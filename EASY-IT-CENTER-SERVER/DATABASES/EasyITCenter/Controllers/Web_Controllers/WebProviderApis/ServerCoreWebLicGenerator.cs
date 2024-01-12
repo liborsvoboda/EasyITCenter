@@ -8,6 +8,7 @@ namespace EasyITCenter.ControllersExtensions {
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ServerCoreWebLicGenerator : ControllerBase {
 
+
         [HttpGet("/LicenseRequest/Trial/{product}")]
         public async Task<IActionResult> TrialLicenseGenerator(string product) {
             try {
