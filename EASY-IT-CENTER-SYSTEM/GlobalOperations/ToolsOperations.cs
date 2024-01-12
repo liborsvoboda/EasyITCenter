@@ -1,7 +1,7 @@
 ﻿using ICSharpCode.AvalonEdit;
 using System.Linq;
 
-namespace EasyITCenter.GlobalOperations {
+namespace EasyITSystemCenter.GlobalOperations {
 
     /// <summary>
     /// Centralized Library With Extension Functions Of Exterrnal Tools

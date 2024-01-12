@@ -1,4 +1,4 @@
-﻿namespace EasyITCenter.Api {
+﻿namespace EasyITSystemCenter.Api {
 
     /// <summary>
     /// ALL standard View AND Form API Call must end with "List" - These will automatic added for

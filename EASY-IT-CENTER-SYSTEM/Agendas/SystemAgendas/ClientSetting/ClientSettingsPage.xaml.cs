@@ -1,9 +1,9 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalClasses;
-using EasyITCenter.GlobalOperations;
-using EasyITCenter.SystemHelper;
-using EasyITCenter.SystemStructure;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
+using EasyITSystemCenter.GlobalOperations;
+using EasyITSystemCenter.SystemHelper;
+using EasyITSystemCenter.SystemStructure;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using Org.BouncyCastle.Asn1;
@@ -15,7 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class ClientSettingsPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class ScreenSaverPage : UserControl {
         private Trackball _trackball;

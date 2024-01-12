@@ -1,13 +1,13 @@
-﻿using EasyITCenter.Classes;
-using EasyITCenter.GlobalOperations;
-using EasyITCenter.OSHelpers;
+﻿using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalOperations;
+using EasyITSystemCenter.OSHelpers;
 using System;
 using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class SystemMonitorPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

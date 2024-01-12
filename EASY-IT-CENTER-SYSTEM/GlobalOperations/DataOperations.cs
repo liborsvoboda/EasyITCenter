@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows.Controls;
 
-namespace EasyITCenter.GlobalOperations {
+namespace EasyITSystemCenter.GlobalOperations {
 
     /// <summary>
     /// Centralized DataOperations as Cleaning dataset Language Dictionary Auto filing

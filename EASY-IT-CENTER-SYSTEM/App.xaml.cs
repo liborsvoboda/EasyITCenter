@@ -1,10 +1,10 @@
 ﻿using CefSharp;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalClasses;
-using EasyITCenter.GlobalOperations;
-using EasyITCenter.Pages;
-using EasyITCenter.SystemHelper;
-using EasyITCenter.SystemStructure;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
+using EasyITSystemCenter.GlobalOperations;
+using EasyITSystemCenter.Pages;
+using EasyITSystemCenter.SystemHelper;
+using EasyITSystemCenter.SystemStructure;
 using log4net.Config;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -22,7 +22,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace EasyITCenter {
+namespace EasyITSystemCenter {
 
     public partial class App : Application {
 

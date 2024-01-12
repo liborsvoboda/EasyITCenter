@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyITCenter.Classes {
+namespace EasyITSystemCenter.Classes {
 
     public partial class BasicCalendarList {
         public int UserId { get; set; }

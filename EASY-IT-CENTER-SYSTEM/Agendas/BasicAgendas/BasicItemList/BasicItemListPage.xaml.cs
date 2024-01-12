@@ -1,7 +1,7 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalOperations;
-using EasyITCenter.GlobalStyles;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalOperations;
+using EasyITSystemCenter.GlobalStyles;
 using HelixToolkit.Wpf;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
@@ -19,7 +19,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class BasicItemListPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

@@ -1,4 +1,4 @@
-﻿namespace EasyITCenter.Classes {
+﻿namespace EasyITSystemCenter.Classes {
 
     /// <summary>
     /// Program version Class

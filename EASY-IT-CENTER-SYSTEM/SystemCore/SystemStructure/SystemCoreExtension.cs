@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
 
-namespace EasyITCenter {
+namespace EasyITSystemCenter {
 
     internal abstract class AppExtension : App {
 

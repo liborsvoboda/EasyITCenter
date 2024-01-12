@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyITCenter.GlobalOperations {
+namespace EasyITSystemCenter.GlobalOperations {
 
     internal class MathTypeOperations {
 

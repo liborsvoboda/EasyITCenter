@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
 
-namespace EasyITCenter.SystemConfiguration {
+namespace EasyITSystemCenter.SystemConfiguration {
 
     public class IniFile {
         public string path;

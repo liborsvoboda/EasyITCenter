@@ -1,7 +1,7 @@
 ﻿using Dragablz;
-using EasyITCenter.GlobalOperations;
-using EasyITCenter.Pages;
-using EasyITCenter.Properties;
+using EasyITSystemCenter.GlobalOperations;
+using EasyITSystemCenter.Pages;
+using EasyITSystemCenter.Properties;
 using MahApps.Metro;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
-namespace EasyITCenter.SystemStructure {
+namespace EasyITSystemCenter.SystemStructure {
 
     public class SystemWindowDataModel {
         private IInterTabClient _interTabClient = new DefaultInterTabClient();

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
 
-namespace EasyITCenter.GlobalOperations {
+namespace EasyITSystemCenter.GlobalOperations {
 
     internal class HardwareOperations {
 

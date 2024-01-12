@@ -1,7 +1,7 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalGenerators;
-using EasyITCenter.GlobalOperations;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalGenerators;
+using EasyITSystemCenter.GlobalOperations;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class ServerToolPanelListPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

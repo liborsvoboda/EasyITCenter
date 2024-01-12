@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 
-namespace EasyITCenter.SystemStructure {
+namespace EasyITSystemCenter.SystemStructure {
 
     public class SystemObjectsBehaviors : Behavior<DataGrid> {
         private bool _monitorForTab;

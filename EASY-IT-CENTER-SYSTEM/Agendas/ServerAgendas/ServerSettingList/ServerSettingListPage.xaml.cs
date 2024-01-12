@@ -1,6 +1,6 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalOperations;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalOperations;
 using MahApps.Metro.Controls;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1;
@@ -13,7 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class ServerSettingListPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

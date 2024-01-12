@@ -1,8 +1,8 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalClasses;
-using EasyITCenter.GlobalGenerators;
-using EasyITCenter.GlobalOperations;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
+using EasyITSystemCenter.GlobalGenerators;
+using EasyITSystemCenter.GlobalOperations;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
@@ -21,7 +21,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class SystemOperationListPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

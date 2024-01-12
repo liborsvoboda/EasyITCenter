@@ -1,10 +1,10 @@
-﻿using EasyITCenter.Classes;
+﻿using EasyITSystemCenter.Classes;
 using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     /// <summary>
     /// Template Page For View document, pictures, text and and much more file formats opened in WebViewer

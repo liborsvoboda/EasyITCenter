@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyITCenter.OSHelpers {
+namespace EasyITSystemCenter.OSHelpers {
 
     internal class RAMUsage {
         public double Memory { get; private set; }

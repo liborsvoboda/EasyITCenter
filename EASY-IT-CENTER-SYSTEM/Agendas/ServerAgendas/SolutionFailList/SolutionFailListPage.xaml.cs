@@ -1,7 +1,7 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalOperations;
-using EasyITCenter.GlobalStyles;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalOperations;
+using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -17,7 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Xwt.WPFBackend;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class SolutionFailListPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

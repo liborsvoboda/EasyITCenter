@@ -1,4 +1,4 @@
-﻿using EasyITCenter.Properties;
+﻿using EasyITSystemCenter.Properties;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -8,14 +8,14 @@ using System.Windows.Interactivity;
 using System.Windows.Markup;
 using System.Windows.Media;
 
-namespace EasyITCenter.ProgramaticXamlBehaviors {
+namespace EasyITSystemCenter.ProgramaticXamlBehaviors {
 
 
     /// <summary>
     /// TextBox Behavior SelectAll on Focus
     ///
     /// Example of Link in XAML
-    /// xmlns:behaviors="clr-namespace:EasyITCenter.ProgramaticXamlBehaviors"
+    /// xmlns:behaviors="clr-namespace:EasyITSystemCenter.ProgramaticXamlBehaviors"
     /// in TextBox Add behaviors:TextBoxBehavior.SelectAllTextOnFocus="True"
     /// </summary>
     public class TextBoxBehavior : Behavior<TextBox> {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace EasyITCenter.SystemHelper {
+namespace EasyITSystemCenter.SystemHelper {
 
     public class DelegateCommand<T> : ICommand {
         private readonly Func<T, bool> canExecuteFunc;

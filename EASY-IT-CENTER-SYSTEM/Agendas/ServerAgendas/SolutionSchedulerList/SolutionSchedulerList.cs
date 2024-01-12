@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Media;
 
-namespace EasyITCenter.Classes {
+namespace EasyITSystemCenter.Classes {
 
     public partial class SolutionSchedulerList {
         public int Id { get; set; } = 0;

@@ -1,9 +1,9 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalClasses;
-using EasyITCenter.GlobalGenerators;
-using EasyITCenter.GlobalOperations;
-using EasyITCenter.GlobalStyles;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
+using EasyITSystemCenter.GlobalGenerators;
+using EasyITSystemCenter.GlobalOperations;
+using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using System;
@@ -18,7 +18,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class ServerToolPanelDefinitionListPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

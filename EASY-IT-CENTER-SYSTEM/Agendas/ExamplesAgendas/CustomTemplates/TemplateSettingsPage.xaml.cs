@@ -1,6 +1,6 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalOperations;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalOperations;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1;
@@ -13,7 +13,7 @@ using System.Windows.Controls;
 
 // This is Template Is Customized For Load and Save data without List (Settings) is folded from
 // standartized Methods
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class TemplateSettingsPage : UserControl {
 

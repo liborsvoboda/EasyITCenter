@@ -1,6 +1,6 @@
 ﻿using Org.BouncyCastle.Asn1.X509;
 
-namespace EasyITCenter.SystemStructure {
+namespace EasyITSystemCenter.SystemStructure {
 
     public class ExtendedKeyUsageData {
 

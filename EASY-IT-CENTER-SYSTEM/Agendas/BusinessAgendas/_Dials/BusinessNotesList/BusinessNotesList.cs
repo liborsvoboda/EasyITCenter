@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyITCenter.Classes {
+namespace EasyITSystemCenter.Classes {
 
     public partial class BusinessNotesList {
         public int Id { get; set; }

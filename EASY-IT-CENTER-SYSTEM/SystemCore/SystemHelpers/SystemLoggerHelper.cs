@@ -3,7 +3,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 
-namespace EasyITCenter.SystemHelper {
+namespace EasyITSystemCenter.SystemHelper {
 
     /// <summary>
     /// System Logger WebSocket Monitor Controller Class Definition For Centralized Using

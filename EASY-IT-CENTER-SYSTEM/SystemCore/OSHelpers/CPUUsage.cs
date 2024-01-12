@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyITCenter.OSHelpers {
+namespace EasyITSystemCenter.OSHelpers {
 
     internal class CPUUsage {
         public double CPU { get; private set; }

@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
-namespace EasyITCenter.GlobalClasses {
+namespace EasyITSystemCenter.GlobalClasses {
 
     public class ConcurrentObservableList<T> : IList<T>, INotifyCollectionChanged, IDisposable {
 

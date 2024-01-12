@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Media.Imaging;
 
-namespace EasyITCenter.Classes {
+namespace EasyITSystemCenter.Classes {
 
     public partial class ServerToolPanelDefinitionList {
         public int Id { get; set; } = 0;

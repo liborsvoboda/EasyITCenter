@@ -1,8 +1,8 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalClasses;
-using EasyITCenter.GlobalOperations;
-using EasyITCenter.GlobalStyles;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
+using EasyITSystemCenter.GlobalOperations;
+using EasyITSystemCenter.GlobalStyles;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -21,7 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class WebGlobalPageBlockListPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

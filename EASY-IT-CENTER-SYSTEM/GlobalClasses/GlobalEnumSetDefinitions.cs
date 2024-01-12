@@ -1,7 +1,7 @@
-﻿using EasyITCenter.Classes;
+﻿using EasyITSystemCenter.Classes;
 using System.Collections.ObjectModel;
 
-namespace EasyITCenter.GlobalClasses {
+namespace EasyITSystemCenter.GlobalClasses {
 
     internal class SystemLocalEnumSets {
 

@@ -1,7 +1,7 @@
 ﻿using EASYTools.Calendar;
-using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalOperations;
+using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalOperations;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using System.Web.UI.WebControls;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class BasicCalendarListPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

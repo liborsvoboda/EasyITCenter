@@ -1,5 +1,5 @@
-﻿using EasyITCenter.GlobalClasses;
-using EasyITCenter.GlobalOperations;
+﻿using EasyITSystemCenter.GlobalClasses;
+using EasyITSystemCenter.GlobalOperations;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EasyITCenter.Api {
+namespace EasyITSystemCenter.Api {
 
     internal class CommApi {
 

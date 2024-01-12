@@ -1,6 +1,6 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalOperations;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalOperations;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class WelcomePage : MetroWindow {
         private List<SolutionMottoList> MottoList = new List<SolutionMottoList>();

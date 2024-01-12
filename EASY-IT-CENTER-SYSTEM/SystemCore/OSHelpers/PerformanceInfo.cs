@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace EasyITCenter.OSHelpers {
+namespace EasyITSystemCenter.OSHelpers {
 
     internal static class PerformanceInfo {
 

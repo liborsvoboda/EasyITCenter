@@ -1,5 +1,5 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EasyITCenter.GlobalOperations {
+namespace EasyITSystemCenter.GlobalOperations {
 
     /// <summary>
     /// Centralised DBFunctions as Load DB Congig, System Dials (Language, Params) Another Db

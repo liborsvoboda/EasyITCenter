@@ -3,7 +3,7 @@ using System.Resources;
 using System.Runtime.InteropServices;
 using System.Windows;
 
-[assembly: AssemblyTitle("EasyITCenter")]
+[assembly: AssemblyTitle("EasyITSystemCenter")]
 [assembly: AssemblyDescription("EASY ANY SYSTEM Builder for Each Modern System")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("GroupWare-Solution.eu")]
@@ -16,6 +16,6 @@ using System.Windows;
     ResourceDictionaryLocation.None,
     ResourceDictionaryLocation.SourceAssembly
 )]
-[assembly: AssemblyVersion("1.7.94.1946")]
-[assembly: AssemblyFileVersion("1.7.94.1946")]
+[assembly: AssemblyVersion("1.7.94.1948")]
+[assembly: AssemblyFileVersion("1.7.94.1948")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]

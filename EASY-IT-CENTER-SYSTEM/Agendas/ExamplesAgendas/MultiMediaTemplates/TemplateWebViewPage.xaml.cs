@@ -1,12 +1,12 @@
 ﻿using CefSharp;
-using EasyITCenter.Classes;
+using EasyITSystemCenter.Classes;
 using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     /// <summary>
     /// Template Page For internet pages document, pictures, text and and much more file formats

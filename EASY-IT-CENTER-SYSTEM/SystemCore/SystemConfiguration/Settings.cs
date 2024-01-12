@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Resources;
 
-namespace EasyITCenter.Properties {
+namespace EasyITSystemCenter.Properties {
     /*
     internal sealed partial class Settings {
         public Settings() {

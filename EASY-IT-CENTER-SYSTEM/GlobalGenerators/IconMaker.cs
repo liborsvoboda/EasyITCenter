@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace EasyITCenter.GlobalGenerators {
+namespace EasyITSystemCenter.GlobalGenerators {
 
     /// <summary>
     /// System Online Icon Generator from custom Path Its for working with Icon over Database Dynamically

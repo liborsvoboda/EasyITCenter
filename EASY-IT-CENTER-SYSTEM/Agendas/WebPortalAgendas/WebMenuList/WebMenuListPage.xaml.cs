@@ -1,8 +1,8 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalClasses;
-using EasyITCenter.GlobalOperations;
-using EasyITCenter.GlobalStyles;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
+using EasyITSystemCenter.GlobalOperations;
+using EasyITSystemCenter.GlobalStyles;
 using ICSharpCode.AvalonEdit.Highlighting;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
@@ -18,7 +18,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class WebMenuListPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

@@ -1,4 +1,4 @@
-﻿namespace EasyITCenter.SystemStructure {
+﻿namespace EasyITSystemCenter.SystemStructure {
 
     public class SystemTabs {
         private readonly string _header;

@@ -1,5 +1,5 @@
-﻿using EasyITCenter.Classes;
-using EasyITCenter.GlobalOperations;
+﻿using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalOperations;
 using MahApps.Metro.Controls;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1;
@@ -12,7 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
 // This is Template Is Customized For Play Video
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class TemplateVideoPage : UserControl {
 

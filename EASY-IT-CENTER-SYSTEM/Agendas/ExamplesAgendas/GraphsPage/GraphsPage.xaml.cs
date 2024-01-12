@@ -1,5 +1,5 @@
-﻿using EasyITCenter.Classes;
-using EasyITCenter.GlobalOperations;
+﻿using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalOperations;
 using LiveCharts;
 using LiveCharts.Wpf;
 using System;
@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class GraphsPage : UserControl, INotifyPropertyChanged {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

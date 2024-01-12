@@ -1,5 +1,5 @@
-﻿using EasyITCenter.Classes;
-using EasyITCenter.GlobalOperations;
+﻿using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalOperations;
 using HelixToolkit.Wpf;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1;
@@ -12,7 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media.Media3D;
 
 // This is Template Is Customized For Show 3D STL Object
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class TemplateSTLPage : UserControl {
 

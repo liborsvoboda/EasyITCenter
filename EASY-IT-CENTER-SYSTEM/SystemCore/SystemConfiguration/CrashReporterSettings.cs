@@ -1,6 +1,6 @@
 ﻿using EASYTools.CrashReporter;
 
-namespace EasyITCenter.SystemConfiguration {
+namespace EasyITSystemCenter.SystemConfiguration {
 
     /// <summary>
     /// Libreria condivisa

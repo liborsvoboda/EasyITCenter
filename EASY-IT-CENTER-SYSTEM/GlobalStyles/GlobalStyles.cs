@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
-namespace EasyITCenter.GlobalStyles {
+namespace EasyITSystemCenter.GlobalStyles {
 
     internal class ProgramaticStyles {
         public static Style gridTextRightAligment = GridTextRightAligment();

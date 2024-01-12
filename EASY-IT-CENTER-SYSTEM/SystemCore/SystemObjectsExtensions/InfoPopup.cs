@@ -1,4 +1,4 @@
-﻿using EasyITCenter.Properties;
+﻿using EasyITSystemCenter.Properties;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,7 +6,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 
 
-namespace EasyITCenter {
+namespace EasyITSystemCenter {
 
     /// <summary>
     /// A markup extension that returns a

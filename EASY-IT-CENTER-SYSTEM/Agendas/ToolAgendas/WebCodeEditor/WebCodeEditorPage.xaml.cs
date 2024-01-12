@@ -1,7 +1,7 @@
-﻿using EasyITCenter.Api;
-using EasyITCenter.Classes;
-using EasyITCenter.GlobalClasses;
-using EasyITCenter.GlobalOperations;
+﻿using EasyITSystemCenter.Api;
+using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
+using EasyITSystemCenter.GlobalOperations;
 using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -16,7 +16,7 @@ using System.Windows;
 using System.Windows.Controls;
 
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class WebCodeEditorPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();

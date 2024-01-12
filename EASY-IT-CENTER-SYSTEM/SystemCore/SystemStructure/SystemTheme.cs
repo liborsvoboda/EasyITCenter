@@ -1,12 +1,12 @@
-﻿using EasyITCenter.Properties;
-using EasyITCenter.SystemHelper;
+﻿using EasyITSystemCenter.Properties;
+using EasyITSystemCenter.SystemHelper;
 using MahApps.Metro;
 using System;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 
-namespace EasyITCenter.SystemStructure {
+namespace EasyITSystemCenter.SystemStructure {
 
     public class SystemTheme : AccentColorMenuData {
 

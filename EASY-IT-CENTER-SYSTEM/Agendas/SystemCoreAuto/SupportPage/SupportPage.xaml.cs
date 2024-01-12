@@ -1,9 +1,9 @@
-﻿using EasyITCenter.GlobalOperations;
+﻿using EasyITSystemCenter.GlobalOperations;
 using Org.BouncyCastle.Asn1;
 using System.Linq;
 using System.Windows.Controls;
 
-namespace EasyITCenter.Pages {
+namespace EasyITSystemCenter.Pages {
 
     public partial class SupportPage : UserControl {
 

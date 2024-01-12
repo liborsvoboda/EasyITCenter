@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace EasyITCenter {
+namespace EasyITSystemCenter {
 
   /// <summary>
   /// Info Popup System Extensions

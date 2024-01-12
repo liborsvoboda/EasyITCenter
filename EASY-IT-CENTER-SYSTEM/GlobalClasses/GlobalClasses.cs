@@ -1,12 +1,11 @@
-﻿using EasyITCenter.Classes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 
-namespace EasyITCenter.GlobalClasses {
+namespace EasyITSystemCenter.GlobalClasses {
 
     /// <summary>
     /// !!!SYSTEM Global Runtime Monitor Definition For One Point monitoring For Processes and each

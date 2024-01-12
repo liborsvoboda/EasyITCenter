@@ -1,4 +1,4 @@
-﻿using EasyITCenter.Classes;
+﻿using EasyITSystemCenter.Classes;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace EasyITCenter.GlobalOperations {
+namespace EasyITSystemCenter.GlobalOperations {
 
     /// <summary>
     /// Centralised System Functions for work with Types, methods, Formats, Logic, supported methods
