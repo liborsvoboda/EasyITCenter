@@ -1,0 +1,92 @@
+﻿@page 
+@model ServerCorePages.LoginModel
+@{
+    ViewData["Title"] = "Login";  
+    //Layout = "~/Shared/_Layout.cshtml";  
+}
+
+    @*
+    https://metroui.org.ua/intro.html
+    https://metroui.org.ua/position.html
+    https://www.c-sharpcorner.com/article/custom-login-register-with-identity-in-asp-net-core-3-1/
+    *@
+
+<div class="text-center info-panel">
+
+    <div class="container-fluid bg-brand fg-white pos-fixed fixed-top z-top">
+        <header data-role="appbar" class="container pos-relative bg-brand fg-white" data-expand-point="md">
+            <div class="brand no-hover">GroupWare Solution</div>
+            <span style="color:black;">translation is posibble by right mouse click</span>
+            <ul class="app-bar-menu ml-auto">
+                <li><a href="https://KlikneteZde.Cz" target="_blank" title="Online System for Testing" data-role="ripple" data-ripple-color="#CE352C" data-ripple-alpha=".2">Online</a></li>
+                <li><a href="https://GroupWare-Solution.Eu" target="_blank" title="Online System for Testing" data-role="ripple" data-ripple-color="#CE352C" data-ripple-alpha=".2">Web Pages</a></li>
+                <li><a href="/DashBoard" data-role="ripple" data-ripple-color="#CE352C" data-ripple-alpha=".2">DashBoard</a></li>
+                <li><a href="/Downloads" data-role="ripple" title="Download Center" data-ripple-color="#CE352C" data-ripple-alpha=".2">Downloads</a></li>
+                <li><a href="/server" target="_blank" class="text-bold fg-yellow"><span class="d-block ani-vertical">Get started</span></a></li>
+            </ul>
+        </header>
+    </div>
+
+    <window>
+        <div class="hero hero-bg 1bg-brand-secondary add-neb">
+            <div class="container">
+                <div class="row">
+                    <form id="loginform" method="post" 
+                        class="login-form bg-white p-6 mx-auto border bd-default win-shadow"
+                          data-role="validator"
+                          action="javascript:"
+                          data-clear-invalid="2000"
+                          data-on-error-form="invalidForm"
+                          data-on-validate-form="validateForm">
+                        <span class="mif-vpn-lock mif-4x place-right" style="margin-top: -10px;"></span>
+                        <h2 class="text-light">Login to service</h2>
+                        <hr class="thin mt-4 mb-4 bg-white">
+                        <div class="form-group">
+                            <input id="usernameId" type="text" data-role="input" data-prepend="<span class='mif-envelop'>" placeholder="Enter your email..." data-validate="required">
+                        </div>
+                        <div class="form-group">
+                            <input id="passwordId" type="password" data-role="input" data-prepend="<span class='mif-key'>" placeholder="Enter your password..." data-validate="required minlength=6">
+                        </div>
+                        <div class="form-group mt-10">
+                            <input type="checkbox" data-role="checkbox" data-caption="Remember me" class="place-right">
+                            <button class="button" >Submit form</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </window>
+    <script>
+        //$(document).ready(function () {
+            function invalidForm(){
+                var form  = $(this);
+                form.addClass("ani-ring");
+                setTimeout(function(){
+                    form.removeClass("ani-ring");
+                }, 1000);
+            }
+
+            function validateForm(){
+         
+                var def = $.ajax({
+                    global: false, type: "POST", url: "/GLOBALNETAuthentication", dataType: 'json',
+                    headers: { "Authorization": "Basic " + btoa($("#usernameId").val() + ":" + $("#passwordId").val()) }
+                });
+
+                var notify = Metro.notify;notify.setup({ width: 300, duration: 1000, animation: 'easeOutBounce' });
+                notify.create("Waiting for Login..."); notify.reset();
+
+                def.fail(function (data) {
+                    var notify = Metro.notify; notify.setup({ width: 300, duration: 1000, animation: 'easeOutBounce' });
+                    notify.create("Login Failed", "Alert", { cls: "alert" }); notify.reset();
+                });
+
+                def.done(function (data) {
+                    Cookies.set('ApiToken', data.Token);
+                    window.location.href = "/Dashboard";
+                });
+            
+            }
+        //});
+    </script>
+</div>

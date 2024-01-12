@@ -1,0 +1,403 @@
+﻿Online HELP https://metroui.org.ua/m4q-about.html
+
+Github studnice od stvoritele
+https://github.com/olton?tab=repositories
++vue https://codepen.io/olton/pen/zWomRo
+
+https://dev.to/paulasantamaria/document-your-javascript-code-with-jsdoc-2fbf
+https://github.com/jsdoc
+https://github.com/metalsmith/metalsmith/tree/master
+https://github.com/metalsmith
+https://github.com/orgs/vue-styleguidist/repositories?type=all
+https://github.com/vue-styleguidist/vue-styleguidist
+https://mokkapps.de/blog/document-and-test-vue-3-components-with-storybook
+https://github.com/vue-styleguidist/vue-styleguidist/tree/dev/packages/vue-styleguidist
+javascriptdokumentace i online dokumentace
+
+gitlab repos
+https://docs.gitlab.com/
+
+MS návod
+https://www.c-sharpcorner.com/article/exporting-comments-in-visual-studio/
+
+
+další kroky
+
+HealthCheckRegistration
+
+CORS
+
+cookie
+
+httpclient for automatic download data
+
+
+/HealthResultService  a třeba udělat zaslání emailu  když nějaká služba vypadne
+
+novou tabulku a cyklicky  v definici protože konekt k DB už mám
+    services.AddHealthChecks()
+ .AddUrlGroup(new Uri("http://httpbin.org/status/200"));
+AddDiskStorageHealthCheck(diskOptions => { diskOptions.AddDrive(driveName: "c:\\", 1000); }, "Drive C free space is more than 1GB")
+.AddFolder(folderOption => { folderOption.AddFolder(BackendServer.ServerRuntimeData.Setting_folder); }, "Setting Folder")
+------------------------------
+using metro objects
+
+call
+onclick="Metro.infobox.open('#EDCinfoBox');"
+
+create by script
+Metro.infobox.create(html_content, "info");
+-------------------------------------------------------------------------------------------
+
+cshtml use data from model
+ value="@Model.webPagesLogin.Username"
+
+
+-------------------------------------------------------------------------------------------
+cookie help
+https://www.npmjs.com/package/js-cookie?activeTab=code
+------------------------------------------------------------------------------------------
+ASPNET MVC Jquery
+
+Načtení dat se udělá tak že v souboru cshtl.cs 
+si načtu všechny potřebné hodnoty do proměnné a tu pak jedoduše zobrazím přes model 
+
+ukázka
+public ServerWebPagesLogin webPagesLogin = new ServerWebPagesLogin() { Username = "test" };
+ <input id="passwordId" type="password" data-role="input" data-prepend="<span class='mif-key'>" value="@Model.webPagesLogin.Password"
+
+   ------------------------------------------------------------------------------------------
+
+  odesální dat jquery
+  $.post("/CheckLogin", { Username: $("#usernameId").val(), Password: $("#passwordId").val() }, function (data) { console.log(data); });
+  ---------------------------------------------------------------------------------------------
+  ajx with basic auth 
+
+
+  JSON Messaging
+            var def = $.ajax({
+                global: false, type: "POST", url: "/WebUser/UpdateRegistration", dataType: 'json',
+                contentType: 'application/json',
+                headers: { "Authorization": 'Bearer ' + Metro.storage.getItem('ApiToken', null) },
+                data: JSON.stringify({ EmailAddress: $("#usernameId").val(), FirstName: $("#firstnameId").val(),
+                    LastName: $("#lastnameId").val(), Password: $("#passwordId").val(), Language: WebPagesLanguage
+                })
+            }).fail(function (data) {
+                var notify = Metro.notify; notify.setup({ width: 300, duration: 1000, animation: 'easeOutBounce' });
+                notify.create("Update Profile Failed", "Alert", { cls: "alert" }); notify.reset();
+                hidePageLoading();
+            }).done(function (data) {
+                var notify = Metro.notify; notify.setup({ width: 300, duration: 1000, animation: 'easeOutBounce' });
+                notify.create("Update Profile Success", "Info", { cls: "success" }); notify.reset();
+                hidePageLoading();
+            });
+
+
+
+            var def = $.ajax({
+                global: false, type: "POST", url: "/EasyITCenterAuthentication", dataType: 'json',
+                headers: { "Authorization": "Basic " + btoa($("#usernameId").val() + ":" + $("#passwordId").val()) },
+                data: JSON.stringify({ Files: dataset })
+            });
+            global: false, type: "GET", url: "//WebUser/GetWebUser/" + WebPagesLanguage, dataType: 'json',
+            headers: { "Authorization": 'Bearer ' + Metro.storage.getItem('ApiToken', null) }
+
+            var def = $.ajax({
+                global: false, type: "POST", url: "/EasyITCenterAuthentication", dataType: 'json',
+                headers: { "Authorization": 'Bearer ' + Metro.storage.getItem('ApiToken', null) },
+                data: JSON.stringify({ EmailAddress: $("#usernameId").val(), FirstName: $("#firstnameId").val(),
+                    LastName: $("#lastnameId").val(), Password: $("#passwordId").val(), Language: WebPagesLanguage
+                })
+            });
+----------------------------------------------------------------------------------------------------------
+
+RAZOR TO javascript
+
+<script type="text/javascript">
+    var i = parseInt('@Model.i');
+</script>
+Or you can try with below given options.
+
+Option 1:
+
+var myVar = '@Model.MyVar';
+var name = '@Model.Name';
+Option 2:
+
+var myVar ='@Html.Raw(Model.MyVar)';
+var name = '@Html.Raw(Model.Name)';
+
+<script type="text/javascript">
+    var myArray = JSON.parse('@Json.Serialize(@Model.MyList)');
+    var myVar = '@Model.MyVar';
+</script>
+
+<script>
+    var myList = @Json.Serialize(Model.MyList);
+</script>
+
+
+
+boolean check  if (!Boolean(@logged.ToString().ToLower())) console.log("hi");
+---------------------------------------------------------------------------------------------------------
+
+call get function
+
+ $.get("data/" + v).then(function (response) {
+     console.log(response);
+     var select = $("#select1").data("select");
+     select.data(v.indexOf("json") === -1 ? response : JSON.parse(response));
+ });
+
+ ukazky
+ http://cidccentreest.fr/Metro/docs/templates/login.asp
+
+ typescript + netcore
+ https://korzh.com/blog/typescript-webpack-aspnetcore
+ https://korzh.com/blog/add-extra-user-claims-aspnet-core-webapp  Identity
+
+ const message = 'Hello world!';
+        console.log(message);
+
+        action='@Url.Action("Login", "Cliente")'
+
+
+
+        function pushMessage(t){
+            var mes = 'Info|Implement independently';
+            $.Notify({
+                caption: mes.split("|")[0],
+                content: mes.split("|")[1],
+                type: t
+            });
+        }
+
+        link
+         <a asp-page="./Index">Back to List</a>
+
+          <input asp-for="Movie.Price" class="form-control" />
+
+
+          $.post("ServerCorePages/Login", $("#loginform").serialize(), function (data) { });
+
+          $.ajax({
+    url: 'someUrl',
+    type: 'POST',
+    dataType: "json",
+    contentType: 'application/json',
+    data: JSON.stringify(myData)
+});  
+---------------------------------------------------
+Cookie Only Api token for NETCORE Identity
+Cookies.set('ApiToken', n);
+
+
+Metro.storage.getItem('ApiToken', null);
+
+------------------------------------------------
+
+var def = $.ajax({
+    global: false, type: "POST", url: "/Generators/GenerateMdToMdBook", dataType: 'json',
+    headers: {
+        'Content-type': 'application/json',
+        "Authorization": 'Bearer ' + Metro.storage.getItem('ApiToken', null)
+    },
+    data: JSON.stringify({ Files: dataset })
+});
+
+
+$.ajax({ url: '/EasyITCenterUserWebConfigList/WebUser', dataType: 'json',
+    type: "GET",
+    headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer ' + Metro.storage.getItem('ApiToken', null)
+    },
+    success: function (data) {
+        console.log(JSON.stringify(data));
+        Metro.storage.setItem('UserData', JSON.stringify(data));
+        hidePageLoading();
+    },
+    error: function (error) {
+        var notify = Metro.notify; notify.setup({ width: 300, duration: 1000, animation: 'easeOutBounce' });
+        notify.create("Downloading User Data Failed", "Alert", { cls: "alert" }); notify.reset();
+        hidePageLoading();
+    }
+});
+
+-------------------------------------------------
+
+https://github.com/KorzhCom/EasyData?utm_source=blog&utm_medium=content&utm_campaign=kblog_banner
+
+metro4 generic data manager
+-------------------------------------------------
+backgeround video support image mask , sound 
+
+https://github.com/pupunzi/jquery.mb.YTPlayer/wiki
+The URL of the page containing the video
+videoURL: ‘https://www.youtube.com/watch?v=V2rifmjZuKQ’.
+The short URL available from the YouTube share panel
+videoURL: ‘http://youtu.be/V2rifmjZuKQ’.
+The video ID
+videoURL: ‘V2rifmjZuKQ’.
+
+-------------------------------------------------
+
+ async function startup() {
+      let result1 = await f1(...);
+      let result2 = await f2(...);
+      let result3 = await f3(...);
+ }
+
+ startup().then(finalResult => {
+    // all async operation done here with finalResult
+ }).catch(err => {
+    // error starting up
+ });
+
+ ------------------------------------------------
+
+ https://projects.lukehaas.me/scrollify/#home
+
+ Window scroll Page
+
+  ------------------------------------------------
+
+
+  generátory
+  https://openapi-generator.tech/docs/generators#server-generators
+
+
+  app.Map("/de",
+    userApp =>
+    {
+        userApp.UseSpaStaticFiles(new StaticFileOptions
+                                  {
+                                      FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "de"))
+                                  });
+        userApp.UseSpa(spa =>
+        {
+            spa.Options.DefaultPage = new PathString("/de/index.html");
+
+            if (app.Environment.IsDevelopment())
+                spa.UseProxyToSpaDevelopmentServer("http://localhost:4000");
+        });
+    });
+app.Map("/en",
+    userApp =>
+    {
+        userApp.UseSpaStaticFiles(new StaticFileOptions
+                                  {
+                                      FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "en"))
+                                  });
+        userApp.UseSpa(spa =>
+        {
+            spa.Options.DefaultPage = new PathString("/en/index.html");
+
+            if (app.Environment.IsDevelopment())
+                spa.UseProxyToSpaDevelopmentServer("http://localhost:4001");
+        });
+    });
+
+app.UseWhen(context => !context.Request.Path.StartsWithSegments("/api"), appBuilder =>
+{
+    appBuilder.Use((Func<HttpContext, Func<Task>, Task>)((context, _) =>
+                                                            {
+                                                                context.Response.Redirect("/de");
+                                                                return Task.CompletedTask;
+                                                            }));
+});
+
+app.Run();
+
+
+---------------------------
+
+controler online 
+https://stackoverflow.com/questions/46156649/asp-net-core-register-controller-at-runtime
+
+https://github.com/quartz-scheduler/quartz/blob/main/docs/examples/Example1.md#Example1-RunningtheExample
+návod
+
+https://github.com/dotnet/AspNetCore.Docs/tree/main
+
+https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/write?view=aspnetcore-8.0
+
+webBuilder.UseUrls("http://*:5000;http://localhost:5001;https://hostname:5002");
+
+https://learn.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0
+https://github.com/dotnet/runtime/tree/main/src/libraries/System.Management/src/System/Management
+https://github.com/aspnet
+
+
+https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/fundamentals/tools/dotnet-aspnet-codegenerator.md
+https://github.com/aspnet/samples/blob/main/samples/aspnetcore/blazor/InputLargeTextArea/SampleServerApp/Program.cs
+https://github.com/aspnet/JavaScriptServices
+
+
+node, angurar js examlpes
+https://github.com/aspnet/JavaScriptServices/tree/master/samples/misc
+
+URL Rewrite service
+https://github.com/aspnet/BasicMiddleware/blob/master/samples/RewriteSample/Startup.cs
+
+Razor portal
+https://github.com/aspnet/Razor/tree/master/src
+
+https://github.com/orgs/microsoft/repositories?type=all
+microsoft mannej tooly
+
+monacoeditor
+https://microsoft.github.io/monaco-editor/docs.html#modules/editor.html
+
+mopnascoeditor
+https://code.visualstudio.com/docs/editor/editingevolved
+
+graphgq sandbox generator schema
+https://github.com/dotansimha/graphql-code-generator-issue-sandbox-template/tree/master
+
+
+práce se soubory bez node.js
+https://copyprogramming.com/howto/write-to-json-file-without-node-js
+
+dodelat restarty sluzeb FTP , quartz atd
+
+https://github.com/graphql-dotnet/server
+
+HOSTING
+http://supervisord.org/installing.html#creating-a-configuration-file
+https://webmin.com/download/
+https://ajenti.org/
+https://relaxedcoder.com/blog/tutorial-easy-deploy-of-net-core-to-linux-on-linode/
+
+SIMPLE HOSTING https://github.com/PureKrome/SimpleHosting
+spa hosting https://github.com/NetLah/spaservices-hosting
+
+RESOUCRCE AMANAGER hosting více aplikací
+https://github.com/Prastiwar/ResourceManager/blob/main/docs/sampleresources.png
+
+
+
+Pages Generator
+https://learn.microsoft.com/en-us/aspnet/core/fundamentals/tools/dotnet-aspnet-codegenerator?view=aspnetcore-8.0
+
+https://github.com/HamedFathi/workflow-core/tree/master
+Glob8ln9 programov8n9 
+
+
+BOREC má milion super projektu
+https://github.com/HamedFathi?tab=repositories
+
+
+subdomeny
+https://github.com/mariuszkerl/AspNetCoreSubdomain
+https://copyprogramming.com/howto/how-do-i-get-the-current-subdomain-within-net-core-middleware
+
+generic API
+https://medium.com/@ajays871/generic-rest-controller-and-generic-entity-framework-implementation-in-asp-net-core-application-a91b18507b55
+
+
+mail server
+https://github.com/linsmod/DataSmart.MailServer/tree/master
+
+
+grafana je monitoring rozhraní
