@@ -23,7 +23,7 @@
         [HttpGet]
         public IActionResult Get() {
             if (ServerConfigSettings.ModuleDbDiagramGeneratorEnabled) {
-                var response = File(Encoding.UTF8.GetBytes(Context.AsDgml()), "application/octet-stream", "Entities.dgml"); ;
+                var response = File(Encoding.UTF8.GetBytes(Context.AsDgml()), "application/octet-stream", "Entities.dgml");
                 return response;
             }
             else { return null; }

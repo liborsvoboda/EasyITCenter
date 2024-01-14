@@ -6,6 +6,7 @@
 using FubarDev.FtpServer;
 using Quartz;
 using Quartz.Impl;
+using Quartz.Simpl;
 
 namespace EasyITCenter.ServerCoreStructure {
 
@@ -100,6 +101,15 @@ namespace EasyITCenter.ServerCoreStructure {
         /// Functionalities for example: Start/Stop Service And More Other sub services for Optimal Hosting
         /// </summary>
         internal static ServiceProvider ServerServiceProvider;
+
+
+
+        /// <summary>
+        /// SercerCore FilesLibrary For Rotator
+        /// TODO Clean
+        /// </summary>
+        internal static Dictionary<object,object> FileRotatorRuntineLibrary = new();
+
 
         //Generic Complicated Example
         //internal static List<Tuple<string, T>>? ServerHostedServicesContollerList = new List<Tuple<string, T>>();

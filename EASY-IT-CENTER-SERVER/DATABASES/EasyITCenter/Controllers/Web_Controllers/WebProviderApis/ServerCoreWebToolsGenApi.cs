@@ -1,4 +1,12 @@
-﻿using System.IO.Compression;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Services.Common;
+using Newtonsoft.Json.Linq;
+using NPOI.HPSF;
+using SharpCompress.Common;
+using System.IO.Compression;
+using System.Net.Http;
+using System.Net.Http.Formatting;
 
 namespace EasyITCenter.ControllersExtensions {
 
@@ -7,7 +15,10 @@ namespace EasyITCenter.ControllersExtensions {
     /// </summary>
     [ApiController]
     [ApiExplorerSettings(IgnoreApi = true)]
+    [Route("Generators")]
     public class ServerCoreWebToolsGenApi : ControllerBase {
+
+
 
         [HttpGet("/Generators/GetGeneratedToolCount")]
         [Consumes("application/json")]
