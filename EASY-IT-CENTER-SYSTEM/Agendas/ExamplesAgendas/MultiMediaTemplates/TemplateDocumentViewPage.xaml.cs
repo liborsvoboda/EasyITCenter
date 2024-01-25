@@ -1,4 +1,5 @@
 ﻿using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalOperations;
 using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace EasyITSystemCenter.Pages {
         /// </summary>
         public TemplateDocumentViewPage() {
             InitializeComponent();
-            Language defaultLanguage = JsonConvert.DeserializeObject<Language>(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
+            _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
             webViewer.Address = Path.Combine(App.appRuntimeData.startupPath, "Data", "xpsDocument.xps");
             //dv_docuentViewer.Document = new XpsDocument(Path.Combine(App.appRuntimeData.startupPath, "Data", "xpsDocument.xps"), FileAccess.Read).GetFixedDocumentSequence();

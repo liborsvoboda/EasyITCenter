@@ -1,5 +1,6 @@
 ﻿using CefSharp;
 using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalOperations;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -26,7 +27,7 @@ namespace EasyITSystemCenter.Pages {
         /// </summary>
         public TemplateWebViewPage() {
             InitializeComponent();
-            Language defaultLanguage = JsonConvert.DeserializeObject<Language>(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
+            _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
             try {
                 webViewer.BeginInit();
@@ -34,7 +35,9 @@ namespace EasyITSystemCenter.Pages {
                 webViewer.FrameLoadStart += WebViewer_FrameLoadStart;
                 webViewer.FrameLoadEnd += WebViewer_FrameLoadEnd;
                 webViewer.LifeSpanHandler = new MyCustomLifeSpanHandler();
+                MainWindow.ProgressRing = System.Windows.Visibility.Visible;
             } catch (Exception ex) { }
+            MainWindow.ProgressRing = System.Windows.Visibility.Hidden;
         }
 
         private void WebViewer_FrameLoadStart(object sender, FrameLoadStartEventArgs e) {

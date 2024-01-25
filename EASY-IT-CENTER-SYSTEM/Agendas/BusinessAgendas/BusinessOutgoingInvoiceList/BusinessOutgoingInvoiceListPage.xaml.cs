@@ -48,6 +48,7 @@ namespace EasyITSystemCenter.Pages {
             try {
                 try {
                     _ = DataOperations.TranslateFormFields(ListForm);
+                    _ = DataOperations.TranslateFormFields(SubListView);
                 } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
                 LoadParameters();
@@ -137,32 +138,33 @@ namespace EasyITSystemCenter.Pages {
         }
 
         // set translate columns in listView
-        private void DgListView_Translate(object sender, EventArgs ex) {
+        private async void DgListView_Translate(object sender, EventArgs ex) {
             try {
-                ((DataGrid)sender).Columns.ToList().ForEach(e => {
-                    string headername = e.Header.ToString();
-                    if (headername == "DocumentNumber") { e.Header = Resources["documentNumber"].ToString(); e.DisplayIndex = 1; }
-                    else if (headername == "Supplier") e.Header = Resources["supplier"].ToString();
-                    else if (headername == "Customer") e.Header = Resources["customer"].ToString();
-                    else if (headername == "OrderNumber") { e.Header = Resources["customerOrderNumber"].ToString(); e.DisplayIndex = 4; }
-                    else if (headername == "IssueDate") { e.Header = Resources["issueDate"].ToString(); (e as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy"; e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = 8; }
-                    else if (headername == "MaturityDate") { e.Header = Resources["maturityDate"].ToString(); (e as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy"; e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = 9; }
-                    else if (headername == "Storned") { e.Header = Resources["storned"].ToString(); e.DisplayIndex = DgListView.Columns.Count - 2; }
-                    else if (headername == "Description") e.Header = Resources["description"].ToString();
-                    else if (headername == "TotalPriceWithVat") { e.Header = Resources["totalPriceWithVat"].ToString(); e.DisplayIndex = 7; e.CellStyle = ProgramaticStyles.gridTextRightAligment; (e as DataGridTextColumn).Binding.StringFormat = "N2"; }
-                    else if (headername == "TotalCurrency") { e.Header = Resources["currency"].ToString(); e.DisplayIndex = 8; }
-                    else if (headername == "ReceiptExist") { e.Header = Resources["receipt"].ToString(); e.DisplayIndex = 2; }
-                    else if (headername == "CreditNoteExist") { e.Header = Resources["creditNote"].ToString(); e.DisplayIndex = 3; }
-                    else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                    else if (headername == "Id") e.DisplayIndex = 0;
-                    else if (headername == "UserId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "TotalCurrencyId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "PaymentMethodId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "MaturityId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "PaymentStatusId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "TaxDate") e.Visibility = Visibility.Hidden;
-                    else if (headername == "ReceiptId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "CreditNoteId") e.Visibility = Visibility.Hidden;
+                ((DataGrid)sender).Columns.ToList().ForEach(async e => {
+                    string headername = e.Header.ToString().ToLower();
+                    if (headername == "documentnumber") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                    else if (headername == "supplier") e.Header = await DBOperations.DBTranslation(headername);
+                    else if (headername == "customer") e.Header = await DBOperations.DBTranslation(headername);
+                    else if (headername == "ordernumber") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
+                    else if (headername == "issuedate") { e.Header = await DBOperations.DBTranslation(headername); (e as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy"; e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = 8; }
+                    else if (headername == "maturitydate") { e.Header = await DBOperations.DBTranslation(headername); (e as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy"; e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = 9; }
+                    else if (headername == "storned") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = DgListView.Columns.Count - 2; }
+                    else if (headername == "description") e.Header = await DBOperations.DBTranslation(headername);
+                    else if (headername == "totalpricewithvat") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 7; e.CellStyle = ProgramaticStyles.gridTextRightAligment; (e as DataGridTextColumn).Binding.StringFormat = "N2"; }
+                    else if (headername == "totalcurrency") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 8; }
+                    else if (headername == "receiptexist") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                    else if (headername == "creditnoteexist") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
+                    else if (headername == "timestamp") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+             
+                    else if (headername == "id") e.DisplayIndex = 0;
+                    else if (headername == "userid") e.Visibility = Visibility.Hidden;
+                    else if (headername == "totalcurrencyid") e.Visibility = Visibility.Hidden;
+                    else if (headername == "paymentmethodid") e.Visibility = Visibility.Hidden;
+                    else if (headername == "maturityid") e.Visibility = Visibility.Hidden;
+                    else if (headername == "paymentstatusid") e.Visibility = Visibility.Hidden;
+                    else if (headername == "taxdate") e.Visibility = Visibility.Hidden;
+                    else if (headername == "receiptid") e.Visibility = Visibility.Hidden;
+                    else if (headername == "creditnoteid") e.Visibility = Visibility.Hidden;
                 });
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
@@ -278,63 +280,74 @@ namespace EasyITSystemCenter.Pages {
 
         //change dataset prepare for working
         private async void SetRecord(bool? showForm = null, bool copy = false) {
-            SetSubListsNonActiveOnNewItem(selectedRecord.Id == 0);
-            selectedRecord.Id = (copy) ? 0 : selectedRecord.Id;
+            try {
+                SetSubListsNonActiveOnNewItem(selectedRecord.Id == 0);
+                selectedRecord.Id = (copy) ? 0 : selectedRecord.Id;
 
-            string originalDocumentNumber = (string.IsNullOrWhiteSpace(selectedRecord.DocumentNumber) && !string.IsNullOrWhiteSpace(DocumentAdviceList.Number)) ? (DocumentAdviceList.Prefix + (int.Parse(DocumentAdviceList.Number) + 1).ToString("D" + DocumentAdviceList.Number.Length.ToString())) : selectedRecord.DocumentNumber;
-            if (copy) {
-                txt_documentNumber.Text = (DocumentAdviceList.Prefix + (int.Parse(DocumentAdviceList.Number) + 1).ToString("D" + DocumentAdviceList.Number.Length.ToString()));
-            }
-            else { txt_documentNumber.Text = originalDocumentNumber; }
+                string originalDocumentNumber = (string.IsNullOrWhiteSpace(selectedRecord.DocumentNumber) && !string.IsNullOrWhiteSpace(DocumentAdviceList.Number)) ? (DocumentAdviceList.Prefix + (int.Parse(DocumentAdviceList.Number) + 1).ToString("D" + DocumentAdviceList.Number.Length.ToString())) : selectedRecord.DocumentNumber;
+                if (copy) {
+                    txt_documentNumber.Text = (DocumentAdviceList.Prefix + (int.Parse(DocumentAdviceList.Number) + 1).ToString("D" + DocumentAdviceList.Number.Length.ToString()));
+                }
+                else { txt_documentNumber.Text = originalDocumentNumber; }
 
-            txt_customer.Text = selectedRecord.Customer;
-            txt_supplier.Text = (!string.IsNullOrWhiteSpace(selectedRecord.Supplier)) ? selectedRecord.Supplier : Supplier;
-            dp_issueDate.Value = selectedRecord.IssueDate;
-            dp_taxDate.Value = selectedRecord.TaxDate;
-            cb_maturity.Text = (MaturityList.Count > 0 && selectedRecord.MaturityId != null) ? MaturityList.FirstOrDefault(a => a.Id == selectedRecord.MaturityId).Name : "";
-            cb_paymentMethod.Text = (PaymentMethodList.Count > 0 && selectedRecord.PaymentMethodId != null) ? PaymentMethodList.FirstOrDefault(a => a.Id == selectedRecord.PaymentMethodId).Name : "";
-            cb_paymentStatus.Text = (PaymentStatusList.Count > 0 && selectedRecord.PaymentStatusId != null) ? PaymentStatusList.FirstOrDefault(a => a.Id == selectedRecord.PaymentStatusId).Name : "";
-            chb_storned.IsChecked = selectedRecord.Storned;
-            cb_totalCurrency.Text = selectedRecord.TotalCurrency;
-            txt_description.Text = selectedRecord.Description;
-            txt_orderNumber.Text = selectedRecord.OrderNumber;
+                txt_customer.Text = selectedRecord.Customer;
+                txt_supplier.Text = (!string.IsNullOrWhiteSpace(selectedRecord.Supplier)) ? selectedRecord.Supplier : Supplier;
+                dp_issueDate.Value = selectedRecord.IssueDate;
+                dp_taxDate.Value = selectedRecord.TaxDate;
+                cb_maturity.Text = (MaturityList.Count > 0 && selectedRecord.MaturityId != null) ? MaturityList.FirstOrDefault(a => a.Id == selectedRecord.MaturityId).Name : "";
+                cb_paymentMethod.Text = (PaymentMethodList.Count > 0 && selectedRecord.PaymentMethodId != null) ? PaymentMethodList.FirstOrDefault(a => a.Id == selectedRecord.PaymentMethodId).Name : "";
+                cb_paymentStatus.Text = (PaymentStatusList.Count > 0 && selectedRecord.PaymentStatusId != null) ? PaymentStatusList.FirstOrDefault(a => a.Id == selectedRecord.PaymentStatusId).Name : "";
+                chb_storned.IsChecked = selectedRecord.Storned;
+                cb_totalCurrency.Text = selectedRecord.TotalCurrency;
+                txt_description.Text = selectedRecord.Description;
+                txt_orderNumber.Text = selectedRecord.OrderNumber;
 
-            if (showForm != null && showForm == true) {
-                //Load Items and Defaults
-                HideTiltButtons();
-                if (App.tiltTargets == TiltTargets.OfferToInvoice.ToString() || App.tiltTargets == TiltTargets.OrderToInvoice.ToString()) { DocumentItemList = App.TiltDocItems; }
-                else { DocumentItemList = await CommApi.GetApiRequest<List<DocumentItemList>>(ApiUrls.EasyITCenterBusinessOutgoingInvoiceSupportList, originalDocumentNumber, App.UserData.Authentification.Token); }
+                if (copy) {
+                    selectedRecord.CreditNoteExist = false;
+                    selectedRecord.ReceiptExist = false;
+                    selectedRecord.CreditNoteId = null;
+                    selectedRecord.ReceiptId = null;
+                }
 
-                DgSubListView.ItemsSource = DocumentItemList; DgSubListView.Items.Refresh(); ClearItemsFields(); txt_totalPrice.Text = DocumentItemList.Sum(a => a.TotalPriceWithVat).ToString(documentVatPriceFormat) + ((cb_totalCurrency.SelectedItem != null) ? " " + ((BasicCurrencyList)cb_totalCurrency.SelectedItem).Name : "");
-                if (CurrencyList.Where(a => a.Default).Count() == 1 && string.IsNullOrWhiteSpace(cb_totalCurrency.Text)) { cb_totalCurrency.Text = CurrencyList.First(a => a.Default).Name; }
-                if (MaturityList.Where(a => a.Default).Count() == 1 && string.IsNullOrWhiteSpace(cb_maturity.Text)) { cb_maturity.Text = MaturityList.First(a => a.Default).Name; dp_maturityDate.Value = DateTimeOffset.Now.AddDays(double.Parse(MaturityList.First(a => a.Default).Value.ToString())).Date; }
-                if (PaymentMethodList.Where(a => a.Default).Count() == 1 && string.IsNullOrWhiteSpace(cb_paymentMethod.Text)) { cb_paymentMethod.Text = PaymentMethodList.First(a => a.Default).Name; }
-                if (PaymentStatusList.Where(a => a.Default).Count() == 1 && string.IsNullOrWhiteSpace(cb_paymentStatus.Text)) { cb_paymentStatus.Text = PaymentStatusList.First(a => a.Default).Name; }
+                if (showForm != null && showForm == true) {
+                    //Load Items and Defaults
+                    HideTiltButtons();
+                    if (App.tiltTargets == TiltTargets.OfferToInvoice.ToString() || App.tiltTargets == TiltTargets.OrderToInvoice.ToString()) { DocumentItemList = App.TiltDocItems; }
+                    else { DocumentItemList = await CommApi.GetApiRequest<List<DocumentItemList>>(ApiUrls.EasyITCenterBusinessOutgoingInvoiceSupportList, originalDocumentNumber, App.UserData.Authentification.Token); }
 
-                MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;
-                ListView.Visibility = Visibility.Hidden; ListForm.Visibility = Visibility.Visible; dataViewSupport.FormShown = true;
-            }
-            else {
-                MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = true;
-                ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; dataViewSupport.FormShown = showForm == null && !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_CloseFormAfterSave").Value);
-            }
+                    DgSubListView.ItemsSource = DocumentItemList; DgSubListView.Items.Refresh(); ClearItemsFields(); txt_totalPrice.Text = DocumentItemList.Sum(a => a.TotalPriceWithVat).ToString(documentVatPriceFormat) + ((cb_totalCurrency.SelectedItem != null) ? " " + ((BasicCurrencyList)cb_totalCurrency.SelectedItem).Name : "");
+                    if (CurrencyList.Where(a => a.Default).Count() == 1 && string.IsNullOrWhiteSpace(cb_totalCurrency.Text)) { cb_totalCurrency.Text = CurrencyList.First(a => a.Default).Name; }
+                    if (MaturityList.Where(a => a.Default).Count() == 1 && string.IsNullOrWhiteSpace(cb_maturity.Text)) { cb_maturity.Text = MaturityList.First(a => a.Default).Name; dp_maturityDate.Value = DateTimeOffset.Now.AddDays(double.Parse(MaturityList.First(a => a.Default).Value.ToString())).Date; }
+                    if (PaymentMethodList.Where(a => a.Default).Count() == 1 && string.IsNullOrWhiteSpace(cb_paymentMethod.Text)) { cb_paymentMethod.Text = PaymentMethodList.First(a => a.Default).Name; }
+                    if (PaymentStatusList.Where(a => a.Default).Count() == 1 && string.IsNullOrWhiteSpace(cb_paymentStatus.Text)) { cb_paymentStatus.Text = PaymentStatusList.First(a => a.Default).Name; }
+
+                    MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;
+                    ListView.Visibility = Visibility.Hidden; ListForm.Visibility = Visibility.Visible; dataViewSupport.FormShown = true;
+                }
+                else {
+                    MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = true;
+                    ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; dataViewSupport.FormShown = showForm == null && !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_CloseFormAfterSave").Value);
+                }
+
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
 
-        private void DgSubListView_Translate(object sender, EventArgs ex) {
-            ((DataGrid)sender).Columns.ToList().ForEach(e => {
-                string headername = e.Header.ToString();
-                if (headername == "PartNumber") e.Header = Resources["partNumber"].ToString();
-                else if (headername == "Name") e.Header = Resources["fname"].ToString();
-                else if (headername == "Unit") { e.Header = Resources["unit"].ToString(); ; e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "PcsPrice") { e.Header = Resources["pcsPrice"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "Count") { e.Header = Resources["count"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "TotalPrice") { e.Header = Resources["totalPrice"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "Vat") { e.Header = Resources["vat"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "TotalPriceWithVat") { e.Header = Resources["totalPriceWithVat"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "Id") e.Visibility = Visibility.Hidden;
-                else if (headername == "UserId") e.Visibility = Visibility.Hidden;
-                else if (headername == "TimeStamp") e.Visibility = Visibility.Hidden;
-                else if (headername == "DocumentNumber") e.Visibility = Visibility.Hidden;
+        private async void DgSubListView_Translate(object sender, EventArgs ex) {
+            ((DataGrid)sender).Columns.ToList().ForEach(async e => {
+                string headername = e.Header.ToString().ToLower();
+                if (headername == "partnumber") e.Header = await DBOperations.DBTranslation(headername);
+                else if (headername == "name") e.Header = await DBOperations.DBTranslation(headername);
+                else if (headername == "unit") { e.Header = await DBOperations.DBTranslation(headername); ; e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "pcsprice") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "count") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "totalprice") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "vat") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "totalpricewithvat") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+
+                else if (headername == "id") e.Visibility = Visibility.Hidden;
+                else if (headername == "userid") e.Visibility = Visibility.Hidden;
+                else if (headername == "timestamp") e.Visibility = Visibility.Hidden;
+                else if (headername == "documentnumber") e.Visibility = Visibility.Hidden;
             });
         }
 

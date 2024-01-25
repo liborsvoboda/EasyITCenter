@@ -124,7 +124,7 @@ namespace EasyITSystemCenter.Pages {
                                 buttonInserted = true;
                                 break;
 
-                            case "beh_activesystemsaver":
+                            case "beh_hidestartvideo":
                                 Button button1 = new Button() { Name = "btn_" + configuration.Key, Margin = new Thickness(5), Content = Resources["test"].ToString(), Width = 150, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
                                 button1.Click += BtnShowVideo_Click;
                                 targetGrid.Children.Add(button1);

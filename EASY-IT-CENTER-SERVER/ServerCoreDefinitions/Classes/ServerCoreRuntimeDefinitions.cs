@@ -5,8 +5,6 @@
 
 using FubarDev.FtpServer;
 using Quartz;
-using Quartz.Impl;
-using Quartz.Simpl;
 
 namespace EasyITCenter.ServerCoreStructure {
 

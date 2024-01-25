@@ -28,9 +28,7 @@ namespace EasyITSystemCenter.Pages {
 
         public TemplateVideoPage() {
             InitializeComponent();
-            Language defaultLanguage = JsonConvert.DeserializeObject<Language>(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
-
-            _ = SystemOperations.SetLanguageDictionary(Resources, defaultLanguage.Value);
+            _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
             btn_play.Content = Resources["play"].ToString();
             btn_pause.Content = Resources["pause"].ToString();

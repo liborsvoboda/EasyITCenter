@@ -60,21 +60,22 @@ namespace EasyITSystemCenter.Pages {
         }
 
         // set translate columns in listView
-        private void DgListView_Translate(object sender, EventArgs ex) {
-            ((DataGrid)sender).Columns.ToList().ForEach(e => {
-                string headername = e.Header.ToString();
-                if (headername == "DocumentTypeTranslation") { e.Header = Resources["documentType"].ToString(); e.DisplayIndex = 1; }
-                else if (headername == "Branch") { e.Header = Resources["branch"].ToString(); e.DisplayIndex = 2; }
-                else if (headername == "Prefix") e.Header = Resources["prefix"].ToString();
-                else if (headername == "Number") e.Header = Resources["number"].ToString();
-                else if (headername == "StartDate") { e.Header = Resources["startDate"].ToString(); (e as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy"; e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "EndDate") { e.Header = Resources["endDate"].ToString(); (e as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy"; e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "Active") { e.Header = Resources["active"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
-                else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                else if (headername == "Id") e.DisplayIndex = 0;
-                else if (headername == "UserId") e.Visibility = Visibility.Hidden;
-                else if (headername == "BranchId") e.Visibility = Visibility.Hidden;
-                else if (headername == "DocumentType") e.Visibility = Visibility.Hidden;
+        private async void DgListView_Translate(object sender, EventArgs ex) {
+            ((DataGrid)sender).Columns.ToList().ForEach( async e => {
+                string headername = e.Header.ToString().ToLower();
+                if (headername == "documenttypetranslation") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                else if (headername == "branch") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                else if (headername == "prefix") e.Header = await DBOperations.DBTranslation(headername);
+                else if (headername == "number") e.Header = await DBOperations.DBTranslation(headername);
+                else if (headername == "startdate") { e.Header = await DBOperations.DBTranslation(headername); (e as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy"; e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "enddate") { e.Header = await DBOperations.DBTranslation(headername); (e as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy"; e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "active") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
+                else if (headername == "timestamp") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+
+                else if (headername == "id") e.DisplayIndex = 0;
+                else if (headername == "userid") e.Visibility = Visibility.Hidden;
+                else if (headername == "branchid") e.Visibility = Visibility.Hidden;
+                else if (headername == "documenttype") e.Visibility = Visibility.Hidden;
             });
         }
 
@@ -176,15 +177,18 @@ namespace EasyITSystemCenter.Pages {
 
         //change dataset prepare for working
         private void SetRecord(bool? showForm = null, bool copy = false) {
-            txt_id.Value = (copy) ? 0 : selectedRecord.Id;
+            try { 
+                txt_id.Value = (copy) ? 0 : selectedRecord.Id;
 
-            cb_branch.Text = selectedRecord.Branch;
-            cb_documentType.Text = selectedRecord.DocumentTypeTranslation;
-            txt_prefix.Text = selectedRecord.Prefix;
-            txt_number.Text = selectedRecord.Number;
-            dp_startDate.Value = (selectedRecord.Id == 0) ? (DateTime)dp_startDate.Value : selectedRecord.StartDate;
-            dp_endDate.Value = (selectedRecord.Id == 0) ? (DateTime)dp_endDate.Value : selectedRecord.EndDate;
-            chb_active.IsChecked = selectedRecord.Active;
+                cb_branch.Text = selectedRecord.Branch;
+                cb_documentType.Text = selectedRecord.DocumentTypeTranslation;
+                txt_prefix.Text = selectedRecord.Prefix;
+                txt_number.Text = selectedRecord.Number;
+                dp_startDate.Value = (selectedRecord.Id == 0) ? (DateTime)dp_startDate.Value : selectedRecord.StartDate;
+                dp_endDate.Value = (selectedRecord.Id == 0) ? (DateTime)dp_endDate.Value : selectedRecord.EndDate;
+                chb_active.IsChecked = selectedRecord.Active;
+
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             if (showForm != null && showForm == true) {
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;

@@ -39,8 +39,8 @@ namespace EasyITSystemCenter.Pages {
         /// </summary>
         public TemplateSettingsPage() {
             InitializeComponent();
-            Language defaultLanguage = JsonConvert.DeserializeObject<Language>(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
-            _ = SystemOperations.SetLanguageDictionary(Resources, defaultLanguage.Value);
+            _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
+
             try {
                 lbl_apiAddress.Content = Resources["conn_apiAddress"].ToString();
                 lbl_serviceName.Content = Resources["serviceName"].ToString();
@@ -67,8 +67,7 @@ namespace EasyITSystemCenter.Pages {
 
             cb_defaultLanguage.ItemsSource = Languages;
 
-            int index = 0;
-            cb_defaultLanguage.Items.SourceCollection.Cast<Language>().ToList().ForEach(language => { if (language.Name == defaultLanguage.Name) { cb_defaultLanguage.SelectedIndex = index; } index++; });
+          
         }
 
         /// <summary>

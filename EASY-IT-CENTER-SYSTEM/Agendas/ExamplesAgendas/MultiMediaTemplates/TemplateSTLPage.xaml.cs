@@ -25,9 +25,7 @@ namespace EasyITSystemCenter.Pages {
 
         public TemplateSTLPage() {
             InitializeComponent();
-            Language defaultLanguage = JsonConvert.DeserializeObject<Language>(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
-
-            _ = SystemOperations.SetLanguageDictionary(Resources, defaultLanguage.Value);
+            _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
             ModelVisual3D device3D = new ModelVisual3D();
             device3D.Content = Display3d(Path.Combine(App.appRuntimeData.startupPath, "Data", "Track.stl")).GetAwaiter().GetResult();
