@@ -23,17 +23,12 @@ namespace EasyITCenter.ControllersExtensions {
                 };
                 var data = LicenseControlller.GenerateLicense(licenseData).ToArray();
 
-                FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CreatePath(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License"));
-                FileOperations.ByteArrayToFile(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License", "license.lic"), data);
-                ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License.zip"));
-                data = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License.zip"));
-
-                if (data != null) { return File(data, "application/x-zip-compressed", "License.zip"); }
+                if (data != null) { return File(data, "application/xml", "license.lic"); }
                 else { return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") }); }
             } catch { }
             return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") });
         }
+
 
         [HttpGet("/LicenseRequest/FullVersion/{product}")]
         public async Task<IActionResult> FullVersionLicenseGenerator(string product) {
@@ -49,8 +44,8 @@ namespace EasyITCenter.ControllersExtensions {
                     };
                     var data = LicenseControlller.GenerateLicense(licenseData).ToArray();
 
-                    FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
                     FileOperations.CreatePath(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License"));
+                    FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
                     FileOperations.ByteArrayToFile(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License", "license.lic"), data);
                     ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License.zip"));
                     data = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License.zip"));
