@@ -44,8 +44,10 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
 
             try {
-                userList = await CommApi.GetApiRequest<List<SolutionUserList>>(ApiUrls.EasyITCenterSolutionUserList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+
                 userRoleList = await CommApi.GetApiRequest<List<SolutionUserRoleList>>(ApiUrls.EasyITCenterSolutionUserRoleList, null, App.UserData.Authentification.Token);
+                userList = await CommApi.GetApiRequest<List<SolutionUserList>>(ApiUrls.EasyITCenterSolutionUserList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                
 
                 userList.ForEach(async user => { user.Translation = await DBOperations.DBTranslation(userRoleList.First(a => a.Id == user.RoleId).SystemName); });
                 userRoleList.ForEach(async role => { role.Translation = await DBOperations.DBTranslation(role.SystemName); });

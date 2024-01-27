@@ -20,6 +20,10 @@ namespace EasyITSystemCenter.Pages {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
         public static SolutionWebsiteList selectedRecord = new SolutionWebsiteList();
 
+
+        private List<SolutionUserRoleList> userRoleList = new List<SolutionUserRoleList>();
+        private List<SolutionWebsiteList> solutionWebsiteList = new List<SolutionWebsiteList>();
+
         public SolutionWebsiteListPage() {
             InitializeComponent();
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
@@ -35,7 +39,20 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                DgListView.ItemsSource = await CommApi.GetApiRequest<List<SolutionWebsiteList>>(ApiUrls.SolutionWebsiteList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                userRoleList = await CommApi.GetApiRequest<List<SolutionUserRoleList>>(ApiUrls.EasyITCenterSolutionUserRoleList, null, App.UserData.Authentification.Token);
+                solutionWebsiteList = await CommApi.GetApiRequest<List<SolutionWebsiteList>>(ApiUrls.SolutionWebsiteList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+
+
+                userRoleList.ForEach(async userRole => { userRole.Translation = await DBOperations.DBTranslation(userRole.SystemName); });
+                solutionWebsiteList.ForEach(async website => {
+                    website.MinimalReadAccessRole = await DBOperations.DBTranslation(userRoleList.First(a => a.MinimalAccessValue == website.MinimalReadAccessValue).SystemName);
+                    website.MinimalWriteAccessRole = await DBOperations.DBTranslation(userRoleList.First(a => a.MinimalAccessValue == website.MinimalWriteAccessValue).SystemName);
+                });
+
+                DgListView.ItemsSource = solutionWebsiteList;
+                cb_minimalReadAccessValue.ItemsSource = userRoleList;
+                cb_minimalWriteAccessValue.ItemsSource = userRoleList;
+
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden; return true;
         }
@@ -44,12 +61,17 @@ namespace EasyITSystemCenter.Pages {
             try {
                 ((DataGrid)sender).Columns.ToList().ForEach(async e => {
                     string headername = e.Header.ToString().ToLower();
-                    if (headername == "websitename") { e.Header = await DBOperations.DBTranslation(headername); ; e.DisplayIndex = 1; }
-                    else if (headername == "description") e.Header = await DBOperations.DBTranslation(headername);
+                    if (headername == "websitename") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                    else if (headername == "description") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                    else if (headername == "MinimalReadAccessRole".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
+                    else if (headername == "MinimalWriteAccessRole".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
+
                     else if (headername == "active") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
                     else if (headername == "timestamp") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
                     else if (headername == "id") e.DisplayIndex = 0;
                     else if (headername == "userid") e.Visibility = Visibility.Hidden;
+                    else if (headername == "MinimalReadAccessValue".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "MinimalWriteAccessValue".ToLower()) e.Visibility = Visibility.Hidden;
                 });
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
@@ -109,6 +131,10 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Id = (int)((txt_id.Value != null) ? txt_id.Value : 0);
                 selectedRecord.WebsiteName = txt_websiteName.Text;
                 selectedRecord.Description = txt_description.Text;
+
+                selectedRecord.MinimalReadAccessValue = ((SolutionUserRoleList)cb_minimalReadAccessValue.SelectedItem).MinimalAccessValue;
+                selectedRecord.MinimalWriteAccessValue = ((SolutionUserRoleList)cb_minimalWriteAccessValue.SelectedItem).MinimalAccessValue;
+
                 selectedRecord.UserId = App.UserData.Authentification.Id;
                 selectedRecord.Active = (bool)chb_active.IsChecked;
                 selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
@@ -138,6 +164,10 @@ namespace EasyITSystemCenter.Pages {
             txt_id.Value = (copy) ? 0 : selectedRecord.Id;
             txt_websiteName.Text = selectedRecord.WebsiteName;
             txt_description.Text = selectedRecord.Description;
+
+            cb_minimalReadAccessValue.SelectedItem = txt_id.Value == 0 ? userRoleList.FirstOrDefault() : userRoleList.FirstOrDefault(a => a.MinimalAccessValue == selectedRecord.MinimalReadAccessValue);
+            cb_minimalWriteAccessValue.SelectedItem = txt_id.Value == 0 ? userRoleList.FirstOrDefault() : userRoleList.FirstOrDefault(a => a.MinimalAccessValue == selectedRecord.MinimalWriteAccessValue);
+
             chb_active.IsChecked = (selectedRecord.Id == 0) ? bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_activeNewInputDefault").Value) : selectedRecord.Active;
 
             if (showForm != null && showForm == true) {

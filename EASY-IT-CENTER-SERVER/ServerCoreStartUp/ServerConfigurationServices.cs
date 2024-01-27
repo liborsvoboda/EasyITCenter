@@ -8,7 +8,8 @@ using Newtonsoft.Json.Serialization;
 using Quartz;
 using SimpleMvcSitemap;
 using Snickler.RSSCore.Extensions;
-
+using FileContextCore;
+using Microsoft.Extensions.FileProviders;
 
 namespace EasyITCenter.ServerCoreConfiguration {
 
@@ -246,7 +247,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
         internal static void ConfigureScoped(ref IServiceCollection services) {
             services.AddScoped(typeof(IRepositoryAsync<,>), typeof(RepositoryAsync<,>));
             services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
-            services.AddScoped<WebsitesStaticFileDbRepository>();
+            services.AddScoped<WebsitesStaticFileDbRepository> ();
         }
 
         /// <summary>
@@ -265,6 +266,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
             if (ServerRuntimeData.DebugMode) { services.AddDatabaseDeveloperPageExceptionFilter(); }
             try {
                 services.AddDbContext<EasyITCenterContext>(opt => opt.UseSqlServer(ServerConfigSettings.DatabaseConnectionString).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+                //services.AddDbContext<Context>(options => options.UseFileContextDatabase(databaseName: "LocalDatabase",location: @"C:\Users\mjanatzek\Documents\Projects\test",password: "EasyITCenter"));
             } catch (Exception ex) { }
         }
     }

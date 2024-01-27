@@ -926,6 +926,12 @@ namespace EasyITCenter.DBModel
                     .WithMany(p => p.SolutionStaticFileLists)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_SolutionStaticFileList_UserList");
+
+                entity.HasOne(d => d.Website)
+                    .WithMany(p => p.SolutionStaticFileLists)
+                    .HasForeignKey(d => d.WebsiteId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SolutionStaticFileList_SolutionWebsiteList");
             });
 
             modelBuilder.Entity<SolutionStaticFilePathList>(entity =>

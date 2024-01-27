@@ -31,6 +31,16 @@ namespace EasyITCenter.ServerCoreDBSettings {
     }
 
 
+    /*
+    [Authorize]
+    [Route("[controller]")]
+    [ApiController]
+    public class SolutionStaticFilePathListController : StdAuthGenericProviderApi<EasyITCenterContext, SolutionStaticFilePathList, int> {
+
+        public SolutionStaticFilePathListController(IRepositoryAsync<EasyITCenterContext, SolutionStaticFilePathList> repo) : base(repo) {
+        }
+    }
+    */
 
     [Authorize(Roles = "admin")]
     [Route("[controller]")]

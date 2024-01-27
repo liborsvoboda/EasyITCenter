@@ -12,6 +12,7 @@ namespace EasyITCenter.DBModel
     {
         [Key]
         public int Id { get; set; }
+        public int WebsiteId { get; set; }
         public int StaticPathId { get; set; }
         [StringLength(512)]
         [Unicode(false)]
@@ -19,7 +20,7 @@ namespace EasyITCenter.DBModel
         [StringLength(150)]
         [Unicode(false)]
         public string MimeType { get; set; } = null!;
-        public byte[] Content { get; set; } = null!;
+        public byte[]? Content { get; set; }
         public bool Active { get; set; }
         public int? UserId { get; set; }
         public DateTime TimeStamp { get; set; }
@@ -30,5 +31,8 @@ namespace EasyITCenter.DBModel
         [ForeignKey("UserId")]
         [InverseProperty("SolutionStaticFileLists")]
         public virtual SolutionUserList? User { get; set; }
+        [ForeignKey("WebsiteId")]
+        [InverseProperty("SolutionStaticFileLists")]
+        public virtual SolutionWebsiteList Website { get; set; } = null!;
     }
 }

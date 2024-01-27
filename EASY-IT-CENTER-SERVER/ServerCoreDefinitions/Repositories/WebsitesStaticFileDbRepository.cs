@@ -4,7 +4,7 @@
         private readonly EasyITCenterContext _EasyITCenter = new EasyITCenterContext();
 
         public void CreateDirectory(int websiteId, string path, int userId, bool ignoreExisting = false) {
-            var existing = _EasyITCenter.SolutionStaticFilePathLists.SingleOrDefault(o => o.Path == path);
+            var existing = _EasyITCenter.SolutionStaticFilePathLists.SingleOrDefault(o => o.Path == "/" + o.Website.WebsiteName + path);
             if (existing != null) {
                 if (!ignoreExisting) throw new Exception($"Directory {path} already exists");
                 return;
@@ -24,7 +24,7 @@
         }
 
         public void CreateOrUpdateFile(int websiteId, string path, byte[] data, int userId) {
-            SolutionStaticFilePathList? existing = _EasyITCenter.SolutionStaticFilePathLists.FirstOrDefault(o => o.Path == path);
+            SolutionStaticFilePathList? existing = _EasyITCenter.SolutionStaticFilePathLists.FirstOrDefault(o => o.Path == "/" + o.Website.WebsiteName + path);
 
             int parentPathId = 0;
             if (existing == null) {
@@ -41,34 +41,34 @@
             // create parent directory if not exists
             CreateParentDir(websiteId, userId, path);
             if (existing != null) {
-                var existingFile = _EasyITCenter.SolutionStaticFileLists.FirstOrDefault(o => o.FileNamePath == path);
+                var existingFile = _EasyITCenter.SolutionStaticFileLists.FirstOrDefault(o => o.FileNamePath == "/" + o.Website.WebsiteName + path);
                 existingFile.Content = data; existingFile.TimeStamp = DateTimeOffset.Now.DateTime;
                 _EasyITCenter.SolutionStaticFileLists.Update(existingFile);
                 _EasyITCenter.SaveChanges();
             }
             else {
-                var dataEntity = new SolutionStaticFileList { FileNamePath = path, StaticPathId = parentPathId, Content = data, UserId = userId, Active = true, TimeStamp = DateTimeOffset.Now.DateTime };
+                var dataEntity = new SolutionStaticFileList { FileNamePath = path, WebsiteId = websiteId, StaticPathId = parentPathId, Content = data, UserId = userId, Active = true, TimeStamp = DateTimeOffset.Now.DateTime };
                 _EasyITCenter.SolutionStaticFileLists.Add(dataEntity);
                 _EasyITCenter.SaveChanges();
             }
         }
 
-        public IEnumerable<SolutionStaticFilePathList> GetFiles(string dir, bool recurse = false) {
-            var all = _EasyITCenter.SolutionStaticFilePathLists.Where(o => o.Path.StartsWith(dir) && o.Path != dir);
+        public IEnumerable<SolutionStaticFilePathList> GetFiles(string path, bool recurse = false) {
+            var all = _EasyITCenter.SolutionStaticFilePathLists.Where(o => o.Path.StartsWith(path) && o.Path != "/" + o.Website.WebsiteName + path);
             if (!recurse) {
-                return all.Where(o => !o.Path.Substring(dir.Length + 1).Contains("/")).ToArray();
+                return all.Where(o => !o.Path.Substring(path.Length + 1).Contains("/")).ToArray();
             }
             return all.ToArray();
         }
 
         public SolutionStaticFileList ReadFile(string path) {
-            var existing = _EasyITCenter.SolutionStaticFilePathLists.SingleOrDefault(o => o.Path == path);
+            var existing = _EasyITCenter.SolutionStaticFilePathLists.SingleOrDefault(o => o.Path == "/" + o.Website.WebsiteName + path);
             if (existing == null) return null!;
             return _EasyITCenter.SolutionStaticFileLists.SingleOrDefault(o => o.StaticPathId == existing.Id)!;
         }
 
         public void DeleteFile(string path, string userId) {
-            var existing = _EasyITCenter.SolutionStaticFilePathLists.SingleOrDefault(o => o.Path == path);
+            var existing = _EasyITCenter.SolutionStaticFilePathLists.SingleOrDefault(o => o.Path == "/" + o.Website.WebsiteName + path);
             if (existing == null) throw new Exception($"File {path} not found");
             var dataEntity = _EasyITCenter.SolutionStaticFileLists.SingleOrDefault(o => o.StaticPathId == existing.Id);
             _EasyITCenter.SolutionStaticFilePathLists.Remove(existing);
@@ -76,7 +76,7 @@
         }
 
         public void DeleteDirectory(string path, string userId) {
-            var existing = _EasyITCenter.SolutionStaticFilePathLists.SingleOrDefault(o => o.Path == path);
+            var existing = _EasyITCenter.SolutionStaticFilePathLists.SingleOrDefault(o => o.Path == "/" + o.Website.WebsiteName + path);
             if (existing == null) { throw new Exception($"Directory {path} not found"); }
             var children = _EasyITCenter.SolutionStaticFilePathLists.Where(o => o.Path.StartsWith(path + "/")).ToList();
             var data = _EasyITCenter; data.RemoveRange(children);

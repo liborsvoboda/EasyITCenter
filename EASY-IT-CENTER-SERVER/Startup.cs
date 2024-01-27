@@ -1,4 +1,5 @@
 ﻿using EasyITCenter.ServerCoreConfiguration;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.FileProviders;
 using NPOI.OpenXmlFormats.Spreadsheet;
 using Snickler.RSSCore.Caching;
@@ -152,12 +153,9 @@ namespace EasyITCenter {
 
             app.UseHsts();
             if (ServerConfigSettings.ConfigServerStartupOnHttps) { app.UseHttpsRedirection(); }
-            app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true });
+            app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, HttpsCompression = HttpsCompressionMode.Compress });
+            app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices), RequestPath = "", HttpsCompression = HttpsCompressionMode.Compress });
 
-            app.UseStaticFiles(new StaticFileOptions {
-                FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices),
-                RequestPath = "/provide"
-            });
             app.UseCookiePolicy();
 
             app.UseSession();

@@ -414,7 +414,7 @@ namespace EasyITSystemCenter {
                     if (menuItem.MenuType.ToLower() != "agenda" && menuPage != null) { menuUnit.FindChildren<TreeViewItem>(false).Where(a => a.Name.ToLower() == "_" + menuItem.MenuType.ToLower()).First().Items.Add(menuPage); }
                     else { menuUnit.Items.Add(menuPage); }
                     menuSection = menuUnit; lastMenuGroupId = menuItem.GroupId;
-                });
+                }); tb_verticalSystemMenu.Items.Add(menuSection);
 
                 tb_verticalSystemMenu.Items.SortDescriptions.Add(new SortDescription("Header", ListSortDirection.Ascending));
                 foreach (TreeViewItem menuItem in tb_verticalSystemMenu.Items) {

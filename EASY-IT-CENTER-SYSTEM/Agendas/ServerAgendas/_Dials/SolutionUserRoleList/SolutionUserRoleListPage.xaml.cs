@@ -48,16 +48,18 @@ namespace EasyITSystemCenter.Pages {
         }
 
         // set translate columns in listView
-        private void DgListView_Translate(object sender, EventArgs ex) {
-            ((DataGrid)sender).Columns.ToList().ForEach(e => {
-                string headername = e.Header.ToString();
-                if (headername == "SystemName") { e.Header = Resources["systemName"].ToString(); e.DisplayIndex = 1; }
-                else if (headername == "Translation") { e.Header = Resources["translation"].ToString(); e.DisplayIndex = 2; }
-                else if (headername == "Description") e.Header = Resources["description"].ToString();
-                else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                else if (headername == "Id") e.DisplayIndex = 0;
-                else if (headername == "UserId") e.Visibility = Visibility.Hidden;
-                else if (headername == "SystemName") e.Visibility = Visibility.Hidden;
+        private async void DgListView_Translate(object sender, EventArgs ex) {
+            ((DataGrid)sender).Columns.ToList().ForEach(async e => {
+                string headername = e.Header.ToString().ToLower();
+                if (headername == "SystemName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                else if (headername == "Translation".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                else if (headername == "minimalAccessValue".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "Description".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+                else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+
+                else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
+                else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
+                else if (headername == "SystemName".ToLower()) e.Visibility = Visibility.Hidden;
             });
         }
 
@@ -122,6 +124,7 @@ namespace EasyITSystemCenter.Pages {
                 DBResultMessage dBResult;
                 selectedRecord.Id = (int)((txt_id.Value != null) ? txt_id.Value : 0);
                 selectedRecord.SystemName = txt_systemName.Text;
+                selectedRecord.MinimalAccessValue = (int)txt_minimalAccessValue.Value;
                 selectedRecord.Description = txt_description.Text;
                 selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
 
@@ -149,11 +152,16 @@ namespace EasyITSystemCenter.Pages {
 
         //change dataset prepare for working
         private void SetRecord(bool? showForm = null, bool copy = false) {
-            txt_id.Value = (copy) ? 0 : selectedRecord.Id;
-            txt_systemName.Text = selectedRecord.SystemName;
-            text_translation.Content = selectedRecord.Translation;
-            txt_description.Text = selectedRecord.Description;
-            dp_timestamp.Value = selectedRecord.Timestamp;
+            try { 
+
+                txt_id.Value = (copy) ? 0 : selectedRecord.Id;
+                txt_systemName.Text = selectedRecord.SystemName;
+                txt_minimalAccessValue.Value = selectedRecord.MinimalAccessValue;
+                text_translation.Content = selectedRecord.Translation;
+                txt_description.Text = selectedRecord.Description;
+                dp_timestamp.Value = selectedRecord.Timestamp;
+
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             if (showForm != null && showForm == true) {
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;
