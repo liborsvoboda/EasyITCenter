@@ -9,7 +9,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
     /// <seealso cref="ControllerBase"/>
     [ApiController]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class ServerWebPagesExtensionsApi : ControllerBase {
+    public class ServerWebPagesExportsApi : ControllerBase {
 
         /// <summary>
         /// Server Root "/" Redirection to "server" Folder

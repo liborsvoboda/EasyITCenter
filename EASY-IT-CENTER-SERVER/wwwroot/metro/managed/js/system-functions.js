@@ -94,5 +94,61 @@ function UnloadMetro() {
 }
 
 
+async function FileReaderToImageData(file) {
+    const reader = new FileReader();
+    let fileContent = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        console.log("files", JSON.parse(JSON.stringify(files)));    
+
+        reader.readAsDataURL(file[0]);
+    });
+    return fileContent;
+}
+
+
+
+function PrintElement(elementId) {
+    try {
+        var printContents = document.getElementById(elementId).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    } catch (err) { }
+}
+
+function DownloadElement(elementId) {
+    try {
+        var a = document.body.appendChild(document.createElement("a"));
+        a.download = elementId + ".html";
+        a.href = "data:text/html," + document.getElementById(elementId).innerHTML;
+        a.click();
+    } catch (err) { }
+}
+
+async function CopyElement(elementId) {
+    try {
+        let text = document.getElementById(elementId).innerHTML;
+        await navigator.clipboard.writeText(text);
+    } catch (err) { }
+}
+
+function ImageFromElement(elementId) {
+    try {
+        var getCanvas;
+        $('document').ready(function () {
+            html2canvas($("#" + elementId), { onrendered: function (canvas) { $("#previewImage").append(canvas); getCanvas = canvas; } });
+            var imgageData = getCanvas.toDataURL("image/png");
+            var newData = imageData.replace(/^data:image\/png/, "data:application/octet-stream");
+            var a = document.body.appendChild(document.createElement("a"));
+            a.download = elementId + ".png";
+            a.href = newData;
+            a.click();
+        });
+    } catch (err) { }
+}
+
 
 

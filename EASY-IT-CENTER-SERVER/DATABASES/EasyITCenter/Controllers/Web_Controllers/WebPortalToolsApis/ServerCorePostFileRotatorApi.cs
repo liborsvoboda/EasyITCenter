@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using Microsoft.AspNetCore.Http;
+using System.Xml.Serialization;
 
 namespace EasyITCenter.ControllersExtensions {
 
@@ -20,8 +21,6 @@ namespace EasyITCenter.ControllersExtensions {
         public async Task<IActionResult> GetApiFileRotator(string filename) {
             try {
                  byte[] fileArray = ServerRuntimeData.FileRotatorRuntineLibrary.FirstOrDefault(a => a.Key.ToString() == filename).Value as byte[];
-
-                ServerRuntimeData.FileRotatorRuntineLibrary.Remove(filename);
                 return File(fileArray, MimeTypes.GetMimeType(filename), filename);
             }  catch (Exception ex) { return BadRequest(new string[] { "error:" + DataOperations.GetUserApiErrMessage(ex), "application/json" }); }  
         }
@@ -48,7 +47,6 @@ namespace EasyITCenter.ControllersExtensions {
                 string uniqueFilename = DataOperations.RandomString(20) + "." + mimeType.Split("/")[1];
                 IDictionary<object, object> detail = new Dictionary<object, object> {
                     { "filename", uniqueFilename },
-                    //{ "url", $"{Request.Scheme}://{Request.Host.Value}" + "/WebApi/GetApiFileRotator" },
                     { "url", "/WebApi/GetApiFileRotator/" + uniqueFilename },
                     { "name", "image" },
                     { "size", stringFile.Length },
@@ -69,8 +67,23 @@ namespace EasyITCenter.ControllersExtensions {
         [HttpPost("/WebApi/PutApiFileRotator"), DisableRequestSizeLimit]
         public async Task<IActionResult> PutApiFileRotator(List<IFormFile> files) {
             string mimeType = null; byte[] loadedfile; string stringFile = null; byte[] fileByteArray = null;
+            string filename = Request.Form.AsEnumerable().First(a => a.Key == "url").Value.ToString().Split("/").Last();
             try {
-                return Ok(JsonSerializer.Serialize("Why"));
+
+                byte[] fileArray = ServerRuntimeData.FileRotatorRuntineLibrary.FirstOrDefault(a => a.Key.ToString() == filename).Value as byte[];
+                mimeType = MimeTypes.GetMimeType(filename);
+                stringFile = Convert.ToBase64String(fileArray);
+                IDictionary<object, object> detail = new Dictionary<object, object> {
+                    { "filename", filename },
+                    { "url", "/WebApi/GetApiFileRotator/" + filename },
+                    { "name", "image" },
+                    { "size", fileArray.Length },
+                    { "image", fileArray },
+                    { "file",  File(fileArray, mimeType, DataOperations.RandomString(20) + "." + mimeType.Split("/")[1]) }
+                };
+
+                ServerRuntimeData.FileRotatorRuntineLibrary.Remove(filename);
+                return Ok(JsonSerializer.Serialize(detail));
             } catch (Exception ex) { return BadRequest(new string[] { "error:" + DataOperations.GetUserApiErrMessage(ex), "application/json" }); }
         }
         
