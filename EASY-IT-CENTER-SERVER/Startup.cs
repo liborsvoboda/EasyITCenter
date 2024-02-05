@@ -154,13 +154,19 @@ namespace EasyITCenter {
             app.UseHsts();
             if (ServerConfigSettings.ConfigServerStartupOnHttps) { app.UseHttpsRedirection(); }
             app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, HttpsCompression = HttpsCompressionMode.Compress });
-            app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices), RequestPath = "", HttpsCompression = HttpsCompressionMode.Compress });
+
+
+            List<SolutionWebsiteList> websites;
+            using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
+                websites = new EasyITCenterContext().SolutionWebsiteLists.Where(a => a.Active).ToList(); 
+            }
+            websites.ForEach(website => {
+                app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices), RequestPath = website.WebsiteName, HttpsCompression = HttpsCompressionMode.Compress }); ;
+            });
 
             app.UseCookiePolicy();
-
             app.UseSession();
             app.UseResponseCaching();
-
             app.UseResponseCompression();
             app.UseAuthentication();
             app.UseAuthorization();

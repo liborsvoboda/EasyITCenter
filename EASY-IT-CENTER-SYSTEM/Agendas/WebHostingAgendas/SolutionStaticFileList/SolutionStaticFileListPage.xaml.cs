@@ -159,6 +159,8 @@ namespace EasyITSystemCenter.Pages {
         }
 
 
+
+
         private void BtnCreateNewFolder_Click(object sender, RoutedEventArgs e) {
 
         }
