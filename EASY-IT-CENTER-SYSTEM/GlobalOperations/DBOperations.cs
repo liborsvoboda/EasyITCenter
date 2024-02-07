@@ -92,6 +92,7 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// Centralised Method for Translating by DB Dictionary Service insert the news words for
         /// translate (After translate request) to Database Automaticaly with Empty Translate.
         /// Service return translate if is possible or requested word send back CamelCase ignored
+        /// Default Language: CZ
         /// </summary>
         /// <param name="systemName">  </param>
         /// <param name="notCreateNew"></param>

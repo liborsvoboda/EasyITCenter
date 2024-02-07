@@ -91,7 +91,8 @@ namespace EasyITSystemCenter.Pages {
                             HorizontalAlignment = HorizontalAlignment.Left,
                             VerticalAlignment = VerticalAlignment.Center,
                             FontSize = 16,
-                            Foreground = new SolidColorBrush(Colors.White)
+                            Foreground = new SolidColorBrush(Colors.White),
+                            ToolTip = (!string.IsNullOrWhiteSpace(configuration.Description)) ? configuration.Description : null
                         };
                         targetGrid.Children.Add(label);
 
@@ -115,6 +116,7 @@ namespace EasyITSystemCenter.Pages {
                             case "list":
                                 ComboBox comboBox = new ComboBox() { Name = configuration.Key, Text = configuration.Value, Width = 300, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
 
+                                //All Udes Lists Definitions
                                 if (configuration.Key.ToLower() == "serviceserverlanguage") { comboBox.ItemsSource = serverLanguages; comboBox.DisplayMemberPath = "Translation"; comboBox.SelectedValuePath = "Name"; comboBox.SelectedValue = configuration.Value; }
 
                                 targetGrid.Children.Add(comboBox);
