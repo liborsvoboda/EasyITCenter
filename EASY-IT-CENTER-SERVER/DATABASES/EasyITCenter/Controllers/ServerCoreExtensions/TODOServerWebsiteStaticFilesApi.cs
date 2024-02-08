@@ -1,12 +1,8 @@
-﻿using EasyITCenter.Services;
-using Microsoft.Extensions.FileProviders;
-using System.Net.Http.Headers;
-using static EasyITCenter.DBModel.WebsitesStaticFileExtension;
+﻿namespace UploadFilesServer.Controllers {
 
-namespace UploadFilesServer.Controllers {
-
-    [Route("/WebApi/StaticFiles")]
+    [AllowAnonymous]
     [ApiController]
+    [Route("/WebApi/StaticFiles")]
     public class ServerWebsiteStaticFilesApi : ControllerBase {
         private readonly ILogger<ServerWebsiteStaticFilesApi> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;

@@ -490,7 +490,7 @@ namespace EasyITCenter.ControllersExtensions {
 
                 byte[] easyGalleryPackage = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "SystemToolDesktop.zip"));
 
-                if (easyGalleryPackage != null) { return File(easyGalleryPackage, "application/x-zip-compressed", "SystemToolDesktop.zip"); }
+                if (easyGalleryPackage != null) { return File(easyGalleryPackage, MimeTypes.GetMimeType("SystemToolDesktop.zip"), "SystemToolDesktop.zip"); }
             } catch { }
             return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") });
         }
@@ -505,7 +505,7 @@ namespace EasyITCenter.ControllersExtensions {
 
                 byte[] easyGalleryPackage = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "AdminDesktop.zip"));
 
-                if (easyGalleryPackage != null) { return File(easyGalleryPackage, "application/x-zip-compressed", "AdminDesktop.zip"); }
+                if (easyGalleryPackage != null) { return File(easyGalleryPackage, MimeTypes.GetMimeType("AdminDesktop.zip"), "AdminDesktop.zip"); }
             } catch { }
             return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") });
         }
@@ -520,7 +520,7 @@ namespace EasyITCenter.ControllersExtensions {
 
                 byte[] easyGalleryPackage = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MoreEffects.zip"));
 
-                if (easyGalleryPackage != null) { return File(easyGalleryPackage, "application/x-zip-compressed", "MoreEffects.zip"); }
+                if (easyGalleryPackage != null) { return File(easyGalleryPackage, MimeTypes.GetMimeType("MoreEffects.zip"), "MoreEffects.zip"); }
             } catch { }
             return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") });
         }
@@ -535,7 +535,7 @@ namespace EasyITCenter.ControllersExtensions {
 
                 byte[] easyGalleryPackage = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MdViewer.zip"));
 
-                if (easyGalleryPackage != null) { return File(easyGalleryPackage, "application/x-zip-compressed", "MdViewer.zip"); }
+                if (easyGalleryPackage != null) { return File(easyGalleryPackage, MimeTypes.GetMimeType("MdViewer.zip"), "MdViewer.zip"); }
             } catch { }
             return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") });
         }

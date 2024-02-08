@@ -21,20 +21,18 @@ namespace EasyITCenter.ServerCoreDBSettings {
         }
     }
 
-
+    [Authorize]
     [ApiController]
     [Route("ServerCoreExport")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ServerWebPagesExportApi : ControllerBase {
 
-        /// <summary>
-        /// For wwwroot folder Update with detect changes and modify static pages
-        /// </summary>
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
-
         public ServerWebPagesExportApi(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment) {
             _hostingEnvironment = hostingEnvironment;
         }
+
+
 
         [HttpGet("/ServerCoreExport/ExportStaticWebPages")]
         public async Task<IActionResult> ExportStaticWebPages() {

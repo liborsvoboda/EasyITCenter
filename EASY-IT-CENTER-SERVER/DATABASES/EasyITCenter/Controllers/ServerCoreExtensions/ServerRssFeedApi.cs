@@ -61,7 +61,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
                     var feed = new SyndicationFeed("Nazev", "Popisek", new Uri(ServerConfigSettings.ServerPublicUrl), "RSSUrl", DateTime.Now);
                     feed.Copyright = new TextSyndicationContent($"{DateTime.Now.Year} Libor Svoboda");
                     var items = new List<SyndicationItem>();
-                    var postings = RssFeedDefinitions.GetItemRssList();
+                    var postings = ServerModulesExtensions.GetItemRssList();
                     foreach (var item in postings) {
                         var postUrl = Url.Action("Produkty", "Vyvoj", new { id = item.UrlSlug }, HttpContext.Request.Scheme);
                         var title = item.Title;
@@ -81,7 +81,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
                             rssFormatter.WriteTo(xmlWriter);
                             xmlWriter.Flush();
                         }
-                        return File(stream.ToArray(), "application/rss+xml; charset=utf-8");
+                        return File(stream.ToArray(), MimeTypes.GetMimeType("rss.xml"), "rss.xml");
                     }
                 }
                 else { return BadRequest(); }

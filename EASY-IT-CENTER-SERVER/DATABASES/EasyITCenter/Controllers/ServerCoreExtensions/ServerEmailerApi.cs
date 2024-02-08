@@ -6,6 +6,8 @@
     /// <seealso cref="ControllerBase"/>
     [Authorize]
     [ApiController]
+    [Route("ServerEmailer")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ServerEmailerApi : ControllerBase {
 
         [HttpGet("/ServerEmailer/{message}")]

@@ -19,9 +19,7 @@
                 }
             } catch { }
 
-            if (user == null)
-                return BadRequest(new { message = DbOperations.DBTranslate("UsernameOrPasswordIncorrect", ServerConfigSettings.ServiceServerLanguage) });
-
+            if (user == null) { return BadRequest(new { message = DbOperations.DBTranslate("UsernameOrPasswordIncorrect", ServerConfigSettings.ServiceServerLanguage) }); }
             if (!ServerConfigSettings.ConfigTimeTokenValidationEnabled) { user.Expiration = null; }
 
             RefreshUserToken(username, user);
@@ -43,6 +41,7 @@
 
             return (null, null);
         }
+
 
         /// <summary>
         /// API Authenticated and Generate Token

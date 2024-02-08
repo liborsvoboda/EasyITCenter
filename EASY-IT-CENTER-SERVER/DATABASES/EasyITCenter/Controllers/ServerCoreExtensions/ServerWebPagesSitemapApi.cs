@@ -19,9 +19,9 @@ namespace EasyITCenter.ServerCoreDBSettings {
                         IsolationLevel = IsolationLevel.ReadUncommitted
                     })) { data = new EasyITCenterContext().WebSettingLists.Where(a => a.Key == "WebRobotTxtFile").First().Value; }
                 }
-                return new ContentResult { Content = data, ContentType = "text/plain" };
+                return new ContentResult { Content = data, ContentType = MimeTypes.GetMimeType("robots.txt") };
             } catch (Exception ex) {
-                return new ContentResult { Content = DataOperations.GetUserApiErrMessage(ex), ContentType = "text/plain" };
+                return new ContentResult { Content = DataOperations.GetUserApiErrMessage(ex), ContentType = MimeTypes.GetMimeType("robots.txt") };
             }
         }
     }

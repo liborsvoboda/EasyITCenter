@@ -155,7 +155,7 @@ namespace EasyITCenter {
                 websites = new EasyITCenterContext().SolutionWebsiteLists.Where(a => a.Active).ToList(); 
             }
             websites.ForEach(website => {
-                app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices), RequestPath = website.WebsiteName, HttpsCompression = HttpsCompressionMode.Compress }); ;
+                app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices), RequestPath = "/" + website.WebsiteName, HttpsCompression = HttpsCompressionMode.Compress }); ;
             });
 
             app.UseCookiePolicy();
