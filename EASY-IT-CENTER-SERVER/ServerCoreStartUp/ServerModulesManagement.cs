@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.FlowAnalysis;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
+using Swashbuckle.AspNetCore.SchemaBuilder;
 using Westwind.AspNetCore.LiveReload;
 using static Quartz.Logging.OperationName;
 
@@ -42,7 +43,10 @@ namespace EasyITCenter.ServerCoreConfiguration {
         }
 
 
-
+        /// <summary>
+        /// Module Entity Schema Design Generator
+        /// </summary>
+        /// <param name="services"></param>
         internal static void ConfigureDBEntitySchema(ref IServiceCollection services) {
             if (ServerConfigSettings.ModuleDBEntitySchemaEnabled) { services.AddDBEntitySchema(ServerConfigSettings.DatabaseConnectionString); }
         }
@@ -65,13 +69,13 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     foreach (ServerLiveDataMonitorList monitor in data) {
                         services.AddLiveReload(config => {
                             try {
-                                if (FileOperations.CheckDirectory(Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath))) {
+                                if (FileOperations.CheckDirectory(System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath))) {
                                     config.LiveReloadEnabled = true;
                                     config.ServerRefreshTimeout = 1000;
-                                    config.FolderToMonitor = Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath);
+                                    config.FolderToMonitor = System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath);
                                     if (monitor.FileExtensions.Length > 0) { config.ClientFileExtensions = monitor.FileExtensions; }
                                 }
-                                else { CoreOperations.SendEmail(new MailRequest() { Content = "Path For Live Data Monitoring not Exist" + Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath) }); }
+                                else { CoreOperations.SendEmail(new MailRequest() { Content = "Path For Live Data Monitoring not Exist" + System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath) }); }
                             } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
                         });
                     }
@@ -166,6 +170,8 @@ namespace EasyITCenter.ServerCoreConfiguration {
         /// <param name="services"></param>
         internal static void ConfigureSwagger(ref IServiceCollection services) {
             if (ServerConfigSettings.ModuleSwaggerApiDocEnabled) {
+                services.AddSwaggerSchemaBuilder(s => {s.CamelCase = false;});
+
                 services.AddSwaggerGen(c => {
                     c.AddSecurityDefinition("Basic", new OpenApiSecurityScheme { Name = "Authorization", Type = SecuritySchemeType.Http, Scheme = "basic", In = ParameterLocation.Header, Description = "Basic Authorization header for getting Bearer Token." });
                     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -173,7 +179,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme { Description = "JWT Authorization header using the Bearer scheme for All safe APIs.", Name = "Authorization", In = ParameterLocation.Header, Scheme = "bearer", Type = SecuritySchemeType.Http, BearerFormat = "JWT" });
                     c.AddSecurityRequirement(new OpenApiSecurityRequirement
                     { { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }, new List<string>() } });
-
+                    
                     c.SchemaGeneratorOptions = new SchemaGeneratorOptions { SchemaIdSelector = type => type.FullName };
                     c.SwaggerDoc(Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString(), new OpenApiInfo {
                         Title = ServerConfigSettings.ConfigCoreServerRegisteredName + " Server API",
@@ -184,7 +190,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                         License = new OpenApiLicense { Name = ServerConfigSettings.ConfigCoreServerRegisteredName + " Server License", Url = new Uri("https://www.groupware-solution.eu/") }
                     });
 
-                    var xmlFile = Path.Combine(AppContext.BaseDirectory, $"{ServerConfigSettings.ConfigCoreServerRegisteredName}.xml");
+                    var xmlFile = System.IO.Path.Combine(AppContext.BaseDirectory, $"{ServerConfigSettings.ConfigCoreServerRegisteredName}.xml");
                     if (File.Exists(xmlFile)) c.IncludeXmlComments(xmlFile, true);
 
                     //c.InferSecuritySchemes();
@@ -261,7 +267,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     //c.EnableValidator();
                     //c.ShowCommonExtensions();
                     //c.ShowExtensions();
-                    c.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Head, SubmitMethod.Post);
+                    c.SupportedSubmitMethods(SubmitMethod.Get,SubmitMethod.Put, SubmitMethod.Delete, SubmitMethod.Head, SubmitMethod.Post);
                     c.UseRequestInterceptor("(request) => { return request; }");
                     c.UseResponseInterceptor("(response) => { return response; }");
                 });

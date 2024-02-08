@@ -21,21 +21,21 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <returns></returns>
         public static bool SaveWebSourceFile(ref Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment, ref WebCoreFileList record) {
             try {
-                FileOperations.CreatePath(Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath.ToLower()));
-                FileOperations.CreatePath(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath.ToLower()));
+                FileOperations.CreatePath(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath.ToLower()));
+                FileOperations.CreatePath(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath.ToLower()));
 
                 string fileExt = record.FileName.Split(".").Last();
-                if (!string.IsNullOrWhiteSpace(record.GuestFileContent)) File.WriteAllText(Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName)), record.GuestFileContent, Encoding.UTF8);
-                if (!string.IsNullOrWhiteSpace(record.GuestFileContent)) File.WriteAllText(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, record.FileName), record.GuestFileContent, Encoding.UTF8);
+                if (!string.IsNullOrWhiteSpace(record.GuestFileContent)) File.WriteAllText(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName)), record.GuestFileContent, Encoding.UTF8);
+                if (!string.IsNullOrWhiteSpace(record.GuestFileContent)) File.WriteAllText(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, record.FileName), record.GuestFileContent, Encoding.UTF8);
 
-                if (!string.IsNullOrWhiteSpace(record.UserFileContent)) File.WriteAllText(Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "user." + fileExt)), record.UserFileContent, Encoding.UTF8);
-                if (!string.IsNullOrWhiteSpace(record.UserFileContent)) File.WriteAllText(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "user." + fileExt)), record.GuestFileContent, Encoding.UTF8);
+                if (!string.IsNullOrWhiteSpace(record.UserFileContent)) File.WriteAllText(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "user." + fileExt)), record.UserFileContent, Encoding.UTF8);
+                if (!string.IsNullOrWhiteSpace(record.UserFileContent)) File.WriteAllText(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "user." + fileExt)), record.GuestFileContent, Encoding.UTF8);
 
-                if (!string.IsNullOrWhiteSpace(record.AdminFileContent)) File.WriteAllText(Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "admin." + fileExt)), record.AdminFileContent, Encoding.UTF8);
-                if (!string.IsNullOrWhiteSpace(record.AdminFileContent)) File.WriteAllText(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "admin." + fileExt)), record.GuestFileContent, Encoding.UTF8);
+                if (!string.IsNullOrWhiteSpace(record.AdminFileContent)) File.WriteAllText(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "admin." + fileExt)), record.AdminFileContent, Encoding.UTF8);
+                if (!string.IsNullOrWhiteSpace(record.AdminFileContent)) File.WriteAllText(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "admin." + fileExt)), record.GuestFileContent, Encoding.UTF8);
 
-                if (!string.IsNullOrWhiteSpace(record.ProviderContent)) File.WriteAllText(Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "provider." + fileExt)), record.ProviderContent, Encoding.UTF8);
-                if (!string.IsNullOrWhiteSpace(record.ProviderContent)) File.WriteAllText(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "provider." + fileExt)), record.GuestFileContent, Encoding.UTF8);
+                if (!string.IsNullOrWhiteSpace(record.ProviderContent)) File.WriteAllText(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "provider." + fileExt)), record.ProviderContent, Encoding.UTF8);
+                if (!string.IsNullOrWhiteSpace(record.ProviderContent)) File.WriteAllText(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "provider." + fileExt)), record.GuestFileContent, Encoding.UTF8);
 
                 return true;
             } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
@@ -51,17 +51,17 @@ namespace EasyITCenter.ServerCoreStructure {
         public static bool DeleteWebSourceFile(ref Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment, ref WebCoreFileList record) {
             try {
                 string fileExt = record.FileName.Split(".").Last();
-                FileOperations.DeleteFile(Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, record.FileName));
-                FileOperations.DeleteFile(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, record.FileName));
+                FileOperations.DeleteFile(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, record.FileName));
+                FileOperations.DeleteFile(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, record.FileName));
 
-                FileOperations.DeleteFile(Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "user." + fileExt)));
-                FileOperations.DeleteFile(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "user." + fileExt)));
+                FileOperations.DeleteFile(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "user." + fileExt)));
+                FileOperations.DeleteFile(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "user." + fileExt)));
 
-                FileOperations.DeleteFile(Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "admin." + fileExt)));
-                FileOperations.DeleteFile(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "admin." + fileExt)));
+                FileOperations.DeleteFile(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "admin." + fileExt)));
+                FileOperations.DeleteFile(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "admin." + fileExt)));
 
-                FileOperations.DeleteFile(Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "provider." + fileExt)));
-                FileOperations.DeleteFile(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "provider." + fileExt)));
+                FileOperations.DeleteFile(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "provider." + fileExt)));
+                FileOperations.DeleteFile(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "provider." + fileExt)));
 
                 return true;
             } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }

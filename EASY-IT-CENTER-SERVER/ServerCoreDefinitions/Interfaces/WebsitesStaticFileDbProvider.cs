@@ -53,12 +53,12 @@ namespace EasyITCenter.ServerCoreStructure {
         public FileInfo(SolutionStaticFileList file) {
             this.file = file;
             LastModified = file.TimeStamp;
-            Name = Path.GetFileName(file.FileNamePath);
+            Name = System.IO.Path.GetFileName(file.FileNamePath);
             Length = file.Content.Length;
         }
 
         public FileInfo(SolutionStaticFilePathList index) {
-            Name = Path.GetFileName(index.Path);
+            Name = System.IO.Path.GetFileName(index.Path);
             Length = index.Size;
             LastModified = index.TimeStamp;
         }

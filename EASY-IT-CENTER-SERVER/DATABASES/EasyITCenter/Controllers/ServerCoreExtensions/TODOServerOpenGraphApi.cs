@@ -23,12 +23,9 @@ namespace EasyITCenter.ServerCoreDBSettings {
         [Consumes("application/json")]
         public async Task<IActionResult> GetFromUrl([FromBody] WebUrlRequest request) {
             try {
-                if (ServerConfigSettings.ModuleDbDiagramGeneratorEnabled) {
-                    OpenGraph graph = await OpenGraph.ParseUrlAsync(request.Url);
-
-                    var response = File(Encoding.UTF8.GetBytes(graph.OriginalHtml), MimeTypes.GetMimeType("index.html"), "index.html");
-                    return response;
-                }
+                OpenGraph graph = await OpenGraph.ParseUrlAsync(request.Url);
+                var response = File(Encoding.UTF8.GetBytes(graph.OriginalHtml), MimeTypes.GetMimeType("index.html"), "index.html");
+                return response;
             } catch { }
             return null;
         }

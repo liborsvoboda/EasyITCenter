@@ -152,7 +152,7 @@ namespace EasyITCenter.ServerCoreStructure {
                     else if (jobType == "command") {
                         try {
                             if (jobData.First(a => a.Key.ToLower() == "userrole").Value?.ToString() == "admin") {
-                                ProcessClass? process = new ProcessClass() { Command = Path.GetFullPath(data), Arguments = "", WorkingDirectory = Path.GetFullPath(data.Replace(Path.GetFileName(data), "")) };
+                                ProcessClass? process = new ProcessClass() { Command = System.IO.Path.GetFullPath(data), Arguments = "", WorkingDirectory = System.IO.Path.GetFullPath(data.Replace(System.IO.Path.GetFileName(data), "")) };
                                 CoreOperations.RunSystemProcess(process);
                             }
                         } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }

@@ -92,7 +92,7 @@ namespace EasyITCenter.ServerCoreStructure {
 
                 try { //Saving Autogenerate Certificate
                     byte[] exportedData = certificate.Export(X509ContentType.Pfx, password);
-                    File.WriteAllBytes(Path.Combine(ServerRuntimeData.Startup_path, ServerRuntimeData.DataPath, "ServerAutoCertificate.pfx"), exportedData);
+                    File.WriteAllBytes(System.IO.Path.Combine(ServerRuntimeData.Startup_path, ServerRuntimeData.DataPath, "ServerAutoCertificate.pfx"), exportedData);
                 } catch { }
 
                 return new X509Certificate2(certificate.Export(X509ContentType.Pfx, password), password, X509KeyStorageFlags.Exportable);
@@ -108,7 +108,7 @@ namespace EasyITCenter.ServerCoreStructure {
             byte[]? certificate = null;
             string? password = null;
             try {
-                certificate = File.ReadAllBytes(Path.Combine(ServerRuntimeData.Startup_path, ServerRuntimeData.DataPath, FileNameFromDataPath));
+                certificate = File.ReadAllBytes(System.IO.Path.Combine(ServerRuntimeData.Startup_path, ServerRuntimeData.DataPath, FileNameFromDataPath));
                 password = ServerConfigSettings.ConfigCertificatePassword;
                 return new X509Certificate2(certificate, password);
             } catch (Exception Ex) { SendEmail(new MailRequest() { Content = "Incorrect Certificate Path or Password, " + DataOperations.GetSystemErrMessage(Ex) }); }

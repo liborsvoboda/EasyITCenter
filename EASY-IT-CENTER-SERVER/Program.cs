@@ -154,7 +154,7 @@ namespace EasyITCenter {
         private static void LoadConfigurationFromFile() {
             try {
                 //Load From Config File
-                string json = File.ReadAllText(Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile), FileOperations.FileDetectEncoding(Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile)));
+                string json = File.ReadAllText(System.IO.Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile), FileOperations.FileDetectEncoding(System.IO.Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile)));
                 Dictionary<string, object> exportServerSettingList = new Dictionary<string, object>();
                 exportServerSettingList.AddRange(JsonSerializer.Deserialize<Dictionary<string, object>>(json).ToList());
 

@@ -2,12 +2,8 @@
 using System.Data;
 
 
-
-/*
- * Server Core Configuration Part
- */
-
 namespace EasyITCenter.ServerCoreDBSettings {
+
 
     /// <summary>
     /// TODO  Inherit DB Context with 

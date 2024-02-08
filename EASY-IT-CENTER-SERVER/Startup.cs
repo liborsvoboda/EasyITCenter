@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.FileProviders;
 
+
 namespace EasyITCenter {
 
     /// <summary>
@@ -71,6 +72,7 @@ namespace EasyITCenter {
             ServerConfigurationServices.ConfigureCentralServicesProviders(ref services);
         }
 
+
         /// <summary>
         /// Server Core: Main Enabling of Server Services, Technologies, Modules, etc..
         /// </summary>
@@ -102,9 +104,9 @@ namespace EasyITCenter {
                 if (context.Request.Headers.Authorization.ToString().Length > 0) {
                     token = context.Request.Headers.Authorization.ToString().Substring(7); }
 
-                if (token != null) { serverWebPagesToken = CoreOperations.CheckTokenValidityFromString(token); 
-                    if (serverWebPagesToken.IsValid) { context.User.AddIdentities(serverWebPagesToken.UserClaims.Identities); context.Items.Add(new KeyValuePair<object, object>("ServerWebPagesToken", serverWebPagesToken)); } 
-                } 
+                if (token != null) { serverWebPagesToken = CoreOperations.CheckTokenValidityFromString(token);
+                    if (serverWebPagesToken.IsValid) { context.User.AddIdentities(serverWebPagesToken.UserClaims.Identities); context.Items.Add(new KeyValuePair<object, object>("ServerWebPagesToken", serverWebPagesToken)); }
+                }
 
                 //Verify Access To Module and Go Next Or Redirect to RedirectUrl
                 ServerModuleAndServiceList? RequestedModule = new EasyITCenterContext().ServerModuleAndServiceLists.FirstOrDefault(a => a.UrlSubPath.ToLower().StartsWith(RequestPath));
@@ -116,8 +118,8 @@ namespace EasyITCenter {
 
 
             //404 Redirect Central One Page Portal not For Files
-            app.Use(async (context, next) => { await next(); if (context.Response.StatusCode == 404 && !context.Request.Path.ToString().Split("/").Last().Contains(".")) {string requestPath = context.Request.Path;
-                    string? RequestedModulePath = context.Request.Cookies.FirstOrDefault(a => a.Key.ToString() == "RequestedModulePath").Value?.ToString();string? RequestModuleAccess = context.Request.Cookies.FirstOrDefault(a => a.Key.ToString() == "RequestedModuleAccess").Value?.ToString();
+            app.Use(async (context, next) => { await next(); if (context.Response.StatusCode == 404 && !context.Request.Path.ToString().Split("/").Last().Contains(".")) { string requestPath = context.Request.Path;
+                    string? RequestedModulePath = context.Request.Cookies.FirstOrDefault(a => a.Key.ToString() == "RequestedModulePath").Value?.ToString(); string? RequestModuleAccess = context.Request.Cookies.FirstOrDefault(a => a.Key.ToString() == "RequestedModuleAccess").Value?.ToString();
 
                     //include user from cookie
                     ServerWebPagesToken? serverWebPagesToken = null; string token = context.Request.Cookies.FirstOrDefault(a => a.Key == "ApiToken").Value;
@@ -152,7 +154,7 @@ namespace EasyITCenter {
 
             List<SolutionWebsiteList> websites;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                websites = new EasyITCenterContext().SolutionWebsiteLists.Where(a => a.Active).ToList(); 
+                websites = new EasyITCenterContext().SolutionWebsiteLists.Where(a => a.Active).ToList();
             }
             websites.ForEach(website => {
                 app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices), RequestPath = "/" + website.WebsiteName, HttpsCompression = HttpsCompressionMode.Compress }); ;
@@ -173,7 +175,7 @@ namespace EasyITCenter {
 
             if (ServerConfigSettings.WebBrowserContentEnabled) {
                 //These commented setting enable full browsing
-                app.UseDirectoryBrowser();app.UseFileServer(enableDirectoryBrowsing: true);
+                //app.UseDirectoryBrowser(); app.UseFileServer(enableDirectoryBrowsing: true);
 
                 List<ServerBrowsablePathList> data;
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
@@ -183,14 +185,13 @@ namespace EasyITCenter {
                 data.ForEach(path => {
                     try {
                         app.UseFileServer(new FileServerOptions {
-                            FileProvider = new PhysicalFileProvider(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", path.WebRootPath)),
+                            FileProvider = new PhysicalFileProvider(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", path.WebRootPath)),
                             RequestPath = "/" + (path.AliasPath != null && path.AliasPath.Length > 0 ? path.AliasPath : path.WebRootPath),
                             EnableDirectoryBrowsing = true,
                         });
                     } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
                 });
             }
-
 
             if (ServerConfigSettings.WebMvcPagesEngineEnabled) { app.UseMvcWithDefaultRoute(); }
             try { app.UsePathBase(BackendServer.ServerRuntimeData.SpecialUserWebRootPath); } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }

@@ -44,11 +44,11 @@ namespace EasyITCenter.ControllersExtensions {
                     };
                     var data = LicenseControlller.GenerateLicense(licenseData).ToArray();
 
-                    FileOperations.CreatePath(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License"));
-                    FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                    FileOperations.ByteArrayToFile(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License", "license.lic"), data);
-                    ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License.zip"));
-                    data = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License.zip"));
+                    FileOperations.CreatePath(System.IO.Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License"));
+                    FileOperations.ClearFolder(System.IO.Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
+                    FileOperations.ByteArrayToFile(System.IO.Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License", "license.lic"), data);
+                    ZipFile.CreateFromDirectory(System.IO.Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License"), System.IO.Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License.zip"));
+                    data = await System.IO.File.ReadAllBytesAsync(System.IO.Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "License.zip"));
 
                     if (data != null) { return File(data, "application/x-zip-compressed", "License.zip"); }
                     else { return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") }); }

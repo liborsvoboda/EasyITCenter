@@ -33,7 +33,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
 
                 services.Configure<FtpServerOptions>(opt => opt.ServerAddress = "*");
                 services.Configure<DotNetFileSystemOptions>(opt => {
-                    opt.RootPath = Path.Combine(ServerRuntimeData.WebRoot_path, ServerConfigSettings.ServerFtpStorageRootPath);
+                    opt.RootPath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path, ServerConfigSettings.ServerFtpStorageRootPath);
                     opt.AllowNonEmptyDirectoryDelete = true;
                 });
                 services.AddSingleton<IMembershipProvider, HostedFtpServerMembershipProvider>();
@@ -205,7 +205,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     option.DomainNames = domainList.ToArray();
                     option.EmailAddress = ServerConfigSettings.EmailerServiceEmailAddress;
                     option.AcceptTermsOfService = true;
-                }).PersistDataToDirectory(new DirectoryInfo(Path.Combine(ServerRuntimeData.Startup_path, ServerRuntimeData.DataPath)), ServerConfigSettings.ConfigCertificatePassword);
+                }).PersistDataToDirectory(new DirectoryInfo(System.IO.Path.Combine(ServerRuntimeData.Startup_path, ServerRuntimeData.DataPath)), ServerConfigSettings.ConfigCertificatePassword);
             }
         }
 
