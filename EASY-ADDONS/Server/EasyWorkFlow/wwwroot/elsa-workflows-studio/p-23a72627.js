@@ -1,0 +1,1 @@
+import"./p-6a489817.js";import"./p-fe704386.js";import{h as t}from"./p-d44d1ddb.js";function e(s){return e=>t("intl-message",Object.assign({},Object.assign({i18next:s},e)))}export{e as G};
