@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using SharpCompress.Common;
 using System.Xml.Serialization;
 
 namespace EasyITCenter.ControllersExtensions {
@@ -20,9 +21,9 @@ namespace EasyITCenter.ControllersExtensions {
         [HttpGet("/WebApi/GetApiFileRotator/{filename}"), DisableRequestSizeLimit]
         public async Task<IActionResult> GetApiFileRotator(string filename) {
             try {
-                 byte[] fileArray = ServerRuntimeData.FileRotatorRuntineLibrary.FirstOrDefault(a => a.Key.ToString() == filename).Value as byte[];
+                byte[] fileArray = ServerRuntimeData.FileRotatorRuntineLibrary.FirstOrDefault(a => a.Key.ToString() == filename).Value as byte[];
                 return File(fileArray, MimeTypes.GetMimeType(filename), filename);
-            }  catch (Exception ex) { return BadRequest(new string[] { "error:" + DataOperations.GetUserApiErrMessage(ex), "application/json" }); }  
+            } catch (Exception ex) { return BadRequest(new string[] { "error:" + DataOperations.GetUserApiErrMessage(ex), "application/json" }); }
         }
 
 
@@ -52,8 +53,8 @@ namespace EasyITCenter.ControllersExtensions {
                     { "size", stringFile.Length },
                     { "image", fileByteArray },
                     { "file",  File(fileByteArray, mimeType, DataOperations.RandomString(20) + "." + mimeType.Split("/")[1]) }
-                }; 
-                
+                };
+
                 ServerRuntimeData.FileRotatorRuntineLibrary.Add(uniqueFilename, fileByteArray);
                 return Ok(JsonSerializer.Serialize(detail));
             } catch (Exception ex) { return BadRequest(new string[] { "error:" + DataOperations.GetUserApiErrMessage(ex), "application/json" }); }
@@ -86,6 +87,7 @@ namespace EasyITCenter.ControllersExtensions {
                 return Ok(JsonSerializer.Serialize(detail));
             } catch (Exception ex) { return BadRequest(new string[] { "error:" + DataOperations.GetUserApiErrMessage(ex), "application/json" }); }
         }
-        
+
+
     }
 }

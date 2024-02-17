@@ -2,6 +2,7 @@
 using EasyITSystemCenter.Api;
 using EasyITSystemCenter.Classes;
 using EasyITSystemCenter.GlobalClasses;
+using EasyITSystemCenter.GlobalGenerators;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using EasyITSystemCenter.Pages;
@@ -21,12 +22,14 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Linq;
 
 namespace EasyITSystemCenter {
 
@@ -50,13 +53,14 @@ namespace EasyITSystemCenter {
         public Process vncProcess;
 
         public static event EventHandler DataGridSelectedChanged, DataGridSelectedIdListIndicatorChanged, DgRefreshChanged, ServiceStatusChanged, ServiceRunningChanged, DownloadStatusChanged,
-            DownloadShowChanged, ProgressRingChanged, UserLoggedChanged, VncRunningChanged, SystemLoggerChanged, RunReleaseModeChanged, OperationRunningChanged, ServerLoggerSourceChanged, ShowSystemLoggerChanged, MultiSameTabsEnabledChanged = delegate { };
+            DownloadShowChanged, ProgressRingChanged, UserLoggedChanged, VncRunningChanged, SystemLoggerChanged, RunReleaseModeChanged, OperationRunningChanged,
+            ServerLoggerSourceChanged, ShowSystemLoggerChanged, MultiSameTabsEnabledChanged = delegate { };
 
         #endregion Definitions
 
         #region MainWindow Controller Statuses
 
-        
+
         /// <summary>
         /// Enable/Disable MultiSameTabs Forms
         /// </summary>
@@ -324,6 +328,47 @@ namespace EasyITSystemCenter {
             return lastUserAction = DateTimeOffset.UtcNow;
         }
 
+
+        /// <summary>
+        /// Set System Module Content
+        /// </summary>
+        private async Task<bool> SetSystemModuleListPanel() {
+            try {
+                List<SolutionMixedEnumList> mixedEnumTypesList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/SystemModules", App.UserData.Authentification.Token);
+                List<SystemSvgIconList> systemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
+
+                systemModuleList.Items.Clear();
+                mixedEnumTypesList.ForEach(async panelType => {
+                    try {
+                        WrapPanel tabMenuPanel = new WrapPanel() { Name = "wp_" + panelType.Id.ToString(), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+                        TabItem tabMenu = new TabItem() { Name = Regex.Replace(panelType.Name, @"[^a-zA-Z]", "_"), Tag = Regex.Replace(panelType.Name, @"[^a-zA-Z]", "_"), Header = await DBOperations.DBTranslation(panelType.Name), Content = tabMenuPanel };
+                        systemModuleList.Items.Add(tabMenu);
+                    } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                });
+
+                foreach (SystemModuleList panel in App.SystemModuleList) {
+                    var toolPanel = new Tile() {
+                        Tag = panel.Id.ToString(), Name = Regex.Replace(panel.Name, @"[^a-zA-Z]", "_"),
+                        Uid = Regex.Replace(panel.ModuleType, @"[^a-zA-Z]", "_"), Title = panel.Name,
+                        Background = (Brush)new BrushConverter().ConvertFromString(panel.BackgroundColor),
+                        Width = 100, Height = 100, Margin = new Thickness(1),Foreground = (Brush)new BrushConverter().ConvertFromString(panel.ForegroundColor),
+                        HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top,Cursor = Cursors.Hand, FontWeight = FontWeights.DemiBold,
+                        HorizontalTitleAlignment = HorizontalAlignment.Left, VerticalTitleAlignment = VerticalAlignment.Bottom, Padding = new Thickness(1),
+                        TitleFontSize = 14, ClickMode = ClickMode.Press, ToolTip = (!string.IsNullOrWhiteSpace(panel.Description)) ? panel.Description : null, 
+                        IsEnabled = panel.ModuleType.ToLower() != "webmodule" ? true : App.appRuntimeData.webServerRunning
+                    }; System.Windows.Media.Imaging.BitmapImage panelIcon = new System.Windows.Media.Imaging.BitmapImage();
+                    panelIcon = IconMaker.Icon((Color)ColorConverter.ConvertFromString(panel.IconColor), systemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == panel.IconName).SvgIconPath);
+                    Image icon = new Image() { Width = 30, Height = 30, Source = panelIcon, VerticalAlignment = VerticalAlignment.Top, HorizontalAlignment = HorizontalAlignment.Center };
+                    toolPanel.Content = icon; toolPanel.Click += SystemModulePanel_Click;
+
+                    ((WrapPanel)systemModuleList.Items.Cast<TabItem>().First(a => a.Name.ToString() == toolPanel.Uid.ToString()).Content).Children.Add(toolPanel);
+                    btn_showModulePanel.IsEnabled = true;
+                };
+            } catch (Exception ex) { App.ApplicationLogging(ex); }
+            return true;
+        }
+
+
         /// <summary>
         /// Central Application Message Dialog for All Info / Error / other messages for User
         /// </summary>
@@ -462,7 +507,6 @@ namespace EasyITSystemCenter {
 
                         //ONETime Update
                         if (ServiceRunning && !updateChecked && UserLogged) {
-                            //await LoadUserMenu();
                             this.Invoke(() => { if (App.appRuntimeData.AppClientSettings.First(b => b.Key == "sys_automaticUpdate").Value != "never") { SystemUpdater.CheckUpdate(false); } updateChecked = true; });
                         }
                     }
@@ -494,12 +538,41 @@ namespace EasyITSystemCenter {
                 Resources["myEmail"].ToString() + "\n" + Resources["myAccount"].ToString(), false);
         }
 
+
+        /// <summary>
+        /// Open Selected System Module
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SystemModulePanel_Click(object sender, RoutedEventArgs e) {
+            try { SystemModuleList module = App.SystemModuleList.First(a => a.Id == int.Parse(((Tile)sender).Tag.ToString()));
+
+                if (module.ModuleType.ToLower() == "webmodule") {
+                    AddOrRemoveTab(((Tile)sender).Title, new WebModulePage(), "Setting");
+                    SystemTabs existingTab = ((SystemWindowDataModel)DataContext).TabContents.ToList().Where(a => a.Header.ToLower() == ((Tile)sender).Title.ToLower()).LastOrDefault();
+                    if (existingTab != null) { ((WebModulePage)existingTab.Content).ShowWebModule = module; }
+                } else if (module.ModuleType.ToLower() == "appmodule") {
+                    //AddOrRemoveTab(((Tile)sender).Title, new HostWin32AppPage(), "Setting");
+                    //SystemTabs existingTab = ((SystemWindowDataModel)DataContext).TabContents.ToList().Where(a => a.Header.ToLower() == ((Tile)sender).Title.ToLower()).LastOrDefault();
+                    //if (existingTab != null) { ((HostWin32AppPage)existingTab.Content).ShowAppModule = module; }
+                    SystemOperations.StartExternalProccess("WINcmd", Path.Combine(App.appRuntimeData.startupPath, "Data", "AddOn", "AppData", module.FolderPath, module.FileName), Path.Combine(App.appRuntimeData.startupPath,"Data","AddOn","AppData", module.FolderPath));
+                } else if (module.ModuleType.ToLower() == "systemtool") {
+                    string objectToInstantiate = "EasyITSystemCenter.Pages." + module.StartupCommand + "";
+                    var objectType = Type.GetType(objectToInstantiate); object pageForm = Activator.CreateInstance(objectType, false);
+                    AddOrRemoveTab(((Tile)sender).Title, pageForm);
+                }
+                SystemModulePanel.IsOpen = !SystemModulePanel.IsOpen;
+            } catch (Exception ex) { App.ApplicationLogging(ex); }
+        }
+
+
         /// <summary>
         /// MainWindow Keyboard pointer to Keyboard Central Application controller
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e">     </param>
         private void MainWindow_KeyDown(object sender, KeyEventArgs e) => HardwareOperations.ApplicationKeyboardMaping(e);
+
 
         /// <summary>
         /// Help button controller for Show Help File
@@ -513,7 +586,7 @@ namespace EasyITSystemCenter {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e">     </param>
-        private void Btn_LaunchMetroTheme_Click(object sender, RoutedEventArgs e) { Process.Start(Path.Combine(App.appRuntimeData.startupPath, "Data", "AddOn", "Metro", "MahApps.Metro.Demo.exe")); }
+        private void Btn_ShowModulePanel_Click(object sender, RoutedEventArgs e) { SystemModulePanel.IsOpen = !SystemModulePanel.IsOpen; }
 
         /// <summary>
         /// Show System On line Logger
@@ -572,6 +645,7 @@ namespace EasyITSystemCenter {
                         App.UserData.Authentification = dBResult;
                         si_loggedIn.Content = Resources["loggedIn"].ToString() + " " + ((App.UserData.Authentification != null) ? App.UserData.Authentification.Name + " " + App.UserData.Authentification.SurName : result.Username);
                         await DBOperations.LoadOrRefreshUserData();
+                        await SetSystemModuleListPanel();
                         await LoadUserMenu();
                         ProgressRing = Visibility.Hidden;
                     }
@@ -609,24 +683,19 @@ namespace EasyITSystemCenter {
                 vncProcess.Kill(); vncProcessId = 0; VncRunning = Brushes.Red;
             }
             else {
-                if (FileOperations.CheckFile(Path.Combine(App.appRuntimeData.startupPath, "Data", "AddOn", "winvnc.exe"))) {
-                    if (FileOperations.VncServerIniFile(Path.Combine(App.appRuntimeData.startupPath, "Data", "AddOn"))) {
+                if (FileOperations.CheckFile(Path.Combine(App.appRuntimeData.startupPath, "Data", "Runtime", "VNC" , "winvnc.exe"))) {
+                    if (FileOperations.VncServerIniFile(Path.Combine(App.appRuntimeData.startupPath, "Data", "Runtime", "VNC"))) {
                         vncProcess = new Process();
                         ProcessStartInfo info = new ProcessStartInfo() {
-                            FileName = Path.Combine(App.appRuntimeData.startupPath, "Data", "AddOn", "winvnc.exe"),
-                            WorkingDirectory = Path.Combine(App.appRuntimeData.startupPath, "Data", "AddOn"),
-                            Arguments = $@" -inifile {Path.Combine(App.appRuntimeData.startupPath, "Data", "AddOn", "server.ini")} -run",
-                            LoadUserProfile = true,
-                            CreateNoWindow = true,
-                            UseShellExecute = false,
-                            WindowStyle = ProcessWindowStyle.Hidden,
-                            RedirectStandardOutput = true,
-                            RedirectStandardError = true,
+                            FileName = Path.Combine(App.appRuntimeData.startupPath, "Data", "Runtime", "VNC", "winvnc.exe"),
+                            WorkingDirectory = Path.Combine(App.appRuntimeData.startupPath, "Data", "Runtime", "VNC"),
+                            Arguments = $@" -inifile {Path.Combine(App.appRuntimeData.startupPath, "Data", "Runtime", "VNC", "server.ini")} -run",
+                            LoadUserProfile = true, CreateNoWindow = true,
+                            UseShellExecute = false, WindowStyle = ProcessWindowStyle.Hidden,
+                            RedirectStandardOutput = true, RedirectStandardError = true,
                             Verb = (Environment.OSVersion.Version.Major >= 6) ? "runas" : "",
                         };
-                        vncProcess.StartInfo = info;
-                        vncProcess.Start();
-                        vncProcessId = vncProcess.Id;
+                        vncProcess.StartInfo = info; vncProcess.Start(); vncProcessId = vncProcess.Id;
                         if (vncProcessId > 0) VncRunning = Brushes.Green; else VncRunning = Brushes.Red;
                     }
                 }
@@ -892,22 +961,15 @@ namespace EasyITSystemCenter {
                                 FileName = App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_reportingPath").Value,
                                 WorkingDirectory = Path.GetDirectoryName(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_reportingPath").Value) + "\\",
                                 Arguments = reportFile + " -p \"Connect=" + App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_reportConnectionString").Value + "&TableName=" + SelectedTab.Content.GetType().Name.Replace("Page", "") + "&Search=%" + tb_search.Text + "%&Id=" + dataGridSelectedId.ToString() + "&Filter=" + advancedFilter + "\"",
-                                LoadUserProfile = true,
-                                CreateNoWindow = false,
-                                UseShellExecute = false,
+                                LoadUserProfile = true, CreateNoWindow = false, UseShellExecute = false,
                                 WindowStyle = ProcessWindowStyle.Normal,
-                                RedirectStandardOutput = true,
-                                RedirectStandardError = true,
+                                RedirectStandardOutput = true, RedirectStandardError = true,
                                 Verb = (Environment.OSVersion.Version.Major >= 6) ? "runas" : "",
                             };
-                            exeProcess.StartInfo = info;
-                            exeProcess.Start();
+                            exeProcess.StartInfo = info; exeProcess.Start();
                         }
                     }
-                    else {
-                        cnn.Close();
-                        await ShowMessageOnMainWindow(true, Resources["connectionStringIsNotValid"].ToString());
-                    }
+                    else { cnn.Close(); await ShowMessageOnMainWindow(true, Resources["connectionStringIsNotValid"].ToString()); }
                     ProgressRing = Visibility.Hidden;
                 } catch (Exception ex) {
                     App.ApplicationLogging(ex);

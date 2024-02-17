@@ -8,7 +8,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dockablz="clr-namespace:Dragablz.Dockablz;assembly=Dragablz"
     xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
-    xmlns:ext="clr-namespace:EasyITSystemCenter"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:EasyITSystemCenter"
@@ -32,11 +31,11 @@
     WindowStartupLocation="CenterScreen"
     WindowTransitionsEnabled="True"
     mc:Ignorable="d">
-<!--
-	GlowBrush="{DynamicResource GlyphBrush}"
-    RenderOptions.ClearTypeHint="Enabled"
-	TextOptions.TextFormattingMode="Display"
--->
+    <!--
+        GlowBrush="{DynamicResource GlyphBrush}"
+        RenderOptions.ClearTypeHint="Enabled"
+        TextOptions.TextFormattingMode="Display"
+    -->
     <!--<Controls:MetroWindow.LeftWindowCommands>
         <Controls:WindowCommands>
             <Button x:Name="btn_showOnlineLogger" Click="BtnShowLoggerClick" Style="{StaticResource MahAppsToolWindowButtonStyle}">
@@ -64,24 +63,21 @@
             </Menu>
             <Button
                 x:Name="btn_about"
-                Click="Btn_about_click" Cursor="Hand"
-                ToolTip="Version Info">
+                Click="Btn_about_click" Cursor="Hand" ToolTip="Version Info">
                 <iconPacks:PackIconModern
                     Width="22" Height="22"
                     Kind="InformationCircle" />
             </Button>
             <Button
                 x:Name="btn_launchHelp"
-                Click="Btn_LaunchHelp_Click" Cursor="Hand"
-                ToolTip="System Structure Documentation">
+                Click="Btn_LaunchHelp_Click" Cursor="Hand" ToolTip="Dokumentace Struktury Systému">
                 <iconPacks:Modern
                     Width="22" Height="22"
                     Kind="BookPerspectiveHelp" />
             </Button>
             <Button
-                x:Name="btn_inputTypes"
-                Click="Btn_LaunchMetroTheme_Click" Cursor="Hand"
-                ToolTip="Default Engine Template">
+                x:Name="btn_showModulePanel"
+                Click="Btn_ShowModulePanel_Click" Cursor="Hand" IsEnabled="False" ToolTip="Zobrazit panel s Moduly">
                 <iconPacks:Material
                     Width="22" Height="22"
                     Kind="DeveloperBoard" />
@@ -110,12 +106,35 @@
     </Controls:MetroWindow.IconTemplate>
 
     <Controls:MetroWindow.Flyouts>
-        <Controls:FlyoutsControl OverrideExternalCloseButton="Right" OverrideIsPinned="True">
+        <Controls:FlyoutsControl>
+            <Controls:Flyout
+                x:Name="SystemModulePanel"
+                Margin="0,30,0,0"
+                AreAnimationsEnabled="True" CloseButtonVisibility="Collapsed" Header="Apps" Position="Top" Theme="Dark" TitleVisibility="Collapsed">
+                <Canvas
+                    x:Name="SystemModuleCanvas"
+                    Height="130"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <ScrollViewer
+                        Width="{Binding ElementName=SystemModuleCanvas, Path=ActualWidth}"
+                        Height="{Binding ElementName=SystemModuleCanvas, Path=ActualHeight}"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Top"
+                        Controls:ScrollViewerHelper.IsHorizontalScrollWheelEnabled="True" HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Disabled">
+
+                        <TabControl
+                            x:Name="systemModuleList"
+                            Margin="5,0,0,0" Padding="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalContentAlignment="Top"
+                            Background="Transparent" FontSize="8" TabStripPlacement="Left" />
+                    </ScrollViewer>
+                </Canvas>
+            </Controls:Flyout>
+
             <Controls:Flyout
                 x:Name="OnlineLogger"
                 Height="200"
                 Margin="0,0,0,40"
-                AllowFocusElement="True" AreAnimationsEnabled="True" CloseButtonVisibility="Visible" Header="System Logger" Position="Bottom" Theme="Inverse">
+                AllowFocusElement="True" AnimateOpacity="True" AreAnimationsEnabled="True" CloseButtonIsCancel="True" CloseButtonVisibility="Visible" Header="System Logger" Position="Bottom"
+                Theme="Inverse">
                 <Canvas
                     x:Name="FlyoutCanvas"
                     Height="200"
@@ -282,7 +301,8 @@
             <dragablz:TabablzControl
                 x:Name="InitialTabablzControl"
                 Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                ItemsSource="{Binding TabContents}" HeaderMemberPath="Header"
+                HeaderMemberPath="Header"
+                ItemsSource="{Binding TabContents}"
                 SelectionChanged="TabPanelOnSelectionChange">
 
                 <!--  This Code Enable Dragging TabPanel To move Out of Application to Next New Application Instance  -->

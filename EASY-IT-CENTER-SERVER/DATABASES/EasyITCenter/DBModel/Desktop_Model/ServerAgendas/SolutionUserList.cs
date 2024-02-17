@@ -78,6 +78,7 @@ namespace EasyITCenter.DBModel
             SystemGroupMenuLists = new HashSet<SystemGroupMenuList>();
             SystemIgnoredExceptionLists = new HashSet<SystemIgnoredExceptionList>();
             SystemMenuLists = new HashSet<SystemMenuList>();
+            SystemModuleLists = new HashSet<SystemModuleList>();
             SystemParameterLists = new HashSet<SystemParameterList>();
             SystemReportLists = new HashSet<SystemReportList>();
             SystemSvgIconLists = new HashSet<SystemSvgIconList>();
@@ -263,6 +264,8 @@ namespace EasyITCenter.DBModel
         public virtual ICollection<SystemIgnoredExceptionList> SystemIgnoredExceptionLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<SystemMenuList> SystemMenuLists { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<SystemModuleList> SystemModuleLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<SystemParameterList> SystemParameterLists { get; set; }
         [InverseProperty("User")]

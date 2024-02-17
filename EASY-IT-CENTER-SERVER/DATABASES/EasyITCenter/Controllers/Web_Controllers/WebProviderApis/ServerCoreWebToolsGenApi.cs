@@ -19,6 +19,20 @@ namespace EasyITCenter.ControllersExtensions {
     public class ServerCoreWebToolsGenApi : ControllerBase {
 
 
+        [HttpGet("/Generators/GetSystemModuleList")]
+        [Consumes("application/json")]
+        public async Task<string> GetSystemModuleList() {
+            List<SystemModuleList> data = null;
+            try {
+               
+                using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
+                    data = new EasyITCenterContext().SystemModuleLists.OrderBy(a => a.ModuleType).ThenBy(a => a.Name).ToList();
+                }
+                
+            } catch { }
+            return JsonSerializer.Serialize(data);
+        }
+
 
         [HttpGet("/Generators/GetGeneratedToolCount")]
         [Consumes("application/json")]

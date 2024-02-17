@@ -60,22 +60,6 @@ namespace EasyITSystemCenter.Pages {
             public void OnBeforeClose(IWebBrowser chromiumWebBrowser, IBrowser browser) {
             }
 
-            /// <summary>
-            /// Block open New Solo Window Frame as popup
-            /// </summary>
-            /// <param name="chromiumWebBrowser"></param>
-            /// <param name="browser">           </param>
-            /// <param name="frame">             </param>
-            /// <param name="targetUrl">         </param>
-            /// <param name="targetFrameName">   </param>
-            /// <param name="targetDisposition"> </param>
-            /// <param name="userGesture">       </param>
-            /// <param name="popupFeatures">     </param>
-            /// <param name="windowInfo">        </param>
-            /// <param name="browserSettings">   </param>
-            /// <param name="noJavascriptAccess"></param>
-            /// <param name="newBrowser">        </param>
-            /// <returns></returns>
             public bool OnBeforePopup(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture, IPopupFeatures popupFeatures, IWindowInfo windowInfo, IBrowserSettings browserSettings, ref bool noJavascriptAccess, out IWebBrowser newBrowser) {
                 browser.MainFrame.LoadUrl(targetUrl);
                 newBrowser = null;

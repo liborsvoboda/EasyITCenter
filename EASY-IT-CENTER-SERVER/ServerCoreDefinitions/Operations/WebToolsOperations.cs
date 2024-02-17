@@ -25,17 +25,34 @@ namespace EasyITCenter.ServerCoreStructure {
                 FileOperations.CreatePath(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath.ToLower()));
 
                 string fileExt = record.FileName.Split(".").Last();
-                if (!string.IsNullOrWhiteSpace(record.GuestFileContent)) File.WriteAllText(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName)), record.GuestFileContent, Encoding.UTF8);
-                if (!string.IsNullOrWhiteSpace(record.GuestFileContent)) File.WriteAllText(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, record.FileName), record.GuestFileContent, Encoding.UTF8);
 
-                if (!string.IsNullOrWhiteSpace(record.UserFileContent)) File.WriteAllText(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "user." + fileExt)), record.UserFileContent, Encoding.UTF8);
-                if (!string.IsNullOrWhiteSpace(record.UserFileContent)) File.WriteAllText(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "user." + fileExt)), record.GuestFileContent, Encoding.UTF8);
+                if (!string.IsNullOrWhiteSpace(record.GuestFileContent)) {
+                    if (record.FileName.ToLower().EndsWith(".js")) { record.GuestFileContent = NUglify.Uglify.Js(record.GuestFileContent).Code;
+                    } else if (record.FileName.ToLower().EndsWith(".css")) { record.GuestFileContent = NUglify.Uglify.Css(record.GuestFileContent).Code; }
+                    File.WriteAllText(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName)), record.GuestFileContent, Encoding.UTF8);
+                    File.WriteAllText(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, record.FileName), record.GuestFileContent, Encoding.UTF8);
+                }
 
-                if (!string.IsNullOrWhiteSpace(record.AdminFileContent)) File.WriteAllText(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "admin." + fileExt)), record.AdminFileContent, Encoding.UTF8);
-                if (!string.IsNullOrWhiteSpace(record.AdminFileContent)) File.WriteAllText(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "admin." + fileExt)), record.GuestFileContent, Encoding.UTF8);
+                if (!string.IsNullOrWhiteSpace(record.UserFileContent)) {
+                    if (record.FileName.ToLower().EndsWith(".js")) { record.UserFileContent = NUglify.Uglify.Js(record.UserFileContent).Code;
+                    } else if (record.FileName.ToLower().EndsWith(".css")) { record.UserFileContent = NUglify.Uglify.Css(record.UserFileContent).Code; }
+                    File.WriteAllText(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "user." + fileExt)), record.UserFileContent, Encoding.UTF8);
+                    File.WriteAllText(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "user." + fileExt)), record.UserFileContent, Encoding.UTF8);
+                }
 
-                if (!string.IsNullOrWhiteSpace(record.ProviderContent)) File.WriteAllText(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "provider." + fileExt)), record.ProviderContent, Encoding.UTF8);
-                if (!string.IsNullOrWhiteSpace(record.ProviderContent)) File.WriteAllText(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "provider." + fileExt)), record.GuestFileContent, Encoding.UTF8);
+                if (!string.IsNullOrWhiteSpace(record.AdminFileContent)) {
+                    if (record.FileName.ToLower().EndsWith(".js")) { record.AdminFileContent = NUglify.Uglify.Js(record.AdminFileContent).Code;
+                    } else if (record.FileName.ToLower().EndsWith(".css")) { record.AdminFileContent = NUglify.Uglify.Css(record.AdminFileContent).Code; }
+                    File.WriteAllText(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "admin." + fileExt)), record.AdminFileContent, Encoding.UTF8);
+                    File.WriteAllText(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "admin." + fileExt)), record.AdminFileContent, Encoding.UTF8);
+                }
+
+                if (!string.IsNullOrWhiteSpace(record.ProviderContent)) {
+                    if (record.FileName.ToLower().EndsWith(".js")) { record.ProviderContent = NUglify.Uglify.Js(record.ProviderContent).Code;
+                    } else if (record.FileName.ToLower().EndsWith(".css")) { record.ProviderContent = NUglify.Uglify.Css(record.ProviderContent).Code; }
+                    File.WriteAllText(System.IO.Path.Combine(hostingEnvironment.WebRootPath, "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "provider." + fileExt)), record.ProviderContent, Encoding.UTF8);
+                    File.WriteAllText(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", record.MetroPath, DataOperations.RemoveWhitespace(record.FileName).Replace(fileExt, "provider." + fileExt)), record.ProviderContent, Encoding.UTF8);
+                }
 
                 return true;
             } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }

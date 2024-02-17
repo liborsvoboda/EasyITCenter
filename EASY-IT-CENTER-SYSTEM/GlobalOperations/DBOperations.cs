@@ -1,5 +1,6 @@
 ﻿using EasyITSystemCenter.Api;
 using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,7 @@ namespace EasyITSystemCenter.GlobalOperations {
             App.IgnoredExceptionList = await CommApi.GetApiRequest<List<SystemIgnoredExceptionList>>(ApiUrls.EasyITCenterSystemIgnoredExceptionList, null, App.UserData.Authentification.Token);
             App.LanguageList = await CommApi.GetApiRequest<List<SystemTranslationList>>(ApiUrls.EasyITCenterSystemTranslationList, null, App.UserData.Authentification.Token);
             App.ParameterList = await CommApi.GetApiRequest<List<SystemParameterList>>(ApiUrls.EasyITCenterSystemParameterList, App.UserData.Authentification.Id.ToString(), App.UserData.Authentification.Token);
+            App.SystemModuleList = await CommApi.GetApiRequest<List<SystemModuleList>>(ApiUrls.SystemModuleList, null, App.UserData.Authentification.Token);
             SetNonUserDataOnSuccessStartUp();
             return true;
         }

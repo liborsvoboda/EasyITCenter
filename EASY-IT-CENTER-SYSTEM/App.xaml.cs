@@ -8,6 +8,7 @@ using EasyITSystemCenter.SystemStructure;
 using log4net.Config;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Owin.Hosting;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,8 +31,8 @@ namespace EasyITSystemCenter {
         /// Tilt Document types definitions
         /// </summary>
         public static ExtendedReceiptList TiltReceiptDoc = new ExtendedReceiptList(); public static ExtendedCreditNoteList TiltCreditDoc = new ExtendedCreditNoteList(); public static ExtendedOutgoingInvoiceList TiltInvoiceDoc = new ExtendedOutgoingInvoiceList(); public static BusinessIncomingOrderList TiltOrderDoc = new BusinessIncomingOrderList();
-
         public static BusinessOfferList TiltOfferDoc = new BusinessOfferList(); public static List<DocumentItemList> TiltDocItems = new List<DocumentItemList>(); public static string tiltTargets = TiltTargets.None.ToString();
+
 
         /// <summary>
         /// Global Application Startup Settings Central Parameters / Languages / User / Configure
@@ -40,13 +41,13 @@ namespace EasyITSystemCenter {
         public static AppRuntimeData appRuntimeData = new AppRuntimeData();
 
         public static log4net.ILog log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
+        public static List<SystemModuleList> SystemModuleList = null;
         public static List<ServerServerSettingList> ServerSetting = new List<ServerServerSettingList>();
         public static List<SystemParameterList> ParameterList = null;
         public static List<SystemTranslationList> LanguageList = null;
-        public static UserData UserData = new UserData();
         public static List<SystemIgnoredExceptionList> IgnoredExceptionList = new List<SystemIgnoredExceptionList>();
         public static SystemLoggerWebSocketClass SystemLoggerWebSocketMonitor = new SystemLoggerWebSocketClass();
+        public static UserData UserData = new UserData();
 
         public static bool ReloadLanguageListRequested = false;
 
@@ -118,29 +119,28 @@ namespace EasyITSystemCenter {
             else { ApplicationQuit(); }
         }
 
-        private void PrepareStartupTools() {
-            //var settings = new CefSettings() {
-            //    CachePath = Path.Combine(tempFolder),
-            //    BrowserSubprocessPath = Path.Combine(startupPath),
-            //    IgnoreCertificateErrors = true,
-            //    CommandLineArgsDisabled = true,
-            //    WindowlessRenderingEnabled = true,
-            //};
-            //Cef.Initialize(settings, performDependencyCheck: false);
-            //settings.CefCommandLineArgs.Add("disable-gpu", "1"); // Disable GPU acceleration
-            //settings.CefCommandLineArgs.Add("disable-gpu-vsync", "1"); //Disable GPU vsync
-            //settings.CefCommandLineArgs.Add("renderer-startup-dialog", "1");
-            //settings.DisableGpuAcceleration();
-            //settings.ChromeRuntime = false;
-            //settings.SetOffScreenRenderingBestPerformanceArgs();
 
-            try {
-                //var initialized = false;
-                //Current.Dispatcher.Invoke(() => {
-                //    initialized = Cef.Initialize(settings, true, (IBrowserProcessHandler)null);
-                //});
+        private void PrepareStartupTools() {
+          try {
+                StartupLocaslWebServer();
+
             } catch (Exception autoEx) { ApplicationLogging(autoEx); }
         }
+
+
+        /// <summary>
+        /// Local Web Server Controller
+        /// </summary>
+        private static void StartupLocaslWebServer() {
+            try {
+                if (bool.Parse(appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerEnabled").Value)) {
+                    moduleApp = WebApp.Start<Startup>(url: appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value);
+                    appRuntimeData.webServerRunning = true;
+                }
+            } catch { }
+        }
+        public static IDisposable moduleApp { get; set; }
+
 
         /// <summary>
         /// MainWindow Closing Handler for Cleaning TempData, disable AddOns / Tool and Third Party
@@ -154,6 +154,7 @@ namespace EasyITSystemCenter {
             } catch { }
 
             try {
+                if (moduleApp != null) { moduleApp.Dispose(); }
                 Cef.PreShutdown();
                 Cef.ShutdownWithoutChecks();
             } catch { }

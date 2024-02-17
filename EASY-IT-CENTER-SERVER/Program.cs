@@ -92,6 +92,9 @@ namespace EasyITCenter {
                 if (ServerConfigSettings.ConfigServerStartupOnHttps) {
                     webBuilder.ConfigureKestrel(options => {
                         options.AddServerHeader = true;
+
+                        //TODO umoznuje naslouchat i na více portech soucasne
+                        //options.ListenAnyIP(500);
                         options.ListenAnyIP(ServerConfigSettings.ConfigServerStartupPort, opt => {
                             opt.Protocols = HttpProtocols.Http1AndHttp2;
                             opt.KestrelServerOptions.AllowAlternateSchemes = true;
@@ -113,8 +116,16 @@ namespace EasyITCenter {
 
                 webBuilder.UseStartup<Startup>();
                 webBuilder.UseStaticWebAssets();
-                webBuilder.UseUrls(ServerConfigSettings.ConfigServerStartupOnHttps ? $"https://*:{ServerConfigSettings.ConfigServerStartupPort}" : $"http://*:{ServerConfigSettings.ConfigServerStartupPort}");
 
+                //TODO umoznuje naslouchat na vice portech soucasne i s ruznymi protokoly 
+                //webBuilder.UseUrls(new string[] { "http://*:5000", "https://*:5001" });
+
+                if (ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS) {
+                    webBuilder.UseUrls($"https://*:{ServerConfigSettings.ConfigServerStartupPort}",$"http://*:{ServerConfigSettings.ConfigServerStartupPort}");
+                }
+                else {
+                    webBuilder.UseUrls(ServerConfigSettings.ConfigServerStartupOnHttps ? $"https://*:{ServerConfigSettings.ConfigServerStartupPort}" : $"http://*:{ServerConfigSettings.ConfigServerStartupPort}");
+                }
                 if (ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerGetLetsEncrypt) {
                     webBuilder.UseKestrel(options => {
                         var appServices = options.ApplicationServices;
@@ -154,7 +165,7 @@ namespace EasyITCenter {
         private static void LoadConfigurationFromFile() {
             try {
                 //Load From Config File
-                string json = File.ReadAllText(System.IO.Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile), FileOperations.FileDetectEncoding(System.IO.Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile)));
+                string json = File.ReadAllText(Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile), FileOperations.FileDetectEncoding(Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile)));
                 Dictionary<string, object> exportServerSettingList = new Dictionary<string, object>();
                 exportServerSettingList.AddRange(JsonSerializer.Deserialize<Dictionary<string, object>>(json).ToList());
 

@@ -27,6 +27,8 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string tempFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0], "Temp");
         public string galleryFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0], "Gallery");
         public string appSettingFile = "config.json";
+        public bool webServerRunning = false;
+
 
         public string appName = Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0];
         public Version AppVersion { get => version; }
@@ -54,6 +56,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         Release,
         DebugWithSystemLogger
     }
+
 
     /// <summary>
     /// Class for User Authentication information

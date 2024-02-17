@@ -85,6 +85,17 @@
         public string FileContent { get; set; }
     }
 
+    public class WebFileList {
+        public List<WebFile> WebFile { get; set; }
+    }
+
+    public class WebFile {
+        public string WebFileName { get; set; }
+        public string? WebFileNamePath { get; set; }
+        public string? WebFileContent { get; set; }
+    }
+
+
     public class WebSystemLogMessage {
         public string? LogLevel { get; set; }
         public string Message { get; set; }

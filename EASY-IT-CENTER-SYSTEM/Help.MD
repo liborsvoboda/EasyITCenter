@@ -20,3 +20,8 @@ https://graphql.org/code/#c-net
 
 
 CEFSHARP nepovyšovat , nejede
+
+
+hostování web aplikací
+https://blog.codeinside.eu/2015/09/29/wpf-chrome-embedded-and-webapi-selfhosting/
+

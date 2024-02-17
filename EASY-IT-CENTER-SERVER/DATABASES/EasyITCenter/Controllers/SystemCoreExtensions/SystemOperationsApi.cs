@@ -13,6 +13,7 @@
             return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
         }
 
+
         [HttpGet("/EasyITCenterSystemOperations/Json/{procedureName}")]
         public async Task<string> GetSystemOperationsListJson(string procedureName) {
             List<DBJsonFile> data = null;

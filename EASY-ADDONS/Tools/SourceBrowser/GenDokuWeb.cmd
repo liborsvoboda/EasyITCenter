@@ -1,0 +1,1 @@
+src\HtmlGenerator\bin\Debug\net472\HtmlGenerator.exe SolutionDokuWeb.sln /out:src\HtmlGenerator\bin\Debug\net472\Web\Index

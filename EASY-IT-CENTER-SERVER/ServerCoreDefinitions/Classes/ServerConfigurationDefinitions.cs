@@ -198,6 +198,13 @@
         /// </summary>
         public static string ConfigJwtLocalKey { get; set; } = DataOperations.RandomString(40);
 
+
+
+        /// <summary>
+        /// Startup Server On HTTP and HTTPS on Defined Port 
+        /// </summary>
+        public static bool ConfigServerStartupHTTPAndHTTPS { get; set; } = false;
+
         #endregion ServerConfigurationServices
 
         #region Server Engines

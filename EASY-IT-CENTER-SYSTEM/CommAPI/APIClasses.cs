@@ -90,6 +90,7 @@
         EasyITCenterSystemIgnoredExceptionList,
         EasyITCenterSystemLoginHistoryList,
         EasyITCenterSystemMenuList,
+        SystemModuleList,
         EasyITCenterSystemParameterList,
         EasyITCenterSystemReportQueueList,
         EasyITCenterSystemReportList,

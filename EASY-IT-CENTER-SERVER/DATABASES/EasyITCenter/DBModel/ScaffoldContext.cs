@@ -90,6 +90,7 @@ namespace EasyITCenter.DBModel
         public virtual DbSet<SystemIgnoredExceptionList> SystemIgnoredExceptionLists { get; set; } = null!;
         public virtual DbSet<SystemLoginHistoryList> SystemLoginHistoryLists { get; set; } = null!;
         public virtual DbSet<SystemMenuList> SystemMenuLists { get; set; } = null!;
+        public virtual DbSet<SystemModuleList> SystemModuleLists { get; set; } = null!;
         public virtual DbSet<SystemParameterList> SystemParameterLists { get; set; } = null!;
         public virtual DbSet<SystemReportList> SystemReportLists { get; set; } = null!;
         public virtual DbSet<SystemReportQueueList> SystemReportQueueLists { get; set; } = null!;
@@ -1035,6 +1036,15 @@ namespace EasyITCenter.DBModel
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SystemMenuList_UserList");
+            });
+
+            modelBuilder.Entity<SystemModuleList>(entity =>
+            {
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.SystemModuleLists)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SystemModuleList_UserList");
             });
 
             modelBuilder.Entity<SystemParameterList>(entity =>

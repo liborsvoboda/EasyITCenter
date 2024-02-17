@@ -50,4 +50,16 @@ namespace EasyITCenter.ServerCoreDBSettings {
         public ServerModuleAndServiceListController(IRepositoryAsync<EasyITCenterContext, ServerModuleAndServiceList> repo) : base(repo) {
         }
     }
+
+
+    [Authorize(Roles = "admin")]
+    [Route("[controller]")]
+    [ApiController]
+    public class SystemModuleListController : StdAuthGenericProviderApi<EasyITCenterContext, SystemModuleList, int> {
+
+        public SystemModuleListController(IRepositoryAsync<EasyITCenterContext, SystemModuleList> repo) : base(repo) {
+        }
+    }
+
+    
 }

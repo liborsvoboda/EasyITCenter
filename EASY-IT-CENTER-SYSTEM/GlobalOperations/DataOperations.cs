@@ -11,7 +11,7 @@ namespace EasyITSystemCenter.GlobalOperations {
     /// <summary>
     /// Centralized DataOperations as Cleaning dataset Language Dictionary Auto filing
     /// </summary>
-    internal class DataOperations : MainWindow {
+    internal class DataOperations {
 
         /// <summary> Convert Dictionary<string,string> To Json Suportted Values Bool, Int, String
         /// </summary> <returns></returns>

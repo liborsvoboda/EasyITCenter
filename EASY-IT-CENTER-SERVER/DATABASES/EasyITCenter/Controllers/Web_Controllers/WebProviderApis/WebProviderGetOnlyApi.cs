@@ -7,8 +7,8 @@
     [Route("WebApi")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class WebProviderGetOnlyApi : ControllerBase {
-        private Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
 
+        private Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
         public WebProviderGetOnlyApi(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment) {
             _hostingEnvironment = hostingEnvironment;
         }
