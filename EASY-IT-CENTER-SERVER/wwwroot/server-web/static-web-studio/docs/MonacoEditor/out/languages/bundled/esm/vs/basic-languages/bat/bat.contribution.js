@@ -1,2 +1,0 @@
-/*! For license information please see bat.contribution.js.LICENSE.txt */
-import{registerLanguage}from"../_.contribution";registerLanguage({id:"bat",extensions:[".bat",".cmd"],aliases:["Batch","bat"],loader:()=>import("./bat")});

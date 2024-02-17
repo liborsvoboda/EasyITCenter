@@ -1,2 +1,0 @@
-/*! For license information please see julia.contribution.js.LICENSE.txt */
-import{registerLanguage}from"../_.contribution";registerLanguage({id:"julia",extensions:[".jl"],aliases:["julia","Julia"],loader:()=>import("./julia")});

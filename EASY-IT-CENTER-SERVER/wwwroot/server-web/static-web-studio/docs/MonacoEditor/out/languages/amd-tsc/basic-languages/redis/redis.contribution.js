@@ -1,1 +1,0 @@
-define(["require","exports","../_.contribution"],(function(e,i,r){"use strict";Object.defineProperty(i,"__esModule",{value:!0}),(0,r.registerLanguage)({id:"redis",extensions:[".redis"],aliases:["redis"],loader:function(){return AMD?new Promise((function(i,r){e(["vs/basic-languages/redis/redis"],i,r)})):new Promise((function(i,r){e(["./redis"],i,r)}))}})}));
