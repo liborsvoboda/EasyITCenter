@@ -1,0 +1,41 @@
+﻿<UserControl
+    x:Class="Wpf.PieChart.DropDowns.PieDropDownSample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Wpf.PieChart.DropDowns"
+    xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    mc:Ignorable="d">
+    <UserControl.DataContext>
+        <local:DropDownViewModel />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <Style TargetType="lvc:PieSeries">
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="DataLabels" Value="True" />
+            <Setter Property="LabelPosition" Value="OutsideSlice" />
+            <Setter Property="Foreground" Value="#303030" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Button
+            HorizontalAlignment="Left" VerticalAlignment="Top"
+            Command="{Binding GoBackCommand}">
+            Go Back
+        </Button>
+        <TextBlock VerticalAlignment="Bottom" TextWrapping="Wrap">Click in the black slice to open more content, click back to go to the previous state</TextBlock>
+        <lvc:PieChart
+            Margin="40" AnimationsSpeed="0:0:0.25"
+            DataClickCommand="{Binding SliceClickCommand}"
+            DataTooltip="{x:Null}"
+            Series="{Binding Series}">
+            <lvc:PieChart.AxisY>
+                <lvc:Axis LabelFormatter="{Binding Formatter}" />
+            </lvc:PieChart.AxisY>
+        </lvc:PieChart>
+    </Grid>
+</UserControl>

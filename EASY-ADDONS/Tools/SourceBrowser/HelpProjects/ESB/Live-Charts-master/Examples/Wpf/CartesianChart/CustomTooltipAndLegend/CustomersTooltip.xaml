@@ -1,0 +1,48 @@
+﻿<UserControl
+    x:Class="Wpf.CartesianChart.CustomTooltipAndLegend.CustomersTooltip"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Wpf.CartesianChart.CustomTooltipAndLegend"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+    Padding="20,10"
+    d:DataContext="{d:DesignInstance local:CustomersTooltip}"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    Background="#E4555555"
+    BorderBrush="#555555"
+    BorderThickness="2"
+    mc:Ignorable="d">
+    <ItemsControl Grid.IsSharedSizeScope="True" ItemsSource="{Binding Data.Points}">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="{x:Type wpf:DataPointViewModel}">
+                <Grid Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Title" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="LastName" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Phone" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="PurchasedItems" />
+                    </Grid.ColumnDefinitions>
+                    <Rectangle
+                        Grid.Column="0" Width="15" Height="15"
+                        Fill="{Binding Series.Fill}"
+                        Stroke="{Binding Series.Stroke}" />
+                    <TextBlock
+                        Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="White"
+                        Text="{Binding ChartPoint.Instance.(local:CustomerVm.Name)}" />
+                    <TextBlock
+                        Grid.Column="2" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="White"
+                        Text="{Binding ChartPoint.Instance.(local:CustomerVm.LastName)}" />
+                    <TextBlock
+                        Grid.Column="3" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="White"
+                        Text="{Binding ChartPoint.Instance.(local:CustomerVm.Phone), StringFormat=Phone: {0}}" />
+                    <TextBlock
+                        Grid.Column="4" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="White"
+                        Text="{Binding ChartPoint.Instance.(local:CustomerVm.PurchasedItems), StringFormat=Purchased Items: {0:N}}" />
+                </Grid>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>
