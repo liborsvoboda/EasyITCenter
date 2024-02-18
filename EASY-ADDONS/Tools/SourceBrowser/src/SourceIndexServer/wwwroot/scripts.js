@@ -10,6 +10,11 @@ var externalUrlMap = [
 var supportedFileExtensions = [
     "cs",
     "vb",
+    "rdl",
+    "js",
+    "css",
+    "md",
+    "html",
     "ts",
     "csproj",
     "vbproj",

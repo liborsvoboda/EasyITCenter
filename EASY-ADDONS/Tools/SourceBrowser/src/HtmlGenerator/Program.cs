@@ -18,12 +18,12 @@ namespace Microsoft.SourceBrowser.HtmlGenerator
         private static void Main(string[] args)
         {
             var options = CommandLineOptions.Parse(args);
-
-            if (options.Projects.Count == 0)
-            {
-                PrintUsage();
-                return;
-            }
+            try {
+                if (options.Projects.Count == 0) {
+                    PrintUsage();
+                    return;
+                }
+            } catch { }
 
             Paths.SolutionDestinationFolder = options.SolutionDestinationFolder;
             SolutionGenerator.LoadPlugins = options.LoadPlugins;
@@ -71,8 +71,11 @@ namespace Microsoft.SourceBrowser.HtmlGenerator
 
                 IndexSolutions(options.Projects, options.Properties, federation, options.ServerPathMappings, options.PluginBlacklist, options.DoNotIncludeReferencedProjects, options.RootPath,
                     options.IncludeSourceGeneratedDocuments);
-                FinalizeProjects(options.EmitAssemblyList, federation);
-                WebsiteFinalizer.Finalize(websiteDestination, options.EmitAssemblyList, federation);
+                try {
+                    FinalizeProjects(options.EmitAssemblyList, federation);
+
+                    WebsiteFinalizer.Finalize(websiteDestination, options.EmitAssemblyList, federation);
+                } catch { }
             }
             Log.Close();
         }

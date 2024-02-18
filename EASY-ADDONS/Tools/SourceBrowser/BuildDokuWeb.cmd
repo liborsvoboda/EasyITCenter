@@ -1,1 +1,1 @@
-msbuild /r /m /bl
+msbuild /property:ContinueOnError=true /r /m /bl

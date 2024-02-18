@@ -20,14 +20,16 @@ namespace Microsoft.SourceBrowser.Common
             }
 
             destinationDirectory = destinationDirectory.TrimSlash();
-
-            var files = Directory.GetFiles(sourceDirectory, "*.*", SearchOption.AllDirectories);
-            foreach (var file in files)
-            {
-                var relative = file.Substring(sourceDirectory.Length + 1);
-                var destination = Path.Combine(destinationDirectory, relative);
-                CopyFile(file, destination);
-            }
+            try {
+                var files = Directory.GetFiles(sourceDirectory, "*.*", SearchOption.AllDirectories);
+                foreach (var file in files) {
+                    try {
+                        var relative = file.Substring(sourceDirectory.Length + 1);
+                        var destination = Path.Combine(destinationDirectory, relative);
+                        CopyFile(file, destination);
+                    } catch { }
+                }
+            } catch { }
         }
 
         public static void CopyFile(string sourceFilePath, string destinationFilePath, bool overwrite = false)
@@ -41,15 +43,15 @@ namespace Microsoft.SourceBrowser.Common
             {
                 return;
             }
+            try {
+                var directory = Path.GetDirectoryName(destinationFilePath);
+                if (!Directory.Exists(directory)) {
+                    Directory.CreateDirectory(directory);
+                }
 
-            var directory = Path.GetDirectoryName(destinationFilePath);
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-
-            File.Copy(sourceFilePath, destinationFilePath, overwrite);
-            File.SetAttributes(destinationFilePath, File.GetAttributes(destinationFilePath) & ~FileAttributes.ReadOnly);
+                File.Copy(sourceFilePath, destinationFilePath, overwrite);
+                File.SetAttributes(destinationFilePath, File.GetAttributes(destinationFilePath) & ~FileAttributes.ReadOnly);
+            } catch { }
         }
     }
 }
