@@ -1,13 +1,9 @@
 using DBEntitySchema.Core;
-using Irony.Ast;
 using MarkdownDocumenting.Extensions;
-using Microsoft.CodeAnalysis.FlowAnalysis;
-using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
 using Swashbuckle.AspNetCore.SchemaBuilder;
 using Westwind.AspNetCore.LiveReload;
-using static Quartz.Logging.OperationName;
 
 namespace EasyITCenter.ServerCoreConfiguration {
    
@@ -164,15 +160,17 @@ namespace EasyITCenter.ServerCoreConfiguration {
             }
         }
 
+
+
         /// <summary>
         /// Server Module: Swagger Api Doc Generator And Online Tester Configuration
         /// </summary>
         /// <param name="services"></param>
         internal static void ConfigureSwagger(ref IServiceCollection services) {
             if (ServerConfigSettings.ModuleSwaggerApiDocEnabled) {
-                services.AddSwaggerSchemaBuilder(s => {s.CamelCase = false;});
-
-                services.AddSwaggerGen(c => {
+                //services.AddSwaggerSchemaBuilder(c => c.CamelCase = true);
+                
+                 services.AddSwaggerGen(c => {
                     c.AddSecurityDefinition("Basic", new OpenApiSecurityScheme { Name = "Authorization", Type = SecuritySchemeType.Http, Scheme = "basic", In = ParameterLocation.Header, Description = "Basic Authorization header for getting Bearer Token." });
                     c.AddSecurityRequirement(new OpenApiSecurityRequirement
                     { { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Basic" } }, new List<string>() } });
@@ -205,6 +203,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     c.CustomSchemaIds(type => type.FullName);
                     c.ResolveConflictingActions(x => x.First());
                 });
+
             }
         }
     }
