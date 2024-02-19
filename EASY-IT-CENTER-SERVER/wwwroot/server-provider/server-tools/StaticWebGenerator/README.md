@@ -1,5 +1,9 @@
 # ejs-static-converter
 
+
+ve view se definuje z ceho bude stránka složená 
+
+
 ejs-static-converter allows you to convert a node app that uses the EJS templating engine into a static HTML site, independant from any server code. This is useful for converting apps or websites that were made with node and ejs for easier development but don't require any server-side code into static HTML.
 
 The package will also render any ejs `include` functions like below into the HTML package, such as a header, navbar etc. into the new HTML file.

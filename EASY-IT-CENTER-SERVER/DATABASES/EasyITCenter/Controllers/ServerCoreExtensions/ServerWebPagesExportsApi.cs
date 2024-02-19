@@ -3,6 +3,7 @@ using System.IO.Compression;
 
 namespace EasyITCenter.ServerCoreDBSettings {
 
+    /*
     /// <summary>
     /// Server Root Controller Used by Server Webpages
     /// </summary>
@@ -15,11 +16,11 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// Server Root "/" Redirection to "server" Folder
         /// </summary>
         /// <returns></returns>
-        //[HttpGet("/")]
-        //public IActionResult Index() {
-        //    return new RedirectResult("/Index");
-        //}
-    }
+        [HttpGet("/")]
+        public IActionResult Index() {
+            return new RedirectResult("/Index");
+        }
+    }*/
 
     [Authorize]
     [ApiController]
@@ -40,19 +41,19 @@ namespace EasyITCenter.ServerCoreDBSettings {
                 List<WebMenuList> data;
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) { data = new EasyITCenterContext().WebMenuLists.ToList(); }
 
-                FileOperations.ClearFolder(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "Export"));
-                FileOperations.CreatePath(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages"));
-                FileOperations.CopyDirectory(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro"), System.IO.Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", "metro"));
+                FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.Startup_path, "Export"));
+                FileOperations.CreatePath(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", "metro"));
                 data.ForEach(menuItem => {
                     try {
                         HtmlWeb hw = new HtmlWeb();
                         HtmlDocument doc = hw.Load((Request.IsHttps ? "https" : "http") + "://" + Request.Host + "/" + DataOperations.RemoveWhitespace(menuItem.Id + "-" + menuItem.Name));
-                        doc.Save(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", DataOperations.RemoveWhitespace(menuItem.Id + "-" + menuItem.Name) + ".html"), Encoding.UTF8);
+                        doc.Save(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", DataOperations.RemoveWhitespace(menuItem.Id + "-" + menuItem.Name) + ".html"), Encoding.UTF8);
                     } catch { }
                 });
 
-                ZipFile.CreateFromDirectory(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages"), System.IO.Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages.zip"));
-                var zipData = await System.IO.File.ReadAllBytesAsync(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages.zip"));
+                ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages.zip"));
+                var zipData = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages.zip"));
 
                 if (data != null) { return File(zipData, "application/x-zip-compressed", "Webpages.zip"); }
                 else { return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") }); }

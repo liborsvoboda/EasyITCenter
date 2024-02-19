@@ -8,8 +8,6 @@ using Newtonsoft.Json.Serialization;
 using Quartz;
 using SimpleMvcSitemap;
 using Snickler.RSSCore.Extensions;
-using FileContextCore;
-using Microsoft.Extensions.FileProviders;
 
 namespace EasyITCenter.ServerCoreConfiguration {
 

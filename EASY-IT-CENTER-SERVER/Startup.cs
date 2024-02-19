@@ -92,7 +92,7 @@ namespace EasyITCenter {
                 app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.All });
                 app.UseCertificateForwarding();
             }
-
+           
             //Root Page To Server Index
             app.Use(async (context, next) => { if (context.Request.Path.Value == "/") { context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath; } await next(); });
 
@@ -192,7 +192,7 @@ namespace EasyITCenter {
                     } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
                 });
             }
-
+           
             if (ServerConfigSettings.WebMvcPagesEngineEnabled) { app.UseMvcWithDefaultRoute(); }
             try { app.UsePathBase(BackendServer.ServerRuntimeData.SpecialUserWebRootPath); } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
             if (ServerConfigSettings.ModuleWebDataManagerEnabled) {app.UseEasyData();}
