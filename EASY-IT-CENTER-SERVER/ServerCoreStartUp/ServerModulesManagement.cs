@@ -61,21 +61,22 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
                         data = new EasyITCenterContext().ServerLiveDataMonitorLists.Where(a => a.Active).ToList();
                     }
-
-                    foreach (ServerLiveDataMonitorList monitor in data) {
-                        services.AddLiveReload(config => {
-                            try {
-                                if (FileOperations.CheckDirectory(System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath))) {
-                                    config.LiveReloadEnabled = true;
-                                    config.ServerRefreshTimeout = 1000;
-                                    config.FolderToMonitor = System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath);
-                                    if (monitor.FileExtensions.Length > 0) { config.ClientFileExtensions = monitor.FileExtensions; }
-                                }
-                                else { CoreOperations.SendEmail(new MailRequest() { Content = "Path For Live Data Monitoring not Exist" + System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath) }); }
-                            } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
-                        });
-                    }
-                } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
+                    if (data != null) {
+                        foreach (ServerLiveDataMonitorList monitor in data) {
+                            services.AddLiveReload(config => {
+                                try {
+                                    if (FileOperations.CheckDirectory(System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath))) {
+                                        config.LiveReloadEnabled = true;
+                                        config.ServerRefreshTimeout = 1000;
+                                        config.FolderToMonitor = System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath);
+                                        if (monitor.FileExtensions.Length > 0) { config.ClientFileExtensions = monitor.FileExtensions; }
+                                    }
+                                    else { CoreOperations.SendEmail(new MailRequest() { Content = "Path For Live Data Monitoring not Exist" + System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath) }); }
+                                } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
+                            });
+                        }
+                    } else { services.AddLiveReload(); }
+            } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
             }
         }
 
