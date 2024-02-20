@@ -33,10 +33,10 @@ namespace AdavancedInkTopicsSamples
                                        Geometry geometry, Brush fillBrush)
         {
             // Create a new Brush, if necessary.
-            brush ??= new LinearGradientBrush(Colors.Red, Colors.Blue, 20d);
+            brush = new LinearGradientBrush(Colors.Red, Colors.Blue, 20d);
 
             // Create a new Pen, if necessary.
-            pen ??= new Pen(brush, 2d);
+            pen = new Pen(brush, 2d);
 
             // Draw linear gradient ellipses between
             // all the StylusPoints that have come in.

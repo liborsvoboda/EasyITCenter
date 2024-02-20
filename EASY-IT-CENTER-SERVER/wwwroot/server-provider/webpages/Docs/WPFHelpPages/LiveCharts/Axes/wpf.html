@@ -1,0 +1,140 @@
+﻿<h3 class="important-tittle">Customizing Axis</h3>
+
+<p>
+    You can customize just about everything in LiveCharts and axes are no exception. The next image illustrates a custom axis.
+</p>
+
+<div class="text-center">
+    <img src="/App/Examples/v1/Axes/Images/axis explain.jpg"/>
+</div>
+
+<h4>Title</h4>
+
+<p>
+    Use the <i class="text-muted">Title</i> property to add a label an axis.
+</p>
+
+<pre class="prettyprint">myAxis.Title = "Population"</pre>
+
+<h4>Merged Axes</h4>
+
+<p>
+    When you need to save space, merge axes in the chart. Set the
+    <i class="text-muted">Axis.IsMerged</i> property to true to merge axes together. The next image shows a merged
+    axis (left) vs a normal axis (right).
+</p>
+
+<div class="text-center">
+    <img src="https://cloud.githubusercontent.com/assets/10853349/14399794/dfda95b0-fdb5-11e5-8504-6df683434e1b.png"/>
+</div>
+
+<h4>Axis positioning</h4>
+
+<p>
+    No matter if you have 1 or 10 axes, you can always specify where the axis is stacked using the
+    <i class="text-muted">Axis.Position</i> property. Position options are <i class="text-muted">RightTop, LeftBottom</i>
+</p>
+
+<pre class="prettyprint">&lt;lvc:Axis Position="RightTop" /></pre>
+
+<div class="text-center">
+    <img src="/App/Examples/v1/Multiple Axes/Images/multiax.jpg"/>
+</div>
+
+<h4>Forcing the separator Step</h4>
+
+<p>
+    Every axis separator is calculated automatically according to the chart size, and values range,
+    but some times you need a static separator step, for example every 30 seconds, or every 10 units.
+    Another useful application is when you need to display all labels. In this case, setting the step
+    to 1 will force the chart to draw all the labels. Finally, to remove any step, you can set it
+    back to <i class="text-muted">null</i>, and it will be calculated automatically.
+</p>
+
+<p>
+    <b>Warning!</b> Be careful when forcing steps, it could result in horrible performance issues
+    if not used correctly. For example, if your current range of values goes from 0 to 1,000 and you 
+    set the step to 1 the chart will draw 1,000 individual separators, possibly leading to performance or visual issues.
+</p>
+
+<p>
+    <b>Forcing step to 1 unit</b>
+</p>
+
+<pre class="prettyprint">&lt;lvc:CartesianChart Series="{Binding SeriesCollection}" >
+  &lt;lvc:CartesianChart.AxisX>
+    &lt;lvc:Axis Labels="{Binding Labels}">
+      &lt;lvc:Axis.Separator>
+        &lt;lvc:Separator IsEnabled="False" Step="1">&lt;/lvc:Separator>
+      &lt;/lvc:Axis.Separator>
+    &lt;/lvc:Axis>
+  &lt;/lvc:CartesianChart.AxisX>
+  &lt;lvc:CartesianChart.AxisY>
+    &lt;lvc:Axis Title="Sold Items" LabelFormatter="{Binding Formatter}">&lt;/lvc:Axis>
+  &lt;/lvc:CartesianChart.AxisY>
+&lt;/lvc:CartesianChart></pre>
+
+<p>
+    <b>Forcing the step when using DateTime</b> 30 second steps in this case. You can find help about using DateTime objects
+    in the <a href="/App/examples/v1/wpf/Date%20Time">DateTime article.</a>
+</p>
+
+<pre class="prettyprint">//Code Behind
+Step = TimeSpan.FromSeconds(30).Ticks;
+
+//XAML
+&lt;lvc:CartesianChart Series="{Binding SeriesCollection}">
+    &lt;lvc:CartesianChart.AxisX>
+        &lt;lvc:Axis Labels="{Binding Labels}">
+            &lt;lvc:Axis.Separator>
+               &lt;lvc:Separator IsEnabled="False" Step="{Binding Step}">&lt;/lvc:Separator>
+            &lt;/lvc:Axis.Separator>
+        &lt;/lvc:Axis>
+    &lt;/lvc:CartesianChart.AxisX>
+    &lt;lvc:CartesianChart.AxisY>
+       &lt;lvc:Axis Title="Sold Items" LabelFormatter="{Binding Formatter}">&lt;/lvc:Axis>
+    &lt;/lvc:CartesianChart.AxisY>
+&lt;/lvc:CartesianChart>
+</pre>
+
+<h4>Styling Separators</h4>
+
+<p>
+    Notice that setting the <i class="text-muted">Axis.Separator.IsEnabled</i> property to false will make
+    the separator invisible.
+</p>
+
+<div class="text-center">
+    <img src="/App/Examples/v1/About Series/Images/custom-line.jpg"/>
+</div>
+
+<pre class="prettyprint">&lt;lvc:CartesianChart Background="#222E31">
+  &lt;lvc:CartesianChart.Series>
+    &lt;lvc:LineSeries Values="{Binding Values1}" />
+    &lt;lvc:LineSeries Values="{Binding Values2}" />
+  &lt;/lvc:CartesianChart.Series>
+  &lt;lvc:CartesianChart.AxisX>
+    &lt;lvc:Axis IsMerged="True">
+      &lt;lvc:Axis.Separator>
+        &lt;lvc:Separator StrokeThickness="1" StrokeDashArray="2">
+          &lt;lvc:Separator.Stroke>
+            &lt;SolidColorBrush Color="#404F56" />
+          &lt;/lvc:Separator.Stroke>
+        &lt;/lvc:Separator>
+      &lt;/lvc:Axis.Separator>
+    &lt;/lvc:Axis>
+  &lt;/lvc:CartesianChart.AxisX>
+  &lt;lvc:CartesianChart.AxisY>
+    &lt;lvc:Axis IsMerged="True">
+      &lt;lvc:Axis.Separator>
+        &lt;lvc:Separator StrokeThickness="1.5" StrokeDashArray="4">
+          &lt;lvc:Separator.Stroke>
+            &lt;SolidColorBrush Color="#404F56" />
+          &lt;/lvc:Separator.Stroke>
+        &lt;/lvc:Separator>
+      &lt;/lvc:Axis.Separator>
+    &lt;/lvc:Axis>
+  &lt;/lvc:CartesianChart.AxisY>
+&lt;/lvc:CartesianChart></pre>
+
+

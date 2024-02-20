@@ -413,7 +413,7 @@ namespace SdkSample
         /// <summary>Resources used to hold styles.</summary>
         private ResourceDictionary GetResources(TextPointer position)
         {
-            _resources ??= new ResourceDictionary();
+            _resources = new ResourceDictionary();
             return _resources;
         }
 

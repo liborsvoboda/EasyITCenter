@@ -1869,7 +1869,7 @@ namespace SdkSample
 
             // Get string valkue for the width
             columnWidthAsString = GetAttribute(htmlTDElement, "width");
-            columnWidthAsString ??= GetCssAttribute(GetAttribute(htmlTDElement, "style"), "width");
+            columnWidthAsString = GetCssAttribute(GetAttribute(htmlTDElement, "style"), "width");
 
             // We do not allow column width to be 0, if specified as 0 we will fail to record it
             if (!TryGetLengthValue(columnWidthAsString, out columnWidth) || columnWidth == 0)
