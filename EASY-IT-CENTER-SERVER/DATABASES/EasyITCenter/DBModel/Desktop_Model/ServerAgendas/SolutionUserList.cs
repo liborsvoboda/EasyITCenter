@@ -65,6 +65,9 @@ namespace EasyITCenter.DBModel
             SolutionEmailTemplateLists = new HashSet<SolutionEmailTemplateList>();
             SolutionFailLists = new HashSet<SolutionFailList>();
             SolutionLanguageLists = new HashSet<SolutionLanguageList>();
+            SolutionMessageModuleListFromUsers = new HashSet<SolutionMessageModuleList>();
+            SolutionMessageModuleListToUsers = new HashSet<SolutionMessageModuleList>();
+            SolutionMessageTypeLists = new HashSet<SolutionMessageTypeList>();
             SolutionMixedEnumLists = new HashSet<SolutionMixedEnumList>();
             SolutionMottoLists = new HashSet<SolutionMottoList>();
             SolutionOperationLists = new HashSet<SolutionOperationList>();
@@ -238,6 +241,12 @@ namespace EasyITCenter.DBModel
         public virtual ICollection<SolutionFailList> SolutionFailLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<SolutionLanguageList> SolutionLanguageLists { get; set; }
+        [InverseProperty("FromUser")]
+        public virtual ICollection<SolutionMessageModuleList> SolutionMessageModuleListFromUsers { get; set; }
+        [InverseProperty("ToUser")]
+        public virtual ICollection<SolutionMessageModuleList> SolutionMessageModuleListToUsers { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<SolutionMessageTypeList> SolutionMessageTypeLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<SolutionMixedEnumList> SolutionMixedEnumLists { get; set; }
         [InverseProperty("User")]

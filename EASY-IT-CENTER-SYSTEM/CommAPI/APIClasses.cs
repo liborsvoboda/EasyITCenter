@@ -69,10 +69,12 @@
         EasyITCenterServerSettingList,
         EasyITCenterServerToolPanelDefinitionList,
         EasyITCenterServerToolTypeList,
-
+        EasyITCenterSolutionEmailerHistoryList,
         EasyITCenterSolutionEmailTemplateList,
         EasyITCenterSolutionLanguageList,
         EasyITCenterSolutionOperationList,
+        SolutionMessageModuleList,
+        SolutionMessageTypeList,
         EasyITCenterSolutionMixedEnumList,
         EasyITCenterSolutionMottoList,
         EasyITCenterSolutionSchedulerList,

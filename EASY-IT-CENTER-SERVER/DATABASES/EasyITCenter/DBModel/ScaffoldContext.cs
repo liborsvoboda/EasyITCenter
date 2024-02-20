@@ -71,8 +71,11 @@ namespace EasyITCenter.DBModel
         public virtual DbSet<ServerToolPanelDefinitionList> ServerToolPanelDefinitionLists { get; set; } = null!;
         public virtual DbSet<ServerToolTypeList> ServerToolTypeLists { get; set; } = null!;
         public virtual DbSet<SolutionEmailTemplateList> SolutionEmailTemplateLists { get; set; } = null!;
+        public virtual DbSet<SolutionEmailerHistoryList> SolutionEmailerHistoryLists { get; set; } = null!;
         public virtual DbSet<SolutionFailList> SolutionFailLists { get; set; } = null!;
         public virtual DbSet<SolutionLanguageList> SolutionLanguageLists { get; set; } = null!;
+        public virtual DbSet<SolutionMessageModuleList> SolutionMessageModuleLists { get; set; } = null!;
+        public virtual DbSet<SolutionMessageTypeList> SolutionMessageTypeLists { get; set; } = null!;
         public virtual DbSet<SolutionMixedEnumList> SolutionMixedEnumLists { get; set; } = null!;
         public virtual DbSet<SolutionMottoList> SolutionMottoLists { get; set; } = null!;
         public virtual DbSet<SolutionOperationList> SolutionOperationLists { get; set; } = null!;
@@ -870,6 +873,40 @@ namespace EasyITCenter.DBModel
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ServerLanguageList_UserList");
+            });
+
+            modelBuilder.Entity<SolutionMessageModuleList>(entity =>
+            {
+                entity.HasOne(d => d.FromUser)
+                    .WithMany(p => p.SolutionMessageModuleListFromUsers)
+                    .HasForeignKey(d => d.FromUserId)
+                    .HasConstraintName("FK_SolutionMessageModuleList_SolutionUserListFrom");
+
+                entity.HasOne(d => d.MessageParent)
+                    .WithMany(p => p.InverseMessageParent)
+                    .HasForeignKey(d => d.MessageParentId)
+                    .HasConstraintName("FK_SolutionMessageModuleList_SolutionMessageModuleListParent");
+
+                entity.HasOne(d => d.MessageType)
+                    .WithMany(p => p.SolutionMessageModuleLists)
+                    .HasForeignKey(d => d.MessageTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SolutionMessageModuleList_SolutionMessageTypeList");
+
+                entity.HasOne(d => d.ToUser)
+                    .WithMany(p => p.SolutionMessageModuleListToUsers)
+                    .HasForeignKey(d => d.ToUserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SolutionMessageModuleList_SolutionUserListTo");
+            });
+
+            modelBuilder.Entity<SolutionMessageTypeList>(entity =>
+            {
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.SolutionMessageTypeLists)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SolutionMessageTypeList_SolutionUserList");
             });
 
             modelBuilder.Entity<SolutionMixedEnumList>(entity =>
