@@ -40,6 +40,11 @@ namespace EasyITSystemCenter {
         /// </summary>
         public static AppRuntimeData appRuntimeData = new AppRuntimeData();
 
+
+        /// <summary>
+        /// System Core Needs Runtime Data For Working
+        /// //TODO move to RuntimeData
+        /// </summary>
         public static log4net.ILog log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static List<SystemModuleList> SystemModuleList = null;
         public static List<ServerServerSettingList> ServerSetting = new List<ServerServerSettingList>();
