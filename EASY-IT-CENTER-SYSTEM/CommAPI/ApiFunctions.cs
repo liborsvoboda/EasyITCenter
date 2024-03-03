@@ -32,7 +32,7 @@ namespace EasyITSystemCenter.Api {
                     return JsonConvert.DeserializeObject<T>(json);
                 } catch (Exception ex) {
                     if (ex.Message.Contains("401 (Unauthorized)")) {
-                        _ = await MainWindow.ShowMessageOnMainWindow(false, await DBOperations.DBTranslation("connectionWasDisconnected"), false);
+                        _ = await MainWindow.ShowMessageOnMainWindow(false, apiUrl + Environment.NewLine + await DBOperations.DBTranslation("connectionWasDisconnected") + Environment.NewLine + ex.Message, false);
                         ((MainWindow)App.Current.MainWindow).ShowLoginDialog();
                     }
                     return new T();
@@ -49,7 +49,7 @@ namespace EasyITSystemCenter.Api {
                     result = JsonConvert.DeserializeObject<DBResultMessage>(await json.Content.ReadAsStringAsync());
                     if (result != null && result.ErrorMessage == null) { result.ErrorMessage = await json.Content.ReadAsStringAsync(); }
                     else if (result == null && json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
-                        _ = await MainWindow.ShowMessageOnMainWindow(false, await DBOperations.DBTranslation("connectionWasDisconnected"), false);
+                        _ = await MainWindow.ShowMessageOnMainWindow(false, apiUrl + Environment.NewLine + await DBOperations.DBTranslation("connectionWasDisconnected") + Environment.NewLine + result.ErrorMessage, false);
                         ((MainWindow)App.Current.MainWindow).ShowLoginDialog();
                         result = new DBResultMessage() { RecordCount = 0, ErrorMessage = System.Net.HttpStatusCode.Unauthorized.ToString(), Status = "error" };
                     }
@@ -67,7 +67,7 @@ namespace EasyITSystemCenter.Api {
                     result = JsonConvert.DeserializeObject<DBResultMessage>(await json.Content.ReadAsStringAsync());
                     if (result != null && result.ErrorMessage == null) { result.ErrorMessage = await json.Content.ReadAsStringAsync(); }
                     else if (result == null && json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
-                        _ = await MainWindow.ShowMessageOnMainWindow(false, await DBOperations.DBTranslation("connectionWasDisconnected"), false);
+                        _ = await MainWindow.ShowMessageOnMainWindow(false, apiUrl + Environment.NewLine + await DBOperations.DBTranslation("connectionWasDisconnected") + Environment.NewLine + result.ErrorMessage, false);
                         ((MainWindow)App.Current.MainWindow).ShowLoginDialog();
                         result = new DBResultMessage() { RecordCount = 0, ErrorMessage = System.Net.HttpStatusCode.Unauthorized.ToString(), Status = "error" };
                     }
@@ -85,7 +85,7 @@ namespace EasyITSystemCenter.Api {
                     result = JsonConvert.DeserializeObject<DBResultMessage>(await json.Content.ReadAsStringAsync());
                     if (result != null && result.ErrorMessage == null) { result.ErrorMessage = await json.Content.ReadAsStringAsync(); }
                     else if (result == null && json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
-                        _ = await MainWindow.ShowMessageOnMainWindow(false, await DBOperations.DBTranslation("connectionWasDisconnected"), false);
+                        _ = await MainWindow.ShowMessageOnMainWindow(false, apiUrl + Environment.NewLine + await DBOperations.DBTranslation("connectionWasDisconnected") + Environment.NewLine + result.ErrorMessage, false);
                         ((MainWindow)App.Current.MainWindow).ShowLoginDialog();
                         result = new DBResultMessage() { RecordCount = 0, ErrorMessage = System.Net.HttpStatusCode.Unauthorized.ToString(), Status = "error" };
                     }

@@ -16,6 +16,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// Documentation https://ogp.me/
         /// Tool For Extend Loaded Html By Add Custom Metadata by Format OpenGraph
         /// TODO Implement Inserting Metadata or How To Use
+        /// Its Description Content as Metadata for Facebokk etc
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>

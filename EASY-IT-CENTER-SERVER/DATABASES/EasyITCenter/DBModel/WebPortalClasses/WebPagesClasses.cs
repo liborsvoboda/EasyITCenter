@@ -91,7 +91,7 @@
 
     public class WebFile {
         public string WebFileName { get; set; }
-        public string? WebFileNamePath { get; set; }
+        public string? WebFileNameFullPath { get; set; }
         public string? WebFileContent { get; set; }
     }
 

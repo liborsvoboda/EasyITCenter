@@ -220,8 +220,8 @@ namespace EasyITCenter.ServerCoreConfiguration {
         internal static void EnableDocumentation(ref IApplicationBuilder app) {
             if (ServerConfigSettings.ModuleMdDocumentationEnabled) {
                 app.UseDocumentation(builder => {
-                    builder.HighlightJsStyle = "/metro/css/material-darker.css";
-                    builder.GetMdlStyle = "/metro/css/material.min.css";
+                    builder.HighlightJsStyle = "../../metro/css/material-darker.css";
+                    builder.GetMdlStyle = "../../metro/css/material.min.css";
                     builder.NavBarStyle = MarkdownDocumenting.Elements.NavBarStyle.Default;
                     builder.RootPathHandling = HandlingType.HandleWithHighOrder;
                     builder.IndexDocument = "Docs";

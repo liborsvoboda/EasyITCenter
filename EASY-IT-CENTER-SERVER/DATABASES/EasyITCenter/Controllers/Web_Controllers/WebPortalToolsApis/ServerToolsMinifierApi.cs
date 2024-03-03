@@ -34,8 +34,8 @@ namespace EasyITCenter.ControllersExtensions {
                         file.WebFileContent = NUglify.Uglify.Css(file.WebFileContent).Code;
                     }
 
-                    System.IO.File.WriteAllText(System.IO.Path.Combine(_hostingEnvironment.WebRootPath,
-                        (file.WebFileName.ToLower().Contains(".min.") ? file.WebFileNamePath : file.WebFileNamePath.Replace(file.WebFileNamePath.Split(".").Last(), ".min." + file.WebFileNamePath.Split(".").Last()))),
+                    System.IO.File.WriteAllText(Path.Combine(_hostingEnvironment.WebRootPath,
+                        file.WebFileName.ToLower().Contains(".min.") ? file.WebFileNameFullPath : file.WebFileNameFullPath.Replace(file.WebFileNameFullPath.Split(".").Last(), ".min." + file.WebFileNameFullPath.Split(".").Last())),
                         file.WebFileContent);
                 });
 
