@@ -185,7 +185,7 @@ namespace EasyITCenter {
                 data.ForEach(path => {
                     try {
                         app.UseFileServer(new FileServerOptions {
-                            FileProvider = new PhysicalFileProvider(System.IO.Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", path.WebRootPath)),
+                            FileProvider = new PhysicalFileProvider(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", path.WebRootPath)),
                             RequestPath = "/" + (path.AliasPath != null && path.AliasPath.Length > 0 ? path.AliasPath : path.WebRootPath),
                             EnableDirectoryBrowsing = true,
                         });

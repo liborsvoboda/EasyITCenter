@@ -13,25 +13,34 @@ namespace EasyITCenter.ServerCoreStructure {
     /// </summary>
     public partial class ServerRuntimeData {
 
+
+
+
         /// <summary>
-        /// Gets or Sets the startup_path.
+        /// Gets or Sets Project Root Directory.
         /// </summary>
-        internal static string Startup_path { get; set; } = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        internal static string ContentRootPath { get; set; } = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+
 
         /// <summary>
         /// Gets or Sets the startup_path.
         /// </summary>
-        internal static string WebRoot_path { get; set; } = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "wwwroot");
+        internal static string Startup_path { get; set; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+        /// <summary>
+        /// Gets or Sets the startup_path.
+        /// </summary>
+        internal static string WebRoot_path { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "wwwroot");
 
         /// <summary>
         /// Gets or Sets the setting_folder.
         /// </summary>
-        internal static string Setting_folder { get; set; } = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0]);
+        internal static string Setting_folder { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0]);
 
         /// <summary>
         /// Gets or Sets the configure file.
         /// </summary>
-        internal static string UserPath { get; set; } = System.IO.Path.Combine(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0]), "Users");
+        internal static string UserPath { get; set; } = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0]), "Users");
 
         /// <summary>
         /// User Web Root Path for Startup and Any missing address Automatic Redirection Value must

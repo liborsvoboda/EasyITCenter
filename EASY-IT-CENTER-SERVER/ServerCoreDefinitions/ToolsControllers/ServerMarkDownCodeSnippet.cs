@@ -1,40 +1,43 @@
 ﻿using MarkdownSnippets;
-using OpenGraphNet;
 
 namespace EasyITCenter.ToolsControllers {
 
-    /// <summary>
-    /// Server Email sender Api for logged Communication
-    /// </summary>
-    /// <seealso cref="ControllerBase"/>
-    [Authorize]
-    [ApiController]
-    [Route("ServerServices")]
-    [ApiExplorerSettings(IgnoreApi = true)]
-    public class ServerMarkDownCodeSnippet : ControllerBase {
-
-        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
-        public ServerMarkDownCodeSnippet(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment) {
-            _hostingEnvironment = hostingEnvironment;
-        }
+  /// <summary>
+  /// Server Tool Generation Markdown Documentation From Project Codes
+  /// </summary>
+    internal class ProjectMarkDown {
 
 
         /// <summary>
-        /// Documentation https://ogp.me/
-        /// Tool For Extend Loaded Html By Add Custom Metadata by Format OpenGraph
-        /// TODO Implement Inserting Metadata or How To Use
-        /// Its Description Content as Metadata for Facebokk etc
+        /// Server Tool Generation Markdown Read All Code Snippets
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpGet("/ServerServices/GenerateCodeMarkdown")]
-        public async Task<IActionResult> GenerateCodeMarkdown([FromBody] WebUrlRequest request) {
-            try {
-                var files = Directory.EnumerateFiles(_hostingEnvironment.ContentRootPath, "*.cs", SearchOption.AllDirectories);
-                var snippets = FileSnippetExtractor.Read(files);
-                return null;
-            } catch { }
-            return null;
+        internal void ReadingFiles() {
+            var files = Directory.EnumerateFiles(ServerRuntimeData.ContentRootPath, "*.cs", SearchOption.AllDirectories);
+            var snippets = FileSnippetExtractor.Read(files);
         }
+
+
+        internal void DirectoryMarkdownProcessorRun() {
+
+            var processor = new DirectoryMarkdownProcessor(
+                "targetDirectory",
+                directoryIncludes: _ => true,
+                markdownDirectoryIncludes: _ => true,
+                snippetDirectoryIncludes: _ => true);
+            processor.Run();
+        }
+
+        internal void DirectoryMarkdownProcessorRunMaxWidth() {
+
+            var processor = new DirectoryMarkdownProcessor(
+                "targetDirectory",
+                maxWidth: 80,
+                directoryIncludes: _ => true,
+                markdownDirectoryIncludes: _ => true,
+                snippetDirectoryIncludes: _ => true);
+            processor.Run();
+
+        }
+
     }
 }
