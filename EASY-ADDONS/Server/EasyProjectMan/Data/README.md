@@ -1,4 +1,4 @@
-﻿
+
 ### Installation Info
 In Installation folder is folder "Data" in Project Installation   
 In this Folder is Startup Database and config.txt Configuration file    

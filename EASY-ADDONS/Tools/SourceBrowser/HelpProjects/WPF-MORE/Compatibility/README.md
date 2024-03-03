@@ -1,4 +1,4 @@
-﻿## .NET Core 3.0 - Applicaiton Compatibility Quirks HOWTO 
+## .NET Core 3.0 - Applicaiton Compatibility Quirks HOWTO 
 
 This sample shows how Application Compatibility quirks are enabled in a WPF application. 
 
