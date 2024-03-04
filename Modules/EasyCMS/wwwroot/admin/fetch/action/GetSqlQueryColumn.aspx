@@ -1,2 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionGetSqlQueryColumnController" Model="Elanat.ActionGetSqlQueryColumnModel" %>
-<textarea id="txt_FetchListItem" name="txt_FetchListItem" class="el_textarea_input el_left_to_right el_important_field"><%=model.FetchListItemValue%></textarea>

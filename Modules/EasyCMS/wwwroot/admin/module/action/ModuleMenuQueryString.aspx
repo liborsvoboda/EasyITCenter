@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionModuleMenuQueryStringController" Model="Elanat.ActionModuleMenuQueryStringModel" %>

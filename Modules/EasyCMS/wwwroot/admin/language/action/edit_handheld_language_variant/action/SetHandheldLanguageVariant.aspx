@@ -1,2 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionSetHandheldLanguageVariantController" Model="Elanat.ActionSetHandheldLanguageVariantModel" %>
-<select id="lstx_HandheldLanguageVariant" name="lstx_HandheldLanguageVariant" style="direction: ltr" onchange="el_SetHandheldLanguageVariant(this)" size="<%=model.HandheldLanguageVariantCountValue%>" class="el_more_select_input"><%=model.HandheldLanguageVariantOptionListValue%></select>

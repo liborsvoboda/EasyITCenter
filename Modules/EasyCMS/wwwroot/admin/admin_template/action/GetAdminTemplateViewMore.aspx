@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionGetAdminTemplateViewMoreController" Model="Elanat.ActionGetAdminTemplateViewMoreModel" %>

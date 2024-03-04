@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionGetComponentInformationController" Model="Elanat.ActionGetComponentInformationModel" %>

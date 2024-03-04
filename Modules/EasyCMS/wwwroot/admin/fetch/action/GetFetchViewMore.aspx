@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionGetFetchViewMoreController" Model="Elanat.ActionGetFetchViewMoreModel" %>

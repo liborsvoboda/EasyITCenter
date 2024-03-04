@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.PluginShowAdminComponentGroupController" Model="Elanat.PluginShowAdminComponentGroupModel" %>

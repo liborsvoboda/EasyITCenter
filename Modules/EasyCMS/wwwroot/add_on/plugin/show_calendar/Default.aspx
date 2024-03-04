@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.PluginSiteShowCalendarController" Model="Elanat.PluginSiteShowCalendarModel" %>

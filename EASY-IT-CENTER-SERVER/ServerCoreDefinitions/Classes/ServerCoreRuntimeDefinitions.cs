@@ -19,7 +19,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <summary>
         /// Gets or Sets Project Root Directory.
         /// </summary>
-        internal static string ContentRootPath { get; set; } = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+        internal static string ContentRootPath { get; set; } = Path.GetDirectoryName(Environment.CurrentDirectory);
 
 
         /// <summary>

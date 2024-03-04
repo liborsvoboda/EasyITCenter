@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionContentAvatarNewDirectoryController" Model="Elanat.ActionContentAvatarNewDirectoryModel" %>

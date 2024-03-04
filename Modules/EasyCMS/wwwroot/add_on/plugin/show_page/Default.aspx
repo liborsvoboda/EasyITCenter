@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.PluginSiteShowPageController" Model="Elanat.PluginSiteShowPageModel" %>

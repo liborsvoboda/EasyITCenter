@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.PluginShowAdminSystemMenuController" Model="Elanat.PluginShowAdminSystemMenuModel" %>

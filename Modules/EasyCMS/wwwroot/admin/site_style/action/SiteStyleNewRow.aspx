@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionSiteStyleNewRowController" Model="Elanat.ActionSiteStyleNewRowModel" %>

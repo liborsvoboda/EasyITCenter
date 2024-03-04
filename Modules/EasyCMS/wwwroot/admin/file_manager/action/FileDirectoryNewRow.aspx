@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionFileDirectoryNewRowController" Model="Elanat.ActionFileDirectoryNewRowModel" %>

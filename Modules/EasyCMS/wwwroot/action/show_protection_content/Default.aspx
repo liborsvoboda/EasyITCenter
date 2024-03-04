@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionShowProtectionContentController" Model="Elanat.ActionShowProtectionContentModel" %>

@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.SiteSitemapController" Model="Elanat.SiteSitemapModel" %>

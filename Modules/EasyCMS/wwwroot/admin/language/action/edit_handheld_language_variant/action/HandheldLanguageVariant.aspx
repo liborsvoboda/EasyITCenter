@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionHandheldLanguageVariantController" Model="Elanat.ActionHandheldLanguageVariantModel" %>

@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.IncludeElanatCaptchaController" Model="Elanat.IncludeElanatCaptchaModel" %>

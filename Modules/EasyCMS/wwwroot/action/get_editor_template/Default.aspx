@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionGetEditorTemplateController" Model="Elanat.ActionGetEditorTemplateModel" %>

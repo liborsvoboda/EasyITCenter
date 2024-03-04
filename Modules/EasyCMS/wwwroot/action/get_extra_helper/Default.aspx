@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionGetExtraHelperController" Model="Elanat.ActionGetExtraHelperModel" %>

@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ExtraHelperShowLogsListController" Model="Elanat.ExtraHelperShowLogsListModel" %>

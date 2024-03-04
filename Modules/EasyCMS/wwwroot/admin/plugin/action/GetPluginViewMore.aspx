@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionGetPluginViewMoreController" Model="Elanat.ActionGetPluginViewMoreModel" %>

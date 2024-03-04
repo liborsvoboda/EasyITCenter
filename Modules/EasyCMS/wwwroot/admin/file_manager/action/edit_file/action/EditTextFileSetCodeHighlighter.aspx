@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionEditTextFileSetCodeHighlighterController" Model="Elanat.ActionEditTextFileSetCodeHighlighterModel" %>

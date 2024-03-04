@@ -1,1 +1,0 @@
-﻿<%@ Page Controller="Elanat.ActionGetContactViewMoreController" Model="Elanat.ActionGetContactViewMoreModel" %>
