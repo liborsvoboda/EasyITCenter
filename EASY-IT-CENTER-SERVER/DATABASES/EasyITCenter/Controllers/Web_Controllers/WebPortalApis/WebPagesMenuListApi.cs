@@ -3,7 +3,7 @@
     [AllowAnonymous]
     [ApiController]
     [Route("WebApi/WebPages")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class WebPagesMenuListApi : ControllerBase {
 
         [Authorize]

@@ -166,36 +166,17 @@ namespace EasyITCenter.ServerCoreConfiguration {
             if (ServerConfigSettings.WebRazorPagesEngineEnabled) {
                 if (ServerConfigSettings.WebRazorPagesCompileOnRuntime) {
                     services.AddMvc(options => {
-                        options.CacheProfiles.Add("Default30", new CacheProfile() { Duration = 300, NoStore = true});
+                        options.CacheProfiles.Add("Default300", new CacheProfile() { Duration = 300, NoStore = true });
                     }).AddRazorPagesOptions(opt => {
                         opt.RootDirectory = "/ServerCorePages";
-                    }).AddRazorOptions(p => {
-                        var test = p.PageViewLocationFormats;
-                        p.PageViewLocationFormats.Add("/ServerCorePages/Github/{0}.cshtml");
-                        p.PageViewLocationFormats.Add("/ServerCorePages/Github/Shared/{0}.cshtml");
-                        p.PageViewLocationFormats.Add("/ServerCorePages/Github/Shared/_Layout.cshtml");
-
-                        p.PageViewLocationFormats.Add("/ServerCorePages/WebPortal/{0}.cshtml");
-                        p.PageViewLocationFormats.Add("/ServerCorePages/WebPortal/Shared/{0}.cshtml");
-                        p.PageViewLocationFormats.Add("/ServerCorePages/WebPortal/Shared/_CleanLayout.cshtml");
-                        p.PageViewLocationFormats.Add("/ServerCorePages/WebPortal/Shared/_CentralLayout.cshtml");
                     }).AddRazorRuntimeCompilation();
-                    services.Configure<RazorViewEngineOptions>(options =>
-                    { options.PageViewLocationFormats.Add("/ServerCorePages/Shared/{0}" + RazorViewEngine.ViewExtension); });
                 }
                 else {
                     services.AddMvc(options => {
-                        options.CacheProfiles.Add("Default30", new CacheProfile() { Duration = 300 });
+                        options.CacheProfiles.Add("Default300", new CacheProfile() { Duration = 300 });
                     }).AddRazorPagesOptions(opt => {
                         opt.RootDirectory = "/ServerCorePages";
-                    }).AddRazorOptions(p => {
-                        var test = p.PageViewLocationFormats;
-                        var indexOfPagesShared = p.PageViewLocationFormats.IndexOf("/Pages/Shared/{0}.cshtml");
-                        p.PageViewLocationFormats.RemoveAt(indexOfPagesShared);
-                        p.PageViewLocationFormats.Insert(indexOfPagesShared, "/ServerCorePages/Shared/{0}.cshtml");
                     });
-                    services.Configure<RazorViewEngineOptions>(options => 
-                    { options.PageViewLocationFormats.Add("/ServerCorePages/Shared/{0}" + RazorViewEngine.ViewExtension); });
                 }//services.AddRazorPages();
             }
 
@@ -263,8 +244,8 @@ namespace EasyITCenter.ServerCoreConfiguration {
         internal static void ConfigureTransient(ref IServiceCollection services) {
             services.AddTransient<GitRepositoryService>();
             services.AddTransient<GitFileService>();
+            //services.AddTransient<GithubUserController>();
             //services.AddTransient<GitAuthenticationService>();//, GitRepository<SolutionUserList>>();
-            services.AddTransient<GithubUserController>();
         }
 
 

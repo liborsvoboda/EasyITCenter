@@ -9,7 +9,7 @@ namespace EasyITCenter.ControllersExtensions {
     /// Server Root Controller
     /// </summary>
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     [Route("WebApi")]
     public class ServerToolsMinifierApi : Controller {
 

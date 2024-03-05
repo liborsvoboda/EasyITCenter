@@ -433,7 +433,9 @@
         public static bool WebLiveDataMonitorEnabled { get; set; } = true;
 
         /// <summary>
+        /// TODO planned
         /// WebPortal Global Notify Path on WebSocket for sending messages from scheduler
+        /// With Create Command Library, can be Generated Web Objects on Message Incoming Action
         /// </summary>
         /// <value>The web global socket notify path.</value>
         public static string WebSocketGlobalNotifyPath { get; set; } = "globalnotify";
@@ -452,10 +454,11 @@
 
 
         /// <summary>
-        /// Cesta na kterou se přesměruje 
-        /// Webová Stránka v případě 404 stránka nenalezena
+        /// Cesta na kterou se přesměruje Webová Stránka 
+        /// v případě 404 stránka nenalezena. 
+        /// Je také nastavena jako Výchozí Stránka
         /// </summary>
-        public static string RedirectPath { get; set; } = "globalnotify";
+        public static string RedirectPath { get; set; } = "/Index";
 
 
         #endregion Server Web Portal

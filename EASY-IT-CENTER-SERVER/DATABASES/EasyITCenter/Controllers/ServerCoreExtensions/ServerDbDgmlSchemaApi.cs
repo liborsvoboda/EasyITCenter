@@ -4,9 +4,8 @@
     /// Database Schema Diagram Controller
     /// </summary>
     /// <seealso cref="Controller"/>
-    [Authorize]
     [Route("ServerDbDgmlSchema")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerDbDgmlSchemaApi : Controller {
         private EasyITCenterContext Context { get; }
 
@@ -23,7 +22,7 @@
         /// <returns>a DGML class diagram</returns>
         [HttpGet("/ServerDbDgmlSchema/dgml")]
         public IActionResult GetDgml() {
-            if (ServerConfigSettings.ModuleDbDiagramGeneratorEnabled) { //"application/octet-stream"
+            if (ServerConfigSettings.ModuleDbDiagramGeneratorEnabled) { 
                 var response = File(Encoding.UTF8.GetBytes( new EasyITCenterContext().AsDgml()), MimeTypes.GetMimeType("DBschema.dgml"), "DBschema.dgml");
                 return response;
             } else { return null; }

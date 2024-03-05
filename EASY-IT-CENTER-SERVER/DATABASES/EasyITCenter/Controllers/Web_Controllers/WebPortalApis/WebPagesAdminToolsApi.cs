@@ -2,7 +2,7 @@
 
     [ApiController]
     [Route("WebApi/WebPages")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class WebPagesAdminToolsApi : ControllerBase {
 
         [HttpGet("/WebApi/WebPages/WebAdmin/WebToolList/{webOnly}")]

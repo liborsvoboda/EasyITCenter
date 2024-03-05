@@ -5,7 +5,7 @@ namespace EasyITCenter.ControllersExtensions {
 
     [Authorize]
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerCoreWebLicGenerator : ControllerBase {
 
 

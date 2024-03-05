@@ -7,7 +7,7 @@ namespace EasyITCenter.ControllersExtensions {
     /// </summary>
     [AllowAnonymous]
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerCoreAutoGeneratorApi : ControllerBase {
 
         [Authorize]

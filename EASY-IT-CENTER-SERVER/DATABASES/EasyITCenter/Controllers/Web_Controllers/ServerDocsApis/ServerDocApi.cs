@@ -3,7 +3,7 @@
     [Authorize]
     [ApiController]
     [Route("/WebApi/WebDocumentation")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerDocApi : ControllerBase {
 
         /// <summary>

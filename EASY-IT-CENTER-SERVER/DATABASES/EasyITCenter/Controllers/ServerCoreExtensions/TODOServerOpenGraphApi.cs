@@ -9,7 +9,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
     [Authorize]
     [ApiController]
     [Route("OpenGraph")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerOpenGraphApi : ControllerBase {
 
         /// <summary>

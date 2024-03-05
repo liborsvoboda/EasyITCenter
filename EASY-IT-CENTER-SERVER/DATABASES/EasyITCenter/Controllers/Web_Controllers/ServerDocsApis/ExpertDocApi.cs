@@ -2,7 +2,7 @@
 
     [ApiController]
     [Route("/WebApi/WebDocumentation")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ExpertDocApi : ControllerBase {
 
         /// <summary>

@@ -6,7 +6,7 @@
     /// <seealso cref="ControllerBase"/>
     [Authorize]
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerDynamicSqlApi : ControllerBase {
 
         [Authorize]

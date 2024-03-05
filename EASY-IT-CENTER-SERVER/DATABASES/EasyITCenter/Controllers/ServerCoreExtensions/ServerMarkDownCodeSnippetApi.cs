@@ -6,7 +6,7 @@
     /// <seealso cref="Controller"/>
     //[Authorize]
     [Route("ServerCoreTools")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerMarkDownCodeSnippetApi : Controller {
 
 

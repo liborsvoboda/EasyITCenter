@@ -9,7 +9,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
     /// </summary>
     /// <seealso cref="ControllerBase"/>
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerWebPagesExportsApi : ControllerBase {
 
         /// <summary>
@@ -22,10 +22,11 @@ namespace EasyITCenter.ServerCoreDBSettings {
         }
     }*/
 
-    [Authorize]
+    ///[Authorize]
+    [AllowAnonymous]
     [ApiController]
     [Route("ServerCoreExport")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerWebPagesExportApi : ControllerBase {
 
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;

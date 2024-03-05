@@ -73,6 +73,46 @@ namespace ServerCorePages {
 
 
         /// <summary>
+        /// Portal CSS Stylisation Template Controler
+        /// </summary>
+        /// <returns></returns>
+        public ViewResult GetManagedPortalCssLayoutFiles() {
+            List<WebCoreFileList> data; string html = null; var result = new ViewResult();
+
+            //Load Css Section
+            using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
+                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "css" || a.SpecificationType.ToLower() == "mincss") && a.FileName.StartsWith("portal-layout.")).OrderBy(a => a.Sequence).ToList();
+            }
+            string insertedPart = "";
+            data.ForEach(managedFile => {
+                insertedPart = ""; string fileExt = managedFile.FileName.Split(".").Last();
+                string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
+
+                if (managedFile.RewriteLowerLevel) {
+                    if (ServerConfigSettings.ServerProviderModeEnabled && managedFile.ProviderContent?.Length > 0) { html += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "provider." + fileExt) + "\" />" + Environment.NewLine; }
+
+                    if (authRole == "admin" && managedFile.AdminFileContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "admin." + fileExt) + "\" />" + Environment.NewLine; }
+                    else if ((authRole == "webuser" || authRole == "admin" && managedFile.UserFileContent?.Length > 0) && managedFile.UserFileContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "user." + fileExt) + "\" />" + Environment.NewLine; }
+                    else if (managedFile.GuestFileContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName + "\" />" + Environment.NewLine; }
+                    html += insertedPart;
+                }
+                else {
+                    if (managedFile.GuestFileContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName + "\" />" + Environment.NewLine; }
+
+                    if (authRole == "webuser" && managedFile.UserFileContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "user." + fileExt) + "\" />" + Environment.NewLine; }
+                    else if (authRole == "admin" && managedFile.AdminFileContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "admin." + fileExt) + "\" />" + Environment.NewLine; }
+
+                    if (ServerConfigSettings.ServerProviderModeEnabled && managedFile.ProviderContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "provider." + fileExt) + "\" />" + Environment.NewLine; }
+                }
+                html += insertedPart;
+            });
+
+            result.ContentType = html;
+            return result;
+        }
+
+
+        /// <summary>
         /// Central CSS Stylisation Template Controler
         /// </summary>
         /// <returns></returns>
@@ -161,13 +201,52 @@ namespace ServerCorePages {
         /// MultiLang JS Library Files Template Controler
         /// </summary>
         /// <returns></returns>
-        public ViewResult GetManagedMultiLangJsFiles() {
+        public ViewResult GetManagedMultiLangJsLayoutFiles() {
             List<WebCoreFileList> data; string html = null; var result = new ViewResult();
 
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             //Load Js Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
                 data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "js" || a.SpecificationType.ToLower() == "minjs") && a.FileName.StartsWith("multi-lang-layout.")).OrderBy(a => a.Sequence).ToList();
+            }
+            string insertedPart = "";
+            data.ForEach(managedFile => {
+                insertedPart = ""; string fileExt = managedFile.FileName.Split(".").Last();
+
+                if (managedFile.RewriteLowerLevel) {
+                    if (ServerConfigSettings.ServerProviderModeEnabled && managedFile.ProviderContent?.Length > 0) { html += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "provider." + fileExt) + "\" ></script>" + Environment.NewLine; }
+
+                    if (authRole == "admin" && managedFile.AdminFileContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "admin." + fileExt) + "\" ></script>" + Environment.NewLine; }
+                    else if ((authRole == "webuser" || authRole == "admin") && managedFile.UserFileContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "user." + fileExt) + "\" ></script>" + Environment.NewLine; }
+                    else if (managedFile.GuestFileContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName + "\" ></script>" + Environment.NewLine; }
+                    html += insertedPart;
+                }
+                else {
+                    if (managedFile.GuestFileContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName + "\" ></script>" + Environment.NewLine; }
+
+                    if (authRole == "webuser" && managedFile.UserFileContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "user." + fileExt) + "\" ></script>" + Environment.NewLine; }
+                    else if (authRole == "admin" && managedFile.AdminFileContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "admin." + fileExt) + "\" ></script>" + Environment.NewLine; }
+                    if (ServerConfigSettings.ServerProviderModeEnabled && managedFile.ProviderContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "provider." + fileExt) + "\" ></script>" + Environment.NewLine; }
+                }
+                html += insertedPart;
+            });
+
+            result.ContentType = html;
+            return result;
+        }
+
+
+        /// <summary>
+        /// Portal JS Library Files Template Controler
+        /// </summary>
+        /// <returns></returns>
+        public ViewResult GetManagedPortalJsLayoutFiles() {
+            List<WebCoreFileList> data; string html = null; var result = new ViewResult();
+
+            string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
+            //Load Js Section
+            using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
+                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "js" || a.SpecificationType.ToLower() == "minjs") && a.FileName.StartsWith("portal-layout.")).OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -239,7 +318,7 @@ namespace ServerCorePages {
         /// Global JS Library Files Template Controler
         /// </summary>
         /// <returns></returns>
-        public ViewResult GetManagedGlobalJsFiles() {
+        public ViewResult GetManagedGlobalJsLayoutFiles() {
             List<WebCoreFileList> data; string html = null; var result = new ViewResult();
 
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
@@ -274,6 +353,13 @@ namespace ServerCorePages {
         }
 
         #endregion Global Methods For Centralize Templates JS Part
+
+
+        ///<summary>
+        ///JS and Css Web Poertal Controls Methods For Managing 
+        /// JS and Css Web Poertal Controls Methods For Managing
+        /// </summary>
+        #region JS and Css Web Poertal Controls
 
 
 
@@ -548,5 +634,10 @@ namespace ServerCorePages {
             result.ContentType = html;
             return result;
         }
+
+
+
+
+        #endregion JS and Css Web Poertal Controls
     }
 }

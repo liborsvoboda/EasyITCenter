@@ -4,7 +4,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
 
     [ApiController]
     [Route("WebApi/WebPages")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class WebPagesSystemToolsApi : ControllerBase {
         private Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
 

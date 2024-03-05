@@ -7,7 +7,7 @@ namespace EasyITCenter.ControllersExtensions {
     /// Server Root Controller
     /// </summary>
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     [Route("Generators")]
     public class ServerCoreWebToolsGenApi : ControllerBase {
 

@@ -5,7 +5,7 @@
     /// </summary>
     [ApiController]
     [Route("WebApi")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerWebProviderGetOnlyApi : ControllerBase {
 
         private Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
@@ -41,12 +41,12 @@
         /// Provider: For Show EASY Script Codes on WebPages
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/WebApi/WebPages/GetManagedJsCssList")]
+        [HttpGet("/WebApi/WebPages/GetWebPortalCssJsContent")]
         public async Task<string> GetManagedCssJsScriptList() {
             try {
                 List<WebCoreFileList> data = new();
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                    data = new EasyITCenterContext().WebCoreFileLists.Where(a => a.SpecificationType.ToLower().StartsWith("js")).OrderBy(a => a.FileName).ToList();
+                    data = new EasyITCenterContext().WebCoreFileLists.OrderBy(a=>a.SpecificationType).ThenBy(a => a.FileName).ToList();
                 }
 
                 return JsonSerializer.Serialize(data, new JsonSerializerOptions() {

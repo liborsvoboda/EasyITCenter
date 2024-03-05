@@ -8,7 +8,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
     /// <seealso cref="Controller"/>
     [Route("robots", Name = "robot")]
     [Route("robots.txt", Name = "robottxt")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class RobotsController : ControllerBase {
 
         public ActionResult Index() {
@@ -33,7 +33,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
     [Route("sitemap", Name = "sitemap")]
     [Route("sitemap.xml", Name = "sitemapxml")]
     [Route("sitemap_index.xml", Name = "sitemapindex")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class SitemapController : ControllerBase {
         private readonly ISitemapProvider sitemapProvider;
         private SitemapDataBuilder dataBuilder;

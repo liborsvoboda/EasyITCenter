@@ -2,7 +2,7 @@
 
     [ApiController]
     [Route("/WebApi/WebUser")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class WebPagesUserApi : ControllerBase {
 
         /// <summary>

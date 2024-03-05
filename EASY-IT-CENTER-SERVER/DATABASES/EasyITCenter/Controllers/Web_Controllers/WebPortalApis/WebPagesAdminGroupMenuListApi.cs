@@ -3,7 +3,7 @@
     [Authorize]
     [ApiController]
     [Route("WebApi/WebPages")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class WebPagesAdminGroupMenuListApi : ControllerBase {
 
         [HttpGet("/WebApi/WebPages/WebAdmin/GetWebGroupMenuList")]

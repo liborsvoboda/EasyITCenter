@@ -3,7 +3,7 @@
     [AllowAnonymous]
     [ApiController]
     [Route("WebApi/WebPages")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class WebPagesSystemLoggerApi : ControllerBase {
 
         [HttpPost("/WebApi/WebPages/WebSystem/SetWebSystemLogMessage")]

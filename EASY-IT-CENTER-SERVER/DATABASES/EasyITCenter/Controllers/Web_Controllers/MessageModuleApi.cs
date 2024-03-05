@@ -4,7 +4,7 @@ namespace EasyITCenter.Controllers {
     [Authorize]
     [ApiController]
     [Route("/WebApi/MessageModule")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    // //[ApiExplorerSettings(IgnoreApi = true)]
     public class MessageModuleApi : ControllerBase {
 
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;

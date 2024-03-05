@@ -2,7 +2,7 @@
 
     [ApiController]
     [Route("WebApi")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class SystemBuilderOnlinePreviewApi : ControllerBase {
 
         /// <summary>

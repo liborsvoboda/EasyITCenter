@@ -97,52 +97,38 @@ namespace EasyITCenter {
                 app.UseCertificateForwarding();
             }
            
-            //Root Page To Server Index
-            app.Use(async (context, next) => {
-                
-                if (context.Request.Path.Value == "/") { await next(); context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath; } 
-                await next(); 
-            });
+            //Root Server Page To Default Path, Other Is Taken From Static Files
+            app.Use(async (context, next) => { if (context.Request.Path.Value == "/" && ServerConfigSettings.RedirectOnPageNotFound) { context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath; } await next(); });
 
-            //Check API Modules Right For Token or User Authentificated
-            app.Use(async (context, next) => { context.Response.StatusCode = StatusCodes.Status200OK; string? requestPath = context.Request.Path.Value;
+            //Check Fouded Server API Modules Right For Token or User Authentificated
+            app.Use(async (context, next) => { context.Response.StatusCode = StatusCodes.Status200OK; string? requestedModulePath = context.Request.Path.Value;
 
-                //Verify Access To Module and Go Next Or Redirect to RedirectUrl
-                ServerModuleAndServiceList? requestedModule = new EasyITCenterContext().ServerModuleAndServiceLists.FirstOrDefault(a => a.UrlSubPath.ToLower().Replace("/", "").StartsWith(WebUtility.UrlDecode(requestPath.ToLower()).Replace("/", "")));
-                if (requestedModule != null) {
-                    //include user from cookie
-                    ServerWebPagesToken? serverWebPagesToken = null; string token = context.Request.Cookies.FirstOrDefault(a => a.Key == "ApiToken").Value;
-                    if (token == null && context.Request.Headers.Authorization.ToString().Length > 0) { token = context.Request.Headers.Authorization.ToString().Substring(7); }
-                    if (token != null) {
-                        serverWebPagesToken = CoreOperations.CheckTokenValidityFromString(token);
-                        if (serverWebPagesToken.IsValid) { context.User.AddIdentities(serverWebPagesToken.UserClaims.Identities); try { context.Items.Add(new KeyValuePair<object, object>("ServerWebPagesToken", serverWebPagesToken)); } catch { } }
+                //Check API module Request is Redirected or Its First contact - Read Module and Token
+                ServerWebPagesToken? serverWebPagesToken = null; string token = context.Request.Cookies.FirstOrDefault(a => a.Key == "ApiToken").Value;
+                if (token == null && context.Request.Headers.Authorization.ToString().Length > 0) { token = context.Request.Headers.Authorization.ToString().Substring(7); }
+                ServerModuleAndServiceList? serverModule = (ServerModuleAndServiceList?)context.Items.FirstOrDefault(a => a.Key.ToString() == "ServerModule").Value;
 
-                        if (requestedModule != null && (!requestedModule.RestrictedAccess
-                        || (requestedModule.RestrictedAccess && serverWebPagesToken != null && serverWebPagesToken.IsValid && requestedModule.AllowedRoles != null && requestedModule.AllowedRoles.Split(",").ToList().Contains(serverWebPagesToken.UserClaims.FindFirstValue(ClaimTypes.Role))))) {
-                            try { context.Items.Add(new KeyValuePair<object, object>("ServerModule", requestedModule == null ? "" : requestedModule)); } catch { }
-                            try { context.Response.Cookies.Append("RequestedModulePath", requestPath); } catch { }
-                            try { context.Response.Cookies.Append("RequestedModuleAccess", requestedModule.AllowedRoles); } catch { }
-                        }
-                        else {
-                            try { context.Items.Add(new KeyValuePair<object, object>("ServerModule", requestedModule)); } catch { }
-                            try { context.Response.Cookies.Append("RequestedModulePath", requestPath); } catch { }
-                            try { context.Response.Cookies.Append("RequestedModuleAccess", requestedModule.AllowedRoles); } catch { }
-                            try { if (requestedModule != null && requestedModule.RestrictedAccess) { context.Request.Path = requestedModule.RedirectPathOnError; } } catch { }
-                        }
-                    } else {
-                        try { context.Items.Add(new KeyValuePair<object, object>("ServerModule", requestedModule)); } catch { }
-                        try { context.Response.Cookies.Append("RequestedModulePath", requestPath); } catch { }
-                        try { context.Response.Cookies.Append("RequestedModuleAccess", requestedModule.AllowedRoles); } catch { }
-                        try { if (requestedModule != null && requestedModule.RestrictedAccess) { context.Request.Path = requestedModule.RedirectPathOnError; } } catch { }
-                    }
-                }
-                await next();
+
+                if (serverModule == null) { /* server API module wuthout Control go Next */ await next(); }
+                else if (serverModule != null && !serverModule.RestrictedAccess) { /* server API module is Free go Next */ await next(); }
+                else if (serverModule != null && serverModule.RestrictedAccess && token != null) { serverWebPagesToken = CoreOperations.CheckTokenValidityFromString(token);
+                    if (serverWebPagesToken.IsValid && serverModule.AllowedRoles != null && serverModule.AllowedRoles.Split(",").ToList().Contains(serverWebPagesToken.UserClaims.FindFirstValue(ClaimTypes.Role))) { /* Token is OK go next*/ await next(); }
+                    else { /* Token is not correct denied = redirect to login again */ context.Request.Path = serverModule.RedirectPathOnError; await next(); }
+                } else { /* unspecified problem = redirect to login */ context.Request.Path = serverModule.RedirectPathOnError; await next(); }
             });
 
 
             //404 Redirect Central One Page Portal not For Files
-            app.Use(async (context, next) => { if (context.Response.StatusCode == StatusCodes.Status404NotFound && !context.Request.Path.ToString().Split("/").Last().Contains(".")) { string requestPath = context.Request.Path;
-                    
+            app.Use(async (context, next) => {
+                if (context.Response.StatusCode == StatusCodes.Status404NotFound && !context.Request.Path.ToString().Split("/").Last().Contains(".")) { string requestPath = context.Request.Path;
+
+
+
+
+
+
+
+                    /*
                       string requestedModulePath = null; string requestModuleAccess = null;
                       try { requestedModulePath = context.Request.Cookies.FirstOrDefault(a => a.Key.ToString() == "RequestedModulePath").Value?.ToString(); } catch { }
                       try { requestModuleAccess = context.Request.Cookies.FirstOrDefault(a => a.Key.ToString() == "RequestedModuleAccess").Value?.ToString(); } catch { }
@@ -186,28 +172,28 @@ namespace EasyITCenter {
                               await next();
                           }
                       }
-                    //context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath;
-                    //await next(); 
+                  */
+                } else { /*Go to Portal unspecified Path */
+                    context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath; await next();
                 }
+                
+                
             });
 
             app.UseExceptionHandler("/Error");
             app.UseRouting();
             app.UseDefaultFiles();
-
             app.UseHsts();
 
 
+            //TODO define over Administration
             var staticFilesProvider = new FileExtensionContentTypeProvider();
-            staticFilesProvider.Mappings[".jscript"] = "application/javascript";
-            staticFilesProvider.Mappings[".style"] = "text/css";
-            staticFilesProvider.Mappings[".data"] = "text/json";
-            staticFilesProvider.Mappings[".code"] = "text/cs";
-            staticFilesProvider.Mappings[".design"] = "text/xaml";
-            staticFilesProvider.Mappings[".archive"] = "application/zip";
+            staticFilesProvider.Mappings[".jscript"] = "application/javascript"; staticFilesProvider.Mappings[".style"] = "text/css";
+            staticFilesProvider.Mappings[".data"] = "text/json"; staticFilesProvider.Mappings[".code"] = "text/cs";
+            staticFilesProvider.Mappings[".design"] = "text/xaml"; staticFilesProvider.Mappings[".archive"] = "application/zip";
 
             if (ServerConfigSettings.ConfigServerStartupOnHttps) { app.UseHttpsRedirection(); }
-            app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, HttpsCompression = HttpsCompressionMode.Compress, ContentTypeProvider = staticFilesProvider, DefaultContentType = "text/html" });
+            app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, ContentTypeProvider = staticFilesProvider, HttpsCompression = HttpsCompressionMode.Compress, DefaultContentType = "text/html" });
 
 
             List<SolutionWebsiteList> websites;
@@ -217,7 +203,7 @@ namespace EasyITCenter {
             websites.ForEach(website => {
                 app.UseStaticFiles(new StaticFileOptions { 
                     ServeUnknownFileTypes = true, FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices), 
-                    RequestPath = "/" + website.WebsiteName+ ".", HttpsCompression = HttpsCompressionMode.Compress, ContentTypeProvider = staticFilesProvider, 
+                    RequestPath = "/" + website.WebsiteName+ ".", HttpsCompression = HttpsCompressionMode.Compress,
                     DefaultContentType = "text/html"
                 });
             });

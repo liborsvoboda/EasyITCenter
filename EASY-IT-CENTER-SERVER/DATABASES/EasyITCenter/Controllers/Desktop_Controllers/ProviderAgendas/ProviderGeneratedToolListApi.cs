@@ -3,7 +3,7 @@
     [Authorize]
     [ApiController]
     [Route("EasyITCenterProviderGeneratedToolList")]
-    [ApiExplorerSettings(IgnoreApi = true)]
+     //[ApiExplorerSettings(IgnoreApi = true)]
     public class EasyITCenterProviderGeneratedToolListApi : ControllerBase {
 
         [HttpGet("/EasyITCenterProviderGeneratedToolList")]
