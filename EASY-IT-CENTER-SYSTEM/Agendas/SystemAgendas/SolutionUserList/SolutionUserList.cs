@@ -8,6 +8,7 @@ namespace EasyITSystemCenter.Classes {
         public string Username { get; set; } = null;
         public string Password { get; set; } = null;
         public string Name { get; set; } = null;
+        public string InfoEmail { get; set; } = null;
         public string Surname { get; set; } = null;
         public string Description { get; set; } = null;
         public bool Active { get; set; } = false;

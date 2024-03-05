@@ -40,17 +40,17 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Hidden; return true;
         }
 
-        private void DgListView_Translate(object sender, EventArgs ex) {
+        private async void DgListView_Translate(object sender, EventArgs ex) {
             try {
-                ((DataGrid)sender).Columns.ToList().ForEach(e => {
+                ((DataGrid)sender).Columns.ToList().ForEach(async e => {
                     string headername = e.Header.ToString();
-                    if (headername == "RootPath") e.Header = Resources["rootPath"].ToString();
-                    else if (headername == "FileExtensions") e.Header = Resources["fileExtensions"].ToString();
-                    else if (headername == "Description") e.Header = Resources["description"].ToString();
-                    else if (headername == "Active") { e.Header = Resources["active"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
-                    else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                    else if (headername == "Id") e.DisplayIndex = 0;
-                    else if (headername == "UserId") e.Visibility = Visibility.Hidden;
+                    if (headername == "RootPath".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+                    else if (headername == "FileExtensions".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+                    else if (headername == "Description".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+                    else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
+                    else if (headername == "TimeStamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
+                    else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
                 });
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }

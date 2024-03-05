@@ -118,17 +118,12 @@ namespace EasyITCenter {
             });
 
 
-            //404 Redirect Central One Page Portal not For Files
-            app.Use(async (context, next) => {
+
+            //404 Redirect Central One Page Portal not For Files, Files has 404 Filename format is ignored
+            app.Use(async (context, next) => { await next();
                 if (context.Response.StatusCode == StatusCodes.Status404NotFound && !context.Request.Path.ToString().Split("/").Last().Contains(".")) { string requestPath = context.Request.Path;
+                    //context.Response.StatusCode = StatusCodes.Status200OK;
 
-
-
-
-
-
-
-                    /*
                       string requestedModulePath = null; string requestModuleAccess = null;
                       try { requestedModulePath = context.Request.Cookies.FirstOrDefault(a => a.Key.ToString() == "RequestedModulePath").Value?.ToString(); } catch { }
                       try { requestModuleAccess = context.Request.Cookies.FirstOrDefault(a => a.Key.ToString() == "RequestedModuleAccess").Value?.ToString(); } catch { }
@@ -140,15 +135,16 @@ namespace EasyITCenter {
                       //include user from cookie
                       ServerWebPagesToken? serverWebPagesToken = null; string token = context.Request.Cookies.FirstOrDefault(a => a.Key == "ApiToken").Value;
                       if (token != null) { serverWebPagesToken = CoreOperations.CheckTokenValidityFromString(token); if (serverWebPagesToken.IsValid) { context.User.AddIdentities(serverWebPagesToken.UserClaims.Identities);
-                              try { context.Items.Add(new KeyValuePair<object, object>("ServerWebPagesToken", serverWebPagesToken)); } catch { } } }
+                              try { context.Items.Add(new KeyValuePair<object, object>("ServerWebPagesToken", serverWebPagesToken)); } catch { } } 
+                      }
 
                       //Check Redirected Login Return to API
                       if (requstedModule != null && (!requstedModule.RestrictedAccess || ( serverWebPagesToken != null && serverWebPagesToken.IsValid && requestModuleAccess != null && requestModuleAccess.Split(",").Contains(serverWebPagesToken.UserClaims.FindFirstValue(ClaimTypes.Role))))) { 
                           try { context.Items.Add(new KeyValuePair<object, object>("ServerModule", requstedModule)); } catch { } 
                           try { context.Response.Cookies.Append("RequestedModulePath", requestedModulePath); } catch { } 
-                          try { context.Response.Cookies.Append("RequestedModuleAccess", requstedModule.AllowedRoles); } catch { } 
-                          context.Request.Path = requstedModule.UrlSubPath; await next();
-                      } else {
+                          try { context.Response.Cookies.Append("RequestedModuleAccess", requstedModule.AllowedRoles); } catch { }
+                          context.Request.Path = requstedModule.UrlSubPath; context.Response.StatusCode = StatusCodes.Status200OK; /* await next();*/
+                    } else {
 
                           //Redirect To Show Module or Login Page
                           if (requstedModule != null) {
@@ -156,31 +152,30 @@ namespace EasyITCenter {
                               try { context.Items.Add(new KeyValuePair<object, object>("ServerModule", requstedModule)); } catch { }
                               try { context.Items.Add(new KeyValuePair<object, object>("LoginModule", loginmodule)); } catch { }
                               try { context.Response.Cookies.Append("RequestedModulePath", requestedModulePath); } catch { }
-                              context.Request.Path = requstedModule.RedirectPathOnError; context.Response.StatusCode = StatusCodes.Status200OK; await next();
+                              context.Request.Path = requstedModule.RedirectPathOnError; context.Response.StatusCode = StatusCodes.Status200OK; /*await next();*/
                           }
+
                           // Redirect To Portal Or Module Or Login Module
                           else if (ServerConfigSettings.RedirectOnPageNotFound) {
-                              context.Items.Add(new KeyValuePair<object, object>("PortalRedirect", true));
-                              context.Request.Path = ServerConfigSettings.RedirectPath; context.Response.StatusCode = StatusCodes.Status200OK; await next();
+                            try { context.Items.Add(new KeyValuePair<object, object>("PortalRedirect", true)); } catch { }
+                            context.Request.Path = ServerConfigSettings.RedirectPath; context.Response.StatusCode = StatusCodes.Status200OK; /*await next();*/
                           }
 
                           //Must be redirected to existing page everytime Vontent is Loaded by Module
-                          if((context.Response.StatusCode == StatusCodes.Status200OK && context.Request.Path != BackendServer.ServerRuntimeData.SpecialUserWebRootPath) ||
-                              ServerConfigSettings.RedirectOnPageNotFound ) { 
-                              context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath; context.Response.StatusCode = StatusCodes.Status200OK;
-                              try { context.Items.Add(new KeyValuePair<object, object>("PortalRedirect", false)); } catch { }
-                              await next();
+                          else if(context.Request.Path != BackendServer.ServerRuntimeData.SpecialUserWebRootPath && ServerConfigSettings.RedirectOnPageNotFound ) { 
+                            try { context.Items.Add(new KeyValuePair<object, object>("PortalRedirect", false)); } catch { }
+                            context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath; context.Response.StatusCode = StatusCodes.Status200OK; /*await next();*/
                           }
                       }
-                  */
-                } else { /*Go to Portal unspecified Path */
-                    context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath; await next();
+                    await next();
+                } else if(context.Response.StatusCode == StatusCodes.Status404NotFound && context.Request.Path != BackendServer.ServerRuntimeData.SpecialUserWebRootPath) { /*Go to Portal unspecified Path */
+                    context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath; context.Response.StatusCode = StatusCodes.Status200OK; await next();
                 }
-                
+                //if (context.Response.StatusCode == StatusCodes.Status200OK) { await next(); }
                 
             });
 
-            app.UseExceptionHandler("/Error");
+            //app.UseExceptionHandler("/Error");
             app.UseRouting();
             app.UseDefaultFiles();
             app.UseHsts();

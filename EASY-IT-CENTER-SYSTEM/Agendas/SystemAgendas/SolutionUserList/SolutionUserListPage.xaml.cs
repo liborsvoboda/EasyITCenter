@@ -61,25 +61,26 @@ namespace EasyITSystemCenter.Pages {
         }
 
         // set translate columns in listView
-        private void DgListView_Translate(object sender, EventArgs ex) {
-            ((DataGrid)sender).Columns.ToList().ForEach(e => {
-                string headername = e.Header.ToString();
-                if (headername == "Username") { e.Header = Resources["userName"].ToString(); e.DisplayIndex = 1; }
-                else if (headername == "Translation") { e.Header = Resources["role"].ToString(); e.DisplayIndex = 2; }
-                else if (headername == "Password") e.Header = Resources["password"].ToString();
-                else if (headername == "Name") e.Header = Resources["name"].ToString();
-                else if (headername == "Surname") e.Header = Resources["surname"].ToString();
-                else if (headername == "Description") e.Header = Resources["description"].ToString();
-                else if (headername == "Expiration") e.Header = Resources["expiration"].ToString();
-                else if (headername == "Active") { e.Header = Resources["active"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
-                else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                else if (headername == "Id") e.DisplayIndex = 0;
-                else if (headername == "UserId") e.Visibility = Visibility.Hidden;
-                else if (headername == "RoleId") e.Visibility = Visibility.Hidden;
-                else if (headername == "Photo") e.Visibility = Visibility.Hidden;
-                else if (headername == "Token") e.Visibility = Visibility.Hidden;
-                else if (headername == "PhotoPath") e.Visibility = Visibility.Hidden;
-                else if (headername == "MimeType") e.Visibility = Visibility.Hidden;
+        private async void DgListView_Translate(object sender, EventArgs ex) {
+            ((DataGrid)sender).Columns.ToList().ForEach(async e => {
+                string headername = e.Header.ToString().ToLower();
+                if (headername == "Username".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                else if (headername == "Translation".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                else if (headername == "infoEmail".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
+                else if (headername == "Password".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+                else if (headername == "Name".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+                else if (headername == "Surname".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+                else if (headername == "Description") e.Header = await DBOperations.DBTranslation(headername);
+                else if (headername == "Expiration".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+                else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
+                else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
+                else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
+                else if (headername == "RoleId".ToLower()) e.Visibility = Visibility.Hidden;
+                else if (headername == "Photo".ToLower()) e.Visibility = Visibility.Hidden;
+                else if (headername == "Token".ToLower()) e.Visibility = Visibility.Hidden;
+                else if (headername == "PhotoPath".ToLower()) e.Visibility = Visibility.Hidden;
+                else if (headername == "MimeType".ToLower()) e.Visibility = Visibility.Hidden;
             });
         }
 
@@ -93,6 +94,7 @@ namespace EasyITSystemCenter.Pages {
                     return user.Username.ToLower().Contains(filter.ToLower())
                     || user.Name.ToLower().Contains(filter.ToLower())
                     || user.Surname.ToLower().Contains(filter.ToLower())
+                    || user.InfoEmail.ToLower().Contains(filter.ToLower())
                     || !string.IsNullOrEmpty(user.Description) && user.Description.ToLower().Contains(filter.ToLower())
                     ;
                 };
@@ -148,6 +150,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Password = pb_password.Password;
                 selectedRecord.Name = txt_name.Text;
                 selectedRecord.Surname = txt_surname.Text;
+                selectedRecord.InfoEmail = txt_infoEmail.Text;
                 selectedRecord.Description = txt_description.Text;
                 selectedRecord.Active = (bool)chb_active.IsChecked;
                 selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
@@ -190,6 +193,7 @@ namespace EasyITSystemCenter.Pages {
             pb_password.Password = selectedRecord.Password;
             txt_name.Text = selectedRecord.Name;
             txt_surname.Text = selectedRecord.Surname;
+            txt_infoEmail.Text = selectedRecord.InfoEmail;
             txt_description.Text = selectedRecord.Description;
             chb_active.IsChecked = (selectedRecord.Id == 0) ? bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_activeNewInputDefault").Value) : selectedRecord.Active;
             dp_timestamp.Value = selectedRecord.Timestamp;
