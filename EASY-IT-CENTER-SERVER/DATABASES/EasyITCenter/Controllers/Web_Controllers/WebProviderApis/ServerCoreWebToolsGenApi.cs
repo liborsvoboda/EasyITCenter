@@ -96,7 +96,7 @@ namespace EasyITCenter.ControllersExtensions {
         public IActionResult GenerateEasyGallery([FromBody] UploadGeneratorFiles imageList) {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\EasyGallery\\copy"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "EasyGallery"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "Tools\\EasyGallery\\copy"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "EasyGallery"));
 
                 List<string> fileList = new List<string>();
                 imageList.Files.ForEach(file => {
@@ -143,7 +143,7 @@ namespace EasyITCenter.ControllersExtensions {
         public IActionResult GenerateCarouselGallery([FromBody] UploadGeneratorFiles imageList) {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\CarouselGallery\\copy"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "CarouselGallery"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder,"Tools\\CarouselGallery\\copy"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "CarouselGallery"));
 
                 List<CarouselImage> fileList = new List<CarouselImage>();
                 imageList.Files.ForEach(file => {
@@ -190,7 +190,7 @@ namespace EasyITCenter.ControllersExtensions {
         public IActionResult GenerateCarouselVideoGallery([FromBody] UploadGeneratorFiles videoList) {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\CarouselVideoGallery\\copy"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "CarouselVideoGallery"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "Tools\\CarouselVideoGallery\\copy"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "CarouselVideoGallery"));
 
                 List<CarouselVideo> fileList = new List<CarouselVideo>();
                 videoList.Files.ForEach(file => {
@@ -237,7 +237,7 @@ namespace EasyITCenter.ControllersExtensions {
         public IActionResult GenerateVideoPlayList([FromBody] UploadGeneratorFiles videoList) {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\VideoListGallery\\copy"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "VideoPlayList"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "Tools\\VideoListGallery\\copy"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "VideoPlayList"));
 
                 string playList = ""; string firstVideo = ""; string firstName = "";
                 int counter = 1;
@@ -287,7 +287,7 @@ namespace EasyITCenter.ControllersExtensions {
         public IActionResult GenerateXmlToMd([FromBody] UploadGeneratorFiles fileList) {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\XmlToMD\\generator"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "XmlToMd"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "Tools\\XmlToMD\\generator"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "XmlToMd"));
 
                 if (fileList.Files[0].FileArray != null) {
                     FileOperations.ByteArrayToFile(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "XmlToMd", (string)DataOperations.RemoveWhitespace(fileList.Files[0].Name)), DataOperations.GetByteArrayFrom64Encode(fileList.Files[0].FileArray));
@@ -338,7 +338,7 @@ namespace EasyITCenter.ControllersExtensions {
         public IActionResult GenerateMdToMdBook([FromBody] UploadGeneratorFiles fileList) {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\EDC_ESB_InteliHelp\\generator"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MdToMdBook"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "Tools\\EDC_ESB_InteliHelp\\generator"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MdToMdBook"));
 
                 fileList.Files.ForEach(file => {
                     if (file.FileArray != null) {
@@ -389,7 +389,7 @@ namespace EasyITCenter.ControllersExtensions {
         public IActionResult GenerateImageBook([FromBody] UploadGeneratorFiles imageList) {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\Book\\copy"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "ImageBook"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "Tools\\Book\\copy"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "ImageBook"));
 
                 string fileList = "";
                 imageList.Files.ForEach(file => {
@@ -436,7 +436,7 @@ namespace EasyITCenter.ControllersExtensions {
         public IActionResult GenerateMedialPresentation([FromBody] UploadGeneratorFiles imageList) {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\Presentation\\copy"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MedialPresentation"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "Tools\\Presentation\\copy"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MedialPresentation"));
 
                 string fileList = "";
                 imageList.Files.ForEach(file => {
@@ -477,7 +477,7 @@ namespace EasyITCenter.ControllersExtensions {
         public async Task<IActionResult> GetSystemDesktop() {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\SystemDesktop"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "SystemDesktop"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "Tools\\SystemDesktop"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "SystemDesktop"));
                 ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "SystemDesktop"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "SystemDesktop.zip"));
 
                 byte[] easyGalleryPackage = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "SystemDesktop.zip"));
@@ -492,7 +492,7 @@ namespace EasyITCenter.ControllersExtensions {
         public async Task<IActionResult> GetSystemToolDesktop() {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\SystemToolDesktop"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "SystemToolDesktop"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "Tools\\SystemToolDesktop"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "SystemToolDesktop"));
                 ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "SystemToolDesktop"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "SystemToolDesktop.zip"));
 
                 byte[] easyGalleryPackage = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "SystemToolDesktop.zip"));
@@ -507,7 +507,7 @@ namespace EasyITCenter.ControllersExtensions {
         public async Task<IActionResult> GetAdminDesktop() {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\AdminDesktop"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "AdminDesktop"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "Tools\\AdminDesktop"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "AdminDesktop"));
                 ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "AdminDesktop"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "AdminDesktop.zip"));
 
                 byte[] easyGalleryPackage = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "AdminDesktop.zip"));
@@ -522,7 +522,7 @@ namespace EasyITCenter.ControllersExtensions {
         public async Task<IActionResult> GetMoreEffects() {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\server\\EASYSYSTEMBuilder_Downloads\\Metro4DevHelp\\Metro4Example"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MoreEffects"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "server\\EASYSYSTEMBuilder_Downloads\\Metro4DevHelp\\Metro4Example"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MoreEffects"));
                 ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MoreEffects"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MoreEffects.zip"));
 
                 byte[] easyGalleryPackage = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MoreEffects.zip"));
@@ -537,7 +537,7 @@ namespace EasyITCenter.ControllersExtensions {
         public async Task<IActionResult> GetMdViewer() {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\MDViewer"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MdViewer"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "Tools\\MDViewer"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MdViewer"));
                 ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MdViewer"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MdViewer.zip"));
 
                 byte[] easyGalleryPackage = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MdViewer.zip"));
@@ -552,7 +552,7 @@ namespace EasyITCenter.ControllersExtensions {
         public async Task<IActionResult> GetPdfWebViewer() {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\Tools\\PdfViewer"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "PdfWebViewer"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "Tools\\PdfViewer"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "PdfWebViewer"));
                 ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "PdfWebViewer"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "PdfWebViewer.zip"));
 
                 byte[] easyGalleryPackage = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "PdfWebViewer.zip"));
@@ -567,7 +567,7 @@ namespace EasyITCenter.ControllersExtensions {
         public async Task<IActionResult> GetMetroPosibilities() {
             try {
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot\\server\\EASYSYSTEMBuilder_Downloads\\Metro4DevHelp\\Metro4Example"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MetroPosibilities"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "server\\EASYSYSTEMBuilder_Downloads\\Metro4DevHelp\\Metro4Example"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MetroPosibilities"));
                 ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MetroPosibilities"), Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MetroPosibilities.zip"));
 
                 byte[] easyGalleryPackage = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MetroPosibilities.zip"));

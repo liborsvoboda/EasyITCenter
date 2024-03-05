@@ -123,6 +123,25 @@
         /// <value>The serve scheduler enabled.</value>
         public static bool ModuleAutoSchedulerEnabled { get; set; } = true;
 
+
+        /// <summary>
+        /// Okamžitý Rerresh při vytvoření 
+        /// jakékoliv změny na Webu, Pomůcka vývoje
+        /// </summary>
+        public static bool BrowserLinkEnabled { get; set; } = true;
+
+
+        /// <summary>
+        /// Zapíná Vypíná privátní Git Server
+        /// </summary>
+        public static bool GitServerEnabled { get; set; } = true;
+        
+        /// <summary>
+        /// Root Složka pro Statické soubory Webu
+        /// </summary>
+        public static string DefaultStaticWebFilesFolder { get; set; } = "wwwroot";
+        
+
         #endregion Server Future Technologies
 
         #region ServerConfigurationServices
@@ -132,7 +151,15 @@
         /// Controler and WebPages
         /// Recommended: 5000
         /// </summary>
-        public static int ConfigServerStartupPort { get; set; } = 5000;
+        public static int ConfigServerStartupHttpPort { get; set; } = 5000;
+
+
+        /// <summary>
+        /// Set Server Startup  HTTPS Port on Http/HttpS/WebSocket and for All Engines, Modules, API
+        ///Controler and WebPages
+        ///Recommended: 5001
+        /// </summary>
+        public static int ConfigServerStartupHttpsPort { get; set; } = 5001;
 
         /// <summary>
         /// WebSocket Timeout Connection Settings in Minutes. After timeout when not detected any
@@ -202,6 +229,8 @@
 
         /// <summary>
         /// Startup Server On HTTP and HTTPS on Defined Port 
+        /// Aktivuje Provoz na protokolech HTTP i HTTPS současně, 
+        /// pro definici HTTP jej nastavte na zapnuto a dále dle nastaveni pro HTTPS
         /// </summary>
         public static bool ConfigServerStartupHTTPAndHTTPS { get; set; } = false;
 
@@ -413,6 +442,21 @@
         /// Provádí kompilaci Za běhu Serveru. Tzn.. Podporuje Vkládání Stránek Externě
         /// </summary>
         public static bool WebRazorPagesCompileOnRuntime { get; set; } = false;
+
+
+        /// <summary>
+        /// Aktivuje Presmerovani na Zadanou cestu
+        /// v případě Stránka nenalezena
+        /// </summary>
+        public static bool RedirectOnPageNotFound { get; set; } = true;
+
+
+        /// <summary>
+        /// Cesta na kterou se přesměruje 
+        /// Webová Stránka v případě 404 stránka nenalezena
+        /// </summary>
+        public static string RedirectPath { get; set; } = "globalnotify";
+
 
         #endregion Server Web Portal
 

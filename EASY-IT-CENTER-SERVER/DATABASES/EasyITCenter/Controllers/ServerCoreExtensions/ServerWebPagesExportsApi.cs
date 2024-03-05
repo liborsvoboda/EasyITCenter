@@ -43,7 +43,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
 
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.Startup_path, "Export"));
                 FileOperations.CreatePath(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages"));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", "metro"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "metro"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", "metro"));
                 data.ForEach(menuItem => {
                     try {
                         HtmlWeb hw = new HtmlWeb();
@@ -122,7 +122,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
                 FileOperations.CreatePath(Path.Combine(ServerRuntimeData.Startup_path, "Export"));
                 FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.Startup_path, "Export"));
                 FileOperations.CreatePath(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", "metro", "managed", "storage"));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "metro", "managed", "storage"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", "metro", "managed", "storage"));
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "metro", "managed", "storage"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", "metro", "managed", "storage"));
 
                 string json = System.IO.File.ReadAllText(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", "metro", "managed", "storage", "globalStorage.js"));
                 FileOperations.WriteToFile(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", "metro", "managed", "storage", "globalStorage.js"), json.Replace("window.location.origin",ServerConfigSettings.ServerPublicUrl));

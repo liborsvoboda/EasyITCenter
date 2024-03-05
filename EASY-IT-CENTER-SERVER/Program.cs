@@ -95,7 +95,7 @@ namespace EasyITCenter {
 
                         //TODO umoznuje naslouchat i na více portech soucasne
                         //options.ListenAnyIP(500);
-                        options.ListenAnyIP(ServerConfigSettings.ConfigServerStartupPort, opt => {
+                        options.ListenAnyIP(ServerConfigSettings.ConfigServerStartupHttpsPort, opt => {
                             opt.Protocols = HttpProtocols.Http1AndHttp2;
                             opt.KestrelServerOptions.AllowAlternateSchemes = true;
 
@@ -114,17 +114,19 @@ namespace EasyITCenter {
                     });
                 }
 
-                webBuilder.UseStartup<Startup>();
+                webBuilder.UseWebRoot(ServerConfigSettings.DefaultStaticWebFilesFolder);
                 webBuilder.UseStaticWebAssets();
+                webBuilder.UseStartup<Startup>();
+                
 
                 //TODO umoznuje naslouchat na vice portech soucasne i s ruznymi protokoly 
                 //webBuilder.UseUrls(new string[] { "http://*:5000", "https://*:5001" });
 
                 if (ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS) {
-                    webBuilder.UseUrls($"https://*:{ServerConfigSettings.ConfigServerStartupPort}",$"http://*:{ServerConfigSettings.ConfigServerStartupPort}");
+                    webBuilder.UseUrls($"https://*:{ServerConfigSettings.ConfigServerStartupHttpsPort}",$"http://*:{ServerConfigSettings.ConfigServerStartupHttpPort}");
                 }
                 else {
-                    webBuilder.UseUrls(ServerConfigSettings.ConfigServerStartupOnHttps ? $"https://*:{ServerConfigSettings.ConfigServerStartupPort}" : $"http://*:{ServerConfigSettings.ConfigServerStartupPort}");
+                    webBuilder.UseUrls(ServerConfigSettings.ConfigServerStartupOnHttps ? $"https://*:{ServerConfigSettings.ConfigServerStartupHttpsPort}" : $"http://*:{ServerConfigSettings.ConfigServerStartupHttpPort}");
                 }
                 if (ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerGetLetsEncrypt) {
                     webBuilder.UseKestrel(options => {
@@ -145,9 +147,7 @@ namespace EasyITCenter {
         /// Changes With Full Auto Filling Non Exist Records
         /// Example: LanguageList
         /// </summary>
-        private static void ServerStartupDbDataLoading() {
-            DbOperations.LoadOrRefreshStaticDbDials();
-        }
+        private static void ServerStartupDbDataLoading() { DbOperations.LoadOrRefreshStaticDbDials(); }
 
         /// <summary>
         /// Checking Valid License on StartUp

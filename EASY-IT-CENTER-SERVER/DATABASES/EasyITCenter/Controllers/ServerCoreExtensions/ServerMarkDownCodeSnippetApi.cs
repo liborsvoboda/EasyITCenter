@@ -1,7 +1,4 @@
-﻿using EasyITCenter.ToolsControllers;
-using IdentityModel.OidcClient;
-
-namespace EasyITCenter.ServerCoreDBSettings {
+﻿namespace EasyITCenter.ServerCoreDBSettings {
 
     /// <summary>
     /// Database Schema Diagram Controller
@@ -21,7 +18,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         [HttpGet("/ServerCoreTools/GenerateMarkDownCodeSnippet")]
         public async Task<string> GenerateMarkDownCodeSnippet() {
             //if (ServerConfigSettings.ModuleDbDiagramGeneratorEnabled) { //"application/octet-stream"
-            string result = GeneratorMarkDownCode.DirectoryMarkdownProcessorRun();
+            string result = null;// GeneratorMarkDownCode.DirectoryMarkdownProcessorRun();
             return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = 0, Status = result == DBResult.success.ToString() ? DBResult.success.ToString() : DBResult.error.ToString(), RecordCount = 0, ErrorMessage = result });
             //else { return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = 0, Status = DBResult.success.ToString(), RecordCount = 0, ErrorMessage = DbOperations.DBTranslate("massEmailNotEnabled") }); }
             //} catch (Exception ex) { return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }

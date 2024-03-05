@@ -1,4 +1,4 @@
-﻿using MarkdownSnippets;
+﻿
 
 namespace EasyITCenter.ToolsControllers {
 
@@ -9,7 +9,7 @@ namespace EasyITCenter.ToolsControllers {
     /// </summary>
     internal class GeneratorMarkDownCode {
 
-
+        /*
         /// <summary>
         /// Server Tool Generation Markdown Read All Code Snippets
         /// Read All Comments from Cs Project files
@@ -48,6 +48,6 @@ namespace EasyITCenter.ToolsControllers {
                 return DataOperations.GetSystemErrMessage(ex);
             }
         }
-
+        */
     }
 }

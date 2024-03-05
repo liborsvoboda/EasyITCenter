@@ -30,7 +30,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <summary>
         /// Gets or Sets the startup_path.
         /// </summary>
-        internal static string WebRoot_path { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "wwwroot");
+        internal static string WebRoot_path { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ServerConfigSettings.DefaultStaticWebFilesFolder);
 
         /// <summary>
         /// Gets or Sets the setting_folder.

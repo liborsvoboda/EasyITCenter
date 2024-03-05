@@ -35,8 +35,8 @@
                         FileOperations.CreatePath(Path.Combine(ServerRuntimeData.Startup_path, "Docs"));
                         FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.Startup_path, "Docs"));
 
-                        FileOperations.CreatePath(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "server-doc", "md-book", "src"));
-                        FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "server-doc", "md-book", "src"));
+                        FileOperations.CreatePath(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "server-doc", "md-book", "src"));
+                        FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "server-doc", "md-book", "src"));
 
                         FileOperations.CreatePath(Path.Combine(_hostingEnvironment.WebRootPath, "server-doc", "md-book", "src"));
                         FileOperations.ClearFolder(Path.Combine(_hostingEnvironment.WebRootPath, "server-doc", "md-book", "src"));
@@ -51,21 +51,21 @@
                             summary += "[" + "Ver." + documentation.AutoVersion + ": " + documentation.Name + "](./" + DataOperations.RemoveWhitespace(documentation.Name) + ".md" + ")   " + Environment.NewLine;
 
                             System.IO.File.WriteAllText(Path.Combine(ServerRuntimeData.Startup_path, "Docs", DataOperations.RemoveWhitespace(documentation.Name) + ".md"), documentation.MdContent, Encoding.UTF8);
-                            System.IO.File.WriteAllText(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "server-doc", "md-book", "src", DataOperations.RemoveWhitespace(documentation.Name) + ".md"), documentation.MdContent, Encoding.UTF8);
+                            System.IO.File.WriteAllText(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "server-doc", "md-book", "src", DataOperations.RemoveWhitespace(documentation.Name) + ".md"), documentation.MdContent, Encoding.UTF8);
 
                             //Dev wwwroot not bin/net6/wwwroot
                             System.IO.File.WriteAllText(Path.Combine(_hostingEnvironment.WebRootPath, "server-doc", "md-book", "src", DataOperations.RemoveWhitespace(documentation.Name) + ".md"), documentation.MdContent, Encoding.UTF8);
                         }); summary += "    ```  " + Environment.NewLine + Environment.NewLine + "---" + Environment.NewLine;
-                        System.IO.File.WriteAllText(Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "server-doc", "md-book", "src", "SUMMARY.md"), summary, Encoding.UTF8);
+                        System.IO.File.WriteAllText(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "server-doc", "md-book", "src", "SUMMARY.md"), summary, Encoding.UTF8);
                         System.IO.File.WriteAllText(Path.Combine(_hostingEnvironment.WebRootPath, "server-doc", "md-book", "src", "SUMMARY.md"), summary, Encoding.UTF8);
 
                         ProcessClass process = new ProcessClass();
                         if (CoreOperations.GetOperatingSystemInfo.IsWindows()) {
-                            process = new ProcessClass() { Command = Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "server-doc", "md-book", "generate-mdbook.bat"), Arguments = "", WorkingDirectory = Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "server-doc", "md-book") };
+                            process = new ProcessClass() { Command = Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "server-doc", "md-book", "generate-mdbook.bat"), Arguments = "", WorkingDirectory = Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "server-doc", "md-book") };
                             process = new ProcessClass() { Command = Path.Combine(_hostingEnvironment.WebRootPath, "server-doc", "md-book", "generate-mdbook.bat"), Arguments = "", WorkingDirectory = Path.Combine(_hostingEnvironment.WebRootPath, "server-doc", "md-book") };
                         }
                         else {
-                            process = new ProcessClass() { Command = "/bin/bash", Arguments = string.Format(" \"{0}\"", Path.Combine(ServerRuntimeData.Startup_path, "wwwroot", "server-doc", "md-book", "generate-mdbook.sh")) };
+                            process = new ProcessClass() { Command = "/bin/bash", Arguments = string.Format(" \"{0}\"", Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "server-doc", "md-book", "generate-mdbook.sh")) };
                             process = new ProcessClass() { Command = "/bin/bash", Arguments = string.Format(" \"{0}\"", Path.Combine(_hostingEnvironment.WebRootPath, "server-doc", "md-book", "generate-mdbook.sh")) };
                         }
 

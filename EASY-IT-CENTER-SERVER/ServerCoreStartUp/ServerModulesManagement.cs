@@ -1,8 +1,8 @@
 using DBEntitySchema.Core;
+using EasyITCenter.GitServer.Settings;
 using MarkdownDocumenting.Extensions;
 using Quartz.Impl;
 using Quartz.Spi;
-using Swashbuckle.AspNetCore.SchemaBuilder;
 using Westwind.AspNetCore.LiveReload;
 
 namespace EasyITCenter.ServerCoreConfiguration {
@@ -13,10 +13,23 @@ namespace EasyITCenter.ServerCoreConfiguration {
     public class ServerModules {
 
         /// <summary>
+        /// Server Module: GitServer Startup Configuration
+        /// </summary>
+        /// <param name="services"></param>
+        internal static void ConfigureGitSevrer(ref IServiceCollection services) {
+            if (ServerConfigSettings.GitServerEnabled) {
+                    services.Configure<GitSettings>(options => {
+                    options.BasePath = Path.Combine(ServerRuntimeData.Startup_path, ServerRuntimeData.DataPath,"GitServer");
+                    options.GitPath = "git";
+                });
+            }
+        }
+
+
+        /// <summary>
         /// Server Module: Configures the Scheduler Module.
         /// </summary>
         /// <param name="services">The services.</param>
-        [Obsolete]
         internal static void ConfigureScheduler(ref IServiceCollection services) {
             if (ServerConfigSettings.ModuleAutoSchedulerEnabled) {
                 services.AddSingleton<IJobFactory, JobFactory>();
@@ -65,10 +78,10 @@ namespace EasyITCenter.ServerCoreConfiguration {
                         foreach (ServerLiveDataMonitorList monitor in data) {
                             services.AddLiveReload(config => {
                                 try {
-                                    if (FileOperations.CheckDirectory(System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath))) {
+                                    if (FileOperations.CheckDirectory(Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath))) {
                                         config.LiveReloadEnabled = true;
                                         config.ServerRefreshTimeout = 1000;
-                                        config.FolderToMonitor = System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath);
+                                        config.FolderToMonitor = Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath);
                                         if (monitor.FileExtensions.Length > 0) { config.ClientFileExtensions = monitor.FileExtensions; }
                                     }
                                     else { CoreOperations.SendEmail(new MailRequest() { Content = "Path For Live Data Monitoring not Exist" + System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath) }); }
@@ -124,7 +137,8 @@ namespace EasyITCenter.ServerCoreConfiguration {
                                 break;
 
                             case "serverUrlPath":
-                                services.AddHealthChecks().AddUrlGroup(new Uri(ServerConfigSettings.ConfigServerStartupOnHttps ? $"https://localhost:{ServerConfigSettings.ConfigServerStartupPort}" + item.ServerUrlPath : $"http://localhost:{ServerConfigSettings.ConfigServerStartupPort}" + item.ServerUrlPath), item.TaskName);
+                                services.AddHealthChecks().AddUrlGroup(new Uri(ServerConfigSettings.ConfigServerStartupOnHttps ? $"https://localhost:{ServerConfigSettings.ConfigServerStartupHttpsPort}" + item.ServerUrlPath : $"http://localhost:{ServerConfigSettings.ConfigServerStartupHttpPort}" + item.ServerUrlPath), item.TaskName);
+                                if (ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS) { services.AddHealthChecks().AddUrlGroup(new Uri($"http://localhost:{ServerConfigSettings.ConfigServerStartupHttpPort}" + item.ServerUrlPath), item.TaskName + "_HTTP"); }
                                 break;
 
                             case "urlPath":
@@ -151,7 +165,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                 };
                 services.AddHealthChecksUI(setup => {
                     setup.SetHeaderText(ServerConfigSettings.ConfigCoreServerRegisteredName + "IT Dohledové Centrum");
-                    setup.AddHealthCheckEndpoint("IT:  NET | HW | SW | OS | DB  Monitoring", (ServerConfigSettings.ConfigServerStartupOnHttps) ? $"https://localhost:{ServerConfigSettings.ConfigServerStartupPort}" + "/HealthResultService" : $"http://localhost:{ServerConfigSettings.ConfigServerStartupPort}" + "/HealthResultService");
+                    setup.AddHealthCheckEndpoint("IT:  NET | HW | SW | OS | DB  Monitoring", ServerConfigSettings.ConfigServerStartupOnHttps ? $"https://localhost:{ServerConfigSettings.ConfigServerStartupHttpsPort}" + "/HealthResultService" : $"http://localhost:{ServerConfigSettings.ConfigServerStartupHttpPort}" + "/HealthResultService");
                     setup.DisableDatabaseMigrations();
                     setup.SetApiMaxActiveRequests(200);
                     setup.SetMinimumSecondsBetweenFailureNotifications(10);
@@ -189,7 +203,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                         License = new OpenApiLicense { Name = ServerConfigSettings.ConfigCoreServerRegisteredName + " Server License", Url = new Uri("https://www.groupware-solution.eu/") }
                     });
 
-                    var xmlFile = System.IO.Path.Combine(AppContext.BaseDirectory, $"{ServerConfigSettings.ConfigCoreServerRegisteredName}.xml");
+                    var xmlFile = Path.Combine(AppContext.BaseDirectory, $"{ServerConfigSettings.ConfigCoreServerRegisteredName}.xml");
                     if (File.Exists(xmlFile)) c.IncludeXmlComments(xmlFile, true);
 
                     //c.InferSecuritySchemes();

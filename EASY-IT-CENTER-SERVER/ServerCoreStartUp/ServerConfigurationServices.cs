@@ -8,6 +8,12 @@ using Newtonsoft.Json.Serialization;
 using Quartz;
 using SimpleMvcSitemap;
 using Snickler.RSSCore.Extensions;
+using Microsoft.AspNetCore.Mvc.Razor;
+using EasyITCenter.GitServer.Services;
+using EasyITCenter.GitServer.Repositorys;
+using EasyITCenter.GitServer.Interfaces;
+using EasyITCenter.GitServer.Models;
+using EasyITCenter.GitServer.Controllers;
 
 namespace EasyITCenter.ServerCoreConfiguration {
 
@@ -31,7 +37,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
 
                 services.Configure<FtpServerOptions>(opt => opt.ServerAddress = "*");
                 services.Configure<DotNetFileSystemOptions>(opt => {
-                    opt.RootPath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path, ServerConfigSettings.ServerFtpStorageRootPath);
+                    opt.RootPath = Path.Combine(ServerRuntimeData.WebRoot_path, ServerConfigSettings.ServerFtpStorageRootPath);
                     opt.AllowNonEmptyDirectoryDelete = true;
                 });
                 services.AddSingleton<IMembershipProvider, HostedFtpServerMembershipProvider>();
@@ -49,10 +55,12 @@ namespace EasyITCenter.ServerCoreConfiguration {
         /// <param name="services"></param>
         internal static void ConfigureCookie(ref IServiceCollection services) {
             services.Configure<CookiePolicyOptions>(options => {
+                options.ConsentCookie.Name = ServerConfigSettings.ConfigCoreServerRegisteredName;
                 options.CheckConsentNeeded = context => false;
                 options.MinimumSameSitePolicy = SameSiteMode.Lax;
                 options.Secure = CookieSecurePolicy.Always;
-                options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
+                options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.None;
+                //options.ConsentCookie.IsEssential = false;
             });
         }
 
@@ -158,17 +166,36 @@ namespace EasyITCenter.ServerCoreConfiguration {
             if (ServerConfigSettings.WebRazorPagesEngineEnabled) {
                 if (ServerConfigSettings.WebRazorPagesCompileOnRuntime) {
                     services.AddMvc(options => {
-                        options.CacheProfiles.Add("Default30", new CacheProfile() { Duration = 30 });
+                        options.CacheProfiles.Add("Default30", new CacheProfile() { Duration = 300, NoStore = true});
                     }).AddRazorPagesOptions(opt => {
                         opt.RootDirectory = "/ServerCorePages";
+                    }).AddRazorOptions(p => {
+                        var test = p.PageViewLocationFormats;
+                        p.PageViewLocationFormats.Add("/ServerCorePages/Github/{0}.cshtml");
+                        p.PageViewLocationFormats.Add("/ServerCorePages/Github/Shared/{0}.cshtml");
+                        p.PageViewLocationFormats.Add("/ServerCorePages/Github/Shared/_Layout.cshtml");
+
+                        p.PageViewLocationFormats.Add("/ServerCorePages/WebPortal/{0}.cshtml");
+                        p.PageViewLocationFormats.Add("/ServerCorePages/WebPortal/Shared/{0}.cshtml");
+                        p.PageViewLocationFormats.Add("/ServerCorePages/WebPortal/Shared/_CleanLayout.cshtml");
+                        p.PageViewLocationFormats.Add("/ServerCorePages/WebPortal/Shared/_CentralLayout.cshtml");
                     }).AddRazorRuntimeCompilation();
+                    services.Configure<RazorViewEngineOptions>(options =>
+                    { options.PageViewLocationFormats.Add("/ServerCorePages/Shared/{0}" + RazorViewEngine.ViewExtension); });
                 }
                 else {
                     services.AddMvc(options => {
-                        options.CacheProfiles.Add("Default30", new CacheProfile() { Duration = 30 });
+                        options.CacheProfiles.Add("Default30", new CacheProfile() { Duration = 300 });
                     }).AddRazorPagesOptions(opt => {
                         opt.RootDirectory = "/ServerCorePages";
-                    }).AddRazorRuntimeCompilation();
+                    }).AddRazorOptions(p => {
+                        var test = p.PageViewLocationFormats;
+                        var indexOfPagesShared = p.PageViewLocationFormats.IndexOf("/Pages/Shared/{0}.cshtml");
+                        p.PageViewLocationFormats.RemoveAt(indexOfPagesShared);
+                        p.PageViewLocationFormats.Insert(indexOfPagesShared, "/ServerCorePages/Shared/{0}.cshtml");
+                    });
+                    services.Configure<RazorViewEngineOptions>(options => 
+                    { options.PageViewLocationFormats.Add("/ServerCorePages/Shared/{0}" + RazorViewEngine.ViewExtension); });
                 }//services.AddRazorPages();
             }
 
@@ -178,8 +205,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                         options.EnableEndpointRouting = false;
                         options.AllowEmptyInputInBodyModelBinding = true;
                     }).AddRazorRuntimeCompilation();
-                }
-                else {
+                } else {
                     services.AddMvc(options => {
                         options.EnableEndpointRouting = false;
                         options.AllowEmptyInputInBodyModelBinding = true;
@@ -227,6 +253,21 @@ namespace EasyITCenter.ServerCoreConfiguration {
         internal static void ConfigureThirdPartyApi(ref IServiceCollection services) {
             //services.AddHttpClient();
         }
+
+
+
+        /// <summary>
+        /// Server Core: Configures the Transient.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        internal static void ConfigureTransient(ref IServiceCollection services) {
+            services.AddTransient<GitRepositoryService>();
+            services.AddTransient<GitFileService>();
+            //services.AddTransient<GitAuthenticationService>();//, GitRepository<SolutionUserList>>();
+            services.AddTransient<GithubUserController>();
+        }
+
+
 
         /// <summary>
         /// Server Core: Configures the singletons. Its Register Custom Listeners For Actions
