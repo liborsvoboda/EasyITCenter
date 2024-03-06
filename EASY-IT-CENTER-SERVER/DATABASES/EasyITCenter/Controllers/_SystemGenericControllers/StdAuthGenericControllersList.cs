@@ -12,23 +12,25 @@ namespace EasyITCenter.ServerCoreDBSettings {
         public SystemParameterListController(IRepositoryAsync<EasyITCenterContext, SystemParameterList> repo) : base(repo) { }
     }*/
 
-    [Authorize]
-    [Route("[controller]")]
-    [ApiController]
-    public class SolutionWebsiteListController : StdAuthGenericProviderApi<EasyITCenterContext, SolutionWebsiteList, int> {
 
-        public SolutionWebsiteListController(IRepositoryAsync<EasyITCenterContext, SolutionWebsiteList> repo) : base(repo) {
-        }
-    }
+    //[Authorize]
+    //[Route("[controller]")]
+    //[ApiController]
+    //public class SolutionWebsiteListController : StdAuthGenericProviderApi<EasyITCenterContext, SolutionWebsiteList, int> {
 
-    [Authorize]
-    [Route("[controller]")]
-    [ApiController]
-    public class SolutionStaticFileListController : StdAuthGenericProviderApi<EasyITCenterContext, SolutionStaticFileList, int> {
+    //    public SolutionWebsiteListController(IRepositoryAsync<EasyITCenterContext, SolutionWebsiteList> repo) : base(repo) {
+    //    }
+    //}
 
-        public SolutionStaticFileListController(IRepositoryAsync<EasyITCenterContext, SolutionStaticFileList> repo) : base(repo) {
-        }
-    }
+
+    //[Authorize]
+    //[Route("[controller]")]
+    //[ApiController]
+    //public class SolutionStaticFileListController : StdAuthGenericProviderApi<EasyITCenterContext, SolutionStaticFileList, int> {
+
+    //    public SolutionStaticFileListController(IRepositoryAsync<EasyITCenterContext, SolutionStaticFileList> repo) : base(repo) {
+    //    }
+    //}
 
 
     /*
@@ -42,24 +44,24 @@ namespace EasyITCenter.ServerCoreDBSettings {
     }
     */
 
-    [Authorize(Roles = "admin")]
-    [Route("[controller]")]
-    [ApiController]
-    public class ServerModuleAndServiceListController : StdAuthGenericProviderApi<EasyITCenterContext, ServerModuleAndServiceList, int> {
+    //[Authorize(Roles = "admin")]
+    //[Route("[controller]")]
+    //[ApiController]
+    //public class ServerModuleAndServiceListController : StdAuthGenericProviderApi<EasyITCenterContext, ServerModuleAndServiceList, int> {
 
-        public ServerModuleAndServiceListController(IRepositoryAsync<EasyITCenterContext, ServerModuleAndServiceList> repo) : base(repo) {
-        }
-    }
+    //    public ServerModuleAndServiceListController(IRepositoryAsync<EasyITCenterContext, ServerModuleAndServiceList> repo) : base(repo) {
+    //    }
+    //}
 
 
-    [Authorize(Roles = "admin")]
-    [Route("[controller]")]
-    [ApiController]
-    public class SystemModuleListController : StdAuthGenericProviderApi<EasyITCenterContext, SystemModuleList, int> {
+    //[Authorize(Roles = "admin")]
+    //[Route("[controller]")]
+    //[ApiController]
+    //public class SystemModuleListController : StdAuthGenericProviderApi<EasyITCenterContext, SystemModuleList, int> {
 
-        public SystemModuleListController(IRepositoryAsync<EasyITCenterContext, SystemModuleList> repo) : base(repo) {
-        }
-    }
+    //    public SystemModuleListController(IRepositoryAsync<EasyITCenterContext, SystemModuleList> repo) : base(repo) {
+    //    }
+    //}
 
     
 }

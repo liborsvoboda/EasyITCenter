@@ -2,50 +2,50 @@
 
     [Authorize]
     [ApiController]
-    [Route("EasyITCenterTemplateList")]
-    public class EasyITCenterTemplateListApi : ControllerBase {
+    [Route("EasyITCenterServerModuleAndServiceList")]
+    public class EasyITCenterServerModuleAndServiceListApi : ControllerBase {
 
-        [HttpGet("/EasyITCenterTemplateList")]
-        public async Task<string> GetTemplateList() {
-            List<TemplateList> data;
+        [HttpGet("/EasyITCenterServerModuleAndServiceList")]
+        public async Task<string> GetServerModuleAndServiceList() {
+            List<ServerModuleAndServiceList> data;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                 IsolationLevel = IsolationLevel.ReadUncommitted //with NO LOCK
             })) {
-                data = new EasyITCenterContext().TemplateLists.ToList();
+                data = new EasyITCenterContext().ServerModuleAndServiceLists.ToList();
             }
             return JsonSerializer.Serialize(data);
         }
 
-        [HttpGet("/EasyITCenterTemplateList/Filter/{filter}")]
-        public async Task<string> GetTemplateListByFilter(string filter) {
-            List<TemplateList> data;
+        [HttpGet("/EasyITCenterServerModuleAndServiceList/Filter/{filter}")]
+        public async Task<string> GetServerModuleAndServiceListByFilter(string filter) {
+            List<ServerModuleAndServiceList> data;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                 IsolationLevel = IsolationLevel.ReadUncommitted //with NO LOCK
             })) {
-                data = new EasyITCenterContext().TemplateLists.FromSqlRaw("SELECT * FROM TemplateList WHERE 1=1 AND " + filter.Replace("+", " ")).AsNoTracking().ToList();
+                data = new EasyITCenterContext().ServerModuleAndServiceLists.FromSqlRaw("SELECT * FROM ServerModuleAndServiceList WHERE 1=1 AND " + filter.Replace("+", " ")).AsNoTracking().ToList();
             }
 
             return JsonSerializer.Serialize(data);
         }
 
-        [HttpGet("/EasyITCenterTemplateList/{id}")]
-        public async Task<string> GetTemplateListKey(int id) {
-            TemplateList data;
+        [HttpGet("/EasyITCenterServerModuleAndServiceList/{id}")]
+        public async Task<string> GetServerModuleAndServiceListKey(int id) {
+            ServerModuleAndServiceList data;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                 IsolationLevel = IsolationLevel.ReadUncommitted
             })) {
-                data = new EasyITCenterContext().TemplateLists.Where(a => a.Id == id).First();
+                data = new EasyITCenterContext().ServerModuleAndServiceLists.Where(a => a.Id == id).First();
             }
 
             return JsonSerializer.Serialize(data);
         }
 
-        [HttpPut("/EasyITCenterTemplateList")]
+        [HttpPut("/EasyITCenterServerModuleAndServiceList")]
         [Consumes("application/json")]
-        public async Task<string> InsertTemplateList([FromBody] TemplateList record) {
+        public async Task<string> InsertServerModuleAndServiceList([FromBody] ServerModuleAndServiceList record) {
             try {
                 record.User = null;  //EntityState.Detached IDENTITY_INSERT is set to OFF
-                var data = new EasyITCenterContext().TemplateLists.Add(record);
+                var data = new EasyITCenterContext().ServerModuleAndServiceLists.Add(record);
                 int result = await data.Context.SaveChangesAsync();
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
@@ -54,23 +54,23 @@
             }
         }
 
-        [HttpPost("/EasyITCenterTemplateList")]
+        [HttpPost("/EasyITCenterServerModuleAndServiceList")]
         [Consumes("application/json")]
-        public async Task<string> UpdateTemplateList([FromBody] TemplateList record) {
+        public async Task<string> UpdateServerModuleAndServiceList([FromBody] ServerModuleAndServiceList record) {
             try {
-                var data = new EasyITCenterContext().TemplateLists.Update(record);
+                var data = new EasyITCenterContext().ServerModuleAndServiceLists.Update(record);
                 int result = await data.Context.SaveChangesAsync();
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
             } catch (Exception ex) { return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
         }
 
-        [HttpDelete("/EasyITCenterTemplateList/{id}")]
+        [HttpDelete("/EasyITCenterServerModuleAndServiceList/{id}")]
         [Consumes("application/json")]
-        public async Task<string> DeleteTemplateList(int id) {
+        public async Task<string> DeleteServerModuleAndServiceList(int id) {
             try {
-                TemplateList record = new() { Id = id };
-                var data = new EasyITCenterContext().TemplateLists.Remove(record);
+                ServerModuleAndServiceList record = new() { Id = id };
+                var data = new EasyITCenterContext().ServerModuleAndServiceLists.Remove(record);
                 int result = await data.Context.SaveChangesAsync();
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });

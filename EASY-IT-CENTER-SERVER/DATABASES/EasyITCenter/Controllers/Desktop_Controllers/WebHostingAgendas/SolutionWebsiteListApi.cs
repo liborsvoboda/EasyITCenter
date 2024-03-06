@@ -2,50 +2,50 @@
 
     [Authorize]
     [ApiController]
-    [Route("EasyITCenterTemplateList")]
-    public class EasyITCenterTemplateListApi : ControllerBase {
+    [Route("EasyITCenterSolutionWebsiteList")]
+    public class EasyITCenterSolutionWebsiteListApi : ControllerBase {
 
-        [HttpGet("/EasyITCenterTemplateList")]
-        public async Task<string> GetTemplateList() {
-            List<TemplateList> data;
+        [HttpGet("/EasyITCenterSolutionWebsiteList")]
+        public async Task<string> GetSolutionWebsiteList() {
+            List<SolutionWebsiteList> data;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                 IsolationLevel = IsolationLevel.ReadUncommitted //with NO LOCK
             })) {
-                data = new EasyITCenterContext().TemplateLists.ToList();
+                data = new EasyITCenterContext().SolutionWebsiteLists.ToList();
             }
             return JsonSerializer.Serialize(data);
         }
 
-        [HttpGet("/EasyITCenterTemplateList/Filter/{filter}")]
-        public async Task<string> GetTemplateListByFilter(string filter) {
-            List<TemplateList> data;
+        [HttpGet("/EasyITCenterSolutionWebsiteList/Filter/{filter}")]
+        public async Task<string> GetSolutionWebsiteListByFilter(string filter) {
+            List<SolutionWebsiteList> data;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                 IsolationLevel = IsolationLevel.ReadUncommitted //with NO LOCK
             })) {
-                data = new EasyITCenterContext().TemplateLists.FromSqlRaw("SELECT * FROM TemplateList WHERE 1=1 AND " + filter.Replace("+", " ")).AsNoTracking().ToList();
+                data = new EasyITCenterContext().SolutionWebsiteLists.FromSqlRaw("SELECT * FROM SolutionWebsiteList WHERE 1=1 AND " + filter.Replace("+", " ")).AsNoTracking().ToList();
             }
 
             return JsonSerializer.Serialize(data);
         }
 
-        [HttpGet("/EasyITCenterTemplateList/{id}")]
-        public async Task<string> GetTemplateListKey(int id) {
-            TemplateList data;
+        [HttpGet("/EasyITCenterSolutionWebsiteList/{id}")]
+        public async Task<string> GetSolutionWebsiteListKey(int id) {
+            SolutionWebsiteList data;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                 IsolationLevel = IsolationLevel.ReadUncommitted
             })) {
-                data = new EasyITCenterContext().TemplateLists.Where(a => a.Id == id).First();
+                data = new EasyITCenterContext().SolutionWebsiteLists.Where(a => a.Id == id).First();
             }
 
             return JsonSerializer.Serialize(data);
         }
 
-        [HttpPut("/EasyITCenterTemplateList")]
+        [HttpPut("/EasyITCenterSolutionWebsiteList")]
         [Consumes("application/json")]
-        public async Task<string> InsertTemplateList([FromBody] TemplateList record) {
+        public async Task<string> InsertSolutionWebsiteList([FromBody] SolutionWebsiteList record) {
             try {
                 record.User = null;  //EntityState.Detached IDENTITY_INSERT is set to OFF
-                var data = new EasyITCenterContext().TemplateLists.Add(record);
+                var data = new EasyITCenterContext().SolutionWebsiteLists.Add(record);
                 int result = await data.Context.SaveChangesAsync();
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
@@ -54,23 +54,23 @@
             }
         }
 
-        [HttpPost("/EasyITCenterTemplateList")]
+        [HttpPost("/EasyITCenterSolutionWebsiteList")]
         [Consumes("application/json")]
-        public async Task<string> UpdateTemplateList([FromBody] TemplateList record) {
+        public async Task<string> UpdateSolutionWebsiteList([FromBody] SolutionWebsiteList record) {
             try {
-                var data = new EasyITCenterContext().TemplateLists.Update(record);
+                var data = new EasyITCenterContext().SolutionWebsiteLists.Update(record);
                 int result = await data.Context.SaveChangesAsync();
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
             } catch (Exception ex) { return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
         }
 
-        [HttpDelete("/EasyITCenterTemplateList/{id}")]
+        [HttpDelete("/EasyITCenterSolutionWebsiteList/{id}")]
         [Consumes("application/json")]
-        public async Task<string> DeleteTemplateList(int id) {
+        public async Task<string> DeleteSolutionWebsiteList(int id) {
             try {
-                TemplateList record = new() { Id = id };
-                var data = new EasyITCenterContext().TemplateLists.Remove(record);
+                SolutionWebsiteList record = new() { Id = id };
+                var data = new EasyITCenterContext().SolutionWebsiteLists.Remove(record);
                 int result = await data.Context.SaveChangesAsync();
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
