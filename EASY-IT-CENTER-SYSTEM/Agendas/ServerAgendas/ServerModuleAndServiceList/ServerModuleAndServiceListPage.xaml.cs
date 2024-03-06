@@ -51,7 +51,7 @@ namespace EasyITSystemCenter.Pages {
                 userRoleList.ForEach(async role => { role.Translation = await DBOperations.DBTranslation(role.SystemName); });
                 ServerModuleAndServiceList.ForEach(module => {
                     module.PageTypeTranslation = solutionMixedEnumList.FirstOrDefault(a => a.Name == module.InheritedPageType).Translation;
-                    module.LayoutTypeTranslation = solutionMixedEnumListLayoutTypes.FirstOrDefault(a => a.Name == module.InheritedLayoutType).Translation;
+                    try { module.LayoutTypeTranslation = solutionMixedEnumListLayoutTypes.FirstOrDefault(a => a.Name == module.InheritedLayoutType).Translation; } catch { }
                 });
 
             DgListView.ItemsSource = ServerModuleAndServiceList;
@@ -158,7 +158,10 @@ namespace EasyITSystemCenter.Pages {
 
                 selectedRecord.InheritedPageType = ((SolutionMixedEnumList)cb_inheritedPageType.SelectedItem).Name;
                 selectedRecord.Name = txt_name.Text;
-                selectedRecord.InheritedLayoutType = ((SolutionMixedEnumList)cb_inheritedLayoutType.SelectedItem).Name;
+
+                if (((SolutionMixedEnumList)cb_inheritedPageType.SelectedItem).Name == "ServerApi") { selectedRecord.InheritedLayoutType = ""; }
+                else { selectedRecord.InheritedLayoutType = ((SolutionMixedEnumList)cb_inheritedLayoutType.SelectedItem).Name; }
+
                 selectedRecord.Description = txt_description.Text;
 
                 selectedRecord.UrlSubPath = txt_urlSubPath.Text;
@@ -202,7 +205,7 @@ namespace EasyITSystemCenter.Pages {
 
             cb_inheritedPageType.SelectedItem = (selectedRecord.Id == 0) ? solutionMixedEnumList.FirstOrDefault() : solutionMixedEnumList.First(a => a.Name == selectedRecord.InheritedPageType);
             txt_name.Text = selectedRecord.Name;
-            cb_inheritedLayoutType.SelectedItem = (selectedRecord.Id == 0) ? solutionMixedEnumListLayoutTypes.FirstOrDefault() : solutionMixedEnumListLayoutTypes.First(a => a.Name == selectedRecord.InheritedLayoutType);
+            cb_inheritedLayoutType.SelectedItem = (selectedRecord.Id == 0) ? solutionMixedEnumListLayoutTypes.FirstOrDefault() : solutionMixedEnumListLayoutTypes.FirstOrDefault(a => a.Name == selectedRecord.InheritedLayoutType);
             txt_description.Text = selectedRecord.Description;
 
             txt_urlSubPath.Text = selectedRecord.UrlSubPath;
@@ -249,6 +252,11 @@ namespace EasyITSystemCenter.Pages {
                 txt_redirectPathOnError.Text = null;
                 txt_redirectPathOnError.IsEnabled = !(bool)chb_restrictedAccess.IsChecked;
             }
+        }
+
+        private void InheritedPageType_Changed(object sender, SelectionChangedEventArgs e) {
+            if (((SolutionMixedEnumList)cb_inheritedPageType.SelectedItem).Name == "ServerApi") { cb_inheritedLayoutType.SelectedIndex = -1; cb_inheritedLayoutType.IsEnabled = false; }
+            else { cb_inheritedLayoutType.SelectedIndex = 0; cb_inheritedLayoutType.IsEnabled = true; }
         }
     }
 }

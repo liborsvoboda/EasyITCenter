@@ -15,8 +15,8 @@ namespace EasyITCenter.ToolsControllers {
         /// Read All Comments from Cs Project files
         /// </summary>
         internal static IEnumerable<Snippet> ReadingFiles() {
-          IEnumerable<string> files = Directory.EnumerateFiles(ServerRuntimeData.ContentRootPath, "*.cs", SearchOption.TopDirectoryOnly);
-          IEnumerable<Snippet> snippets = FileSnippetExtractor.Read(files);
+          IEnumerable<string> files = Directory.Enumera.teFiles(ServerRuntimeData.ContentRootPath, "*.cs", SearchOption.TopDirectoryOnly);
+          IEnumerable<Snippet> snippets = FileSnippetExtractorRead(files);
             return snippets;
         }
 

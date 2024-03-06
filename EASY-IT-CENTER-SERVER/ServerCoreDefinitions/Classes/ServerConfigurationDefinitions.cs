@@ -136,6 +136,7 @@
         /// </summary>
         public static bool GitServerEnabled { get; set; } = true;
         
+
         /// <summary>
         /// Root Složka pro Statické soubory Webu
         /// </summary>

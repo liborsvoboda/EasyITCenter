@@ -12,9 +12,9 @@ using EasyITCenter.GitServer.Interfaces;
 using EasyITCenter.GitServer.Models;
 
 namespace EasyITCenter.GitServer.Controllers
-{    
+{
 
-
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class GithubUserController : Controller
     {
         private SolutionUserList _user;

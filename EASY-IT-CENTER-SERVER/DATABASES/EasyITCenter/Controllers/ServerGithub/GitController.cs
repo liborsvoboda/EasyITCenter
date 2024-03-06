@@ -8,6 +8,7 @@ using System.IO;
 
 namespace EasyITCenter.GitServer.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(AuthenticationSchemes = BasicAuthenticationDefaults.AuthenticationScheme)]
     public class GitController : GitControllerBase
     {

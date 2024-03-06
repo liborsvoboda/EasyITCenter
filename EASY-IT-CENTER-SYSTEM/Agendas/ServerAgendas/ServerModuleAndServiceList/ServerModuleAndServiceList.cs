@@ -25,6 +25,6 @@ namespace EasyITSystemCenter.Classes {
         public DateTime TimeStamp { get; set; }
 
         public string PageTypeTranslation { get; set; } = null;
-        public string LayoutTypeTranslation { get; set; } = null;
+        public string LayoutTypeTranslation { get; set; } = "";
     }
 }

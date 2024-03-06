@@ -5,7 +5,7 @@
     /// </summary>
     /// <seealso cref="Controller"/>
     [Route("ServerDbDgmlSchema")]
-     //[ApiExplorerSettings(IgnoreApi = true)]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerDbDgmlSchemaApi : Controller {
         private EasyITCenterContext Context { get; }
 

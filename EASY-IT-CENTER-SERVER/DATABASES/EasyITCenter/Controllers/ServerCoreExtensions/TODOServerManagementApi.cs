@@ -9,7 +9,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
     /// <seealso cref="ControllerBase"/>
     [Authorize]
     [ApiController]
-     //[ApiExplorerSettings(IgnoreApi = true)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ServerManagementApi : ControllerBase {
         private readonly ILogger logger;
 

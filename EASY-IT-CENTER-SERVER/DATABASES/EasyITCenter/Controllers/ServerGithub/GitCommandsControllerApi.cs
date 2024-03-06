@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace EasyITCenter.GitServer.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class GitControllerBase : Controller
     {
 		private IOptions<GitSettings> _gitOptions;

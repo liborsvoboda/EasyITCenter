@@ -3,6 +3,7 @@
     [AllowAnonymous]
     [ApiController]
     [Route("/WebApi/StaticFiles")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ServerWebsiteStaticFilesApi : ControllerBase {
         private readonly ILogger<ServerWebsiteStaticFilesApi> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;

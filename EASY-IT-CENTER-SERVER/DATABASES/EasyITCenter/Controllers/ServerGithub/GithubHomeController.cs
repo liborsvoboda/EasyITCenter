@@ -6,7 +6,7 @@ using EasyITCenter.GitServer.Repositorys;
 
 namespace EasyITCenter.GitServer.Controllers
 {
-    
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class GithubHomeController : GitControllerBase
     {
         private EasyITCenterContext _repository;

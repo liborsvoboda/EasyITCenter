@@ -6,7 +6,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
     [AllowAnonymous]
     [ApiController]
     [Route("/WS")]
-     //[ApiExplorerSettings(IgnoreApi = true)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ServerCoreLoggerWS : ControllerBase {
         private static ILogger<ServerCoreLoggerWS> _logger;
 

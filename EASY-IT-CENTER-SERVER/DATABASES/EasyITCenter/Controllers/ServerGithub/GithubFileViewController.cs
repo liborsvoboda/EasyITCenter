@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace EasyITCenter.GitServer.Controllers
 {
     //[Authorize]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class GithubFileViewController : GitControllerBase
     {
         public GithubFileViewController(

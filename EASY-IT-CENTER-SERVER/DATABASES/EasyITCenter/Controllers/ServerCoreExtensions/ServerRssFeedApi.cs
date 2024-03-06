@@ -49,7 +49,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
     [ApiController]
     [Route("rss", Name = "rss")]
     [Route("rss.xml", Name = "rssxml")]
-     //[ApiExplorerSettings(IgnoreApi = true)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ServerRssFeedApi : ControllerBase {
         private readonly ILogger logger;
 
