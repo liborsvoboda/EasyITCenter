@@ -1,9 +1,26 @@
-﻿
-// Behaviors
-
-// STARTUP Temp Variables Definitions
-let pageLoader;
+﻿//START DEFINE PAGE GLOBAL VARIABLES
+let siteLoader;
 let charms;
+
+//END OF DEFINE PAGE GLOBAL VARIABLES
+//START DEFINE STORAGE FOR TOOL
+Metro.storage.setItem('BackendServerAddress', window.location.origin); /* You Can Set External Backend Server */
+Metro.storage.setItem('ApiOriginSuffix', Metro.storage.getItem('BackendServerAddress', null) + "/WebApi");
+Metro.storage.setItem('DetectedLanguage', (navigator.language || navigator.userLanguage).substring(0, 2));
+
+/*WebPages Theme Scheme*/
+if (Metro.storage.getItem('WebScheme', null) == null) {
+    Metro.storage.setItem('WebScheme', "sky-net.css");
+    ChangeSchemeTo(Metro.storage.getItem('WebScheme', null));
+} else { ChangeSchemeTo(Metro.storage.getItem('WebScheme', null)); }
+
+//Start Set User Default Setting
+if (Metro.storage.getItem('UserAutomaticTranslate', null) == null) { Metro.storage.setItem('UserAutomaticTranslate', true); }
+
+
+//END OF STORAGE FOR TOOL
+//START PAGE BEHAVIORS CONTROL DEFINITONS
+
 
 /*Definitions  of Global System Behaviors */
 function ChangeSchemeTo(n) {
@@ -13,14 +30,14 @@ function ChangeSchemeTo(n) {
 }
 
 /*Start of Global Loading Indicator for All Pages*/
-function hidePageLoading() { Metro.activity.close(pageLoader); }
+function hidePageLoading() { Metro.activity.close(siteLoader); }
 function showPageLoading() {
-    if (pageLoader != undefined) {
-        if (pageLoader[0]["DATASET:UID:M4Q"] == undefined) { pageLoader = null; }
-        else { try { Metro.activity.close(pageLoader); } catch {
-                try { pageLoader.close(); } catch { pageLoader = pageLoader[0]["DATASET:UID:M4Q"].dialog; pageLoader.close(); }; pageLoader = null; } }
+    if (siteLoader != undefined) {
+        if (siteLoader[0]["DATASET:UID:M4Q"] == undefined) { siteLoader = null; }
+        else { try { Metro.activity.close(siteLoader); } catch {
+                try { siteLoader.close(); } catch { siteLoader = siteLoader[0]["DATASET:UID:M4Q"].dialog; siteLoader.close(); }; siteLoader = null; } }
     }
-    pageLoader = Metro.activity.open({ type: 'atom', style: 'dark', overlayClickClose: true, /*overlayColor: '#fff', overlayAlpha: 1*/ });
+    siteLoader = Metro.activity.open({ type: 'atom', style: 'dark', overlayClickClose: true, /*overlayColor: '#fff', overlayAlpha: 1*/ });
 }
 
 
@@ -77,100 +94,6 @@ function CancelTranslation() {
     }, 1000);
 }
 
-function ApplyLoadedWebSetting(val) {
-    if (Metro.storage.getItem('WebPagesName', null) != null) {
-        $("#WebPagesName").html(Metro.storage.getItem('WebPagesName', null) + "<small id='WebPageMottos'>" + (Metro.storage.getItem('CycleWebPageMottosEnabled', null) == null ? Metro.storage.getItem('WebPagesNameSmall', null) : "" ) + "</small>");
-    } else { $("#WebPagesName").html("EDC+ESB IT GroupWare-Solution.Eu <small id='WebPageMottos'>Celé IT v 1 Řešení v každém jazyce</small>"); }
-
-
-    if (document.getElementsByClassName("YTPOverlay")[0] == undefined) {
-        document.getElementsByClassName("overlay")[0].style.opacity = (Metro.storage.getItem('BackgroundOpacitySetting', null) /100);
-        document.getElementsByClassName("overlay")[0].style.backgroundColor = Metro.storage.getItem('BackgroundColorSetting', null);
-    } else {
-        document.getElementsByClassName("YTPOverlay")[0].style.opacity = (Metro.storage.getItem('BackgroundOpacitySetting', null) / 100);
-        document.getElementsByClassName("YTPOverlay")[0].style.backgroundColor = Metro.storage.getItem('BackgroundColorSetting', null);
-    }
-    $("#body")[0].style.backgroundImage = 'url("' + Metro.storage.getItem('BackgroundImageSetting', null) + '")';
-    try { $("#backgroundPlayer")[0].dataset.property = "{ videoURL:'" + Metro.storage.getItem('BackgroundVideoSetting', null) + "', containment: '#body', showControls: false, autoPlay: true, loop: true, mute: true, startAt: 0, opacity: 1, quality: 'default', optimizeDisplay: true }";} catch { }
-    try { $('.player').YTPChangeMovie({ videoURL: Metro.storage.getItem('BackgroundVideoSetting', null), containment: '#body', showControls: false, autoPlay: true, loop: true, mute: true, startAt: 0, opacity: 1, quality: 'default', optimizeDisplay: true });} catch { }
-    setTimeout(function () { $('.player').YTPPlay(); }, 1000);
-}
-
-//Afte Api Load 
-function SetWebMenuPanel() {
-    let menuContent = Metro.storage.getItem('WebMenuList', null);
-    if (menuContent.length > 0) {
-        let html = ""; let groupId = null;
-        menuContent.forEach((menuItem, index) => {
-            if (groupId != menuItem.groupId) {
-                html += (html.length > 0 ? "</ul></li>" : "");
-                html += "<li ><a href='#' onclick=\'" + (menuItem.group.onclick.toString().replace('"', '\"')) + "\' class='dropdown-toggle' data-role='ripple' data-ripple-color='#CE352C' data-ripple-alpha='.2' >" + menuItem.group.name + "</a>";
-                html += "<ul class='d-menu' data-role='dropdown'>";
-            }
-            if(Metro.storage.getItem('ReloadContentOnly', null) == null || !Metro.storage.getItem('ReloadContentOnly', null)){
-	            html += 
-	            "<li onclick=window.location.href='" + (window.location.protocol == "file:" ? window.location.pathname.replace(window.location.pathname.split("/").pop(), "") : "/") + menuItem.id.toString() + "-" + menuItem.name.replace(/\s+/g, '') + (window.location.protocol == "file:" ? ".html" : "") + "' class='" + (menuItem.menuClass != null ? menuItem.menuClass : "") + "' " + (menuItem.description != null && menuItem.description.length > 0 ?
-		            "data-role='hint' data-cls-hint='supertop' data-hint-position='bottom' data-hint-text='" + menuItem.description + "'" : "") + " ><a href='#' >" + menuItem.name + 
-		        "</a></li>";
-	        } else {
-	            html += 
-	            "<li onclick=SetWebMenuContent('" + menuItem.id.toString() + "') class='" + 
-		            (menuItem.menuClass != null ? menuItem.menuClass : "") + "' " + 
-		            (menuItem.description != null && menuItem.description.length > 0 ?
-		            " data-role='hint' data-cls-hint='supertop' data-hint-position='bottom' data-hint-text='" + menuItem.description + "'" : "") + 
-		            " ><a href='#" + menuItem.id.toString() + "-" + menuItem.name.replace(/\s+/g, '') + "' >" + menuItem.name + 
-		        "</a></li>";
-	        }
-            groupId = menuItem.groupId;
-        });
-        html += "</ul></li>";
-        html += "<li><div data-role='hint' data-hint-position='bottom' data-hint-text='Přeložit do libovolného jazyku' class='c-pointer mif-language mif-2x fg-white p-3 ani-hover-heartbeat' onclick='ShowToolPanel()'></div></li>";
-        $("#WebMainMenuPanel").html(html);
-
-    }
-}
-
-async function SetWebMenuContent(id){
-	window.showPageLoading();
-	let response = await fetch(Metro.storage.getItem('ApiOriginSuffix', null) + (Metro.storage.getItem('ApiToken', null) == null ? '/WebPages/GetWebMenuListById/' + id : '/WebPages/GetAuthWebMenuListById/' + id), {
-        method: 'GET', headers: { 'Content-type': 'application/json', 'Authorization': 'Bearer ' + Metro.storage.getItem('ApiToken', null) }
-    }); let result = await response.json();
-    if (result.Status == "error") { ShowBlockedMessage(); } 
-    else {
-        $("#WebPageHTMLContent").html(result.htmlContent);
-        document.querySelector("#WebPageHTMLContent").style.position = "absolute";
-        document.querySelector("#WebPageHTMLContent").style.position = "relative";
-        document.querySelector("#WebPageHTMLContent").style.top = "70px";
-    }
-    setTimeout(function () { try { $('.player').YTPPlay(); } catch { } }, 1000);
-
-    // refresh Menu   
-    await GetWebMenuList();
-    window.hidePageLoading();
-}
-
-async function SetWebMenuHtml() {
-    setTimeout(async function () {
-        window.showPageLoading(); let id = 0;
-        if (window.location.pathname != "/") { id = window.location.pathname.split("/").pop().split("-")[0]; } else { id = 0; }
-        let response = await fetch(Metro.storage.getItem('ApiOriginSuffix', null) + (Metro.storage.getItem('ApiToken', null) == null ? '/WebPages/GetWebMenuListById/' + id : '/WebPages/GetAuthWebMenuListById/' + id), {
-            method: 'GET', headers: { 'Content-type': 'application/json', 'Authorization': 'Bearer ' + Metro.storage.getItem('ApiToken', null) }
-        }); let result = await response.json();
-
-        if (result.Status == "error") { ShowBlockedMessage(); } else {
-            $("#WebPageHTMLContent").html(result.htmlContent);
-            document.querySelector("#WebPageHTMLContent").style.position = "absolute";
-            document.querySelector("#WebPageHTMLContent").style.position = "relative";
-            document.querySelector("#WebPageHTMLContent").style.top = "70px";
-        }
-        setTimeout(function () { try { $('.player').YTPPlay(); } catch { } }, 1000);
-
-        // refresh Menu   
-        await GetWebMenuList();
-        window.hidePageLoading();
-    }, 100);
-}
-
 
 function PrintElement(elementId){
 	try{$("#"+elementId).printElement({pageTitle:elementId.split("_")[1]+".html",printMode:"popup"})
@@ -193,8 +116,19 @@ function ImageFromElement(elementId){
 	}catch(t){}
 }
 
-// Functions 
-//Global Functions Library
+
+//Control Translation Panel
+function ShowToolPanel(close) {
+    $("#UserAutomaticTranslate").val('checked')[0].checked = Metro.storage.getItem('UserAutomaticTranslate', null);
+    if (close) { { Metro.bottomsheet.close($('#ToolPanel')); } } else {
+        if (Metro.bottomsheet.isOpen($('#ToolPanel'))) { Metro.bottomsheet.close($('#ToolPanel')); }
+        else { Metro.bottomsheet.open($('#ToolPanel')); }
+    }
+}
+
+//END PAGE BEHAVIORS CONTROL DEFINITONS
+//START GLOBAL FUNCTIONS DECLARATIONS
+
 
 function ScrollToTop() { window.scrollTo(0, 0); }
 function enableScroll() { window.onscroll = function () { }; }
@@ -222,22 +156,11 @@ function UserChangeTranslateSetting() {
 }
 
 
-
-
-function RestrictionControls() {
-    //Enable-Disable Logged Controls
-    //$("#UserSettingBtn").prop('disabled', !isLogged);
-}
-
-
-
 //Save Token on Success Login
-async function AdminLogin(data) {
+async function Login(data) {
     Cookies.set('ApiToken', data.Token);
     Metro.storage.setItem('ApiToken', data.Token);
     Metro.storage.setItem('User', data);
-
-    window.location.href = '/' + Metro.storage.getItem('WebMenuList', null)[0].id + "-" + Metro.storage.getItem('WebMenuList', data.Token)[0].name.replace(/\s+/g, '');
 }
 
 
@@ -245,7 +168,6 @@ async function AdminLogin(data) {
 function Logout() {
     Cookies.remove('ApiToken');
     Metro.storage.storage.clear();
-    window.location.href ='/';
 }
 
 
@@ -297,25 +219,28 @@ async function FileReaderToImageData(n){
 	})
 }
 
+//END GLOBAL FUNCTIONS DECLARATIONS
+//START OBJECT GENERATORS DEFINITIONS
 
-//Generated Objects
 <!-- TOOL Panel -->
-    <div id="toolPanel" data-role="bottom-sheet" class="bottom-sheet pos-fixed list-list grid-style opened" style="top: 0px; left: 90%; z-index:10000;min-width: 400px;">
-        <div class="w-100 text-left" > <audio id="radio" class="light bg-transparent" data-role="audio-player" data-src="./metro/media/hotel_california.mp3" data-volume=".5" ></audio> </div>
-        <div class="w-100 text-left" style="z-index: 1000000;"><div id="google_translate_element"></div></div>
-        <div class="w-100 d-inline-flex">
-            <div class="w-75 text-left">
-                <input id="UserAutomaticTranslate" type="checkbox" data-role="checkbox" data-cls-caption="fg-cyan text-bold" data-caption="Překládat Automaticky" onchange="UserChangeTranslateSetting">
-            </div><div class="w-25 mt-1 text-right"><button class="button secondary mini" onclick="CancelTranslation()">Zrušit Překlad</button></div>
-            </div>
-        <div class="d-flex w-100">
-            <button class="button shadowed w-25 mt-1" style="background-color: #585b5d; width:50px;" onclick="ChangeSchemeTo('darcula.css')"></button>
-            <button class="button shadowed w-25 mt-1" style="background-color: #AF0015; width:50px;" onclick="ChangeSchemeTo('red-alert.css')"></button>
-            <button class="button shadowed w-25 mt-1" style="background-color: #690012; width:50px;" onclick="ChangeSchemeTo('red-dark.css')"></button>
-            <button class="button shadowed w-25 mt-1" style="background-color: #0CA9F2; width:50px;" onclick="ChangeSchemeTo('sky-net.css')"></button>
-        </div>
-        <div class="c-pointer mif-cancel icon pos-absolute fg-red" style="top:5px;right:5px;" onclick="ShowToolPanel()"></div>
-    </div>
+
+function GenerateToolPanel(){
+	let htmlTool ='<div id="ToolPanel" data-role="bottom-sheet" class="draggable bottom-sheet pos-fixed list-list grid-style opened drag-element" data-drag-element="ToolPanel" style="top: 160px; left: 90%; z-index:10000;min-width: 400px;">';
+	htmlTool +='<div class="w-100 text-left" > <audio id="radio" class="light bg-transparent" data-role="audio-player" data-src="./metro/media/hotel_california.mp3" data-volume=".5" ></audio> </div>';
+	htmlTool +='<div class="w-100 text-left" style="z-index: 1000000;"><div id="google_translate_element"></div></div>';
+	htmlTool +='<div class="w-100 d-inline-flex"><div class="w-75 text-left">';
+	htmlTool +='<input id="UserAutomaticTranslate" type="checkbox" data-role="checkbox" data-cls-caption="fg-cyan text-bold" data-caption="Překládat Automaticky" onchange="UserChangeTranslateSetting" checked>';
+	htmlTool +='</div><div class="w-25 mt-1 text-right"><button class="button secondary mini" onclick="CancelTranslation()">Zrušit Překlad</button></div>';
+	htmlTool +='</div><div class="d-flex w-100">';
+	htmlTool +='<button class="button shadowed w-25 mt-1" style="background-color: #585b5d; width:50px;" onclick="ChangeSchemeTo(\'darcula.css\')"></button>';
+	htmlTool +='<button class="button shadowed w-25 mt-1" style="background-color: #AF0015; width:50px;" onclick="ChangeSchemeTo(\'red-alert.css\')"></button>';
+	htmlTool +='<button class="button shadowed w-25 mt-1" style="background-color: #690012; width:50px;" onclick="ChangeSchemeTo(\'red-dark.css\')"></button>';
+	htmlTool +='<button class="button shadowed w-25 mt-1" style="background-color: #0CA9F2; width:50px;" onclick="ChangeSchemeTo(\'sky-net.css\')"></button>';
+	htmlTool +='</div><div class="c-pointer mif-cancel icon pos-absolute fg-red" style="top:5px;right:5px;display:none;" onclick="ShowToolPanel()"></div></div>';
+	
+	let origin = htmlTool + $('#WebPageHTMLContent').html();$('#WebPageHTMLContent').html(origin);
+	//Metro.infobox.open('#ToolPanel');
+}
 
 //Blocked IP Info Panel
 function ShowBlockedMessage() {
@@ -323,7 +248,7 @@ function ShowBlockedMessage() {
         "<h3>Blokovaná IP Adresa</h3>" +
         "<p>Vaše adrese je blokována, protože byla zjištěna podezřelá činnost...</p>" +
         "<p>Pro Odblokování nás kontaktujte Telefonicky.</p>";
-    Metro.infobox.create(html_content, "alert");
+    Metro.infobox.create(html_content, "alert", {clsBox: " drop-shadow shadowed "});
 }
 
 //Unauthorized Access Info Panel
@@ -333,5 +258,19 @@ function ShowUnAuthMessage() {
         "<h3>Neautorizovaný Přístup</h3>" +
         "<p>Pokoušíte se provést autorizovanou operaci neoprávněně,</p>" +
         "<p>nebo platnost vašeho tokenu vypršela.</p>";
-    Metro.infobox.create(html_content, "alert");
+    Metro.infobox.create(html_content, "alert", {clsBox: " drop-shadow shadowed "});
 }
+
+
+//END OBJECT GENERATORS DEFINITIONS
+//STARTUP COMMANDS 
+try { showPageLoading();} catch {}
+
+
+
+
+
+$(document).ready(function () { hidePageLoading();GenerateToolPanel(); });
+//END OF STARTUP COMMANDS
+
+

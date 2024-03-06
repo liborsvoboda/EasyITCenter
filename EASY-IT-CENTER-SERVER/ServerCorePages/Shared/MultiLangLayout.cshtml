@@ -16,7 +16,7 @@
 
 }
 
-@if (serverModule != null && serverModule.InheritedPageType == "HtmlBodyOnly" && (!serverModule.RestrictedAccess || (serverModule.RestrictedAccess && webpagestoken != null && webpagestoken.IsValid && serverModule.AllowedRoles.Split(",").ToList().Contains(webpagestoken.UserClaims.FindFirstValue(ClaimTypes.Role))))) {
+@if (serverModule != null && serverModule.InheritedPageType == "HtmlBodyOnly" && loginModule == null && (!serverModule.RestrictedAccess || (serverModule.RestrictedAccess && webpagestoken != null && webpagestoken.IsValid && serverModule.AllowedRoles.Split(",").ToList().Contains(webpagestoken.UserClaims.FindFirstValue(ClaimTypes.Role))))) {
     <!DOCTYPE html>
     <html lang="cs-CZ">
     <head>
@@ -39,8 +39,10 @@
         <script type="text/javascript" src="../../metro/js/metro.4.5.2.min.js"></script>
         @Html.Raw(this.Model.GetManagedMultiLangJsLayoutFiles().ContentType)
 
+        <!-- Google Translation -->
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     </head>
-    <body id="body" style="background: url(../../metro/images/anime-background-images-1.jpg) center center no-repeat;background-size: cover">
+    <body id="body" style="background: url(../../metro/images/anime-background-images-1.jpg) center center no-repeat;background-size: cover;background-position: center;background-repeat: no-repeat;background-attachment: fixed;">
         <div class="d-block w-100 h-100">
             <main id="WebPageHTMLContent" role="main" class="pb-10 w-100 h-100" >
                 @Html.Raw(serverModule.CustomHtmlContent)
@@ -50,7 +52,7 @@
     </body>
     </html>
 }
-else if (serverModule != null && serverModule.RestrictedAccess && webpagestoken == null && (loginModule == null || (loginModule != null && loginModule.InheritedPageType == "HtmlBodyOnly"))) {
+else if (loginModule != null && loginModule.InheritedPageType == "HtmlBodyOnly") {
     <!DOCTYPE html>
     <html lang="cs-CZ">
     <head>
@@ -72,32 +74,27 @@ else if (serverModule != null && serverModule.RestrictedAccess && webpagestoken 
         <script type="text/javascript" src="../../metro/addons/js/js.cookie.min.js"></script>
         <script type="text/javascript" src="../../metro/js/metro.4.5.2.min.js"></script>
         @Html.Raw(this.Model.GetManagedMultiLangJsLayoutFiles().ContentType)
+
+        <!-- Google Translation -->
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     </head>
-    <body id="body" style="background: url(../../metro/images/anime-background-images-1.jpg) center center no-repeat;background-size: cover">
+    <body id="body" style="background: url(../../metro/images/anime-background-images-1.jpg) center center no-repeat;background-size: cover;background-position: center;background-repeat: no-repeat;background-attachment: fixed;">
         <div class="d-block w-100 h-100">
             <main id="WebPageHTMLContent" role="main" class="pb-10 w-100 h-100">
                 @Html.Raw(loginModule.CustomHtmlContent)
-                @RenderBody()
+               @*  @RenderBody() *@
             </main>
         </div>
     </body>
     </html>
 }
-else if (serverModule != null && serverModule.RestrictedAccess && webpagestoken == null && (loginModule == null || (loginModule != null && loginModule.InheritedPageType == "FullHtmlPage"))) {
+else if (loginModule != null && loginModule.InheritedPageType == "FullHtmlPage") {
 
-    @*
-        Html.Raw(this.Model.GetManagedPortalCssLayoutFiles().ContentType);
-        Html.Raw(this.Model.GetManagedPortalJsLayoutFiles().ContentType);
-    *@
     Html.Raw(Regex.Replace(loginModule?.CustomHtmlContent, "<head>", "<head>" + Environment.NewLine + this.Model.GetManagedMultiLangCssLayoutFiles().ContentType + Environment.NewLine + this.Model.GetManagedMultiLangJsLayoutFiles().ContentType + Environment.NewLine, RegexOptions.IgnoreCase));
     RenderBody();
 
-} else if (serverModule != null && serverModule.InheritedPageType == "FullHtmlPage" && (!serverModule.RestrictedAccess || (serverModule.RestrictedAccess && webpagestoken != null && webpagestoken.IsValid && serverModule.AllowedRoles.Split(",").ToList().Contains(webpagestoken.UserClaims.FindFirstValue(ClaimTypes.Role))))) {
+} else if (serverModule != null && serverModule.InheritedPageType == "FullHtmlPage" && loginModule == null && (!serverModule.RestrictedAccess || (serverModule.RestrictedAccess && webpagestoken != null && webpagestoken.IsValid && serverModule.AllowedRoles.Split(",").ToList().Contains(webpagestoken.UserClaims.FindFirstValue(ClaimTypes.Role))))) {
 
-    @*
-        Html.Raw(this.Model.GetManagedPortalCssLayoutFiles().ContentType);
-        Html.Raw(this.Model.GetManagedPortalJsLayoutFiles().ContentType);
-    *@
     Html.Raw(Regex.Replace(serverModule?.CustomHtmlContent, "<head>", "<head>" + Environment.NewLine + this.Model.GetManagedMultiLangCssLayoutFiles().ContentType + Environment.NewLine + this.Model.GetManagedMultiLangJsLayoutFiles().ContentType + Environment.NewLine, RegexOptions.IgnoreCase));
     RenderBody();
 
