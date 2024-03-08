@@ -55,7 +55,7 @@ WebPortal Již nyní obsahuje Nativní Web Stránky a Celý je uložen v Databá
 
 ---
 
-## Řešení EasyITcenter Obsahuje   
+## **Řešení EasyITcenter Obsahuje**   
 
 #### Servery
  1. Multi Backend API Server - Any DB support
@@ -71,7 +71,7 @@ WebPortal Již nyní obsahuje Nativní Web Stránky a Celý je uložen v Databá
  11. Web Portal s Online vývojem z Webu či Systému
  12. Data Service API pro Controling API pro Reporty, Pivot, Grafy
 
-#### Nástroje a Moduly
+#### **Nástroje a Moduly**
  1. AutoWeb s Popisem a Testem API
  2. Generátor DB Schema 
  3. Web Dashboard DB Schema Online
@@ -88,7 +88,7 @@ WebPortal Již nyní obsahuje Nativní Web Stránky a Celý je uložen v Databá
  14. Private GitHub Dashboard
 
 
-#### Web Portal a Web Hosting s implementací
+#### **Web Portal a Web Hosting s implementací**
 1. 10+ Web Mopderních Frameworků
 3. 200+ Web Knihovny Funkcinalit
 4. 1000+ Web Knihovny Objektů
@@ -100,7 +100,7 @@ WebPortal Již nyní obsahuje Nativní Web Stránky a Celý je uložen v Databá
 
 ---
 
-## Centrální Správa IT
+## **Centrální Správa IT**
 Instalace na OS Windows provedete pomocí běžného Instalátoru.
 Instalace na OS LINUX/MACOS dle přiloženého Návodu  
 Server Funguje jako Systémová Služba, Systém je Tenký/Tlustý Klient
@@ -108,7 +108,7 @@ Již Nyní Obsahuje Kompletní centrální Správu IT pro Vaši Společnost
 Chtějte od svého IT oddělení Více a pořidtě jim toto řešení ještě dnes
 
 
-## Jednoduchý Vývoj API - Webů - Aplikací 
+## **Jednoduchý Vývoj API - Webů - Aplikací** 
 Vývoj je už jen kopírování a vytváření nových tabulek dle potřeby.
 Řešení nabízí 2x více než Kdokoliv. Dvojí administrace je možná
 jak ze Systému, Tak i z Webu, Vyvynutí jednoho nebo druhého je stejně snadné
@@ -119,7 +119,7 @@ z Portálu. Sstémy bude možné Updatovat a vznikne i Distibuce Agend pro klien
 tedy možnost přivýdělku. Spolupráce, či Cokoliv jinéhjo je vždy Vítána.
 
 
-## Právě se Implementuje
+## **Právě se Implementuje**
 
  1. Subdomain Web Hosting - Multi WebServer React,Node,Next,Static 
  2. Client Dev Portal s Online Nástroji pro správu Projektů C# Online
@@ -135,7 +135,7 @@ tedy možnost přivýdělku. Spolupráce, či Cokoliv jinéhjo je vždy Vítána
 
 ---
 
-## Neomezené Možnosti v Jediném Řešení
+## **Neomezené Možnosti v Jediném Řešení**
 Toto Řešení tak již nyní nabízí doslova unikátní možnosti nastavení
 jak webových systému, Tak Desktopových Aplikací, A c chcete Více?  
 
@@ -149,7 +149,7 @@ postupně Implementována a nabídnuta Zákazníkům k Aktualizaci či rozšíř
 Už Bude na každém z vás Jestli se dále Vydáte Vlastní Cestou,
 nebo Své Úsilí spojíme v plodné a přínosné činnosti.
 
-## Jednoduchá Instalace 
+## **Jednoduchá Instalace** 
 Instalace na OS Windows provedete pomocí běžného Instalátoru.  
 Instalace na OS LINUX/MACOS dle přiloženého Návodu   
    * Server Funguje jako Systémová Služba 
