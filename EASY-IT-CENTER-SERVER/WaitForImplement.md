@@ -786,7 +786,7 @@ docFX je dokumentace a peknz navod jak na to umi i svager ,komentare z projektu
 https://code-maze.com/docfx-generating-source-code-documentation/
 https://dotnet.github.io/docfx/
 https://dotnet.github.io/docfx/extensions/templates.html
-
+https://xxred.gitee.io/docfx/api/Microsoft.DocAsCode.html - dobry popis
 
 
 
@@ -795,6 +795,8 @@ https://github.com/CodeMazeBlog/CodeMazeGuides/tree/main
 
 
 Generování Dokumentace příkazy
+dotnet tool update -g docfx
+
 docfx init
 docfx .\docfx.json --serve
 docfx build .\docfx.json --serve
@@ -804,3 +806,4 @@ Template used: (default or statictoc or contain custom template)
 https://dotnet.github.io/docfx/tutorial/howto_create_custom_template.html
 https://dotnet.github.io/docfx/docs/api-page.html#block-elements
 https://xxred.gitee.io/docfx/tutorial/incrementalbuild/intro_incremental_build.html
+https://xxred.gitee.io/docfx/tutorial/walkthrough/walkthrough_create_a_docfx_project.html

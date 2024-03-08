@@ -1,4 +1,4 @@
-﻿namespace EASYDATACenter.Controllers {
+﻿namespace EasyITCenter.Controllers {
 
     [Authorize]
     [ApiController]
