@@ -202,8 +202,8 @@ namespace EasyITSystemCenter.Pages {
 
         private void SetRecord(bool? showForm = null, bool copy = false) {
             txt_id.Value = (copy) ? 0 : selectedRecord.Id;
-
-            cb_inheritedPageType.SelectedItem = (selectedRecord.Id == 0) ? solutionMixedEnumList.FirstOrDefault() : solutionMixedEnumList.First(a => a.Name == selectedRecord.InheritedPageType);
+		
+		try {cb_inheritedPageType.SelectedItem = (selectedRecord.Id == 0) ? solutionMixedEnumList.FirstOrDefault() : solutionMixedEnumList.First(a => a.Name == selectedRecord.InheritedPageType);
             txt_name.Text = selectedRecord.Name;
             cb_inheritedLayoutType.SelectedItem = (selectedRecord.Id == 0) ? solutionMixedEnumListLayoutTypes.FirstOrDefault() : solutionMixedEnumListLayoutTypes.FirstOrDefault(a => a.Name == selectedRecord.InheritedLayoutType);
             txt_description.Text = selectedRecord.Description;
@@ -221,7 +221,8 @@ namespace EasyITSystemCenter.Pages {
             CustomHtmlContent.Text = selectedRecord.CustomHtmlContent;
 
             chb_active.IsChecked = (selectedRecord.Id == 0) ? bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_activeNewInputDefault").Value) : selectedRecord.Active;
-
+		} catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+		
             if (showForm != null && showForm == true) {
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;
                 ListView.Visibility = Visibility.Hidden; ListForm.Visibility = Visibility.Visible; dataViewSupport.FormShown = true;
