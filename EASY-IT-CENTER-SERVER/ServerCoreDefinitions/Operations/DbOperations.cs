@@ -52,6 +52,13 @@ namespace EasyITCenter.ServerCoreStructure {
             return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? DBTranslateOffline(word, language) : DBTranslateOnline(word, language);
         }
 
+
+        /// <summary>
+        /// Default Operation for Call CHEckModuleExist
+        /// </summary>
+        /// <param name="word">    </param>
+        /// <param name="language"></param>
+        /// <returns></returns>
         public static ServerModuleAndServiceList? CheckServerModuleExists(string modulePath) {
             return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? CheckServerModuleOffline(modulePath) : CheckServerModuleOnline(modulePath);
         }

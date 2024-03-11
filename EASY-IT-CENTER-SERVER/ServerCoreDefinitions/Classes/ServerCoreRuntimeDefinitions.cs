@@ -99,8 +99,6 @@ namespace EasyITCenter.ServerCoreStructure {
         internal static IScheduler? ServerAutoSchedulerProvider;
 
 
-        internal static List<ServerModuleAndServiceList> ServerModuleAndServiceLists;
-
         /// <summary>
         /// Central WebSocket List for Easy one place Using
         /// </summary>
