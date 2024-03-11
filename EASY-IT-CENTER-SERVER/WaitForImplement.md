@@ -807,3 +807,12 @@ https://dotnet.github.io/docfx/tutorial/howto_create_custom_template.html
 https://dotnet.github.io/docfx/docs/api-page.html#block-elements
 https://xxred.gitee.io/docfx/tutorial/incrementalbuild/intro_incremental_build.html
 https://xxred.gitee.io/docfx/tutorial/walkthrough/walkthrough_create_a_docfx_project.html
+
+
+included http://milbay.com.au/Files/MetroDocs/one-page-example.html
+http://milbay.com.au/Files/MetroDocs/sidebar.html
+https://metroui.org.ua/v2/#google_vignette
+Metroui 3
+https://metroui.org.ua/keypad.html
+https://metroui.org.ua/v3/windows.html
+https://metroui.org.ua/v2/examples.html

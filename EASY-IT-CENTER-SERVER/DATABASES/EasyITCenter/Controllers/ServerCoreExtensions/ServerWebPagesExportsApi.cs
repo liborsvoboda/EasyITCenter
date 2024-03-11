@@ -42,8 +42,8 @@ namespace EasyITCenter.ServerCoreDBSettings {
                 List<WebMenuList> data;
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) { data = new EasyITCenterContext().WebMenuLists.ToList(); }
 
-                FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.Startup_path, "Export"));
                 FileOperations.CreatePath(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages"));
+                FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.Startup_path, "Export"));
                 FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "metro"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", "metro"));
                 data.ForEach(menuItem => {
                     try {

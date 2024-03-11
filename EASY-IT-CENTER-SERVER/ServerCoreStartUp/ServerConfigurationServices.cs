@@ -166,14 +166,14 @@ namespace EasyITCenter.ServerCoreConfiguration {
             if (ServerConfigSettings.WebRazorPagesEngineEnabled) {
                 if (ServerConfigSettings.WebRazorPagesCompileOnRuntime) {
                     services.AddMvc(options => {
-                        options.CacheProfiles.Add("Default300", new CacheProfile() { Duration = 300, NoStore = true });
+                        options.CacheProfiles.Add("Default30", new CacheProfile() { Duration = 30 });
                     }).AddRazorPagesOptions(opt => {
                         opt.RootDirectory = "/ServerCorePages";
                     }).AddRazorRuntimeCompilation();
                 }
                 else {
                     services.AddMvc(options => {
-                        options.CacheProfiles.Add("Default300", new CacheProfile() { Duration = 300 });
+                        options.CacheProfiles.Add("Default30", new CacheProfile() { Duration = 30 });
                     }).AddRazorPagesOptions(opt => {
                         opt.RootDirectory = "/ServerCorePages";
                     });

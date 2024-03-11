@@ -2,10 +2,10 @@
 
     [Authorize]
     [ApiController]
-    [Route("EasyITCenterSystemModuleList")]
+    [Route("SystemModuleList")]
     public class EasyITCenterSystemModuleListApi : ControllerBase {
 
-        [HttpGet("/EasyITCenterSystemModuleList")]
+        [HttpGet("/SystemModuleList")]
         public async Task<string> GetSystemModuleList() {
             List<SystemModuleList> data;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
@@ -16,7 +16,7 @@
             return JsonSerializer.Serialize(data);
         }
 
-        [HttpGet("/EasyITCenterSystemModuleList/Filter/{filter}")]
+        [HttpGet("/SystemModuleList/Filter/{filter}")]
         public async Task<string> GetSystemModuleListByFilter(string filter) {
             List<SystemModuleList> data;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
@@ -28,7 +28,7 @@
             return JsonSerializer.Serialize(data);
         }
 
-        [HttpGet("/EasyITCenterSystemModuleList/{id}")]
+        [HttpGet("/SystemModuleList/{id}")]
         public async Task<string> GetSystemModuleListKey(int id) {
             SystemModuleList data;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
@@ -40,7 +40,7 @@
             return JsonSerializer.Serialize(data);
         }
 
-        [HttpPut("/EasyITCenterSystemModuleList")]
+        [HttpPut("/SystemModuleList")]
         [Consumes("application/json")]
         public async Task<string> InsertSystemModuleList([FromBody] SystemModuleList record) {
             try {
@@ -54,7 +54,7 @@
             }
         }
 
-        [HttpPost("/EasyITCenterSystemModuleList")]
+        [HttpPost("/SystemModuleList")]
         [Consumes("application/json")]
         public async Task<string> UpdateSystemModuleList([FromBody] SystemModuleList record) {
             try {
@@ -65,7 +65,7 @@
             } catch (Exception ex) { return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
         }
 
-        [HttpDelete("/EasyITCenterSystemModuleList/{id}")]
+        [HttpDelete("/SystemModuleList/{id}")]
         [Consumes("application/json")]
         public async Task<string> DeleteSystemModuleList(int id) {
             try {

@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using DocumentFormat.OpenXml.ExtendedProperties;
+using IdentityModel.OidcClient;
+using System.Data;
 
 namespace EasyITCenter.ServerCoreStructure {
 
@@ -19,11 +21,15 @@ namespace EasyITCenter.ServerCoreStructure {
                     foreach (ServerLocalDbDials dbTable in (ServerLocalDbDials[])Enum.GetValues(typeof(ServerLocalDbDials))) {
                         switch (onlyThis != null ? onlyThis.ToString() : dbTable.ToString()) {
                             case "SystemTranslationList":
-                                List<SystemTranslationList>? dataLL = new EasyITCenterContext().SystemTranslationLists.ToList();
-                                int indexLL = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == dataLL.GetType());
-                                if (indexLL >= 0) ServerRuntimeData.LocalDBTableList[indexLL] = dataLL; else ServerRuntimeData.LocalDBTableList.Add(dataLL);
+                                List<SystemTranslationList>? stlDataLL = new EasyITCenterContext().SystemTranslationLists.ToList();
+                                int stlIndexLL = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == stlDataLL.GetType());
+                                if (stlIndexLL >= 0) ServerRuntimeData.LocalDBTableList[stlIndexLL] = stlDataLL; else ServerRuntimeData.LocalDBTableList.Add(stlDataLL);
                                 break;
-
+                            case "ServerModuleAndServiceLists":
+                                List<ServerModuleAndServiceList>? smlDataLL = new EasyITCenterContext().ServerModuleAndServiceLists.ToList();
+                                int smlIndexLL = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == smlDataLL.GetType());
+                                if (smlIndexLL >= 0) ServerRuntimeData.LocalDBTableList[smlIndexLL] = smlDataLL; else ServerRuntimeData.LocalDBTableList.Add(smlDataLL);
+                                break;
                             default: break;
                         }
                         if (onlyThis != null) break;
@@ -46,9 +52,35 @@ namespace EasyITCenter.ServerCoreStructure {
             return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? DBTranslateOffline(word, language) : DBTranslateOnline(word, language);
         }
 
+        public static ServerModuleAndServiceList? CheckServerModuleExists(string modulePath) {
+            return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? CheckServerModuleOffline(modulePath) : CheckServerModuleOnline(modulePath);
+        }
+
         #endregion Public definitions for standard using
 
         #region Private or On-line/Off-line Definitions
+
+        /// <summary>
+        /// Get Check ServerModule from OneTime Load Server List
+        /// </summary>
+        /// <param name="modulePath"></param>
+        /// <returns></returns>
+        private static ServerModuleAndServiceList? CheckServerModuleOffline(string modulePath) {
+            int index = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == new List<ServerModuleAndServiceList>().GetType());
+            return ((List<ServerModuleAndServiceList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => a.UrlSubPath?.ToLower() == modulePath.ToLower()).FirstOrDefault();
+        }
+
+
+
+        /// <summary>
+        /// Get Check ServerModule from DB 
+        /// </summary>
+        /// <param name="modulePath"></param>
+        /// <returns></returns>
+        private static ServerModuleAndServiceList? CheckServerModuleOnline(string modulePath) {
+            return new EasyITCenterContext().ServerModuleAndServiceLists.Where(a => a.UrlSubPath.ToLower() == modulePath.ToLower()).FirstOrDefault();
+        }
+
 
         /// <summary>
         /// Database LanuageList for Off-line Using Definitions
