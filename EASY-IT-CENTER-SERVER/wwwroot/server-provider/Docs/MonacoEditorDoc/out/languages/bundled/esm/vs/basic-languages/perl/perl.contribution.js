@@ -1,2 +1,0 @@
-/*! For license information please see perl.contribution.js.LICENSE.txt */
-import{registerLanguage}from"../_.contribution";registerLanguage({id:"perl",extensions:[".pl",".pm"],aliases:["Perl","pl"],loader:()=>import("./perl")});

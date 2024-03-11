@@ -1,2 +1,0 @@
-/*! For license information please see hcl.contribution.js.LICENSE.txt */
-import{registerLanguage}from"../_.contribution";registerLanguage({id:"hcl",extensions:[".tf",".tfvars",".hcl"],aliases:["Terraform","tf","HCL","hcl"],loader:()=>import("./hcl")});
