@@ -1,5 +1,9 @@
 ﻿using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Folding;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Search;
 using System.Linq;
+using System.Windows;
 
 namespace EasyITSystemCenter.GlobalOperations {
 
@@ -55,5 +59,35 @@ namespace EasyITSystemCenter.GlobalOperations {
                 _ = MainWindow.ShowMessageOnMainWindow(false, DBOperations.DBTranslation("StringWasReplaced").GetAwaiter().GetResult());
             }
         }
+
+
+        public class HtmlEditor : TextEditor {
+            public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(HtmlEditor), new PropertyMetadata(default(string), TextChanged));
+
+            public new string Text {
+                get => Document.Text;
+                set => SetValue(TextProperty, value);
+            }
+
+            public HtmlEditor() {
+                SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("XML");
+                Options.EnableHyperlinks = true;
+                Options.EnableEmailHyperlinks = true;
+                Options.HighlightCurrentLine  = true;
+                Options.ShowTabs = true;
+                Options.AllowScrollBelowDocument = true;
+                Options.ShowColumnRuler = true;
+                ShowLineNumbers = true;
+          
+            }
+
+            private new static void TextChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args) {
+                if (args.NewValue != null) {
+                    var xmlViewer = (HtmlEditor)dependencyObject;
+                    xmlViewer.Document.Text = (string)args.NewValue;
+                }
+            }
+        }
+
     }
 }

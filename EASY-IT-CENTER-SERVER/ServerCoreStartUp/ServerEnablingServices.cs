@@ -1,5 +1,6 @@
 using EasyData.Services;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.FileProviders;
 using MirrorSharp;
 using MirrorSharp.AspNetCore;
 using Snickler.RSSCore.Caching;
@@ -97,10 +98,9 @@ namespace EasyITCenter.ServerCoreConfiguration {
                 }
 
                 if (ServerConfigSettings.ModuleCSharpCodeBuilder) { endpoints.MapMirrorSharp("/mirrorsharp", new MirrorSharpOptions { SelfDebugEnabled = true, IncludeExceptionDetails = true, }); }
-            });
+            }); if (ServerConfigSettings.ModuleCSharpCodeBuilder) { app.MapMirrorSharp("/mirrorsharp"); }
 
 
-            if (ServerConfigSettings.ModuleCSharpCodeBuilder) { app.MapMirrorSharp("/mirrorsharp"); }
 
             if (ServerConfigSettings.ModuleHealthServiceEnabled) {
                 app.UseHealthChecks("/HealthResultService");

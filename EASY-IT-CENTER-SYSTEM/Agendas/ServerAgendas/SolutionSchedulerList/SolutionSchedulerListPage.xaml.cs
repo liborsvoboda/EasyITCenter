@@ -153,8 +153,8 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Description = txt_description.Text;
 
                 selectedRecord.StartNowOnly = (bool)chb_startNowOnly.IsChecked;
-                selectedRecord.StartAt = dp_startAt.Value;
-                selectedRecord.FinishAt = dp_finishAt.Value;
+                selectedRecord.StartAt = !(bool)chb_startNowOnly.IsChecked || dp_startAt.Value == null ? DateTimeOffset.Now.DateTime : dp_startAt.Value;
+                selectedRecord.FinishAt = dp_finishAt.Value == null ? DateTimeOffset.Now.DateTime : dp_finishAt.Value;
                 selectedRecord.Interval = int.Parse(txt_interval.Value.ToString());
                 selectedRecord.InheritedIntervalType = ((SolutionMixedEnumList)cb_inheritedIntervalType.SelectedItem).Name;
 

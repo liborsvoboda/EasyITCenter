@@ -130,7 +130,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// </summary>
         /// <param name="processDefinition">The process definition.</param>
         /// <returns></returns>
-        public static bool RunSystemProcess(ProcessClass processDefinition) {
+        public async static Task<string> RunSystemProcess(ProcessClass processDefinition) {
             string resultOutput = "", resultError = "";
 
             try {
@@ -147,15 +147,20 @@ namespace EasyITCenter.ServerCoreStructure {
                     proc.StartInfo.Verb = (Environment.OSVersion.Version.Major >= 6) ? "runas" : "";
                     proc.Start();
 
-                    resultOutput += proc.StandardOutput.ReadToEnd();
-                    resultError += proc.StandardError.ReadToEnd();
+                    resultOutput += proc.StandardOutput.ReadToEndAsync();
+                    resultError += proc.StandardError.ReadToEndAsync();
 
-                    if (processDefinition.WaitForExit) { proc.WaitForExit(); }
-                    Console.WriteLine(resultError);
+                    if (processDefinition.WaitForExit) { 
+                        await proc.WaitForExitAsync();
+                        return resultOutput + Environment.NewLine + resultError;
+                    }
+                    else { return resultOutput + Environment.NewLine + resultError; }
                 }
-                return true;
-            } catch { }
-            return false;
+                
+            } catch (Exception ex ){ resultError += ex.StackTrace + Environment.NewLine + ex.Message;
+                CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) });
+            }
+            return resultOutput + Environment.NewLine + resultError;
         }
 
         /// <summary>
