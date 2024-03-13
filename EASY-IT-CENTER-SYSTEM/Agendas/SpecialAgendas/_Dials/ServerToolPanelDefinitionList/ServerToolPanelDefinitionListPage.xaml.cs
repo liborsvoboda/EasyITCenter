@@ -25,13 +25,8 @@ namespace EasyITSystemCenter.Pages {
         public static ServerToolPanelDefinitionList selectedRecord = new ServerToolPanelDefinitionList();
 
         public static ServerToolPanelDefinitionList generatedIcon = new ServerToolPanelDefinitionList() {
-            SystemName = "",
-            IconName = "star",
-            IconColor = "RoyalBlue",
-            BackgroundColor = "DarkSeaGreen",
-            Description = ""
-            ,
-            BitmapImage = new BitmapImage(ResourceAccessor.Get())
+            SystemName = "",IconName = "star", IconColor = "RoyalBlue", BackgroundColor = "DarkSeaGreen", Description = "",
+            BitmapImage = new BitmapImage(DataResources.GetImageResource("no_photo.png"))
         };
 
         private List<ServerToolPanelDefinitionList> toolPanelDefinitionList = new List<ServerToolPanelDefinitionList>();
@@ -253,14 +248,16 @@ namespace EasyITSystemCenter.Pages {
         }
 
         private async void GeneratedIconChanged() {
-            if (pageLoaded && svgIconList.Any()) {
-                t_generatedIcon.Title = await DBOperations.DBTranslation(generatedIcon.SystemName, true);
-                t_generatedIcon.Foreground = (Brush)new BrushConverter().ConvertFromString(generatedIcon.IconColor);
-                t_generatedIcon.Background = (Brush)new BrushConverter().ConvertFromString(generatedIcon.BackgroundColor);
-                t_generatedIcon.ToolTip = generatedIcon.Description;
-                i_generatedIcon.Source = string.IsNullOrWhiteSpace(generatedIcon.IconName) ? new BitmapImage(ResourceAccessor.Get())
-                    : IconMaker.Icon((Color)ColorConverter.ConvertFromString(generatedIcon.IconColor), svgIconList.Where(a => a.Name == generatedIcon.IconName).Select(a => a.SvgIconPath).First());
-            }
+            try {
+                if (pageLoaded && svgIconList.Any()) {
+                    t_generatedIcon.Title = await DBOperations.DBTranslation(generatedIcon.SystemName, true);
+                    t_generatedIcon.Foreground = (Brush)new BrushConverter().ConvertFromString(generatedIcon.IconColor);
+                    t_generatedIcon.Background = (Brush)new BrushConverter().ConvertFromString(generatedIcon.BackgroundColor);
+                    t_generatedIcon.ToolTip = generatedIcon.Description;
+                    i_generatedIcon.Source = string.IsNullOrWhiteSpace(generatedIcon.IconName) ? new BitmapImage(DataResources.GetImageResource("no_photo.png"))
+                        : IconMaker.Icon((Color)ColorConverter.ConvertFromString(generatedIcon.IconColor), svgIconList.Where(a => a.Name == generatedIcon.IconName).Select(a => a.SvgIconPath).First());
+                }
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
 
         private void BtnCommandTest_Click(object sender, RoutedEventArgs e) {

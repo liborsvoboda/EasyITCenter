@@ -199,7 +199,7 @@ namespace EasyITSystemCenter.Pages {
             dp_timestamp.Value = selectedRecord.Timestamp;
             txt_token.Text = selectedRecord.Token;
             dp_expiration.Value = selectedRecord.Expiration;
-            img_photoPath.Source = (!string.IsNullOrWhiteSpace(selectedRecord.PhotoPath)) ? MediaOperations.ByteToImage(selectedRecord.Photo) : new BitmapImage(new Uri(Path.Combine(App.appRuntimeData.settingFolder, "no_photo.png")));
+            img_photoPath.Source = (!string.IsNullOrWhiteSpace(selectedRecord.PhotoPath)) ? MediaOperations.ByteToImage(selectedRecord.Photo) : new BitmapImage(DataResources.GetImageResource("no_photo.png"));
             txt_photoPath.Text = null;
 
             if (showForm != null && showForm == true) {

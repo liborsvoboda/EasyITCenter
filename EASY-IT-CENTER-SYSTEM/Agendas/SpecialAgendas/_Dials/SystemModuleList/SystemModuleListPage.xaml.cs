@@ -30,7 +30,7 @@ namespace EasyITSystemCenter.Pages {
             BackgroundColor = "DarkSeaGreen",
             Description = ""
             ,
-            BitmapImage = new BitmapImage(ResourceAccessor.Get())
+            BitmapImage = new BitmapImage(DataResources.GetImageResource())
         };
 
         private List<SystemModuleList> systemModuleList = new List<SystemModuleList>();
@@ -268,7 +268,7 @@ namespace EasyITSystemCenter.Pages {
                 t_generatedIcon.Foreground = (Brush)new BrushConverter().ConvertFromString(generatedIcon.IconColor);
                 t_generatedIcon.Background = (Brush)new BrushConverter().ConvertFromString(generatedIcon.BackgroundColor);
                 t_generatedIcon.ToolTip = generatedIcon.Description;
-                i_generatedIcon.Source = string.IsNullOrWhiteSpace(generatedIcon.IconName) ? new BitmapImage(ResourceAccessor.Get())
+                i_generatedIcon.Source = string.IsNullOrWhiteSpace(generatedIcon.IconName) ? new BitmapImage(DataResources.GetImageResource())
                     : IconMaker.Icon((Color)ColorConverter.ConvertFromString(generatedIcon.IconColor), svgIconList.Where(a => a.Name == generatedIcon.IconName).Select(a => a.SvgIconPath).First());
             }
         }

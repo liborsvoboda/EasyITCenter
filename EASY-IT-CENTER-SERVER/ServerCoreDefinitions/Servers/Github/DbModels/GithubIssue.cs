@@ -1,6 +1,6 @@
 ﻿namespace EasyITCenter.GitServer.Models
 {
-    public class GitgubIssue:GithubBaseEntity
+    public class githubIssue:GithubBaseEntity
     {
         public long UserId { get; set; }
         public long RepositoryId { get; set; }

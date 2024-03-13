@@ -77,13 +77,16 @@ namespace EasyITCenter.ServerCoreConfiguration {
         /// </summary>
         internal static void EnableEndpoints(ref IApplicationBuilder app) {
             app.UseEndpoints(endpoints => {
-                if (ServerConfigSettings.ModuleWebDataManagerEnabled) { endpoints.MapEasyData(options => { options.UseDbContext<EasyITCenterContext>(); }); }
+
+                if (ServerConfigSettings.ModuleWebDataManagerEnabled) { endpoints.MapEasyData(options => { 
+                    options.UseDbContext<EasyITCenterContext>();
+                }); }
 
                 endpoints.MapControllers();
 
                 if (ServerConfigSettings.WebRazorPagesEngineEnabled) {
                     endpoints.MapRazorPages();
-                    endpoints.MapControllerRoute(name: "default", pattern: "{controller=ServerCorePages}/{action=Index}/{id?}");
+                    endpoints.MapControllerRoute(name: "WebSites", pattern: "{controller=ServerCorePages}/{action=Index}/{id?}");
                 }
 
                 if (ServerConfigSettings.ModuleHealthServiceEnabled) {
@@ -111,6 +114,9 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     setup.AddCustomStylesheet("ServerCoreDefinitions/Styles/HealthChecksUI.css");
                 });
             }
+
+
+
         }
     }
 }

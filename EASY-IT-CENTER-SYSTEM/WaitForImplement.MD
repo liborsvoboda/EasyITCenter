@@ -58,3 +58,29 @@ xam,l editor
 Perfect desktop designer por machines and more
 https://github.com/LPeter1997/WpfEditorLibrary
 
+maji spousty grafickych app
+https://www.syncfusion.com/account/profilecompletion?returnurl=%2fdownloads%2fmetrostudio
+
+https://github.com/scriptcs-contrib/scriptcs-webapi/tree/dev
+webserver
+https://github.com/scriptcs-contrib/scriptcs-webapi/tree/dev
+script-webapi  xaml na webu add
+
+
+ilspy dokaze generovat tu dokumentaci
+https://github.com/icsharpcode/ILSpy/tree/master/ICSharpCode.ILSpyX/Search
+
+
+Vše o XAML
+https://docs.telerik.com/devtools/wpf/styling-and-appearance/styling-apperance-editing-control-templates
+
+
+microsoft WPF na webu
+https://www.wpftutorial.net/3rdPartyLibs.html
+
+dohrat ilspy  ma i context menu
+
+
+
+avaloniaDocs
+https://docs.avaloniaui.net/docs/reference/controls/contextmenu

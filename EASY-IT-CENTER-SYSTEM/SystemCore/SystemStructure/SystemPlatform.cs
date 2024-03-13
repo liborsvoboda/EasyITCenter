@@ -16,8 +16,7 @@ namespace EasyITSystemCenter.SystemStructure {
             return ToUpperInvariant(a) == ToUpperInvariant(b);
         }
 
-        internal static string GetEnvironmentVariable(
-            string variable) {
+        internal static string GetEnvironmentVariable(string variable) {
             try {
                 return Environment.GetEnvironmentVariable(variable);
             } catch (System.Security.SecurityException) {
@@ -25,8 +24,7 @@ namespace EasyITSystemCenter.SystemStructure {
             }
         }
 
-        internal static Exception CreateNotImplementedException(
-            string message) {
+        internal static Exception CreateNotImplementedException(string message) {
             return new NotImplementedException(message);
         }
 

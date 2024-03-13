@@ -135,10 +135,14 @@ namespace EasyITSystemCenter.Pages {
         }
 
         private void SetRecord(bool? showForm = null, bool copy = false) {
-            txt_id.Value = (copy) ? 0 : selectedRecord.Id;
-            txt_pageName.Text = selectedRecord.PageName;
-            txt_description.Text = selectedRecord.Description;
-            chb_active.IsChecked = (selectedRecord.Id == 0) ? bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_activeNewInputDefault").Value) : selectedRecord.Active;
+
+            try {
+                txt_id.Value = (copy) ? 0 : selectedRecord.Id;
+                txt_pageName.Text = selectedRecord.PageName;
+                txt_description.Text = selectedRecord.Description;
+                chb_active.IsChecked = (selectedRecord.Id == 0) ? bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_activeNewInputDefault").Value) : selectedRecord.Active;
+
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             if (showForm != null && showForm == true) {
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;
@@ -148,6 +152,7 @@ namespace EasyITSystemCenter.Pages {
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = true;
                 ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; dataViewSupport.FormShown = showForm == null && !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_CloseFormAfterSave").Value);
             }
+
         }
     }
 }

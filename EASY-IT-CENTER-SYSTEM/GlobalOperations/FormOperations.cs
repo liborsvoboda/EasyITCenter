@@ -58,7 +58,7 @@ namespace EasyITSystemCenter.GlobalOperations {
                     element.ToolTip = toolTip;
                     if (element.ToolTip != null && element.ToolTip.ToString().Length > 3) {
                         toolTip.PlacementTarget = element;
-                        if (toolTip.Content.GetType().Name != "InfoPopup") { toolTip.Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#e1a05d"); }
+                        toolTip.Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#e1a05d");
                         toolTip.Placement = PlacementMode.Relative;
                         toolTip.IsOpen = true;
                         await Task.Delay(TimeSpan.FromSeconds(1));

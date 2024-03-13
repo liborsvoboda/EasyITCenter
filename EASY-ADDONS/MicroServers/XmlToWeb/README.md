@@ -1,3 +1,7 @@
+Nakopirovat XML do složky src
+
+
+
 # C# XMLDocument To Html
 This program provides a method for converting an XML document that can be output from C# Compiler to a user defined HTML document.  
 

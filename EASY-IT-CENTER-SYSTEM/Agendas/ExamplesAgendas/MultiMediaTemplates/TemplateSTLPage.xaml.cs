@@ -28,7 +28,7 @@ namespace EasyITSystemCenter.Pages {
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
             ModelVisual3D device3D = new ModelVisual3D();
-            device3D.Content = Display3d(Path.Combine(App.appRuntimeData.startupPath, "Data", "Track.stl")).GetAwaiter().GetResult();
+            device3D.Content = Display3d(Path.Combine(App.appRuntimeData.startupPath, "Data", "Media","Track.stl")).GetAwaiter().GetResult();
             viewPort3d.Children.Add(device3D);
         }
 
