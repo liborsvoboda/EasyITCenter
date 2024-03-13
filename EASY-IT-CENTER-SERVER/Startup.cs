@@ -99,7 +99,7 @@ namespace EasyITCenter {
                 app.UseCertificateForwarding();
             }
 
-
+            
             //Root Server Page To Default Path, Other Is Taken From Static Files
             app.Use(async (context, next) => { await next();
 
@@ -108,9 +108,22 @@ namespace EasyITCenter {
                 try { requestedModulePath = context.Request.Cookies.FirstOrDefault(a => a.Key.ToString() == "RequestedModulePath").Value?.ToString(); } catch { }
 
 
-                //Static Folders
-                if (context.Request.Path.ToString().ToLower().StartsWith("/server") || context.Request.Path.ToString().ToLower().StartsWith("/provide")) 
+
+                //TODO implement ALL WebSites to This Expression BY LOCAL TABLE
+                //Static Folders = Not Redirected to WebPortal  
+                if (context.Response.StatusCode == StatusCodes.Status200OK &&
+                   context.Request.Path.ToString().ToLower().StartsWith("/server") || context.Request.Path.ToString().ToLower().StartsWith("/provide") 
+                || context.Request.Path.ToString().ToLower().StartsWith("/github") || context.Request.Path.ToString().ToLower().StartsWith("/refactorwebsites")) 
                 { return; }
+
+                //404 Template For Defined Other WebPages
+                if (context.Response.StatusCode == StatusCodes.Status404NotFound &&
+                   (context.Request.Path.ToString().ToLower().StartsWith("/server") || context.Request.Path.ToString().ToLower().StartsWith("/provide")
+                || context.Request.Path.ToString().ToLower().StartsWith("/github") || context.Request.Path.ToString().ToLower().StartsWith("/refactorwebsites"))
+                && !context.Request.Path.ToString().Split("/").Last().Contains(".")) {
+                    context.Request.Path = "/ServerControls/NonExistPage";
+                    await next(); //FOR Goto procces over NonExistPage page
+                }
 
                 //404 For Files
                 if (context.Response.StatusCode == StatusCodes.Status404NotFound && context.Request.Path.ToString().Split("/").Last().Contains(".")) { return; }

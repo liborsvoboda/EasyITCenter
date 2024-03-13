@@ -59,15 +59,5 @@ namespace EasyITSystemCenter.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Vyhledává lokalizovaný prostředek typu System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap no_photo {
-            get {
-                object obj = ResourceManager.GetObject("no_photo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }
