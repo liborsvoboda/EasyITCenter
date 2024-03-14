@@ -5,8 +5,10 @@ using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.SystemHelper;
 using EasyITSystemCenter.SystemStructure;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using Org.BouncyCastle.Asn1;
+using SharpDX.WIC;
 using System;
 using System.Data.SqlClient;
 using System.Linq;
@@ -14,6 +16,7 @@ using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+
 
 namespace EasyITSystemCenter.Pages {
 
@@ -151,10 +154,19 @@ namespace EasyITSystemCenter.Pages {
                                 targetGrid.Children.Add(button4);
                                 buttonInserted = true;
                                 break;
+
+                            case "appe_toolLightThemeName":
+                            case "appe_toolDarkThemeName":
+                                Button button5 = new Button() { Name = "btn_" + configuration.Key, Margin = new Thickness(5), Content = configuration.Value.ToString(), Width = 150, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
+                                button5.Click += BtnOpenColorPicker_Click;
+                                targetGrid.Children.Add(button5);
+                                buttonInserted = true;
+                                break;
                         }
 
                         if (!buttonInserted) { targetGrid.Children.Add(new Label() { Width = 200 }); };
-                    } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                    } 
+                    catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
                 });
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden;
@@ -209,6 +221,30 @@ namespace EasyITSystemCenter.Pages {
                 }
             }
         }
+
+
+        private void BtnOpenColorPicker_Click(object sender, RoutedEventArgs e) {
+            try {
+                var colorDialog = new Xwt.SelectColorDialog();
+                colorDialog.Title = Resources["selectColor"].ToString();
+                BaseMetroDialog modalDialog = new CustomDialog();
+                modalDialog.Content = colorDialog; modalDialog.Title = Resources[((Button)sender).Name.Split('_').Last()].ToString();
+                colorDialog.Color = (Xwt.Drawing.Color)ColorConverter.ConvertFromString(((Button)sender).Content.ToString());
+                MetroDialogSettings modalSetting = new MetroDialogSettings() { AnimateShow = true, AnimateHide = true, AffirmativeButtonText = "Ok", ColorScheme = MetroDialogColorScheme.Inverted };
+                //modalDialog.BeginInit();
+                var mainWindow = (MetroWindow)App.Current.MainWindow;
+                var result = mainWindow.ShowMetroDialogAsync(modalDialog, modalSetting);
+                if (result.IsCompleted) {
+                    SystemLocalEnumSets.sections.ToList().ForEach(section => {
+                        WrapPanel targetGrid = ((WrapPanel)TabMenuList.Items.Cast<TabItem>().ToList().Where(a => a.Name.StartsWith("conn")).First().Content);
+                        targetGrid.Children.OfType<TextBox>().ToList().ForEach(textbox => {
+                            if (textbox.Name == ((Button)sender).Name.Substring(((Button)sender).Name.Split('.')[0].Length - 1).Split('_').Last()) { textbox.Text = colorDialog.Color.ToHexString(); };
+                        });
+                    });
+                }
+            } catch (Exception ex) { }
+        }
+
 
         private void BtnBrowseReporter_Click(object sender, RoutedEventArgs e) {
             try {

@@ -25,67 +25,99 @@
             <ToolBar.Resources>
                 <Style TargetType="{x:Type Image}">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}" Value="True">
                             <Setter Property="Opacity" Value="0.30" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </ToolBar.Resources>
+
             <Button
-                Background="LightBlue" Click="openFileClick" ToolTip="Otevřít Soubor">
+                Background="LightBlue" Click="openFileClick"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Otevřít Soubor">
                 <Image Height="16" Source="/Data/Images/Open.png" />
             </Button>
-            <Button Click="saveFileClick" ToolTip="Uložit">
+            <Button
+                Click="saveFileClick"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Uložit">
                 <Image Height="16" Source="/Data/Images/Save.png" />
             </Button>
-            <Button Click="saveAsFileClick" ToolTip="Uložit Jako">
+            <Button
+                Click="saveAsFileClick"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Uložit Jako">
                 <Image Height="16" Source="/Data/Images/Save.png" />
             </Button>
             <Separator />
-            <Button Command="Cut" ToolTip="Vyjmout">
+            <Button
+                Command="Cut"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Vyjmout">
                 <Image Height="16" Source="/Data/Images/Cut.png" />
             </Button>
-            <Button Command="Copy" ToolTip="Zkopírovat">
+            <Button
+                Command="Copy"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Zkopírovat">
                 <Image Height="16" Source="/Data/Images/Copy.png" />
             </Button>
-            <Button Command="Paste" ToolTip="Vložit">
+            <Button
+                Command="Paste"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Vložit">
                 <Image Height="16" Source="/Data/Images/Paste.png" />
             </Button>
-            <Button Command="Delete" ToolTip="Smazat Označené">
+            <Button
+                Command="Delete"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Smazat Označené">
                 <Image Height="16" Source="/Data/Images/Delete.png" />
             </Button>
             <Separator />
-            <Button Command="Undo" ToolTip="Zpět">
+            <Button
+                Command="Undo"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Zpět">
                 <Image Height="16" Source="/Data/Images/Undo.png" />
             </Button>
-            <Button Command="Redo" ToolTip="Vpřed">
+            <Button
+                Command="Redo"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Vpřed">
                 <Image Height="16" Source="/Data/Images/Redo.png" />
             </Button>
             <Separator />
             <CheckBox
                 Height="40"
                 Margin="2,0,2,0"
-                FontSize="20"
+                Cursor="Hand" FontSize="20"
                 IsChecked="{Binding ElementName=codeEditor, Path=WordWrap}"
-                Style="{StaticResource MetroToggleButton}"
+                Style="{DynamicResource MetroButton}"
                 ToolTip="Zalomit řádkování">
                 <Image Height="16" Source="/Data/Images/WordWrap.png" />
             </CheckBox>
+
             <CheckBox
                 Margin="2,0,2,0"
+                Cursor="Hand"
                 IsChecked="{Binding ElementName=codeEditor, Path=ShowLineNumbers}"
-                Style="{StaticResource MetroToggleButton}"
+                Style="{DynamicResource MetroButton}"
                 ToolTip="Zobrazit čísla řádků">
+
                 <TextBlock
                     Width="16"
                     FontSize="20" Foreground="Black" TextAlignment="Center">
                     #
                 </TextBlock>
             </CheckBox>
+
             <CheckBox
                 Margin="2,0,2,0"
+                Cursor="Hand"
                 IsChecked="{Binding ElementName=codeEditor, Path=Options.ShowEndOfLine}"
-                Style="{StaticResource MetroToggleButton}"
+                Style="{DynamicResource MetroButton}"
                 ToolTip="Zobrazit konce řádků">
                 <TextBlock
                     Width="16"
@@ -96,32 +128,55 @@
             <ComboBox
                 Name="highlightingComboBox"
                 Width="130" Height="40"
-                Background="LightGoldenrodYellow" FontSize="16"
+                Background="LightGoldenrodYellow" Cursor="Hand" FontSize="16"
                 ItemsSource="{Binding highlightingManager.HighlightingDefinitions}"
                 SelectedItem="{Binding SyntaxHighlighting, ElementName=codeEditor}"
                 SelectionChanged="HighlightingComboBox_SelectionChanged" />
             <Separator />
             <Button
                 Height="40"
-                VerticalContentAlignment="Center"
-                Click="AddMarkerFromSelectionClick" Content="Mark"
-                Style="{StaticResource MetroAccentButton}" />
+                Margin="2,0,2,0" VerticalContentAlignment="Center"
+                Click="AddMarkerFromSelectionClick" Cursor="Hand"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Označit">
+                <iconPacks:BootstrapIcons Kind="Pen" />
+            </Button>
+
             <Button
                 Height="40"
-                Click="RemoveSelectedClick" Content="UnMark"
-                Style="{StaticResource MetroAccentButton}" />
+                Margin="2,0,2,0"
+                Click="RemoveSelectedClick" Cursor="Hand"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Odznačit">
+                <iconPacks:BootstrapIcons Kind="CloudMinus" />
+            </Button>
             <Button
                 Height="40"
-                Click="RemoveAllClick" Content="RemMark"
-                Style="{StaticResource MetroAccentButton}" />
+                Margin="2,0,2,0"
+                Click="RemoveAllClick"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Odebrat všechny značky">
+                <iconPacks:BootstrapIcons Kind="ClipboardMinus" />
+            </Button>
             <Separator />
+
+            <Button
+                x:Name="btn_theme"
+                Width="40" Height="40"
+                Margin="2,0,2,0" HorizontalAlignment="Right"
+                Background="LightYellow" Click="btnTheme_Click" Cursor="Hand" FontWeight="ExtraBlack" Foreground="Black"
+                Style="{DynamicResource MetroButton}"
+                ToolTip="Light / Dark " ToolTipService.InitialShowDelay="0" ToolTipService.ShowOnDisabled="True">
+                <iconPacks:BootstrapIcons Kind="EyeFill" />
+            </Button>
+
             <Button
                 Width="40" Height="40"
                 Margin="2,0,2,0" HorizontalAlignment="Right"
-                ClickMode="Release" IsEnabled="False"
-                Style="{DynamicResource AccentedSquareButtonStyle}"
+                Cursor="Hand" IsEnabled="False"
+                Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}"
                 ToolTip="CTRL+F Najít, Nahradit" ToolTipService.InitialShowDelay="0" ToolTipService.ShowOnDisabled="True">
-                <iconPacks:BootstrapIcons Kind="Mouse" />
+                <iconPacks:BootstrapIcons Kind="InfoCircleFill" />
             </Button>
         </ToolBar>
         <Grid>
@@ -129,9 +184,11 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
+
+
             <code:TextEditor
                 Name="codeEditor"
-                FontFamily="Consolas" FontSize="10pt" HorizontalScrollBarVisibility="Auto" ShowLineNumbers="True" SyntaxHighlighting="C#" VerticalScrollBarVisibility="Auto" >
+                FontFamily="Consolas" FontSize="10pt" HorizontalScrollBarVisibility="Auto" ShowLineNumbers="True" SyntaxHighlighting="C#" VerticalScrollBarVisibility="Auto">
                 <code:TextEditor.ContextMenu>
                     <ContextMenu x:Name="mymenu1">
                         <ContextMenu.Resources>

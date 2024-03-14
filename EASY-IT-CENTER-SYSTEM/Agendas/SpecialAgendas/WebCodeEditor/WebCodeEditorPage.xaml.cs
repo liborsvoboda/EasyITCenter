@@ -22,11 +22,13 @@ namespace EasyITSystemCenter.Pages {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
         public static TemplateClassList selectedRecord = new TemplateClassList();
 
+
         private ServerModuleAndServiceList systemWebCodeEditor = new ServerModuleAndServiceList();
         private List<ServerModuleAndServiceList> serverModuleAndServiceList = new List<ServerModuleAndServiceList>();
         private int FoundedPositionIndex = 0; private int ReplacePositionIndex = 0;
 
         public WebCodeEditorPage() {
+
             InitializeComponent();
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 

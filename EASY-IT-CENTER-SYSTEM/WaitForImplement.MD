@@ -84,3 +84,25 @@ dohrat ilspy  ma i context menu
 
 avaloniaDocs
 https://docs.avaloniaui.net/docs/reference/controls/contextmenu
+
+
+dnspy online  debug and compiler EASY DEV
+https://github.com/sentientpc/dnSpy
+
+
+https://github.com/JustinPealing/html-query-plan?tab=readme-ov-file
+display table execution html structure
+
+
+stream server
+https://github.com/sentientpc/RecordRTC
+
+chrome web
+https://github.com/sentientpc/WordFlow-Web/tree/master
+
+
+JS grid tables easy
+SlickGrid https://github.com/6pac/SlickGrid/tree/master/examples
+
+
+

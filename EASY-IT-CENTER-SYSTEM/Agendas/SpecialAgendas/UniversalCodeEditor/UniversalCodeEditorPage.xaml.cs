@@ -19,8 +19,8 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using Microsoft.Win32;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using System.ComponentModel.Design;
+
 
 
 namespace EasyITSystemCenter.Pages {
@@ -36,6 +36,8 @@ namespace EasyITSystemCenter.Pages {
         HighlightingManager highlightingManager = HighlightingManager.Instance;
         CompletionWindow completionWindow;
         string currentFileName;
+        string lightThemeName = App.appRuntimeData.AppClientSettings.First(a => a.Key == "appe_toolLightThemeName").Value;
+        string darkThemeName = App.appRuntimeData.AppClientSettings.First(a => a.Key == "appe_toolDarkThemeName").Value;
 
 
         public UniversalCodeEditorPage() {
@@ -280,6 +282,23 @@ namespace EasyITSystemCenter.Pages {
             return false;
         }
 
+
+        /// <summary>
+        /// UniversalEditor Theme Controls
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnTheme_Click(object sender, RoutedEventArgs e) {
+
+            if (btn_theme.Background == (Brush)new BrushConverter().ConvertFromString(lightThemeName)) {
+                codeEditor.Background = (Brush)new BrushConverter().ConvertFromString(lightThemeName);
+                btn_theme.Background = (Brush)new BrushConverter().ConvertFromString(darkThemeName);
+            }
+            else {
+                codeEditor.Background = (Brush)new BrushConverter().ConvertFromString(darkThemeName);
+                btn_theme.Background = (Brush)new BrushConverter().ConvertFromString(lightThemeName);
+            }
+        }
     }
 
 }
