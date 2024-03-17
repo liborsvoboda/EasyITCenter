@@ -1,4 +1,6 @@
+using AnyoneDeveloper.Grpc.UI;
 using EasyData.Services;
+using GrpcBrowser.Configuration;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.FileProviders;
 using MirrorSharp;
@@ -78,7 +80,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
         internal static void EnableEndpoints(ref IApplicationBuilder app) {
             app.UseEndpoints(endpoints => {
 
-                if (ServerConfigSettings.ModuleWebDataManagerEnabled) { endpoints.MapEasyData(options => { 
+                if (ServerConfigSettings.ModuleWebDataManagerEnabled) { endpoints.MapEasyData(options => {
                     options.UseDbContext<EasyITCenterContext>();
                 }); }
 
@@ -100,6 +102,9 @@ namespace EasyITCenter.ServerCoreConfiguration {
                         );
                 }
 
+                endpoints.MapGrpcReflectionService();
+
+
                 if (ServerConfigSettings.ModuleCSharpCodeBuilder) { endpoints.MapMirrorSharp("/mirrorsharp", new MirrorSharpOptions { SelfDebugEnabled = true, IncludeExceptionDetails = true, }); }
             }); if (ServerConfigSettings.ModuleCSharpCodeBuilder) { app.MapMirrorSharp("/mirrorsharp"); }
 
@@ -114,8 +119,10 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     setup.AddCustomStylesheet("ServerCoreDefinitions/Styles/HealthChecksUI.css");
                 });
             }
-
-
+            ILoggerFactory test = new LoggerFactory();
+            app.UseGrpcBrowser();
+            app.UseGrpcWeb();
+            app.UseGrpcUI(test);
 
         }
     }

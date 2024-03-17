@@ -76,6 +76,9 @@ namespace EasyITCenter {
             ServerConfigurationServices.ConfigureTransient(ref services);
             ServerConfigurationServices.ConfigureSingletons(ref services);
             ServerConfigurationServices.ConfigureCentralServicesProviders(ref services);
+
+            services.AddGrpc(cgf => { cgf.ResponseCompressionLevel = System.IO.Compression.CompressionLevel.Optimal; });
+            services.AddGrpcReflection();
         }
 
 

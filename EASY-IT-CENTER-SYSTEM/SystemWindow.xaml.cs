@@ -4,7 +4,6 @@ using EasyITSystemCenter.Classes;
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalGenerators;
 using EasyITSystemCenter.GlobalOperations;
-using EasyITSystemCenter.GlobalStyles;
 using EasyITSystemCenter.Pages;
 using EasyITSystemCenter.Properties;
 using EasyITSystemCenter.SystemHelper;
@@ -43,15 +42,17 @@ namespace EasyITSystemCenter {
         public static DateTimeOffset lastUserAction = DateTimeOffset.UtcNow.AddSeconds(int.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_timeToEnable").Value));
         public readonly Timer AppSystemTimer = new Timer() { Enabled = false, Interval = 1 };
 
+        //Central Variables Declarations
         public static bool dataGridSelected, dgIdSetted, dgRefresh, serviceRunning, userLogged, updateChecked, runReleaseMode, operationRunning, serverLoggerSource, multiSameTabsEnabled = false;
         public static int dataGridSelectedId, downloadShow, downloadStatus = 0, vncProcessId = 0;
         public static string serviceStatus;
-
         public static Visibility progressRing, showSystemLogger = Visibility.Hidden;
-
         public SolidColorBrush vncRunning = Brushes.Red;
         public Process vncProcess;
 
+
+        //Variables Centralisation Hanlers for Working Only Over MainWindow.
+        //Its Central View For All Statuses Of System
         public static event EventHandler DataGridSelectedChanged, DataGridSelectedIdListIndicatorChanged, DgRefreshChanged, ServiceStatusChanged, ServiceRunningChanged, DownloadStatusChanged,
             DownloadShowChanged, ProgressRingChanged, UserLoggedChanged, VncRunningChanged, SystemLoggerChanged, RunReleaseModeChanged, OperationRunningChanged,
             ServerLoggerSourceChanged, ShowSystemLoggerChanged, MultiSameTabsEnabledChanged = delegate { };

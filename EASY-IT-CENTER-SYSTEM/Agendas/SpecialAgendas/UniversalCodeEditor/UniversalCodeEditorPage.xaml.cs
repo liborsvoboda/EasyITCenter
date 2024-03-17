@@ -1,10 +1,7 @@
-﻿using ICSharpCode.AvalonEdit.Folding;
-using ICSharpCode.AvalonEdit.Search;
-using EasyITSystemCenter.Api;
+﻿using EasyITSystemCenter.Api;
 using EasyITSystemCenter.Classes;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.Tools;
-using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,9 +14,18 @@ using System.Windows.Media;
 using System.Xml;
 using System.Windows.Input;
 using System.Windows.Threading;
-using ICSharpCode.AvalonEdit.CodeCompletion;
 using Microsoft.Win32;
 using System.ComponentModel.Design;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.CodeCompletion.Sample;
+using ICSharpCode.AvalonEdit.Search;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Folding;
+using ICSharpCode.AvalonEdit.Utils;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.CodeCompletion;
+using ICSharpCode.WpfDesign.Designer.PropertyGrid;
+using AvaloniaEdit.Snippets;
 
 
 
@@ -32,8 +38,6 @@ namespace EasyITSystemCenter.Pages {
         private ServerModuleAndServiceList systemWebCodeEditor = new ServerModuleAndServiceList();
         private List<ServerModuleAndServiceList> serverModuleAndServiceList = new List<ServerModuleAndServiceList>();
 
-        IHighlightingDefinition customHighlighting;
-        HighlightingManager highlightingManager = HighlightingManager.Instance;
         CompletionWindow completionWindow;
         string currentFileName;
         string lightThemeName = App.appRuntimeData.AppClientSettings.First(a => a.Key == "appe_toolLightThemeName").Value;
@@ -45,12 +49,12 @@ namespace EasyITSystemCenter.Pages {
             InitializeComponent();
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
             InitializeTextMarkerService();
-
             try {
-
+                
                 DirectoryInfo highlightFiles = new DirectoryInfo(Path.Combine(App.appRuntimeData.startupPath, "Data", "HighLights"));
                 highlightFiles.GetFiles().ToList().ForEach(file => {
                     try {
+
                         //using (Stream s = new FileStream(file.FullName, FileMode.Open)) {
                         //HighlightingLoader.LoadXshd(XmlReader.Create(new Uri(file.FullName).ToString()));
                         //    customHighlighting = HighlightingLoader.Load(new XmlTextReader(s), HighlightingManager.Instance);
@@ -69,12 +73,11 @@ namespace EasyITSystemCenter.Pages {
 
 
             try {
+
                 SearchPanel.Install(codeEditor);
-
-                //FoldingManager foldingManager = FoldingManager.Install(codeEditor.TextArea);
-                //BraceFoldingStrategy foldingStrategy = new BraceFoldingStrategy();
-                //foldingStrategy.UpdateFoldings(foldingManager, codeEditor.Document);
-
+                ////FoldingManager foldingManager = FoldingManager.Install(codeEditor.TextArea);
+                ////BraceFoldingStrategy foldingStrategy = new BraceFoldingStrategy();
+                ////foldingStrategy.UpdateFoldings(foldingManager, codeEditor.Document);
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             try {
@@ -108,25 +111,47 @@ namespace EasyITSystemCenter.Pages {
         }
 
 
+
+        private void newFile_Click(object sender, RoutedEventArgs e) {
+            lbl_openedFile.Text = "undefined";
+            currentFileName = codeEditor.Text = null;
+            codeEditor.Text = "";
+        }
+
+
+
         void openFileClick(object sender, RoutedEventArgs e) {
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.CheckFileExists = true;
             if (dlg.ShowDialog() ?? false) {
                 currentFileName = dlg.FileName;
+                lbl_openedFile.Text = dlg.SafeFileName;
                 codeEditor.Load(dlg.FileName);
                 codeEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(Path.GetExtension(currentFileName));
+
             }
         }
+
+
 
         void saveFileClick(object sender, EventArgs e) {
             if (currentFileName == null) {
                 SaveFileDialog dlg = new SaveFileDialog();
-                dlg.DefaultExt = ".txt";
                 if (dlg.ShowDialog() ?? false) {
                     currentFileName = dlg.FileName;
+                    lbl_openedFile.Text = dlg.SafeFileName;
                 } else { return; }
             }
             codeEditor.Save(currentFileName);
+        }
+
+
+        private void saveAsFileClick(object sender, RoutedEventArgs e) {
+            SaveFileDialog dlg = new SaveFileDialog(); //dlg.DefaultExt = ".txt";
+            if (dlg.ShowDialog() ?? false) {
+                lbl_openedFile.Text = currentFileName = dlg.FileName;
+            }
+            else { return; }
         }
 
         void propertyGridComboBoxSelectionChanged(object sender, RoutedEventArgs e) {
@@ -136,11 +161,11 @@ namespace EasyITSystemCenter.Pages {
                 case 0:
                     propertyGrid.SelectedObject = codeEditor;
                     break;
-                case 1:
-                    propertyGrid.SelectedObject = codeEditor.TextArea;
-                    break;
                 case 2:
                     propertyGrid.SelectedObject = codeEditor.Options;
+                    break;
+                case 1:
+                    propertyGrid.SelectedObject = codeEditor.TextArea;
                     break;
             }
         }
@@ -198,9 +223,9 @@ namespace EasyITSystemCenter.Pages {
                             codeEditor.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy();
                             break;
                         case "C#":
-                            foldingStrategy = new XmlFoldingStrategy();
-                            codeEditor.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy();
-                            break;
+                            codeEditor.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy(codeEditor.Options);
+                            foldingStrategy = new BraceFoldingStrategy();
+                        break;
                         case "C++":
                         case "PHP":
                         case "Java":
@@ -236,14 +261,6 @@ namespace EasyITSystemCenter.Pages {
             }
         }
         #endregion
-
-        private void saveAsFileClick(object sender, RoutedEventArgs e) {
-                SaveFileDialog dlg = new SaveFileDialog(); //dlg.DefaultExt = ".txt";
-                if (dlg.ShowDialog() ?? false) {
-                    currentFileName = dlg.FileName;
-                }
-                else { return; }
-        }
 
 
 
@@ -299,6 +316,7 @@ namespace EasyITSystemCenter.Pages {
                 btn_theme.Background = (Brush)new BrushConverter().ConvertFromString(lightThemeName);
             }
         }
+
     }
 
 }

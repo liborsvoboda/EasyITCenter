@@ -117,7 +117,6 @@ namespace EasyITCenter {
                 webBuilder.UseWebRoot(ServerConfigSettings.DefaultStaticWebFilesFolder);
                 webBuilder.UseStaticWebAssets();
                 webBuilder.UseStartup<Startup>();
-                
 
                 //TODO umoznuje naslouchat na vice portech soucasne i s ruznymi protokoly 
                 //webBuilder.UseUrls(new string[] { "http://*:5000", "https://*:5001" });
@@ -139,6 +138,14 @@ namespace EasyITCenter {
                         });
                     });
                 }
+
+
+
+
+
+
+
+
             });
         }
 
