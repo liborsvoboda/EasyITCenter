@@ -816,3 +816,9 @@ Metroui 3
 https://metroui.org.ua/keypad.html
 https://metroui.org.ua/v3/windows.html
 https://metroui.org.ua/v2/examples.html
+
+avalonia on web
+
+https://play.avaloniaui.net/
+
+https://docs.avaloniaui.net/docs/basics/

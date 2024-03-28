@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.FileProviders;
+using NuGet.Protocol.Plugins;
 using Westwind.AspNetCore.LiveReload;
 
 namespace EasyITCenter {
@@ -77,8 +78,8 @@ namespace EasyITCenter {
             ServerConfigurationServices.ConfigureSingletons(ref services);
             ServerConfigurationServices.ConfigureCentralServicesProviders(ref services);
 
-            services.AddGrpc(cgf => { cgf.ResponseCompressionLevel = System.IO.Compression.CompressionLevel.Optimal; });
-            services.AddGrpcReflection();
+         
+            services.AddServerSideBlazor();
         }
 
 
@@ -214,7 +215,7 @@ namespace EasyITCenter {
             app.UseResponseCompression();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            
             ServerEnablingServices.EnableCors(ref app);
             ServerEnablingServices.EnableWebSocket(ref app);
             ServerEnablingServices.EnableEndpoints(ref app);
@@ -246,9 +247,12 @@ namespace EasyITCenter {
             try { app.UsePathBase(BackendServer.ServerRuntimeData.SpecialUserWebRootPath); 
             } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
 
-
+            
             if (ServerConfigSettings.BrowserLinkEnabled) { app.UseBrowserLink(); }
             if (ServerConfigSettings.ModuleWebDataManagerEnabled) {app.UseEasyData();}
+
+
+            ILoggerFactory? ter = new LoggerFactory();
 
         }
 

@@ -1,4 +1,5 @@
 ﻿using LicenseVerify;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NuGet.Packaging;
 using System.Runtime.InteropServices;
 
@@ -86,7 +87,7 @@ namespace EasyITCenter {
                 CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) });
                 Environment.Exit(10);
             }
-
+            
             return Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder => {
                 if (ServerConfigSettings.ConfigServerStartupOnHttps) {
@@ -113,7 +114,7 @@ namespace EasyITCenter {
                         });
                     });
                 }
-
+                
                 webBuilder.UseWebRoot(ServerConfigSettings.DefaultStaticWebFilesFolder);
                 webBuilder.UseStaticWebAssets();
                 webBuilder.UseStartup<Startup>();
@@ -143,9 +144,7 @@ namespace EasyITCenter {
 
 
 
-
-
-
+              
             });
         }
 

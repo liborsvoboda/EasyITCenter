@@ -287,7 +287,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                 });
             }
         }
-
+        
         /// <summary>
         /// Server Module: Enable Live Data Monitor
         /// </summary>
