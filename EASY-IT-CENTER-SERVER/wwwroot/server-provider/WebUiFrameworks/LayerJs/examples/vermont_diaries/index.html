@@ -1,0 +1,126 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>layerJS example | Vermont Diaries</title>
+  <meta name="description" content="Example layerJS application. Showcasing a presentiation/slideshow like example of a comic">
+  <meta name="author" content="Thomas Handorf">
+
+  <link rel="stylesheet" href="../../dist/layerjs.css">
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  <script src="../../dist/layerjs.js"></script>
+  <style>
+    html {
+      height: 100%;
+    }
+
+    body {
+      height: 100%;
+      width: 100%;
+    }
+
+    [data-lj-type="frame"]:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+      box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.2);
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    [data-lj-type="frame"].wl-active {
+      background-color: none;
+      pointer-events: none;
+      cursor: inherit;
+    }
+
+    [data-lj-name="1"] {
+      width: 800px;
+      height: 360px;
+    }
+
+    [data-lj-name="2"] {
+      width: 720px;
+      height: 250px;
+    }
+
+    [data-lj-name="3"] {
+      width: 250px;
+      height: 250px;
+    }
+
+    [data-lj-name="4"] {
+      width: 500px;
+      height: 270px;
+    }
+
+    [data-lj-name="5"] {
+      width: 800px;
+      height: 300px;
+    }
+
+    [data-lj-name="6"] {
+      width: 720px;
+      height: 550px;
+    }
+
+    [data-lj-name="7"] {
+      width: 500px;
+      height: 280px;
+    }
+
+    [data-lj-name="8"] {
+      width: 270px;
+      height: 340px;
+    }
+
+    [data-lj-name="overview"] {
+      width: 800px;
+      height: 1892px;
+      pointer-events: none;
+    }
+
+    #source {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      text-decoration: none;
+      color: rgb(80,80,80);
+    }
+
+    #source:hover {
+      text-decoration: underline;
+    }
+  </style>
+
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+
+<body data-lj-type="stage">
+  <div data-lj-type="layer" data-lj-layout-type="canvas">
+    <div data-lj-type="frame" data-lj-fit-to="contain" data-lj-start-position="center" data-lj-name="overview" data-lj-x="0" data-lj-y="0">
+      <img width="800" height="1892" src="vermont_diaries.gif">
+    </div>
+    <div data-lj-type="frame" data-lj-fit-to="width" data-lj-name="1" data-lj-neighbors.b="2"></div>
+    <div data-lj-type="frame" data-lj-fit-to="contain" data-lj-start-position="center" data-lj-name="2" data-lj-x="40" data-lj-y="350" data-lj-neighbors.t="1" data-lj-neighbors.b="3"></div>
+    <div data-lj-type="frame" data-lj-fit-to="contain" data-lj-start-position="center" data-lj-name="3" data-lj-x="40" data-lj-y="590" data-lj-neighbors.t="2" data-lj-neighbors.r="4" data-lj-neighbors.b="5"></div>
+    <div data-lj-type="frame" data-lj-fit-to="contain" data-lj-start-position="center" data-lj-name="4" data-lj-x="250" data-lj-y="590" data-lj-neighbors.l="3" data-lj-neighbors.t="2" data-lj-neighbors.b="5"></div>
+    <div data-lj-type="frame" data-lj-fit-to="contain" data-lj-start-position="center" data-lj-name="5" data-lj-x="0" data-lj-y="810" data-lj-neighbors.t="4" data-lj-neighbors.b="6"></div>
+    <div data-lj-type="frame" data-lj-fit-to="contain" data-lj-start-position="center" data-lj-name="6" data-lj-x="40" data-lj-y="1060" data-lj-neighbors.t="5" data-lj-neighbors.b="7"></div>
+    <div data-lj-type="frame" data-lj-fit-to="contain" data-lj-start-position="center" data-lj-name="7" data-lj-x="40" data-lj-y="1570" data-lj-neighbors.t="6" data-lj-neighbors.r="8"></div>
+    <div data-lj-type="frame" data-lj-fit-to="contain" data-lj-start-position="center" data-lj-name="8" data-lj-x="520" data-lj-y="1560" data-lj-neighbors.l="7" data-lj-neighbors.t="6" data-lj-neighbors.b="overview" data-lj-neighbors.r="overview"></div>
+    <a id="source" href="http://www.snotm.com/">Comic by Alex Noriega</a>
+
+  </div>
+    <script src="../../dist/layerjs.js"></script>
+  <script>
+    $('[data-lj-type="frame"]').on('click', function(e) {
+      layerJS.select('[data-lj-type="layer"]').transitionTo(e.currentTarget._ljView.name());
+    });
+  </script>
+</body>
+
+</html>

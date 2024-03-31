@@ -116,26 +116,36 @@ namespace EasyITCenter {
                 //TODO implement ALL WebSites to This Expression BY LOCAL TABLE
                 //Static Folders = Not Redirected to WebPortal  
                 if (context.Response.StatusCode == StatusCodes.Status200OK &&
-                   context.Request.Path.ToString().ToLower().StartsWith("/server") || context.Request.Path.ToString().ToLower().StartsWith("/provide") 
-                || context.Request.Path.ToString().ToLower().StartsWith("/github") || context.Request.Path.ToString().ToLower().StartsWith("/refactorwebsites")) 
-                { return; }
-
-                //404 Template For Defined Other WebPages
-                if (context.Response.StatusCode == StatusCodes.Status404NotFound &&
-                   (context.Request.Path.ToString().ToLower().StartsWith("/server") || context.Request.Path.ToString().ToLower().StartsWith("/provide")
-                || context.Request.Path.ToString().ToLower().StartsWith("/github") || context.Request.Path.ToString().ToLower().StartsWith("/refactorwebsites"))
-                && !context.Request.Path.ToString().Split("/").Last().Contains(".")) {
-                    context.Request.Path = "/ServerControls/NonExistPage";
-                    await next(); //FOR Goto procces over NonExistPage page
-                }
-
-                //404 For Files
-                if (context.Response.StatusCode == StatusCodes.Status404NotFound && context.Request.Path.ToString().Split("/").Last().Contains(".")) { return; }
-
+                   context.Request.Path.ToString().ToLower().StartsWith("/server") || context.Request.Path.ToString().ToLower().StartsWith("/metro")) {
+                    return;
 
                 //200 Run Next Existed Backend API Calls Request Without Checked Modules
-                if (context.Response.StatusCode == StatusCodes.Status200OK && (context.Request.Path.Value != "/" || context.Request.Path.Value.ToLower() != BackendServer.ServerRuntimeData.SpecialUserWebRootPath.ToLower() || serverModule == null)) 
-                { return; }
+                } else if (context.Response.StatusCode == StatusCodes.Status200OK && (context.Request.Path.Value != "/" || context.Request.Path.Value.ToLower() != BackendServer.ServerRuntimeData.SpecialUserWebRootPath.ToLower() || serverModule == null)) {
+                    return;
+
+                //301 Solve Missing / on last Folder in Path
+                } else if (context.Response.StatusCode == StatusCodes.Status301MovedPermanently) {
+                    return;
+
+                //404 Template For Defined Other WebPages
+                } else if (context.Response.StatusCode == StatusCodes.Status404NotFound &&
+                   (context.Request.Path.ToString().ToLower().StartsWith("/server") || context.Request.Path.ToString().ToLower().StartsWith("/metro"))
+                && !context.Request.Path.ToString().Split("/").Last().Contains(".")) {
+
+                    //Check missing .html extension
+                    if (!context.Request.Path.ToString().EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + context.Request.Path.ToString() + ".html")) {
+                        context.Response.StatusCode = 200; context.Request.Path = context.Request.Path.ToString() + ".html"; 
+                        await next.Invoke(); return;
+
+                        //Static Bad path to NonExistPage
+                    } else {
+                        context.Request.Path = "/ServerControls/NonExistPage";
+                        await next.Invoke(); return;
+                    }
+                }
+                //404 For Files
+                else if (context.Response.StatusCode == StatusCodes.Status404NotFound && context.Request.Path.ToString().Split("/").Last().Contains(".")) { return; }
+
 
                 /*Check Authorized and Set from valid Token*/
                 string token = context.Request.Cookies.FirstOrDefault(a => a.Key == "ApiToken").Value;
@@ -146,13 +156,13 @@ namespace EasyITCenter {
                 }
 
                 //Goto Portal RooT Page Or Allowed Module 
-                if (context.Request.Path.Value == "/" || context.Request.Path.Value.ToLower() == BackendServer.ServerRuntimeData.SpecialUserWebRootPath.ToLower()
+                if (context.Request.Path.Value == "/" || context.Request.Path.ToString().ToLower() == BackendServer.ServerRuntimeData.SpecialUserWebRootPath.ToLower()
                 || (serverModule != null && (!serverModule.RestrictedAccess || (serverModule.RestrictedAccess && serverWebPagesToken != null && serverWebPagesToken.IsValid && serverModule.AllowedRoles.Split(",").ToList().Contains(serverWebPagesToken.UserClaims.FindFirstValue(ClaimTypes.Role)))))
                 ) {
                     if (serverModule != null) { try { context.Items.Add(new KeyValuePair<object, object>("ServerModule", serverModule)); } catch { } }
 
                     context.Response.StatusCode = StatusCodes.Status200OK; context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath;
-                    await next(); //FOR Goto procces over index page
+                    await next.Invoke(); //FOR Goto procces over index page
 
                 } //Module Go For Login
                 else if (serverModule != null && serverModule.RestrictedAccess) {
@@ -164,17 +174,17 @@ namespace EasyITCenter {
                     try { context.Response.Cookies.Append("RequestedModulePath", serverModule.UrlSubPath); } catch { }
 
                     context.Response.StatusCode = StatusCodes.Status200OK; context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath;
-                    await next(); //FOR Goto procces over index page
+                    await next.Invoke(); //FOR Goto procces over index page
 
                 } //Go to Allowed Redirect 404 Page
                 else if (context.Response.StatusCode != 200 && ServerConfigSettings.RedirectOnPageNotFound) {
                     context.Response.StatusCode = StatusCodes.Status200OK; context.Request.Path = ServerConfigSettings.RedirectPath;
-                    await next(); //FOR Goto procces over index page
+                    await next.Invoke(); //FOR Goto procces over index page
 
                 } //Go to 404 Page
                 else if (context.Response.StatusCode != 200 && !ServerConfigSettings.RedirectOnPageNotFound) {
                     context.Request.Path = "/ServerControls/NonExistPage";
-                    await next(); //FOR Goto procces over NonExistPage page
+                    await next.Invoke(); //FOR Goto procces over NonExistPage page
 
                 } //Not Defined
                 else { return; }

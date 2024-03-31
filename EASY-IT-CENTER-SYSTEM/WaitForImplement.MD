@@ -329,9 +329,11 @@ to ma EDI v sobe
 UML Editor luxus
 LogFOrnet viewer 
 
+dob5e ypracovane strankz s programy dle zamereni
+https://www.linuxlinks.com/best-free-open-source-software-development/
 
 
-
+materialUi msa vlastn9 webbuilder opensource
 
 
 
