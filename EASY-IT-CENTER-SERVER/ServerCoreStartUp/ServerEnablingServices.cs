@@ -3,6 +3,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.FileProviders;
 using MirrorSharp;
 using MirrorSharp.AspNetCore;
+using MonacoProvider;
+using MonacoProvider.Api;
 using Snickler.RSSCore.Caching;
 using Snickler.RSSCore.Extensions;
 using Snickler.RSSCore.Models;
@@ -99,15 +101,43 @@ namespace EasyITCenter.ServerCoreConfiguration {
                         }
                         );
                 }
-                endpoints.MapBlazorHub();
-                //endpoints.MapFallbackToPage("/_Host");
+
+                //Monaco Support
+                endpoints.MapPost("/MonacoCompletion/{0}", async (e) =>
+                {
+                    using var reader = new StreamReader(e.Request.Body);
+                    string text = await reader.ReadToEndAsync();
+                    if (text != null) {
+                        if (e.Request.Path.Value?.EndsWith("complete") == true) {
+                            var tabCompletionRequest = JsonSerializer.Deserialize<TabCompletionRequest>(text);
+                            var tabCompletionResults = await CompletitionRequestHandler.Handle(tabCompletionRequest);
+                            await JsonSerializer.SerializeAsync(e.Response.Body, tabCompletionResults); return;
+                        }
+                        else if (e.Request.Path.Value?.EndsWith("signature") == true) {
+                            var signatureHelpRequest = JsonSerializer.Deserialize<SignatureHelpRequest>(text);
+                            var signatureHelpResult = await CompletitionRequestHandler.Handle(signatureHelpRequest);
+                            await JsonSerializer.SerializeAsync(e.Response.Body, signatureHelpResult); return;
+                        }
+                        else if (e.Request.Path.Value?.EndsWith("hover") == true) {
+                            var hoverInfoRequest = JsonSerializer.Deserialize<HoverInfoRequest>(text);
+                            var hoverInfoResult = await CompletitionRequestHandler.Handle(hoverInfoRequest);
+                            await JsonSerializer.SerializeAsync(e.Response.Body, hoverInfoResult); return;
+                        }
+                        else if (e.Request.Path.Value?.EndsWith("codeCheck") == true) {
+                            var codeCheckRequest = JsonSerializer.Deserialize<CodeCheckRequest>(text);
+                            var codeCheckResults = await CompletitionRequestHandler.Handle(codeCheckRequest);
+                            await JsonSerializer.SerializeAsync(e.Response.Body, codeCheckResults); return;
+                        }
+                    }
+                    e.Response.StatusCode = 405;
+                });
 
 
+                //MirrorSharp Support
                 if (ServerConfigSettings.ModuleCSharpCodeBuilder) { endpoints.MapMirrorSharp("/mirrorsharp", new MirrorSharpOptions { SelfDebugEnabled = true, IncludeExceptionDetails = true, }); }
             }); if (ServerConfigSettings.ModuleCSharpCodeBuilder) { app.MapMirrorSharp("/mirrorsharp"); }
 
-
-
+            
             if (ServerConfigSettings.ModuleHealthServiceEnabled) {
                 app.UseHealthChecks("/HealthResultService");
                 app.UseHealthChecksUI(setup => {
@@ -118,7 +148,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                 });
             }
 
-            app.UseBlazorFrameworkFiles("/");
+
         }
     }
 }

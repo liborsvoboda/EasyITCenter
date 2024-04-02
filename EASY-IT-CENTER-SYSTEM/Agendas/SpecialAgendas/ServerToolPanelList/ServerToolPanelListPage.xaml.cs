@@ -21,7 +21,7 @@ namespace EasyITSystemCenter.Pages {
         public static ServerToolPanelDefinitionList selectedRecord = new ServerToolPanelDefinitionList();
 
         private List<ServerToolPanelDefinitionList> ServerToolPanelDefinitionList = new List<ServerToolPanelDefinitionList>();
-        private List<SystemSvgIconList> SystemSvgIconList = new List<SystemSvgIconList>();
+        //private List<SystemSvgIconList> SystemSvgIconList = new List<SystemSvgIconList>();
         private List<ServerToolTypeList> ServerToolTypeList = new List<ServerToolTypeList>();
 
         public ServerToolPanelListPage() {
@@ -37,7 +37,7 @@ namespace EasyITSystemCenter.Pages {
             try {
                 ServerToolTypeList = await CommApi.GetApiRequest<List<ServerToolTypeList>>(ApiUrls.EasyITCenterServerToolTypeList, null, App.UserData.Authentification.Token);
                 ServerToolPanelDefinitionList = await CommApi.GetApiRequest<List<ServerToolPanelDefinitionList>>(ApiUrls.EasyITCenterServerToolPanelDefinitionList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
-                SystemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
+                //SystemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
 
                 //Generate Menu Panel
                 if (ServerToolTypeList.Any()) { TabMenuList.Items.Clear(); }
@@ -53,7 +53,7 @@ namespace EasyITSystemCenter.Pages {
                 foreach (ServerToolPanelDefinitionList panel in ServerToolPanelDefinitionList) {
                     panel.ToolTypeName = Regex.Replace(ServerToolTypeList.FirstOrDefault(a => a.Id == panel.ToolTypeId).Name, @"[^a-zA-Z]", "_");
                     try {
-                        panel.BitmapImage = IconMaker.Icon((Color)ColorConverter.ConvertFromString(panel.IconColor), SystemSvgIconList.FirstOrDefault(a => a.Name == panel.IconName).SvgIconPath);
+                        panel.BitmapImage = IconMaker.Icon((Color)ColorConverter.ConvertFromString(panel.IconColor), App.SystemSvgIconList.FirstOrDefault(a => a.Name == panel.IconName).SvgIconPath);
                     } catch { }
 
                     var toolPanel = new Tile() {

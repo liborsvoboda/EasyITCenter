@@ -336,9 +336,8 @@ namespace EasyITSystemCenter {
         private async Task<bool> SetSystemModuleListPanel() {
             try {
                 List<SolutionMixedEnumList> mixedEnumTypesList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/SystemModules", App.UserData.Authentification.Token);
-                List<SystemSvgIconList> systemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
+                App.SystemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
 
-                systemModuleList.Items.Clear();
                 mixedEnumTypesList.ForEach(async panelType => {
                     try {
                         WrapPanel tabMenuPanel = new WrapPanel() { Name = "wp_" + panelType.Id.ToString(), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
@@ -352,13 +351,13 @@ namespace EasyITSystemCenter {
                         Tag = panel.Id.ToString(), Name = Regex.Replace(panel.Name, @"[^a-zA-Z]", "_"),
                         Uid = Regex.Replace(panel.ModuleType, @"[^a-zA-Z]", "_"), Title = panel.Name,
                         Background = (Brush)new BrushConverter().ConvertFromString(panel.BackgroundColor),
-                        Width = 100, Height = 100, Margin = new Thickness(1),Foreground = (Brush)new BrushConverter().ConvertFromString(panel.ForegroundColor),
-                        HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top,Cursor = Cursors.Hand, FontWeight = FontWeights.DemiBold,
+                        Width = 100, Height = 100, Margin = new Thickness(1), Foreground = (Brush)new BrushConverter().ConvertFromString(panel.ForegroundColor),
+                        HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top, Cursor = Cursors.Hand, FontWeight = FontWeights.DemiBold,
                         HorizontalTitleAlignment = HorizontalAlignment.Left, VerticalTitleAlignment = VerticalAlignment.Bottom, Padding = new Thickness(1),
-                        TitleFontSize = 14, ClickMode = ClickMode.Press, ToolTip = (!string.IsNullOrWhiteSpace(panel.Description)) ? panel.Description : null, 
+                        TitleFontSize = 14, ClickMode = ClickMode.Press, ToolTip = (!string.IsNullOrWhiteSpace(panel.Description)) ? panel.Description : null,
                         IsEnabled = panel.ModuleType.ToLower() != "webmodule" ? true : App.appRuntimeData.webServerRunning
                     }; System.Windows.Media.Imaging.BitmapImage panelIcon = new System.Windows.Media.Imaging.BitmapImage();
-                    panelIcon = IconMaker.Icon((Color)ColorConverter.ConvertFromString(panel.IconColor), systemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == panel.IconName).SvgIconPath);
+                    panelIcon = IconMaker.Icon((Color)ColorConverter.ConvertFromString(panel.IconColor), App.SystemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == panel.IconName).SvgIconPath);
                     Image icon = new Image() { Width = 30, Height = 30, Source = panelIcon, VerticalAlignment = VerticalAlignment.Top, HorizontalAlignment = HorizontalAlignment.Center };
                     toolPanel.Content = icon; toolPanel.Click += SystemModulePanel_Click;
 
@@ -406,7 +405,7 @@ namespace EasyITSystemCenter {
                 this.Invoke(() => {
                     AppSystemTimer.Elapsed += SystemTimerController; AppSystemTimer.Enabled = true;
                     _ = SystemOperations.IncreaseFileVersionBuild();
-                    AddOrRemoveTab(Resources["support"].ToString(), new SupportPage());
+                    AddOrRemoveTab(Resources["support"].ToString(), new SupportPage(), "Setting");
                 });
 
                 //Load Theme
@@ -421,11 +420,12 @@ namespace EasyITSystemCenter {
         /// </summary>
         private async Task<bool> LoadUserMenu() {
             try {
-                List<SystemMenuList> userMenu = await CommApi.GetApiRequest<List<SystemMenuList>>(ApiUrls.EasyITCenterStoredProceduresList, "SystemSpGetUserMenuList", App.UserData.Authentification.Token);
+                App.SystemMenuList = await CommApi.GetApiRequest<List<SystemMenuList>>(ApiUrls.EasyITCenterStoredProceduresList, "SystemSpGetUserMenuList", App.UserData.Authentification.Token);
+                App.SystemCustomList = await CommApi.GetApiRequest<List<SystemCustomPageList>>(ApiUrls.EasyITCenterSystemCustomPageList, null, App.UserData.Authentification.Token);
 
                 tb_verticalSystemMenu.Items.Clear();
                 int? lastMenuGroupId = null; tb_verticalSystemMenu.Items.Clear(); TreeViewItem menuSection = null;
-                userMenu.ForEach(async menuItem => {
+                App.SystemMenuList.ForEach(async menuItem => {
                     TreeViewItem menuUnit = null;
                     if (lastMenuGroupId != menuItem.GroupId) {
                         if (lastMenuGroupId != null) { tb_verticalSystemMenu.Items.Add(menuSection); menuSection = null; }
@@ -549,16 +549,18 @@ namespace EasyITSystemCenter {
             try { SystemModuleList module = App.SystemModuleList.First(a => a.Id == int.Parse(((Tile)sender).Tag.ToString()));
 
                 if (module.ModuleType.ToLower() == "webmodule") {
+
                     AddOrRemoveTab(((Tile)sender).Title, new WebModulePage(), "Setting");
                     SystemTabs existingTab = ((SystemWindowDataModel)DataContext).TabContents.ToList().Where(a => a.Header.ToLower() == ((Tile)sender).Title.ToLower()).LastOrDefault();
                     if (existingTab != null) { ((WebModulePage)existingTab.Content).ShowWebModule = module; }
+
                 } else if (module.ModuleType.ToLower() == "appmodule") {
-                    //AddOrRemoveTab(((Tile)sender).Title, new HostWin32AppPage(), "Setting");
-                    //SystemTabs existingTab = ((SystemWindowDataModel)DataContext).TabContents.ToList().Where(a => a.Header.ToLower() == ((Tile)sender).Title.ToLower()).LastOrDefault();
-                    //if (existingTab != null) { ((HostWin32AppPage)existingTab.Content).ShowAppModule = module; }
-                    SystemOperations.StartExternalProccess("WINcmd", Path.Combine(App.appRuntimeData.startupPath, "Data", "AddOn", "AppData", module.FolderPath, module.FileName), Path.Combine(App.appRuntimeData.startupPath,"Data","AddOn","AppData", module.FolderPath));
+
+                    SystemOperations.StartExternalProccess("WINcmd", Path.Combine(App.appRuntimeData.appDataPath, module.FolderPath, module.FileName), Path.Combine(App.appRuntimeData.appDataPath, module.FolderPath));
+
                 } else if (module.ModuleType.ToLower() == "systemtool") {
-                    string objectToInstantiate = "EasyITSystemCenter.Pages." + module.StartupCommand + "";
+
+                    string objectToInstantiate = "EasyITSystemCenter.Pages." + module.StartupCommand.Split('_')[0] + "";
                     var objectType = Type.GetType(objectToInstantiate); object pageForm = Activator.CreateInstance(objectType, false);
                     AddOrRemoveTab(((Tile)sender).Title, pageForm);
                 }
@@ -684,7 +686,7 @@ namespace EasyITSystemCenter {
                 vncProcess.Kill(); vncProcessId = 0; VncRunning = Brushes.Red;
             }
             else {
-                if (FileOperations.CheckFile(Path.Combine(App.appRuntimeData.startupPath, "Data", "Runtime", "VNC" , "winvnc.exe"))) {
+                if (FileOperations.CheckFile(Path.Combine(App.appRuntimeData.startupPath, "Data", "Runtime", "VNC", "winvnc.exe"))) {
                     if (FileOperations.VncServerIniFile(Path.Combine(App.appRuntimeData.startupPath, "Data", "Runtime", "VNC"))) {
                         vncProcess = new Process();
                         ProcessStartInfo info = new ProcessStartInfo() {
@@ -704,7 +706,7 @@ namespace EasyITSystemCenter {
         }
         private void BtnCaptureAppClick(object sender, RoutedEventArgs e) => MediaOperations.SaveAppScreenShot(this);
         private void BtnShowToolTipsClick(object sender, RoutedEventArgs e) => FormOperations.DisplayAllToolTips_OnClick(this);
-        
+
         #endregion Tools
 
         //----------------------------------------------------------------- BEGIN OF MENU REACTIONS -------------------------------------------------------------------------
@@ -753,9 +755,9 @@ namespace EasyITSystemCenter {
             SystemTabs SelectedTab = (SystemTabs)TabablzControl.GetLoadedInstances().Last().SelectedItem;
             string advancedFilter = SystemOperations.FilterToString(cb_filter);
 
-            ((DataViewSupport)Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + SelectedTab.Content.GetType().Name)).GetType().GetField("dataViewSupport").GetValue(null)).AdvancedFilter = advancedFilter;
+            ((DataViewSupport)Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + SelectedTab.Content.GetType().Name.Split('_')[0])).GetType().GetField("dataViewSupport").GetValue(null)).AdvancedFilter = advancedFilter;
             cb_filter.SelectedIndex = 0;
-            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + SelectedTab.Content.GetType().Name)).GetType()
+            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + SelectedTab.Content.GetType().Name.Split('_')[0])).GetType()
                 .GetMethod("LoadDataList").Invoke(((SystemTabs)InitialTabablzControl.SelectedItem).Content, null);
         }
 
@@ -765,11 +767,11 @@ namespace EasyITSystemCenter {
         /// <param name="sender"></param>
         /// <param name="e">     </param>
         private void Mi_filter_Click(object sender, RoutedEventArgs e) {
-            string mark = DateTime.UtcNow.Ticks.ToString(); 
+            string mark = DateTime.UtcNow.Ticks.ToString();
 
             if (((Button)sender).Name == "mi_plus") {
                 SystemTabs SelectedTab = (SystemTabs)TabablzControl.GetLoadedInstances().Last().SelectedItem;
-                var viewFields = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + SelectedTab.Content.GetType().Name)).GetType().GetField("selectedRecord").GetValue(null);
+                var viewFields = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + SelectedTab.Content.GetType().Name.Split('_')[0])).GetType().GetField("selectedRecord").GetValue(null);
 
                 ComboBox cbFieldsBox = new ComboBox() { Name = "field_" + mark, Width = 200, Height = 30 };
                 cbFieldsBox.SelectionChanged += FilterField_SelectionChanged;
@@ -849,7 +851,7 @@ namespace EasyITSystemCenter {
                 else // Item Field
                 {
                     SystemTabs SelectedTab = (SystemTabs)TabablzControl.GetLoadedInstances().Last().SelectedItem;
-                    var viewFields = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + SelectedTab.Content.GetType().Name)).GetType().GetField("selectedRecord").GetValue(null);
+                    var viewFields = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + SelectedTab.Content.GetType().Name.Split('_')[0])).GetType().GetField("selectedRecord").GetValue(null);
 
                     ComboBox cbFieldsBox = new ComboBox() { Name = "field_" + mark, Width = 200, Height = 30 };
                     cbFieldsBox.SelectionChanged += FilterField_SelectionChanged;
@@ -921,9 +923,7 @@ namespace EasyITSystemCenter {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e">     </param>
-        private void MainGrid_IsDraggingChanged(object sender, RoutedPropertyChangedEventArgs<bool> e) {
-        }
-
+        private void MainGrid_IsDraggingChanged(object sender, RoutedPropertyChangedEventArgs<bool> e) { }
         private void TabControl_OnDragEnter(object sender, DragEventArgs e) {
             if (!(e.OriginalSource is Visual v)) { return; }
             var item = AppExtension.GetParentOfType<DragablzItem>(v);
@@ -946,11 +946,11 @@ namespace EasyITSystemCenter {
                     if (cnn.State == System.Data.ConnectionState.Open) {
                         cnn.Close();
                         SystemTabs SelectedTab = (SystemTabs)TabablzControl.GetLoadedInstances().Last().SelectedItem;
-                        string advancedFilter = ((DataViewSupport)Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + SelectedTab.Content.GetType().Name)).GetType().GetField("dataViewSupport").GetValue(null)).AdvancedFilter;
+                        string advancedFilter = ((DataViewSupport)Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + SelectedTab.Content.GetType().Name.Split('_')[0])).GetType().GetField("dataViewSupport").GetValue(null)).AdvancedFilter;
                         advancedFilter = (string.IsNullOrWhiteSpace(advancedFilter)) ? "1=1" : advancedFilter.Replace("[!]", "").Replace("{!}", "");
 
                         //Update Filter data for generate Report
-                        SetReportFilter setReportFilter = new SetReportFilter() { TableName = SelectedTab.Content.GetType().Name.Replace("Page", ""), Filter = advancedFilter, Search = tb_search.Text, RecId = dataGridSelectedId };
+                        SetReportFilter setReportFilter = new SetReportFilter() { TableName = SelectedTab.Content.GetType().Name.Replace("Page", "").Split('_')[0], Filter = advancedFilter, Search = tb_search.Text, RecId = dataGridSelectedId };
                         string json = JsonConvert.SerializeObject(setReportFilter);
                         StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                         DBResultMessage dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterSystemReportQueueList, httpContent, "WriteFilter", App.UserData.Authentification.Token);
@@ -961,7 +961,7 @@ namespace EasyITSystemCenter {
                             ProcessStartInfo info = new ProcessStartInfo() {
                                 FileName = App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_reportingPath").Value,
                                 WorkingDirectory = Path.GetDirectoryName(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_reportingPath").Value) + "\\",
-                                Arguments = reportFile + " -p \"Connect=" + App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_reportConnectionString").Value + "&TableName=" + SelectedTab.Content.GetType().Name.Replace("Page", "") + "&Search=%" + tb_search.Text + "%&Id=" + dataGridSelectedId.ToString() + "&Filter=" + advancedFilter + "\"",
+                                Arguments = reportFile + " -p \"Connect=" + App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_reportConnectionString").Value + "&TableName=" + SelectedTab.Content.GetType().Name.Replace("Page", "").Split('_')[0] + "&Search=%" + tb_search.Text + "%&Id=" + dataGridSelectedId.ToString() + "&Filter=" + advancedFilter + "\"",
                                 LoadUserProfile = true, CreateNoWindow = false, UseShellExecute = false,
                                 WindowStyle = ProcessWindowStyle.Normal,
                                 RedirectStandardOutput = true, RedirectStandardError = true,
@@ -1001,15 +1001,15 @@ namespace EasyITSystemCenter {
                 }
                 else if (!name.StartsWith("tv_") && name.ToLower() != "_dial" && name.ToLower() != "_view") {
                     //Initiate PageClass by Page Name
-                    string pageName = name; string objectToInstantiate = "EasyITSystemCenter.Pages." + pageName + "";
+                    string pageName = name; string objectToInstantiate = "EasyITSystemCenter.Pages." + pageName.Split('_')[0] + "";
                     var objectType = Type.GetType(objectToInstantiate);
                     object pageForm = Activator.CreateInstance(objectType, false);
-                    if (((MainWindow)Application.Current.MainWindow).MultiSameTabsEnabled || TabablzControl.GetLoadedInstances().Last().GetOrderedHeaders().Count(a => a.Content.ToString() == DBOperations.DBTranslation(pageName).GetAwaiter().GetResult()) == 0) { AddOrRemoveTab(await DBOperations.DBTranslation(pageName), pageForm); }
-                    else { InitialTabablzControl.SelectedIndex = TabablzControl.GetLoadedInstances().Last().GetOrderedHeaders().First(a => a.Content.ToString() == DBOperations.DBTranslation(pageName).GetAwaiter().GetResult().ToString()).LogicalIndex; }
+                    if (((MainWindow)Application.Current.MainWindow).MultiSameTabsEnabled || TabablzControl.GetLoadedInstances().Last().GetOrderedHeaders().Count(a => a.Content.ToString() == DBOperations.DBTranslation(pageName.Split('_')[0]).GetAwaiter().GetResult()) == 0) { AddOrRemoveTab(await DBOperations.DBTranslation(pageName), pageForm); }
+                    else { InitialTabablzControl.SelectedIndex = TabablzControl.GetLoadedInstances().Last().GetOrderedHeaders().First(a => a.Content.ToString() == DBOperations.DBTranslation(pageName.Split('_')[0]).GetAwaiter().GetResult().ToString()).LogicalIndex; }
                     StringToFilter(cb_filter, "");
 
                     if (App.UserData.Authentification != null) {
-                        cb_printReports.ItemsSource = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/" + pageName.Replace("Page", ""), App.UserData.Authentification.Token);
+                        cb_printReports.ItemsSource = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/" + pageName.Replace("Page", "").Split('_')[0], App.UserData.Authentification.Token);
                     }
 
                     cb_printReports.IsEnabled = cb_printReports.Items.Count > 0;
@@ -1017,6 +1017,7 @@ namespace EasyITSystemCenter {
                 }
             } catch (Exception ex) { App.ApplicationLogging(ex); }
         }
+
 
         /// <summary>
         /// THIS IS AUTOMATIC INCLUDE DATALIST VIEW MENU in FORMAT APIcallPage open or select
@@ -1031,43 +1032,43 @@ namespace EasyITSystemCenter {
                 DBResultMessage dBResult = new DBResultMessage();
                 switch (((FrameworkElement)sender).Name) {
                     case "tb_search":
-                        if (Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType().GetMethod("Filter") != null) {
-                            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType()
+                        if (Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType().GetMethod("Filter") != null) {
+                            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType()
                                 .GetMethod("Filter").Invoke(((SystemTabs)InitialTabablzControl.SelectedItem).Content, new object[] { ((TextBox)e.Source).Text });
                         }
                         break;
 
                     case "mi_reload":
-                        if (Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType().GetMethod("LoadDataList") != null) {
-                            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType()
+                        if (Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType().GetMethod("LoadDataList") != null) {
+                            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType()
                              .GetMethod("LoadDataList").Invoke(((SystemTabs)InitialTabablzControl.SelectedItem).Content, null);
                         }
                         break;
 
                     case "mi_new":
-                        if (Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType().GetMethod("NewRecord") != null) {
-                            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType()
+                        if (Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType().GetMethod("NewRecord") != null) {
+                            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType()
                             .GetMethod("NewRecord").Invoke(((SystemTabs)InitialTabablzControl.SelectedItem).Content, null);
                         }
                         break;
 
                     case "mi_edit":
-                        if (Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType().GetMethod("EditRecord") != null) {
-                            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType()
+                        if (Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType().GetMethod("EditRecord") != null) {
+                            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType()
                             .GetMethod("EditRecord").Invoke(((SystemTabs)InitialTabablzControl.SelectedItem).Content, new object[] { false });
                         }
                         break;
 
                     case "mi_copy":
-                        if (Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType().GetMethod("EditRecord") != null) {
-                            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType()
+                        if (Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType().GetMethod("EditRecord") != null) {
+                            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType()
                             .GetMethod("EditRecord").Invoke(((SystemTabs)InitialTabablzControl.SelectedItem).Content, new object[] { true });
                         }
                         break;
 
                     case "mi_delete":
-                        if (Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType().GetMethod("DeleteRecord") != null) {
-                            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType()
+                        if (Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType().GetMethod("DeleteRecord") != null) {
+                            _ = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType()
                             .GetMethod("DeleteRecord").Invoke(((SystemTabs)InitialTabablzControl.SelectedItem).Content, null);
                         }
                         break;
@@ -1085,26 +1086,42 @@ namespace EasyITSystemCenter {
         /// <param name="tabPage">   </param>
         /// <param name="tagText">   </param>
         public static void AddOrRemoveTab(string headerName, object tabPage = null, string tagText = null) {
+            int? dbRecId = null; //Get DbRecId for Usermenu For UserControls
+            try {  if (tabPage != null && App.SystemMenuList.Any()) { 
+
+                    dbRecId = App.SystemMenuList.Where(a => a.FormPageName == tabPage.ToString().Split('.').Last() 
+                    || a.FormPageName + "Page" == tabPage.ToString().Split('.').Last()).Select(a => a.Id).FirstOrDefault();
+
+                    if (dbRecId == null || dbRecId == 0) {
+                        SystemTranslationList translation = App.LanguageList.FirstOrDefault(a => a.DescriptionCz == headerName || a.DescriptionEn == headerName);
+                        if (translation != null) { dbRecId = App.SystemCustomList.Where(a => a.PageName == translation.SystemName).Select(a => a.Id).FirstOrDefault(); }
+                    }
+                    ((UIElement)tabPage).Uid = dbRecId.ToString(); ((UIElement)tabPage).IsEnabled = true; }
+            } catch { }
+
             try {
                 IEnumerable<DragablzItem> existedTabs = TabablzControl.GetLoadedInstances().Last().GetOrderedHeaders();
                 existedTabs = TabablzControl.GetLoadedInstances().Last().GetOrderedHeaders();
 
                 if (tabPage == null) { } //Removing TabPage by name
+
                 else if (existedTabs.Count() > 0) {
-                    SystemTabs tc1 = new SystemTabs(headerName, tabPage, tagText);
+                    SystemTabs tc1 = new SystemTabs(dbRecId, headerName, tabPage, tagText);
                     TabablzControl.AddItem(tc1, existedTabs.Last().DataContext, AddLocationHint.After);
                     TabablzControl.SelectItem(tc1);
                     existedTabs = TabablzControl.GetLoadedInstances().Last().GetOrderedHeaders();
-                }
-                else if (existedTabs.Count() == 0) {
+
+                } else if (existedTabs.Count() == 0) {
                     SystemWindowDataModel result = new SystemWindowDataModel();
-                    result.TabContents.Add(new SystemTabs(headerName, tabPage, tagText));
+                    result.TabContents.Add(new SystemTabs(dbRecId, headerName, tabPage, tagText));
                     MetroWindow metroWindow = Application.Current.MainWindow as MetroWindow;
                     metroWindow.DataContext = result;
                     existedTabs = TabablzControl.GetLoadedInstances().Last().GetOrderedHeaders();
                 }
             } catch (Exception ex) { App.ApplicationLogging(ex); }
         }
+
+
 
         /// <summary>
         /// Tab click selection change reload ID and Pointers for ListView Buttons
@@ -1130,11 +1147,11 @@ namespace EasyITSystemCenter {
                 }
                 else if (SelectedTab != null && (((FrameworkElement)SelectedTab.Content).Tag != null && new string[] { "View", "Form" }.Contains(((FrameworkElement)SelectedTab.Content).Tag.ToString()))) {
                     DataGridSelected = true; DgRefresh = true; string senderName = SelectedTab.Content.GetType().Name;
-                    var AutoPageGeneration = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType();
+                    var AutoPageGeneration = Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType();
                     switch (((FrameworkElement)SelectedTab.Content).Tag.ToString()) {
                         //FORMS - LIST + DETAIL FORM
                         case "Form":
-                            dataViewSupport = ((DataViewSupport)Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType().GetField("dataViewSupport").GetValue(null));
+                            dataViewSupport = ((DataViewSupport)Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType().GetField("dataViewSupport").GetValue(null));
                             tb_search.Text = dataViewSupport.FilteredValue;
                             if (dataViewSupport.FormShown) { dataGridSelectedId = 0; DataGridSelectedIdListIndicator = false; DataGridSelected = false; DgRefresh = false; }
                             else {
@@ -1147,7 +1164,7 @@ namespace EasyITSystemCenter {
 
                         //VIEWS - LIST ONLY
                         case "View":
-                            dataViewSupport = ((DataViewSupport)Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName)).GetType().GetField("dataViewSupport").GetValue(null));
+                            dataViewSupport = ((DataViewSupport)Convert.ChangeType(SelectedTab.Content, Type.GetType("EasyITSystemCenter.Pages." + senderName.Split('_')[0])).GetType().GetField("dataViewSupport").GetValue(null));
                             tb_search.Text = dataViewSupport.FilteredValue; dataGridSelectedId = dataViewSupport.SelectedRecordId;
                             DataGridSelected = DataGridSelectedIdListIndicator = false; DgRefresh = true;
                             StringToFilter(cb_filter, dataViewSupport.AdvancedFilter);

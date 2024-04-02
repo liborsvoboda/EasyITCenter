@@ -30,12 +30,12 @@
         }
 
         [HttpGet("/EasyITCenterSystemCustomPageList/{id}")]
-        public async Task<string> GetSystemCustomPageListKey(int id) {
+        public async Task<string> GetSystemCustomPageListKey(string id) {
             SystemCustomPageList data;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                 IsolationLevel = IsolationLevel.ReadUncommitted
             })) {
-                data = new EasyITCenterContext().SystemCustomPageLists.Where(a => a.Id == id).First();
+                data = new EasyITCenterContext().SystemCustomPageLists.Where(a => a.Id == int.Parse(id)).First();
             }
 
             return JsonSerializer.Serialize(data);

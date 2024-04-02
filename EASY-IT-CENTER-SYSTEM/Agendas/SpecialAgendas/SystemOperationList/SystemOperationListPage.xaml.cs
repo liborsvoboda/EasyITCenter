@@ -29,7 +29,7 @@ namespace EasyITSystemCenter.Pages {
 
         private List<SolutionMixedEnumList> mixedEnumTypesList = new List<SolutionMixedEnumList>();
         private List<SolutionOperationList> solutionOperationList = new List<SolutionOperationList>();
-        private List<SystemSvgIconList> systemSvgIconList = new List<SystemSvgIconList>();
+        //private List<SystemSvgIconList> systemSvgIconList = new List<SystemSvgIconList>();
 
         public SystemOperationListPage() {
             InitializeComponent();
@@ -43,7 +43,7 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
                 mixedEnumTypesList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/OperationTypes", App.UserData.Authentification.Token);
-                systemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
+                //systemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
                 solutionOperationList = await CommApi.GetApiRequest<List<SolutionOperationList>>(ApiUrls.EasyITCenterSolutionOperationList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
                 //Generate Menu Panel
@@ -79,23 +79,23 @@ namespace EasyITSystemCenter.Pages {
                     BitmapImage spinner = new BitmapImage();
                     switch (panel.InheritedTypeName) {
                         case "DB_SP_GET_Operace":
-                            spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), systemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner").SvgIconPath);
+                            spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), App.SystemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner").SvgIconPath);
                             break;
 
                         case "DB_SP_POST_Operace":
-                            spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), systemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner2").SvgIconPath);
+                            spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), App.SystemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner2").SvgIconPath);
                             break;
 
                         case "API_GET_Request":
-                            spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), systemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner4").SvgIconPath);
+                            spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), App.SystemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner4").SvgIconPath);
                             break;
 
                         case "API_POST_Request":
-                            spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), systemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner5").SvgIconPath);
+                            spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), App.SystemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner5").SvgIconPath);
                             break;
 
                         default:
-                            spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), systemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner3").SvgIconPath);
+                            spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), App.SystemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner3").SvgIconPath);
                             break;
                     }
 

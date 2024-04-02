@@ -335,5 +335,43 @@ https://www.linuxlinks.com/best-free-open-source-software-development/
 
 materialUi msa vlastn9 webbuilder opensource
 
+je řešení pro react aplikace 
+https://dotnetify.net/core
+
+dokumentace SQL objektu
+https://www.codeproject.com/Articles/5161784/Documenting-MS-SQL-Server-Databases
+
+netcore portal article Wexflow - Open Source .NET Workflow Engine  workflow server
+https://www.codeproject.com/Articles/5346143/Wexflow-Open-Source-NET-Workflow-Engine
+
+videokonference
+https://github.com/aelassas/wexstream/tree/main
 
 
+
+clean code dotnet
+https://github.com/aelassas/clean-code-dotnet/tree/master
+
+clean code javascript
+https://github.com/ryanmcdermott/clean-code-javascript
+
+
+Roslyn,RoslynPad,CSharpEditor,AvalonStudio,Avalonia.Desktop  
+jak net6UI app pro uplnou spravu projeku
+
+Editory CDS.CSharpScripting,Avalonia,AvalonEdit,SharpLab
+ICSharpCODE ma spostu jinych funkci jako VB-C# atd
+
+
+avalonia i moderní xaml https://github.com/AvaloniaUI
+
+
+
+manik bohaty na C# 150 uzitecnych projektu
+https://github.com/KirillOsenkov?tab=repositories
+
+https://github.com/KirillOsenkov/LayoutDesigner/tree/master/LayoutDesigner/UI
+pekna stavba formulare drag drop pro xaml
+
+další blázen do C# 3D / Games / Etc. 61 repos
+https://github.com/tgjones/veldrid

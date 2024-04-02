@@ -78,8 +78,10 @@ namespace EasyITCenter {
             ServerConfigurationServices.ConfigureSingletons(ref services);
             ServerConfigurationServices.ConfigureCentralServicesProviders(ref services);
 
-         
-            services.AddServerSideBlazor();
+            //https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/signalr/dotnet-client/sample/SignalRChatClient/MainWindow.xaml.cs
+            //primi chat s aplikaci
+            //services.AddSignalR();
+            //services.AddServerSideBlazor();
         }
 
 
@@ -202,6 +204,7 @@ namespace EasyITCenter {
             staticFilesProvider.Mappings[".jscript"] = "application/javascript"; staticFilesProvider.Mappings[".style"] = "text/css";
             staticFilesProvider.Mappings[".data"] = "text/json"; staticFilesProvider.Mappings[".code"] = "text/cs";
             staticFilesProvider.Mappings[".design"] = "text/xaml"; staticFilesProvider.Mappings[".archive"] = "application/zip";
+
             
             if (ServerConfigSettings.ConfigServerStartupOnHttps) { app.UseHttpsRedirection(); }
             app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, ContentTypeProvider = staticFilesProvider, HttpsCompression = HttpsCompressionMode.Compress, DefaultContentType = "text/html" });

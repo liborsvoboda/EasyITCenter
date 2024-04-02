@@ -16,11 +16,10 @@ namespace EasyITSystemCenter {
 
         public void Configuration(IAppBuilder appBuilder) {
             string dir = AppDomain.CurrentDomain.RelativeSearchPath; 
-            string contentPath = Path.GetFullPath(Path.Combine(App.appRuntimeData.startupPath, "Data", "AddOn", "WebData"));
-            appBuilder.UseStaticFiles("/Data/AddOn/WebData").UseFileServer(
+            appBuilder.UseStaticFiles("/AddOn/WebData").UseFileServer(
                 new FileServerOptions {
                     EnableDefaultFiles = true,
-                    FileSystem = new PhysicalFileSystem(contentPath),
+                    FileSystem = new PhysicalFileSystem(App.appRuntimeData.webDataPath),
                     EnableDirectoryBrowsing = true, 
                     RequestPath = new PathString(string.Empty)
                 });

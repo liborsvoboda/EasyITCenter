@@ -3,6 +3,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -258,6 +260,48 @@ namespace EasyITSystemCenter.GlobalOperations {
             if (str.Length > 1)
                 return char.ToLower(str[0]) + str.Substring(1);
             return str.ToLower();
+        }
+
+        
+        /// <summary>
+        /// System Port Checker
+        /// </summary>
+        /// <param name="port"></param>
+        /// <returns></returns>
+        public static bool PortInUse(int port) {
+            bool inUse = false;
+
+            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
+            IPEndPoint[] ipEndPoints = ipProperties.GetActiveTcpListeners();
+
+            foreach (IPEndPoint endPoint in ipEndPoints) {
+                if (endPoint.Port == port) {
+                    inUse = true;
+                    break;
+                }
+            }
+            return inUse;
+        }
+
+
+        /// <summary>
+        /// Get First Free Port For Start Local Web Server
+        /// Used By reactive Web Server
+        /// </summary>
+        /// <returns></returns>
+        public static int? GetSystemLocalhostFreePort() {
+            int? freePort = null;
+            int startPort = 10000;
+
+            while (freePort == null) {
+                if (!PortInUse(startPort)) {
+                    freePort = startPort;
+                }
+                else {
+                    freePort = null;
+                }
+            }
+            return freePort;
         }
     }
 }

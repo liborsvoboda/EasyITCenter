@@ -46,6 +46,10 @@ namespace EasyITSystemCenter {
         /// //TODO move to RuntimeData
         /// </summary>
         public static log4net.ILog log = log4net.LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        public static List<SystemMenuList> SystemMenuList = null;
+        public static List<SystemCustomPageList> SystemCustomList = null;
+        public static List<SystemSvgIconList> SystemSvgIconList = null;
+
         public static List<SystemModuleList> SystemModuleList = null;
         public static List<ServerServerSettingList> ServerSetting = new List<ServerServerSettingList>();
         public static List<SystemParameterList> ParameterList = null;

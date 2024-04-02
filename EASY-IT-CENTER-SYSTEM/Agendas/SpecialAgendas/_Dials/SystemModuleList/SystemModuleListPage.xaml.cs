@@ -34,7 +34,7 @@ namespace EasyITSystemCenter.Pages {
         };
 
         private List<SystemModuleList> systemModuleList = new List<SystemModuleList>();
-        private List<SystemSvgIconList> svgIconList = new List<SystemSvgIconList>();
+        //private List<SystemSvgIconList> svgIconList = new List<SystemSvgIconList>();
         private List<SolutionMixedEnumList> mixedEnumTypesList = new List<SolutionMixedEnumList>();
 
         private bool pageLoaded = false;
@@ -63,12 +63,12 @@ namespace EasyITSystemCenter.Pages {
             try {
 
                 mixedEnumTypesList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/SystemModules", App.UserData.Authentification.Token);
-                svgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
+                //svgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
                 systemModuleList = await CommApi.GetApiRequest<List<SystemModuleList>>(ApiUrls.SystemModuleList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
 
-                if (svgIconList.Any()) { lv_iconViewer.Items.Clear(); }
-                svgIconList.ForEach(icon => {
+                lv_iconViewer.Items.Clear();
+                App.SystemSvgIconList.ForEach(icon => {
                     try {
                         icon.BitmapImage = IconMaker.Icon(Colors.RoyalBlue, icon.SvgIconPath);
                     } catch { }
@@ -231,7 +231,7 @@ namespace EasyITSystemCenter.Pages {
             else {
                 pageLoaded = false;
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = true;
-                ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; dataViewSupport.FormShown = showForm == null && !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_CloseFormAfterSave").Value);
+                ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; dataViewSupport.FormShown = showForm == null && !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key.ToLower() == "beh_closeformaftersave".ToLower()).Value);
             }
         }
 
@@ -263,13 +263,13 @@ namespace EasyITSystemCenter.Pages {
         }
 
         private async void GeneratedIconChanged() {
-            if (pageLoaded && svgIconList.Any()) {
+            if (pageLoaded) {
                 t_generatedIcon.Title = await DBOperations.DBTranslation(generatedIcon.Name, true);
                 t_generatedIcon.Foreground = (Brush)new BrushConverter().ConvertFromString(generatedIcon.IconColor);
                 t_generatedIcon.Background = (Brush)new BrushConverter().ConvertFromString(generatedIcon.BackgroundColor);
                 t_generatedIcon.ToolTip = generatedIcon.Description;
                 i_generatedIcon.Source = string.IsNullOrWhiteSpace(generatedIcon.IconName) ? new BitmapImage(DataResources.GetImageResource())
-                    : IconMaker.Icon((Color)ColorConverter.ConvertFromString(generatedIcon.IconColor), svgIconList.Where(a => a.Name == generatedIcon.IconName).Select(a => a.SvgIconPath).First());
+                    : IconMaker.Icon((Color)ColorConverter.ConvertFromString(generatedIcon.IconColor), App.SystemSvgIconList.Where(a => a.Name == generatedIcon.IconName).Select(a => a.SvgIconPath).First());
             }
         }
 

@@ -76,7 +76,7 @@ namespace EasyITSystemCenter.SystemStructure {
         }
 
         public static Func<object> NewItemFactory {
-            get { return () => new SystemTabs(DBOperations.DBTranslation("support").GetAwaiter().GetResult(), new SupportPage()); }
+            get { return () => new SystemTabs(null, "SupportPage", new SupportPage(), "Setting"); }
         }
     }
 

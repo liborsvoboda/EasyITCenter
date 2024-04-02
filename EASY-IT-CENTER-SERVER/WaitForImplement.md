@@ -822,3 +822,36 @@ avalonia on web
 https://play.avaloniaui.net/
 
 https://docs.avaloniaui.net/docs/basics/
+
+
+monaco
+https://github.com/serdarciplak/BlazorMonaco/blob/master/SampleApp/Pages/DiffEditor.razor
+https://github.com/autostep/AutoStep.Editor/tree/develop
+
+reactive app netcore
+https://dotnetify.net/core/reactive
+
+
+googlepress umi delat strankz
+webgitnet
+
+
+xamarin xaml in netcore
+https://montemagno.com/building-a-xaml-xamarin-forms-asp-net-website/
+
+TXTextControl.TextControl.ASP.SDK
+https://www.textcontrol.com/blog/2024/03/14/building-an-asp-net-core-backend-application-to-host-the-document-editor-and-document-viewer/
+dotNetify-Elements  reactive netcore
+https://github.com/dsuryd/dotNetify-Elements/tree/master
+https://dotnetify.net/core/reactive
+
+videokonference
+https://github.com/aelassas/wexflow
+
+
+
+
+
+-----------
+web boostrapblazor
+https://github.com/dotnetcore/BootstrapBlazor/tree/main
