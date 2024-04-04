@@ -3,7 +3,11 @@ using System.Text.RegularExpressions;
 
 namespace EasyITCenter.ServerCoreStructure {
 
-    internal static class DataOperations {
+
+    /// <summary>
+    /// Data Formating and similar Operations Library
+    /// </summary>
+    public static class DataOperations {
 
         /// <summary>
         /// Change First Character of String

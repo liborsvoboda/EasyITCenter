@@ -462,6 +462,13 @@
         public static string RedirectPath { get; set; } = "/Index";
 
 
+
+        /// <summary>
+        /// Zapíná/Vypína Automatické zobrazení MD souboru jako HTML
+        /// v rozsahu celého Web Serveru
+        /// </summary>
+        public static bool EnableAutoShowMdAsHtml { get; set; } = true;
+
         #endregion Server Web Portal
 
     }

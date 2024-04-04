@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.FileProviders;
 using NuGet.Protocol.Plugins;
+using System.Linq;
 using Westwind.AspNetCore.LiveReload;
+using Westwind.AspNetCore.Markdown;
 
 namespace EasyITCenter {
 
@@ -70,8 +72,8 @@ namespace EasyITCenter {
             ServerModules.ConfigureDocumentation(ref services);
             ServerModules.ConfigureLiveDataMonitor(ref services);
             ServerModules.ConfigureDBEntitySchema(ref services);
-            ServerModules.ConfigureGitSevrer(ref services);
-
+            ServerModules.ConfigureGitServer(ref services);
+            ServerModules.ConfigureMarkdownAsHtmlFiles(ref services);
             #endregion Server Modules
 
             ServerConfigurationServices.ConfigureTransient(ref services);
@@ -105,48 +107,62 @@ namespace EasyITCenter {
                 app.UseCertificateForwarding();
             }
 
-            
+
             //Root Server Page To Default Path, Other Is Taken From Static Files
-            app.Use(async (context, next) => { await next();
+            app.Use(async (context, next) => { 
+                if (context.Response.StatusCode != 200 || !ServerConfigSettings.EnableAutoShowMdAsHtml || !context.Request.Path.ToString().ToLower().EndsWith(".md")) { 
+                    await next();
+                }
 
                 /*Declaration & Check Module Redirect*/
                 ServerWebPagesToken? serverWebPagesToken = null; string requestedModulePath = null; ServerModuleAndServiceList? serverModule = DbOperations.CheckServerModuleExists(context.Request.Path.Value);
                 try { requestedModulePath = context.Request.Cookies.FirstOrDefault(a => a.Key.ToString() == "RequestedModulePath").Value?.ToString(); } catch { }
 
+                //Process MarkDown Files As Html
+                if (ServerConfigSettings.EnableAutoShowMdAsHtml && context.Request.Path.ToString().ToLower().EndsWith(".md")) {
 
+                    //TODO check DB MD File
+                    //CHEck Static Md file
+                    if (System.IO.File.Exists(Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(context.Request.Path.ToString()))) {
+                        context.Items.Add("RequestedUrlPath", context.Request.Path.ToString());
+                        context.Response.StatusCode = 200; context.Request.Path = "/ServerCoreTools/MarkDown"; await next(); return;
+                    } else { context.Request.Path = "/ServerControls/NonExistPage"; await next(); return; }
 
-                //TODO implement ALL WebSites to This Expression BY LOCAL TABLE
-                //Static Folders = Not Redirected to WebPortal  
-                if (context.Response.StatusCode == StatusCodes.Status200OK &&
+                    //Static Folders = Not Redirected to WebPortal  
+                } else if (context.Response.StatusCode == StatusCodes.Status200OK &&
                    context.Request.Path.ToString().ToLower().StartsWith("/server") || context.Request.Path.ToString().ToLower().StartsWith("/metro")) {
                     return;
 
-                //200 Run Next Existed Backend API Calls Request Without Checked Modules
-                } else if (context.Response.StatusCode == StatusCodes.Status200OK && (context.Request.Path.Value != "/" || context.Request.Path.Value.ToLower() != BackendServer.ServerRuntimeData.SpecialUserWebRootPath.ToLower() || serverModule == null)) {
+                    //200 Run Next Existed Backend API Calls Request Without Checked Modules
+                }
+                else if (context.Response.StatusCode == StatusCodes.Status200OK && (context.Request.Path.Value != "/" || context.Request.Path.Value.ToLower() != ServerConfigSettings.RedirectPath.ToLower() || serverModule == null)) {
                     return;
 
-                //301 Solve Missing / on last Folder in Path
-                } else if (context.Response.StatusCode == StatusCodes.Status301MovedPermanently) {
+                    //301 Solve Missing / on last Folder in Path
+                }
+                else if (context.Response.StatusCode == StatusCodes.Status301MovedPermanently) {
                     return;
 
-                //404 Template For Defined Other WebPages
-                } else if (context.Response.StatusCode == StatusCodes.Status404NotFound &&
+                    //404 Template For Defined Other WebPages
+                }
+                else if (context.Response.StatusCode != StatusCodes.Status200OK &&
                    (context.Request.Path.ToString().ToLower().StartsWith("/server") || context.Request.Path.ToString().ToLower().StartsWith("/metro"))
                 && !context.Request.Path.ToString().Split("/").Last().Contains(".")) {
 
                     //Check missing .html extension
                     if (!context.Request.Path.ToString().EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + context.Request.Path.ToString() + ".html")) {
-                        context.Response.StatusCode = 200; context.Request.Path = context.Request.Path.ToString() + ".html"; 
-                        await next.Invoke(); return;
+                        context.Response.StatusCode = 200; context.Request.Path = context.Request.Path.ToString() + ".html";
+                        await next(); return;
 
                         //Static Bad path to NonExistPage
-                    } else {
+                    }
+                    else {
                         context.Request.Path = "/ServerControls/NonExistPage";
-                        await next.Invoke(); return;
+                        await next(); return;
                     }
                 }
                 //404 For Files
-                else if (context.Response.StatusCode == StatusCodes.Status404NotFound && context.Request.Path.ToString().Split("/").Last().Contains(".")) { return; }
+                else if (context.Response.StatusCode != StatusCodes.Status200OK && context.Request.Path.ToString().Split("/").Last().Contains(".")) { return; }
 
 
                 /*Check Authorized and Set from valid Token*/
@@ -158,13 +174,13 @@ namespace EasyITCenter {
                 }
 
                 //Goto Portal RooT Page Or Allowed Module 
-                if (context.Request.Path.Value == "/" || context.Request.Path.ToString().ToLower() == BackendServer.ServerRuntimeData.SpecialUserWebRootPath.ToLower()
+                if (context.Request.Path.Value == "/" || context.Request.Path.ToString().ToLower() == ServerConfigSettings.RedirectPath.ToLower()
                 || (serverModule != null && (!serverModule.RestrictedAccess || (serverModule.RestrictedAccess && serverWebPagesToken != null && serverWebPagesToken.IsValid && serverModule.AllowedRoles.Split(",").ToList().Contains(serverWebPagesToken.UserClaims.FindFirstValue(ClaimTypes.Role)))))
                 ) {
                     if (serverModule != null) { try { context.Items.Add(new KeyValuePair<object, object>("ServerModule", serverModule)); } catch { } }
 
-                    context.Response.StatusCode = StatusCodes.Status200OK; context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath;
-                    await next.Invoke(); //FOR Goto procces over index page
+                    context.Response.StatusCode = StatusCodes.Status200OK; context.Request.Path = ServerConfigSettings.RedirectPath;
+                    await next(); //FOR Goto procces over index page
 
                 } //Module Go For Login
                 else if (serverModule != null && serverModule.RestrictedAccess) {
@@ -175,37 +191,38 @@ namespace EasyITCenter {
                     try { context.Response.Cookies.Append("IsLoginRequest", "correct"); } catch { }
                     try { context.Response.Cookies.Append("RequestedModulePath", serverModule.UrlSubPath); } catch { }
 
-                    context.Response.StatusCode = StatusCodes.Status200OK; context.Request.Path = BackendServer.ServerRuntimeData.SpecialUserWebRootPath;
-                    await next.Invoke(); //FOR Goto procces over index page
+                    context.Response.StatusCode = StatusCodes.Status200OK; context.Request.Path = ServerConfigSettings.RedirectPath;
+                    await next(); //FOR Goto procces over index page
 
                 } //Go to Allowed Redirect 404 Page
                 else if (context.Response.StatusCode != 200 && ServerConfigSettings.RedirectOnPageNotFound) {
                     context.Response.StatusCode = StatusCodes.Status200OK; context.Request.Path = ServerConfigSettings.RedirectPath;
-                    await next.Invoke(); //FOR Goto procces over index page
+                    await next(); //FOR Goto procces over index page
 
-                } //Go to 404 Page
+                } //Go to 404 Page Goto process over NonExistPage page
                 else if (context.Response.StatusCode != 200 && !ServerConfigSettings.RedirectOnPageNotFound) {
-                    context.Request.Path = "/ServerControls/NonExistPage";
-                    await next.Invoke(); //FOR Goto procces over NonExistPage page
+                    context.Request.Path = "/ServerControls/NonExistPage"; await next();
 
                 } //Not Defined
                 else { return; }
             });
-               
+
 
             //app.UseExceptionHandler("/Error");
             app.UseRouting();
-            app.UseDefaultFiles();
-            app.UseHsts();
 
+            app.UseDefaultFiles(new DefaultFilesOptions() { DefaultFileNames = ServerConfigSettings.EnableAutoShowMdAsHtml ? new List<string> { "index.html", "index.md" } : new List<string> { "index.html" } });
+            ServerModulesEnabling.EnableMarkdownAsHtmlFiles(ref app);
+
+            app.UseHsts();
 
             //TODO define over Administration
             var staticFilesProvider = new FileExtensionContentTypeProvider();
             staticFilesProvider.Mappings[".jscript"] = "application/javascript"; staticFilesProvider.Mappings[".style"] = "text/css";
             staticFilesProvider.Mappings[".data"] = "text/json"; staticFilesProvider.Mappings[".code"] = "text/cs";
             staticFilesProvider.Mappings[".design"] = "text/xaml"; staticFilesProvider.Mappings[".archive"] = "application/zip";
+            staticFilesProvider.Mappings[".docu"] = "text/markdown"; 
 
-            
             if (ServerConfigSettings.ConfigServerStartupOnHttps) { app.UseHttpsRedirection(); }
             app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, ContentTypeProvider = staticFilesProvider, HttpsCompression = HttpsCompressionMode.Compress, DefaultContentType = "text/html" });
 
@@ -218,7 +235,7 @@ namespace EasyITCenter {
                 app.UseStaticFiles(new StaticFileOptions { 
                     ServeUnknownFileTypes = true, FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices), 
                     RequestPath = "/" + website.WebsiteName+ ".", HttpsCompression = HttpsCompressionMode.Compress,
-                    DefaultContentType = "text/html"
+                    DefaultContentType = "text/html", ContentTypeProvider = staticFilesProvider,
                 });
             });
 
@@ -257,7 +274,7 @@ namespace EasyITCenter {
 
             if (ServerConfigSettings.WebMvcPagesEngineEnabled) { app.UseMvcWithDefaultRoute(); }
             
-            try { app.UsePathBase(BackendServer.ServerRuntimeData.SpecialUserWebRootPath); 
+            try { app.UsePathBase(ServerConfigSettings.RedirectPath); 
             } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
 
             

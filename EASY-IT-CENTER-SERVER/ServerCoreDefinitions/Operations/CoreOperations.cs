@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace EasyITCenter.ServerCoreStructure {
 
+    /// <summary>
+    /// Specific Server Core Operations Library
+    /// </summary>
     public static class CoreOperations {
 
         /// <summary>

@@ -2,7 +2,7 @@
 
 namespace ServerCorePages {
 
-    public class EasyDataModel : PageModel {
+    public class EaszDataModel : PageModel {
         public static ServerWebPagesToken serverWebPagesToken;
 
         public void OnGet() {

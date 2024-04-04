@@ -56,6 +56,9 @@
                     var data = new EasyITCenterContext().WebCoreFileLists.Add(record);
                     int result = await data.Context.SaveChangesAsync();
 
+                    //Update Server LocalFile
+                    DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.WebCoreFileLists);
+
                     if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                     else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 }
@@ -73,6 +76,9 @@
                     var data = new EasyITCenterContext().WebCoreFileLists.Update(record);
                     int result = await data.Context.SaveChangesAsync();
 
+                    //Update Server LocalFile
+                    DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.WebCoreFileLists);
+
                     if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                     else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 }
@@ -89,10 +95,12 @@
                 WebCoreFileList origRec = new EasyITCenterContext().WebCoreFileLists.Where(a => a.Id == int.Parse(id)).First();
 
                 if (WebToolsOperations.DeleteWebSourceFile(ref _hostingEnvironment, ref origRec)) {
-                    //WebCoreFileList record = new() { Id = int.Parse(id) };
-
                     var data = new EasyITCenterContext().WebCoreFileLists.Remove(origRec);
                     int result = await data.Context.SaveChangesAsync();
+
+                    //Update Server LocalFile
+                    DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.WebCoreFileLists);
+
                     if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = origRec.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                     else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 }

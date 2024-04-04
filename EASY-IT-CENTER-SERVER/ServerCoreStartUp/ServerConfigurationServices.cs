@@ -15,6 +15,7 @@ using EasyITCenter.GitServer.Interfaces;
 using EasyITCenter.GitServer.Models;
 using EasyITCenter.GitServer.Controllers;
 using RefactorWebSites;
+using Westwind.AspNetCore.Markdown;
 
 namespace EasyITCenter.ServerCoreConfiguration {
 

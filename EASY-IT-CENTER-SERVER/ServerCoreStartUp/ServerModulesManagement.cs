@@ -1,9 +1,17 @@
 using DBEntitySchema.Core;
 using EasyITCenter.GitServer.Settings;
+using Markdig.Extensions.AutoIdentifiers;
+using Markdig;
 using MarkdownDocumenting.Extensions;
 using Quartz.Impl;
 using Quartz.Spi;
 using Westwind.AspNetCore.LiveReload;
+using Westwind.AspNetCore.Markdown;
+using Jering.Markdig.Extensions.FlexiBlocks;
+using Pek.Markdig.HighlightJs;
+using Docfx.MarkdigEngine.Extensions;
+using Markdig.Prism;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EasyITCenter.ServerCoreConfiguration {
    
@@ -16,7 +24,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
         /// Server Module: GitServer Startup Configuration
         /// </summary>
         /// <param name="services"></param>
-        internal static void ConfigureGitSevrer(ref IServiceCollection services) {
+        internal static void ConfigureGitServer(ref IServiceCollection services) {
             if (ServerConfigSettings.GitServerEnabled) {
                     services.Configure<GitSettings>(options => {
                     options.BasePath = Path.Combine(ServerRuntimeData.Startup_path, ServerRuntimeData.DataPath,"GitServer");
@@ -25,6 +33,42 @@ namespace EasyITCenter.ServerCoreConfiguration {
             }
         }
 
+
+        /// <summary>
+        /// Server Module: Configure Automatic MDtoHtml Files Show in WebPages
+        /// </summary>
+        /// <param name="services"></param>
+        internal static void ConfigureMarkdownAsHtmlFiles(ref IServiceCollection services) {
+            if (ServerConfigSettings.EnableAutoShowMdAsHtml) { services.AddMarkdown(config =>
+            {
+                // Create custom MarkdigPipeline 
+                // using MarkDig; for extension methods
+                config.ConfigureMarkdigPipeline = builder =>
+                {
+                    builder.UseEmphasisExtras(Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Default)
+                        .UsePipeTables().UseGridTables().UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
+                        .UseAutoLinks().UseAbbreviations().UseEmojiAndSmiley(true).UseListExtras()
+                        .UseAdvancedExtensions().UseAlertBlocks().UseBootstrap().UseCitations().UseDefinitionLists()
+                        .UseDiagrams().UseEmphasisExtras().UseFigures().UseListExtras().UseFooters().UseFootnotes()
+                        .UseGlobalization().UseMathematics().UseMediaLinks().UsePreciseSourceLocation().UseReferralLinks()
+                        .UseSmartyPants().UseSyntaxHighlighting().UseTableOfContent().UseTaskLists().UseDFMCodeInfoPrefix()
+
+                        //.UseFlexiCodeBlocks().UseFlexiBlocks().UseFlexiAlertBlocks().UseFlexiIncludeBlocks()
+                        //.UseFlexiTableBlocks().UseFlexiSectionBlocks().UseFlexiOptionsBlocks()
+                        .UseHighlightJs().UseInteractiveCode().UseXref()
+                        //.UsePrism()
+                        //.UseCodeSnippet()
+                        //.UsePlantUml()
+                        //.UseIncludeFile()
+                        .UseUrlRewriter(link => link.Url.AsRelativeResource())
+                        //.UseUrlRewriter(link => link.Url.Replace(!ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS ? "https://" : "http://", !ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS ? "http://" : "https://"))
+                        .UseFigures().UseTaskLists().UseCustomContainers().UseGenericAttributes();//.Build();
+
+                    //.DisableHtml();   // don't render HTML - encode as text
+                };
+            }); }
+        }
+        
 
         /// <summary>
         /// Server Module: Configures the Scheduler Module.
@@ -223,10 +267,21 @@ namespace EasyITCenter.ServerCoreConfiguration {
         }
     }
 
+
     /// <summary>
     /// Enable Configured Server Ad-dons and Modules
     /// </summary>
     public class ServerModulesEnabling {
+
+
+        /// <summary>
+        /// Server Module: Enable Automatic MDtoHtml Files Show in WebPages
+        /// </summary>
+        /// <param name="app"></param>
+        internal static void EnableMarkdownAsHtmlFiles(ref IApplicationBuilder app) {
+            if (ServerConfigSettings.EnableAutoShowMdAsHtml) { app.UseMarkdown(); }
+        }
+
 
         /// <summary>
         /// Server Module: Enable Generated Developer Documentation

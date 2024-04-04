@@ -49,7 +49,7 @@
                 int result = await data.Context.SaveChangesAsync();
 
                 //Update Server LocalFile
-                DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.SystemTranslationList);
+                DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.SystemTranslationLists);
 
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
@@ -68,7 +68,7 @@
                     int result = await data.Context.SaveChangesAsync();
 
                     //Update Server LocalFile
-                    DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.SystemTranslationList);
+                    DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.SystemTranslationLists);
 
                     if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                     else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
@@ -91,7 +91,7 @@
                     int result = await data.Context.SaveChangesAsync();
 
                     //Update Server LocalFile
-                    DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.SystemTranslationList);
+                    DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.SystemTranslationLists);
 
                     if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                     else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });

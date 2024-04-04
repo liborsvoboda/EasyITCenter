@@ -50,6 +50,10 @@ namespace EasyITCenter.Controllers {
                 record.User = null;  //EntityState.Detached IDENTITY_INSERT is set to OFF
                 var data = new EasyITCenterContext().WebGlobalPageBlockLists.Add(record);
                 int result = await data.Context.SaveChangesAsync();
+
+                //Update Server LocalFile
+                DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.WebGlobalPageBlockLists);
+
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
             } catch (Exception ex) {
@@ -63,6 +67,10 @@ namespace EasyITCenter.Controllers {
             try {
                 var data = new EasyITCenterContext().WebGlobalPageBlockLists.Update(record);
                 int result = await data.Context.SaveChangesAsync();
+
+                //Update Server LocalFile
+                DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.WebGlobalPageBlockLists);
+
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
             } catch (Exception ex) { return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
@@ -78,6 +86,10 @@ namespace EasyITCenter.Controllers {
 
                 var data = new EasyITCenterContext().WebGlobalPageBlockLists.Remove(record);
                 int result = await data.Context.SaveChangesAsync();
+                 
+                //Update Server LocalFile
+                DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.WebGlobalPageBlockLists);
+
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
             } catch (Exception ex) {

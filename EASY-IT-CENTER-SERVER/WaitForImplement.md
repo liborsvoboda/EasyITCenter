@@ -848,10 +848,26 @@ https://dotnetify.net/core/reactive
 videokonference
 https://github.com/aelassas/wexflow
 
-
+implement Easy Scraping Functionality API 
+https://www.scrapingbee.com/blog/web-scraping-csharp/#making-an-http-request-to-a-web-page-in-c
 
 
 
 -----------
 web boostrapblazor
 https://github.com/dotnetcore/BootstrapBlazor/tree/main
+
+
+docfx netcore funkce
+https://dotnet.github.io/docfx/
+await Docfx.Docset.Build("docfx.json");
+
+služby netcore: analyza kou, clienti, benchmark, build, atd
+https://dotnetfoundation.org/projects/current-projects
+
+koznoh.dbutil for DB operations
+is Installed
+
+
+Vygeneruje z MD souboru dokumetaci zaimplementovat do projektu
+ITGlobal.MarkDocs

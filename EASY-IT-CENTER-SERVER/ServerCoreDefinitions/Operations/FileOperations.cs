@@ -1,6 +1,6 @@
 ﻿namespace EasyITCenter.ServerCoreStructure {
 
-    internal static class FileOperations {
+    public static class FileOperations {
 
         /// <summary>
         /// Server Local Startup Configuration Its Running as First - Load from Congig.Json After DB
@@ -230,6 +230,19 @@
             foreach (System.IO.FileInfo fi in dir.GetFiles()) {
                 fi.Delete();
             }
+        }
+
+
+        /// <summary>
+        /// Return Full File path to the operating system default
+        /// slashes.
+        /// </summary>
+        /// <param name="webpath"></param>
+        public static string ConvertSystemFilePathFromUrl(string webpath) {
+            if (string.IsNullOrEmpty(webpath)) return webpath;
+            char slash = Path.DirectorySeparatorChar;
+            webpath = webpath.Replace('/', slash).Replace('\\', slash);
+            return webpath.Replace(slash.ToString() + slash.ToString(), slash.ToString());
         }
     }
 }

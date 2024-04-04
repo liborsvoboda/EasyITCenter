@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using NPOI.HPSF;
 namespace ServerCorePages {
 
     /// <summary>
@@ -41,7 +42,7 @@ namespace ServerCorePages {
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             //Load Js Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "cssfiles") && a.FileName.StartsWith("multilang-fullpage")).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("cssfiles", "multilang-fullpage").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -80,7 +81,7 @@ namespace ServerCorePages {
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             //Load Js Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "cssfiles") && a.FileName.StartsWith("central-fullpage")).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("cssfiles", "central-fullpage").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -118,7 +119,7 @@ namespace ServerCorePages {
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             //Load Js Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "cssfiles") && a.FileName.StartsWith("global-fullpage")).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("cssfiles", "global-fullpage").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -158,7 +159,7 @@ namespace ServerCorePages {
 
             //Load Css Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "css" || a.SpecificationType.ToLower() == "mincss") && a.FileName.StartsWith("multi-lang-layout.")).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("css", "multi-lang-layout.").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -189,46 +190,6 @@ namespace ServerCorePages {
         }
 
 
-        ///// <summary>
-        ///// Portal CSS Stylisation Template Controler
-        ///// </summary>
-        ///// <returns></returns>
-        //public ViewResult GetManagedPortalCssLayoutFiles() {
-        //    List<WebCoreFileList> data; string html = null; var result = new ViewResult();
-
-        //    //Load Css Section
-        //    using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-        //        data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "css" || a.SpecificationType.ToLower() == "mincss") && a.FileName.StartsWith("portal-layout.")).OrderBy(a => a.Sequence).ToList();
-        //    }
-        //    string insertedPart = "";
-        //    data.ForEach(managedFile => {
-        //        insertedPart = ""; string fileExt = managedFile.FileName.Split(".").Last();
-        //        string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
-
-        //        if (managedFile.RewriteLowerLevel) {
-        //            if (ServerConfigSettings.ServerProviderModeEnabled && managedFile.ProviderContent?.Length > 0) { html += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "provider." + fileExt) + "\" />" + Environment.NewLine; }
-
-        //            if (authRole == "admin" && managedFile.AdminFileContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "admin." + fileExt) + "\" />" + Environment.NewLine; }
-        //            else if ((authRole == "webuser" || authRole == "admin" && managedFile.UserFileContent?.Length > 0) && managedFile.UserFileContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "user." + fileExt) + "\" />" + Environment.NewLine; }
-        //            else if (managedFile.GuestFileContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName + "\" />" + Environment.NewLine; }
-        //            html += insertedPart;
-        //        }
-        //        else {
-        //            if (managedFile.GuestFileContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName + "\" />" + Environment.NewLine; }
-
-        //            if (authRole == "webuser" && managedFile.UserFileContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "user." + fileExt) + "\" />" + Environment.NewLine; }
-        //            else if (authRole == "admin" && managedFile.AdminFileContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "admin." + fileExt) + "\" />" + Environment.NewLine; }
-
-        //            if (ServerConfigSettings.ServerProviderModeEnabled && managedFile.ProviderContent?.Length > 0) { insertedPart += "<link rel=\"stylesheet\" href=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "provider." + fileExt) + "\" />" + Environment.NewLine; }
-        //        }
-        //        html += insertedPart;
-        //    });
-
-        //    result.ContentType = html;
-        //    return result;
-        //}
-
-
         /// <summary>
         /// Central CSS Stylisation Template Controler
         /// </summary>
@@ -238,7 +199,7 @@ namespace ServerCorePages {
 
             //Load Css Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "css" || a.SpecificationType.ToLower() == "mincss") && a.FileName.StartsWith("central-layout.")).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("css", "central-layout.").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -278,7 +239,7 @@ namespace ServerCorePages {
 
             //Load Css Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "css" || a.SpecificationType.ToLower() == "mincss") && a.FileName.StartsWith("global-layout.")).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("css", "global-layout.").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -324,7 +285,7 @@ namespace ServerCorePages {
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             //Load Js Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "jsfiles") && a.FileName.StartsWith("multilang-fullpage")).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("jsfiles", "multilang-fullpage").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -363,7 +324,7 @@ namespace ServerCorePages {
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             //Load Js Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "jsfiles") && a.FileName.StartsWith("central-fullpage")).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("jsfiles", "central-fullpage").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -401,7 +362,7 @@ namespace ServerCorePages {
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             //Load Js Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "jsfiles") && a.FileName.StartsWith("global-fullpage")).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("jsfiles", "global-fullpage").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -442,7 +403,7 @@ namespace ServerCorePages {
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             //Load Js Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "js" || a.SpecificationType.ToLower() == "minjs") && a.FileName.StartsWith("multi-lang-layout.")).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("js", "multi-lang-layout.").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -471,43 +432,7 @@ namespace ServerCorePages {
         }
 
 
-        ///// <summary>
-        ///// Portal JS Library Files Template Controler
-        ///// </summary>
-        ///// <returns></returns>
-        //public ViewResult GetManagedPortalJsLayoutFiles() {
-        //    List<WebCoreFileList> data; string html = null; var result = new ViewResult();
-
-        //    string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
-        //    //Load Js Section
-        //    using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-        //        data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "js" || a.SpecificationType.ToLower() == "minjs") && a.FileName.StartsWith("portal-layout.")).OrderBy(a => a.Sequence).ToList();
-        //    }
-        //    string insertedPart = "";
-        //    data.ForEach(managedFile => {
-        //        insertedPart = ""; string fileExt = managedFile.FileName.Split(".").Last();
-
-        //        if (managedFile.RewriteLowerLevel) {
-        //            if (ServerConfigSettings.ServerProviderModeEnabled && managedFile.ProviderContent?.Length > 0) { html += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "provider." + fileExt) + "\" ></script>" + Environment.NewLine; }
-
-        //            if (authRole == "admin" && managedFile.AdminFileContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "admin." + fileExt) + "\" ></script>" + Environment.NewLine; }
-        //            else if ((authRole == "webuser" || authRole == "admin") && managedFile.UserFileContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "user." + fileExt) + "\" ></script>" + Environment.NewLine; }
-        //            else if (managedFile.GuestFileContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName + "\" ></script>" + Environment.NewLine; }
-        //            html += insertedPart;
-        //        }
-        //        else {
-        //            if (managedFile.GuestFileContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName + "\" ></script>" + Environment.NewLine; }
-
-        //            if (authRole == "webuser" && managedFile.UserFileContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "user." + fileExt) + "\" ></script>" + Environment.NewLine; }
-        //            else if (authRole == "admin" && managedFile.AdminFileContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "admin." + fileExt) + "\" ></script>" + Environment.NewLine; }
-        //            if (ServerConfigSettings.ServerProviderModeEnabled && managedFile.ProviderContent?.Length > 0) { insertedPart += "<script type=\"text/javascript\" src=\"../../metro/" + managedFile.MetroPath + "/" + managedFile.FileName.Replace(fileExt, "provider." + fileExt) + "\" ></script>" + Environment.NewLine; }
-        //        }
-        //        html += insertedPart;
-        //    });
-
-        //    result.ContentType = html;
-        //    return result;
-        //}
+    
 
 
         /// <summary>
@@ -520,7 +445,7 @@ namespace ServerCorePages {
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             //Load Js Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "js" || a.SpecificationType.ToLower() == "minjs") && a.FileName.StartsWith("central-layout.")).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("js", "central-layout.").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -559,7 +484,7 @@ namespace ServerCorePages {
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             //Load Js Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "js" || a.SpecificationType.ToLower() == "minjs") && a.FileName.StartsWith("global-layout.")).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("js", "global-layout.").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -607,7 +532,7 @@ namespace ServerCorePages {
 
             //Load Css Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "css" || a.SpecificationType.ToLower() == "mincss") && a.Active).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("css", null).OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -647,7 +572,7 @@ namespace ServerCorePages {
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             //Load Js Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == "js" || a.SpecificationType.ToLower() == "minjs") && a.Active).OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("js", null).OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -675,6 +600,8 @@ namespace ServerCorePages {
             return result;
         }
 
+
+
         /// <summary>
         /// Gets HeaderPreCss the managed header pre CSS for layout.
         /// </summary>
@@ -684,7 +611,7 @@ namespace ServerCorePages {
 
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebGlobalPageBlockLists.Where(a => a.Active && a.PagePartType == "HeaderPreCss").OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebGlobalPageBlockLists("HeaderPreCss").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(pagePart => {
@@ -722,7 +649,7 @@ namespace ServerCorePages {
 
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebGlobalPageBlockLists.Where(a => a.Active && a.PagePartType == "HeaderPreScripts").OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebGlobalPageBlockLists("HeaderPreScripts").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(pagePart => {
@@ -761,7 +688,7 @@ namespace ServerCorePages {
 
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebGlobalPageBlockLists.Where(a => a.Active && a.PagePartType == "HeaderPostScripts").OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebGlobalPageBlockLists("HeaderPostScripts").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(pagePart => {
@@ -801,7 +728,7 @@ namespace ServerCorePages {
 
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebGlobalPageBlockLists.Where(a => a.Active && a.PagePartType == "Body").OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebGlobalPageBlockLists("Body").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(pagePart => {
@@ -841,7 +768,7 @@ namespace ServerCorePages {
 
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = new EasyITCenterContext().WebGlobalPageBlockLists.Where(a => a.Active && a.PagePartType == "Footer").OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebGlobalPageBlockLists("Footer").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(pagePart => {

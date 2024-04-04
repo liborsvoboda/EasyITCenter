@@ -59,7 +59,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
         }
 
 
-
+        //RssFeed Support
         internal static void EnableRssFeed(ref IApplicationBuilder app) {
             if (ServerConfigSettings.WebRSSFeedsEnabled) {
                 app.UseRSSFeed("/feed", new RSSFeedOptions {
@@ -80,6 +80,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
         internal static void EnableEndpoints(ref IApplicationBuilder app) {
             app.UseEndpoints(endpoints => {
 
+                //EasyData Support
                 if (ServerConfigSettings.ModuleWebDataManagerEnabled) { endpoints.MapEasyData(options => {
                     options.UseDbContext<EasyITCenterContext>();
                 }); }
@@ -91,6 +92,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     endpoints.MapControllerRoute(name: "WebSites", pattern: "{controller=ServerCorePages}/{action=Index}/{id?}");
                 }
 
+                //HeathService Support
                 if (ServerConfigSettings.ModuleHealthServiceEnabled) {
                     endpoints.MapHealthChecks("/HealthResultService",
                         new HealthCheckOptions() {
@@ -135,9 +137,12 @@ namespace EasyITCenter.ServerCoreConfiguration {
 
                 //MirrorSharp Support
                 if (ServerConfigSettings.ModuleCSharpCodeBuilder) { endpoints.MapMirrorSharp("/mirrorsharp", new MirrorSharpOptions { SelfDebugEnabled = true, IncludeExceptionDetails = true, }); }
-            }); if (ServerConfigSettings.ModuleCSharpCodeBuilder) { app.MapMirrorSharp("/mirrorsharp"); }
 
+            }); 
             
+            if (ServerConfigSettings.ModuleCSharpCodeBuilder) { app.MapMirrorSharp("/mirrorsharp"); }
+
+            //HeathService Support
             if (ServerConfigSettings.ModuleHealthServiceEnabled) {
                 app.UseHealthChecks("/HealthResultService");
                 app.UseHealthChecksUI(setup => {

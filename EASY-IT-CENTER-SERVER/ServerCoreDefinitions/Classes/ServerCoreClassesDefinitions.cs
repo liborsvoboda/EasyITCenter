@@ -36,7 +36,9 @@
     /// Table when is First Using Its can be used for more Dials
     /// </summary>
     public enum ServerLocalDbDials {
-        SystemTranslationList,
-        ServerModuleAndServiceLists
+        SystemTranslationLists,
+        ServerModuleAndServiceLists,
+        WebCoreFileLists,
+        WebGlobalPageBlockLists
     }
 }
