@@ -7,7 +7,6 @@ using Quartz.Impl;
 using Quartz.Spi;
 using Westwind.AspNetCore.LiveReload;
 using Westwind.AspNetCore.Markdown;
-using Jering.Markdig.Extensions.FlexiBlocks;
 using Pek.Markdig.HighlightJs;
 using Docfx.MarkdigEngine.Extensions;
 using Markdig.Prism;
@@ -39,34 +38,32 @@ namespace EasyITCenter.ServerCoreConfiguration {
         /// </summary>
         /// <param name="services"></param>
         internal static void ConfigureMarkdownAsHtmlFiles(ref IServiceCollection services) {
-            if (ServerConfigSettings.EnableAutoShowMdAsHtml) { services.AddMarkdown(config =>
-            {
-                // Create custom MarkdigPipeline 
-                // using MarkDig; for extension methods
-                config.ConfigureMarkdigPipeline = builder =>
-                {
-                    builder.UseEmphasisExtras(Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Default)
-                        .UsePipeTables().UseGridTables().UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
-                        .UseAutoLinks().UseAbbreviations().UseEmojiAndSmiley(true).UseListExtras()
-                        .UseAdvancedExtensions().UseAlertBlocks().UseBootstrap().UseCitations().UseDefinitionLists()
-                        .UseDiagrams().UseEmphasisExtras().UseFigures().UseListExtras().UseFooters().UseFootnotes()
-                        .UseGlobalization().UseMathematics().UseMediaLinks().UsePreciseSourceLocation().UseReferralLinks()
-                        .UseSmartyPants().UseSyntaxHighlighting().UseTableOfContent().UseTaskLists().UseDFMCodeInfoPrefix()
+            if (ServerConfigSettings.EnableAutoShowMdAsHtml) { 
+                services.AddMarkdown(config => {
+                    // Create custom MarkdigPipeline 
+                    // using MarkDig; for extension methods
+                    config.ConfigureMarkdigPipeline = builder =>
+                    {
+                        builder.UseEmphasisExtras(Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Default)
+                            .UsePipeTables().UseGridTables().UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
+                            .UseAutoLinks().UseAbbreviations().UseEmojiAndSmiley(true).UseListExtras()
+                            .UseAdvancedExtensions().UseAlertBlocks().UseBootstrap().UseCitations().UseDefinitionLists()
+                            .UseDiagrams().UseEmphasisExtras().UseFigures().UseListExtras().UseFooters().UseFootnotes()
+                            .UseGlobalization().UseMathematics().UseMediaLinks().UsePreciseSourceLocation().UseReferralLinks()
+                            .UseSmartyPants().UseSyntaxHighlighting().UseTableOfContent().UseTaskLists().UseDFMCodeInfoPrefix()
 
-                        //.UseFlexiCodeBlocks().UseFlexiBlocks().UseFlexiAlertBlocks().UseFlexiIncludeBlocks()
-                        //.UseFlexiTableBlocks().UseFlexiSectionBlocks().UseFlexiOptionsBlocks()
-                        .UseHighlightJs().UseInteractiveCode().UseXref()
-                        //.UsePrism()
-                        //.UseCodeSnippet()
-                        //.UsePlantUml()
-                        //.UseIncludeFile()
-                        .UseUrlRewriter(link => link.Url.AsRelativeResource())
-                        //.UseUrlRewriter(link => link.Url.Replace(!ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS ? "https://" : "http://", !ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS ? "http://" : "https://"))
-                        .UseFigures().UseTaskLists().UseCustomContainers().UseGenericAttributes();//.Build();
+                            .UseHighlightJs().UseInteractiveCode().UseXref()
+                            //.UsePrism()
+                            .UseUrlRewriter(link => link.Url.AsRelativeResource())
+                            //.UseUrlRewriter(link => link.Url.Replace(!ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS ? "https://" : "http://", !ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS ? "http://" : "https://"))
+                            .UseFigures().UseTaskLists().UseCustomContainers().UseGenericAttributes();//.Build();
 
-                    //.DisableHtml();   // don't render HTML - encode as text
-                };
-            }); }
+                        //.DisableHtml();   // don't render HTML - encode as text
+                    };
+                }); 
+            }
+
+
         }
         
 
@@ -265,6 +262,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
 
             }
         }
+
     }
 
 
@@ -289,11 +287,11 @@ namespace EasyITCenter.ServerCoreConfiguration {
         internal static void EnableDocumentation(ref IApplicationBuilder app) {
             if (ServerConfigSettings.ModuleMdDocumentationEnabled) {
                 app.UseDocumentation(builder => {
-                    builder.HighlightJsStyle = "../../metro/css/material-darker.css";
-                    builder.GetMdlStyle = "../../metro/css/material.min.css";
+                    builder.HighlightJsStyle = "../../ServerCoreTools/JsCssLibrary/Docs/material-darker.css";
+                    builder.GetMdlStyle = "../../ServerCoreTools/JsCssLibrary/Docs/material.min.css";
                     builder.NavBarStyle = MarkdownDocumenting.Elements.NavBarStyle.Default;
                     builder.RootPathHandling = HandlingType.HandleWithHighOrder;
-                    builder.IndexDocument = "Docs";
+                    builder.IndexDocument = "Docs"; //Nemenit moznost ztraty dosahu css
 
                     //if (ServerConfigSettings.ServerRazorWebPagesEngineEnabled) builder.AddCustomLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate("DashBoard", ServerConfigSettings.ServiceServerLanguage), "/DashBoard"));
                     //if (ServerConfigSettings.ModuleHealthServiceEnabled) builder.AddCustomLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate("GithubInteli", ServerConfigSettings.ServiceServerLanguage), "/Tools/EDC_ESB_InteliHelp/book/"));
@@ -360,5 +358,8 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     : "/" + ServerConfigSettings.ModuleDBEntitySchemaPath; }); 
             } 
         }
+
+
     }
+
 }

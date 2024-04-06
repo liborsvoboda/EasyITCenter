@@ -189,3 +189,7 @@ function ImageFromElement(elementId){
 	var r=t.toDataURL("image/png"),u=r.replace(/^data:image\/png/,"data:application/octet-stream"),i=document.body.appendChild(document.createElement("a"));i.download=elementId+".png";i.href=u;i.click()}})})
 	}catch(t){}
 }
+
+
+
+

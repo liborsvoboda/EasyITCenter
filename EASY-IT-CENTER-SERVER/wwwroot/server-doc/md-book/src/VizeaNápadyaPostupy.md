@@ -21,7 +21,7 @@ Almost like tennis, you can publish one table after another, and by evening you 
 
 ---
 
-### Development in EasyITCenter UNIVERS RESTFULL/SOCKET BACKEND SERVER in three user steps
+### Development in Golden UNIVERS RESTFULL/SOCKET BACKEND SERVER in three user steps
 
 * Create any database Table. Use the TemplateList Template
         and just insert your boxes into it. Remember Indexes, Foreign Keys, or look at already existing tables or consult with me. It IS for a few minutes
@@ -123,7 +123,7 @@ All documentation, license, case study, price list, media, developer information
 
 ---
 
-### EasyITCenter - Backend Server Development Plan
+### Golden - Backend Server Development Plan
 
 - Create Backend Server Generator
 - Create Full Customer Support with Project Managements

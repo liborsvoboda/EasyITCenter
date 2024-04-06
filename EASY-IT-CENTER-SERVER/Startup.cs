@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.FileProviders;
 using NuGet.Protocol.Plugins;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using Westwind.AspNetCore.LiveReload;
 using Westwind.AspNetCore.Markdown;
+using static Quartz.Logging.OperationName;
 
 namespace EasyITCenter {
 
@@ -74,6 +76,7 @@ namespace EasyITCenter {
             ServerModules.ConfigureDBEntitySchema(ref services);
             ServerModules.ConfigureGitServer(ref services);
             ServerModules.ConfigureMarkdownAsHtmlFiles(ref services);
+
             #endregion Server Modules
 
             ServerConfigurationServices.ConfigureTransient(ref services);
@@ -84,6 +87,7 @@ namespace EasyITCenter {
             //primi chat s aplikaci
             //services.AddSignalR();
             //services.AddServerSideBlazor();
+
         }
 
 
@@ -107,10 +111,9 @@ namespace EasyITCenter {
                 app.UseCertificateForwarding();
             }
 
-
             //Root Server Page To Default Path, Other Is Taken From Static Files
-            app.Use(async (context, next) => { 
-                if (context.Response.StatusCode != 200 || !ServerConfigSettings.EnableAutoShowMdAsHtml || !context.Request.Path.ToString().ToLower().EndsWith(".md")) { 
+            app.Use(async (context, next) => {
+                if (context.Response.StatusCode != 200 || !ServerConfigSettings.EnableAutoShowMdAsHtml || !context.Request.Path.ToString().ToLower().EndsWith(".md")) {
                     await next();
                 }
 
@@ -118,19 +121,31 @@ namespace EasyITCenter {
                 ServerWebPagesToken? serverWebPagesToken = null; string requestedModulePath = null; ServerModuleAndServiceList? serverModule = DbOperations.CheckServerModuleExists(context.Request.Path.Value);
                 try { requestedModulePath = context.Request.Cookies.FirstOrDefault(a => a.Key.ToString() == "RequestedModulePath").Value?.ToString(); } catch { }
 
-                //Process MarkDown Files As Html
-                if (ServerConfigSettings.EnableAutoShowMdAsHtml && context.Request.Path.ToString().ToLower().EndsWith(".md")) {
-
-                    //TODO check DB MD File
+                //Process Static MarkDown Files As Html
+                if (ServerConfigSettings.EnableAutoShowMdAsHtml && context.Request.Path.ToString().ToLower().EndsWith(".md")
+                || (!context.Request.Path.ToString().EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(context.Request.Path.ToString()) + ".md"))
+                || (context.Request.Path.ToString().EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(context.Request.Path.ToString()) + "index.md"))
+                || (!context.Request.Path.ToString().EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(context.Request.Path.ToString()) + Path.DirectorySeparatorChar + "index.md"))
+                ) {
+                    string repairedMDPath = null;//Repair Path For Select index.MD missing URL
+                    if (!context.Request.Path.ToString().ToLower().EndsWith(".md")) { repairedMDPath = !context.Request.Path.Value.ToLower().EndsWith(".md") && !context.Request.Path.Value.ToLower().EndsWith("index") && !context.Request.Path.Value.EndsWith('/')
+                        ? context.Request.Path.Value + "/index.md" : context.Request.Path.Value.ToLower().EndsWith("index") ? context.Request.Path.Value + ".md" : context.Request.Path.Value + "index.md";
+                    }
+                    if (repairedMDPath != null && !repairedMDPath.ToLower().EndsWith(".md") && !context.Request.Path.Value.ToLower().EndsWith(".md")) { context.Request.Path = "/ServerControls/NonExistPage"; await next(); return; }
                     //CHEck Static Md file
-                    if (System.IO.File.Exists(Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(context.Request.Path.ToString()))) {
-                        context.Items.Add("RequestedUrlPath", context.Request.Path.ToString());
-                        context.Response.StatusCode = 200; context.Request.Path = "/ServerCoreTools/MarkDown"; await next(); return;
-                    } else { context.Request.Path = "/ServerControls/NonExistPage"; await next(); return; }
+                    context.Items.Add("RequestedUrlPath", (repairedMDPath == null ? context.Request.Path.ToString() : repairedMDPath));
+                    context.Response.StatusCode = 200; context.Request.Path = "/ServerCoreTools/MarkDown"; await next(); return;
 
-                    //Static Folders = Not Redirected to WebPortal  
-                } else if (context.Response.StatusCode == StatusCodes.Status200OK &&
-                   context.Request.Path.ToString().ToLower().StartsWith("/server") || context.Request.Path.ToString().ToLower().StartsWith("/metro")) {
+                //Static Folders = Not Redirected to WebPortal but NonExistPage  
+                //TODO HERE WILL BE INJECTION FOR STATIC FILES redirect to template INJECT and in Template Load FILE And Show
+                }
+                else if (context.Response.StatusCode == StatusCodes.Status200OK &&
+                   (
+                   context.Request.Path.ToString().ToLower().StartsWith("/server") 
+                   || context.Request.Path.ToString().ToLower().StartsWith("/metro")
+                   || context.Request.Path.ToString().ToLower().StartsWith("/servercoretools")
+                   )
+                ) {
                     return;
 
                     //200 Run Next Existed Backend API Calls Request Without Checked Modules
@@ -146,8 +161,13 @@ namespace EasyITCenter {
                     //404 Template For Defined Other WebPages
                 }
                 else if (context.Response.StatusCode != StatusCodes.Status200OK &&
-                   (context.Request.Path.ToString().ToLower().StartsWith("/server") || context.Request.Path.ToString().ToLower().StartsWith("/metro"))
-                && !context.Request.Path.ToString().Split("/").Last().Contains(".")) {
+                   (context.Request.Path.ToString().ToLower().StartsWith("/server") 
+                   || context.Request.Path.ToString().ToLower().StartsWith("/metro")
+                   || context.Request.Path.ToString().ToLower().StartsWith("/servercoretools")
+                   )
+                   && !context.Request.Path.ToString().Split("/").Last().Contains(".")
+                ) {
+                    
 
                     //Check missing .html extension
                     if (!context.Request.Path.ToString().EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + context.Request.Path.ToString() + ".html")) {
@@ -211,7 +231,7 @@ namespace EasyITCenter {
             //app.UseExceptionHandler("/Error");
             app.UseRouting();
 
-            app.UseDefaultFiles(new DefaultFilesOptions() { DefaultFileNames = ServerConfigSettings.EnableAutoShowMdAsHtml ? new List<string> { "index.html", "index.md" } : new List<string> { "index.html" } });
+            app.UseDefaultFiles(new DefaultFilesOptions() { DefaultFileNames = new List<string> { "index.html" } });
             ServerModulesEnabling.EnableMarkdownAsHtmlFiles(ref app);
 
             app.UseHsts();
@@ -221,7 +241,7 @@ namespace EasyITCenter {
             staticFilesProvider.Mappings[".jscript"] = "application/javascript"; staticFilesProvider.Mappings[".style"] = "text/css";
             staticFilesProvider.Mappings[".data"] = "text/json"; staticFilesProvider.Mappings[".code"] = "text/cs";
             staticFilesProvider.Mappings[".design"] = "text/xaml"; staticFilesProvider.Mappings[".archive"] = "application/zip";
-            staticFilesProvider.Mappings[".docu"] = "text/markdown"; 
+            staticFilesProvider.Mappings[".docu"] = "text/markdown";
 
             if (ServerConfigSettings.ConfigServerStartupOnHttps) { app.UseHttpsRedirection(); }
             app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, ContentTypeProvider = staticFilesProvider, HttpsCompression = HttpsCompressionMode.Compress, DefaultContentType = "text/html" });
@@ -232,10 +252,13 @@ namespace EasyITCenter {
                 websites = new EasyITCenterContext().SolutionWebsiteLists.Where(a => a.Active).ToList();
             }
             websites.ForEach(website => {
-                app.UseStaticFiles(new StaticFileOptions { 
-                    ServeUnknownFileTypes = true, FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices), 
-                    RequestPath = "/" + website.WebsiteName+ ".", HttpsCompression = HttpsCompressionMode.Compress,
-                    DefaultContentType = "text/html", ContentTypeProvider = staticFilesProvider,
+                app.UseStaticFiles(new StaticFileOptions {
+                    ServeUnknownFileTypes = true,
+                    FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices),
+                    RequestPath = "/" + website.WebsiteName + ".",
+                    HttpsCompression = HttpsCompressionMode.Compress,
+                    DefaultContentType = "text/html",
+                    ContentTypeProvider = staticFilesProvider,
                 });
             });
 
@@ -245,7 +268,7 @@ namespace EasyITCenter {
             app.UseResponseCompression();
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             ServerEnablingServices.EnableCors(ref app);
             ServerEnablingServices.EnableWebSocket(ref app);
             ServerEnablingServices.EnableEndpoints(ref app);
@@ -273,26 +296,21 @@ namespace EasyITCenter {
             }
 
             if (ServerConfigSettings.WebMvcPagesEngineEnabled) { app.UseMvcWithDefaultRoute(); }
-            
-            try { app.UsePathBase(ServerConfigSettings.RedirectPath); 
+
+            try {
+                app.UsePathBase(ServerConfigSettings.RedirectPath);
             } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
 
-            
+
             if (ServerConfigSettings.BrowserLinkEnabled) { app.UseBrowserLink(); }
-            if (ServerConfigSettings.ModuleWebDataManagerEnabled) {app.UseEasyData();}
-
-
-            ILoggerFactory? ter = new LoggerFactory();
-
+            if (ServerConfigSettings.ModuleWebDataManagerEnabled) { app.UseEasyData(); }
         }
 
         /// <summary>
         /// Server Core Enabling Disabling Hosted Services
         /// </summary>
         private void ServerOnStarted() => ServerRuntimeData.ServerCoreStatus = ServerStatuses.Running.ToString();
-
         private void ServerOnStopping() => ServerRuntimeData.ServerCoreStatus = ServerStatuses.Stopping.ToString();
-
         private void ServerOnStopped() => ServerRuntimeData.ServerCoreStatus = ServerStatuses.Stopped.ToString();
     }
 }

@@ -18,7 +18,7 @@ from **CZK 35,000** or hourly **CZK 750/Hour**
 
 
 * Project License/Customer/Number and method of Use
-PRICE OF 1 EasyITCenter SERVER  LICENSE **CZK 10 000**
+PRICE OF 1 Golden SERVER  LICENSE **CZK 10 000**
 PRICE OF 1 EASYSYSTEMBuilder      LICENSE **CZK 10 000**
 
 

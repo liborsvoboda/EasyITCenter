@@ -15,10 +15,10 @@ namespace DynamicRun.Builder
         Runner runner = new Runner();
 
         private static void Startup() {
-            var sourcesPath = Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "ServerCoreTools", "Compile", "DynamicProgram.cs");
+            var sourcesPath = Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "ServerCoreTools", "Compile", "PlayGround.cs");
             Console.WriteLine("Modify and Save the sources for compile and run it!");
 
-            using (var watcher = new ObservableFileSystemWatcher(c => { c.Path = Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "ServerCoreTools", "Compile", "DynamicProgram.cs"); })) {
+            using (var watcher = new ObservableFileSystemWatcher(c => { c.Path = Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "ServerCoreTools", "Compile", "PlayGround.cs"); })) {
                 watcher.Start();
                 Console.WriteLine("Press any key to exit!");
                 Console.ReadLine();

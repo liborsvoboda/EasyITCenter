@@ -56,7 +56,7 @@ https://github.com/karl-sjogren/robots-txt-middleware
 
 
 ---
-### EasyITCenter Universal BACKEND Server Solution foe ANY LIN/WIN/DB 
+### Golden Universal BACKEND Server Solution foe ANY LIN/WIN/DB 
 *     Universal Secure MultiPlatform MultiDATABASE BackEnd Server Project 
 *     WiTH RESTFULL / WEBSOCKET implementations
 *     With All Template types for INSERT / UPDATE / DELETE / SELECT / 
@@ -245,10 +245,10 @@ be deployed separately for making changes
 
 ```cs
 if (Request.HttpContext.User.IsInRole("admin"))
-{ data = new EasyITCenterContext().ImageGalleryLists.FromSqlRaw("SELECT * FROM ImageGalleryList WHERE 1=1 AND " + filter.Replace("+", " ")).AsNoTracking().ToList(); }
+{ data = new GoldenContext().ImageGalleryLists.FromSqlRaw("SELECT * FROM ImageGalleryList WHERE 1=1 AND " + filter.Replace("+", " ")).AsNoTracking().ToList(); }
 else
 {
-    data = new EasyITCenterContext().ImageGalleryLists.FromSqlRaw("SELECT * FROM ImageGalleryList WHERE 1=1 AND " + filter.Replace("+", " "))
+    data = new GoldenContext().ImageGalleryLists.FromSqlRaw("SELECT * FROM ImageGalleryList WHERE 1=1 AND " + filter.Replace("+", " "))
         .Include(a => a.User).Where(a => a.User.UserName == Request.HttpContext.User.Claims.First().Issuer)
         .AsNoTracking().ToList();
 }
@@ -327,7 +327,7 @@ public virtual UserList User { get; set; } = null!;
 * The template is ready for complete communication with the table Just RENAME  
 * Authorization, INSERT/UPDATE/SELECT/DELETE  
 
-[Standard Table API Template](https://github.com/liborsvoboda/EASYSYSTEM-EASYSERVER-EN/blob/main/EasyITCenterProject-ASPNETCORE6/Templates/TemplateListApi.cs "")
+[Standard Table API Template](https://github.com/liborsvoboda/EASYSYSTEM-EASYSERVER-EN/blob/main/GoldenProject-ASPNETCORE6/Templates/TemplateListApi.cs "")
 
 
 
@@ -352,7 +352,7 @@ new SqlParameter { ParameterName = "@unlockCode", Value = unlockCode },
 new SqlParameter { ParameterName = "@partNumber", Value = partNumber },
 new SqlParameter { ParameterName = "@ipAddress", Value = clientIPAddr },
 new SqlParameter { ParameterName = "@allowed" , Value = allowed, Direction = System.Data.ParameterDirection.Output} };
-data = new EasyITCenterContext().Database.ExecuteSqlRaw("exec CheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output", parameters.ToArray()).ToString();
+data = new GoldenSystemContext().Database.ExecuteSqlRaw("exec CheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output", parameters.ToArray()).ToString();
 allowed = bool.Parse(parameters[3].Value.ToString());
 ```
 
@@ -371,9 +371,9 @@ Scaffold-DbContext "Server=SQLSRV\SQLEXPRESS;Database=DATAPUB;Trusted_Connection
 
 ```cs
 if (Request.HttpContext.User.IsInRole("admin")) {
-    data = new EasyITCenterContext().AddressLists.ToList();
+    data = new GoldenContext().AddressLists.ToList();
 } else {
-    data = new EasyITCenterContext().AddressLists.Include(a => a.User)
+    data = new GoldenContext().AddressLists.Include(a => a.User)
         .Where(a => a.User.UserName == Request.HttpContext.User.Claims.First().Issuer).ToList();
 }
 ```   
@@ -391,9 +391,9 @@ return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHan
 
 ```cs
 if (Request.HttpContext.User.IsInRole("admin"))
-{ data = new EasyITCenterContext().AddressLists.FromSqlRaw("SELECT * FROM AddressList WHERE 1=1 AND " + filter.Replace("+", " ")).AsNoTracking().ToList(); }
+{ data = new GoldenContext().AddressLists.FromSqlRaw("SELECT * FROM AddressList WHERE 1=1 AND " + filter.Replace("+", " ")).AsNoTracking().ToList(); }
 else {
-    data = new EasyITCenterContext().AddressLists.FromSqlRaw("SELECT * FROM AddressList WHERE 1=1 AND " + filter.Replace("+", " "))
+    data = new GoldenContext().AddressLists.FromSqlRaw("SELECT * FROM AddressList WHERE 1=1 AND " + filter.Replace("+", " "))
         .Include(a => a.User).Where(a => a.User.UserName == Request.HttpContext.User.Claims.First().Issuer)
         .AsNoTracking().ToList();
 }
@@ -404,7 +404,7 @@ else {
 ### Extend Table schema with columns from another table  
 
 ```cs
-data = new EasyITCenterContext().DocumentTypeLists
+data = new GoldenContext().DocumentTypeLists
 .Include(d => (d.SystemNameNavigation)).Select(x => new ExtendedDocumentTypeList
 {
     Id = x.Id,
@@ -424,7 +424,7 @@ data = new EasyITCenterContext().DocumentTypeLists
 **And next more condition in WHERE to List<string> **  
 (_joiner, _joined) => _joiner.City
 ```css
-        [HttpGet("/EasyITCenterWebApi/Search/GetSearchDial/{language}")]
+        [HttpGet("/GoldenSystemWebApi/Search/GetSearchDial/{language}")]
         public async Task<string> GetSearchDial(string language = "cz") {
 
             List<string> data;
@@ -783,23 +783,23 @@ System kernel code dump, Where you just always add the address and don't care ab
     /// </summary>
     public enum ApiUrls
     {
-        EasyITCenterBasicAttachmentList,
-        EasyITCenterAddressList,
+        GoldenSystemBasicAttachmentList,
+        GoldenSystemAddressList,
         Authentication,
         BackendCheck,
-        EasyITCenterBranchList,
-        EasyITCenterCalendar,
-        EasyITCenterCreditNoteList,
-        EasyITCenterCreditNoteSupportList,
-        EasyITCenterCurrencyList,
-        EasyITCenterDocumentAdviceList,
-        EasyITCenterExchangeRateList,
-        EasyITCenterIncomingInvoiceList,
-        EasyITCenterIncomingInvoiceSupportList,
-        EasyITCenterIncomingOrderList,
-        EasyITCenterIncomingOrderSupportList,
+        GoldenSystemBranchList,
+        GoldenSystemCalendar,
+        GoldenSystemCreditNoteList,
+        GoldenSystemCreditNoteSupportList,
+        GoldenSystemCurrencyList,
+        GoldenSystemDocumentAdviceList,
+        GoldenSystemExchangeRateList,
+        GoldenSystemIncomingInvoiceList,
+        GoldenSystemIncomingInvoiceSupportList,
+        GoldenSystemIncomingOrderList,
+        GoldenSystemIncomingOrderSupportList,
 
-        EasyITCenterTemplateClassList
+        GoldenSystemTemplateClassList
     }
 ```
 
