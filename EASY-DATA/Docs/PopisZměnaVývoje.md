@@ -1,6 +1,6 @@
 ﻿## Projects Legend 
     EB = EASYBuilder 
-    ED = EasyITCenter
+    ED = Golden
     SD = EASYBuilderDataCenter
     SP = EASYBuilder application
     I  = Install file
@@ -40,7 +40,7 @@ login: marketing/marketing
      for Build ANY Information / Multimedia / Control / Flow / Reporting and More Systems
      FOR NEXT COPY / PASTE DEVELOPMENT IN EXTREMELY LOW PRICE 5000Kč/200EURO - Project LICENSE
 
-    EasyITCenter - Universal Secure MultiPlatform MultiDATABASE Backend Server Project 
+    Golden - Universal Secure MultiPlatform MultiDATABASE Backend Server Project 
                      WiTH RESTFULL / WEBSOCKET implementations
          With All Template types for INSERT / UPDATE / DELETE / SELECT / 
          PROCEDURE / SUBFORMDATA and more Other

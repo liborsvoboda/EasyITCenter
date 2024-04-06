@@ -138,7 +138,7 @@ A Zde Zmíněné Layouty a Multi Endopinty Pro Moduly a Specifické Soubory:
 [Šablona pro Moduláž Dokumentů Více Modulární](./EIC/ServerCorePages/Shared/CentralLayout.md)  
 [Šablona pro další jiné Typy Modulací](./EIC/ServerCorePages/Shared/GlobalLayout.md)  
 
-Modulacemi je myšleno, že se má načíst stánka ale v systému byl vytvořen modul: HTML/JS/CSS
+Modulacemi je myšleno, že se má načíst stránka, ale v systému existuje 1 nebo více modulů: HTML/JS/CSS
 který odpovídá Čestě Dotazu, tak Dojde k jeho připojení do Obsahu, například Automatický Překladač
 pro Statické Stránky. TZN. včechny robrazené stránky se dopní překladačem a ten je přeloží bez práec
 do detekovaného zajyku Browseru což můžete Vidět na Tomto dokument portále. A takto můžete dělat Cokoliv
@@ -160,5 +160,196 @@ a Ji6 Brzy V7voj Projekt; P59mo Online na CHystaném Web PORTÁLU a vším CO da
 ----    
 
  
+# Dokumentace **EasySYSTEMbuilder** to je GroupWare
+Krátký Úvod pro seznámení s Projektem Easy SYSTEM buider a jeho významu a přínosem pro celý svět.
+
+**Aktuální verzi [EasySYSTEMBuilder](http://KlikneteZde.cz:8000) můžete vyzkoušet online.**  
+**Další informace o projektech EIC a ESB na Portálu [KlikneteZde.cz](http://KlikneteZde.cz)**
+
+## **Co je EasySYSTEMbuilder?**
+**EASY-SYSTEM-BUILDER [ESB]** je C# WPF Visual Studio Projekt zaměřený na 
+extrémně snadný a rychlý vývoj JAKÉHOKOLI SYSTÉMU pomocí připravených Šablon Formulářů.
+
+ESB je tak Univerzální SYSTÉMOVÁ ŠABLONA pro další vývoj pouze pomocí grafických Formulářů
+a brzy již v Grafickém Studiu, kde se vám FORMULÁŘ i sám Vygeneruje
+na základě struktury Dat dané Tabulky [Faktury,seznam adres] a vy jen doladíte.
+
+Systémové šablony jsou stále stejné a vy tedy nemusíte nic než nastavit správně nová políčka.
+Vše ostatní je součástí šablony, která obsahuje Obsluhující funkcionality.
+
+**Systém jako takový není totiž Nic jiného než Seznam Formulářů s rozdílnými Daty**.
+A přesně takto je postaven **EasySYSTEMbuilder**. 
+
+Dokonale nastavené Jádro systému, spravuje vše další potřebné k plnohodnotnému chodu.
+Systém disponuje všemi běžnými funkcionalitami, **Tiskem**, **správou** ,**MultiJazyčností,** **MultiMedia**, **3D**, i jako **Centrální Klient více Serverů najednou** tedy více systémů a mnohem Více. 
+
+Tento Systém je plně kompatibilní s každým možným typem Systému.
+Ať už **Informační, Dotykový, Nadstavba, Controling, Reporting, Monitor Hardware, Dotykové Kiosky,
+Plánovací či Řidící či Monitorovací Terminály a Systémy, Výrobní Terminály** 
+a již Bzy i jako **Ovladací Panely výrobních Strojů SIEMENS**.
+
+A to Zdaleka není jedniná Výhoda. Jen na [Github.com](https://github.com/search?q=C%23%20WPF&type=repositories) máte stovku ne-li 
+Tisíce téměř hotových nástrojů, funkcionalit, editorů, prohlížečů, designů, příkladů, nápadů řešení,
+která vás posunou Vpřed. 
+
+---
+
+## Kódová Struktura Projektu ESB
+
+ Vy budete Sice Pouze Vytvářet Formuláře ,Tak zašnu šablonami. Následně představím zase podobnou Strukturu
+Jádra, protže takové rozložení se ukázalo jako naprosto správné a vše v něm má své jasně dané místo
+
+Šablony jsou Dvojího dhuru: Unikátní jako Editory, provádějící různé operace, např stříhání videa a náročné Operace.
+A pak ty Obyčejné Jako Informační systém, růůzné Datové Systémy, Dotykové Panely, Informační Panely atd.
+Systém již obsahuje přes 100 formulářů z toho je více než 80% systémových, tedy Kopy/Vložit úprava políček.
+
+1. **Zde je Pák ukázek Unikátnívh Formulářů:**   
+
+[Multi Šablona s cca 10 grafy Form](./ESB/ESBTemplates/MultiMedia/GraphsPage.xaml.md)  
+[Multi Šablona s cca 10 grafy Funkce](./ESB/ESBTemplates/MultiMedia/GraphsPage.xaml.cs.md)   
+
+[Prohlížeč Multi Typů Formátů Dokumentů Form](./ESB/ESBTemplates/MultiMedia/TemplateDocumentViewPage.xaml.md)  
+[Prohlížeč Multi Typů Formátů Dokumentů Funkce](./ESB/ESBTemplates/MultiMedia/TemplateDocumentViewPage.xaml.cs.md)   
+
+[Přehrávač Videí Form](./ESB/ESBTemplates/MultiMedia/TemplateVideoPage.xaml.md)  
+[Přehrávač Videí Funkce](./ESB/ESBTemplates/MultiMedia/TemplateVideoPage.xaml.cs.md)   
+
+[Prohlížeč 3D Formátů Form](./ESB/ESBTemplates/MultiMedia/TemplateSTLPage.xaml.md)  
+[Prohlížeč 3D Formátů Funkce](./ESB/ESBTemplates/MultiMedia/TemplateSTLPage.xaml.cs.md)   
+
+[Web Prohlížeč Form](./ESB/ESBTemplates/MultiMedia/TemplateWebViewPage.xaml.md)    
+[Web Prohlížeč Funkce](./ESB/ESBTemplates/MultiMedia/TemplateWebViewPage.xaml.cs.md)   
+
+2. **a Zde Systémové Formuláře:**  
+všimněte si že Fnkční soubor, je skoro vždy stejný - protože se pořád dělá to samé   
+
+[Šablona Data Pohledu a Editace Form](./ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationPage.xaml.md)    
+[Šablona Data Pohledu a Editace  Funkce](./ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationPage.xaml.cs.md)   
+
+[Šablona Data Pohledu Form](./ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationViewPage.xaml.md)    
+[Šablona Data Pohledu Funkce](./ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationViewPage.xaml.cs.md)   
+
+[Šablona Data Pohledu a Editace s Podičem Form](./ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationWithParentPage.xaml.md)    
+[Šablona Data Pohledu a Editace s Podičem Funkce](./ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationWithParentPage.xaml.cs.md)   
+
+[Šablona Data Pohledu a Editace Form](./ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationPage.xaml.md)    
+[Šablona Data Pohledu a Editace  Funkce](./ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationPage.xaml.cs.md)   
+
+[Šablona Data Pohledu a Editace s Celým Rodič Form + Form](./ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationWithSubPage.xaml.cs.md)    
+[Šablona Data Pohledu a Editace s Celým Rodič Form + Funkce](./ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationWithSubPage.xaml.cs.md)   
+
+[Šablona Data Pohledu s Celým Rodičem Form](./ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationWithSubViewPage.xaml.md)    
+[Šablona Data Pohledu s Celým Rodičem Funkce](./ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationWithSubViewPage.xaml.cs.md)   
+
+
+A tím jsme Vyčerpali Předbolby pro 90% Všech Systémů na Celé Planetě
+
+3. **Nyní Komunikační Modul**   
+Stačí 1 Definice pro RESTFULL s číselníkem API volání a je HOTOVO
+je potřeba přidávat jen nová api do seznamu.
+
+[Číselník API Endpointů](./ESB/ApiModule/APIClasses.md)    
+[Definice API Funkcí](./ESB/ApiModule/ApiFunctions.md)   
+
+Tyto 2 Definice zajišŤují kopletní Komunikaci Celého Systému.
+
+
+4. **Datové Definice Jadra Systému, které je již hotové**   
+Datové Definice jádra a Modulů, Doplňků
+
+[DDatasety Systému](./ESB/GlobalClasses/GlobalClasses.cs.md)    
+[Číselníky Systému - Bude přesunuto do DB](./ESB/GlobalClasses/GlobalEnumSetDefinitions.cs.md)   
+[Unikatní Kolekce - Galerie](./ESB/GlobalClasses/PhotoCollectionClasses.cs.md)   
+[Dynamickla Kolekce](./ESB/GlobalClasses/ConcurrentObservableList.cs.md)
+
+Tyto Datové Definice stačí pro provoz Systému o více jak 100 Agendách
+
+5. **Generátory**   
+Lze Implemetovat nespočet Generátorů Zde jsou zatím první z nich,
+a jsou plně kompatibilní s Webovou Technologií METRO a zobrazují se tedy i na Webu 
+
+[Generátor Ikon](./ESB/GlobalGenerators/IconMaker.cs.md)  
+[Generator Obrázků](./ESB/GlobalGenerators/ImageElementGenerator.cs.md)   
+
+
+5. **Systémové Funkcionality - Operace**   
+Stajně jako u Projektu Serveru jsou zde rozloženy Funkcionality podle povahy.  
+Dobře se s nimi pracuje, a hned je jasné kde je hledat.   
+
+[Komunikační Operace](./ESB/GlobalOperations/CommOperations.cs.md)  
+[Datové Operace](./ESB/GlobalOperations/DataOperations.cs.md)  
+[Databázové Operace](./ESB/GlobalOperations/DBOperations.cs.md)  
+[Formulářové Operace](./ESB/GlobalOperations/FormOperations.cs.md)  
+[Souborové Operace](./ESB/GlobalOperations/FileOperations.cs.md)  
+[Matematické Operace](./ESB/GlobalOperations/MathTypeOperations.cs.md)  
+[Media Operace](./ESB/GlobalOperations/MediaOperations.cs.md)  
+[Systémové Operace](./ESB/GlobalOperations/SystemOperations.cs.md)  
+[Operace Modulů](./ESB/GlobalOperations/ToolsOperations.cs.md)  
+
+Když si je prohlédnete zjistíte že jich není moc, zato dohromady
+dokážou zajistit Tvorbu či provedení Čehokoliv. 
+A to je cílem řešení.
+
+
+6. **Globální Styly - Vzhledy Polí a Formulářů**   
+Je Definováno pomocí pár Gobálních Stylů. I když Systém Aktuáln nabízí Více jak 500 různých 
+Datových polí a Objektů, Aktuálně jich využívá cca 30 a to včetně Médií.
+Je to totiž proto, že Multimediální Povaha Celého Systému Dokáže pracovat s Desítkami
+Typů Objektů pomocí jednihé Objektu. A tím se vše neskutečně zjednodušilo.
+
+
+[Doplňující Definice Vlastích Polí](./ESB/GlobalStylesLibrary/ObjectDefinitionsLibrary/CustomObjectDefaultKeySetStyles.xaml.md)  
+[Globální Definice Metro Stylu](./ESB/GlobalStylesLibrary/ObjectDefinitionsLibrary/MetroObjectDefaultStyles.xaml.md)  
+[Standartní Definice](./ESB/GlobalStylesLibrary/ObjectDefinitionsLibrary/StandardObjectDefaultStyles.xaml.md)  
+
+programátorské definice Stylů:
+[Kombinování Stylů](./ESB/GlobalStylesLibrary/GlobalUsingStyleExtensions.cs.md)  
+[Styly pro programovou Aplikaci](./ESB/GlobalStylesLibrary/GlobalProgramaticStyleDefinitions.cs.md)  
+
+a ještě styly Externích Nástrojů:
+[MarkDown Styly](./ESB/GlobalStylesLibrary/Tools/Markdown/MarkdownStylesLibrary.xaml.md)  
+[Knihovna Stylů pro Moduly a Nástroje](./ESB/GlobalStylesLibrary/Tools/ToolsStylesLibrary.xaml.md)  
+
+Toto stačí Pro jednotný a přitom bohatý Vzhled Celého Systémů.
+Chcete přece aby systém vypadal stejně sa ne každy formulář jinak :)
+
+
+
+7. **Jazyky Systému**   
+Systém je multijazyčný. Nyní s Automatickou správou systému - tzn. vše nové se uloží do databáze
+s výchozím nastavením názvu a pověřená Osoba až uvidí název při otevření fomuláře 
+otevře slovník a název přepíše pro všechny jazyky. Tím je zajišťen Kompletní Překlad Systému.
+Navíc Tentýž slovník následně používá i Server. Slovníky se jen vyexportují ze serveru 
+do Systému i pro možnost Offline použití - můžete pracovat i když nejede Server.
+Ono se to pak dodatečně Uloží :)
+
+[Čsský Slovník](./ESB/Languages/StringResources.cs-CZ.xaml.md)  
+[Anglický Slovník](./ESB/Languages/StringResources.xaml.md)  
+
+A to je Celá Struktura Systému.
+
+8. **SYSTÉMOVÉ JÁDRO Centrální BOD systému**
+A Zde si můžete prohlédnout jak Vypadá Jádro systému, které vše Ovladá z 1 Bodu.
+Zde se spojují všechny formuláře, moduly, Data, Dotazy a Výsledky, a řídí se jejich zpracování
+
+[Centrální Formulář](./ESB/SystemWindow.xaml.md)  
+[Centrální Systém](./ESB/SystemWindow.xaml.md)  
+
+
+A to je vše. Je to Jednoduché a Pokud Vám to nepřipadá rád pro vás Cokoliv Vyvinu.
+Vy ani vše znát nemusíte, k vývoji stačí Šablony - již do týdne trochu šikovný ITčkář dodá 
+první agendy. A Pak to půjde Samo až z toho bude mít zábavu. Nevěříte? 
+Vyzkoušejte Možnosti a Uvidíte sami. Plná Verze s Editací vbez Možnosti Vývoje je v sekci Ke Stažení
+
+Svoboda Libor
+33 Vývoje shrnuto v EIC a ESB projektech
+
+
+
+
+
+
+
+
 
 

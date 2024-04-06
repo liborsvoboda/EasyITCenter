@@ -31,7 +31,7 @@ xxxSupportList - Tabulka podřízená nepromítá se do [AppMenu,Tisky] ale má 
 * add this code to 'PropertyGroup' in project file setting
 ```
 <GenerateDocumentationFile>True</GenerateDocumentationFile>
-<DocumentationMarkdown>$(MSBuildProjectDirectory)\EasyITCenter.md</DocumentationMarkdown>
+<DocumentationMarkdown>$(MSBuildProjectDirectory)\Golden.md</DocumentationMarkdown>
 ```
 ---
 
