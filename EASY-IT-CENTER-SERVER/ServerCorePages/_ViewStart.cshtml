@@ -3,6 +3,7 @@
 
 @using ServerCorePages
 @using EasyITCenter.DBModel;
+@using EasyITCenter.ServerCoreStructure;
 @using EasyITCenter.ServerCoreWebPages;
 @namespace ServerCorePages
 @{
@@ -12,16 +13,56 @@
     try { webpagestoken = ((ServerWebPagesToken?)Context.Items.FirstOrDefault(a => a.Key.ToString() == "ServerWebPagesToken").Value); } catch { }
     try { portalRedirect = Context.Items.FirstOrDefault(a => a.Key.ToString() == "PortalRedirect").Value?.ToString(); } catch { }
 
+    /*
+             try {
+                string? requestedUrlPath = "";
+                try { requestedUrlPath = ((string?)Context.Items.FirstOrDefault(a => a.Key.ToString() == "CorectedUrlPath").Value); } catch { }
+                string? markdownFilePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
+                if (!System.IO.File.Exists(markdownFilePath)) { markdownFilePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(ServerConfigSettings.RedirectPath); }
+                var markdown = System.IO.File.ReadAllText(markdownFilePath);
+                this.Html.Raw(markdown);
+            } catch {
+                string? requestedUrlPath = "";
+                try { requestedUrlPath = ((string?)Context.Items.FirstOrDefault(a => a.Key.ToString() == "CorectedUrlPath").Value); } catch { }
+                string? markdownFilePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
+                var markdown = System.IO.File.ReadAllText(markdownFilePath);
+                MarkdownModel.result = markdown.ToString();
+            }
+*/
+
+
+    RouteLayout? routeLayout = RouteLayout.CleanLayout;
+    try { routeLayout = ((RouteLayout)Context.Items.FirstOrDefault(a => a.Key.ToString() == "RouteLayout").Value); } catch { }
+
+    string? FileValidUrl = "";
+    try { FileValidUrl = ((string?)Context.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
+
 
     //TODO change this Management to Set Over Administration With Full Online Dynamic Control
-    if (Context.Request.Path.ToString().ToLower() == "/ServerCoreTools/MarkDown".ToLower()) {
+    
+    if (routeLayout == RouteLayout.StaticLayout) {
+        Layout = "/ServerCorePages/Shared/StaticLayout.cshtml";
+
+    } else if (routeLayout == RouteLayout.MarkDownLayout) {
         Layout = "/ServerCorePages/Shared/MarkDownLayout.cshtml";
 
-    } else if (Context.Request.Path.ToString().ToLower().StartsWith("/github", StringComparison.OrdinalIgnoreCase)) {
+    } else if (routeLayout == RouteLayout.GitHubLayout) {
         Layout = "/ServerCorePages/Shared/GithubLayout.cshtml";
 
-    } else if (Context.Request.Path.ToString().ToLower().StartsWith("/easydata", StringComparison.OrdinalIgnoreCase)) {
+    } else if (routeLayout == RouteLayout.CleanLayout) {
+        Layout = "/ServerCorePages/Shared/CleanLayout.cshtml";
+
+    } else if (routeLayout == RouteLayout.MetroLayout) {
         Layout = "/ServerCorePages/Shared/MetroLayout.cshtml";
+
+    } else if (routeLayout == RouteLayout.MultiLangLayout) {
+        Layout = "/ServerCorePages/Shared/MultiLangLayout.cshtml";
+
+    } else if (routeLayout == RouteLayout.CentralLayout) {
+        Layout = "/ServerCorePages/Shared/MetroLayout.cshtml";
+
+    } else if (routeLayout == RouteLayout.GlobalLayout) {
+        Layout = "/ServerCorePages/Shared/GlobalLayout.cshtml";
 
     } else if (serverModule != null && serverModule.InheritedLayoutType != null) {
         Layout = "/ServerCorePages/Shared/" + serverModule.InheritedLayoutType + ".cshtml";

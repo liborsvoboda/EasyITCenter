@@ -15,6 +15,10 @@ Přehledů, dokumentace, partnerská příprava dat
 * Vytvořit agendu Nastavení k Docs, styly s uploadem, linky  
 * Vytvořit agendu napoveda kodu s vlastnimi castmi kodu - codecompletention
 
+* VYTvořit Gendu Generování Dokumentace MD
+* Vytvořit Agendu Generátory pro Web Portal a stranku skladat i z Generátorů
+
+
 
  
 //Links to csv minning form URL api 
@@ -338,7 +342,7 @@ to ma EDI v sobe
 UML Editor luxus
 LogFOrnet viewer 
 
-dob5e ypracovane strankz s programy dle zamereni
+dobře zpracovane stranky s programy dle zamereni
 https://www.linuxlinks.com/best-free-open-source-software-development/
 
 

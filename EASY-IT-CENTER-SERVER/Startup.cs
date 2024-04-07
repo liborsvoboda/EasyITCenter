@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using DocumentFormat.OpenXml.Office2013.Excel;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -113,13 +114,47 @@ namespace EasyITCenter {
 
             //Root Server Page To Default Path, Other Is Taken From Static Files
             app.Use(async (context, next) => {
-                if (context.Response.StatusCode != 200 || !ServerConfigSettings.EnableAutoShowMdAsHtml || !context.Request.Path.ToString().ToLower().EndsWith(".md")) {
-                    await next();
+                if (context.Response.StatusCode != 200 || !ServerConfigSettings.EnableAutoShowMdAsHtml || !context.Request.Path.ToString().ToLower().EndsWith(".md")) { await next(); }
+
+
+
+
+                //Verify Request For Detect Layout, Redurection, Module, Correct File Path, WebMenu Selection
+                CoreOperations.SelectCorrectLayoutByUrl(ref context); 
+                RouteLayout routeLayout = RouteLayout.CleanLayout; RoutingResult comandType = RoutingResult.None;string fileValidUrl = context.Request.Path;
+                try { routeLayout = ((RouteLayout)context.Items.FirstOrDefault(a => a.Key.ToString() == "RouteLayout").Value); } catch { }
+                try { comandType = ((RoutingResult)context.Items.FirstOrDefault(a => a.Key.ToString() == "ComandType").Value); } catch { }
+                try { fileValidUrl = ((string)context.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
+
+                //Aplying Result to Next 
+                switch (routeLayout) {
+                    case RouteLayout.CleanLayout: 
+                    case RouteLayout.StaticLayout:
+                    case RouteLayout.GitHubLayout:
+                    case RouteLayout.MarkDownLayout:
+                        context.Request.Path = "/Markdown";
+                        break;
+                }
+
+              //  context.Request.Path = fileValidUrl;
+                if (comandType == RoutingResult.Return) { return; }
+                else if(comandType == RoutingResult.Next) { await next(); return; }
+
+
+
+
+
+
+
+                //Root Redirect To Defined Path REDIRECT PATH MUST BE EVERYTIME EXISTING PHYSICAL PATH
+                if (context.Response.StatusCode == 200 && ServerConfigSettings.RedirectOnPageNotFound && context.Request.Path.ToString() == "/") {
+                    context.Request.Path = ServerConfigSettings.RedirectPath; await next(); return;
                 }
 
                 /*Declaration & Check Module Redirect*/
                 ServerWebPagesToken? serverWebPagesToken = null; string requestedModulePath = null; ServerModuleAndServiceList? serverModule = DbOperations.CheckServerModuleExists(context.Request.Path.Value);
                 try { requestedModulePath = context.Request.Cookies.FirstOrDefault(a => a.Key.ToString() == "RequestedModulePath").Value?.ToString(); } catch { }
+
 
                 //Process Static MarkDown Files As Html
                 if (ServerConfigSettings.EnableAutoShowMdAsHtml && context.Request.Path.ToString().ToLower().EndsWith(".md")
@@ -133,7 +168,7 @@ namespace EasyITCenter {
                     }
                     if (repairedMDPath != null && !repairedMDPath.ToLower().EndsWith(".md") && !context.Request.Path.Value.ToLower().EndsWith(".md")) { context.Request.Path = "/ServerControls/NonExistPage"; await next(); return; }
                     //CHEck Static Md file
-                    context.Items.Add("RequestedUrlPath", (repairedMDPath == null ? context.Request.Path.ToString() : repairedMDPath));
+                    context.Items.Add("CorectedUrlPath", (repairedMDPath == null ? context.Request.Path.ToString() : repairedMDPath));
                     context.Response.StatusCode = 200; context.Request.Path = "/ServerCoreTools/MarkDown"; await next(); return;
 
                 //Static Folders = Not Redirected to WebPortal but NonExistPage  
@@ -155,7 +190,7 @@ namespace EasyITCenter {
 
                     //301 Solve Missing / on last Folder in Path
                 }
-                else if (context.Response.StatusCode == StatusCodes.Status301MovedPermanently) {
+                else if (context.Response.StatusCode == StatusCodes.Status301MovedPermanently && context.Request.Path.ToString() != "") {
                     return;
 
                     //404 Template For Defined Other WebPages

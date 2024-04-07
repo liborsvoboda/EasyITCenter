@@ -137,10 +137,12 @@ namespace EasyITCenter.ServerCoreConfiguration {
 
 
                 //MirrorSharp Support
-                if (ServerConfigSettings.ModuleCSharpCodeBuilder) { endpoints.MapMirrorSharp("/mirrorsharp", new MirrorSharpOptions { SelfDebugEnabled = true, IncludeExceptionDetails = true, }); }
+                if (ServerConfigSettings.ModuleCSharpCodeBuilder) { endpoints.MapMirrorSharp("/mirrorsharp", new MirrorSharpOptions { SelfDebugEnabled = true, IncludeExceptionDetails = true  }); }
+         
 
-            }); 
-            
+            });
+
+            //MirrorSharp Support
             if (ServerConfigSettings.ModuleCSharpCodeBuilder) { app.MapMirrorSharp("/mirrorsharp"); }
 
             //HeathService Support
@@ -156,5 +158,33 @@ namespace EasyITCenter.ServerCoreConfiguration {
 
 
         }
+
+
+/*
+        private static IEnumerable<MetadataReference> GetAllReferences() {
+            yield return ReferenceAssembly("System.Runtime");
+            yield return ReferenceAssembly("System.Collections");
+            var assembly = typeof(IScriptGlobals).Assembly;
+            yield return MetadataReference.CreateFromFile(assembly.Location);
+            foreach (var reference in assembly.GetReferencedAssemblies()) {
+                yield return ReferenceAssembly(reference.Name!);
+            }
+        }
+
+        private static MetadataReference ReferenceAssembly(string name) {
+            var rootPath = Path.Combine(
+                Path.GetDirectoryName(new Uri(typeof(Startup).Assembly.EscapedCodeBase).LocalPath)!,
+                "ref-assemblies"
+            );
+            var assemblyPath = Path.Combine(rootPath, name + ".dll");
+            var documentationPath = Path.Combine(rootPath, name + ".xml");
+
+            return MetadataReference.CreateFromFile(
+                assemblyPath, documentation: XmlDocumentationProvider.CreateFromFile(documentationPath)
+            );
+        }
+*/
     }
+
+
 }

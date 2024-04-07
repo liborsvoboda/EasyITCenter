@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title> </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content=" ">
+    
+    
+      <link rel="shortcut icon" href="../../favicon.ico">
+      <link rel="stylesheet" href="../../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../../styles/docfx.css">
+      <link rel="stylesheet" href="../../styles/main.css">
+      <meta property="docfx:navrel" content="../../toc.html">
+      <meta property="docfx:tocrel" content="../../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    <meta property="docfx:newtab" content="true">
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="EasySYSTEMbuilder InfoWeb">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+
+<p align="center">
+    <img src="https://i.loli.net/2020/09/05/LUIGZ3yHRfqgeES.png" align="center" height="80">
+</p>
+<div align="center">
+    
+# MarkdownEditBox
+<p><a href="https://www.nuget.org/packages/Richasy.Controls.MarkdownEditBox/"><img src="https://img.shields.io/nuget/v/Richasy.Controls.MarkdownEditBox" alt="Nuget"></a></p>
+<p><a href="https://github.com/Richasy/Controls-MarkdownEditBox/wiki">Wiki</a> | <a href="README_ZH.md">中文说明</a></p>
+<p><code>MarkdownEditBox</code> is a Markdown editor based on monaco-editor</p>
+</div>
+<h2 id="introduction">Introduction</h2>
+<p>The core editor of the control is based on <a href="https://microsoft.github.io/monaco-editor/">monaco-editor</a>, Markdown syntax analysis is based on <a href="https://github.com/markdown-it/markdown-it">markdown-it</a>，Organize the two based on <a href="https://vuejs.org/">Vue</a>, and then use WebView to present them in UWP.</p>
+<p>So it is not a lightweight Native editor, on the contrary, it is very heavy, but it has quite complete functions.</p>
+<p>Since it is a specialized Markdown editor, some customized operations have been performed on moanco-editor. Please check the revised editor project: <a href="https://github.com/Richasy/Markdown-Editor-Vue">Markdown-Editor-Vue</a></p>
+<p><em><strong>The minimum system version requirement of this control is Windows10 ver 1809</strong></em></p>
+<h2 id="control-characteristics">Control characteristics</h2>
+<ul>
+<li>Expanded Markdown syntax highlighting</li>
+<li>Support most Markdown syntax rendering</li>
+<li>Provide separate editor <code>Editor</code> mode and edit+preview <code>Split</code> mode</li>
+<li>Built-in relatively complete shortcut key definition, and provide right-click menu</li>
+<li>Provide a rich theme definition interface (actually the set of monaco-editor)</li>
+<li>Support css import</li>
+</ul>
+<h2 id="simple-start">Simple start</h2>
+<ol>
+<li>Reference the nuget package in the project:<a href="https://www.nuget.org/packages/Richasy.Controls.MarkdownEditBox/">Richasy.Controls.MarkdownEditBox</a></li>
+<li>Create a page <code>EditorPage.xaml</code>.</li>
+</ol>
+<p><strong>EditorPage.xaml</strong></p>
+<pre><code class="lang-xml">&lt;Page ...
+    xmlns:editor=&quot;using:MarkdownEditBox.Editor&quot;
+    &gt;
+    &lt;editor:MarkdownEditBox x:Name=&quot;MyEditor&quot;
+                        IsLoadingRingActive=&quot;True&quot;
+                        LoadingRingForeground=&quot;{ThemeResource SystemColorControlAccentBrush}&quot;
+                        ControlLoaded=&quot;MyEditor_ControlLoaded&quot;
+                        /&gt;
+&lt;/Page&gt;
+</code></pre>
+<p><strong>EditorPage.xaml.cs</strong></p>
+<pre><code class="lang-csharp">private async void MyEditor_ControlLoaded(object sender, EventArgs e)
+{
+    var displayOptions = DisplayOptions.CreateOptions();
+    var editorOptions = EditorOptions.CreateOptions();
+    var localeOptions = await EditorLocaleOptions.GetDefaultEnOptionsAsync();
+    editorOptions.Theme = &quot;&quot;;
+    await MyEditor.Initialize(&quot;# Hello Markdown!&quot;, displayOptions, editorOptions, &quot;&quot;, localeOptions);
+    var cssFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri(&quot;Your custom css file path (need in the project)&quot;));
+    string css = await FileIO.ReadTextAsync(cssFile);
+    await MyEditor.SetPreviewStyle(css);
+}
+</code></pre>
+<p><img src="https://i.loli.net/2020/09/06/jqvFZrVOcY9t7fh.png" alt=""></p>
+<p>Since it is a WebView-based control, MarkdownEditBox does not try to use traditional <code>MarkdownEditBox.Text</code> property to set the text, but takes the form of calling methods for configuration.</p>
+<p>For detailed information about related configurations, and how to use MarkdownEditBox in some common scenarios, you can refer to the sample project in the repository.</p>
+<h2 id="known-issues">Known issues</h2>
+<ol>
+<li>Use a lot of memory, about 120MB when running</li>
+<li>When switching applications quickly, there may be garbled characters when using the input method to input text (Chakra kernel issue)</li>
+<li>After selecting the text, using the input method to input text for the first time is invalid (Chakra kernel issue)</li>
+<li>In <code>Split</code> mode, there will be obvious lag when adjusting the area ratio (Chakra kernel issue)</li>
+</ol>
+<p>The monaco editor is designed for VS Code after all, and VS Code is based on Electron (Chromium core), so some problems will arise when running in the current WebView.</p>
+<p>This control is actually prepared for the WebView2 of WinUI3. After WebView2 for UWP is officially released, the browser kernel of the control will be replaced.</p>
+<h2 id="thanks">Thanks</h2>
+<ul>
+<li><a href="https://github.com/Microsoft/monaco-editor">monaco editor</a></li>
+<li><a href="https://github.com/markdown-it/markdown-it">markdown-it</a></li>
+<li><a href="https://github.com/vuejs/vue">vue</a></li>
+<li><a href="https://github.com/PanJiaChen/vue-split-pane">vue-split-pane</a></li>
+</ul>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      EasySYSTEMbuilder Universální Systém builder - Komplexní Řešení pro Vaše IT
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

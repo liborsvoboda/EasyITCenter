@@ -58,8 +58,7 @@
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                     IsolationLevel = IsolationLevel.ReadUncommitted
                 })) {
-                    data = new EasyITCenterContext().WebMenuLists
-                        .Include(a => a.Group).OrderBy(a => a.Name).ToList();
+                    data = DbOperations.GetWebMenuList().Include(a => a.Group).OrderBy(a => a.Name).ToList();
                 }
 
                 return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
@@ -108,6 +107,9 @@
                         result = await data.Context.SaveChangesAsync();
                     }
 
+                    //Update Server LocalFile
+                    DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.WebMenuList);
+
                     if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = webMenu.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                     else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 }
@@ -131,6 +133,10 @@
 
                     var data = new EasyITCenterContext().WebMenuLists.Remove(record);
                     int result = await data.Context.SaveChangesAsync();
+
+                    //Update Server LocalFile
+                    DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.WebMenuList);
+
                     if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                     else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 }

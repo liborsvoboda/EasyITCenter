@@ -1,11 +1,37 @@
 ﻿# FIRST TODO LIST
 
 * Zprovoznit ExperDoc Editor a Viewer Pro Doc Server, potazmo pridat pravo zapisovat externistun
+* puppeter sharp netcore scraping
+* https://github.com/libgit2/libgit2sharp/tree/master implementace komunikace s gitem
+* prikazy muzu provadet i po socketu
 
+* https://nugetmusthaves.com/Tag/roslyn?page=7 TADY TO PROHLEDAT MORE SUPOER KNIHOVEN
+
+netcore project builder
+https://github.com/xoofx/Broslyn/blob/master/src/Broslyn/CSharpCompilationCapture.cs
+http://scriptcs.net/ spousteni scriptu instalace
+
+living je generovani dokumentace s UML diagramy
+OmniSharp http server https://github.com/OmniSharp/omnisharp-roslyn
+https://github.com/dotnet-script/dotnet-script
+Westwind.Scripting https://nugetmusthaves.com/Package/Westwind.Scripting
+
+OmniSharp.MSBuild https://nugetmusthaves.com/Package/OmniSharp.MSBuild
+dotnet-script https://github.com/dotnet-script/dotnet-script
+NUnit Migrator https://github.com/wachulski/nunit-migrator
+
+https://github.com/dotMorten/DotNetOMDGenerator Generator HTML diagramu 
+https://github.com/wiltaylor/EasyRoslynScript
 
 
 
 # Nezdokumentované Poznámky
+
+netcore generator
+https://github.com/maca88/AsyncGenerator/tree/master/Source/AsyncGenerator.Core
+
+
+
 
 Server=127.0.0.1;Database=Golden;Trusted_Connection=True;TrustServerCertificate=True
 "Server=127.0.0.1,1433;Database=Golden;User Id=Golden;Password=Golden;TrustServerCertificate=True"

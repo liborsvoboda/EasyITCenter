@@ -11,13 +11,13 @@ namespace ServerCorePages {
 
             try {
                 string? requestedUrlPath = "";
-                try { requestedUrlPath = ((string?)HttpContext.Items.FirstOrDefault(a => a.Key.ToString() == "RequestedUrlPath").Value); } catch { }
+                try { requestedUrlPath = ((string?)HttpContext.Items.FirstOrDefault(a => a.Key.ToString() == "CorectedUrlPath").Value); } catch { }
                 string? markdownFilePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
                 var markdown = System.IO.File.ReadAllText(markdownFilePath);
                 MarkdownModel.result = Markdown.ParseHtmlString(markdown)?.Value.ToString();
             } catch {
                 string? requestedUrlPath = "";
-                try { requestedUrlPath = ((string?)HttpContext.Items.FirstOrDefault(a => a.Key.ToString() == "RequestedUrlPath").Value); } catch { }
+                try { requestedUrlPath = ((string?)HttpContext.Items.FirstOrDefault(a => a.Key.ToString() == "CorectedUrlPath").Value); } catch { }
                 string? markdownFilePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
                 var markdown = System.IO.File.ReadAllText(markdownFilePath);
                 MarkdownModel.result = markdown.ToString();

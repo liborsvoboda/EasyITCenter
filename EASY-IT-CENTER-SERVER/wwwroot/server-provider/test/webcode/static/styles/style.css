@@ -1,0 +1,382 @@
+* {
+	box-sizing: border-box;
+}
+
+body, html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	overflow: hidden;
+	font-family: "Samsung One", "Helvetica Neue", "Calibri Light", Roboto, Helvetica, sans-serif;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	letter-spacing: 0.02em;
+	font-size: 16px;
+	color: #333;
+	--bg-head-color: #333;
+	--file-list-bg: #555;
+	--file-list-fg: white;
+	background-color: var(--bg-head-color);
+}
+
+button {
+	font-family: "Samsung One", "Helvetica Neue", "Calibri Light", Roboto, Helvetica, sans-serif;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+main {
+	display: flex;
+	flex-direction: row;
+	flex-grow: 1;
+	min-height: 0;
+}
+
+#container {
+	flex-grow: 1;
+	display: flex;
+	background: var(--bg-head-color);
+	position: relative;
+}
+
+#container:empty {
+	align-content: center;
+	align-items: center;
+}
+
+@keyframes fade-in {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+#container:empty:before {
+	content: 'Welcome to Web Code.';
+	font-size: calc(15vw - 20px);
+	color: rgba(255, 255, 255, 0.4);
+	text-align: center;
+	opacity: 0;
+	animation: fade-in 2s ease;
+	animation-fill-mode: forwards;
+	animation-delay: 500ms;
+}
+
+#directory {
+	flex-grow: 2;
+	border-width: 0;
+	margin-top: 0.5em;
+	background: var(--file-list-bg);
+	color: var(--file-list-fg);
+}
+
+#currently-open-files {
+	margin-top: 0.5em;
+	border-width: 0;
+	background: var(--file-list-bg);
+	color: var(--file-list-fg);
+	border-top-right-radius: 1em;
+	min-height: 5em;
+}
+
+.tab-content {
+	flex-grow: 1;
+	display: none;
+	background-color: var(--bg-head-color);
+	z-index: 1;
+}
+
+.tab-content.image-container {
+	overflow: auto;
+	max-width: 100%;
+	min-width: 0;
+	width: 100px;
+}
+
+.tab-content.has-focus {
+	display: block;
+}
+
+#editor {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+#sidebar {
+	width: 200px;
+	max-width: 50%;
+	display: flex;
+	flex-direction: column;
+}
+
+#errors {
+	flex-grow: 0;
+	position: relative;
+	padding: 0;
+	margin: 0;
+}
+
+.error-type {
+	float: left;
+    background: #bf3b66;
+    margin: -0.5em 0 -0.5em -0.5em;
+    display: inline-block;
+    padding: 0.5em;
+    border-right: 1px solid #721c2d;
+}
+
+#errors > li {
+	background: palevioletred;
+	color: black;
+	list-style: none;
+	text-align: center;
+	display: block;
+	padding: 0.5em;
+}
+
+#file-dialog-widget {
+	min-width: 300px;
+	width: 66%;
+	max-width: 800px;
+	height: 500px;
+	max-height: calc(100% - 1em);
+	background: white;
+	box-shadow: 0 0 3em -0.5em black;
+	position: absolute;
+	top: 1em;
+	transition: transform 0.5s ease;
+	display: flex;
+	padding: 0.5em;
+	z-index: 2;
+	flex-direction: column;
+	left: calc(50vw - 400px);
+}
+
+
+#file-dialog-widget .filelist {
+	min-width: 40%;
+}
+
+@media screen and (max-width: 1200px) {
+	#file-dialog-widget {
+		left: 16vw;
+	}
+}
+
+#file-dialog-widget.closed {
+	transform: translateY(-100%) translateY(-3em);
+	visibility: hidden;
+}
+
+#file-dialog-widget input[type="text"] {
+	flex-grow: 1;
+	font-size: 1em;
+	padding-left: 0.3em;
+}
+
+#file-dialog-widget .buttons {
+	text-align: right;
+}
+
+#file-dialog-widget .buttons button {
+	font-size: 1.3em;
+}
+
+#file-dialog-widget .buttons #file-dialog-submit {
+	filter: brightness(0.8) sepia(1) hue-rotate(50deg);
+}
+
+#file-dialog-widget #save-file-name {
+	display: inline;
+}
+
+#file-dialog-widget[data-role="save"] #save-file-name {
+	display: inline;
+}
+
+.file-dialog-widget_tools {
+	display: flex;
+	margin-bottom: 0.25em;
+	flex-shrink: 0;
+}
+
+#file-dialog-widget .file-save-widget_tools {
+	display: none;
+	margin-bottom: 0.25em;
+	flex-shrink: 0;
+}
+
+#file-dialog-widget[data-role="save-as"] .file-save-widget_tools {
+	display: flex;
+}
+
+
+#tools {
+	display: flex;
+	padding: 0.5em;
+	background-color: var(--bg-head-color);
+	color: white;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+#tools button {
+	font-size: 1.5em;
+	width: 1.3em;
+	height: 1.3em;
+	padding: 0;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	color: black;
+}
+
+#tools button:not(:hover):not(:focus) {
+	-webkit-appearance: none;
+	border: 0;
+	background: none;
+	color: #ddd;
+}
+
+
+#file-dialog-widget .file-selectors {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 0.5em;
+	min-height: 0;
+}
+
+#file-dialog-widget .file-selectors .filelist:first-child {
+	margin-right: 0.5em;
+}
+
+.filelist {
+	margin: 0;
+	border: 1px solid grey;
+	flex-grow: 1;
+	overflow: auto;
+	list-style: none;
+	padding: 0;
+}
+
+.filelist:before {
+	content: attr(data-name);
+	padding-left: 0.25em;
+	background-color: var(--bg-head-color);
+	color: white;
+	display: block;
+	border-bottom: 3px solid grey;
+}
+
+.filelist .filelist:before {
+	content: none;
+}
+
+.filelist .filelist {
+	padding-left: 0.5em;
+	border: none;
+	width: 100%;
+}
+
+.filelist li {
+	position: relative;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.has-icon:before {
+	content: '';
+	display: inline-block;
+	width: 1.5em;
+	padding-right: 0.5em;
+	text-align: right;
+	user-select: none;
+}
+
+.filelist li.has-highlight {
+	background-color: orange;
+}
+
+#tabs {
+	display: flex;
+	justify-content: flex-start;
+	align-content: flex-end;
+	background-color: var(--bg-head-color);
+	padding-bottom: 6px;
+	margin-bottom: -6px;
+	flex-shrink: 0;
+	position: relative;
+	overflow: hidden;
+	height: calc(2.5em + 6px);
+}
+
+#logo {
+	margin: 0 0.5em 0 0;
+	padding: 0 1em 0 0;
+	font-weight: 200;
+	border-bottom: 2px solid #66a8ff;
+}
+
+.tab {
+	padding: 0.5em;
+	display: inline-block;
+	border-style: solid;
+	border-width: 0;
+	background-color: lightgray;
+	border-color: lightseagreen;
+	border-right-width: 1px;
+	border-top-width: 3px;
+	transform: translateY(3px);
+	transition: transform 0.5s ease;
+	cursor: pointer;
+	white-space: nowrap;
+	outline: none;
+}
+
+.tab.has-changes {
+	border-color: orangered;
+	border-top-width: 5px;
+}
+
+.tab.has-icon {
+	padding: 0.5em 0.5em 0.5em 0;
+}
+
+.tab:hover, .tab:focus, .tab.has-focus {
+	transform: none;
+}
+
+.tab .tab_close {
+	margin-left: 0.5em;
+	width: 1.3rem;
+	height: 1.3rem;
+	padding: 0;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+.tab .tab_close:not(:hover):not(:focus) {
+	-webkit-appearance: none;
+	border: 0;
+	background: none;
+	color: grey;
+}
+
+cmenu h2 {
+	font-size: 1.1em;
+    margin: 0.1em 0;
+    padding: 0 0.5em;
+}
+
+cmenu {
+	font-family: inherit !important;
+}

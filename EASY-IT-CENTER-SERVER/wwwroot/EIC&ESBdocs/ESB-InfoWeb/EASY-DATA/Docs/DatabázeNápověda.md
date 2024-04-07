@@ -5,7 +5,7 @@ One Command and One Database in Project, never less - its my new Idea
 ### Possible DB Technologies for immediately using by start click only
 
 
-### ALL MAIN DATABASE TYPES IN EasyITCenter by EF6 (entity framework) are supported
+### ALL MAIN DATABASE TYPES IN Golden by EF6 (entity framework) are supported
     ORACLE
     MSSQL
     MYSQL

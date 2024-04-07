@@ -27,7 +27,7 @@
                     using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                         IsolationLevel = IsolationLevel.ReadUncommitted //with NO LOCK
                     })) {
-                        data = new EasyITCenterContext().WebMenuLists
+                        data = DbOperations.GetWebMenuList()
                             .Include(a => a.Group)
                             .OrderBy(a => a.Sequence)
                             .ToList().OrderBy(a => a.Group.Sequence).ToList();
@@ -69,7 +69,7 @@
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                     IsolationLevel = IsolationLevel.ReadUncommitted //with NO LOCK
                 })) {
-                    data = new EasyITCenterContext().WebMenuLists
+                    data = DbOperations.GetWebMenuList()
                         .Include(a => a.Group)
                         .Where(a => !a.AdminMenu && !a.UserMenu && a.Active && a.Group.Active)
                         .OrderBy(a => a.Sequence)
@@ -114,7 +114,7 @@
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                     IsolationLevel = IsolationLevel.ReadUncommitted //with NO LOCK
                 })) {
-                    data = new EasyITCenterContext().WebMenuLists
+                    data = DbOperations.GetWebMenuList()
                         .Include(a => a.Group)
                         .Where(a => ((!a.AdminMenu && !a.UserMenu) || ((a.UserMenu || !a.AdminMenu) && authRole == "webuser") || ((a.UserMenu || a.AdminMenu) && authRole == "admin")) && a.Active && a.Group.Active)
                         .OrderBy(a => a.Sequence)
@@ -154,9 +154,9 @@
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
                     //string authRole = User.FindFirstValue(ClaimTypes.Role.ToString()).ToLower();
 
-                    data = new EasyITCenterContext().WebMenuLists.Where(a => a.Id == id).FirstOrDefault();
+                    data = DbOperations.GetWebMenuList().Where(a => a.Id == id).FirstOrDefault();
 
-                    if (data == null) data = new EasyITCenterContext().WebMenuLists
+                    if (data == null) data = DbOperations.GetWebMenuList()
                             .Where(a => !a.AdminMenu && !a.UserMenu && a.Active && a.Group.Active && a.Default).FirstOrDefault();
                 }
 
@@ -194,7 +194,7 @@
             if (!IpIsBlocked) {
                 WebMenuList data;
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                    data = new EasyITCenterContext().WebMenuLists.Where(a => a.Id == id).FirstOrDefault();
+                    data = DbOperations.GetWebMenuList().Where(a => a.Id == id).FirstOrDefault();
 
                     if (data == null) data = new EasyITCenterContext().WebMenuLists
                             .Where(a => ((!a.AdminMenu && !a.UserMenu) || ((a.UserMenu || !a.AdminMenu) && authRole == "webuser") || ((a.UserMenu || a.AdminMenu) && authRole == "admin")) && a.Active && a.Group.Active && a.Default)

@@ -92,7 +92,30 @@ function CancelTranslation() {
     }, 1000);
 }
 
+function SendMessage() {
+    showPageLoading();
+    var def = $.ajax({
+        global: false, type: "POST", url: Metro.storage.getItem('ApiOriginSuffix', null) + "/WebPages/InsertMessage", dataType: 'json',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        data: JSON.stringify({ Message: $("#NewMessage").val() })
+    });
 
+    def.fail(function (err) {
+        var notify = Metro.notify; notify.setup({ width: 300, duration: 1000, animation: 'easeOutBounce' });
+        notify.create("Saving Message Failed", "Alert", { cls: "alert" }); notify.reset();
+        hidePageLoading();
+    });
+
+    def.done(function (data) {
+        var notify = Metro.notify; notify.setup({ width: 300, duration: 1000, animation: 'easeOutBounce' });
+        notify.create("Saving Message Sucessfully", "Info", { cls: "success" }); notify.reset();
+        $("#NewMessage").val(null);
+        hidePageLoading();
+        GetMessages();
+    });
+}
 
 function PrintElement(elementId) {
     try {
@@ -175,7 +198,7 @@ function CreateLinkWindow(title, url) {
 }
 
 function ChangeSource(url) {
-    $("#contentWindow").html('<object type="text/html" data="' + url + '" ></object>');
+    $("#contentWindow").html('<iframe type="text/html" src="' + url + '" style="width:1024px;min-width:1024px !important;max-width:1024px !important; min-height:100vh;"  frameborder="0" style="height:100%;" height="100%"></iframe>');
 }
 
 //Control Translation Panel

@@ -97,6 +97,185 @@ WebPortal Již nyní obsahuje Nativní Web Stránky a Celý je uložen v Databá
 7. 50 Předloh portálů,Systémů, Panelů
 6. Web Portal s Online Vývojem z Webu či ze Systému - Metro4
 
+**Web Server Slouží k provozu** z úložiště DB,souborové,ftp
+- 1x Generovaného Web Portál: s možností přenosu do Statické Stránky pro tvorbu dalšího portálu
+- s Neomezeným počtem další statických webů, stránek, aplikací, Dashbordů, Galeríí, Dokumentací a všeho co si jen dokážete představit...
+s jednoduchým vývojem z editorů, Visual Studia, Systému ESB, Web Portálu, Notepadu, čeho chcete..
+bez jakéhokoliv buildování a nasazování na server, to již provádíte přímo pouhou editací souborů...
+- Vývojem App,Stránek,atd.. z Module Editoru
+
+**pro vývoj pouhým editorem máte připraveno ihned k použití:**
+- original Dokumentace Použitých technologii ve **VŠECH JAZYCÍCH**  
+do DETAILU: **nyní již pochopíte všechny možnosti celých řešení**
+
+- Globální Knihovna kódů pro snadný vývoj kopírováním šablon,již obsahuje veškeré příklady nutné pro vývoj
+- XX Html Editory pro editace a tvorbu Stránek Online, k implementaci atd..
+- XX Code Editory pro komplexní vývoj Webu z Editoru, Vývoj všech typů Webových Aplikací
+- Database Editory SQLite pro možnost samostatného webu s interní DB
+- Inteligentní Online Code Editory s InteliSense
+- XX Statické UI Frameworky pro Tvorbu Webů,Portálů,Intranetů,Aplikací v různých designech
+- XX Statické UI DashBordy  pro Tvorbu Webů,Portálů,Intranetů,Aplikací v různých designech
+- X Statické Generátory Dokumentací
+- Static Filemanager , Soubory jsou řešeny přes API
+- XX Statické Grafické nástroje Galerie,Animace,HighLight,Mermaid,Diagramy,Background Player,Video Galerie,...
+- XX Statické Prohlížeče nejrůznějších formátů souborů, Panorama, Office, 3D, Grafy, XML, PDF, MD,..
+- XX Další Knihovny Stylů CSS pro dodatečné implemetace Animací, Objektů, Celků, Webů
+- XX Javascript Knihovny pro implementaci všemožných funkcionalit do portálu
+- XX šablony aplikací: Vue,React,Next, a všechny ostatní.. cca 50 typů
+- 50 Šablony moderních Webových Stránek
+- XX Generátory statických webových stránek - Celých webových stránek nebo listů 
+     webových stránek technoligií Drag&Drop
+
+s možností si přidávat pouhým zkopírováním Cokoliv dalšího z Github a internetu
+
+---
+
+# **Technologický List**
+Seznam Balíčků rozšiřující Jádro Serveru EIC
+
+* microsoft.visualstudio.web.browserlink\2.2.0\
+* aspnetcore.healthchecks.applicationstatus\6.0.0\
+* aspnetcore.healthchecks.azurestorage\6.1.2\
+* aspnetcore.healthchecks.eventstore\6.0.3\
+* aspnetcore.healthchecks.mongodb\6.0.2\
+* aspnetcore.healthchecks.mysql\6.0.2\
+* aspnetcore.healthchecks.network\6.0.4\
+* aspnetcore.healthchecks.npgsql\6.0.2\
+* aspnetcore.healthchecks.oracle\6.0.3\
+* aspnetcore.healthchecks.prometheus.metrics\6.0.2\
+* aspnetcore.healthchecks.publisher.prometheus\6.0.2\
+* aspnetcore.healthchecks.sqlite\6.0.2\
+* aspnetcore.healthchecks.sqlserver\6.0.2\
+* aspnetcore.healthchecks.system\6.0.5\
+* aspnetcore.healthchecks.ui.client\6.0.5\
+* aspnetcore.healthchecks.ui.core\6.0.5\
+* aspnetcore.healthchecks.ui.inmemory.storage\6.0.5\
+* aspnetcore.healthchecks.ui.mysql.storage\6.0.5\
+* aspnetcore.healthchecks.ui.postgresql.storage\6.0.4\
+* aspnetcore.healthchecks.ui.sqlite.storage\6.0.5\
+* aspnetcore.healthchecks.ui.sqlserver.storage\6.0.5\
+* aspnetcore.healthchecks.ui\6.0.5\
+* aspnetcore.healthchecks.uris\6.0.3\
+* aspnetcore.markdowndocumenting\2.3.1\
+* codemirror.full\3.1.0\
+* dapper\2.1.35\
+* docfx.markdigengine.extensions\2.75.3\
+* docfx.markdigengine\2.75.3\
+* easydata.aspnetcore\1.5.2\
+* easydata.core\1.5.2\
+* easydata.entityframeworkcore.relational\1.5.2\
+* easydata.exporters.closedxml\1.5.2\
+* easydata.exporters.default\1.5.2\
+* easydata.exporters.pdfsharp\1.5.2\
+* erikej.entityframeworkcore.dgmlbuilder\6.0.0\
+* filecontextcore\3.4.0\
+* fubardev.ftpserver.commands\3.1.2\
+* fubardev.ftpserver.filesystem.dotnet\3.1.2\
+* fubardev.ftpserver\3.1.2\
+* ht.minify\6.0.11\
+* htmlagilitypack\1.11.59\
+* korzh.dbutils.export\1.4.1\
+* korzh.dbutils.import\1.4.1\
+* korzh.dbutils.sqlite\1.4.1\
+* korzh.dbutils.sqlserver\1.4.1\
+* korzh.dbutils\1.4.1\
+* leisn.markdigtoc\0.1.3\
+* lettuceencrypt\1.3.0\
+* libgit2sharp\0.26.2\
+* magick.net.core\13.6.0\
+* markdig\0.36.2\
+* markdigbadheaders\2017.12.11\
+* markdigextensions.syntaxhighlighting\1.0.3\
+* markdigextensions.urlrewriter\1.0.0\
+* microsoft.applicationinsights.aspnetcore\2.22.0\
+* microsoft.applicationinsights.eventcountercollector\2.22.0\
+* microsoft.applicationinsights.profiler.aspnetcore\2.6.0\
+* microsoft.aspnetcore.authentication.certificate\6.0.27\
+* microsoft.aspnetcore.authentication.jwtbearer\6.0.27\
+* microsoft.aspnetcore.components.analyzers\6.0.27\
+* microsoft.aspnetcore.components.authorization\6.0.27\
+* microsoft.aspnetcore.components.forms\6.0.27\
+* microsoft.aspnetcore.components.web\6.0.27\
+* microsoft.aspnetcore.components.webassembly.server\6.0.27\
+* microsoft.aspnetcore.components.webassembly\6.0.27\
+* microsoft.aspnetcore.components.webview\6.0.27\
+* microsoft.aspnetcore.components\6.0.27\
+* microsoft.aspnetcore.dataprotection.entityframeworkcore\6.0.27\
+* microsoft.aspnetcore.diagnostics.entityframeworkcore\6.0.27\
+* microsoft.aspnetcore.hosting.windowsservices\6.0.27\
+* microsoft.aspnetcore.http.connections.client\6.0.27\
+* microsoft.aspnetcore.http.connections.common\6.0.27\
+* microsoft.aspnetcore.identity.entityframeworkcore\6.0.27\
+* microsoft.aspnetcore.identity.ui\6.0.27\
+* microsoft.aspnetcore.mvc.core\2.2.5\
+* microsoft.aspnetcore.mvc.razor.extensions\6.0.27\
+* microsoft.aspnetcore.mvc.razor.runtimecompilation\6.0.27\
+* microsoft.codeanalysis.razor\6.0.27\
+* microsoft.dependencyvalidation.analyzers\0.11.0\
+* microsoft.entityframeworkcore.abstractions\6.0.27\
+* microsoft.entityframeworkcore.analyzers\6.0.27\
+* microsoft.entityframeworkcore.design\6.0.27\
+* microsoft.entityframeworkcore.inmemory\6.0.27\
+* microsoft.entityframeworkcore.relational\6.0.27\
+* microsoft.entityframeworkcore.sqlserver.nettopologysuite\6.0.27\
+* microsoft.entityframeworkcore.sqlserver\6.0.27\
+* microsoft.entityframeworkcore.tools\6.0.27\
+* microsoft.entityframeworkcore\6.0.27\
+* microsoft.extensions.configuration.abstractions\6.0.0\
+* microsoft.extensions.dependencyinjection.abstractions\6.0.0\
+* microsoft.extensions.diagnostics.healthchecks.abstractions\6.0.27\
+* microsoft.extensions.diagnostics.healthchecks.entityframeworkcore\6.0.27\
+* microsoft.extensions.diagnostics.healthchecks\6.0.27\
+* microsoft.extensions.fileproviders.abstractions\6.0.0\
+* microsoft.extensions.hosting.abstractions\6.0.0\
+* microsoft.extensions.hosting.windowsservices\6.0.1\
+* microsoft.extensions.hosting\6.0.1\
+* microsoft.extensions.identity.core\6.0.27\
+* microsoft.netcore.dotnethostpolicy\6.0.27\
+* microsoft.visualstudio.services.client\16.205.1\
+* microsoft.visualstudio.web.codegeneration.design\6.0.16\
+* microsoft.visualstudio.web.codegeneration.entityframeworkcore\6.0.16\
+* microsoft.visualstudio.web.codegeneration\6.0.16\
+* mimekit\4.3.0\
+* mimetypes\2.4.1\
+* mirrorsharp.aspnetcore\4.0.0\
+* mirrorsharp.common\3.0.8\
+* monaco.pathtree\1.2.2\
+* morincer.markdig.renderers.docx\1.0.1\
+* newtonsoft.json\13.0.3\
+* npoi\2.6.2\
+* nuglify\1.21.4\
+* opengraph-net\4.0.1\
+* pek.markdig.highlightjs\0.5.1\
+* quartz.aspnetcore\3.8.1\
+* quartz.extensions.dependencyinjection\3.8.1\
+* quartz.extensions.hosting\3.8.1\
+* quartz.jobs\3.8.1\
+* quartz.plugins\3.8.1\
+* simplemvcsitemap\4.0.1\
+* snickler.rsscore\2.0.0\
+* statik.files\0.14.0\
+* statik\0.14.0\
+* swashbuckle.aspnetcore.annotations\6.5.0\
+* swashbuckle.aspnetcore.newtonsoft\6.5.0\
+* swashbuckle.aspnetcore.schemabuilder\1.6.0\
+* swashbuckle.aspnetcore.swagger\6.5.0\
+* swashbuckle.aspnetcore.swaggergen\6.5.0\
+* swashbuckle.aspnetcore.swaggerui\6.5.0\
+* swashbuckle.aspnetcore\6.5.0\
+* system.appcontext\4.3.0\
+* system.diagnostics.contracts\4.3.0\
+* system.diagnostics.eventlog\6.0.0\
+* system.diagnostics.stacktrace\4.3.0\
+* system.diagnostics.textwritertracelistener\4.3.0\
+* system.diagnostics.tracesource\4.3.0\
+* system.reactive\6.0.0\
+* system.servicemodel.syndication\6.0.0\
+* system.serviceprocess.servicecontroller\6.0.1\
+* webstoating.markdig.prism\1.0.0\
+* westwind.aspnetcore.livereload\0.4.2\
+* westwind.aspnetcore.markdown\3.16.0\
+
 
 ---
 

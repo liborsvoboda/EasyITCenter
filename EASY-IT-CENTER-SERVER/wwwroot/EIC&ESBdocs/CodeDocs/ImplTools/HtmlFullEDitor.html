@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>WYSitor </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="WYSitor ">
+    
+    
+      <link rel="shortcut icon" href="../../../favicon.ico">
+      <link rel="stylesheet" href="../../../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../../../styles/docfx.css">
+      <link rel="stylesheet" href="../../../styles/main.css">
+      <meta property="docfx:navrel" content="../../../toc.html">
+      <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    <meta property="docfx:rel" content="../../../">
+    <meta property="docfx:newtab" content="true">
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="EasySYSTEMbuilder InfoWeb">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="wysitor">WYSitor</h1>
+
+<p>WYSitor is WYSIWYG HTML Editor for WPF.</p>
+<h3 id="preview">Preview</h3>
+<p><img src="Readme/preview.png?raw=true" alt=""></p>
+<h2 id="why-another-editor">Why another editor?</h2>
+<h3 id="nothing-usable-for-my-project">Nothing usable (for my project)</h3>
+<p>I needed WPF HTML editor for our aplication, so i started searching existing projects.
+There are some editors in big library packs, that are priced too high for our ussage.
+Then there is project <a href="https://github.com/adambarath/SmithHtmlEditor">SmithHtmlEditor</a> wich I <a href="https://github.com/Gh61/EasyHtmlEditor">forked and migrated to .NET 4.5</a> (for usage in our project). In my experience it was very unstable and need many fixes.</p>
+<p>Then I found <a href="https://www.codeproject.com/Tips/870549/Csharp-WPF-WYSIWYG-HTML-Editor">this solution</a> wich is inspiration for this project. <em>Though it's similar to SmithHtmlEditor, it's using native WPF WebBrowser control (not WindowsFormsHost) wich I hope will be more stable.</em> Inspiration for some core functionality comes also from <a href="https://github.com/adambarath/SmithHtmlEditor">SmithHtmlEditor</a>.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li>stable WYSIWYG HTML editor</li>
+<li>standard WPF control</li>
+<li>HtmlContent TwoWay Binding</li>
+<li>Customizable Toolbar</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<h3 id="standard-xaml-usage">Standard XAML usage:</h3>
+<pre><code class="lang-xml">&lt;wySitor:HtmlEditor x:Name=&quot;editor&quot; Margin=&quot;0 12 0 0&quot; HtmlContent=&quot;{Binding SourceCode}&quot;/&gt;
+</code></pre>
+<p><em>You can of course create this element using code behind and adding it to the view later.</em></p>
+<h2 id="change-toolbar">Change Toolbar</h2>
+<p><strong>Enable/Disable OverflowMode</strong></p>
+<p>With this property you can enable (or disable) the overflow behaviour of Toolbar.
+When this is set, all controls that will not fit on the toolbar with current size, will be polaced to oveflow menu (opened via small arrow at the end of toolbar).</p>
+<pre><code class="lang-csharp">using Gh61.WYSitor.Code;
+
+// `editor` variable is instance of HtmlEditor from xaml view
+editor.Toolbar.EnableOverflowMode = true;
+</code></pre>
+<p><em>Default value is <code>false</code></em></p>
+<p><strong>This code applies to all further examples</strong></p>
+<pre><code class="lang-csharp">using Gh61.WYSitor.Code;
+
+// `editor` variable is instance of HtmlEditor from xaml view
+private ObservableCollection&lt;ToolbarElement&gt; ToolbarItems =&gt; editor.Toolbar.ToolbarElements;
+</code></pre>
+<h3 id="get-toolbar-element">Get toolbar element</h3>
+<p>You can get any default button with helper method <strong>ToolbarCommands.Get</strong></p>
+<pre><code class="lang-csharp">var underlineButton = ToolbarCommands.Get(StandardToolbarElement.Underline, editor.Toolbar);
+</code></pre>
+<p>Then you can remove this button:</p>
+<h3 id="remove-button">Remove button</h3>
+<pre><code class="lang-csharp">private void RemoveUnderlineButton()
+{
+    var underlineButton = ToolbarCommands.Get(StandardToolbarElement.Underline, editor.Toolbar);
+    ToolbarItems.Remove(underlineButton);
+}
+</code></pre>
+<h3 id="change-position-of-buttons">Change position of buttons</h3>
+<p>If you want to switch position of some buttons, you can search their index by using their <strong><a href="#manually-identify-toolbar-elements">Identifier</a></strong></p>
+<pre><code class="lang-csharp">private void SwitchBoldAndItalic()
+{
+    var boldIndex = ToolbarItems.IndexOf(e =&gt; e.Identifier == nameof(StandardToolbarElement.Bold));
+    var italicIndex = ToolbarItems.IndexOf(e =&gt; e.Identifier == nameof(StandardToolbarElement.Italic));
+
+    ToolbarItems.Move(boldIndex, italicIndex);
+}
+</code></pre>
+<h3 id="replace-separator">Replace separator</h3>
+<p>If you want to do something with separators, you need to find them by class <strong>ToolbarSeparatorElement</strong> or by <strong>Indentifier</strong> &quot;Separator{number}&quot;. <em>See <a href="#manually-identify-toolbar-elements">Manually identify toolbar elements</a></em></p>
+<pre><code class="lang-csharp">private void ReplaceSeparator()
+{
+    var sepIndex = ToolbarItems.IndexOf(e =&gt; e is ToolbarSeparatorElement);
+    ToolbarItems[sepIndex] = new ToolbarButton(&quot;HA&quot;, &quot;Custom Separator&quot;, new Run(&quot;|&quot;), c =&gt; { });
+}
+</code></pre>
+<h4 id="manually-identify-toolbar-elements">Manually identify toolbar elements</h4>
+<ul>
+<li>all default toolbar buttons have predictable <strong>Identifier</strong> from <em>StandardToolbarElement</em> enum</li>
+<li><strong>separators</strong> can be identified as <em>ToolbarSeparatorElement</em> class
+<ul>
+<li>they are using Identifiers &quot;Separator{number}&quot; where number is counted from 1 and increasing with every new ToolbarSeparatorElement instance</li>
+</ul>
+</li>
+</ul>
+<pre><code class="lang-csharp">var boldIndex = ToolbarItems.IndexOf(e =&gt; e.Identifier == nameof(StandardToolbarElement.Bold));
+var firstSepIndex = ToolbarItems.IndexOf(e =&gt; e is ToolbarSeparatorElement);
+</code></pre>
+<h2 id="custom-toolbar-elements">Custom Toolbar Elements</h2>
+<p>You can add your own elements to toolbar. It waill have access to internal browser behind the <a href="Gh61.WYSitor/Interfaces/IBrowserControl.cs">IBrowserControl interface</a></p>
+<ul>
+<li><strong>ToolbarButton</strong> class
+<ul>
+<li>can contain any content you want (and there are some prepared icons in <code>ResourceHelper.Icon_XXX</code>)</li>
+<li>can be toggleable</li>
+<li>can work with browser on click</li>
+<li>can has disabled automatic focus to browser after click</li>
+<li>can be enabled in source mode</li>
+</ul>
+</li>
+<li><strong>ToolbarSeparatorElement</strong> class
+<ul>
+<li>simple create new instance and add it anywhere to ToolbarElements</li>
+</ul>
+</li>
+<li><strong>ToolbarSplitButton</strong> class
+<ul>
+<li>you need to implement this on your own</li>
+<li>override methods to:
+<ul>
+<li>create content of main button</li>
+<li>click on main button</li>
+<li>create content of dropdown menu</li>
+</ul>
+</li>
+<li>can be enabled in source mode</li>
+</ul>
+</li>
+<li><strong>ToolbarElement</strong> class
+<ul>
+<li>you can implement your very own ToolbarElement that can do anything</li>
+</ul>
+</li>
+</ul>
+<h3 id="examples-of-custom-toolbarbutton">Examples of custom <strong>ToolbarButton</strong>:</h3>
+<h4 id="simple-button">Simple button</h4>
+<pre><code class="lang-csharp">var signatureButton = new ToolbarButton(
+                &quot;Signature&quot;, // Identifier
+                &quot;Inserts signature markup&quot;, // Title - for tooltip
+                ResourceHelper.Icon_Signature, // Content of button (icon)
+                b =&gt; // action on button click
+                {
+                    b.GetSelectedRange().PasteHtml(&quot;[SIGNATURE]&quot;);
+                });
+ToolbarItems.Add(signatureButton);
+</code></pre>
+<h4 id="custom-html-code-preview-window">Custom html code preview window</h4>
+<pre><code class="lang-csharp">SourceCodePreview preview = null;
+var previewButton = new ToolbarButton(
+    &quot;SourceCodePreview&quot;, // Identifier
+    &quot;Source code Preview&quot;, // Title - for tooltip
+    new Bold(new Run(&quot;HTML&quot;)), // Content of button - bold &quot;HTML&quot; text
+    b =&gt; // create new window on click and show html preview
+    {
+        if (preview == null)
+        {
+            preview = new SourceCodePreview((TestViewModel)this.DataContext);
+            preview.Closed += (s, e) =&gt;
+            {
+                preview = null;
+            };
+        }
+        preview.Show();
+        preview.Focus();
+    },
+    b =&gt; preview?.IsVisible == true // Toggle indicator
+);
+previewButton.DisableEditorFocusAfterClick = true; // will not set focus into editor, when clicken on this button
+previewButton.EnabledInSourceMode = true; // this button will be enabled in source mode
+
+ToolbarItems.Add(previewButton);
+</code></pre>
+<h2 id="localization">Localization</h2>
+<p>Default implementation contains library Gh61.WYSitor.Locale.Default.dll, where is localization for these languages:</p>
+<ul>
+<li><code>cs</code> (Czech)</li>
+<li>... possibly more to come?</li>
+<li></li>
+</ul>
+<p><em>If you don't want or need this localization, simply drop reference to this DLL.</em></p>
+<p><strong>Your own localization:</strong></p>
+<p>You can localize WYSitor easily any way you want with one of these two methods:</p>
+<h3 id="assigning-resourcemanager-in-code">Assigning ResourceManager in code</h3>
+<ol>
+<li>Implement <a href="Gh61.WYSitor/Localization/IResourceManager.cs">IResourceManager intarface</a></li>
+<li>Create instance of your manager</li>
+<li>Add it to <code>Gh61.WYSitor.Localization.ResourceManager.Managers</code> list (preferably at the beginning).</li>
+</ol>
+<pre><code class="lang-csharp">using Gh61.WYSitor.Localization;
+
+internal class MyResources : IResourceManager
+{ ... }
+
+// Add this to AppStart or somewhere before first HtmlEditor instance is created
+ResourceManager.Managers.Insert(0, new MyResources());
+</code></pre>
+<h3 id="loading-resourcemanager-from-external-dll-gh61wysitorlocalexxxdll">Loading ResourceManager from external DLL (Gh61.WYSitor.Locale.XXX.dll)</h3>
+<ol>
+<li>Create project named Gh61.WYSitor.Locale.XXX.dll (where XXX is anything you want)</li>
+<li>In this project create public class implementing <a href="Gh61.WYSitor/Localization/IResourceManager.cs">IResourceManager intarface</a></li>
+<li>This class needs to have parameterless constructor</li>
+<li>Place DLL in same folder as Gh61.WYSitor.dll (basicaly just add this project as reference to project, where you are using HtmlEditor)</li>
+</ol>
+<h2 id="known-issues">Known Issues</h2>
+<h3 id="visible-part-of-editor-is-not-working">Visible part of editor is not working</h3>
+<p><em>WYSIWYG part is completely white, but you can see in source code editor mode that it's working (when you try to type something).</em></p>
+<p>This problem occurs, when this component is used in window, that has <code>AllowTransparent</code> set to <code>True</code>.
+This is caused by the fact, that this component is using .NET WPF WebBrowser control, wich is just wrapped ActiveX control and thus not rendered by WPF (not supporting transparency).
+You can fix this easily by setting the <code>AllowTransparent</code> property to <code>False</code> in parent window. There are some workarounds wich you can use, but official statement is that this is not supported.
+Some useful links, if you want to try your own solution on this problem:</p>
+<ul>
+<li><a href="https://social.msdn.microsoft.com/Forums/en-US/61a901d3-3273-4d8e-8e08-9441dc11010f/wpf-webbrowser-in-a-transparent-window?forum=wpf">MSDN Forum</a></li>
+<li><a href="https://www.codeproject.com/Questions/217236/WPF-WebBrowser-Problem-if-AllowsTransparencyequals">CodeProject</a></li>
+<li><a href="https://stackoverflow.com/questions/19444457/c-sharp-wpf-displaying-webbrowser-on-window-with-allowtransparency-true-does-n">StackOverflow</a></li>
+</ul>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      EasySYSTEMbuilder Universální Systém builder - Komplexní Řešení pro Vaše IT
+      
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../../../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

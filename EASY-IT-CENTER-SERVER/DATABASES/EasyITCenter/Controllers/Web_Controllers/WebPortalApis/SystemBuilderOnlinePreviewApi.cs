@@ -1,4 +1,7 @@
-﻿namespace EasyITCenter.ServerCoreDBSettings {
+﻿using Microsoft.CodeAnalysis.Elfie.Serialization;
+using System.Text.RegularExpressions;
+
+namespace EasyITCenter.ServerCoreDBSettings {
 
     [ApiController]
     [Route("WebApi")]
@@ -23,7 +26,9 @@
                 string head;
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) { head = new EasyITCenterContext().WebSettingLists.Where(a => a.Key == "WebBuilderHeadSection").First().Value; }
                 try {
-                    data = data.Split("<HEAD>")[0] + head + data.Split("</HEAD>")[1];
+                    string? prevHeader = Regex.Split(data, "<HEAD>", RegexOptions.IgnoreCase)[0];
+                    string? pastHeader = Regex.Split(data, "</HEAD>", RegexOptions.IgnoreCase)[1];
+                    data = prevHeader + head + pastHeader;
                 } catch { data = head + data; }
 
                 return new ContentResult { Content = data, ContentType = "text/html" };
@@ -51,7 +56,9 @@
                 string head;
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) { head = new EasyITCenterContext().WebSettingLists.Where(a => a.Key == "WebBuilderHeadSection").First().Value; }
                 try {
-                    data = data.Split("<HEAD>")[0] + head + data.Split("</HEAD>")[1];
+                    string? prevHeader = Regex.Split(data, "<HEAD>", RegexOptions.IgnoreCase)[0];
+                    string? pastHeader = Regex.Split(data, "</HEAD>", RegexOptions.IgnoreCase)[1];
+                    data = prevHeader + head + pastHeader;
                 } catch { data = head + data; }
 
                 return new ContentResult { Content = data, ContentType = "text/html" };

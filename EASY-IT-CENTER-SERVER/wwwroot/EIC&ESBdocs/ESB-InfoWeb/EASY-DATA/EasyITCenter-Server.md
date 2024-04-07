@@ -72,9 +72,17 @@
 - [DatabaseContextExtensions](#T-EasyITCenter-ServerCoreDBSettings-DatabaseContextExtensions 'EasyITCenter.ServerCoreDBSettings.DatabaseContextExtensions')
 - [DbOperations](#T-EasyITCenter-ServerCoreStructure-DbOperations 'EasyITCenter.ServerCoreStructure.DbOperations')
   - [BindList\`\`1(dt)](#M-EasyITCenter-ServerCoreStructure-DbOperations-BindList``1-System-Data-DataTable- 'EasyITCenter.ServerCoreStructure.DbOperations.BindList``1(System.Data.DataTable)')
+  - [CheckServerModuleExists(word,language)](#M-EasyITCenter-ServerCoreStructure-DbOperations-CheckServerModuleExists-System-String- 'EasyITCenter.ServerCoreStructure.DbOperations.CheckServerModuleExists(System.String)')
+  - [CheckServerModuleOffline(modulePath)](#M-EasyITCenter-ServerCoreStructure-DbOperations-CheckServerModuleOffline-System-String- 'EasyITCenter.ServerCoreStructure.DbOperations.CheckServerModuleOffline(System.String)')
+  - [CheckServerModuleOnline(modulePath)](#M-EasyITCenter-ServerCoreStructure-DbOperations-CheckServerModuleOnline-System-String- 'EasyITCenter.ServerCoreStructure.DbOperations.CheckServerModuleOnline(System.String)')
   - [DBTranslate(word,language)](#M-EasyITCenter-ServerCoreStructure-DbOperations-DBTranslate-System-String,System-String- 'EasyITCenter.ServerCoreStructure.DbOperations.DBTranslate(System.String,System.String)')
   - [DBTranslateOffline(word,language)](#M-EasyITCenter-ServerCoreStructure-DbOperations-DBTranslateOffline-System-String,System-String- 'EasyITCenter.ServerCoreStructure.DbOperations.DBTranslateOffline(System.String,System.String)')
   - [DBTranslateOnline(word,language)](#M-EasyITCenter-ServerCoreStructure-DbOperations-DBTranslateOnline-System-String,System-String- 'EasyITCenter.ServerCoreStructure.DbOperations.DBTranslateOnline(System.String,System.String)')
+  - [GetWebGlobalPageBlockLists(modulePath)](#M-EasyITCenter-ServerCoreStructure-DbOperations-GetWebGlobalPageBlockLists-System-String- 'EasyITCenter.ServerCoreStructure.DbOperations.GetWebGlobalPageBlockLists(System.String)')
+  - [GetWebGlobalPageBlockListsOnline(modulePath)](#M-EasyITCenter-ServerCoreStructure-DbOperations-GetWebGlobalPageBlockListsOnline-System-String- 'EasyITCenter.ServerCoreStructure.DbOperations.GetWebGlobalPageBlockListsOnline(System.String)')
+  - [GetWebPortalJsCssScripts(specType,fileName)](#M-EasyITCenter-ServerCoreStructure-DbOperations-GetWebPortalJsCssScripts-System-String,System-String- 'EasyITCenter.ServerCoreStructure.DbOperations.GetWebPortalJsCssScripts(System.String,System.String)')
+  - [GetWebPortalJsCssScriptsOffline(specType,fileName)](#M-EasyITCenter-ServerCoreStructure-DbOperations-GetWebPortalJsCssScriptsOffline-System-String,System-String- 'EasyITCenter.ServerCoreStructure.DbOperations.GetWebPortalJsCssScriptsOffline(System.String,System.String)')
+  - [GetWebPortalJsCssScriptsOnline(specType,fileName)](#M-EasyITCenter-ServerCoreStructure-DbOperations-GetWebPortalJsCssScriptsOnline-System-String,System-String- 'EasyITCenter.ServerCoreStructure.DbOperations.GetWebPortalJsCssScriptsOnline(System.String,System.String)')
   - [LoadOrRefreshStaticDbDials(onlyThis)](#M-EasyITCenter-ServerCoreStructure-DbOperations-LoadOrRefreshStaticDbDials-System-Nullable{EasyITCenter-ServerCoreStructure-ServerLocalDbDials}- 'EasyITCenter.ServerCoreStructure.DbOperations.LoadOrRefreshStaticDbDials(System.Nullable{EasyITCenter.ServerCoreStructure.ServerLocalDbDials})')
 - [DelegateHealthCheckPublisher](#T-EasyITCenter-ServerCoreStructure-DelegateHealthCheckPublisher 'EasyITCenter.ServerCoreStructure.DelegateHealthCheckPublisher')
 - [EasyITCenterAuthenticationApi](#T-EasyITCenter-ControllersExtensions-EasyITCenterAuthenticationApi 'EasyITCenter.ControllersExtensions.EasyITCenterAuthenticationApi')
@@ -97,6 +105,7 @@
   - [CheckDirectory(directory)](#M-EasyITCenter-ServerCoreStructure-FileOperations-CheckDirectory-System-String- 'EasyITCenter.ServerCoreStructure.FileOperations.CheckDirectory(System.String)')
   - [CheckFile(file)](#M-EasyITCenter-ServerCoreStructure-FileOperations-CheckFile-System-String- 'EasyITCenter.ServerCoreStructure.FileOperations.CheckFile(System.String)')
   - [ClearFolder(FolderName)](#M-EasyITCenter-ServerCoreStructure-FileOperations-ClearFolder-System-String- 'EasyITCenter.ServerCoreStructure.FileOperations.ClearFolder(System.String)')
+  - [ConvertSystemFilePathFromUrl(webpath)](#M-EasyITCenter-ServerCoreStructure-FileOperations-ConvertSystemFilePathFromUrl-System-String- 'EasyITCenter.ServerCoreStructure.FileOperations.ConvertSystemFilePathFromUrl(System.String)')
   - [CopyDirectory(directory)](#M-EasyITCenter-ServerCoreStructure-FileOperations-CopyDirectory-System-String,System-String- 'EasyITCenter.ServerCoreStructure.FileOperations.CopyDirectory(System.String,System.String)')
   - [CopyFile(from,to)](#M-EasyITCenter-ServerCoreStructure-FileOperations-CopyFile-System-String,System-String- 'EasyITCenter.ServerCoreStructure.FileOperations.CopyFile(System.String,System.String)')
   - [CopyFiles(sourcePath,destinationPath)](#M-EasyITCenter-ServerCoreStructure-FileOperations-CopyFiles-System-String,System-String- 'EasyITCenter.ServerCoreStructure.FileOperations.CopyFiles(System.String,System.String)')
@@ -124,20 +133,24 @@
 - [IdFilter](#T-EasyITCenter-DBModel-IdFilter 'EasyITCenter.DBModel.IdFilter')
 - [IndexModel](#T-ServerCorePages-IndexModel 'ServerCorePages.IndexModel')
   - [GetManagedBodyPartForLayout()](#M-ServerCorePages-IndexModel-GetManagedBodyPartForLayout 'ServerCorePages.IndexModel.GetManagedBodyPartForLayout')
+  - [GetManagedCentralCssFiles()](#M-ServerCorePages-IndexModel-GetManagedCentralCssFiles 'ServerCorePages.IndexModel.GetManagedCentralCssFiles')
   - [GetManagedCentralCssLayoutFiles()](#M-ServerCorePages-IndexModel-GetManagedCentralCssLayoutFiles 'ServerCorePages.IndexModel.GetManagedCentralCssLayoutFiles')
+  - [GetManagedCentralJsFiles()](#M-ServerCorePages-IndexModel-GetManagedCentralJsFiles 'ServerCorePages.IndexModel.GetManagedCentralJsFiles')
   - [GetManagedCentralJsLayoutFiles()](#M-ServerCorePages-IndexModel-GetManagedCentralJsLayoutFiles 'ServerCorePages.IndexModel.GetManagedCentralJsLayoutFiles')
   - [GetManagedCssFilesForLayout()](#M-ServerCorePages-IndexModel-GetManagedCssFilesForLayout 'ServerCorePages.IndexModel.GetManagedCssFilesForLayout')
   - [GetManagedFooterPartForLayout()](#M-ServerCorePages-IndexModel-GetManagedFooterPartForLayout 'ServerCorePages.IndexModel.GetManagedFooterPartForLayout')
+  - [GetManagedGlobalCssFiles()](#M-ServerCorePages-IndexModel-GetManagedGlobalCssFiles 'ServerCorePages.IndexModel.GetManagedGlobalCssFiles')
   - [GetManagedGlobalCssLayoutFiles()](#M-ServerCorePages-IndexModel-GetManagedGlobalCssLayoutFiles 'ServerCorePages.IndexModel.GetManagedGlobalCssLayoutFiles')
+  - [GetManagedGlobalJsFiles()](#M-ServerCorePages-IndexModel-GetManagedGlobalJsFiles 'ServerCorePages.IndexModel.GetManagedGlobalJsFiles')
   - [GetManagedGlobalJsLayoutFiles()](#M-ServerCorePages-IndexModel-GetManagedGlobalJsLayoutFiles 'ServerCorePages.IndexModel.GetManagedGlobalJsLayoutFiles')
   - [GetManagedHeaderPostScriptsForLayout()](#M-ServerCorePages-IndexModel-GetManagedHeaderPostScriptsForLayout 'ServerCorePages.IndexModel.GetManagedHeaderPostScriptsForLayout')
   - [GetManagedHeaderPreCssForLayout()](#M-ServerCorePages-IndexModel-GetManagedHeaderPreCssForLayout 'ServerCorePages.IndexModel.GetManagedHeaderPreCssForLayout')
   - [GetManagedHeaderPreScriptsForLayout()](#M-ServerCorePages-IndexModel-GetManagedHeaderPreScriptsForLayout 'ServerCorePages.IndexModel.GetManagedHeaderPreScriptsForLayout')
   - [GetManagedJsFilesForLayout()](#M-ServerCorePages-IndexModel-GetManagedJsFilesForLayout 'ServerCorePages.IndexModel.GetManagedJsFilesForLayout')
+  - [GetManagedMultiLangCssFiles()](#M-ServerCorePages-IndexModel-GetManagedMultiLangCssFiles 'ServerCorePages.IndexModel.GetManagedMultiLangCssFiles')
   - [GetManagedMultiLangCssLayoutFiles()](#M-ServerCorePages-IndexModel-GetManagedMultiLangCssLayoutFiles 'ServerCorePages.IndexModel.GetManagedMultiLangCssLayoutFiles')
+  - [GetManagedMultiLangJsFiles()](#M-ServerCorePages-IndexModel-GetManagedMultiLangJsFiles 'ServerCorePages.IndexModel.GetManagedMultiLangJsFiles')
   - [GetManagedMultiLangJsLayoutFiles()](#M-ServerCorePages-IndexModel-GetManagedMultiLangJsLayoutFiles 'ServerCorePages.IndexModel.GetManagedMultiLangJsLayoutFiles')
-  - [GetManagedPortalCssLayoutFiles()](#M-ServerCorePages-IndexModel-GetManagedPortalCssLayoutFiles 'ServerCorePages.IndexModel.GetManagedPortalCssLayoutFiles')
-  - [GetManagedPortalJsLayoutFiles()](#M-ServerCorePages-IndexModel-GetManagedPortalJsLayoutFiles 'ServerCorePages.IndexModel.GetManagedPortalJsLayoutFiles')
   - [OnGet()](#M-ServerCorePages-IndexModel-OnGet 'ServerCorePages.IndexModel.OnGet')
 - [MailRequest](#T-EasyITCenter-ServerCoreStructure-MailRequest 'EasyITCenter.ServerCoreStructure.MailRequest')
 - [MessageModuleApi](#T-EasyITCenter-Controllers-MessageModuleApi 'EasyITCenter.Controllers.MessageModuleApi')
@@ -149,6 +162,9 @@
   - [GetMimeTypeExtensions(mimeType)](#M-EasyITCenter-MimeTypes-GetMimeTypeExtensions-System-String- 'EasyITCenter.MimeTypes.GetMimeTypeExtensions(System.String)')
   - [TryGetMimeType(fileName,mimeType)](#M-EasyITCenter-MimeTypes-TryGetMimeType-System-String,System-String@- 'EasyITCenter.MimeTypes.TryGetMimeType(System.String,System.String@)')
 - [NameFilter](#T-EasyITCenter-DBModel-NameFilter 'EasyITCenter.DBModel.NameFilter')
+- [ObservableFileSystemWatcher](#T-DynamicRun-Builder-ObservableFileSystemWatcher 'DynamicRun.Builder.ObservableFileSystemWatcher')
+  - [#ctor(watcher)](#M-DynamicRun-Builder-ObservableFileSystemWatcher-#ctor-System-IO-FileSystemWatcher- 'DynamicRun.Builder.ObservableFileSystemWatcher.#ctor(System.IO.FileSystemWatcher)')
+  - [#ctor()](#M-DynamicRun-Builder-ObservableFileSystemWatcher-#ctor-System-Action{System-IO-FileSystemWatcher}- 'DynamicRun.Builder.ObservableFileSystemWatcher.#ctor(System.Action{System.IO.FileSystemWatcher})')
 - [ProcessClass](#T-EasyITCenter-ServerCoreStructure-ProcessClass 'EasyITCenter.ServerCoreStructure.ProcessClass')
 - [RSSLoad](#T-EasyITCenter-ServerCoreDBSettings-RSSLoad 'EasyITCenter.ServerCoreDBSettings.RSSLoad')
   - [GetRssFeed(rssUrl)](#M-EasyITCenter-ServerCoreDBSettings-RSSLoad-GetRssFeed-System-String- 'EasyITCenter.ServerCoreDBSettings.RSSLoad.GetRssFeed(System.String)')
@@ -179,6 +195,7 @@
   - [EmailerSMTPServerAddress](#P-EasyITCenter-ServerCoreStructure-ServerConfigSettings-EmailerSMTPServerAddress 'EasyITCenter.ServerCoreStructure.ServerConfigSettings.EmailerSMTPServerAddress')
   - [EmailerSMTPSslIsEnabled](#P-EasyITCenter-ServerCoreStructure-ServerConfigSettings-EmailerSMTPSslIsEnabled 'EasyITCenter.ServerCoreStructure.ServerConfigSettings.EmailerSMTPSslIsEnabled')
   - [EmailerServiceEmailAddress](#P-EasyITCenter-ServerCoreStructure-ServerConfigSettings-EmailerServiceEmailAddress 'EasyITCenter.ServerCoreStructure.ServerConfigSettings.EmailerServiceEmailAddress')
+  - [EnableAutoShowMdAsHtml](#P-EasyITCenter-ServerCoreStructure-ServerConfigSettings-EnableAutoShowMdAsHtml 'EasyITCenter.ServerCoreStructure.ServerConfigSettings.EnableAutoShowMdAsHtml')
   - [GitServerEnabled](#P-EasyITCenter-ServerCoreStructure-ServerConfigSettings-GitServerEnabled 'EasyITCenter.ServerCoreStructure.ServerConfigSettings.GitServerEnabled')
   - [ModuleAutoSchedulerEnabled](#P-EasyITCenter-ServerCoreStructure-ServerConfigSettings-ModuleAutoSchedulerEnabled 'EasyITCenter.ServerCoreStructure.ServerConfigSettings.ModuleAutoSchedulerEnabled')
   - [ModuleCSharpCodeBuilder](#P-EasyITCenter-ServerCoreStructure-ServerConfigSettings-ModuleCSharpCodeBuilder 'EasyITCenter.ServerCoreStructure.ServerConfigSettings.ModuleCSharpCodeBuilder')
@@ -282,20 +299,21 @@
   - [FtpServerStop()](#M-EasyITCenter-ServerCoreDBSettings-ServerManagementApi-FtpServerStop 'EasyITCenter.ServerCoreDBSettings.ServerManagementApi.FtpServerStop')
   - [ServerRestart()](#M-EasyITCenter-ServerCoreDBSettings-ServerManagementApi-ServerRestart 'EasyITCenter.ServerCoreDBSettings.ServerManagementApi.ServerRestart')
   - [ServerSchedulerStart()](#M-EasyITCenter-ServerCoreDBSettings-ServerManagementApi-ServerSchedulerStart 'EasyITCenter.ServerCoreDBSettings.ServerManagementApi.ServerSchedulerStart')
-- [ServerMarkDownCodeSnippetApi](#T-EasyITCenter-ServerCoreDBSettings-ServerMarkDownCodeSnippetApi 'EasyITCenter.ServerCoreDBSettings.ServerMarkDownCodeSnippetApi')
-  - [GenerateMarkDownCodeSnippet()](#M-EasyITCenter-ServerCoreDBSettings-ServerMarkDownCodeSnippetApi-GenerateMarkDownCodeSnippet 'EasyITCenter.ServerCoreDBSettings.ServerMarkDownCodeSnippetApi.GenerateMarkDownCodeSnippet')
+- [ServerMarkDownApi](#T-EasyITCenter-ServerCoreDBSettings-ServerMarkDownApi 'EasyITCenter.ServerCoreDBSettings.ServerMarkDownApi')
 - [ServerModules](#T-EasyITCenter-ServerCoreConfiguration-ServerModules 'EasyITCenter.ServerCoreConfiguration.ServerModules')
   - [ConfigureDBEntitySchema(services)](#M-EasyITCenter-ServerCoreConfiguration-ServerModules-ConfigureDBEntitySchema-Microsoft-Extensions-DependencyInjection-IServiceCollection@- 'EasyITCenter.ServerCoreConfiguration.ServerModules.ConfigureDBEntitySchema(Microsoft.Extensions.DependencyInjection.IServiceCollection@)')
   - [ConfigureDocumentation(services)](#M-EasyITCenter-ServerCoreConfiguration-ServerModules-ConfigureDocumentation-Microsoft-Extensions-DependencyInjection-IServiceCollection@- 'EasyITCenter.ServerCoreConfiguration.ServerModules.ConfigureDocumentation(Microsoft.Extensions.DependencyInjection.IServiceCollection@)')
-  - [ConfigureGitSevrer(services)](#M-EasyITCenter-ServerCoreConfiguration-ServerModules-ConfigureGitSevrer-Microsoft-Extensions-DependencyInjection-IServiceCollection@- 'EasyITCenter.ServerCoreConfiguration.ServerModules.ConfigureGitSevrer(Microsoft.Extensions.DependencyInjection.IServiceCollection@)')
+  - [ConfigureGitServer(services)](#M-EasyITCenter-ServerCoreConfiguration-ServerModules-ConfigureGitServer-Microsoft-Extensions-DependencyInjection-IServiceCollection@- 'EasyITCenter.ServerCoreConfiguration.ServerModules.ConfigureGitServer(Microsoft.Extensions.DependencyInjection.IServiceCollection@)')
   - [ConfigureHealthCheck(services)](#M-EasyITCenter-ServerCoreConfiguration-ServerModules-ConfigureHealthCheck-Microsoft-Extensions-DependencyInjection-IServiceCollection@- 'EasyITCenter.ServerCoreConfiguration.ServerModules.ConfigureHealthCheck(Microsoft.Extensions.DependencyInjection.IServiceCollection@)')
   - [ConfigureLiveDataMonitor(services)](#M-EasyITCenter-ServerCoreConfiguration-ServerModules-ConfigureLiveDataMonitor-Microsoft-Extensions-DependencyInjection-IServiceCollection@- 'EasyITCenter.ServerCoreConfiguration.ServerModules.ConfigureLiveDataMonitor(Microsoft.Extensions.DependencyInjection.IServiceCollection@)')
+  - [ConfigureMarkdownAsHtmlFiles(services)](#M-EasyITCenter-ServerCoreConfiguration-ServerModules-ConfigureMarkdownAsHtmlFiles-Microsoft-Extensions-DependencyInjection-IServiceCollection@- 'EasyITCenter.ServerCoreConfiguration.ServerModules.ConfigureMarkdownAsHtmlFiles(Microsoft.Extensions.DependencyInjection.IServiceCollection@)')
   - [ConfigureScheduler(services)](#M-EasyITCenter-ServerCoreConfiguration-ServerModules-ConfigureScheduler-Microsoft-Extensions-DependencyInjection-IServiceCollection@- 'EasyITCenter.ServerCoreConfiguration.ServerModules.ConfigureScheduler(Microsoft.Extensions.DependencyInjection.IServiceCollection@)')
   - [ConfigureSwagger(services)](#M-EasyITCenter-ServerCoreConfiguration-ServerModules-ConfigureSwagger-Microsoft-Extensions-DependencyInjection-IServiceCollection@- 'EasyITCenter.ServerCoreConfiguration.ServerModules.ConfigureSwagger(Microsoft.Extensions.DependencyInjection.IServiceCollection@)')
 - [ServerModulesEnabling](#T-EasyITCenter-ServerCoreConfiguration-ServerModulesEnabling 'EasyITCenter.ServerCoreConfiguration.ServerModulesEnabling')
   - [EnableDBEntitySchema()](#M-EasyITCenter-ServerCoreConfiguration-ServerModulesEnabling-EnableDBEntitySchema-Microsoft-AspNetCore-Builder-IApplicationBuilder@- 'EasyITCenter.ServerCoreConfiguration.ServerModulesEnabling.EnableDBEntitySchema(Microsoft.AspNetCore.Builder.IApplicationBuilder@)')
   - [EnableDocumentation()](#M-EasyITCenter-ServerCoreConfiguration-ServerModulesEnabling-EnableDocumentation-Microsoft-AspNetCore-Builder-IApplicationBuilder@- 'EasyITCenter.ServerCoreConfiguration.ServerModulesEnabling.EnableDocumentation(Microsoft.AspNetCore.Builder.IApplicationBuilder@)')
   - [EnableLiveDataMonitor()](#M-EasyITCenter-ServerCoreConfiguration-ServerModulesEnabling-EnableLiveDataMonitor-Microsoft-AspNetCore-Builder-IApplicationBuilder@- 'EasyITCenter.ServerCoreConfiguration.ServerModulesEnabling.EnableLiveDataMonitor(Microsoft.AspNetCore.Builder.IApplicationBuilder@)')
+  - [EnableMarkdownAsHtmlFiles(app)](#M-EasyITCenter-ServerCoreConfiguration-ServerModulesEnabling-EnableMarkdownAsHtmlFiles-Microsoft-AspNetCore-Builder-IApplicationBuilder@- 'EasyITCenter.ServerCoreConfiguration.ServerModulesEnabling.EnableMarkdownAsHtmlFiles(Microsoft.AspNetCore.Builder.IApplicationBuilder@)')
   - [EnableSwagger()](#M-EasyITCenter-ServerCoreConfiguration-ServerModulesEnabling-EnableSwagger-Microsoft-AspNetCore-Builder-IApplicationBuilder@- 'EasyITCenter.ServerCoreConfiguration.ServerModulesEnabling.EnableSwagger(Microsoft.AspNetCore.Builder.IApplicationBuilder@)')
 - [ServerOpenGraphApi](#T-EasyITCenter-ServerCoreDBSettings-ServerOpenGraphApi 'EasyITCenter.ServerCoreDBSettings.ServerOpenGraphApi')
   - [GetFromUrl(request)](#M-EasyITCenter-ServerCoreDBSettings-ServerOpenGraphApi-GetFromUrl-EasyITCenter-DBModel-WebUrlRequest- 'EasyITCenter.ServerCoreDBSettings.ServerOpenGraphApi.GetFromUrl(EasyITCenter.DBModel.WebUrlRequest)')
@@ -316,11 +334,11 @@
   - [DataPath](#P-EasyITCenter-ServerCoreStructure-ServerRuntimeData-DataPath 'EasyITCenter.ServerCoreStructure.ServerRuntimeData.DataPath')
   - [DebugMode](#P-EasyITCenter-ServerCoreStructure-ServerRuntimeData-DebugMode 'EasyITCenter.ServerCoreStructure.ServerRuntimeData.DebugMode')
   - [Setting_folder](#P-EasyITCenter-ServerCoreStructure-ServerRuntimeData-Setting_folder 'EasyITCenter.ServerCoreStructure.ServerRuntimeData.Setting_folder')
-  - [SpecialUserWebRootPath](#P-EasyITCenter-ServerCoreStructure-ServerRuntimeData-SpecialUserWebRootPath 'EasyITCenter.ServerCoreStructure.ServerRuntimeData.SpecialUserWebRootPath')
   - [Startup_path](#P-EasyITCenter-ServerCoreStructure-ServerRuntimeData-Startup_path 'EasyITCenter.ServerCoreStructure.ServerRuntimeData.Startup_path')
   - [UserPath](#P-EasyITCenter-ServerCoreStructure-ServerRuntimeData-UserPath 'EasyITCenter.ServerCoreStructure.ServerRuntimeData.UserPath')
   - [WebRoot_path](#P-EasyITCenter-ServerCoreStructure-ServerRuntimeData-WebRoot_path 'EasyITCenter.ServerCoreStructure.ServerRuntimeData.WebRoot_path')
 - [ServerStatuses](#T-EasyITCenter-ServerCoreStructure-ServerStatuses 'EasyITCenter.ServerCoreStructure.ServerStatuses')
+- [ServerSystemControlApi](#T-EasyITCenter-ServerCoreDBSettings-ServerSystemControlApi 'EasyITCenter.ServerCoreDBSettings.ServerSystemControlApi')
 - [ServerToolsMinifierApi](#T-EasyITCenter-ControllersExtensions-ServerToolsMinifierApi 'EasyITCenter.ControllersExtensions.ServerToolsMinifierApi')
   - [MinifyAndReturn(filelist)](#M-EasyITCenter-ControllersExtensions-ServerToolsMinifierApi-MinifyAndReturn-EasyITCenter-ServerCoreWebPages-WebFileList- 'EasyITCenter.ControllersExtensions.ServerToolsMinifierApi.MinifyAndReturn(EasyITCenter.ServerCoreWebPages.WebFileList)')
   - [MinifyAndSaveMinToPath(filelist)](#M-EasyITCenter-ControllersExtensions-ServerToolsMinifierApi-MinifyAndSaveMinToPath-EasyITCenter-ServerCoreWebPages-WebFileList- 'EasyITCenter.ControllersExtensions.ServerToolsMinifierApi.MinifyAndSaveMinToPath(EasyITCenter.ServerCoreWebPages.WebFileList)')
@@ -743,6 +761,10 @@ This method has no parameters.
 
 EasyITCenter.ServerCoreStructure
 
+##### Summary
+
+Specific Server Core Operations Library
+
 <a name='M-EasyITCenter-ServerCoreStructure-CoreOperations-CallGetApiUrl-System-String-'></a>
 ### CallGetApiUrl(url) `method`
 
@@ -993,6 +1015,10 @@ WebApi Responses
 ##### Namespace
 
 EasyITCenter.ServerCoreStructure
+
+##### Summary
+
+Data Formating and similar Operations Library
 
 <a name='M-EasyITCenter-ServerCoreStructure-DataOperations-ConvertGenericClassToStandard``1-``0-'></a>
 ### ConvertGenericClassToStandard\`\`1(data) `method`
@@ -1270,6 +1296,57 @@ Context Extension as 'CollectionFromSql' Method in Database Context
 | ---- | ----------- |
 | T |  |
 
+<a name='M-EasyITCenter-ServerCoreStructure-DbOperations-CheckServerModuleExists-System-String-'></a>
+### CheckServerModuleExists(word,language) `method`
+
+##### Summary
+
+Default Operation for Call CHEckModuleExist
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| word | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
+
+<a name='M-EasyITCenter-ServerCoreStructure-DbOperations-CheckServerModuleOffline-System-String-'></a>
+### CheckServerModuleOffline(modulePath) `method`
+
+##### Summary
+
+Get Check ServerModule from OneTime Load Server List
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| modulePath | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
+
+<a name='M-EasyITCenter-ServerCoreStructure-DbOperations-CheckServerModuleOnline-System-String-'></a>
+### CheckServerModuleOnline(modulePath) `method`
+
+##### Summary
+
+Get Check ServerModule from DB
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| modulePath | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
+
 <a name='M-EasyITCenter-ServerCoreStructure-DbOperations-DBTranslate-System-String,System-String-'></a>
 ### DBTranslate(word,language) `method`
 
@@ -1323,6 +1400,97 @@ Database LanuageList for On-line Using Definitions
 | ---- | ---- | ----------- |
 | word | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
 | language | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
+
+<a name='M-EasyITCenter-ServerCoreStructure-DbOperations-GetWebGlobalPageBlockLists-System-String-'></a>
+### GetWebGlobalPageBlockLists(modulePath) `method`
+
+##### Summary
+
+Default Operation For Generate Web Portal
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| modulePath | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
+
+<a name='M-EasyITCenter-ServerCoreStructure-DbOperations-GetWebGlobalPageBlockListsOnline-System-String-'></a>
+### GetWebGlobalPageBlockListsOnline(modulePath) `method`
+
+##### Summary
+
+Get Check ServerModule from DB
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| modulePath | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
+
+<a name='M-EasyITCenter-ServerCoreStructure-DbOperations-GetWebPortalJsCssScripts-System-String,System-String-'></a>
+### GetWebPortalJsCssScripts(specType,fileName) `method`
+
+##### Summary
+
+Default Operation For Working Wihth 
+Portal Scripts From Local Tables.
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| specType | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
+| fileName | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
+
+<a name='M-EasyITCenter-ServerCoreStructure-DbOperations-GetWebPortalJsCssScriptsOffline-System-String,System-String-'></a>
+### GetWebPortalJsCssScriptsOffline(specType,fileName) `method`
+
+##### Summary
+
+Default Operation For Working Wihth 
+Portal Scripts From Local Tables Offline
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| specType | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
+| fileName | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
+
+<a name='M-EasyITCenter-ServerCoreStructure-DbOperations-GetWebPortalJsCssScriptsOnline-System-String,System-String-'></a>
+### GetWebPortalJsCssScriptsOnline(specType,fileName) `method`
+
+##### Summary
+
+Default Operation For Working Wihth 
+Portal Scripts From Local Tables. Online
+
+##### Returns
+
+
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| specType | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
+| fileName | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
 
 <a name='M-EasyITCenter-ServerCoreStructure-DbOperations-LoadOrRefreshStaticDbDials-System-Nullable{EasyITCenter-ServerCoreStructure-ServerLocalDbDials}-'></a>
 ### LoadOrRefreshStaticDbDials(onlyThis) `method`
@@ -1638,6 +1806,20 @@ Full Clear Folder
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | FolderName | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') | Name of the folder. |
+
+<a name='M-EasyITCenter-ServerCoreStructure-FileOperations-ConvertSystemFilePathFromUrl-System-String-'></a>
+### ConvertSystemFilePathFromUrl(webpath) `method`
+
+##### Summary
+
+Return Full File path to the operating system default
+slashes.
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| webpath | [System.String](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.String 'System.String') |  |
 
 <a name='M-EasyITCenter-ServerCoreStructure-FileOperations-CopyDirectory-System-String,System-String-'></a>
 ### CopyDirectory(directory) `method`
@@ -2019,12 +2201,42 @@ Rights From DB Table WebGlobalBodyBlockList
 
 This method has no parameters.
 
+<a name='M-ServerCorePages-IndexModel-GetManagedCentralCssFiles'></a>
+### GetManagedCentralCssFiles() `method`
+
+##### Summary
+
+Central CSS Library Files List
+
+##### Returns
+
+
+
+##### Parameters
+
+This method has no parameters.
+
 <a name='M-ServerCorePages-IndexModel-GetManagedCentralCssLayoutFiles'></a>
 ### GetManagedCentralCssLayoutFiles() `method`
 
 ##### Summary
 
 Central CSS Stylisation Template Controler
+
+##### Returns
+
+
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-ServerCorePages-IndexModel-GetManagedCentralJsFiles'></a>
+### GetManagedCentralJsFiles() `method`
+
+##### Summary
+
+Central JS Library Files List
 
 ##### Returns
 
@@ -2080,12 +2292,42 @@ Rights From DB Table WebGlobalBodyBlockList
 
 This method has no parameters.
 
+<a name='M-ServerCorePages-IndexModel-GetManagedGlobalCssFiles'></a>
+### GetManagedGlobalCssFiles() `method`
+
+##### Summary
+
+Global CSS Library Files List
+
+##### Returns
+
+
+
+##### Parameters
+
+This method has no parameters.
+
 <a name='M-ServerCorePages-IndexModel-GetManagedGlobalCssLayoutFiles'></a>
 ### GetManagedGlobalCssLayoutFiles() `method`
 
 ##### Summary
 
 Global CSS Stylisation Template Controler
+
+##### Returns
+
+
+
+##### Parameters
+
+This method has no parameters.
+
+<a name='M-ServerCorePages-IndexModel-GetManagedGlobalJsFiles'></a>
+### GetManagedGlobalJsFiles() `method`
+
+##### Summary
+
+Global JS Library Files List
 
 ##### Returns
 
@@ -2170,6 +2412,21 @@ Generation JS Script Section In Server Pages
 
 This method has no parameters.
 
+<a name='M-ServerCorePages-IndexModel-GetManagedMultiLangCssFiles'></a>
+### GetManagedMultiLangCssFiles() `method`
+
+##### Summary
+
+MultiLang CSS Library Files List
+
+##### Returns
+
+
+
+##### Parameters
+
+This method has no parameters.
+
 <a name='M-ServerCorePages-IndexModel-GetManagedMultiLangCssLayoutFiles'></a>
 ### GetManagedMultiLangCssLayoutFiles() `method`
 
@@ -2185,42 +2442,27 @@ MultiLang CSS Stylisation Template Controler
 
 This method has no parameters.
 
+<a name='M-ServerCorePages-IndexModel-GetManagedMultiLangJsFiles'></a>
+### GetManagedMultiLangJsFiles() `method`
+
+##### Summary
+
+MultiLang JS Library Files List
+
+##### Returns
+
+
+
+##### Parameters
+
+This method has no parameters.
+
 <a name='M-ServerCorePages-IndexModel-GetManagedMultiLangJsLayoutFiles'></a>
 ### GetManagedMultiLangJsLayoutFiles() `method`
 
 ##### Summary
 
 MultiLang JS Library Files Template Controler
-
-##### Returns
-
-
-
-##### Parameters
-
-This method has no parameters.
-
-<a name='M-ServerCorePages-IndexModel-GetManagedPortalCssLayoutFiles'></a>
-### GetManagedPortalCssLayoutFiles() `method`
-
-##### Summary
-
-Portal CSS Stylisation Template Controler
-
-##### Returns
-
-
-
-##### Parameters
-
-This method has no parameters.
-
-<a name='M-ServerCorePages-IndexModel-GetManagedPortalJsLayoutFiles'></a>
-### GetManagedPortalJsLayoutFiles() `method`
-
-##### Summary
-
-Portal JS Library Files Template Controler
 
 ##### Returns
 
@@ -2376,6 +2618,44 @@ EasyITCenter.DBModel
 ##### Summary
 
 Custom Class Definition for Filtering by string
+
+<a name='T-DynamicRun-Builder-ObservableFileSystemWatcher'></a>
+## ObservableFileSystemWatcher `type`
+
+##### Namespace
+
+DynamicRun.Builder
+
+##### Summary
+
+This is a wrapper around a file system watcher to use the Rx framework instead of event handlers to handle
+    notifications of file system changes.
+
+<a name='M-DynamicRun-Builder-ObservableFileSystemWatcher-#ctor-System-IO-FileSystemWatcher-'></a>
+### #ctor(watcher) `constructor`
+
+##### Summary
+
+Pass an existing FileSystemWatcher instance, this is just for the case where it's not possible to only pass the
+    configuration, be aware that disposing this wrapper will dispose the FileSystemWatcher instance too.
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| watcher | [System.IO.FileSystemWatcher](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.IO.FileSystemWatcher 'System.IO.FileSystemWatcher') |  |
+
+<a name='M-DynamicRun-Builder-ObservableFileSystemWatcher-#ctor-System-Action{System-IO-FileSystemWatcher}-'></a>
+### #ctor() `constructor`
+
+##### Summary
+
+Pass a function to configure the FileSystemWatcher as desired, this constructor will manage creating and applying
+    the configuration.
+
+##### Parameters
+
+This constructor has no parameters.
 
 <a name='T-EasyITCenter-ServerCoreStructure-ProcessClass'></a>
 ## ProcessClass `type`
@@ -2650,6 +2930,14 @@ Necessary for Correct running Server Internal Core Monitoring
 Service email, for info about not available service from HeatchCheck Can be used for
 next Develop, automatic checking problems, missing data and all other Its Necessary for
 Correct running Server Internal Core Monitoring
+
+<a name='P-EasyITCenter-ServerCoreStructure-ServerConfigSettings-EnableAutoShowMdAsHtml'></a>
+### EnableAutoShowMdAsHtml `property`
+
+##### Summary
+
+Zapíná/Vypína Automatické zobrazení MD souboru jako HTML
+v rozsahu celého Web Serveru
 
 <a name='P-EasyITCenter-ServerCoreStructure-ServerConfigSettings-GitServerEnabled'></a>
 ### GitServerEnabled `property`
@@ -3825,8 +4113,8 @@ AutoScheduler Server Controls
 
 This method has no parameters.
 
-<a name='T-EasyITCenter-ServerCoreDBSettings-ServerMarkDownCodeSnippetApi'></a>
-## ServerMarkDownCodeSnippetApi `type`
+<a name='T-EasyITCenter-ServerCoreDBSettings-ServerMarkDownApi'></a>
+## ServerMarkDownApi `type`
 
 ##### Namespace
 
@@ -3839,22 +4127,6 @@ Database Schema Diagram Controller
 ##### See Also
 
 - [Microsoft.AspNetCore.Mvc.Controller](#T-Microsoft-AspNetCore-Mvc-Controller 'Microsoft.AspNetCore.Mvc.Controller')
-
-<a name='M-EasyITCenter-ServerCoreDBSettings-ServerMarkDownCodeSnippetApi-GenerateMarkDownCodeSnippet'></a>
-### GenerateMarkDownCodeSnippet() `method`
-
-##### Summary
-
-Creates a DGML class diagram of most of the entities in the project wher you go to
-localhost/dgml See https://github.com/ErikEJ/SqlCeToolbox/wiki/EF-Core-Power-Tools
-
-##### Returns
-
-a DGML class diagram
-
-##### Parameters
-
-This method has no parameters.
 
 <a name='T-EasyITCenter-ServerCoreConfiguration-ServerModules'></a>
 ## ServerModules `type`
@@ -3894,8 +4166,8 @@ full Server Structure for extremelly simple developing
 | ---- | ---- | ----------- |
 | services | [Microsoft.Extensions.DependencyInjection.IServiceCollection@](#T-Microsoft-Extensions-DependencyInjection-IServiceCollection@ 'Microsoft.Extensions.DependencyInjection.IServiceCollection@') |  |
 
-<a name='M-EasyITCenter-ServerCoreConfiguration-ServerModules-ConfigureGitSevrer-Microsoft-Extensions-DependencyInjection-IServiceCollection@-'></a>
-### ConfigureGitSevrer(services) `method`
+<a name='M-EasyITCenter-ServerCoreConfiguration-ServerModules-ConfigureGitServer-Microsoft-Extensions-DependencyInjection-IServiceCollection@-'></a>
+### ConfigureGitServer(services) `method`
 
 ##### Summary
 
@@ -3928,6 +4200,19 @@ Posibilities https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
 
 Server Module: Generted Developer Documentation for Defvelopers Documentation contain
 full Server Structure for extremelly simple developing
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| services | [Microsoft.Extensions.DependencyInjection.IServiceCollection@](#T-Microsoft-Extensions-DependencyInjection-IServiceCollection@ 'Microsoft.Extensions.DependencyInjection.IServiceCollection@') |  |
+
+<a name='M-EasyITCenter-ServerCoreConfiguration-ServerModules-ConfigureMarkdownAsHtmlFiles-Microsoft-Extensions-DependencyInjection-IServiceCollection@-'></a>
+### ConfigureMarkdownAsHtmlFiles(services) `method`
+
+##### Summary
+
+Server Module: Configure Automatic MDtoHtml Files Show in WebPages
 
 ##### Parameters
 
@@ -4004,6 +4289,19 @@ Server Module: Enable Live Data Monitor
 ##### Parameters
 
 This method has no parameters.
+
+<a name='M-EasyITCenter-ServerCoreConfiguration-ServerModulesEnabling-EnableMarkdownAsHtmlFiles-Microsoft-AspNetCore-Builder-IApplicationBuilder@-'></a>
+### EnableMarkdownAsHtmlFiles(app) `method`
+
+##### Summary
+
+Server Module: Enable Automatic MDtoHtml Files Show in WebPages
+
+##### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| app | [Microsoft.AspNetCore.Builder.IApplicationBuilder@](#T-Microsoft-AspNetCore-Builder-IApplicationBuilder@ 'Microsoft.AspNetCore.Builder.IApplicationBuilder@') |  |
 
 <a name='M-EasyITCenter-ServerCoreConfiguration-ServerModulesEnabling-EnableSwagger-Microsoft-AspNetCore-Builder-IApplicationBuilder@-'></a>
 ### EnableSwagger() `method`
@@ -4184,14 +4482,6 @@ Gets or Sets the debug mode.
 
 Gets or Sets the setting_folder.
 
-<a name='P-EasyITCenter-ServerCoreStructure-ServerRuntimeData-SpecialUserWebRootPath'></a>
-### SpecialUserWebRootPath `property`
-
-##### Summary
-
-User Web Root Path for Startup and Any missing address Automatic Redirection Value must
-start with / Its Portal Model Central Point
-
 <a name='P-EasyITCenter-ServerCoreStructure-ServerRuntimeData-Startup_path'></a>
 ### Startup_path `property`
 
@@ -4223,6 +4513,21 @@ EasyITCenter.ServerCoreStructure
 ##### Summary
 
 Server and Hosted Services Runtime Statusses
+
+<a name='T-EasyITCenter-ServerCoreDBSettings-ServerSystemControlApi'></a>
+## ServerSystemControlApi `type`
+
+##### Namespace
+
+EasyITCenter.ServerCoreDBSettings
+
+##### Summary
+
+Database Schema Diagram Controller
+
+##### See Also
+
+- [Microsoft.AspNetCore.Mvc.Controller](#T-Microsoft-AspNetCore-Mvc-Controller 'Microsoft.AspNetCore.Mvc.Controller')
 
 <a name='T-EasyITCenter-ControllersExtensions-ServerToolsMinifierApi'></a>
 ## ServerToolsMinifierApi `type`

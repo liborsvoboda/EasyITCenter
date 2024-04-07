@@ -31,6 +31,13 @@ A je třeba je oprojít celé.
 
 ---
 
+# Poznámky Vývojáře Aktuálně
+Aktuální Poznámky k Vývoji k nahlednutí. Jaká je vize, nápady, chuť
+a zda není čas se rozhodnout si nasadit systém a podpořit tak vývoj
+
+[EIC - Vývojářské Poznámky](./EIC-WaitForImplement.md)  
+[EIC - Vývojářské Poznámky](./ESB-WaitForImplement.md) 
+
 ### Change Technology
 
 https://github.com/dotnet/windows-desktop?tab=readme-ov-file

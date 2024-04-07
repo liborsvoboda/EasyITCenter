@@ -39,7 +39,7 @@ ONLINE EXAMPLE: https://kliknetezde.cz
 <sup>**For thinking, the development of tools and work with them worthy in the 21st century**</sup>
 
 
-* EasyITCenter - Universal multi-platform MultiDatabase Backend server solution with all standard technologies implemented
+* Golden - Universal multi-platform MultiDatabase Backend server solution with all standard technologies implemented
 * EASYSYSTEMBuilder - Universal modern Metro WPF Frontend System Builder solution for quick and easy development of any system with minimal knowledge
 * Combined solution - is a simple solution for rapid development of any modern system,
     runs perfectly on prepared System Core and templates for Graphical/Click Development
@@ -58,7 +58,7 @@ ONLINE EXAMPLE: https://kliknetezde.cz
 [AUTO_STEPS_Look_First.md](AUTO_STEPS_Look_First.md)  
 [CoreStructureDefinition.md](CoreStructureDefinition.md)  
 [DATABASES.md](DATABASES.md)  
-[EasyITCenter_Code_Help.MD](EasyITCenter_Code_Help.MD)  
+[Golden_Code_Help.MD](Golden_Code_Help.MD)  
 [EASYSYSTEMBuilder_Code_Help.md](EASYSYSTEMBuilder_Code_Help.md)   
 [EASYTools_3rdFreeAddons.MD](EASYTools_3rdFreeAddons.MD)  
 [FIYReporting.md](FIYReporting.md)  
@@ -103,7 +103,7 @@ DATAView / DATADetail / DATAView with SubDATAview / DATAView with SubFullDataDet
 ---
 
 ### EASY-DATA-CENTER
-Visual Studio project solution EasyITCenter ASPNETCORE6 providing:
+Visual Studio project solution Golden ASPNETCORE6 providing:
 
 Simple development of Universal secure Multiplatform MultiDB Backend Server
 With RESTFULL / WEBSOCKET implementations

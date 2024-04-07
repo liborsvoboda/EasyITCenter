@@ -54,6 +54,10 @@
 
                 var data = new EasyITCenterContext().WebMenuLists.Add(record);
                 int result = await data.Context.SaveChangesAsync();
+
+                //Update Server LocalFile
+                DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.WebMenuList);
+
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
             } catch (Exception ex) {
@@ -67,6 +71,10 @@
             try {
                 var data = new EasyITCenterContext().WebMenuLists.Update(record);
                 int result = await data.Context.SaveChangesAsync();
+
+                //Update Server LocalFile
+                DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.WebMenuList);
+
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
             } catch (Exception ex) { return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
@@ -82,6 +90,10 @@
 
                 var data = new EasyITCenterContext().WebMenuLists.Remove(record);
                 int result = await data.Context.SaveChangesAsync();
+
+                //Update Server LocalFile
+                DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.WebMenuList);
+
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
             } catch (Exception ex) {

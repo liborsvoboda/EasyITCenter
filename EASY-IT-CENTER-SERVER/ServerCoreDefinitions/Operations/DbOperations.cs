@@ -41,6 +41,11 @@ namespace EasyITCenter.ServerCoreStructure {
                                 int wgIndexLL = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == wgDataLL.GetType());
                                 if (wgIndexLL >= 0) ServerRuntimeData.LocalDBTableList[wgIndexLL] = wgDataLL; else ServerRuntimeData.LocalDBTableList.Add(wgDataLL);
                                 break;
+                            case "WebMenuLists":
+                                DbSet<WebMenuList>? wmDataLL = new EasyITCenterContext().WebMenuLists;
+                                int wmIndexLL = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == wmDataLL.GetType());
+                                if (wmIndexLL >= 0) ServerRuntimeData.LocalDBTableList[wmIndexLL] = wmDataLL; else ServerRuntimeData.LocalDBTableList.Add(wmDataLL);
+                                break;
                             default: break;
                         }
                         if (onlyThis != null) break;
@@ -55,6 +60,7 @@ namespace EasyITCenter.ServerCoreStructure {
 
         /// <summary>
         /// Default Operation for Call Translation
+        ///  Over Local Tables Functionality
         /// </summary>
         /// <param name="word">    </param>
         /// <param name="language"></param>
@@ -66,14 +72,22 @@ namespace EasyITCenter.ServerCoreStructure {
 
         /// <summary>
         /// Default Operation for Call CHEckModuleExist
+        ///  Over Local Tables Functionality
         /// </summary>
-        /// <param name="word">    </param>
-        /// <param name="language"></param>
+        /// <param name="modulePath"></param>
         /// <returns></returns>
         public static ServerModuleAndServiceList? CheckServerModuleExists(string modulePath) {
             return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? CheckServerModuleOffline(modulePath) : CheckServerModuleOnline(modulePath);
         }
 
+
+        /// <summary>
+        /// Default Operation For Call WebMenuList Over Local Tables Functionality
+        /// </summary>
+        /// <returns></returns>
+        public static DbSet<WebMenuList>? GetWebMenuList() {
+            return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? GetWebMenuListOffline() : GetWebMenuListOnline();
+        }
 
         /// <summary>
         /// Default Operation For Working Wihth 
@@ -89,8 +103,9 @@ namespace EasyITCenter.ServerCoreStructure {
 
         /// <summary>
         /// Default Operation For Generate Web Portal
+        /// Over Local Tables Functionality
         /// </summary>
-        /// <param name="modulePath"></param>
+        /// <param name="pagePartType"></param>
         /// <returns></returns>
         public static List<WebGlobalPageBlockList>? GetWebGlobalPageBlockLists(string pagePartType) {
             return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? GetWebGlobalPageBlockListsOffline(pagePartType) : GetWebGlobalPageBlockListsOnline(pagePartType);
@@ -101,7 +116,11 @@ namespace EasyITCenter.ServerCoreStructure {
         #region Private or On-line/Off-line Definitions
 
 
-
+        /// <summary>
+        /// Get WebGlobalPageBlockList Offline Method
+        /// </summary>
+        /// <param name="pagePartType"></param>
+        /// <returns></returns>
         private static List<WebGlobalPageBlockList>? GetWebGlobalPageBlockListsOffline(string pagePartType) {
             int index = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == new List<WebGlobalPageBlockList>().GetType());
             return ((List<WebGlobalPageBlockList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => a.Active && a.PagePartType.ToLower() == pagePartType.ToLower()).ToList();
@@ -110,9 +129,9 @@ namespace EasyITCenter.ServerCoreStructure {
 
 
         /// <summary>
-        /// Get Check ServerModule from DB 
+        ///  Get WebGlobalPageBlockList OnLine Method
         /// </summary>
-        /// <param name="modulePath"></param>
+        /// <param name="pagePartType"></param>
         /// <returns></returns>
         private static List<WebGlobalPageBlockList>? GetWebGlobalPageBlockListsOnline(string pagePartType) {
             return new EasyITCenterContext().WebGlobalPageBlockLists.Where(a => a.Active && a.PagePartType.ToLower() == pagePartType.ToLower()).ToList();
@@ -177,6 +196,28 @@ namespace EasyITCenter.ServerCoreStructure {
             return new List<WebCoreFileList>();
         }
 
+
+
+
+        /// <summary>
+        /// Get FullMenu List from OneTime Load Server List
+        /// </summary>
+        /// <returns></returns>
+        private static DbSet<WebMenuList>? GetWebMenuListOffline() {
+            int index = ServerRuntimeData.LocalDBTableList.ToList().FindIndex(a => a.GetType() == new List<WebMenuList>().GetType());
+
+            return ((DbSet<WebMenuList>)ServerRuntimeData.LocalDBTableList[index]);
+        }
+
+
+
+        /// <summary>
+        /// Get FillMenu List from DB by Disabled AutoLocalTables
+        /// </summary>
+        /// <returns></returns>
+        private static DbSet<WebMenuList>? GetWebMenuListOnline() {
+            return new EasyITCenterContext().WebMenuLists;
+        }
 
 
         /// <summary>

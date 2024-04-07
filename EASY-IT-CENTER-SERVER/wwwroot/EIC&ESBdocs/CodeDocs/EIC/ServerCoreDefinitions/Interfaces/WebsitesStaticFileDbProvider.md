@@ -1,5 +1,5 @@
 
-```csharp   
+```cs   
 
 using EasyITCenter.Services;
 using Microsoft.Extensions.FileProviders;

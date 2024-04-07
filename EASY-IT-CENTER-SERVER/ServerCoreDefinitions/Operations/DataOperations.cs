@@ -10,6 +10,20 @@ namespace EasyITCenter.ServerCoreStructure {
     public static class DataOperations {
 
         /// <summary>
+        /// Convert String to Enum
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static T ToEnum<T>(this string value) {
+            Type enumType = typeof(T);
+            if (!enumType.IsEnum) {
+                CoreOperations.SendEmail(new MailRequest() { Content = "DataOperation ToEnum Method line 22: T must be an Enumeration type." + enumType.ToString() });
+            } return (T)Enum.Parse(typeof(T), value, true);
+        }
+
+
+        /// <summary>
         /// Change First Character of String
         /// </summary>
         /// <param name="str">The string.</param>

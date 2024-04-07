@@ -49,10 +49,12 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <param name="newWebSocket"> The new web socket.</param>
         /// <param name="socketAPIPath">The socket path.</param>
         public static async void AddSocketConnectionToCentralList(WebSocket newWebSocket, string socketAPIPath) {
-            ServerRuntimeData.CentralWebSocketList.Add(new Tuple<WebSocket, WebSocketExtension>(newWebSocket, new WebSocketExtension() {
-                socketAPIPath = socketAPIPath,
-                SocketTimeout = DateTimeOffset.UtcNow.AddMinutes(ServerConfigSettings.WebSocketTimeoutMin)
-            }));
+            try {
+                ServerRuntimeData.CentralWebSocketList.Add(new Tuple<WebSocket, WebSocketExtension>(newWebSocket, new WebSocketExtension() {
+                    socketAPIPath = socketAPIPath,
+                    SocketTimeout = DateTimeOffset.UtcNow.AddMinutes(ServerConfigSettings.WebSocketTimeoutMin)
+                }));
+            } catch { }
 
             //welcome message
             await SendMessageToClientSocket(newWebSocket, ServerConfigSettings.ConfigCoreServerRegisteredName + " " + DbOperations.DBTranslate("welcome"));
@@ -66,13 +68,14 @@ namespace EasyITCenter.ServerCoreStructure {
         public static async void SendMessageAndUpdateWebSocketsInSpecificPath(string socketAPIPath, string message) {
             //clean invalid Sockets before updating
             DisposeSocketConnectionsWithTimeOut();
-
-            foreach (Tuple<WebSocket, WebSocketExtension> socket in ServerRuntimeData.CentralWebSocketList) {
-                if (socket.Item2.socketAPIPath == socketAPIPath) {
-                    await SendMessageToClientSocket(socket.Item1, message);
-                    socket.Item2.SocketTimeout = DateTimeOffset.UtcNow.AddMinutes(ServerConfigSettings.WebSocketTimeoutMin);
+            try {
+                foreach (Tuple<WebSocket, WebSocketExtension> socket in ServerRuntimeData.CentralWebSocketList) {
+                    if (socket.Item2.socketAPIPath == socketAPIPath) {
+                        await SendMessageToClientSocket(socket.Item1, message);
+                        socket.Item2.SocketTimeout = DateTimeOffset.UtcNow.AddMinutes(ServerConfigSettings.WebSocketTimeoutMin);
+                    }
                 }
-            }
+            } catch { }
         }
 
         /// <summary>
@@ -80,10 +83,12 @@ namespace EasyITCenter.ServerCoreStructure {
         /// Sockets from Central List. Are Closed and Disposed Only with Timeout or with closed Connection
         /// </summary>
         public static int DisposeSocketConnectionsWithTimeOut() {
-            ServerRuntimeData.CentralWebSocketList.ForEach(socket => {
-                if (socket.Item2.SocketTimeout < DateTimeOffset.UtcNow) { socket.Item1.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None); }
-            });
-            ServerRuntimeData.CentralWebSocketList.RemoveAll(socket => socket.Item1.State != WebSocketState.Open);
+            try {
+                ServerRuntimeData.CentralWebSocketList.ForEach(socket => {
+                    if (socket.Item2.SocketTimeout < DateTimeOffset.UtcNow) { socket.Item1.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None); }
+                });
+                ServerRuntimeData.CentralWebSocketList.RemoveAll(socket => socket.Item1.State != WebSocketState.Open);
+            } catch { }
             return ServerRuntimeData.CentralWebSocketList.Count;
         }
 

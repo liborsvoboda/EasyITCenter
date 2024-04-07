@@ -20,6 +20,35 @@
         InStandbyMode
     }
 
+
+    /// <summary>
+    /// Request Types For Selected correct Layout 
+    /// </summary>
+    public enum RouteLayout {
+        MarkDownLayout,
+        StaticLayout,
+        PortalLayout,
+        CleanLayout,
+        MetroLayout,
+        MultiLangLayout,
+        CentralLayout,
+        GlobalLayout,
+        GitHubLayout
+
+    }
+
+
+    /// <summary>
+    /// Routing Command statuses for Control 
+    /// Routing and Layout Logic
+    /// </summary>
+    public enum RoutingResult {
+        Next,
+        Return,
+        None
+    }
+
+
     /// <summary>
     /// Server Process class for running external prrocesses
     /// </summary>
@@ -39,6 +68,7 @@
         SystemTranslationLists,
         ServerModuleAndServiceLists,
         WebCoreFileLists,
-        WebGlobalPageBlockLists
+        WebGlobalPageBlockLists,
+        WebMenuList
     }
 }

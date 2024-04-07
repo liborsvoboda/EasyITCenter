@@ -13,7 +13,6 @@
             _httpContextAccessor = httpContextAccessor;
         }
 
-
         /// <summary>
         /// WebStatic Files for Website and Path
         /// Get Full Folder Info 
