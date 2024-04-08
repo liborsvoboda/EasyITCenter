@@ -1,4 +1,65 @@
-﻿<a name='assembly'></a>
+﻿### Nový Dokument Portal a příprava k Vývoji Online z Web Editorů
+**Podívejte se čerstvě Vydaný Dokumentační Portal komlpet v Češtině.**
+
+Díky implementovanému AUTO překladači se už nestane že něčemu neporozumíte.   
+Protože Správné porozumění je nejčastější Kámen Úrazu u tolik Trpících Dokumentací.   
+Psát Dokumentaci je totiž horší než vývoj.   
+
+1. [Dokument Portal ANY LANG](https://KlikneteZde.Cz/EIC&ESBdocs/CodeDocs "Portál Dokumentace s Ukázkami připravených Nástrojů")
+
+2. [MS System Builder Online na Webu](https://KlikneteZde.Cz:8000 "MS System Builder Online")  
+
+3. [Web Portal tvořený již nyní Editorem v Systému](https://KlikneteZde.Cz:8000/Portal "Web Portal tvořený již nyní Editorem v Systému")  
+
+Věřím, že budete mít zajímavou podívanou co se dá nachystat ve volném čase v
+1 Měsíci.
+
+### Poznámky, Které Vznikly při Nasazení Doc.Portálu
+
+# First TODO v Pořadí
+* Routingem muzu treba image nebo html file nebo cokoliv poslat do takoveho layoutu ktery v sobe bude mit editor a nacte si dany soubor sam
+  a tak muzu udelat staticky html editor pro subdomain file
+
+* Přidat Novou Agengu: HTML Generátory: Ya v knihovně nachystat generování různých typů HTML
+bude i nástroj při tvorbě Statických webů, prezentačních stránek, statických stránek,
+Přehledů, dokumentace, partnerská příprava dat
+
+* vytvořit remote konzoli na server pro moznost instalace a stravy online ze systemu
+
+* dodělat dynamicke API z SQL   
+* dodělat vyhledávání ve všech DB dokumentacích pro Editory - Search Panel     
+* Udělat sloučený Export vybraných knihoven jako StartuUp Script CSS     
+* Vytvořit agendu Nastavení k Docs, styly s uploadem, linky    
+* Vytvořit agendu napoveda kodu s vlastnimi castmi kodu - codecompletention   
+* Vytvořit Gendu Generování Dokumentace MD   
+* Vytvořit Agendu Generátory pro Web Portal a stranku skladat i z Generátorů   
+* Prenest Sablony Html Souboru z Razor do Agendy pro uplnou spravu  
+  + zrusit agendu includovane scripty so sablon, - budou si udrzovat sablony   
+  + takto: vytvořit agendu nastroju a k nim templaty v ni budou i editory a nastroje   
+  + Kazdy Layout bude mit svoji Page a to bude plate i pro portaly   
+  + PS: portalum dat index znacku a dovolit jich neomezene   
+  A k nim Sablony Stranek a tak pujde delat nastroje s Menu Atd, vazba musi byt zapsana v nich  
+  Ukladat je stejne jako portal scripty jsou potreba pro build serveru = dynamicke programovani   
+* TODO slozky upravit na browsable, allowedOpen in browser, must be authorized Nova agenda  
+
+To je prace cca na 2 TYDNY, škoda že Chybí klientela, která by mi dala   
+prostor Věnovat Tomuto řešení:  
+* MultiServer ANY
+* MultiDB  
+* MultiSystem    
+[kde i System bude příští měsic taky multi web server]  spoustet si sve web aplikace   
+to vse si muzete vyzkoušet jižř nyni Online.
+
+V sekce ke Stažení  najdete Databázi MSSQL, Server i System Klienta
+ v Plne verzi na 30 DNÍ. Když budete chtít pomoci s install.exe neváhejte se Ozvat.
+
+Teším se na společné Zítřky
+
+S pozdravem
+Svoboda Libor 33let Vývojář
+
+----
+
 ### EASY-SYSTEM-Builder & EASY-DATA-Center & Visual Studio Help  
 ### OS GIT WINDOWS LINUX MARKDOWN DOC SCHEMA DATABASES
 * target of the new Groupware Solutions is set Maximal processes to this automatic solutions. 
@@ -109,5 +170,4 @@ Use File: install.bat
 ```
 
 ---
-
 

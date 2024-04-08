@@ -1,2 +1,0 @@
-/*! For license information please see elixir.contribution.js.LICENSE.txt */
-import{registerLanguage}from"../_.contribution";registerLanguage({id:"elixir",extensions:[".ex",".exs"],aliases:["Elixir","elixir","ex"],loader:()=>import("./elixir")});

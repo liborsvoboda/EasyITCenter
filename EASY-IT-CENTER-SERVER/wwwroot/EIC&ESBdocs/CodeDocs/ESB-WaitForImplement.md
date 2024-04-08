@@ -1,10 +1,14 @@
 ﻿
-# First TODO v Pořadí
-
+# Remember
 **!! CEFSHARP nepovyšovat , MAJI BUG !!!** - půjde do Backupu Nahrazen WebView2 
 
+
+# First TODO v Pořadí
+* Routingem muzu treba image nebo html file nebo cokoliv poslat do takoveho layoutu ktery v sobe bude mit editor a nacte si dany soubor sam
+  a tak muzu udelat staticky html editor pro subdomain file
+
 * Přidat Novou Agengu: HTML Generátory: Ya v knihovně nachystat generování různých typů HTML
-bude i nástroj při tvorně Statických webů, prezentačních stránek, statických stránek,
+bude i nástroj při tvorbě Statických webů, prezentačních stránek, statických stránek,
 Přehledů, dokumentace, partnerská příprava dat
 
 * vytvořit remote konzoli na server pro moznost instalace a stravy online ze systemu
@@ -17,8 +21,14 @@ Přehledů, dokumentace, partnerská příprava dat
 
 * VYTvořit Gendu Generování Dokumentace MD
 * Vytvořit Agendu Generátory pro Web Portal a stranku skladat i z Generátorů
-
-
+* Prenest Sablony Html Souboru z Razor do Agendy pro uplnou spravu
+  + zrusit agendu includovane scripty so sablon, - budou si udrzovat sablony
+  + takto: vytvořit agendu nastroju a k nim templaty v ni budou i editory a nastroje 
+  + Kazdy Layout bude mit svoji Page a to bude plate i pro portaly
+  + PS: portalum dat index znacku a dovolit jich neomezene
+  A k nim Sablony Stranek a tak pujde delat nastroje s Menu Atd, vazba musi byt zapsana v nich
+  Ukladat je stejne jako portal scripty jsou potreba pro build serveru = dynamicke programovani
+* TODO slozky upravit na browsable, allowedOpen in browser, must be authorized Nova agenda
 
  
 //Links to csv minning form URL api 

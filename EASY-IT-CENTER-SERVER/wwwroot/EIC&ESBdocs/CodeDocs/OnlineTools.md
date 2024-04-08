@@ -31,7 +31,7 @@ viz ukázka Dokumentací na:
 * [Dohledové Centrum Prahled Stavu](/ServerHealthService) Přehled Stavů Dohledového Centra
 * [Docs Prohlížeč verzované Dokumentace](https://kliknetezde.cz/Docs)
 * [ExpertDocViewer Prohlížeč verzované Dokumentace pro Libovolné Webové Stránky](https://kliknetezde.cz/server-doc/expertdoc-viewer/)
-* [ExpertDocEditor Editor verzované Dokumentace pro Libovolné Webové Stránky](https://kliknetezde.cz/server-doc/expertdoc-viewer/)
+* [ExpertDocEditor Editor verzované Dokumentace pro Libovolné Webové Stránky](https://kliknetezde.cz/server-doc/expertdoc-editor/)
 * [Ke stažení k Dispozici 30denní PLná Verze EIC + EBS včetně Databáze ](https://kliknetezde.cz/Downloads)
 * [Privátní Github Server - Jestě ve vývoji ](https://kliknetezde.cz/Github)
 * [XamlCZ - Export automaticky spracovaného Slovníku pro Řešení](https://kliknetezde.cz/ServerCoreExport/XamlCz)

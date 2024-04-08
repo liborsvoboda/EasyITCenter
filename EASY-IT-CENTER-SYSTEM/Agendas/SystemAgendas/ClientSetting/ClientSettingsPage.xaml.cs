@@ -57,12 +57,12 @@ namespace EasyITSystemCenter.Pages {
 
         #endregion helper methods
 
-        public async void LoadDataList() {
+        public void LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
                 //Generate Menu Panel
                 TabMenuList.Items.Clear();
-                SystemLocalEnumSets.sections.ToList().ForEach(async section => {
+                SystemLocalEnumSets.sections.ToList().ForEach(section => {
                     try {
                         WrapPanel tabMenuPanel = new WrapPanel() { Name = "wp_" + section.Value, Width = 850, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
 
@@ -72,7 +72,7 @@ namespace EasyITSystemCenter.Pages {
                 });
 
                 //Generate Config Fields
-                App.appRuntimeData.AppClientSettings.ToList().ForEach(async configuration => {
+                App.appRuntimeData.AppClientSettings.ToList().ForEach(configuration => {
                     try {
                         //Get Parent Object
                         WrapPanel targetGrid = ((WrapPanel)TabMenuList.Items.Cast<TabItem>().ToList().Where(a => a.Name.StartsWith(configuration.Key.Split('_')[0])).First().Content);
@@ -242,7 +242,7 @@ namespace EasyITSystemCenter.Pages {
                         });
                     });
                 }
-            } catch (Exception ex) { }
+            } catch (Exception ex) { App.ApplicationLogging(ex); }
         }
 
 

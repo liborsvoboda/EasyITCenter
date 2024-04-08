@@ -1,1 +1,0 @@
-YAHOO.util.DDM.handleMouseUp=function(A){clearTimeout(this.clickTimeout);if(this.dragThreshMet){if(this.fromTimeout){this.fromTimeout=false;this.handleMouseMove(A)}this.fromTimeout=false;this.fireEvents(A,true)}this.stopDrag(A);this.stopEvent(A)};

@@ -1,12 +1,13 @@
-﻿@page "/ServerCoreTools/MarkDown"
+﻿@page "/MarkDown"
+@{ Layout = "/ServerCorePages/Shared/MarkDownLayout.cshtml"; }
 
 @addTagHelper *, WebOptimizer.Core
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, Westwind.AspNetCore.Markdown
-@model ServerCorePages.MarkdownModel
 @using Microsoft.AspNetCore.Html;
+@using EasyITCenter.ServerCoreStructure;
 @using Westwind.AspNetCore.Markdown;
-
+@model ServerCorePages.MarkDownModel
 @{
     ViewBag.Title = "EIC-MDsolution";
 }
@@ -40,9 +41,28 @@
     </div>
 
     <div id="contentWindow" style="min-width: 1024px !important;width: 100vw !important;max-width: 1024px !important;">
-  @*   <markdown> *@
-        @Html.Raw(MarkdownModel.result)
- @*    </markdown> *@
+    <markdown>
+@{
+            string? requestedUrlPath = ""; HtmlString fileContent = new HtmlString(null); string mdfileContent;
+    try {//Standalone Load File From Url Request
+        try { requestedUrlPath = ((string?)this.HttpContext.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
+        string? filePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
+        //fileContent = System.IO.File.ReadAllText(filePath);
+        fileContent = Markdown.ParseHtmlString(System.IO.File.ReadAllText(filePath));
+    } catch {
+        try { requestedUrlPath = ((string?)HttpContext.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
+        string? filePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
+        mdfileContent = System.IO.File.ReadAllText(filePath);
+    }
+
+    if (MarkDownModel.result != null) {
+        @Html.Raw(MarkDownModel.result);
+    } else if (fileContent != null) {
+        @Html.Raw(fileContent);
+    }
+
+}
+    </markdown>
     </div>
 
     <hr />

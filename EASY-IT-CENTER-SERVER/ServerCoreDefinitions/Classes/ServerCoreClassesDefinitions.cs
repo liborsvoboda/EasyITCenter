@@ -25,16 +25,18 @@
     /// Request Types For Selected correct Layout 
     /// </summary>
     public enum RouteLayout {
+        CentralLayout,
+        EasyDataLayout,
+        EmptyLayout,
+        GitHubLayout,
+        GlobalLayout,
+        HtmlFileEditorLayout,
         MarkDownLayout,
-        StaticLayout,
-        PortalLayout,
-        CleanLayout,
         MetroLayout,
         MultiLangLayout,
-        CentralLayout,
-        GlobalLayout,
-        GitHubLayout
-
+        PortalLayout,
+        ServerModulesLayout,
+        StaticFileLayout
     }
 
 
@@ -68,7 +70,6 @@
         SystemTranslationLists,
         ServerModuleAndServiceLists,
         WebCoreFileLists,
-        WebGlobalPageBlockLists,
-        WebMenuList
+        WebGlobalPageBlockLists
     }
 }

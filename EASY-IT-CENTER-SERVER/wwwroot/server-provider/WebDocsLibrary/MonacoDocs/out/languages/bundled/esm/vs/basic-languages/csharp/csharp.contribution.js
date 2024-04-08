@@ -1,2 +1,0 @@
-/*! For license information please see csharp.contribution.js.LICENSE.txt */
-import{registerLanguage}from"../_.contribution";registerLanguage({id:"csharp",extensions:[".cs",".csx",".cake"],aliases:["C#","csharp"],loader:()=>import("./csharp")});

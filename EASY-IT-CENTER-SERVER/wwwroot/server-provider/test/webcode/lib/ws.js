@@ -1,2 +1,0 @@
-// Does nothing
-module.exports = {};

@@ -1,5 +1,4 @@
-﻿using EasyITCenter.ToolsControllers;
-using Microsoft.Extensions.Hosting.Internal;
+﻿using Microsoft.Extensions.Hosting.Internal;
 using Westwind.AspNetCore.Markdown;
 
 namespace EasyITCenter.ServerCoreDBSettings {

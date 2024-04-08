@@ -1,6 +1,6 @@
 ﻿
 
-## Ukázka Veřejně Dostupných Nástrojů, Modulů Serveru    
+# Ukázka Veřejně Dostupných Nástrojů, Modulů Serveru    
 Implementovaný Automatický Překladač v celém Web řešení Udělao z vývoje Hračku.   
 Na rovinu špatné nebo nedostatečné porozumění kolikrát hrozně napsané dokumentace jenejvětším kamenem úrazu.  
 
@@ -31,7 +31,7 @@ viz ukázka Dokumentací na:
 * [Dohledové Centrum Prahled Stavu](/ServerHealthService) Přehled Stavů Dohledového Centra
 * [Docs Prohlížeč verzované Dokumentace](https://kliknetezde.cz/Docs)
 * [ExpertDocViewer Prohlížeč verzované Dokumentace pro Libovolné Webové Stránky](https://kliknetezde.cz/server-doc/expertdoc-viewer/)
-* [ExpertDocEditor Editor verzované Dokumentace pro Libovolné Webové Stránky](https://kliknetezde.cz/server-doc/expertdoc-viewer/)
+* [ExpertDocEditor Editor verzované Dokumentace pro Libovolné Webové Stránky](https://kliknetezde.cz/server-doc/expertdoc-editor/)
 * [Ke stažení k Dispozici 30denní PLná Verze EIC + EBS včetně Databáze ](https://kliknetezde.cz/Downloads)
 * [Privátní Github Server - Jestě ve vývoji ](https://kliknetezde.cz/Github)
 * [XamlCZ - Export automaticky spracovaného Slovníku pro Řešení](https://kliknetezde.cz/ServerCoreExport/XamlCz)
@@ -45,18 +45,18 @@ viz ukázka Dokumentací na:
 * [Libovolné Vlastní Moduly ukázka PrintPage](https://KlikneteZde.Cz/PrintPageModuleList)
 
 
-## Webové Frameworky, Systémy, WebStránky, Nástroje, Editory, Generátoy
+# Webové Frameworky, Systémy, WebStránky, Nástroje, Editory, Generátoy
 Naleznetek prohlednutí Online na novém portálu Dokuemtace.
 Všechna řešení jsou statická takže není nutný žadný build a změny se projevují IHNED
 * [Nový Portál Dokumentace EIC&ESB ve 3 Dnech](https://kliknetezde.cz/EIC&ESBdocs/CodeDocs)  
-* 
 
-## **Implementované Nástroje Třetích stran**
+
+# **Implementované Nástroje Třetích stran**   
 
 * [Mermaid Grafika](https://mermaid.js.org/intro/) 
 * [MarkDown Základy](https://www.markdownguide.org/basic-syntax/) 
 * [MarkDown Advance](https://www.markdownguide.org/extended-syntax/) 
 * [Mermaid Editor](https://mermaid.live/) 
 
-A velká spousta k implementaci Systémových a třetích stran
+A velká spousta k implementaci Systémových a třetích stran   
 

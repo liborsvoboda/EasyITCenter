@@ -1,74 +1,63 @@
 ﻿@addTagHelper *, WebOptimizer.Core
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Westwind.AspNetCore
+@addTagHelper *, Westwind.AspNetCore.Markdown
 
 @using ServerCorePages
-@using EasyITCenter.DBModel;
-@using EasyITCenter.ServerCoreStructure;
-@using EasyITCenter.ServerCoreWebPages;
+@using EasyITCenter.DBModel
+@using EasyITCenter.ServerCoreStructure
+@using EasyITCenter.ServerCoreWebPages
+@using Westwind.AspNetCore.Markdown;
+@using Microsoft.AspNetCore.Html;
+@using System.Security.Claims;
 @namespace ServerCorePages
 @{
 
-    ServerModuleAndServiceList? serverModule = null; ServerWebPagesToken? webpagestoken = null; string? portalRedirect = null;
-    try { serverModule = ((ServerModuleAndServiceList?)Context.Items.FirstOrDefault(a => a.Key.ToString() == "ServerModule").Value); } catch { }
-    try { webpagestoken = ((ServerWebPagesToken?)Context.Items.FirstOrDefault(a => a.Key.ToString() == "ServerWebPagesToken").Value); } catch { }
-    try { portalRedirect = Context.Items.FirstOrDefault(a => a.Key.ToString() == "PortalRedirect").Value?.ToString(); } catch { }
-
-    /*
-             try {
-                string? requestedUrlPath = "";
-                try { requestedUrlPath = ((string?)Context.Items.FirstOrDefault(a => a.Key.ToString() == "CorectedUrlPath").Value); } catch { }
-                string? markdownFilePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
-                if (!System.IO.File.Exists(markdownFilePath)) { markdownFilePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(ServerConfigSettings.RedirectPath); }
-                var markdown = System.IO.File.ReadAllText(markdownFilePath);
-                this.Html.Raw(markdown);
-            } catch {
-                string? requestedUrlPath = "";
-                try { requestedUrlPath = ((string?)Context.Items.FirstOrDefault(a => a.Key.ToString() == "CorectedUrlPath").Value); } catch { }
-                string? markdownFilePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
-                var markdown = System.IO.File.ReadAllText(markdownFilePath);
-                MarkdownModel.result = markdown.ToString();
-            }
-*/
+    //Load Result From Url Checker
+    Context.Items = CoreOperations.ChechUrlRequestValidOrAuthorized(Context).Items;
 
 
-    RouteLayout? routeLayout = RouteLayout.CleanLayout;
+    RouteLayout routeLayout = RouteLayout.PortalLayout;
     try { routeLayout = ((RouteLayout)Context.Items.FirstOrDefault(a => a.Key.ToString() == "RouteLayout").Value); } catch { }
-
     string? FileValidUrl = "";
     try { FileValidUrl = ((string?)Context.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
 
+    ServerModuleAndServiceList? serverModule = null; ServerModuleAndServiceList? loginModule = null; ServerWebPagesToken? webpagestoken = null; string? portalRedirect = null;
+    try { serverModule = ((ServerModuleAndServiceList?)Context.Items.FirstOrDefault(a => a.Key.ToString() == "ServerModule").Value); } catch { }
+    try { loginModule = ((ServerModuleAndServiceList?)Context.Items.FirstOrDefault(a => a.Key.ToString() == "LoginModule").Value); } catch { }
+    try { webpagestoken = ((ServerWebPagesToken?)Context.Items.FirstOrDefault(a => a.Key.ToString() == "ServerWebPagesToken").Value); } catch { }
+    try { portalRedirect = Context.Items.FirstOrDefault(a => a.Key.ToString() == "PortalRedirect").Value?.ToString(); } catch { }
+
+    try
+    {
+        string? fileContent = "";
+        string? filePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(FileValidUrl);
+        if (serverModule != null) { this.Html.Raw(serverModule.CustomHtmlContent);
+
+        }
+
+        if (serverModule == null && !System.IO.File.Exists(filePath)) { filePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(ServerConfigSettings.RedirectPath); }
+        if (serverModule == null && !System.IO.File.Exists(filePath)) {
+            if (!filePath.ToLower().EndsWith(".md")) { fileContent = System.IO.File.ReadAllText(filePath); } else { fileContent = Markdown.ParseHtmlString(fileContent)?.Value?.ToString(); }
+            this.Html.Raw(fileContent);
+        }
+    } catch {
+    }
 
     //TODO change this Management to Set Over Administration With Full Online Dynamic Control
-    
-    if (routeLayout == RouteLayout.StaticLayout) {
-        Layout = "/ServerCorePages/Shared/StaticLayout.cshtml";
 
-    } else if (routeLayout == RouteLayout.MarkDownLayout) {
-        Layout = "/ServerCorePages/Shared/MarkDownLayout.cshtml";
 
-    } else if (routeLayout == RouteLayout.GitHubLayout) {
-        Layout = "/ServerCorePages/Shared/GithubLayout.cshtml";
-
-    } else if (routeLayout == RouteLayout.CleanLayout) {
-        Layout = "/ServerCorePages/Shared/CleanLayout.cshtml";
-
-    } else if (routeLayout == RouteLayout.MetroLayout) {
-        Layout = "/ServerCorePages/Shared/MetroLayout.cshtml";
-
-    } else if (routeLayout == RouteLayout.MultiLangLayout) {
-        Layout = "/ServerCorePages/Shared/MultiLangLayout.cshtml";
-
-    } else if (routeLayout == RouteLayout.CentralLayout) {
-        Layout = "/ServerCorePages/Shared/MetroLayout.cshtml";
-
-    } else if (routeLayout == RouteLayout.GlobalLayout) {
-        Layout = "/ServerCorePages/Shared/GlobalLayout.cshtml";
-
+    //Select Detected Layout
+    if (serverModule == null) {
+        Layout = "/ServerCorePages/Shared/" + routeLayout.ToString() + ".cshtml";
+    //Change For Server Module Page
+    } else if (loginModule != null && loginModule.InheritedLayoutType != null) {
+        Layout = "/ServerCorePages/Shared/" + serverModule.InheritedLayoutType + ".cshtml";
     } else if (serverModule != null && serverModule.InheritedLayoutType != null) {
         Layout = "/ServerCorePages/Shared/" + serverModule.InheritedLayoutType + ".cshtml";
-
-    } else { //Portal Pages
+    } else if(serverModule != null && serverModule.InheritedLayoutType == null) { //Portal Pages
         Layout = "/ServerCorePages/Shared/PortalLayout.cshtml";
     }
 
+    this.Layout = Layout;
 }

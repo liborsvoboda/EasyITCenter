@@ -1,2 +1,0 @@
-/*! For license information please see swift.contribution.js.LICENSE.txt */
-import{registerLanguage}from"../_.contribution";registerLanguage({id:"swift",aliases:["Swift","swift"],extensions:[".swift"],mimetypes:["text/swift"],loader:()=>import("./swift")});

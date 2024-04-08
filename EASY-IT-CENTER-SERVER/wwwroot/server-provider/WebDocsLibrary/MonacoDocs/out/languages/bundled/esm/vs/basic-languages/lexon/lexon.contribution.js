@@ -1,2 +1,0 @@
-/*! For license information please see lexon.contribution.js.LICENSE.txt */
-import{registerLanguage}from"../_.contribution";registerLanguage({id:"lexon",extensions:[".lex"],aliases:["Lexon"],loader:()=>import("./lexon")});

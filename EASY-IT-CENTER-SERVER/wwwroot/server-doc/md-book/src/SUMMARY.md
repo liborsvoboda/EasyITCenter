@@ -2,9 +2,9 @@
 
     ```markdown  
 [Ver.2: Databáze Nápověda](./DatabázeNápověda.md)   
-[Ver.2: Automatické Funkcinality](./AutomatickéFunkcinality.md)   
 [Ver.1: Vize a Nápady a Postupy](./VizeaNápadyaPostupy.md)   
 [Ver.3: Popis Změn a Vývoje](./PopisZměnaVývoje.md)   
+[Ver.3: Automatické Funkcinality](./AutomatickéFunkcinality.md)   
 [Ver.2: Použité Nástoje 3rd](./PoužitéNástoje3rd.md)   
 [Ver.19: Úvodní Informace](./ÚvodníInformace.md)   
 [Ver.19: Ceník a Kontakty](./CeníkaKontakty.md)   

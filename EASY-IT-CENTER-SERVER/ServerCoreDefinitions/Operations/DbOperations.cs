@@ -41,11 +41,6 @@ namespace EasyITCenter.ServerCoreStructure {
                                 int wgIndexLL = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == wgDataLL.GetType());
                                 if (wgIndexLL >= 0) ServerRuntimeData.LocalDBTableList[wgIndexLL] = wgDataLL; else ServerRuntimeData.LocalDBTableList.Add(wgDataLL);
                                 break;
-                            case "WebMenuLists":
-                                DbSet<WebMenuList>? wmDataLL = new EasyITCenterContext().WebMenuLists;
-                                int wmIndexLL = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == wmDataLL.GetType());
-                                if (wmIndexLL >= 0) ServerRuntimeData.LocalDBTableList[wmIndexLL] = wmDataLL; else ServerRuntimeData.LocalDBTableList.Add(wmDataLL);
-                                break;
                             default: break;
                         }
                         if (onlyThis != null) break;
@@ -80,14 +75,6 @@ namespace EasyITCenter.ServerCoreStructure {
             return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? CheckServerModuleOffline(modulePath) : CheckServerModuleOnline(modulePath);
         }
 
-
-        /// <summary>
-        /// Default Operation For Call WebMenuList Over Local Tables Functionality
-        /// </summary>
-        /// <returns></returns>
-        public static DbSet<WebMenuList>? GetWebMenuList() {
-            return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? GetWebMenuListOffline() : GetWebMenuListOnline();
-        }
 
         /// <summary>
         /// Default Operation For Working Wihth 
@@ -194,29 +181,6 @@ namespace EasyITCenter.ServerCoreStructure {
                 return new EasyITCenterContext().WebCoreFileLists.Where(a => a.SpecificationType.ToLower() == specType.ToLower() && a.FileName.StartsWith(fileName.ToLower())).ToList();
             }
             return new List<WebCoreFileList>();
-        }
-
-
-
-
-        /// <summary>
-        /// Get FullMenu List from OneTime Load Server List
-        /// </summary>
-        /// <returns></returns>
-        private static DbSet<WebMenuList>? GetWebMenuListOffline() {
-            int index = ServerRuntimeData.LocalDBTableList.ToList().FindIndex(a => a.GetType() == new List<WebMenuList>().GetType());
-
-            return ((DbSet<WebMenuList>)ServerRuntimeData.LocalDBTableList[index]);
-        }
-
-
-
-        /// <summary>
-        /// Get FillMenu List from DB by Disabled AutoLocalTables
-        /// </summary>
-        /// <returns></returns>
-        private static DbSet<WebMenuList>? GetWebMenuListOnline() {
-            return new EasyITCenterContext().WebMenuLists;
         }
 
 

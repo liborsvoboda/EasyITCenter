@@ -64,23 +64,23 @@ s možností si přidávat pouhým zkopírováním Cokoliv dalšího z Github a 
 
 1. Třídy, jsou definice použitých datových typů, které jsou použity jako proměnné hodnoty celého řešení
 Ty jsou rozděleny podle významu do následujících definic:  
-[Definice Nastavení Jádra Serveru](/ServerCoreDefinitions/Classes/ServerConfigurationDefinitions.md)   
-[Definice Komunikací Jádra Serveru](/ServerCoreDefinitions/Classes/ServerCoreClassesDefinitions.md)   
-[Runtime Definice Jádra Serveru](/ServerCoreDefinitions/Classes/ServerCoreRuntimeDefinitions.md)   
-[WebSocket Definice](/ServerCoreDefinitions/Classes/WebSocketClassesDefinitions.md)   
+[Definice Nastavení Jádra Serveru](/CodeDocs/EIC/ServerCoreDefinitions/Classes/ServerConfigurationDefinitions.md)   
+[Definice Komunikací Jádra Serveru](/CodeDocs/EIC/ServerCoreDefinitions/Classes/ServerCoreClassesDefinitions.md)   
+[Runtime Definice Jádra Serveru](/CodeDocs/EIC/ServerCoreDefinitions/Classes/ServerCoreRuntimeDefinitions.md)   
+[WebSocket Definice](/CodeDocs/EIC/ServerCoreDefinitions/Classes/WebSocketClassesDefinitions.md)   
 
 a nechtěné nutné bordely externích modulů:   
-[Definice modulu SiteMap](/ServerCoreDefinitions/Classes/ServerCoreWebSitemapClasses.md)   
+[Definice modulu SiteMap](/CodeDocs/EIC/ServerCoreDefinitions/Classes/ServerCoreWebSitemapClasses.md)   
 
 ---
 
 2. Interfaces,je definice různých typů modulů, řešení a jejich funkcionalit v řešení   
 Ty jsou rozděleny podle významu do následujících Funkcionalit:  
-[AutoScheduler](/ServerCoreDefinitions/Interfaces/AutoScheduledTasksDefs.md)   
-[NET,DB,SW,HW,Service,atd.. Monitoring](/ServerCoreDefinitions/Interfaces/HealthCheckNotifycationsDefs.md)   
-[Rozšíření API Auth Info pro Databáze](/ServerCoreDefinitions/Interfaces/HttpRequestsFullUserInfoDefs.md)   
-[Static SubDomain Websites](/ServerCoreDefinitions/Interfaces/WebsitesStaticFileDbProvider.md)   
-[WebSocket Server Monitor](/ServerCoreDefinitions/Interfaces/AutoScheduledTasksDefs.md)   
+[AutoScheduler](/CodeDocs/EIC/ServerCoreDefinitions/Interfaces/AutoScheduledTasksDefs.md)   
+[NET,DB,SW,HW,Service,atd.. Monitoring](/CodeDocs/EIC/ServerCoreDefinitions/Interfaces/HealthCheckNotifycationsDefs.md)   
+[Rozšíření API Auth Info pro Databáze](/CodeDocs/EIC/ServerCoreDefinitions/Interfaces/HttpRequestsFullUserInfoDefs.md)   
+[Static SubDomain Websites](/CodeDocs/EIC/ServerCoreDefinitions/Interfaces/WebsitesStaticFileDbProvider.md)   
+[WebSocket Server Monitor](/CodeDocs/EIC/ServerCoreDefinitions/Interfaces/AutoScheduledTasksDefs.md)   
 
 ---
 
@@ -96,8 +96,8 @@ Bežný Vývoj API k DB se vyvýjí jen pouhým zkopírováním a přejmenován�
 Speciální Funkcionality si pak musíte do této šablony Zaimplementovat: např: Odeslání SMS po uložení záznamu   
 
 * Zde je ukázka nového API pouhou Registrací Tabulky:   
-[Registrace API s Autorizací](/Database/StdAuthGenericProviderApi.md)  
-[Registrace otevřené API](/Database/StdFreeGenericProviderApi.md)  
+[Registrace API s Autorizací](/CodeDocs/EIC/Database/StdAuthGenericProviderApi.md)  
+[Registrace otevřené API](/CodeDocs/EIC/Database/StdFreeGenericProviderApi.md)  
 
 Takto snadno lze vyvíjet libovolný API server který potřebujete pro každý systém, internet, aplikaci  
 
@@ -108,13 +108,13 @@ stačí 1 Šablona REST FULL zajištující vše: INSERT,UPDATE,DELETE,SELECT-AL
 i tak jsou nachystány další šablony pro FULL DB využití PROCEDURY,MULTI-SAVE,SUBFORMS,IMAGES,FILES.
 Zde je jejich Přehled:
 
-[Šablona pro SP proceduru s návratem Generické Tabulky](/APITemplates/TemplateAnySProcedureDataListApi.md)  
-[Šablona pro SP proceduru s návratem Jediné Hodnoty](/APITemplates/TemplateAnySProcedureFieldApi.md)  
-[Šablona Implementace Autorizace Baasic/JWT](/APITemplates/TemplateAuthApi.md)  
-[Šabona API Publikace Obrázků/Souborů](/APITemplates/TemplateImageApi.md)  
-[RestFull Šablona API sta49 na v 95% Požadavků](/APITemplates/TemplateListApi.md)  
-[Šablona Ukládání Seznamu Dat](/APITemplates/TemplateRangeApi.md)  
-[Šablona pro ukládání se Sub Položkami](/APITemplates/TemplateSubRangeListApi.md)  
+[Šablona pro SP proceduru s návratem Generické Tabulky](/CodeDocs/EIC/APITemplates/TemplateAnySProcedureDataListApi.md)  
+[Šablona pro SP proceduru s návratem Jediné Hodnoty](/CodeDocs/EIC/APITemplates/TemplateAnySProcedureFieldApi.md)  
+[Šablona Implementace Autorizace Baasic/JWT](/CodeDocs/EIC/APITemplates/TemplateAuthApi.md)  
+[Šabona API Publikace Obrázků/Souborů](/CodeDocs/EIC/APITemplates/TemplateImageApi.md)  
+[RestFull Šablona API sta49 na v 95% Požadavků](/CodeDocs/EIC/APITemplates/TemplateListApi.md)  
+[Šablona Ukládání Seznamu Dat](/CodeDocs/EIC/APITemplates/TemplateRangeApi.md)  
+[Šablona pro ukládání se Sub Položkami](/CodeDocs/EIC/APITemplates/TemplateSubRangeListApi.md)  
 
 ----
 
@@ -130,13 +130,13 @@ Ajaxovými částmi.
 
 A Zde Zmíněné Layouty a Multi Endopinty Pro Moduly a Specifické Soubory:
 
-[Čistá Šablona pro Libovolný Obsah Dokumentu](/ServerCorePages/Shared/CleanLayout.md)  
-[Šablona pro integrovaný Github Server](/ServerCorePages/Shared/GithubLayout.md)  
-[Šablona pro Integrovaný MarkDown Viewer](/ServerCorePages/Shared/MarkDownLayout.md)  
-[Šablona pro Metro4 Stránky](/ServerCorePages/Shared/MetroLayout.md)  
-[Šablona pro Moduláž Dokumentů Multijazyčná](/ServerCorePages/Shared/MultiLangLayout.md)  
-[Šablona pro Moduláž Dokumentů Více Modulární](/ServerCorePages/Shared/CentralLayout.md)  
-[Šablona pro další jiné Typy Modulací](/ServerCorePages/Shared/GlobalLayout.md)  
+[Čistá Šablona pro Libovolný Obsah Dokumentu](/CodeDocs/EIC/ServerCorePages/Shared/CleanLayout.md)  
+[Šablona pro integrovaný Github Server](/CodeDocs/EIC/ServerCorePages/Shared/GithubLayout.md)  
+[Šablona pro Integrovaný MarkDown Viewer](/CodeDocs/EIC/ServerCorePages/Shared/MarkDownLayout.md)  
+[Šablona pro Metro4 Stránky](/CodeDocs/EIC/ServerCorePages/Shared/MetroLayout.md)  
+[Šablona pro Moduláž Dokumentů Multijazyčná](/CodeDocs/EIC/ServerCorePages/Shared/MultiLangLayout.md)  
+[Šablona pro Moduláž Dokumentů Více Modulární](/CodeDocs/EIC/ServerCorePages/Shared/CentralLayout.md)  
+[Šablona pro další jiné Typy Modulací](/CodeDocs/EIC/ServerCorePages/Shared/GlobalLayout.md)  
 
 Modulacemi je myšleno, že se má načíst stránka, ale v systému existuje 1 nebo více modulů: HTML/JS/CSS
 který odpovídá Čestě Dotazu, tak Dojde k jeho připojení do Obsahu, například Automatický Překladač
@@ -147,10 +147,10 @@ A Zde Kondové Body Ztn. Pevné Body, Kde každý může být jinak modulovaný 
 Nyní stačí zatím 3 pro WEb Portal, Statické Stránky, Různé Dokumenty A Moduly.
 
 
-[Globální Výchozí Endpoint](/ServerCorePages/Index.md)  
-[Integrovaný Web DB Manažer](/ServerCorePages/EasyData.md)   
-[Integrovaný MarkDown Převodník na Html](/ServerCorePages/Markdown.md)   
-[Neaktivní, bude Upraven pro Monitoring](/ServerCorePages/Error.md)    
+[Globální Výchozí Endpoint](/CodeDocs/EIC/ServerCorePages/Index.md)  
+[Integrovaný Web DB Manažer](/CodeDocs/EIC/ServerCorePages/EasyData.md)   
+[Integrovaný MarkDown Převodník na Html](/CodeDocs/EIC/ServerCorePages/Markdown.md)   
+[Neaktivní, bude Upraven pro Monitoring](/CodeDocs/EIC/ServerCorePages/Error.md)    
 
 A to je celé Jádro přes 20 Serverů, 1000+ Objektů pro WEby
 v Řešení Multi Sever, Multi System, Multi web, Multi Lang, NoBuilD,EASY Code, EASY Dev, EASY IT
@@ -205,41 +205,41 @@ Systém již obsahuje přes 100 formulářů z toho je více než 80% systémov�
 
 1. **Zde je Pák ukázek Unikátnívh Formulářů:**   
 
-[Multi Šablona s cca 10 grafy Form](/ESBTemplates/MultiMedia/GraphsPage.xaml.md)  
-[Multi Šablona s cca 10 grafy Funkce](/ESBTemplates/MultiMedia/GraphsPage.xaml.cs.md)   
+[Multi Šablona s cca 10 grafy Form](/CodeDocs/ESB/ESBTemplates/MultiMedia/GraphsPage.xaml.md)  
+[Multi Šablona s cca 10 grafy Funkce](/CodeDocs/ESB/ESBTemplates/MultiMedia/GraphsPage.xaml.cs.md)   
 
-[Prohlížeč Multi Typů Formátů Dokumentů Form](/ESBTemplates/MultiMedia/TemplateDocumentViewPage.xaml.md)  
-[Prohlížeč Multi Typů Formátů Dokumentů Funkce](/ESBTemplates/MultiMedia/TemplateDocumentViewPage.xaml.cs.md)   
+[Prohlížeč Multi Typů Formátů Dokumentů Form](/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateDocumentViewPage.xaml.md)  
+[Prohlížeč Multi Typů Formátů Dokumentů Funkce](/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateDocumentViewPage.xaml.cs.md)   
 
-[Přehrávač Videí Form](/ESBTemplates/MultiMedia/TemplateVideoPage.xaml.md)  
-[Přehrávač Videí Funkce](/ESBTemplates/MultiMedia/TemplateVideoPage.xaml.cs.md)   
+[Přehrávač Videí Form](/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateVideoPage.xaml.md)  
+[Přehrávač Videí Funkce](/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateVideoPage.xaml.cs.md)   
 
-[Prohlížeč 3D Formátů Form](/ESBTemplates/MultiMedia/TemplateSTLPage.xaml.md)  
-[Prohlížeč 3D Formátů Funkce](/ESBTemplates/MultiMedia/TemplateSTLPage.xaml.cs.md)   
+[Prohlížeč 3D Formátů Form](/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateSTLPage.xaml.md)  
+[Prohlížeč 3D Formátů Funkce](/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateSTLPage.xaml.cs.md)   
 
-[Web Prohlížeč Form](/ESBTemplates/MultiMedia/TemplateWebViewPage.xaml.md)    
-[Web Prohlížeč Funkce](/ESBTemplates/MultiMedia/TemplateWebViewPage.xaml.cs.md)   
+[Web Prohlížeč Form](/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateWebViewPage.xaml.md)    
+[Web Prohlížeč Funkce](/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateWebViewPage.xaml.cs.md)   
 
 2. **a Zde Systémové Formuláře:**  
 všimněte si že Fnkční soubor, je skoro vždy stejný - protože se pořád dělá to samé   
 
-[Šablona Data Pohledu a Editace Form](/ESBTemplates/System/TemplateClassListAutoDBTranslationPage.xaml.md)    
-[Šablona Data Pohledu a Editace  Funkce](/ESBTemplates/System/TemplateClassListAutoDBTranslationPage.xaml.cs.md)   
+[Šablona Data Pohledu a Editace Form](/CodeDocs/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationPage.xaml.md)    
+[Šablona Data Pohledu a Editace  Funkce](/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationPage.xaml.cs.md)   
 
-[Šablona Data Pohledu Form](/ESBTemplates/System/TemplateClassListAutoDBTranslationViewPage.xaml.md)    
-[Šablona Data Pohledu Funkce](/ESBTemplates/System/TemplateClassListAutoDBTranslationViewPage.xaml.cs.md)   
+[Šablona Data Pohledu Form](/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationViewPage.xaml.md)    
+[Šablona Data Pohledu Funkce](/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationViewPage.xaml.cs.md)   
 
-[Šablona Data Pohledu a Editace s Podičem Form](/ESBTemplates/System/TemplateClassListAutoDBTranslationWithParentPage.xaml.md)    
-[Šablona Data Pohledu a Editace s Podičem Funkce](/ESBTemplates/System/TemplateClassListAutoDBTranslationWithParentPage.xaml.cs.md)   
+[Šablona Data Pohledu a Editace s Podičem Form](/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithParentPage.xaml.md)    
+[Šablona Data Pohledu a Editace s Podičem Funkce](/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithParentPage.xaml.cs.md)   
 
-[Šablona Data Pohledu a Editace Form](/ESBTemplates/System/TemplateClassListAutoDBTranslationPage.xaml.md)    
-[Šablona Data Pohledu a Editace  Funkce](/ESBTemplates/System/TemplateClassListAutoDBTranslationPage.xaml.cs.md)   
+[Šablona Data Pohledu a Editace Form](/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationPage.xaml.md)    
+[Šablona Data Pohledu a Editace  Funkce](/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationPage.xaml.cs.md)   
 
-[Šablona Data Pohledu a Editace s Celým Rodič Form + Form](/ESBTemplates/System/TemplateClassListAutoDBTranslationWithSubPage.xaml.cs.md)    
-[Šablona Data Pohledu a Editace s Celým Rodič Form + Funkce](/ESBTemplates/System/TemplateClassListAutoDBTranslationWithSubPage.xaml.cs.md)   
+[Šablona Data Pohledu a Editace s Celým Rodič Form + Form](/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubPage.xaml.cs.md)    
+[Šablona Data Pohledu a Editace s Celým Rodič Form + Funkce](/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubPage.xaml.cs.md)   
 
-[Šablona Data Pohledu s Celým Rodičem Form](/ESBTemplates/System/TemplateClassListAutoDBTranslationWithSubViewPage.xaml.md)    
-[Šablona Data Pohledu s Celým Rodičem Funkce](/ESBTemplates/System/TemplateClassListAutoDBTranslationWithSubViewPage.xaml.cs.md)   
+[Šablona Data Pohledu s Celým Rodičem Form](/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubViewPage.xaml.md)    
+[Šablona Data Pohledu s Celým Rodičem Funkce](/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubViewPage.xaml.cs.md)   
 
 
 A tím jsme Vyčerpali Předbolby pro 90% Všech Systémů na Celé Planetě
@@ -248,8 +248,8 @@ A tím jsme Vyčerpali Předbolby pro 90% Všech Systémů na Celé Planetě
 Stačí 1 Definice pro RESTFULL s číselníkem API volání a je HOTOVO
 je potřeba přidávat jen nová api do seznamu.
 
-[Číselník API Endpointů](/ApiModule/APIClasses.md)    
-[Definice API Funkcí](/ApiModule/ApiFunctions.md)   
+[Číselník API Endpointů](/CodeDocs/ESB/ApiModule/APIClasses.md)    
+[Definice API Funkcí](/CodeDocs/ESB/ApiModule/ApiFunctions.md)   
 
 Tyto 2 Definice zajišŤují kopletní Komunikaci Celého Systému.
 
@@ -257,10 +257,10 @@ Tyto 2 Definice zajišŤují kopletní Komunikaci Celého Systému.
 4. **Datové Definice Jadra Systému, které je již hotové**   
 Datové Definice jádra a Modulů, Doplňků
 
-[DDatasety Systému](/GlobalClasses/GlobalClasses.cs.md)    
-[Číselníky Systému - Bude přesunuto do DB](/GlobalClasses/GlobalEnumSetDefinitions.cs.md)   
-[Unikatní Kolekce - Galerie](/GlobalClasses/PhotoCollectionClasses.cs.md)   
-[Dynamickla Kolekce](/GlobalClasses/ConcurrentObservableList.cs.md)
+[DDatasety Systému](/CodeDocs/ESB/GlobalClasses/CodeDocs/ESB/GlobalClasses.cs.md)    
+[Číselníky Systému - Bude přesunuto do DB](/CodeDocs/ESB/GlobalClasses/GlobalEnumSetDefinitions.cs.md)   
+[Unikatní Kolekce - Galerie](/CodeDocs/ESB/GlobalClasses/PhotoCollectionClasses.cs.md)   
+[Dynamickla Kolekce](/CodeDocs/ESB/GlobalClasses/ConcurrentObservableList.cs.md)
 
 Tyto Datové Definice stačí pro provoz Systému o více jak 100 Agendách
 
@@ -268,23 +268,23 @@ Tyto Datové Definice stačí pro provoz Systému o více jak 100 Agendách
 Lze Implemetovat nespočet Generátorů Zde jsou zatím první z nich,
 a jsou plně kompatibilní s Webovou Technologií METRO a zobrazují se tedy i na Webu 
 
-[Generátor Ikon](/GlobalGenerators/IconMaker.cs.md)  
-[Generator Obrázků](/GlobalGenerators/ImageElementGenerator.cs.md)   
+[Generátor Ikon](/CodeDocs/ESB/GlobalGenerators/IconMaker.cs.md)  
+[Generator Obrázků](/CodeDocs/ESB/GlobalGenerators/ImageElementGenerator.cs.md)   
 
 
 5. **Systémové Funkcionality - Operace**   
 Stajně jako u Projektu Serveru jsou zde rozloženy Funkcionality podle povahy.  
 Dobře se s nimi pracuje, a hned je jasné kde je hledat.   
 
-[Komunikační Operace](/GlobalOperations/CommOperations.cs.md)  
-[Datové Operace](/GlobalOperations/DataOperations.cs.md)  
-[Databázové Operace](/GlobalOperations/DBOperations.cs.md)  
-[Formulářové Operace](/GlobalOperations/FormOperations.cs.md)  
-[Souborové Operace](/GlobalOperations/FileOperations.cs.md)  
-[Matematické Operace](/GlobalOperations/MathTypeOperations.cs.md)  
-[Media Operace](/GlobalOperations/MediaOperations.cs.md)  
-[Systémové Operace](/GlobalOperations/SystemOperations.cs.md)  
-[Operace Modulů](/GlobalOperations/ToolsOperations.cs.md)  
+[Komunikační Operace](/CodeDocs/ESB/GlobalOperations/CommOperations.cs.md)  
+[Datové Operace](/CodeDocs/ESB/GlobalOperations/DataOperations.cs.md)  
+[Databázové Operace](/CodeDocs/ESB/GlobalOperations/DBOperations.cs.md)  
+[Formulářové Operace](/CodeDocs/ESB/GlobalOperations/FormOperations.cs.md)  
+[Souborové Operace](/CodeDocs/ESB/GlobalOperations/FileOperations.cs.md)  
+[Matematické Operace](/CodeDocs/ESB/GlobalOperations/MathTypeOperations.cs.md)  
+[Media Operace](/CodeDocs/ESB/GlobalOperations/MediaOperations.cs.md)  
+[Systémové Operace](/CodeDocs/ESB/GlobalOperations/SystemOperations.cs.md)  
+[Operace Modulů](/CodeDocs/ESB/GlobalOperations/ToolsOperations.cs.md)  
 
 Když si je prohlédnete zjistíte že jich není moc, zato dohromady
 dokážou zajistit Tvorbu či provedení Čehokoliv. 

@@ -23,6 +23,8 @@ NUnit Migrator https://github.com/wachulski/nunit-migrator
 https://github.com/dotMorten/DotNetOMDGenerator Generator HTML diagramu 
 https://github.com/wiltaylor/EasyRoslynScript
 
+užitečné JS k postavení čehokoli naprosto stačí 110 repos webviewer apps
+https://github.com/orgs/PDFTron/repositories?type=all&page=3
 
 
 # Nezdokumentované Poznámky

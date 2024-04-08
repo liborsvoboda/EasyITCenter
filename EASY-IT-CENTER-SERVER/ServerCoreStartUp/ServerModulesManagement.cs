@@ -290,8 +290,8 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     builder.HighlightJsStyle = "../../ServerCoreTools/JsCssLibrary/Docs/material-darker.css";
                     builder.GetMdlStyle = "../../ServerCoreTools/JsCssLibrary/Docs/material.min.css";
                     builder.NavBarStyle = MarkdownDocumenting.Elements.NavBarStyle.Default;
-                    builder.RootPathHandling = HandlingType.HandleWithHighOrder;
-                    builder.IndexDocument = "Docs"; //Nemenit moznost ztraty dosahu css
+                    builder.RootPathHandling = HandlingType.Redirect;
+                    builder.SetIndexDocument("AutomatickéFunkcinality"); //Nemenit moznost ztraty dosahu css
 
                     //if (ServerConfigSettings.ServerRazorWebPagesEngineEnabled) builder.AddCustomLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate("DashBoard", ServerConfigSettings.ServiceServerLanguage), "/DashBoard"));
                     //if (ServerConfigSettings.ModuleHealthServiceEnabled) builder.AddCustomLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate("GithubInteli", ServerConfigSettings.ServiceServerLanguage), "/Tools/EDC_ESB_InteliHelp/book/"));
