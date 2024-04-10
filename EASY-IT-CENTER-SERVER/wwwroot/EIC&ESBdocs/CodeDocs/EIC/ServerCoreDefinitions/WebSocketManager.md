@@ -1,4 +1,5 @@
-﻿
+﻿[Zpět](../../index)   
+
 * Server Core Web Helpers
 * System Extensions for Correct Core working
 * DataTypes Conversion Support, etc.

@@ -173,3 +173,6 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string Value { get; set; }
     }
 }
+```
+
+

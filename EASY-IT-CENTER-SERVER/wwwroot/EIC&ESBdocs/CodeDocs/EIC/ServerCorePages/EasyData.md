@@ -1,4 +1,5 @@
-﻿
+﻿[Zpět](../../index)   
+
 ```cshtml  
 
 @page "/easydata/{**entity}"

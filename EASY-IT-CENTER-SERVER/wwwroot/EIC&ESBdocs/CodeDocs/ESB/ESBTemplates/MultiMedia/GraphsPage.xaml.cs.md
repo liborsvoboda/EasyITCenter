@@ -1,4 +1,7 @@
-﻿using EasyITSystemCenter.Classes;
+﻿[Zpět](../../../index)   
+
+```cs   
+using EasyITSystemCenter.Classes;
 using EasyITSystemCenter.GlobalOperations;
 using LiveCharts;
 using LiveCharts.Wpf;
@@ -155,3 +158,5 @@ namespace EasyITSystemCenter.Pages {
         }
     }
 }
+```   
+

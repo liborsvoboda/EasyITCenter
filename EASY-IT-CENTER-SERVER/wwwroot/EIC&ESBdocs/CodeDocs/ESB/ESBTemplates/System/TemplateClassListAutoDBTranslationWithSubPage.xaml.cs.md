@@ -1,4 +1,7 @@
-﻿using EasyITSystemCenter.Api;
+﻿[Zpět](../../../index)   
+
+```cs   
+using EasyITSystemCenter.Api;
 using EasyITSystemCenter.Classes;
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
@@ -670,3 +673,5 @@ namespace EasyITSystemCenter.Pages {
         }
     }
 }
+```
+

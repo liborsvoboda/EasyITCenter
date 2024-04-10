@@ -1,4 +1,7 @@
-﻿using EasyITSystemCenter.Classes;
+﻿[Zpět](../../../index)   
+
+```cs   
+using EasyITSystemCenter.Classes;
 using EasyITSystemCenter.GlobalOperations;
 using Newtonsoft.Json;
 using System.IO;
@@ -31,3 +34,5 @@ namespace EasyITSystemCenter.Pages {
         }
     }
 }
+```  
+

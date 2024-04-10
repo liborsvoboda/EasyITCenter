@@ -1,4 +1,7 @@
-﻿<ResourceDictionary
+﻿[Zpět](../../../index)   
+
+```xml   
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
@@ -137,3 +140,5 @@
     </Style>
 
 </ResourceDictionary>
+```
+

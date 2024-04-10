@@ -1,4 +1,6 @@
-﻿
+﻿[Zpět](../../index)   
+
+
 ```cshtml  
 namespace EasyITCenter.Controllers {
 

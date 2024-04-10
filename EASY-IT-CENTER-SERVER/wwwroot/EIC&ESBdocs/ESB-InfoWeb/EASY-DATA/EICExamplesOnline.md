@@ -1,32 +1,60 @@
-﻿
+﻿# Ukázka Veřejně Dostupných Nástrojů, Modulů Serveru    
+Implementovaný Automatický Překladač v celém Web řešení Udělao z vývoje Hračku.   
+Na rovinu špatné nebo nedostatečné porozumění kolikrát hrozně napsané dokumentace jenejvětším kamenem úrazu.  
 
-## Seznam Veřejně Dostupných Nástrojů, Modulů    
-
-* [DB AutoManageApi](https://KlikneteZde.Cz/AdminApiDocs) Swagger Automaticky Generované Rozhraní
-* [DB EasyDATAManager](https://KlikneteZde.Cz/EasyData) Správce Databáze
-* [DB EntitySchema](https://kliknetezde.cz/DBEntitySchema) Přehled Aktuální Struktury DB
-* [Inteli C# Dev Online](https://kliknetezde.cz/livedev/csharpedit/) Inteligentní Vývoj C# Online
-* [Dohledové Centrum](/ServerHealthService) Přehled Stavů Dohledového Centra
-* [Docs](https://kliknetezde.cz/Docs) Prohlížeč MarkDown Dokumentace
-* [Downloads](https://kliknetezde.cz/Downloads) Sdílená složka serveru
-* [Github](https://kliknetezde.cz/Github) Privátní Github Server
-* [XamlCZ](https://kliknetezde.cz/ServerCoreExport/XamlCz) Automaticky udržovaný Slovník XamlCZ
-* [XamlCZ](https://kliknetezde.cz/ServerCoreExport/XamlCz) Automaticky udržovaný Slovník XamlEN
-* [Export DB Schema](https://kliknetezde.cz/ServerDbDgmlSchema/dgml) Export DB Schema
-* [Robots](https://kliknetezde.cz/robots.txt) Robot.txt
-* [sitemap](https://kliknetezde.cz/sitemap.xml/webpages) 
-* [InteliDocs](https://kliknetezde.cz/server-doc/md-book/book/) 
-* [Expert Prohlížeč](https://kliknetezde.cz/server-doc/expertdoc-viewer/) 
-* [sitemap](https://kliknetezde.cz/sitemap.xml) 
+To je Veškerý Obsah otevřený přes Řešení EasyITcenter,   
+protože vždy zabuduje překladač to stránky a přeloží ji.    
+To znamená publikovat automaticky z jediného jazyka pro celý svět a naopak.  
+viz ukázka Dokumentacích na:   
+* [Nový Tento Nový Portál Dokumentace EIC&ESB ve 3 Dnech](/)   
 
 
+**V přípravě Inteligentí nástroje pro Vývoj a Správu Projwektů Online**   
+* [Inteligentí Vývoj Projektů C# Online](/ServerCoreTools/csharpedit/)    
+* [Inteligentní Vývoj Všech typů kódů s podporou Intelisense Online](/ServerCoreTools/monaco)  
+* [Porovnávání Souborů kódu s podporou Intelisense Online](/ServerCoreTools/monaco/indexdiff.html)  
+* [Mluvící Editor Kódu s možností Implementace InteliSense](/ServerCoreTools/monacospeech/)  
+* [Online Database Desiger pro Vývoj DB Online](/ServerCoreTools/sqldesigner/)  
+* [Nový Online Developer Portal pro vývoj Projektů přes Internet z Editorů - ve fázi přípravy](/server-provider/DeveloperBoard/Ideas/Template)  
+* [Webový Portál Generovaný pomocí Editoru v Systému](/server-provider/DeveloperBoard/Ideas/Template)  
+* [Online Kompilace Kódu - připravuje se vlastní nástroj](/ServerCoreTools/ExternalServices/csharponline.html)  
 
-## **Implementované Nástroje Třetích stran**
+**Další nástoje Serveru**   
+* [DB AutoManageApi Automaticky Generované API Rozhraní + Docs](/AdminApiDocs) 
+* [DB EasyDATABASE Manager Web Správa Databáze](/EasyData)
+* [DB AutoEntity DB Schema](/DBEntitySchema) Přehled Aktuální Struktury DB
+(/ServerCoreTools/csharpedit/) Inteligentní Vývoj C# Online
+
+* [Online Monitoring Serveru](/ServerCoreTools/wsservermonitor.html)  
+* [Dohledové Centrum Prahled Stavu](/ServerHealthService) Přehled Stavů Dohledového Centra
+* [Docs Prohlížeč verzované Dokumentace](/Docs)
+* [ExpertDocViewer Prohlížeč verzované Dokumentace pro Libovolné Webové Stránky](/server-doc/expertdoc-viewer/)
+* [ExpertDocEditor Editor verzované Dokumentace pro Libovolné Webové Stránky](/server-doc/expertdoc-editor/)
+* [Ke stažení k Dispozici 30denní PLná Verze EIC + EBS včetně Databáze ](/Downloads)
+* [Privátní Github Server - Jestě ve vývoji ](/Github)
+* [XamlCZ - Export automaticky spracovaného Slovníku pro Řešení](/ServerCoreExport/XamlCz)
+* [XamlEN - Export automaticky spracovaného Slovníku pro Řešení](/ServerCoreExport/XamlEn) Automaticky udržovaný Slovník XamlEN
+* [Export Databazoveho Schematu ve formátu DGML](/ServerDbDgmlSchema/dgml) Export DB Schema
+* [Robots Web Konfigurační Soubor](/robots.txt) Robot.txt
+* [sitemap](/sitemap.xml/webpages) 
+* [InteliDocs](/server-doc/md-book/book/) 
+* [Expert Prohlížeč](/server-doc/expertdoc-viewer/) 
+* [sitemap](/sitemap.xml) 
+* [Libovolné Vlastní Moduly ukázka PrintPage](/PrintPageModuleList)
+
+
+# Webové Frameworky, Systémy, WebStránky, Nástroje, Editory, Generátoy
+Naleznetek prohlednutí Online na novém portálu Dokuemtace.
+Všechna řešení jsou statická takže není nutný žadný build a změny se projevují IHNED
+* [Nový Portál Dokumentace EIC&ESB ve 3 Dnech](/EIC&ESBdocs/CodeDocs)  
+
+
+# **Implementované Nástroje Třetích stran**   
 
 * [Mermaid Grafika](https://mermaid.js.org/intro/) 
 * [MarkDown Základy](https://www.markdownguide.org/basic-syntax/) 
 * [MarkDown Advance](https://www.markdownguide.org/extended-syntax/) 
 * [Mermaid Editor](https://mermaid.live/) 
 
-A velká spousta k implementaci Systémových a třetích stran
+A velká spousta k implementaci Systémových a třetích stran   
 

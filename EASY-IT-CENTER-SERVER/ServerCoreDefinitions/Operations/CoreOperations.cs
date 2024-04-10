@@ -65,19 +65,14 @@ namespace EasyITCenter.ServerCoreStructure {
                     routeLayout = RouteLayout.StaticFileLayout; /*enable change for md */ routePath = ServerConfigSettings.RedirectPath; routingResult = RoutingResult.Next;
                 }
 
-                //Startup Redirect To Portal
-                if (validPath == null && routePath == "/"
-                    && ServerConfigSettings.RedirectOnPageNotFound && (ServerConfigSettings.RedirectPath.ToLower() == "/" || ServerConfigSettings.RedirectPath.ToLower() == "/portal")) {
-                    routeLayout = RouteLayout.PortalLayout; validPath = ServerConfigSettings.RedirectPath; routingResult = RoutingResult.Next;
-                }
 
-                //Check Portal Id Or MenuName //Here check Menu Items
+                //Check Portal Startup Or Id Or MenuName //Here check Menu Items
                 try {
                     int webMenuId = 0; webMenuId = int.TryParse(routePath.Split("/").Last().Split("-")[0], out int checkInt) ? checkInt : 0;
-                    if (validPath == null && (
-                        /*Portal started*/ (routePath == "/portal" || routePath == "/") ||
-                        /*Portal run*/ (context.Response.StatusCode != StatusCodes.Status200OK && new EasyITCenterContext().WebMenuLists.Where(a => a.Id == webMenuId || a.Name.ToLower() == routePath.Substring(1)).Any())
-                    )) { routeLayout = RouteLayout.PortalLayout; validPath = ServerConfigSettings.RedirectPath; routingResult = RoutingResult.Next; }
+                    if (
+                        /*Portal started*/ (routePath == "/" && ServerConfigSettings.RedirectOnPageNotFound && ServerConfigSettings.RedirectPath.ToLower() == "/portal") || routePath == "/portal" ||
+                        /*Portal run*/ (new EasyITCenterContext().WebMenuLists.Where(a => a.Id == webMenuId || a.Name.ToLower() == routePath.Substring(1)).Any())
+                    ) { routeLayout = RouteLayout.PortalLayout; validPath = ServerConfigSettings.RedirectPath; routingResult = RoutingResult.Next; }
                 } catch { }
                 #endregion
 

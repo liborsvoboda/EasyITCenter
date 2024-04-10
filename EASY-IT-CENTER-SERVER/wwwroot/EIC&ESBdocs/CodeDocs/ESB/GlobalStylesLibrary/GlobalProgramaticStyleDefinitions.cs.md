@@ -36,3 +36,5 @@ namespace EasyITSystemCenter.GlobalStyles {
 
     }
 }
+```
+

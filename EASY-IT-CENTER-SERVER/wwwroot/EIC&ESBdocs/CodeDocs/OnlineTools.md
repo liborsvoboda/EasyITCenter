@@ -2,8 +2,8 @@
 Implementovaný Automatický Překladač v celém Web řešení Udělao z vývoje Hračku.   
 Na rovinu špatné nebo nedostatečné porozumění kolikrát hrozně napsané dokumentace jenejvětším kamenem úrazu.  
 
-To je Pryč Veškerý Obsah otevřený přes Řešení EasyITcenter   
-totiž vždy zabuduje překladač to stránky a přeloží ji.    
+To je Veškerý Obsah otevřený přes Řešení EasyITcenter,   
+protože vždy zabuduje překladač to stránky a přeloží ji.    
 To znamená publikovat automaticky z jediného jazyka pro celý svět a naopak.  
 viz ukázka Dokumentacích na:   
 * [Nový Tento Nový Portál Dokumentace EIC&ESB ve 3 Dnech](/)   

@@ -130,16 +130,16 @@ namespace EasyITCenter {
             //Aplied new Working Style For Files Makdow, Html, Editor, Images,
             //etc Its Need Nes Style For Exclude Folders from this Control
             //Root Server Page To Default Path, Other Is Taken From Static Files
-            app.Use(async (HttpContext context, Func<Task> next) => { await next(); string requestPath = context.Request.Path.ToString().ToLower();bool redirected =false;
+            app.Use(async (HttpContext context, Func<Task> next) => { await next(); 
+                string requestPath = context.Request.Path.ToString().ToLower();bool redirected =false;
 
-                //Excluded Urls For Server Browsing From Page Settings TODO move to Local Dials + New Agenda
-                if (requestPath.StartsWith("/downloads") || requestPath.StartsWith("/server-web") || requestPath.StartsWith("/server-doc") || requestPath.StartsWith("/metro")) { return; }
-
-
-                //Redirect on Start Before Docs Module
-                //if (context.Request.Path.ToString() == "/" && ServerConfigSettings.RedirectOnPageNotFound) { context.Response.Redirect(ServerConfigSettings.RedirectPath); context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-                //else { await next(); }
-
+                //Excluded Urls For Server Browsing From Page Settings, redirected Defined paths
+                //TODO move to Local Dials + New Agenda
+                if (requestPath.StartsWith("/downloads") || requestPath.StartsWith("/server-web") || requestPath.StartsWith("/server-doc") || requestPath.StartsWith("/metro")
+                || requestPath.StartsWith("/portal") || requestPath.StartsWith("/docportal") || requestPath.StartsWith("/servermodules") || requestPath.StartsWith("/swagger")
+                || requestPath.StartsWith("/eic&esbdocs/sourcebrowser") || requestPath.StartsWith("/mirrorsharp") || requestPath.StartsWith("/healthresult")
+                || context.Response.StatusCode == StatusCodes.Status200OK)
+                { return; }
 
                 //Verify Request For Detect Layout, Redirection, Module, Correct File Path, WebMenu Selection
                 RouteLayout routeLayout = RouteLayout.EmptyLayout; RoutingResult commandType = RoutingResult.None; string fileValidUrl = context.Request.Path;
@@ -157,9 +157,13 @@ namespace EasyITCenter {
                 else if (routeLayout == RouteLayout.MarkDownFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
                 { redirected = true; context.Request.Path = "/MarkDownFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
-                //Show Portal in Layout by missing .md extension
+                //Show Portal in Layout
                 else if (routeLayout == RouteLayout.PortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
                 { redirected = true; context.Request.Path = "/Portal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+
+                //Show ServerModules in Layout by missing .md extension
+                else if (routeLayout == RouteLayout.ServerModulesLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                { redirected = true; context.Request.Path = "/ServerModules"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
                 //Others Type Detected
                 else if (context.Request.Path.ToString().ToLower() != fileValidUrl)
@@ -167,12 +171,8 @@ namespace EasyITCenter {
 
 
                 if (commandType == RoutingResult.Return) { return; }
-                else if (!redirected && commandType == RoutingResult.Next && context.Request.Path.ToString().ToLower() != fileValidUrl) {
-                    context.Request.Path = fileValidUrl;
-                    context.Response.StatusCode = StatusCodes.Status200OK;
-                    await next(); 
-                    return;
-                }
+                else if (!redirected && commandType == RoutingResult.Next && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                { context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
                 else if (commandType == RoutingResult.Next && context.Request.Path.ToString().ToLower() == fileValidUrl) { return; }
             });
 
@@ -214,7 +214,8 @@ namespace EasyITCenter {
             //TODO staticbrowser
             app.UseStaticFiles(new StaticFileOptions {
                 RequestPath = "/EIC&ESBdocs/SourceBrowser/index",
-                FileProvider = new PhysicalFileProvider(Path.Combine(ServerRuntimeData.WebRoot_path, "EIC&ESBdocs", "SourceBrowser", "index"), ExclusionFilters.Sensitive & ~ExclusionFilters.DotPrefixed),});
+                FileProvider = new PhysicalFileProvider(Path.Combine(ServerRuntimeData.WebRoot_path, "EIC&ESBdocs", "SourceBrowser", "index"), ExclusionFilters.Sensitive & ~ExclusionFilters.DotPrefixed)
+            });
 
             app.UseStaticFiles();
 

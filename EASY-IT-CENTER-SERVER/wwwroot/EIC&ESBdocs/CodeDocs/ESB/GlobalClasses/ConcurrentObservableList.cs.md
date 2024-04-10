@@ -392,3 +392,5 @@ namespace EasyITSystemCenter.GlobalClasses {
         #endregion IDisposable Members
     }
 }
+```
+

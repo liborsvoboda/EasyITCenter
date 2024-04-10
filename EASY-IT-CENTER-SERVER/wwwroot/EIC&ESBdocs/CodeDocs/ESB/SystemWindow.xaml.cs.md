@@ -1,4 +1,7 @@
-﻿using Dragablz;
+﻿[Zpět](../../../index)   
+
+```cs   
+using Dragablz;
 using EasyITSystemCenter.Api;
 using EasyITSystemCenter.Classes;
 using EasyITSystemCenter.GlobalClasses;
@@ -1181,3 +1184,5 @@ namespace EasyITSystemCenter {
         }
     }
 }
+```
+

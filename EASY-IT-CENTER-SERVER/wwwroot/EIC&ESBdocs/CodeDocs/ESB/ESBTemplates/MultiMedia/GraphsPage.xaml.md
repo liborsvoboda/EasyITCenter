@@ -1,4 +1,7 @@
-﻿<UserControl
+﻿[Zpět](../../../index)   
+
+```xml   
+<UserControl
     x:Class="EasyITSystemCenter.Pages.GraphsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -148,4 +151,7 @@
             </xctk:SwitchPanel>
         </ScrollViewer>
     </Grid>
-</UserControl>
+</UserControl>    
+
+```   
+

@@ -1,4 +1,7 @@
-﻿using EasyITSystemCenter.Classes;
+﻿[Zpět](../../../index)   
+
+```cs   
+using EasyITSystemCenter.Classes;
 using EasyITSystemCenter.GlobalOperations;
 using MahApps.Metro.Controls;
 using Newtonsoft.Json;
@@ -105,3 +108,6 @@ namespace EasyITSystemCenter.Pages {
         #endregion helper methods
     }
 }
+```
+
+

@@ -1,3 +1,6 @@
+[Zpět](../../../index)   
+
+```xml   
 <Controls:MetroWindow
     x:Class="EasyITSystemCenter.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -422,3 +425,5 @@
             Visibility="{Binding Path=(local:MainWindow.ProgressRing)}" />
     </Grid>
 </Controls:MetroWindow>
+```
+

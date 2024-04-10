@@ -1,4 +1,7 @@
-﻿<UserControl
+﻿[Zpět](../../../index)   
+
+```xml   
+<UserControl
     x:Class="EasyITSystemCenter.Pages.TemplateDocumentViewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -34,4 +37,6 @@
             Width="{Binding Path=ActualWidth, ElementName=View}"
             Height="{Binding Path=ActualHeight, ElementName=View}" />
     </Grid>
-</UserControl>
+</UserControl>   
+```  
+

@@ -70,3 +70,4 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string Source { get { return _path; } set { _path = value; } }
     }
 }
+```

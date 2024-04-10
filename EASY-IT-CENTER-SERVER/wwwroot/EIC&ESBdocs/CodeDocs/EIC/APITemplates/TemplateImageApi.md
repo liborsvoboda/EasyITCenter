@@ -1,4 +1,6 @@
-﻿
+﻿ [Zpět](../../index)   
+
+
 ```cshtml  
 using EasyITCenter.DBModel;
 using MimeKit;
