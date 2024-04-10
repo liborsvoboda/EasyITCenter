@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html><head><title>ZoomingAndPanning.xaml.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(143);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#Wpf/CartesianChart/ZoomingAndPanning/ZoomingAndPanning.xaml.cs" target="_top">CartesianChart\ZoomingAndPanning\ZoomingAndPanning.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Examples\Wpf\Wpf.csproj</a> (Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">LiveCharts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Defaults</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>;
+
+<b>namespace</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">ZoomingAndPanning</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Interaction logic for ZoomingAndPanning.xaml</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <b>partial</b> <b>class</b> <a id="f7036c7abcc27647" href="../../R/f7036c7abcc27647.html" target="n" data-glyph="0,0" class="t t">ZoomingAndPanning</a> : <a href="@0@System/A.html#fd4b42d7e29d53e5" class="t t">INotifyPropertyChanged</a>
+    {
+        <b>private</b> <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a> <a id="7d733bd2586ca389" href="../../R/7d733bd2586ca389.html" target="n" data-glyph="46,1" class="i field">_zoomingMode</a>;
+
+        <b>public</b> <a id="6cc5303286e22e3d" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ZoomingAndPanning</a>()
+        {
+            <span class="i">InitializeComponent</span>();
+
+            <a href="@0@PresentationCore/A.html#95e063a8a6c98a51" class="k">var</a> <span id="r0 rd" class="r0 r">gradientBrush</span> = <b>new</b> <a href="@0@PresentationCore/A.html#cab8ccfc27cff4b9" class="t constructor">LinearGradientBrush</a> {<a href="@0@PresentationCore/A.html#b1eee9a6882b4bcd" class="i property">StartPoint</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, 0),
+                <a href="@0@PresentationCore/A.html#f263c2997c4cfda3" class="i property">EndPoint</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, 1)};
+            <span class="r0 r">gradientBrush</span>.<a href="@0@PresentationCore/A.html#0392ede480e9384d" class="i property">GradientStops</a>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(33, 148, 241), 0));
+            <span class="r0 r">gradientBrush</span>.<a href="@0@PresentationCore/A.html#0392ede480e9384d" class="i property">GradientStops</a>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>(<a href="@0@PresentationCore/A.html#0584e1e7d7fb612c" class="t t">Colors</a>.<a href="@0@PresentationCore/A.html#d6c4b30872bd611e" class="i property">Transparent</a>, 1));
+
+            <a href="#9a1c2c13c31b9dcb" class="i property">SeriesCollection</a> = <b>new</b> <a href="/LiveCharts/A.html#e05f0ac3c5ac3613" class="t constructor">SeriesCollection</a>
+            {
+                <b>new</b> <a href="/LiveCharts.Wpf/A.html#c8aa0c4dad3d2e0b" class="t constructor">LineSeries</a>
+                {
+                    <a href="/LiveCharts.Wpf/A.html#ba565e37fd8fc84c" class="i property">Values</a> = <a href="#8837968add6893c1" class="i method">GetData</a>(),
+                    <a href="/LiveCharts.Wpf/A.html#a6f44874beaa1a39" class="i property">Fill</a> = <span class="r0 r">gradientBrush</span>,
+                    <a href="/LiveCharts.Wpf/A.html#8092434fd2c35445" class="i property">StrokeThickness</a> = 1,
+                    <a href="/LiveCharts.Wpf/A.html#b5254d5f9d700091" class="i property">PointGeometrySize</a> = 0
+                }
+            };
+
+            <a href="#42b5ead2fa9a8e7d" class="i property">ZoomingMode</a> = <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#3cb9b7056777c7ef" class="i field">X</a>;
+
+            <a href="#22d229980b347953" class="i property">XFormatter</a> = <span id="r1 rd" class="r1 r">val</span> =&gt; <b>new</b> <a href="@0@mscorlib/A.html#943ac78ef8dd0f5f" class="t constructor">DateTime</a>((<b>long</b>) <span class="r1 r">val</span>).<a href="@0@mscorlib/A.html#5088b43558351160" class="i method">ToString</a>(<span class="s">&quot;dd MMM&quot;</span>);
+            <a href="#554ea447e7ab3f1d" class="i property">YFormatter</a> = <span id="r2 rd" class="r2 r">val</span> =&gt; <span class="r2 r">val</span>.<a href="@0@mscorlib/A.html#0e003048b54ae390" class="i method">ToString</a>(<span class="s">&quot;C&quot;</span>);
+
+            <span class="i">DataContext</span> = <a href="#f7036c7abcc27647" class="k">this</a>;
+        }
+
+        <b>public</b> <a href="/LiveCharts/A.html#90afae0d66da3706" class="t t">SeriesCollection</a> <a id="9a1c2c13c31b9dcb" href="../../R/9a1c2c13c31b9dcb.html" target="n" data-glyph="102,1" class="i property">SeriesCollection</a> { <b>get</b>; <b>set</b>; }
+        <b>public</b> <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<b>double</b>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="22d229980b347953" href="../../R/22d229980b347953.html" target="n" data-glyph="102,1" class="i property">XFormatter</a> { <b>get</b>; <b>set</b>; }
+        <b>public</b> <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<b>double</b>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="554ea447e7ab3f1d" href="../../R/554ea447e7ab3f1d.html" target="n" data-glyph="102,1" class="i property">YFormatter</a> { <b>get</b>; <b>set</b>; }
+
+        <b>public</b> <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a> <a id="42b5ead2fa9a8e7d" href="../../R/42b5ead2fa9a8e7d.html" target="n" data-glyph="102,1" class="i property">ZoomingMode</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#7d733bd2586ca389" class="i field">_zoomingMode</a>; }
+            <b>set</b>
+            {
+                <a href="#7d733bd2586ca389" class="i field">_zoomingMode</a> = <b>value</b>;
+                <a href="#947cccbb595ce5ba" class="i method">OnPropertyChanged</a>();
+            }
+        }
+
+        <b>private void</b> <a id="b00aa2ea768d1f4a" href="../../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">ToogleZoomingMode</a>(<b>object</b> <span id="r3 rd" class="r3 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r4 rd" class="r4 r">e</span>)
+        {
+            <b>switch</b> (<a href="#42b5ead2fa9a8e7d" class="i property">ZoomingMode</a>)
+            {
+                <b>case</b> <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#b05ad0916abdf51e" class="i field">None</a>:
+                    <a href="#42b5ead2fa9a8e7d" class="i property">ZoomingMode</a> = <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#3cb9b7056777c7ef" class="i field">X</a>;
+                    <b>break</b>;
+                <b>case</b> <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#3cb9b7056777c7ef" class="i field">X</a>:
+                    <a href="#42b5ead2fa9a8e7d" class="i property">ZoomingMode</a> = <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#b836d5a499b591a2" class="i field">Y</a>;
+                    <b>break</b>;
+                <b>case</b> <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#b836d5a499b591a2" class="i field">Y</a>:
+                    <a href="#42b5ead2fa9a8e7d" class="i property">ZoomingMode</a> = <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#3d4538fd0d23195e" class="i field">Xy</a>;
+                    <b>break</b>;
+                <b>case</b> <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#3d4538fd0d23195e" class="i field">Xy</a>:
+                    <a href="#42b5ead2fa9a8e7d" class="i property">ZoomingMode</a> = <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#b05ad0916abdf51e" class="i field">None</a>;
+                    <b>break</b>;
+                <b>default</b>:
+                    <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#337b690f0704f510" class="t constructor">ArgumentOutOfRangeException</a>();
+            }
+        }
+
+        <b>private</b> <a href="/LiveCharts/A.html#0a44fd13939b5dc3" class="t t">ChartValues</a>&lt;<a href="/LiveCharts/A.html#9707ac077399b8ce" class="t t">DateTimePoint</a>&gt; <a id="8837968add6893c1" href="../../R/8837968add6893c1.html" target="n" data-glyph="76,1" class="i method">GetData</a>()
+        {
+            <a href="@0@mscorlib/A.html#bb77e610694e64ca" class="k">var</a> <span id="r5 rd" class="r5 r">r</span> = <b>new</b> <a href="@0@mscorlib/A.html#5d22f8880fc9f8d9" class="t constructor">Random</a>();
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r6 rd" class="r6 r">trend</span> = 100;
+            <a href="/LiveCharts/A.html#0a44fd13939b5dc3" class="k">var</a> <span id="r7 rd" class="r7 r">values</span> = <b>new</b> <a href="/LiveCharts/A.html#9dc8c197acdf6c12" class="t constructor">ChartValues</a>&lt;<a href="/LiveCharts/A.html#9707ac077399b8ce" class="t t">DateTimePoint</a>&gt;();
+
+            <b>for</b> (<a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r8 rd" class="r8 r">i</span> = 0; <span class="r8 r">i</span> &lt; 100; <span class="r8 r">i</span>++)
+            {
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r9 rd" class="r9 r">seed</span> = <span class="r5 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>();
+                <b>if</b> (<span class="r9 r">seed</span> &gt; .8) <span class="r6 r">trend</span> += <span class="r9 r">seed</span> &gt; .9 ? 50 : -50;
+                <span class="r7 r">values</span>.<a href="/LiveCharts/A.html#501ee31de2dd2f3e" class="i method">Add</a>(<b>new</b> <a href="/LiveCharts/A.html#3dd881994cb34fd0" class="t constructor">DateTimePoint</a>(<a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@0@mscorlib/A.html#1cd5dd408a32124f" class="i property">Now</a>.<a href="@0@mscorlib/A.html#f5cb6edd98581ca2" class="i method">AddDays</a>(<span class="r8 r">i</span>), <span class="r6 r">trend</span> + <span class="r5 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 10)));
+            }
+
+            <b>return</b> <span class="r7 r">values</span>;
+        }
+
+        <b>public event</b> <a href="@0@System/A.html#670754815f6804ff" class="t t">PropertyChangedEventHandler</a> <a id="b47907294a66704a" href="../../R/b47907294a66704a.html" target="n" data-glyph="30,1" class="i">PropertyChanged</a>;
+
+        <b>protected virtual void</b> <a id="947cccbb595ce5ba" href="../../R/947cccbb595ce5ba.html" target="n" data-glyph="75,1" class="i method">OnPropertyChanged</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r10 rd" class="r10 r">propertyName</span> = <b>null</b>)
+        {
+            <b>if</b> (<a href="#b47907294a66704a" class="i">PropertyChanged</a> != <b>null</b>) <a href="#b47907294a66704a" class="i">PropertyChanged</a>.<a href="@0@System/A.html#c66222f7abfe2e28" class="i method">Invoke</a>(<a href="#f7036c7abcc27647" class="k">this</a>, <b>new</b> <a href="@0@System/A.html#76958b0a96ed2a2e" class="t constructor">PropertyChangedEventArgs</a>(<span class="r10 r">propertyName</span>));
+        }
+
+        <b>private void</b> <a id="8842e0d9bea83352" href="../../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">ResetZoomOnClick</a>(<b>object</b> <span id="r11 rd" class="r11 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r12 rd" class="r12 r">e</span>)
+        {
+            <span class="c">//Use the axis MinValue/MaxValue properties to specify the values to display.</span>
+            <span class="c">//use double.Nan to clear it.</span>
+
+            <span class="i">X</span>.<span class="i">MinValue</span> = <b>double</b>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>;
+            <span class="i">X</span>.<span class="i">MaxValue</span> = <b>double</b>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>;
+            <span class="i">Y</span>.<span class="i">MinValue</span> = <b>double</b>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>;
+            <span class="i">Y</span>.<span class="i">MaxValue</span> = <b>double</b>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>;
+        }
+    }
+
+    <b>public class</b> <a id="499917e7922e8692" href="../../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="f55531a5649b96db">ZoomingModeCoverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <b>public object</b> <a id="4e6cf0841b523193" href="../../R/4e6cf0841b523193.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b> <span id="r13 rd" class="r13 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r14 rd" class="r14 r">targetType</span>, <b>object</b> <span id="r15 rd" class="r15 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r16 rd" class="r16 r">culture</span>)
+        {
+            <b>switch</b> ((<a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>) <span class="r13 r">value</span>)
+            {
+                <b>case</b> <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#b05ad0916abdf51e" class="i field">None</a>:
+                    <b>return</b> <span class="s">&quot;None&quot;</span>;
+                <b>case</b> <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#3cb9b7056777c7ef" class="i field">X</a>:
+                    <b>return</b> <span class="s">&quot;X&quot;</span>;
+                <b>case</b> <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#b836d5a499b591a2" class="i field">Y</a>:
+                    <b>return</b> <span class="s">&quot;Y&quot;</span>;
+                <b>case</b> <a href="/LiveCharts/A.html#aefa82268b907534" class="t t">ZoomingOptions</a>.<a href="/LiveCharts/A.html#3d4538fd0d23195e" class="i field">Xy</a>:
+                    <b>return</b> <span class="s">&quot;XY&quot;</span>;
+                <b>default</b>:
+                    <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#337b690f0704f510" class="t constructor">ArgumentOutOfRangeException</a>();
+            }
+        }
+
+        <b>public object</b> <a id="2b58c61c839cfd96" href="../../R/2b58c61c839cfd96.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r17 rd" class="r17 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r18 rd" class="r18 r">targetType</span>, <b>object</b> <span id="r19 rd" class="r19 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r20 rd" class="r20 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

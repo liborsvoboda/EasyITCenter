@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html><head><title>TimePicker.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(74);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/TimePicker/TimePicker.cs" target="_top">Controls\TimePicker\TimePicker.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Threading</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     Represents a control that allows the user to select a time.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="1575820c39eeb0b6" href="../../R/1575820c39eeb0b6.html" target="n" data-glyph="0,0" class="t t">TimePicker</a> : <a href="TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a>
+    {
+        <b>static</b> <a id="0601f272ca20bf89" href="../../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">TimePicker</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6339cc8ec3e1311a" class="i field">DefaultStyleKeyProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#1575820c39eeb0b6" class="t t">TimePicker</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>typeof</b>(<a href="#1575820c39eeb0b6" class="t t">TimePicker</a>)));
+        }
+
+        <b>public</b> <a id="35ae329c48bf3b17" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">TimePicker</a>()
+        {
+            <a href="#1575820c39eeb0b6" class="k">this</a>.<a href="TimePickerBase.cs.html#c26e98fa617fdae2" class="i property">IsDatePickerVisible</a> = <b>false</b>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span> <span class="c">/&gt;</span>
+        <b>protected override void</b> <a id="bbd867f08a867fcb" href="../../R/bbd867f08a867fcb.html" target="n" data-glyph="75,1" class="i method">FocusElementAfterIsDropDownOpenChanged</a>()
+        {
+            <b>if</b> (<a href="#1575820c39eeb0b6" class="k">this</a>.<a href="TimePickerBase.cs.html#ff4ff8d5843aacc2" class="i field">hourInput</a> <b>is null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <span class="c">// When the popup is opened set focus to the hour input.</span>
+            <span class="c">// Do this asynchronously because the IsDropDownOpen could</span>
+            <span class="c">// have been set even before the template for the DatePicker is</span>
+            <span class="c">// applied. And this would mean that the visuals wouldn&#39;t be available yet.</span>
+
+            <a href="#1575820c39eeb0b6" class="k">this</a>.<a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#bcbefade88f12503" class="i method">BeginInvoke</a>(<a href="@0@WindowsBase/A.html#af2d44a802e4535c" class="t t">DispatcherPriority</a>.<a href="@0@WindowsBase/A.html#57171cb6115df956" class="i field">Input</a>, (<a href="@0@mscorlib/A.html#9147ae6f76643aae" class="t t">Action</a>)<b>delegate</b>
+                {
+                    <span class="c">// setting the focus to the calendar will focus the correct date.</span>
+                    <a href="#1575820c39eeb0b6" class="k">this</a>.<a href="TimePickerBase.cs.html#ff4ff8d5843aacc2" class="i field">hourInput</a>.<a href="@0@PresentationCore/A.html#0e11f7ae56f1c30f" class="i method">Focus</a>();
+                });
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span> <span class="c">/&gt;</span>
+        <b>protected override void</b> <a id="c578ae4006464e9d" href="../../R/c578ae4006464e9d.html" target="n" data-glyph="75,1" class="i method">SetSelectedDateTime</a>()
+        {
+            <b>if</b> (<a href="#1575820c39eeb0b6" class="k">this</a>.<a href="TimePickerBase.cs.html#c4606050a3cb55e2" class="i field">textBox</a> <b>is null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <b>const</b> <a href="@0@mscorlib/A.html#0052cfe5031c0372" class="t t">DateTimeStyles</a> <span id="r0 rd" class="r0 r">dateTimeParseStyle</span> = <a href="@0@mscorlib/A.html#0052cfe5031c0372" class="t t">DateTimeStyles</a>.<a href="@0@mscorlib/A.html#41bf60a621650598" class="i field">AllowWhiteSpaces</a>
+                                                      &amp; <a href="@0@mscorlib/A.html#0052cfe5031c0372" class="t t">DateTimeStyles</a>.<a href="@0@mscorlib/A.html#6865c402d99dbad3" class="i field">AssumeLocal</a>
+                                                      &amp; <a href="@0@mscorlib/A.html#0052cfe5031c0372" class="t t">DateTimeStyles</a>.<a href="@0@mscorlib/A.html#a91a762e79a55510" class="i field">NoCurrentDateDefault</a>;
+
+            <b>if</b> (<a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@0@mscorlib/A.html#bb5bf8221a9b43fc" class="i method">TryParse</a>(<a href="#1575820c39eeb0b6" class="k">this</a>.<a href="TimePickerBase.cs.html#c4606050a3cb55e2" class="i field">textBox</a>.<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>, <a href="#1575820c39eeb0b6" class="k">this</a>.<a href="TimePickerBase.cs.html#44c5105f9f83d110" class="i property">SpecificCultureInfo</a>, <span class="r0 r">dateTimeParseStyle</span>, <b>out</b> <a href="@0@mscorlib/A.html#df6b1eba7461813b" class="k">var</a> <span id="r1 rd" class="r1 r">timeSpan</span>))
+            {
+                <a href="#1575820c39eeb0b6" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="TimePickerBase.cs.html#a067806ca275c70a" class="i field">SelectedDateTimeProperty</a>, <a href="#1575820c39eeb0b6" class="k">this</a>.<a href="TimePickerBase.cs.html#3dc010efe03b0f45" class="i property">SelectedDateTime</a>.<a href="@0@mscorlib/A.html#8b928034cfee7d43" class="i method">GetValueOrDefault</a>().<a href="@0@mscorlib/A.html#92aa9b2917a74e91" class="i property">Date</a> + <span class="r1 r">timeSpan</span>.<a href="@0@mscorlib/A.html#717a61f6fe64fdf9" class="i property">TimeOfDay</a>);
+            }
+            <b>else</b>
+            {
+                <a href="#1575820c39eeb0b6" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="TimePickerBase.cs.html#a067806ca275c70a" class="i field">SelectedDateTimeProperty</a>, <b>null</b>);
+                <b>if</b> (<a href="#1575820c39eeb0b6" class="k">this</a>.<a href="TimePickerBase.cs.html#3dc010efe03b0f45" class="i property">SelectedDateTime</a> == <b>null</b>)
+                {
+                    <span class="c">// if already null, overwrite wrong data in TextBox</span>
+                    <a href="#1575820c39eeb0b6" class="k">this</a>.<a href="TimePickerBase.cs.html#76066ce36f09bf2c" class="i method">WriteValueToTextBox</a>();
+                }
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

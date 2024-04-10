@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html><head><title>PhotoViewer.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(60);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#PhotoViewerDemo/PhotoViewer.cs" target="_top">PhotoViewer.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#PhotoViewerDemo" target="_top">HelpProjects\WPF-MORE\Sample Applications\PhotoViewerDemo\PhotoViewerDemo.csproj</a> (PhotoViewerDemo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+
+<b>namespace</b> <span class="i n">PhotoViewerDemo</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     Interaction logic for PhotoViewer.xaml</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <a href="P/a1086357663f28e0.html" target="s" class="k">partial</a> <b>class</b> <a id="a1086357663f28e0" href="R/a1086357663f28e0.html" target="n" data-glyph="0,0" class="t t">PhotoViewer</a> : <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>
+    {
+        <b>public</b> <a id="7987b068045b7ca5" href="R/7987b068045b7ca5.html" target="n" data-glyph="72,1" class="t constructor">PhotoViewer</a>()
+        {
+            <a href="obj/Debug/netcoreapp3.1/PhotoViewer.g.cs.html#a284d717037ae2dd" class="i method">InitializeComponent</a>();
+        }
+
+        <b>public</b> <a href="Photo.cs.html#3b9d8a112480cd79" class="t t">Photo</a> <a id="ccc3579e106a4e33" href="R/ccc3579e106a4e33.html" target="n" data-glyph="102,1" class="i property">SelectedPhoto</a> { <b>get</b>; <b>set</b>; }
+
+        <b>private void</b> <a id="d8e937fb4e71f113" href="R/d8e937fb4e71f113.html" target="n" data-glyph="76,1" class="i method">WindowLoaded</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <a href="obj/Debug/netcoreapp3.1/PhotoViewer.g.cs.html#1a977ae704d7a4cc" class="i field">ViewedPhoto</a>.<a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> = <a href="#ccc3579e106a4e33" class="i property">SelectedPhoto</a>.<a href="Photo.cs.html#b4aed208e643651c" class="i property">Image</a>;
+            <a href="obj/Debug/netcoreapp3.1/PhotoViewer.g.cs.html#b1588af680827028" class="i field">ViewedCaption</a>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <a href="#ccc3579e106a4e33" class="i property">SelectedPhoto</a>.<a href="Photo.cs.html#6af13524d1c2acbb" class="i property">Source</a>;
+        }
+
+        <b>private void</b> <a id="d5a837be84654428" href="R/d5a837be84654428.html" target="n" data-glyph="76,1" class="i method">Rotate</a>(<b>object</b> <span id="r2 rd" class="r2 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r3 rd" class="r3 r">e</span>)
+        {
+            <a href="@0@PresentationCore/A.html#0423ed363f952960" class="t t">BitmapSource</a> <span id="r4 rd" class="r4 r">img</span> = <a href="#ccc3579e106a4e33" class="i property">SelectedPhoto</a>.<a href="Photo.cs.html#b4aed208e643651c" class="i property">Image</a>;
+
+            <a href="@0@PresentationCore/A.html#ae09c383e05d67c5" class="k">var</a> <span id="r5 rd" class="r5 r">cache</span> = <b>new</b> <a href="@0@PresentationCore/A.html#68fbcb275b6762c7" class="t constructor">CachedBitmap</a>(<span class="r4 r">img</span>, <a href="@0@PresentationCore/A.html#f16ee6363903c31c" class="t t">BitmapCreateOptions</a>.<a href="@0@PresentationCore/A.html#2da53e15fa7de8f1" class="i field">None</a>, <a href="@0@PresentationCore/A.html#2892a7144be883ba" class="t t">BitmapCacheOption</a>.<a href="@0@PresentationCore/A.html#5fdb13813fd17def" class="i field">OnLoad</a>);
+            <a href="#ccc3579e106a4e33" class="i property">SelectedPhoto</a>.<a href="Photo.cs.html#b4aed208e643651c" class="i property">Image</a> = <a href="@0@PresentationCore/A.html#bad013e46489de54" class="t t">BitmapFrame</a>.<a href="@0@PresentationCore/A.html#249d5611eba74aa4" class="i method">Create</a>(<b>new</b> <a href="@0@PresentationCore/A.html#f3219837c0d611a8" class="t constructor">TransformedBitmap</a>(<span class="r5 r">cache</span>, <b>new</b> <a href="@0@PresentationCore/A.html#88c1ebb3eb7f41fb" class="t constructor">RotateTransform</a>(90.0)));
+
+            <a href="obj/Debug/netcoreapp3.1/PhotoViewer.g.cs.html#1a977ae704d7a4cc" class="i field">ViewedPhoto</a>.<a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> = <a href="#ccc3579e106a4e33" class="i property">SelectedPhoto</a>.<a href="Photo.cs.html#b4aed208e643651c" class="i property">Image</a>;
+        }
+
+        <b>private void</b> <a id="0c2797fb9df557ad" href="R/0c2797fb9df557ad.html" target="n" data-glyph="76,1" class="i method">Crop</a>(<b>object</b> <span id="r6 rd" class="r6 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r7 rd" class="r7 r">e</span>)
+        {
+            <a href="@0@PresentationCore/A.html#0423ed363f952960" class="t t">BitmapSource</a> <span id="r8 rd" class="r8 r">img</span> = <a href="#ccc3579e106a4e33" class="i property">SelectedPhoto</a>.<a href="Photo.cs.html#b4aed208e643651c" class="i property">Image</a>;
+
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r9 rd" class="r9 r">halfWidth</span> = <span class="r8 r">img</span>.<a href="@0@PresentationCore/A.html#e88eaeb82217cab6" class="i property">PixelWidth</a>/2;
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r10 rd" class="r10 r">halfHeight</span> = <span class="r8 r">img</span>.<a href="@0@PresentationCore/A.html#0807be1f18d7aeef" class="i property">PixelHeight</a>/2;
+            <a href="#ccc3579e106a4e33" class="i property">SelectedPhoto</a>.<a href="Photo.cs.html#b4aed208e643651c" class="i property">Image</a> =
+                <a href="@0@PresentationCore/A.html#bad013e46489de54" class="t t">BitmapFrame</a>.<a href="@0@PresentationCore/A.html#249d5611eba74aa4" class="i method">Create</a>(<b>new</b> <a href="@0@PresentationCore/A.html#0b41e865f3e381bd" class="t constructor">CroppedBitmap</a>(<span class="r8 r">img</span>,
+                    <b>new</b> <a href="@0@WindowsBase/A.html#c7ba7e87ea0d094a" class="t constructor">Int32Rect</a>((<span class="r9 r">halfWidth</span> - (<span class="r9 r">halfWidth</span>/2)), (<span class="r10 r">halfHeight</span> - (<span class="r10 r">halfHeight</span>/2)), <span class="r9 r">halfWidth</span>, <span class="r10 r">halfHeight</span>)));
+
+            <a href="obj/Debug/netcoreapp3.1/PhotoViewer.g.cs.html#1a977ae704d7a4cc" class="i field">ViewedPhoto</a>.<a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> = <a href="#ccc3579e106a4e33" class="i property">SelectedPhoto</a>.<a href="Photo.cs.html#b4aed208e643651c" class="i property">Image</a>;
+        }
+
+        <b>private void</b> <a id="a04588138e0aa467" href="R/a04588138e0aa467.html" target="n" data-glyph="76,1" class="i method">BlackAndWhite</a>(<b>object</b> <span id="r11 rd" class="r11 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r12 rd" class="r12 r">e</span>)
+        {
+            <a href="@0@PresentationCore/A.html#0423ed363f952960" class="t t">BitmapSource</a> <span id="r13 rd" class="r13 r">img</span> = <a href="#ccc3579e106a4e33" class="i property">SelectedPhoto</a>.<a href="Photo.cs.html#b4aed208e643651c" class="i property">Image</a>;
+            <a href="#ccc3579e106a4e33" class="i property">SelectedPhoto</a>.<a href="Photo.cs.html#b4aed208e643651c" class="i property">Image</a> =
+                <a href="@0@PresentationCore/A.html#bad013e46489de54" class="t t">BitmapFrame</a>.<a href="@0@PresentationCore/A.html#249d5611eba74aa4" class="i method">Create</a>(<b>new</b> <a href="@0@PresentationCore/A.html#fc904705a09467e7" class="t constructor">FormatConvertedBitmap</a>(<span class="r13 r">img</span>, <a href="@0@PresentationCore/A.html#8f8a28423b24bd8e" class="t t">PixelFormats</a>.<a href="@0@PresentationCore/A.html#20014ee385b9c1d3" class="i property">Gray8</a>, <a href="@0@PresentationCore/A.html#5e1fae8c1b7e6c68" class="t t">BitmapPalettes</a>.<a href="@0@PresentationCore/A.html#567b261f5fda5061" class="i property">Gray256</a>, 1.0));
+
+            <a href="obj/Debug/netcoreapp3.1/PhotoViewer.g.cs.html#1a977ae704d7a4cc" class="i field">ViewedPhoto</a>.<a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> = <a href="#ccc3579e106a4e33" class="i property">SelectedPhoto</a>.<a href="Photo.cs.html#b4aed208e643651c" class="i property">Image</a>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

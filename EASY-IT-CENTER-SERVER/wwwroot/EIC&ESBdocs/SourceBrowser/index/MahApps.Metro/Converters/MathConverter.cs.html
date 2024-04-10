@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html><head><title>MathConverter.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(224);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Converters/MathConverter.cs" target="_top">Converters\MathConverter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Markup</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Converters</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> The math operations which can be used at the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#c3be02f83291c31b" class="t t">MathConverter</a><span class="c">&quot;</span><span class="c">/&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public enum</b> <a id="1c4a785a03245654" href="../R/1c4a785a03245654.html" target="n" data-glyph="18,0" class="t t"><span id="ea83d944549cf9b8">MathOperation</span></a>
+    {
+        <a id="2a776cb34a052aaa" href="../R/2a776cb34a052aaa.html" target="n" data-glyph="24,1" class="i field">Add</a>,
+        <a id="5196d04483bdd04f" href="../R/5196d04483bdd04f.html" target="n" data-glyph="24,1" class="i field">Subtract</a>,
+        <a id="4fd00ea87123c74c" href="../R/4fd00ea87123c74c.html" target="n" data-glyph="24,1" class="i field">Multiply</a>,
+        <a id="a6a201dec53ece5c" href="../R/a6a201dec53ece5c.html" target="n" data-glyph="24,1" class="i field">Divide</a>
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> MathConverter provides a value converter which can be used for math operations.</span>
+    <span class="c">///</span><span class="c"> It can be used for normal binding or multi binding as well.</span>
+    <span class="c">///</span><span class="c"> If it is used for normal binding the given parameter will be used as operands with the selected operation.</span>
+    <span class="c">///</span><span class="c"> If it is used for multi binding then the first and second binding will be used as operands with the selected operation.</span>
+    <span class="c">///</span><span class="c"> This class cannot be inherited.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@PresentationFramework/A.html#ddd8a157949fec4d" class="t constructor">ValueConversion</a>(<b>typeof</b>(<b>object</b>), <b>typeof</b>(<b>object</b>))]
+    <b>public sealed class</b> <a id="c3be02f83291c31b" href="../R/c3be02f83291c31b.html" target="n" data-glyph="0,0" class="t t"><span id="acb3382baf06da0e">MathConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>, <a href="@0@PresentationFramework/A.html#60c26f3054102ef4" class="t t">IMultiValueConverter</a>
+    {
+        <b>public</b> <a href="#1c4a785a03245654" class="t t">MathOperation</a> <a id="dbe098a9e1dbef45" href="../R/dbe098a9e1dbef45.html" target="n" data-glyph="102,1" class="i property">Operation</a> { <b>get</b>; <b>set</b>; }
+
+        <b>public object</b>? <a id="b5d0a6577a070d08" href="../R/b5d0a6577a070d08.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>? <span id="r0 rd" class="r0 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r1 rd" class="r1 r">targetType</span>, <b>object</b>? <span id="r2 rd" class="r2 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r3 rd" class="r3 r">culture</span>)
+        {
+            <b>return</b> <a href="#5f065763dcb70c0a" class="i method">DoConvert</a>(<span class="r0 r">value</span>, <span class="r2 r">parameter</span>, <a href="#c3be02f83291c31b" class="k">this</a>.<a href="#dbe098a9e1dbef45" class="i property">Operation</a>);
+        }
+
+        <b>public object</b>? <a id="cf33c09104501bc8" href="../R/cf33c09104501bc8.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>[]? <span id="r4 rd" class="r4 r">values</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r5 rd" class="r5 r">targetType</span>, <b>object</b>? <span id="r6 rd" class="r6 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r7 rd" class="r7 r">culture</span>)
+        {
+            <b>return</b> <span class="r4 r">values</span> <b>is null</b>
+                ? <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>
+                : <a href="#5f065763dcb70c0a" class="i method">DoConvert</a>(<span class="r4 r">values</span>.<a href="@0@System.Core/A.html#0bd04e5c179c3c7d" class="i method">ElementAtOrDefault</a>(0), <span class="r4 r">values</span>.<a href="@0@System.Core/A.html#0bd04e5c179c3c7d" class="i method">ElementAtOrDefault</a>(1), <a href="#c3be02f83291c31b" class="k">this</a>.<a href="#dbe098a9e1dbef45" class="i property">Operation</a>);
+        }
+
+        <b>public object</b>? <a id="f557b62eaeabbf3d" href="../R/f557b62eaeabbf3d.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r8 rd" class="r8 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r9 rd" class="r9 r">targetType</span>, <b>object</b>? <span id="r10 rd" class="r10 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r11 rd" class="r11 r">culture</span>)
+        {
+            <b>return</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#ee7f3b3d5828e7ab" class="i field">UnsetValue</a>;
+        }
+
+        <b>public object</b>[]? <a id="f116c2535227de0a" href="../R/f116c2535227de0a.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r12 rd" class="r12 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>[] <span id="r13 rd" class="r13 r">targetTypes</span>, <b>object</b>? <span id="r14 rd" class="r14 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r15 rd" class="r15 r">culture</span>)
+        {
+            <b>return</b> <span class="r13 r">targetTypes</span>.<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>(<span id="r16 rd" class="r16 r">t</span> =&gt; <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#ee7f3b3d5828e7ab" class="i field">UnsetValue</a>).<a href="@0@System.Core/A.html#783a052330e7d48d" class="i method">ToArray</a>();
+        }
+
+        <b>private static object</b>? <a id="5f065763dcb70c0a" href="../R/5f065763dcb70c0a.html" target="n" data-glyph="76,1" class="i method">DoConvert</a>(<b>object</b>? <span id="r17 rd" class="r17 r">firstValue</span>, <b>object</b>? <span id="r18 rd" class="r18 r">secondValue</span>, <a href="#1c4a785a03245654" class="t t">MathOperation</a> <span id="r19 rd" class="r19 r">operation</span>)
+        {
+            <b>if</b> (<span class="r17 r">firstValue</span> <b>is null</b>
+                || <span class="r18 r">secondValue</span> <b>is null</b>
+                || <span class="r17 r">firstValue</span> == <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#ee7f3b3d5828e7ab" class="i field">UnsetValue</a>
+                || <span class="r18 r">secondValue</span> == <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#ee7f3b3d5828e7ab" class="i field">UnsetValue</a>
+                || <span class="r17 r">firstValue</span> == <a href="@0@mscorlib/A.html#7faae4cef0a3f251" class="t t">DBNull</a>.<a href="@0@mscorlib/A.html#9603a89be4827410" class="i field">Value</a>
+                || <span class="r18 r">secondValue</span> == <a href="@0@mscorlib/A.html#7faae4cef0a3f251" class="t t">DBNull</a>.<a href="@0@mscorlib/A.html#9603a89be4827410" class="i field">Value</a>)
+            {
+                <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+            }
+
+            <b>try</b>
+            {
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r20 rd" class="r20 r">value1</span> = (<span class="r17 r">firstValue</span> <b>as double</b>?).<a href="@0@mscorlib/A.html#8c499091e3b47bc7" class="i method">GetValueOrDefault</a>(<span class="i n">System</span>.<a href="@0@mscorlib/A.html#fc990bd1275d43d6" class="t t">Convert</a>.<a href="@0@mscorlib/A.html#ac6ab2ba4b67749e" class="i method">ToDouble</a>(<span class="r17 r">firstValue</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>));
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r21 rd" class="r21 r">value2</span> = (<span class="r18 r">secondValue</span> <b>as double</b>?).<a href="@0@mscorlib/A.html#8c499091e3b47bc7" class="i method">GetValueOrDefault</a>(<span class="i n">System</span>.<a href="@0@mscorlib/A.html#fc990bd1275d43d6" class="t t">Convert</a>.<a href="@0@mscorlib/A.html#ac6ab2ba4b67749e" class="i method">ToDouble</a>(<span class="r18 r">secondValue</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>));
+
+                <b>switch</b> (<span class="r19 r">operation</span>)
+                {
+                    <b>case</b> <a href="#1c4a785a03245654" class="t t">MathOperation</a>.<a href="#2a776cb34a052aaa" class="i field">Add</a>: <b>return</b> <span class="r20 r">value1</span> + <span class="r21 r">value2</span>;
+                    <b>case</b> <a href="#1c4a785a03245654" class="t t">MathOperation</a>.<a href="#a6a201dec53ece5c" class="i field">Divide</a>:
+                    {
+                        <b>if</b> (<span class="r21 r">value2</span> &gt; 0)
+                        {
+                            <b>return</b> <span class="r20 r">value1</span> / <span class="r21 r">value2</span>;
+                        }
+                        <b>else</b>
+                        {
+                            <a href="@0@System/A.html#c63a0f19b2d4db69" class="t t">Trace</a>.<a href="@0@System/A.html#ed0a145461a37c94" class="i method">TraceWarning</a>(<span class="s">$&quot;</span><span class="s">Second value can not be used by division, because it&#39;s &#39;0&#39; (value1=</span>{<span class="r20 r">value1</span>}<span class="s">, value2=</span>{<span class="r21 r">value2</span>}<span class="s">)</span><span class="s">&quot;</span>);
+                            <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+                        }
+                    }
+                    <b>case</b> <a href="#1c4a785a03245654" class="t t">MathOperation</a>.<a href="#4fd00ea87123c74c" class="i field">Multiply</a>: <b>return</b> <span class="r20 r">value1</span> * <span class="r21 r">value2</span>;
+                    <b>case</b> <a href="#1c4a785a03245654" class="t t">MathOperation</a>.<a href="#5196d04483bdd04f" class="i field">Subtract</a>: <b>return</b> <span class="r20 r">value1</span> - <span class="r21 r">value2</span>;
+                    <b>default</b>: <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+                }
+            }
+            <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r22 rd" class="r22 r">e</span>)
+            {
+                <a href="@0@System/A.html#c63a0f19b2d4db69" class="t t">Trace</a>.<a href="@0@System/A.html#3e7f2b0454b49e5c" class="i method">TraceError</a>(<span class="s">$&quot;</span><span class="s">Error while math operation: operation=</span>{<span class="r19 r">operation</span>}<span class="s">, value1=</span>{<span class="r17 r">firstValue</span>}<span class="s">, value2=</span>{<span class="r18 r">secondValue</span>}<span class="s"> =&gt; exception: </span>{<span class="r22 r">e</span>}<span class="s">&quot;</span>);
+                <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+            }
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> MathAddConverter provides a multi value converter as a MarkupExtension which can be used for math operations.</span>
+    <span class="c">///</span><span class="c"> This class cannot be inherited.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@System.Xaml/A.html#93f5ab681cae64ab" class="t constructor">MarkupExtensionReturnType</a>(<b>typeof</b>(<a href="#4a9b78e6e1197b4c" class="t t">MathAddConverter</a>))]
+    <b>public sealed class</b> <a id="4a9b78e6e1197b4c" href="../R/4a9b78e6e1197b4c.html" target="n" data-glyph="0,0" class="t t"><span id="e76d7ad7c20abdcc">MathAddConverter</span></a> : <a href="MarkupConverter.cs.html#4eb1e8a9b882ae5b" class="t t">MarkupMultiConverter</a>
+    {
+        <b>private static readonly</b> <a href="#c3be02f83291c31b" class="t t">MathConverter</a> <a id="7c7f5d85958d928a" href="../R/7c7f5d85958d928a.html" target="n" data-glyph="46,1" class="i field">MathConverter</a> = <b>new</b> <a href="#c3be02f83291c31b" class="t constructor">MathConverter</a> { <a href="#dbe098a9e1dbef45" class="i property">Operation</a> = <a href="#1c4a785a03245654" class="t t">MathOperation</a>.<a href="#2a776cb34a052aaa" class="i field">Add</a> };
+
+        <b>public override object</b>? <a id="954b069e7e08432f" href="../R/954b069e7e08432f.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>[]? <span id="r23 rd" class="r23 r">values</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r24 rd" class="r24 r">targetType</span>, <b>object</b>? <span id="r25 rd" class="r25 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r26 rd" class="r26 r">culture</span>)
+        {
+            <b>return</b> <a href="#7c7f5d85958d928a" class="i field">MathConverter</a>.<a href="#cf33c09104501bc8" class="i method">Convert</a>(<span class="r23 r">values</span>, <span class="r24 r">targetType</span>, <span class="r25 r">parameter</span>, <span class="r26 r">culture</span>);
+        }
+
+        <b>public override object</b>? <a id="d486b17941454af1" href="../R/d486b17941454af1.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>? <span id="r27 rd" class="r27 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r28 rd" class="r28 r">targetType</span>, <b>object</b>? <span id="r29 rd" class="r29 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r30 rd" class="r30 r">culture</span>)
+        {
+            <b>return</b> <a href="#7c7f5d85958d928a" class="i field">MathConverter</a>.<a href="#b5d0a6577a070d08" class="i method">Convert</a>(<span class="r27 r">value</span>, <span class="r28 r">targetType</span>, <span class="r29 r">parameter</span>, <span class="r30 r">culture</span>);
+        }
+
+        <b>public override object</b>[]? <a id="a64928acc7daa245" href="../R/a64928acc7daa245.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r31 rd" class="r31 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>[] <span id="r32 rd" class="r32 r">targetTypes</span>, <b>object</b>? <span id="r33 rd" class="r33 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r34 rd" class="r34 r">culture</span>)
+        {
+            <b>return</b> <a href="#7c7f5d85958d928a" class="i field">MathConverter</a>.<a href="#f116c2535227de0a" class="i method">ConvertBack</a>(<span class="r31 r">value</span>, <span class="r32 r">targetTypes</span>, <span class="r33 r">parameter</span>, <span class="r34 r">culture</span>);
+        }
+
+        <b>public override object</b>? <a id="25c7983ebd605c97" href="../R/25c7983ebd605c97.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r35 rd" class="r35 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r36 rd" class="r36 r">targetType</span>, <b>object</b>? <span id="r37 rd" class="r37 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r38 rd" class="r38 r">culture</span>)
+        {
+            <b>return</b> <a href="#7c7f5d85958d928a" class="i field">MathConverter</a>.<a href="#f557b62eaeabbf3d" class="i method">ConvertBack</a>(<span class="r35 r">value</span>, <span class="r36 r">targetType</span>, <span class="r37 r">parameter</span>, <span class="r38 r">culture</span>);
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> MathSubtractConverter provides a multi value converter as a MarkupExtension which can be used for math operations.</span>
+    <span class="c">///</span><span class="c"> This class cannot be inherited.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@System.Xaml/A.html#93f5ab681cae64ab" class="t constructor">MarkupExtensionReturnType</a>(<b>typeof</b>(<a href="#4ff519b8fa7b0ad3" class="t t">MathSubtractConverter</a>))]
+    <b>public sealed class</b> <a id="4ff519b8fa7b0ad3" href="../R/4ff519b8fa7b0ad3.html" target="n" data-glyph="0,0" class="t t"><span id="4f43e0367b0720b0">MathSubtractConverter</span></a> : <a href="MarkupConverter.cs.html#4eb1e8a9b882ae5b" class="t t">MarkupMultiConverter</a>
+    {
+        <b>private static readonly</b> <a href="#c3be02f83291c31b" class="t t">MathConverter</a> <a id="cf43762c9a0768fd" href="../R/cf43762c9a0768fd.html" target="n" data-glyph="46,1" class="i field">MathConverter</a> = <b>new</b> <a href="#c3be02f83291c31b" class="t constructor">MathConverter</a> { <a href="#dbe098a9e1dbef45" class="i property">Operation</a> = <a href="#1c4a785a03245654" class="t t">MathOperation</a>.<a href="#5196d04483bdd04f" class="i field">Subtract</a> };
+
+        <b>public override object</b>? <a id="74accc5333bdc76a" href="../R/74accc5333bdc76a.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>[]? <span id="r39 rd" class="r39 r">values</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r40 rd" class="r40 r">targetType</span>, <b>object</b>? <span id="r41 rd" class="r41 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r42 rd" class="r42 r">culture</span>)
+        {
+            <b>return</b> <a href="#cf43762c9a0768fd" class="i field">MathConverter</a>.<a href="#cf33c09104501bc8" class="i method">Convert</a>(<span class="r39 r">values</span>, <span class="r40 r">targetType</span>, <span class="r41 r">parameter</span>, <span class="r42 r">culture</span>);
+        }
+
+        <b>public override object</b>? <a id="4003fb242b7b2f54" href="../R/4003fb242b7b2f54.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>? <span id="r43 rd" class="r43 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r44 rd" class="r44 r">targetType</span>, <b>object</b>? <span id="r45 rd" class="r45 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r46 rd" class="r46 r">culture</span>)
+        {
+            <b>return</b> <a href="#cf43762c9a0768fd" class="i field">MathConverter</a>.<a href="#b5d0a6577a070d08" class="i method">Convert</a>(<span class="r43 r">value</span>, <span class="r44 r">targetType</span>, <span class="r45 r">parameter</span>, <span class="r46 r">culture</span>);
+        }
+
+        <b>public override object</b>[]? <a id="ae940ed5ab4bf343" href="../R/ae940ed5ab4bf343.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r47 rd" class="r47 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>[] <span id="r48 rd" class="r48 r">targetTypes</span>, <b>object</b>? <span id="r49 rd" class="r49 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r50 rd" class="r50 r">culture</span>)
+        {
+            <b>return</b> <a href="#cf43762c9a0768fd" class="i field">MathConverter</a>.<a href="#f116c2535227de0a" class="i method">ConvertBack</a>(<span class="r47 r">value</span>, <span class="r48 r">targetTypes</span>, <span class="r49 r">parameter</span>, <span class="r50 r">culture</span>);
+        }
+
+        <b>public override object</b>? <a id="add597a3fbf07571" href="../R/add597a3fbf07571.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r51 rd" class="r51 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r52 rd" class="r52 r">targetType</span>, <b>object</b>? <span id="r53 rd" class="r53 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r54 rd" class="r54 r">culture</span>)
+        {
+            <b>return</b> <a href="#cf43762c9a0768fd" class="i field">MathConverter</a>.<a href="#f557b62eaeabbf3d" class="i method">ConvertBack</a>(<span class="r51 r">value</span>, <span class="r52 r">targetType</span>, <span class="r53 r">parameter</span>, <span class="r54 r">culture</span>);
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> MathMultiplyConverter provides a multi value converter as a MarkupExtension which can be used for math operations.</span>
+    <span class="c">///</span><span class="c"> This class cannot be inherited.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@System.Xaml/A.html#93f5ab681cae64ab" class="t constructor">MarkupExtensionReturnType</a>(<b>typeof</b>(<a href="#f03a8258df74d92a" class="t t">MathMultiplyConverter</a>))]
+    <b>public sealed class</b> <a id="f03a8258df74d92a" href="../R/f03a8258df74d92a.html" target="n" data-glyph="0,0" class="t t"><span id="7ec58094bf9d37d6">MathMultiplyConverter</span></a> : <a href="MarkupConverter.cs.html#4eb1e8a9b882ae5b" class="t t">MarkupMultiConverter</a>
+    {
+        <b>private static readonly</b> <a href="#c3be02f83291c31b" class="t t">MathConverter</a> <a id="663ae18dea0b7536" href="../R/663ae18dea0b7536.html" target="n" data-glyph="46,1" class="i field">MathConverter</a> = <b>new</b> <a href="#c3be02f83291c31b" class="t constructor">MathConverter</a> { <a href="#dbe098a9e1dbef45" class="i property">Operation</a> = <a href="#1c4a785a03245654" class="t t">MathOperation</a>.<a href="#4fd00ea87123c74c" class="i field">Multiply</a> };
+
+        <b>public override object</b>? <a id="64bfbca6ab8df8af" href="../R/64bfbca6ab8df8af.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>[]? <span id="r55 rd" class="r55 r">values</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r56 rd" class="r56 r">targetType</span>, <b>object</b>? <span id="r57 rd" class="r57 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r58 rd" class="r58 r">culture</span>)
+        {
+            <b>return</b> <a href="#663ae18dea0b7536" class="i field">MathConverter</a>.<a href="#cf33c09104501bc8" class="i method">Convert</a>(<span class="r55 r">values</span>, <span class="r56 r">targetType</span>, <span class="r57 r">parameter</span>, <span class="r58 r">culture</span>);
+        }
+
+        <b>public override object</b>? <a id="0a39ba1814020d0d" href="../R/0a39ba1814020d0d.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>? <span id="r59 rd" class="r59 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r60 rd" class="r60 r">targetType</span>, <b>object</b>? <span id="r61 rd" class="r61 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r62 rd" class="r62 r">culture</span>)
+        {
+            <b>return</b> <a href="#663ae18dea0b7536" class="i field">MathConverter</a>.<a href="#b5d0a6577a070d08" class="i method">Convert</a>(<span class="r59 r">value</span>, <span class="r60 r">targetType</span>, <span class="r61 r">parameter</span>, <span class="r62 r">culture</span>);
+        }
+
+        <b>public override object</b>[]? <a id="99ca303f128db5cd" href="../R/99ca303f128db5cd.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r63 rd" class="r63 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>[] <span id="r64 rd" class="r64 r">targetTypes</span>, <b>object</b>? <span id="r65 rd" class="r65 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r66 rd" class="r66 r">culture</span>)
+        {
+            <b>return</b> <a href="#663ae18dea0b7536" class="i field">MathConverter</a>.<a href="#f116c2535227de0a" class="i method">ConvertBack</a>(<span class="r63 r">value</span>, <span class="r64 r">targetTypes</span>, <span class="r65 r">parameter</span>, <span class="r66 r">culture</span>);
+        }
+
+        <b>public override object</b>? <a id="550aba6038f2bcd5" href="../R/550aba6038f2bcd5.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r67 rd" class="r67 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r68 rd" class="r68 r">targetType</span>, <b>object</b>? <span id="r69 rd" class="r69 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r70 rd" class="r70 r">culture</span>)
+        {
+            <b>return</b> <a href="#663ae18dea0b7536" class="i field">MathConverter</a>.<a href="#f557b62eaeabbf3d" class="i method">ConvertBack</a>(<span class="r67 r">value</span>, <span class="r68 r">targetType</span>, <span class="r69 r">parameter</span>, <span class="r70 r">culture</span>);
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> MathDivideConverter provides a multi value converter as a MarkupExtension which can be used for math operations.</span>
+    <span class="c">///</span><span class="c"> This class cannot be inherited.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@System.Xaml/A.html#93f5ab681cae64ab" class="t constructor">MarkupExtensionReturnType</a>(<b>typeof</b>(<a href="#e09c9261de198db2" class="t t">MathDivideConverter</a>))]
+    <b>public sealed class</b> <a id="e09c9261de198db2" href="../R/e09c9261de198db2.html" target="n" data-glyph="0,0" class="t t"><span id="2ef0b20c0ab331ce">MathDivideConverter</span></a> : <a href="MarkupConverter.cs.html#4eb1e8a9b882ae5b" class="t t">MarkupMultiConverter</a>
+    {
+        <b>private static readonly</b> <a href="#c3be02f83291c31b" class="t t">MathConverter</a> <a id="7eb86b33e8c7159c" href="../R/7eb86b33e8c7159c.html" target="n" data-glyph="46,1" class="i field">MathConverter</a> = <b>new</b> <a href="#c3be02f83291c31b" class="t constructor">MathConverter</a> { <a href="#dbe098a9e1dbef45" class="i property">Operation</a> = <a href="#1c4a785a03245654" class="t t">MathOperation</a>.<a href="#a6a201dec53ece5c" class="i field">Divide</a> };
+
+        <b>public override object</b>? <a id="4341c943c812b04c" href="../R/4341c943c812b04c.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>[]? <span id="r71 rd" class="r71 r">values</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r72 rd" class="r72 r">targetType</span>, <b>object</b>? <span id="r73 rd" class="r73 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r74 rd" class="r74 r">culture</span>)
+        {
+            <b>return</b> <a href="#7eb86b33e8c7159c" class="i field">MathConverter</a>.<a href="#cf33c09104501bc8" class="i method">Convert</a>(<span class="r71 r">values</span>, <span class="r72 r">targetType</span>, <span class="r73 r">parameter</span>, <span class="r74 r">culture</span>);
+        }
+
+        <b>public override object</b>? <a id="13c3c86751c71c8f" href="../R/13c3c86751c71c8f.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>? <span id="r75 rd" class="r75 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r76 rd" class="r76 r">targetType</span>, <b>object</b>? <span id="r77 rd" class="r77 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r78 rd" class="r78 r">culture</span>)
+        {
+            <b>return</b> <a href="#7eb86b33e8c7159c" class="i field">MathConverter</a>.<a href="#b5d0a6577a070d08" class="i method">Convert</a>(<span class="r75 r">value</span>, <span class="r76 r">targetType</span>, <span class="r77 r">parameter</span>, <span class="r78 r">culture</span>);
+        }
+
+        <b>public override object</b>[]? <a id="ebc59ac38d199601" href="../R/ebc59ac38d199601.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r79 rd" class="r79 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>[] <span id="r80 rd" class="r80 r">targetTypes</span>, <b>object</b>? <span id="r81 rd" class="r81 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r82 rd" class="r82 r">culture</span>)
+        {
+            <b>return</b> <a href="#7eb86b33e8c7159c" class="i field">MathConverter</a>.<a href="#f116c2535227de0a" class="i method">ConvertBack</a>(<span class="r79 r">value</span>, <span class="r80 r">targetTypes</span>, <span class="r81 r">parameter</span>, <span class="r82 r">culture</span>);
+        }
+
+        <b>public override object</b>? <a id="d35d48b0f40db842" href="../R/d35d48b0f40db842.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r83 rd" class="r83 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r84 rd" class="r84 r">targetType</span>, <b>object</b>? <span id="r85 rd" class="r85 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r86 rd" class="r86 r">culture</span>)
+        {
+            <b>return</b> <a href="#7eb86b33e8c7159c" class="i field">MathConverter</a>.<a href="#f557b62eaeabbf3d" class="i method">ConvertBack</a>(<span class="r83 r">value</span>, <span class="r84 r">targetType</span>, <span class="r85 r">parameter</span>, <span class="r86 r">culture</span>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

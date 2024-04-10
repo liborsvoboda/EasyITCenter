@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html><head><title>MainWindow.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(106);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#AnnotationsStyling/MainWindow.cs" target="_top">MainWindow.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#AnnotationsStyling" target="_top">HelpProjects\WPF-MORE\Documents\Annotations\AnnotationsStyling\AnnotationsStyling.csproj</a> (AnnotationsStyling)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Annotations</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Annotations</span>.<span class="i n">Storage</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+
+<b>namespace</b> <span class="i n">AnnotationsStyling</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     Interaction logic for MainWindow.xaml</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <a href="P/1ded7ad775472a7d.html" target="s" class="k">partial</a> <b>class</b> <a id="1ded7ad775472a7d" href="R/1ded7ad775472a7d.html" target="n" data-glyph="0,0" class="t t">MainWindow</a> : <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>
+    {
+        <b>public</b> <a id="a326cd2064ac25a1" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MainWindow</a>()
+        {
+            <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#3d8e881b55311a7e" class="i method">InitializeComponent</a>();
+        }
+
+        <span class="c">// ------------------------- OnStyleSelected --------------------------</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Replaces the default StickyNote style when a new</span>
+        <span class="c">///</span><span class="c">     style is selected from the drop down combo box.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>protected void</b> <a id="3bb01325040a5299" href="R/3bb01325040a5299.html" target="n" data-glyph="75,1" class="i method">OnStyleSelected</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@PresentationFramework/A.html#c488465397cb1452" class="t t">SelectionChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <span class="c">// Extract the selected style.</span>
+            <a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="k">var</a> <span id="r2 rd" class="r2 r">source</span> = (<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>) <span class="r1 r">e</span>.<a href="@0@PresentationCore/A.html#d8bb6e0074ca9326" class="i property">Source</a>;
+            <a href="StyleMetaData.cs.html#32172fcbe8da8a6f" class="k">var</a> <span id="r3 rd" class="r3 r">selectedStyle</span> = (<a href="StyleMetaData.cs.html#32172fcbe8da8a6f" class="t t">StyleMetaData</a>) <span class="r2 r">source</span>.<a href="@0@PresentationFramework/A.html#f053c8f858b51411" class="i property">SelectedItem</a>;
+            <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="k">var</a> <span id="r4 rd" class="r4 r">newStyle</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#77e1492c499487f0" class="t constructor">Style</a>(<b>typeof</b> (<a href="@0@PresentationFramework/A.html#dfdeae1d0590fa25" class="t t">StickyNoteControl</a>)) {<a href="@0@PresentationFramework/A.html#d0e8509f9d62b902" class="i property">BasedOn</a> = <span class="r3 r">selectedStyle</span>.<a href="StyleMetaData.cs.html#88c043c40561c353" class="i field">Value</a>};
+
+            <span class="c">// Replace the default StickyNote style with the one that was just selected.</span>
+            <a href="@1@System.Runtime/A.html#3d00eeab9feb80f3" class="k">var</a> <span id="r5 rd" class="r5 r">defaultKey</span> = <b>typeof</b> (<a href="@0@PresentationFramework/A.html#dfdeae1d0590fa25" class="t t">StickyNoteControl</a>);
+            <b>if</b> (<a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#139ec3143caa5219" class="i field">Viewer</a>.<a href="@0@PresentationFramework/A.html#49776fc24d2e2b0d" class="i property">Resources</a>.<a href="@0@PresentationFramework/A.html#82e8969359036451" class="i method">Contains</a>(<span class="r5 r">defaultKey</span>))
+                <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#139ec3143caa5219" class="i field">Viewer</a>.<a href="@0@PresentationFramework/A.html#49776fc24d2e2b0d" class="i property">Resources</a>.<a href="@0@PresentationFramework/A.html#cc6a9c2c3b740d70" class="i method">Remove</a>(<span class="r5 r">defaultKey</span>);
+            <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#139ec3143caa5219" class="i field">Viewer</a>.<a href="@0@PresentationFramework/A.html#49776fc24d2e2b0d" class="i property">Resources</a>.<a href="@0@PresentationFramework/A.html#1c454a5b1f87e5a9" class="i method">Add</a>(<span class="r5 r">defaultKey</span>, <span class="r4 r">newStyle</span>);
+
+            <span class="c">// Re-load annotations so that they pickup new style.</span>
+            <a href="@0@PresentationFramework/A.html#27e6230489706ec0" class="k">var</a> <span id="r6 rd" class="r6 r">service</span> = <a href="@0@PresentationFramework/A.html#27e6230489706ec0" class="t t">AnnotationService</a>.<a href="@0@PresentationFramework/A.html#adbc44303e672f9d" class="i method">GetService</a>(<a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#139ec3143caa5219" class="i field">Viewer</a>);
+            <span class="r6 r">service</span>.<a href="@0@PresentationFramework/A.html#9430c1ffd73ff29d" class="i method">Disable</a>();
+            <span class="r6 r">service</span>.<a href="@0@PresentationFramework/A.html#c66998f4282f1138" class="i method">Enable</a>(<span class="r6 r">service</span>.<a href="@0@PresentationFramework/A.html#54b83f0b5654cfc9" class="i property">Store</a>);
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Boilerplate Annotations Code
+
+        <span class="c">// ----------------------------- OnLoaded -----------------------------</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Turns Annotations on.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>protected void</b> <a id="1580170f4de9099b" href="R/1580170f4de9099b.html" target="n" data-glyph="75,1" class="i method">OnLoaded</a>(<b>object</b> <span id="r7 rd" class="r7 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r8 rd" class="r8 r">e</span>)
+        {
+            <span class="c">// Make sure that an AnnotationService isn�t already enabled.</span>
+            <a href="@0@PresentationFramework/A.html#27e6230489706ec0" class="k">var</a> <span id="r9 rd" class="r9 r">service</span> = <a href="@0@PresentationFramework/A.html#27e6230489706ec0" class="t t">AnnotationService</a>.<a href="@0@PresentationFramework/A.html#adbc44303e672f9d" class="i method">GetService</a>(<a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#139ec3143caa5219" class="i field">Viewer</a>);
+            <b>if</b> (<span class="r9 r">service</span> == <b>null</b>)
+            {
+                <span class="c">// (a) Create a Stream for the annotations to be stored in.</span>
+                <a href="#bee69b8311f7f7eb" class="i field">_annotationStream</a> =
+                    <b>new</b> <a href="@1@System.Runtime/A.html#66c00a58470ce47d" class="t constructor">FileStream</a>(<span class="s">&quot;annotations.xml&quot;</span>, <a href="@1@System.Runtime/A.html#c0cb6ba6af625b3a" class="t t">FileMode</a>.<a href="@1@System.Runtime/A.html#80a500db887477f8" class="i field">OpenOrCreate</a>);
+                <span class="c">// (b) Create an AnnotationService on our</span>
+                <span class="c">// FlowDocumentPageViewer.</span>
+                <span class="r9 r">service</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#c18d97a94e649752" class="t constructor">AnnotationService</a>(<a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#139ec3143caa5219" class="i field">Viewer</a>);
+                <span class="c">// (c) Create an AnnotationStore and give it the stream we</span>
+                <span class="c">// created. (Autoflush == false)</span>
+                <a href="@0@PresentationFramework/A.html#1319d7465fbe7786" class="t t">AnnotationStore</a> <span id="r10 rd" class="r10 r">store</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#1b72721b2b293706" class="t constructor">XmlStreamStore</a>(<a href="#bee69b8311f7f7eb" class="i field">_annotationStream</a>);
+                <span class="c">// (d) &quot;Turn on annotations&quot;. Annotations will be persisted in</span>
+                <span class="c">// the stream created at (a).</span>
+                <span class="r9 r">service</span>.<a href="@0@PresentationFramework/A.html#c66998f4282f1138" class="i method">Enable</a>(<span class="r10 r">store</span>);
+            }
+        } <span class="c">// end:OnLoaded</span>
+
+
+        <span class="c">// ---------------------------- OnUnLoaded ----------------------------</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Turns Annotations off.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>protected void</b> <a id="e4058c78126b2147" href="R/e4058c78126b2147.html" target="n" data-glyph="75,1" class="i method">OnUnloaded</a>(<b>object</b> <span id="r11 rd" class="r11 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r12 rd" class="r12 r">e</span>)
+        {
+            <span class="c">// (a) Check that an AnnotationService</span>
+            <span class="c">// actually existed and was Enabled.</span>
+            <a href="@0@PresentationFramework/A.html#27e6230489706ec0" class="k">var</a> <span id="r13 rd" class="r13 r">service</span> = <a href="@0@PresentationFramework/A.html#27e6230489706ec0" class="t t">AnnotationService</a>.<a href="@0@PresentationFramework/A.html#adbc44303e672f9d" class="i method">GetService</a>(<a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#139ec3143caa5219" class="i field">Viewer</a>);
+            <b>if</b> (<span class="r13 r">service</span> != <b>null</b> &amp;&amp; <span class="r13 r">service</span>.<a href="@0@PresentationFramework/A.html#fee609b80d9a5aa1" class="i property">IsEnabled</a>)
+            {
+                <span class="c">// (b) Flush changes to annotations to our stream.</span>
+                <span class="r13 r">service</span>.<a href="@0@PresentationFramework/A.html#54b83f0b5654cfc9" class="i property">Store</a>.<a href="@0@PresentationFramework/A.html#7721af713d83cf3a" class="i method">Flush</a>();
+                <span class="c">// (c) Turn off annotations.</span>
+                <span class="r13 r">service</span>.<a href="@0@PresentationFramework/A.html#9430c1ffd73ff29d" class="i method">Disable</a>();
+                <span class="c">// (d) Close our stream.</span>
+                <a href="#bee69b8311f7f7eb" class="i field">_annotationStream</a>.<a href="@1@System.Runtime/A.html#dc4ffe046b847b84" class="i method">Close</a>();
+            }
+        }
+
+        <span class="c">// The stream that we will store annotations in.</span>
+        <b>private</b> <a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <a id="bee69b8311f7f7eb" href="R/bee69b8311f7f7eb.html" target="n" data-glyph="46,1" class="i field">_annotationStream</a>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Boilerplate Annotations Code
+    } <span class="c">// end:partial class Window1</span>
+
+
+    <span class="c">// =============== class ResourceEntryToComboItemConverter ================</span>
+    <span class="c">// end:class ResourceEntryToComboItemConverter</span>
+
+
+    <span class="c">// ========================= class StyleMetaData ==========================</span>
+}</pre></td></tr></table></div></body></html>

@@ -1,4 +1,7 @@
-﻿using EasyITSystemCenter.Api;
+﻿[Zpět](../../index)   
+
+```cshtml   
+using EasyITSystemCenter.Api;
 using EasyITSystemCenter.Classes;
 using EasyITSystemCenter.GlobalClasses;
 using Newtonsoft.Json;

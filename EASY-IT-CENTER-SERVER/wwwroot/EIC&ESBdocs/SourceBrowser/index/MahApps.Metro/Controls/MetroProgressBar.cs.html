@@ -1,0 +1,316 @@
+﻿<!DOCTYPE html>
+<html><head><title>MetroProgressBar.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(307);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/MetroProgressBar.cs" target="_top">Controls\MetroProgressBar.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> A metrofied ProgressBar.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#53ac4fa4a2cdc1a4" class="t t">ProgressBar</a><span class="c">&quot;</span><span class="c">/&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="1772968e53ac0e4c" href="../R/1772968e53ac0e4c.html" target="n" data-glyph="0,0" class="t t">MetroProgressBar</a> : <a href="@0@PresentationFramework/A.html#53ac4fa4a2cdc1a4" class="t t">ProgressBar</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7686bd94d3ab6fbc" class="i property">EllipseDiameter</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="5adb3b8414602f8a" href="../R/5adb3b8414602f8a.html" target="n" data-glyph="42,1" class="i field">EllipseDiameterProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#7686bd94d3ab6fbc" class="i property">EllipseDiameter</a>),
+                                          <b>typeof</b>(<b>double</b>),
+                                          <b>typeof</b>(<a href="#1772968e53ac0e4c" class="t t">MetroProgressBar</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>double</b>)));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the diameter of the ellipses used in the indeterminate animation.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="7686bd94d3ab6fbc" href="../R/7686bd94d3ab6fbc.html" target="n" data-glyph="102,1" class="i property">EllipseDiameter</a>
+        {
+            <b>get</b> =&gt; (<b>double</b>)<a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#5adb3b8414602f8a" class="i field">EllipseDiameterProperty</a>);
+            <b>set</b> =&gt; <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#5adb3b8414602f8a" class="i field">EllipseDiameterProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#ed7ecf3790b18394" class="i property">EllipseOffset</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="68730b1c7330c573" href="../R/68730b1c7330c573.html" target="n" data-glyph="42,1" class="i field">EllipseOffsetProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#ed7ecf3790b18394" class="i property">EllipseOffset</a>),
+                                        <b>typeof</b>(<b>double</b>),
+                                        <b>typeof</b>(<a href="#1772968e53ac0e4c" class="t t">MetroProgressBar</a>),
+                                        <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>double</b>)));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the offset of the ellipses used in the indeterminate animation.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="ed7ecf3790b18394" href="../R/ed7ecf3790b18394.html" target="n" data-glyph="102,1" class="i property">EllipseOffset</a>
+        {
+            <b>get</b> =&gt; (<b>double</b>)<a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#68730b1c7330c573" class="i field">EllipseOffsetProperty</a>);
+            <b>set</b> =&gt; <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#68730b1c7330c573" class="i field">EllipseOffsetProperty</a>, <b>value</b>);
+        }
+
+        <b>private readonly object</b> <a id="7c06a632f35cf0a1" href="../R/7c06a632f35cf0a1.html" target="n" data-glyph="46,1" class="i field">lockme</a> = <b>new</b> <b>object</b>();
+        <b>private</b> <a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="t t">Storyboard</a>? <a id="908266cd2cfe1501" href="../R/908266cd2cfe1501.html" target="n" data-glyph="46,1" class="i field">indeterminateStoryboard</a>;
+
+        <b>static</b> <a id="ef2cc0d919213987" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">MetroProgressBar</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6339cc8ec3e1311a" class="i field">DefaultStyleKeyProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#1772968e53ac0e4c" class="t t">MetroProgressBar</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>typeof</b>(<a href="#1772968e53ac0e4c" class="t t">MetroProgressBar</a>)));
+            <a href="@0@PresentationFramework/A.html#60ee7d94e2137368" class="i field">IsIndeterminateProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#1772968e53ac0e4c" class="t t">MetroProgressBar</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#f0b5ca672c6f55d2" class="t constructor">FrameworkPropertyMetadata</a>(<a href="#8b53f5b8ed979040" class="i method">OnIsIndeterminateChanged</a>));
+        }
+
+        <b>public</b> <a id="768117b3a7441c0e" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MetroProgressBar</a>()
+        {
+            <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationCore/A.html#798084dd6c266279" class="i">IsVisibleChanged</a> += <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#f598852e8835afc6" class="i method">VisibleChangedHandler</a>;
+        }
+
+        <b>private void</b> <a id="f598852e8835afc6" href="../R/f598852e8835afc6.html" target="n" data-glyph="76,1" class="i method">VisibleChangedHandler</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <span class="c">// reset Storyboard if Visibility is set to Visible #1300</span>
+            <b>if</b> (<a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#05f2b779a1b763c8" class="i property">IsIndeterminate</a>)
+            {
+                <a href="#bb0ce4465131b3e5" class="i method">ToggleIndeterminate</a>(<a href="#1772968e53ac0e4c" class="k">this</a>, (<b>bool</b>)<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a>, (<b>bool</b>)<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>);
+            }
+        }
+
+        <b>private static void</b> <a id="8b53f5b8ed979040" href="../R/8b53f5b8ed979040.html" target="n" data-glyph="76,1" class="i method">OnIsIndeterminateChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r2 rd" class="r2 r">dependencyObject</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r3 rd" class="r3 r">e</span>)
+        {
+            <a href="#1772968e53ac0e4c" class="k">var</a> <span id="r4 rd" class="r4 r">bar</span> = (<a href="#1772968e53ac0e4c" class="t t">MetroProgressBar</a>)<span class="r2 r">dependencyObject</span>;
+            <b>if</b> (<span class="r4 r">bar</span>.<a href="@0@PresentationFramework/A.html#b05bbe3100c43c82" class="i property">IsLoaded</a> &amp;&amp; <span class="r4 r">bar</span>.<a href="@0@PresentationCore/A.html#90bc97a020426061" class="i property">IsVisible</a>)
+            {
+                <a href="#bb0ce4465131b3e5" class="i method">ToggleIndeterminate</a>(<span class="r4 r">bar</span>, (<b>bool</b>)<span class="r3 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a>, (<b>bool</b>)<span class="r3 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>);
+            }
+        }
+
+        <b>private static void</b> <a id="bb0ce4465131b3e5" href="../R/bb0ce4465131b3e5.html" target="n" data-glyph="76,1" class="i method">ToggleIndeterminate</a>(<a href="#1772968e53ac0e4c" class="t t">MetroProgressBar</a> <span id="r5 rd" class="r5 r">bar</span>, <b>bool</b> <span id="r6 rd" class="r6 r">oldValue</span>, <b>bool</b> <span id="r7 rd" class="r7 r">newValue</span>)
+        {
+            <b>if</b> (<span class="r7 r">newValue</span> == <span class="r6 r">oldValue</span>)
+            {
+                <b>return</b>;
+            }
+
+            <a href="@0@PresentationFramework/A.html#91b0cbbca687886c" class="k">var</a> <span id="r8 rd" class="r8 r">indeterminateState</span> = <span class="r5 r">bar</span>.<a href="#5e66a51523d5d391" class="i method">GetIndeterminate</a>();
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="k">var</a> <span id="r9 rd" class="r9 r">containingObject</span> = <span class="r5 r">bar</span>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;ContainingGrid&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+            <b>if</b> (<span class="r8 r">indeterminateState</span> != <b>null</b> &amp;&amp; <span class="r9 r">containingObject</span> != <b>null</b>)
+            {
+                <a href="@0@mscorlib/A.html#9147ae6f76643aae" class="k">var</a> <span id="r10 rd" class="r10 r">resetAction</span> = <b>new</b> <span class="t">Action</span>(() =&gt;
+                    {
+                        <b>if</b> (<span class="r6 r">oldValue</span> &amp;&amp; <span class="r8 r">indeterminateState</span>.<a href="@0@PresentationFramework/A.html#b5e1d56d8a960b13" class="i property">Storyboard</a> != <b>null</b>)
+                        {
+                            <span class="c">// remove the previous storyboard from the Grid #1855</span>
+                            <span class="r8 r">indeterminateState</span>.<a href="@0@PresentationFramework/A.html#b5e1d56d8a960b13" class="i property">Storyboard</a>.<a href="@0@PresentationFramework/A.html#786317aa9ab3c8c9" class="i method">Stop</a>(<span class="r9 r">containingObject</span>);
+                            <span class="r8 r">indeterminateState</span>.<a href="@0@PresentationFramework/A.html#b5e1d56d8a960b13" class="i property">Storyboard</a>.<a href="@0@PresentationFramework/A.html#3ca5e17027968e82" class="i method">Remove</a>(<span class="r9 r">containingObject</span>);
+                        }
+
+                        <b>if</b> (<span class="r7 r">newValue</span>)
+                        {
+                            <span class="r5 r">bar</span>.<a href="#18780c9d99702711" class="i method">ResetStoryboard</a>(<span class="r5 r">bar</span>.<a href="#1d8e19fa703e926d" class="i method">ActualSize</a>(<b>true</b>), <b>false</b>);
+                        }
+                    });
+                <span class="r5 r">bar</span>.<a href="Extensions.cs.html#a03707fe13ce3664" class="i method">Invoke</a>(<span class="r10 r">resetAction</span>);
+            }
+        }
+
+        <b>private void</b> <a id="99e33fa41c517816" href="../R/99e33fa41c517816.html" target="n" data-glyph="76,1" class="i method">SizeChangedHandler</a>(<b>object</b>? <span id="r11 rd" class="r11 r">sender</span>, <a href="@0@PresentationFramework/A.html#cde359118c1bffb9" class="t t">SizeChangedEventArgs</a>? <span id="r12 rd" class="r12 r">e</span>)
+        {
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r13 rd" class="r13 r">size</span> = <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#1d8e19fa703e926d" class="i method">ActualSize</a>(<b>false</b>);
+            <a href="#1772968e53ac0e4c" class="k">var</a> <span id="r14 rd" class="r14 r">bar</span> = <a href="#1772968e53ac0e4c" class="k">this</a>;
+            <b>if</b> (<a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> == <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a> &amp;&amp; <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#05f2b779a1b763c8" class="i property">IsIndeterminate</a>)
+            {
+                <span class="r14 r">bar</span>.<a href="#18780c9d99702711" class="i method">ResetStoryboard</a>(<span class="r13 r">size</span>, <b>true</b>);
+            }
+        }
+
+        <b>private double</b> <a id="1d8e19fa703e926d" href="../R/1d8e19fa703e926d.html" target="n" data-glyph="76,1" class="i method">ActualSize</a>(<b>bool</b> <span id="r15 rd" class="r15 r">invalidateMeasureArrange</span>)
+        {
+            <b>if</b> (<span class="r15 r">invalidateMeasureArrange</span>)
+            {
+                <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationCore/A.html#b985370236fdd604" class="i method">UpdateLayout</a>();
+                <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationCore/A.html#0e6c09a4266b5db0" class="i method">Measure</a>(<b>new</b> <a href="@0@WindowsBase/A.html#a9e92f9d82abccc2" class="t constructor">Size</a>(<b>double</b>.<a href="@0@mscorlib/A.html#704210f8dd6afaed" class="i field">PositiveInfinity</a>, <b>double</b>.<a href="@0@mscorlib/A.html#704210f8dd6afaed" class="i field">PositiveInfinity</a>));
+                <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationCore/A.html#122da6e9bd28e257" class="i method">InvalidateArrange</a>();
+            }
+
+            <b>return</b> <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#3e482ca9b13fbd05" class="i property">Orientation</a> == <a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a>.<a href="@0@PresentationFramework/A.html#eb60498b6a8ff15f" class="i field">Horizontal</a> ? <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a> : <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>;
+        }
+
+        <b>private void</b> <a id="18780c9d99702711" href="../R/18780c9d99702711.html" target="n" data-glyph="76,1" class="i method">ResetStoryboard</a>(<b>double</b> <span id="r16 rd" class="r16 r">width</span>, <b>bool</b> <span id="r17 rd" class="r17 r">removeOldStoryboard</span>)
+        {
+            <b>if</b> (!<a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#05f2b779a1b763c8" class="i property">IsIndeterminate</a>)
+            {
+                <b>return</b>;
+            }
+
+            <b>lock</b> (<a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#7c06a632f35cf0a1" class="i field">lockme</a>)
+            {
+                <span class="c">//perform calculations</span>
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r18 rd" class="r18 r">containerAnimStart</span> = <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#4ddb8eae9ded6403" class="i method">CalcContainerAnimStart</a>(<span class="r16 r">width</span>);
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r19 rd" class="r19 r">containerAnimEnd</span> = <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#a63bb685df2ba924" class="i method">CalcContainerAnimEnd</a>(<span class="r16 r">width</span>);
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r20 rd" class="r20 r">ellipseAnimWell</span> = <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#f75f332b7bf18685" class="i method">CalcEllipseAnimWell</a>(<span class="r16 r">width</span>);
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r21 rd" class="r21 r">ellipseAnimEnd</span> = <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#903cfca5819f0dbb" class="i method">CalcEllipseAnimEnd</a>(<span class="r16 r">width</span>);
+                <span class="c">//reset the main double animation</span>
+                <b>try</b>
+                {
+                    <a href="@0@PresentationFramework/A.html#91b0cbbca687886c" class="k">var</a> <span id="r22 rd" class="r22 r">indeterminate</span> = <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#5e66a51523d5d391" class="i method">GetIndeterminate</a>();
+
+                    <b>if</b> (<span class="r22 r">indeterminate</span> != <b>null</b> &amp;&amp; <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#908266cd2cfe1501" class="i field">indeterminateStoryboard</a> != <b>null</b>)
+                    {
+                        <a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="k">var</a> <span id="r23 rd" class="r23 r">newStoryboard</span> = <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#908266cd2cfe1501" class="i field">indeterminateStoryboard</a>.<a href="@0@PresentationFramework/A.html#9e53f3172ec9e29c" class="i method">Clone</a>();
+                        <a href="@0@PresentationCore/A.html#069253e56c5739fe" class="k">var</a> <span id="r24 rd" class="r24 r">doubleAnim</span> = <span class="r23 r">newStoryboard</span>.<a href="@0@PresentationCore/A.html#a34849b73cc39556" class="i property">Children</a>.<a href="@0@System.Core/A.html#bfa632d2645eb8d5" class="i method">First</a>(<span id="r25 rd" class="r25 r">t</span> =&gt; <span class="r25 r">t</span>.<a href="@0@PresentationCore/A.html#27aadc8fcfcba206" class="i property">Name</a> == <span class="s">&quot;MainDoubleAnim&quot;</span>);
+                        <span class="r24 r">doubleAnim</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="@0@PresentationCore/A.html#a17bc32ef694a3ac" class="t t">DoubleAnimation</a>.<a href="@0@PresentationCore/A.html#42ed6e6ae6818866" class="i field">FromProperty</a>, <span class="r18 r">containerAnimStart</span>);
+                        <span class="r24 r">doubleAnim</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="@0@PresentationCore/A.html#a17bc32ef694a3ac" class="t t">DoubleAnimation</a>.<a href="@0@PresentationCore/A.html#9b40207fd64aaa17" class="i field">ToProperty</a>, <span class="r19 r">containerAnimEnd</span>);
+
+                        <b>var</b> <span id="r26 rd" class="r26 r">namesOfElements</span> = <b>new</b>[] { <span class="s">&quot;E1&quot;</span>, <span class="s">&quot;E2&quot;</span>, <span class="s">&quot;E3&quot;</span>, <span class="s">&quot;E4&quot;</span>, <span class="s">&quot;E5&quot;</span> };
+                        <b>foreach</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r27 rd" class="r27 r">elemName</span> <b>in</b> <span class="r26 r">namesOfElements</span>)
+                        {
+                            <a href="@0@PresentationCore/A.html#b95f9603a7310974" class="k">var</a> <span id="r28 rd" class="r28 r">doubleAnimParent</span> = (<a href="@0@PresentationCore/A.html#b95f9603a7310974" class="t t">DoubleAnimationUsingKeyFrames</a>)<span class="r23 r">newStoryboard</span>.<a href="@0@PresentationCore/A.html#a34849b73cc39556" class="i property">Children</a>.<a href="@0@System.Core/A.html#bfa632d2645eb8d5" class="i method">First</a>(<span id="r29 rd" class="r29 r">t</span> =&gt; <span class="r29 r">t</span>.<a href="@0@PresentationCore/A.html#27aadc8fcfcba206" class="i property">Name</a> == <span class="r27 r">elemName</span> + <span class="s">&quot;Anim&quot;</span>);
+                            <a href="@0@PresentationCore/A.html#e1851c15a1ed99f7" class="t t">DoubleKeyFrame</a> <span id="r30 rd" class="r30 r">first</span>,
+                                           <span id="r31 rd" class="r31 r">second</span>,
+                                           <span id="r32 rd" class="r32 r">third</span>;
+                            <b>if</b> (<span class="r27 r">elemName</span> == <span class="s">&quot;E1&quot;</span>)
+                            {
+                                <span class="r30 r">first</span> = <span class="r28 r">doubleAnimParent</span>.<a href="@0@PresentationCore/A.html#a413876606f40f81" class="i property">KeyFrames</a>[1];
+                                <span class="r31 r">second</span> = <span class="r28 r">doubleAnimParent</span>.<a href="@0@PresentationCore/A.html#a413876606f40f81" class="i property">KeyFrames</a>[2];
+                                <span class="r32 r">third</span> = <span class="r28 r">doubleAnimParent</span>.<a href="@0@PresentationCore/A.html#a413876606f40f81" class="i property">KeyFrames</a>[3];
+                            }
+                            <b>else</b>
+                            {
+                                <span class="r30 r">first</span> = <span class="r28 r">doubleAnimParent</span>.<a href="@0@PresentationCore/A.html#a413876606f40f81" class="i property">KeyFrames</a>[2];
+                                <span class="r31 r">second</span> = <span class="r28 r">doubleAnimParent</span>.<a href="@0@PresentationCore/A.html#a413876606f40f81" class="i property">KeyFrames</a>[3];
+                                <span class="r32 r">third</span> = <span class="r28 r">doubleAnimParent</span>.<a href="@0@PresentationCore/A.html#a413876606f40f81" class="i property">KeyFrames</a>[4];
+                            }
+
+                            <span class="r30 r">first</span>.<a href="@0@PresentationCore/A.html#6a4a9c5697cd2019" class="i property">Value</a> = <span class="r20 r">ellipseAnimWell</span>;
+                            <span class="r31 r">second</span>.<a href="@0@PresentationCore/A.html#6a4a9c5697cd2019" class="i property">Value</a> = <span class="r20 r">ellipseAnimWell</span>;
+                            <span class="r32 r">third</span>.<a href="@0@PresentationCore/A.html#6a4a9c5697cd2019" class="i property">Value</a> = <span class="r21 r">ellipseAnimEnd</span>;
+                            <span class="r30 r">first</span>.<a href="@0@WindowsBase/A.html#93dc88d3ddf93651" class="i method">InvalidateProperty</a>(<a href="@0@PresentationCore/A.html#e1851c15a1ed99f7" class="t t">DoubleKeyFrame</a>.<a href="@0@PresentationCore/A.html#9719ed024079dbbb" class="i field">ValueProperty</a>);
+                            <span class="r31 r">second</span>.<a href="@0@WindowsBase/A.html#93dc88d3ddf93651" class="i method">InvalidateProperty</a>(<a href="@0@PresentationCore/A.html#e1851c15a1ed99f7" class="t t">DoubleKeyFrame</a>.<a href="@0@PresentationCore/A.html#9719ed024079dbbb" class="i field">ValueProperty</a>);
+                            <span class="r32 r">third</span>.<a href="@0@WindowsBase/A.html#93dc88d3ddf93651" class="i method">InvalidateProperty</a>(<a href="@0@PresentationCore/A.html#e1851c15a1ed99f7" class="t t">DoubleKeyFrame</a>.<a href="@0@PresentationCore/A.html#9719ed024079dbbb" class="i field">ValueProperty</a>);
+
+                            <span class="r28 r">doubleAnimParent</span>.<a href="@0@WindowsBase/A.html#93dc88d3ddf93651" class="i method">InvalidateProperty</a>(<a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="t t">Storyboard</a>.<a href="@0@PresentationFramework/A.html#9050b5ae12a5d82d" class="i field">TargetPropertyProperty</a>);
+                            <span class="r28 r">doubleAnimParent</span>.<a href="@0@WindowsBase/A.html#93dc88d3ddf93651" class="i method">InvalidateProperty</a>(<a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="t t">Storyboard</a>.<a href="@0@PresentationFramework/A.html#d5cfa4f8ab2d02e7" class="i field">TargetNameProperty</a>);
+                        }
+
+                        <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="k">var</a> <span id="r33 rd" class="r33 r">containingGrid</span> = (<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>)<a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;ContainingGrid&quot;</span>);
+
+                        <b>if</b> (<span class="r17 r">removeOldStoryboard</span> &amp;&amp; <span class="r22 r">indeterminate</span>.<a href="@0@PresentationFramework/A.html#b5e1d56d8a960b13" class="i property">Storyboard</a> != <b>null</b>)
+                        {
+                            <span class="c">// remove the previous storyboard from the Grid #1855</span>
+                            <span class="r22 r">indeterminate</span>.<a href="@0@PresentationFramework/A.html#b5e1d56d8a960b13" class="i property">Storyboard</a>.<a href="@0@PresentationFramework/A.html#786317aa9ab3c8c9" class="i method">Stop</a>(<span class="r33 r">containingGrid</span>);
+                            <span class="r22 r">indeterminate</span>.<a href="@0@PresentationFramework/A.html#b5e1d56d8a960b13" class="i property">Storyboard</a>.<a href="@0@PresentationFramework/A.html#3ca5e17027968e82" class="i method">Remove</a>(<span class="r33 r">containingGrid</span>);
+                        }
+
+                        <span class="r22 r">indeterminate</span>.<a href="@0@PresentationFramework/A.html#b5e1d56d8a960b13" class="i property">Storyboard</a> = <span class="r23 r">newStoryboard</span>;
+
+                        <span class="r22 r">indeterminate</span>.<a href="@0@PresentationFramework/A.html#b5e1d56d8a960b13" class="i property">Storyboard</a>?.<a href="@0@PresentationFramework/A.html#30723858589e3094" class="i method">Begin</a>(<span class="r33 r">containingGrid</span>, <b>true</b>);
+                    }
+                }
+                <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a>)
+                {
+                    <span class="c">//we just ignore </span>
+                }
+            }
+        }
+
+        <b>private</b> <a href="@0@PresentationFramework/A.html#91b0cbbca687886c" class="t t">VisualState</a>? <a id="5e66a51523d5d391" href="../R/5e66a51523d5d391.html" target="n" data-glyph="76,1" class="i method">GetIndeterminate</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="k">var</a> <span id="r34 rd" class="r34 r">templateGrid</span> = <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;ContainingGrid&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+            <b>if</b> (<span class="r34 r">templateGrid</span> <b>is null</b>)
+            {
+                <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#261f505f3dbf66d2" class="i method">ApplyTemplate</a>();
+                <span class="r34 r">templateGrid</span> = <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;ContainingGrid&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+                <b>if</b> (<span class="r34 r">templateGrid</span> <b>is null</b>)
+                {
+                    <b>return</b> <b>null</b>;
+                }
+            }
+
+            <a href="@0@mscorlib/A.html#5d74f6adfeaf6c7d" class="k">var</a> <span id="r35 rd" class="r35 r">groups</span> = <a href="@0@PresentationFramework/A.html#5c12561bc99f678d" class="t t">VisualStateManager</a>.<a href="@0@PresentationFramework/A.html#b8331aff2da2fb56" class="i method">GetVisualStateGroups</a>(<span class="r34 r">templateGrid</span>);
+            <b>return</b> <span class="r35 r">groups</span>?.<a href="@0@System.Core/A.html#4ba4a3f8a5530e33" class="i method">OfType</a>&lt;<a href="@0@PresentationFramework/A.html#90cfc3be380c7238" class="t t">VisualStateGroup</a>&gt;()
+                         .<a href="@0@System.Core/A.html#8f3471331178bcb0" class="i method">SelectMany</a>(<span id="r36 rd" class="r36 r">group</span> =&gt; <span class="r36 r">group</span>.<a href="@0@PresentationFramework/A.html#d66490c8e27079a2" class="i property">States</a>.<a href="@0@System.Core/A.html#4ba4a3f8a5530e33" class="i method">OfType</a>&lt;<a href="@0@PresentationFramework/A.html#91b0cbbca687886c" class="t t">VisualState</a>&gt;())
+                         .<a href="@0@System.Core/A.html#b7e5965cab68b1cf" class="i method">FirstOrDefault</a>(<span id="r37 rd" class="r37 r">state</span> =&gt; <span class="r37 r">state</span>.<a href="@0@PresentationFramework/A.html#e25e342dd2cd7d44" class="i property">Name</a> == <span class="s">&quot;Indeterminate&quot;</span>);
+        }
+
+        <b>private void</b> <a id="c4cef13d29cef105" href="../R/c4cef13d29cef105.html" target="n" data-glyph="76,1" class="i method">SetEllipseDiameter</a>(<b>double</b> <span id="r38 rd" class="r38 r">width</span>)
+        {
+            <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#5adb3b8414602f8a" class="i field">EllipseDiameterProperty</a>, <span class="r38 r">width</span> &lt;= 180 ? 4d : (<span class="r38 r">width</span> &lt;= 280 ? 5d : 6d));
+        }
+
+        <b>private void</b> <a id="c0278339dbc88251" href="../R/c0278339dbc88251.html" target="n" data-glyph="76,1" class="i method">SetEllipseOffset</a>(<b>double</b> <span id="r39 rd" class="r39 r">width</span>)
+        {
+            <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#68730b1c7330c573" class="i field">EllipseOffsetProperty</a>, <span class="r39 r">width</span> &lt;= 180 ? 4d : (<span class="r39 r">width</span> &lt;= 280 ? 7d : 9d));
+        }
+
+        <b>private double</b> <a id="4ddb8eae9ded6403" href="../R/4ddb8eae9ded6403.html" target="n" data-glyph="76,1" class="i method">CalcContainerAnimStart</a>(<b>double</b> <span id="r40 rd" class="r40 r">width</span>)
+        {
+            <b>return</b> <span class="r40 r">width</span> &lt;= 180 ? -34 : (<span class="r40 r">width</span> &lt;= 280 ? -50.5 : -63);
+        }
+
+        <b>private double</b> <a id="a63bb685df2ba924" href="../R/a63bb685df2ba924.html" target="n" data-glyph="76,1" class="i method">CalcContainerAnimEnd</a>(<b>double</b> <span id="r41 rd" class="r41 r">width</span>)
+        {
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r42 rd" class="r42 r">firstPart</span> = 0.4352 * <span class="r41 r">width</span>;
+            <b>return</b> <span class="r41 r">width</span> &lt;= 180 ? <span class="r42 r">firstPart</span> - 25.731 : (<span class="r41 r">width</span> &lt;= 280 ? <span class="r42 r">firstPart</span> + 27.84 : <span class="r42 r">firstPart</span> + 58.862);
+        }
+
+        <b>private double</b> <a id="f75f332b7bf18685" href="../R/f75f332b7bf18685.html" target="n" data-glyph="76,1" class="i method">CalcEllipseAnimWell</a>(<b>double</b> <span id="r43 rd" class="r43 r">width</span>)
+        {
+            <b>return</b> <span class="r43 r">width</span> * 1.0 / 3.0;
+        }
+
+        <b>private double</b> <a id="903cfca5819f0dbb" href="../R/903cfca5819f0dbb.html" target="n" data-glyph="76,1" class="i method">CalcEllipseAnimEnd</a>(<b>double</b> <span id="r44 rd" class="r44 r">width</span>)
+        {
+            <b>return</b> <span class="r44 r">width</span> * 2.0 / 3.0;
+        }
+
+        <b>public override void</b> <a id="8bb049c71da6f251" href="../R/8bb049c71da6f251.html" target="n" data-glyph="72,1" class="i method">OnApplyTemplate</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#53ac4fa4a2cdc1a4" class="k">base</a>.<a href="@0@PresentationFramework/A.html#1fad5b663b25dec0" class="i method">OnApplyTemplate</a>();
+
+            <b>lock</b> (<a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#7c06a632f35cf0a1" class="i field">lockme</a>)
+            {
+                <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#908266cd2cfe1501" class="i field">indeterminateStoryboard</a> = <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#5b064a6294551b3b" class="i method">TryFindResource</a>(<span class="s">&quot;IndeterminateStoryboard&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="t t">Storyboard</a>;
+            }
+
+            <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> -= <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#8ab6e4c4f22d4caa" class="i method">LoadedHandler</a>;
+            <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#8ab6e4c4f22d4caa" class="i method">LoadedHandler</a>;
+        }
+
+        <b>private void</b> <a id="8ab6e4c4f22d4caa" href="../R/8ab6e4c4f22d4caa.html" target="n" data-glyph="76,1" class="i method">LoadedHandler</a>(<b>object</b> <span id="r45 rd" class="r45 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r46 rd" class="r46 r">routedEventArgs</span>)
+        {
+            <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> -= <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#8ab6e4c4f22d4caa" class="i method">LoadedHandler</a>;
+            <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#99e33fa41c517816" class="i method">SizeChangedHandler</a>(<b>null</b>, <b>null</b>);
+            <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#ec1a90b4f82457bf" class="i">SizeChanged</a> += <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#99e33fa41c517816" class="i method">SizeChangedHandler</a>;
+        }
+
+        <b>protected override void</b> <a id="c168ddf930096f62" href="../R/c168ddf930096f62.html" target="n" data-glyph="75,1" class="i method">OnRenderSizeChanged</a>(<a href="@0@PresentationCore/A.html#bbb500fe15aee002" class="t t">SizeChangedInfo</a> <span id="r47 rd" class="r47 r">sizeInfo</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#53ac4fa4a2cdc1a4" class="k">base</a>.<a href="@0@PresentationFramework/A.html#b5be75df6bb83f00" class="i method">OnRenderSizeChanged</a>(<span class="r47 r">sizeInfo</span>);
+            <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#fc16c8dbfc6d08c2" class="i method">UpdateEllipseProperties</a>();
+        }
+
+        <b>private void</b> <a id="fc16c8dbfc6d08c2" href="../R/fc16c8dbfc6d08c2.html" target="n" data-glyph="76,1" class="i method">UpdateEllipseProperties</a>()
+        {
+            <span class="c">// Update the Ellipse properties to their default values</span>
+            <span class="c">// only if they haven&#39;t been user-set.</span>
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r48 rd" class="r48 r">actualSize</span> = <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#1d8e19fa703e926d" class="i method">ActualSize</a>(<b>true</b>);
+            <b>if</b> (<span class="r48 r">actualSize</span> &gt; 0)
+            {
+                <b>if</b> (<a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#7686bd94d3ab6fbc" class="i property">EllipseDiameter</a>.<a href="@0@mscorlib/A.html#bceeea32c8ba20a7" class="i method">Equals</a>(0))
+                {
+                    <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#c4cef13d29cef105" class="i method">SetEllipseDiameter</a>(<span class="r48 r">actualSize</span>);
+                }
+
+                <b>if</b> (<a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#ed7ecf3790b18394" class="i property">EllipseOffset</a>.<a href="@0@mscorlib/A.html#bceeea32c8ba20a7" class="i method">Equals</a>(0))
+                {
+                    <a href="#1772968e53ac0e4c" class="k">this</a>.<a href="#c0278339dbc88251" class="i method">SetEllipseOffset</a>(<span class="r48 r">actualSize</span>);
+                }
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

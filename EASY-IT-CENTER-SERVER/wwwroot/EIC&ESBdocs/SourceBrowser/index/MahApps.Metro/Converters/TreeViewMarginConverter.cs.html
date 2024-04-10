@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html><head><title>TreeViewMarginConverter.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(69);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Converters/TreeViewMarginConverter.cs" target="_top">Converters\TreeViewMarginConverter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Converters</span>
+{
+    [<a href="@0@PresentationFramework/A.html#ddd8a157949fec4d" class="t constructor">ValueConversion</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#c17a2c09aaa80559" class="t t">TreeViewItem</a>), <b>typeof</b>(<a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a>))]
+    <b>public class</b> <a id="1eb76b0d2ef6b8ee" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="5a9f195de169209a">TreeViewMarginConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <b>public double</b> <a id="9910a527fe688ed2" href="../R/9910a527fe688ed2.html" target="n" data-glyph="102,1" class="i property">Length</a> { <b>get</b>; <b>set</b>; }
+
+        <b>public object</b>? <a id="10e0da1de6fc4469" href="../R/10e0da1de6fc4469.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>? <span id="r0 rd" class="r0 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r1 rd" class="r1 r">targetType</span>, <b>object</b>? <span id="r2 rd" class="r2 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r3 rd" class="r3 r">culture</span>)
+        {
+            <b>if</b> (<span class="r0 r">value</span> <b>is</b> <a href="@0@PresentationFramework/A.html#c17a2c09aaa80559" class="t t">TreeViewItem</a> <span id="r4 rd" class="r4 r">item</span>)
+            {
+                <b>return</b> <b>new</b> <a href="@0@PresentationFramework/A.html#7d5226ec44f0e6f6" class="t constructor">Thickness</a>(<a href="#1eb76b0d2ef6b8ee" class="k">this</a>.<a href="#9910a527fe688ed2" class="i property">Length</a> * <span class="r4 r">item</span>.<a href="#0be3129c188cd333" class="i method">GetDepth</a>(), 0, 0, 0);
+            }
+
+            <b>return</b> <b>new</b> <a href="@0@PresentationFramework/A.html#f24f92e6dee837d3" class="t constructor">Thickness</a>(0);
+        }
+
+        <b>public object</b>? <a id="07fd2ab97958e2d2" href="../R/07fd2ab97958e2d2.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r5 rd" class="r5 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r6 rd" class="r6 r">targetType</span>, <b>object</b>? <span id="r7 rd" class="r7 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r8 rd" class="r8 r">culture</span>)
+        {
+            <b>return</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#ee7f3b3d5828e7ab" class="i field">UnsetValue</a>;
+        }
+    }
+
+    <b>public static class</b> <a id="81aedb2c5cf0773f" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">TreeViewItemExtensions</a>
+    {
+        <b>public static int</b> <a id="0be3129c188cd333" href="../R/0be3129c188cd333.html" target="n" data-glyph="220,1" class="i method">GetDepth</a>(<b>this</b> <a href="@0@PresentationFramework/A.html#c17a2c09aaa80559" class="t t">TreeViewItem</a> <span id="r9 rd" class="r9 r">item</span>)
+        {
+            <span class="c">// Use non linq version for better performance (maybe).</span>
+            <b>return</b> <a href="#6897bc5b3d09bca6" class="i method">CountAncestors</a>&lt;<a href="@0@PresentationFramework/A.html#5050528c9202ffc4" class="t t">TreeView</a>&gt;(<span class="r9 r">item</span>, <span id="r10 rd" class="r10 r">x</span> =&gt; <span class="r10 r">x</span> <b>is</b> <a href="@0@PresentationFramework/A.html#c17a2c09aaa80559" class="t t">TreeViewItem</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Counts the ancestors until the type T was found.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">typeparam</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r11 r t">T</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The type until the search should work.</span><span class="c">&lt;/</span><span class="c">typeparam</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r12 r">child</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The start child.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r13 r">countFor</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">A filter function which can be null to count all ancestors.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>internal static int</b> <a id="6897bc5b3d09bca6" href="../R/6897bc5b3d09bca6.html" target="n" data-glyph="221,1" class="i method">CountAncestors</a>&lt;<span id="r11 rd t" class="r11 r t">T</span>&gt;(<b>this</b> <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r12 rd" class="r12 r">child</span>, <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>, <b>bool</b>&gt; <span id="r13 rd" class="r13 r">countFor</span>)
+            <b>where</b> <span class="r11 r t">T</span> : <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>
+        {
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r14 rd" class="r14 r">count</span> = 0;
+            <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="k">var</a> <span id="r15 rd" class="r15 r">parent</span> = <a href="@0@PresentationCore/A.html#7f1e2538afba01e7" class="t t">VisualTreeHelper</a>.<a href="@0@PresentationCore/A.html#31ea065317da8a39" class="i method">GetParent</a>(<span class="r12 r">child</span>);
+
+            <b>while</b> (<span class="r15 r">parent</span> <b>is not null</b> &amp;&amp; <span class="r15 r">parent</span> <b>is not</b> <span class="r11 r t">T</span>)
+            {
+                <b>if</b> (<span class="r13 r">countFor</span> <b>is null</b> || <span class="r13 r">countFor</span>(<span class="r15 r">parent</span>))
+                {
+                    <span class="r14 r">count</span>++;
+                }
+
+                <span class="r15 r">parent</span> = <a href="@0@PresentationCore/A.html#7f1e2538afba01e7" class="t t">VisualTreeHelper</a>.<a href="@0@PresentationCore/A.html#31ea065317da8a39" class="i method">GetParent</a>(<span class="r15 r">parent</span>);
+            }
+
+            <b>return</b> <span class="r14 r">count</span>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

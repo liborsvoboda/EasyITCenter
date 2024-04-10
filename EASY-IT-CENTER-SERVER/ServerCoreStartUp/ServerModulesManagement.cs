@@ -42,8 +42,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                 services.AddMarkdown(config => {
                     // Create custom MarkdigPipeline 
                     // using MarkDig; for extension methods
-                    config.ConfigureMarkdigPipeline = builder =>
-                    {
+                    config.ConfigureMarkdigPipeline = builder => {
                         builder.UseEmphasisExtras(Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Default)
                             .UsePipeTables().UseGridTables().UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
                             .UseAutoLinks().UseAbbreviations().UseEmojiAndSmiley(true).UseListExtras()
@@ -51,7 +50,6 @@ namespace EasyITCenter.ServerCoreConfiguration {
                             .UseDiagrams().UseEmphasisExtras().UseFigures().UseListExtras().UseFooters().UseFootnotes()
                             .UseGlobalization().UseMathematics().UseMediaLinks().UsePreciseSourceLocation().UseReferralLinks()
                             .UseSmartyPants().UseSyntaxHighlighting().UseTableOfContent().UseTaskLists().UseDFMCodeInfoPrefix()
-
                             .UseHighlightJs().UseInteractiveCode().UseXref()
                             //.UsePrism()
                             .UseUrlRewriter(link => link.Url.AsRelativeResource())

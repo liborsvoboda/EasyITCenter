@@ -1,0 +1,666 @@
+﻿<!DOCTYPE html>
+<html><head><title>GeoMap.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(657);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts.Wpf/GeoMap.cs" target="_top">GeoMap.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts.Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\WpfView\WpfView.csproj</a> (LiveCharts.Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Effects</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Maps</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<span class="i n">Maps</span>;
+<b>using</b> <span class="t">Path</span> = <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>.<a href="@0@PresentationFramework/A.html#ede77210f20e8cf9" class="t t">Path</a>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <b>public class</b> <a id="91862fbfded92326" href="R/91862fbfded92326.html" target="n" data-glyph="0,0" class="t t">GeoMap</a> : <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a>
+    {
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructors
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#91862fbfded92326" class="t t">GeoMap</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> class.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a id="bc1639e946898770" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">GeoMap</a>()
+        {
+            <a href="#4038d02d4c948a6e" class="i property">Canvas</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#382f8bfec4ebad3c" class="t constructor">Canvas</a>();
+            <a href="#2e87115681998405" class="i property">Map</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#382f8bfec4ebad3c" class="t constructor">Canvas</a>();
+            <a href="#4038d02d4c948a6e" class="i property">Canvas</a>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<a href="#2e87115681998405" class="i property">Map</a>);
+            <a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <a href="#4038d02d4c948a6e" class="i property">Canvas</a>;
+
+            <a href="#4038d02d4c948a6e" class="i property">Canvas</a>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationFramework/A.html#eab43ecf1e67f8ba" class="i field">WidthProperty</a>,
+                <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a> { <a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#cf4296c7d69477b8" class="t constructor">PropertyPath</a>(<a href="@0@PresentationFramework/A.html#e45d5739ae67714d" class="i field">ActualWidthProperty</a>), <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#91862fbfded92326" class="k">this</a> });
+            <a href="#4038d02d4c948a6e" class="i property">Canvas</a>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationFramework/A.html#2d42566e5f9dbe0e" class="i field">HeightProperty</a>,
+                <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a> { <a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#cf4296c7d69477b8" class="t constructor">PropertyPath</a>(<a href="@0@PresentationFramework/A.html#613d2567ab02766a" class="i field">ActualHeightProperty</a>), <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#91862fbfded92326" class="k">this</a> });
+
+            <a href="#812390efc84e9e1d" class="i property">Lands</a> = <b>new</b> <a href="@0@mscorlib/A.html#bf6849e410b43c4c" class="t constructor">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="/LiveCharts/A.html#6dc2c20c49c69762" class="t t">MapData</a>&gt;();
+
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#19f4e447099f5b7f" class="i field">DefaultLandFillProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#9289c34fb9030bfd" class="i method">FromArgb</a>(200,255,255,255)));
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#95fc08eb516b3a23" class="i field">LandStrokeProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#9289c34fb9030bfd" class="i method">FromArgb</a>(30, 55,55, 55)));
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#417f1bc3f5e8e235" class="i field">LandStrokeThicknessProperty</a>, 1.3d);
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#645a03b8522ef61e" class="i field">AnimationsSpeedProperty</a>, <a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@0@mscorlib/A.html#668d91d771bce54b" class="i method">FromMilliseconds</a>(500));
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#a79e672f6084659d" class="i field">BackgroundProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#9289c34fb9030bfd" class="i method">FromArgb</a>(150, 96, 125, 138)));
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#d9d5deb48ef8673f" class="i field">GradientStopCollectionProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#da78b9c1109ee092" class="t constructor">GradientStopCollection</a>
+            {
+                <b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#9289c34fb9030bfd" class="i method">FromArgb</a>(100,2,119,188), 0d),
+                <b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(2,119,188), 1d),
+            });
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#397312e2c43df0aa" class="i field">HeatMapProperty</a>, <b>new</b> <a href="@0@mscorlib/A.html#bf6849e410b43c4c" class="t constructor">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <b>double</b>&gt;());
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#7b914e218eaceeab" class="i field">GeoMapTooltipProperty</a>, <b>new</b> <a href="DefaultGeoMapTooltip.xaml.cs.html#fbc1cfff329922dc" class="t constructor">DefaultGeoMapTooltip</a> {<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#0024ca32be32c247" class="i field">Hidden</a>});
+            <a href="#4038d02d4c948a6e" class="i property">Canvas</a>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<a href="#9c056ec9ee816834" class="i property">GeoMapTooltip</a>);
+
+            <a href="@0@PresentationFramework/A.html#ec1a90b4f82457bf" class="i">SizeChanged</a> += (<span id="r0 rd" class="r0 r">sender</span>, <span id="r1 rd" class="r1 r">e</span>) =&gt;
+            {
+                <a href="#ac41d7036d476a83" class="i method">Draw</a>();
+            };
+
+            <a href="@0@PresentationCore/A.html#ebe95961ddbcbd2a" class="i">MouseWheel</a> += (<span id="r2 rd" class="r2 r">sender</span>, <span id="r3 rd" class="r3 r">e</span>) =&gt;
+            {
+                <b>if</b> (!<a href="#1b20ac1255b08e8c" class="i property">EnableZoomingAndPanning</a>) <b>return</b>;
+
+                <span class="r3 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+                <a href="@0@PresentationCore/A.html#e7edd21a66e74ebb" class="k">var</a> <span id="r4 rd" class="r4 r">rt</span> = <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationCore/A.html#291370cc1b2ddda6" class="i property">RenderTransform</a> <b>as</b> <a href="@0@PresentationCore/A.html#e7edd21a66e74ebb" class="t t">ScaleTransform</a>;
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r5 rd" class="r5 r">p</span> = <span class="r4 r">rt</span> == <b>null</b> ? 1 : <span class="r4 r">rt</span>.<a href="@0@PresentationCore/A.html#c0e36e95722549cc" class="i property">ScaleX</a>;
+                <span class="r5 r">p</span> += <span class="r3 r">e</span>.<a href="@0@PresentationCore/A.html#da89a6a0b369523a" class="i property">Delta</a> &gt; 0 ? .05 : -.05;
+                <span class="r5 r">p</span> = <span class="r5 r">p</span> &lt; 1 ? 1 : <span class="r5 r">p</span>;
+                <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r6 rd" class="r6 r">o</span> = <span class="r3 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="#91862fbfded92326" class="k">this</a>);
+                <b>if</b> (<span class="r3 r">e</span>.<a href="@0@PresentationCore/A.html#da89a6a0b369523a" class="i property">Delta</a> &gt; 0) <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationCore/A.html#b09b837ed30e36a6" class="i property">RenderTransformOrigin</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r6 r">o</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>/<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>,<span class="r6 r">o</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>/<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>);
+                <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationCore/A.html#291370cc1b2ddda6" class="i property">RenderTransform</a> = <b>new</b> <a href="@0@PresentationCore/A.html#4ca1f16164405c58" class="t constructor">ScaleTransform</a>(<span class="r5 r">p</span>, <span class="r5 r">p</span>);
+            };
+
+            <a href="@0@PresentationCore/A.html#bb42e64a3ed1a0ce" class="i">MouseDown</a> += (<span id="r7 rd" class="r7 r">sender</span>, <span id="r8 rd" class="r8 r">e</span>) =&gt;
+            {
+                <b>if</b> (!<a href="#1b20ac1255b08e8c" class="i property">EnableZoomingAndPanning</a>) <b>return</b>;
+
+                <a href="#9364394d9023312e" class="i property">DragOrigin</a> = <span class="r8 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="#91862fbfded92326" class="k">this</a>);
+            };
+
+            <a href="@0@PresentationCore/A.html#efe155ade2e36eaf" class="i">MouseUp</a> += (<span id="r9 rd" class="r9 r">sender</span>, <span id="r10 rd" class="r10 r">e</span>) =&gt;
+            {
+                <b>if</b> (!<a href="#1b20ac1255b08e8c" class="i property">EnableZoomingAndPanning</a>) <b>return</b>;
+
+                <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r11 rd" class="r11 r">end</span> = <span class="r10 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="#91862fbfded92326" class="k">this</a>);
+                <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r12 rd" class="r12 r">delta</span> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<a href="#9364394d9023312e" class="i property">DragOrigin</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> - <span class="r11 r">end</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>, <a href="#9364394d9023312e" class="i property">DragOrigin</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <span class="r11 r">end</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>);
+
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r13 rd" class="r13 r">l</span> = <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#c65916be9b322dda" class="i method">GetLeft</a>(<a href="#2e87115681998405" class="i property">Map</a>) - <span class="r12 r">delta</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>;
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r14 rd" class="r14 r">t</span> = <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#bbf3dfbfc3a60d1b" class="i method">GetTop</a>(<a href="#2e87115681998405" class="i property">Map</a>) - <span class="r12 r">delta</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+
+                <b>if</b> (<a href="#ab1b75ac2987b5c1" class="i property">DisableAnimations</a>)
+                {
+                    <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="#2e87115681998405" class="i property">Map</a>, <span class="r13 r">l</span>);
+                    <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="#2e87115681998405" class="i property">Map</a>, <span class="r14 r">t</span>);
+                }
+                <b>else</b>
+                {
+                    <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#eb349db243881914" class="i field">LeftProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r13 r">l</span>, <a href="#257ce9fffc23def9" class="i property">AnimationsSpeed</a>));
+                    <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#a76de5a09fc0753e" class="i field">TopProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r14 r">t</span>, <a href="#257ce9fffc23def9" class="i property">AnimationsSpeed</a>));
+                }
+            };
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Events
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Occurs when [land click].</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@mscorlib/A.html#27863de72c2c9b49" class="t t">Action</a>&lt;<b>object</b>, <a href="/LiveCharts/A.html#6dc2c20c49c69762" class="t t">MapData</a>&gt; <a id="62a97b171532ac6e" href="R/62a97b171532ac6e.html" target="n" data-glyph="30,1" class="i">LandClick</a>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Properties
+
+        <b>private</b> <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a> <a id="4038d02d4c948a6e" href="R/4038d02d4c948a6e.html" target="n" data-glyph="106,1" class="i property">Canvas</a> { <b>get</b>; <b>set</b>; }
+        <b>private</b> <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a> <a id="2e87115681998405" href="R/2e87115681998405.html" target="n" data-glyph="106,1" class="i property">Map</a> { <b>get</b>; <b>set</b>; }
+        <b>private</b> <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <a id="9364394d9023312e" href="R/9364394d9023312e.html" target="n" data-glyph="106,1" class="i property">DragOrigin</a> { <b>get</b>; <b>set</b>; }
+        <b>private</b> <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <a id="70827672b03eae90" href="R/70827672b03eae90.html" target="n" data-glyph="106,1" class="i property">OriginalPosition</a> { <b>get</b>; <b>set</b>; }
+        <b>private bool</b> <a id="353db76a5f78fbde" href="R/353db76a5f78fbde.html" target="n" data-glyph="106,1" class="i property">IsDrawn</a> { <b>get</b>; <b>set</b>; }
+        <b>private bool</b> <a id="fabc2beecb664a2b" href="R/fabc2beecb664a2b.html" target="n" data-glyph="106,1" class="i property">IsWidthDominant</a> { <b>get</b>; <b>set</b>; }
+        <b>private</b> <a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="/LiveCharts/A.html#6dc2c20c49c69762" class="t t">MapData</a>&gt; <a id="812390efc84e9e1d" href="R/812390efc84e9e1d.html" target="n" data-glyph="106,1" class="i property">Lands</a> { <b>get</b>; <b>set</b>; }
+
+        <b>private static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="7b914e218eaceeab" href="R/7b914e218eaceeab.html" target="n" data-glyph="46,1" class="i field">GeoMapTooltipProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;GeoMapTooltip&quot;</span>, <b>typeof</b> (<a href="P/8a10e719e9c58436.html#8a10e719e9c58436" class="t t">DefaultGeoMapTooltip</a>), <b>typeof</b> (<a href="#91862fbfded92326" class="t t">GeoMap</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="P/8a10e719e9c58436.html#8a10e719e9c58436" class="t t">DefaultGeoMapTooltip</a>)));
+        <b>private</b> <a href="P/8a10e719e9c58436.html#8a10e719e9c58436" class="t t">DefaultGeoMapTooltip</a> <a id="9c056ec9ee816834" href="R/9c056ec9ee816834.html" target="n" data-glyph="106,1" class="i property">GeoMapTooltip</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="P/8a10e719e9c58436.html#8a10e719e9c58436" class="t t">DefaultGeoMapTooltip</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#7b914e218eaceeab" class="i field">GeoMapTooltipProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#7b914e218eaceeab" class="i field">GeoMapTooltipProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The language pack property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="a2b5953b33223f53" href="R/a2b5953b33223f53.html" target="n" data-glyph="42,1" class="i field">LanguagePackProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;LanguagePack&quot;</span>, <b>typeof</b> (<a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt;), <b>typeof</b> (<a href="#91862fbfded92326" class="t t">GeoMap</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt;)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the language dictionary</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="e44f0174efc2dbc9" href="R/e44f0174efc2dbc9.html" target="n" data-glyph="102,1" class="i property">LanguagePack</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt;) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#a2b5953b33223f53" class="i field">LanguagePackProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#a2b5953b33223f53" class="i field">LanguagePackProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The default land fill property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="19f4e447099f5b7f" href="R/19f4e447099f5b7f.html" target="n" data-glyph="42,1" class="i field">DefaultLandFillProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;DefaultLandFill&quot;</span>, <b>typeof</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>), <b>typeof</b> (<a href="#91862fbfded92326" class="t t">GeoMap</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets default land fill</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a> <a id="5e0173c0c3e3d19e" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">DefaultLandFill</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#19f4e447099f5b7f" class="i field">DefaultLandFillProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#19f4e447099f5b7f" class="i field">DefaultLandFillProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The land stroke thickness property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="417f1bc3f5e8e235" href="R/417f1bc3f5e8e235.html" target="n" data-glyph="42,1" class="i field">LandStrokeThicknessProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;LandStrokeThickness&quot;</span>, <b>typeof</b> (<b>double</b>), <b>typeof</b> (<a href="#91862fbfded92326" class="t t">GeoMap</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>double</b>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets every land stroke thickness property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="7cd61de84e96535b" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">LandStrokeThickness</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#417f1bc3f5e8e235" class="i field">LandStrokeThicknessProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#417f1bc3f5e8e235" class="i field">LandStrokeThicknessProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The land stroke property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="95fc08eb516b3a23" href="R/95fc08eb516b3a23.html" target="n" data-glyph="42,1" class="i field">LandStrokeProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;LandStroke&quot;</span>, <b>typeof</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>), <b>typeof</b> (<a href="#91862fbfded92326" class="t t">GeoMap</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets every land stroke</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a> <a id="0143092a31e19e57" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">LandStroke</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#95fc08eb516b3a23" class="i field">LandStrokeProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#95fc08eb516b3a23" class="i field">LandStrokeProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The disable animations property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f87f335b1fb3d5d6" href="R/f87f335b1fb3d5d6.html" target="n" data-glyph="42,1" class="i field">DisableAnimationsProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;DisableAnimations&quot;</span>, <b>typeof</b> (<b>bool</b>), <b>typeof</b> (<a href="#91862fbfded92326" class="t t">GeoMap</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>bool</b>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the chart is animated</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="ab1b75ac2987b5c1" href="R/ab1b75ac2987b5c1.html" target="n" data-glyph="102,1" class="i property">DisableAnimations</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f87f335b1fb3d5d6" class="i field">DisableAnimationsProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f87f335b1fb3d5d6" class="i field">DisableAnimationsProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The animations speed property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="645a03b8522ef61e" href="R/645a03b8522ef61e.html" target="n" data-glyph="42,1" class="i field">AnimationsSpeedProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;AnimationsSpeed&quot;</span>, <b>typeof</b> (<a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>), <b>typeof</b> (<a href="#91862fbfded92326" class="t t">GeoMap</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets animations speed</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a> <a id="257ce9fffc23def9" href="R/257ce9fffc23def9.html" target="n" data-glyph="102,1" class="i property">AnimationsSpeed</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#645a03b8522ef61e" class="i field">AnimationsSpeedProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#645a03b8522ef61e" class="i field">AnimationsSpeedProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The hoverable property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="5c8cad2bd5771c99" href="R/5c8cad2bd5771c99.html" target="n" data-glyph="42,1" class="i field">HoverableProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;Hoverable&quot;</span>, <b>typeof</b> (<b>bool</b>), <b>typeof</b> (<a href="#91862fbfded92326" class="t t">GeoMap</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>bool</b>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the chart reacts when a user moves the mouse over a land</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="21e0d83fcb9a90f9" href="R/21e0d83fcb9a90f9.html" target="n" data-glyph="102,1" class="i property">Hoverable</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#5c8cad2bd5771c99" class="i field">HoverableProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#5c8cad2bd5771c99" class="i field">HoverableProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The heat map property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="397312e2c43df0aa" href="R/397312e2c43df0aa.html" target="n" data-glyph="42,1" class="i field">HeatMapProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;HeatMap&quot;</span>, <b>typeof</b> (<a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <b>double</b>&gt;), <b>typeof</b> (<a href="#91862fbfded92326" class="t t">GeoMap</a>), 
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <b>double</b>&gt;), <a href="#ec3c0de5f658da96" class="i method">OnHeapMapChanged</a>));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the current heat map</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <b>double</b>&gt; <a id="3b8aa88a80f9e7a7" href="R/3b8aa88a80f9e7a7.html" target="n" data-glyph="102,1" class="i property">HeatMap</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <b>double</b>&gt;) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#397312e2c43df0aa" class="i field">HeatMapProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#397312e2c43df0aa" class="i field">HeatMapProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The gradient stop collection property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="d9d5deb48ef8673f" href="R/d9d5deb48ef8673f.html" target="n" data-glyph="42,1" class="i field">GradientStopCollectionProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;GradientStopCollection&quot;</span>, <b>typeof</b>(<a href="@0@PresentationCore/A.html#b3b8a1db9c51e976" class="t t">GradientStopCollection</a>), <b>typeof</b>(<a href="#91862fbfded92326" class="t t">GeoMap</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationCore/A.html#b3b8a1db9c51e976" class="t t">GradientStopCollection</a>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the gradient stop collection, use every gradient offset and color properties to define your gradient.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#b3b8a1db9c51e976" class="t t">GradientStopCollection</a> <a id="a2ed606ce27c09b1" href="R/a2ed606ce27c09b1.html" target="n" data-glyph="102,1" class="i property">GradientStopCollection</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#b3b8a1db9c51e976" class="t t">GradientStopCollection</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#d9d5deb48ef8673f" class="i field">GradientStopCollectionProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#d9d5deb48ef8673f" class="i field">GradientStopCollectionProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The source property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="1d49134bf4a810a6" href="R/1d49134bf4a810a6.html" target="n" data-glyph="42,1" class="i field">SourceProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;Source&quot;</span>, <b>typeof</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>), <b>typeof</b> (<a href="#91862fbfded92326" class="t t">GeoMap</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the map source</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="902be295ca797069" href="R/902be295ca797069.html" target="n" data-glyph="102,1" class="i property">Source</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#1d49134bf4a810a6" class="i field">SourceProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#1d49134bf4a810a6" class="i field">SourceProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The enable zooming and panning property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="019cb2a8a556eb47" href="R/019cb2a8a556eb47.html" target="n" data-glyph="42,1" class="i field">EnableZoomingAndPanningProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;EnableZoomingAndPanning&quot;</span>, <b>typeof</b> (<b>bool</b>), <b>typeof</b> (<a href="#91862fbfded92326" class="t t">GeoMap</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>bool</b>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the map allows zooming and panning</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="1b20ac1255b08e8c" href="R/1b20ac1255b08e8c.html" target="n" data-glyph="102,1" class="i property">EnableZoomingAndPanning</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#019cb2a8a556eb47" class="i field">EnableZoomingAndPanningProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#019cb2a8a556eb47" class="i field">EnableZoomingAndPanningProperty</a>, <b>value</b>); }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Publics
+
+        <span class="c">///// &lt;summary&gt;</span>
+        <span class="c">///// Moves the map to a specif area</span>
+        <span class="c">///// &lt;/summary&gt;</span>
+        <span class="c">///// &lt;param name=&quot;data&quot;&gt;target area&lt;/param&gt;</span>
+        <span class="c">//public void MoveTo(MapData data)</span>
+        <span class="c">//{</span>
+        <span class="c">//    var s = (Path) data.Shape;</span>
+        <span class="c">//    var area = s.Data.Bounds;</span>
+        <span class="c">//    var t = (ScaleTransform) s.RenderTransform;</span>
+            
+
+
+        <span class="c">//    //if (DisableAnimations)</span>
+        <span class="c">//    //{</span>
+            
+        <span class="c">//    double scale;</span>
+        <span class="c">//    double cx = 0;</span>
+        <span class="c">//    double cy = 0;</span>
+
+        <span class="c">//    if (IsWidthDominant)</span>
+        <span class="c">//    {</span>
+        <span class="c">//        scale = data.LvcMap.DesiredWidth / area.Width;</span>
+        <span class="c">//    }</span>
+        <span class="c">//    else</span>
+        <span class="c">//    {</span>
+        <span class="c">//        scale = data.LvcMap.DesiredHeight / area.Height;</span>
+        <span class="c">//    }</span>
+
+        <span class="c">//    Map.RenderTransformOrigin = new Point(0, 0);</span>
+        <span class="c">//    Map.RenderTransform = new ScaleTransform(scale, scale);</span>
+
+        <span class="c">//    Canvas.SetLeft(Map, -area.X*t.ScaleX*scale + cx);</span>
+        <span class="c">//    Canvas.SetTop(Map, -area.Y*t.ScaleY*scale + cy);</span>
+
+        <span class="c">//    //}</span>
+        <span class="c">//    //else</span>
+        <span class="c">//    //{</span>
+        <span class="c">//    //    Map.BeginAnimation(Canvas.LeftProperty, new DoubleAnimation(-area.X, AnimationsSpeed));</span>
+        <span class="c">//    //    //Map.BeginAnimation(Canvas.TopProperty, new DoubleAnimation(area.Y, AnimationsSpeed));</span>
+        <span class="c">//    //}</span>
+        <span class="c">//}</span>
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Restarts the current map view</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="d87849c79bd45168" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Restart</a>()
+        {
+            <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationCore/A.html#291370cc1b2ddda6" class="i property">RenderTransform</a> = <b>new</b> <a href="@0@PresentationCore/A.html#4ca1f16164405c58" class="t constructor">ScaleTransform</a>(1, 1);
+            <b>if</b> (<a href="#ab1b75ac2987b5c1" class="i property">DisableAnimations</a>)
+            {
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="#2e87115681998405" class="i property">Map</a>, <a href="#70827672b03eae90" class="i property">OriginalPosition</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>);
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="#2e87115681998405" class="i property">Map</a>, <a href="#70827672b03eae90" class="i property">OriginalPosition</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>);
+            }
+            <b>else</b>
+            {
+                <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#eb349db243881914" class="i field">LeftProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<a href="#70827672b03eae90" class="i property">OriginalPosition</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>, <a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@0@mscorlib/A.html#668d91d771bce54b" class="i method">FromMilliseconds</a>(1)));
+                <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#a76de5a09fc0753e" class="i field">TopProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<a href="#70827672b03eae90" class="i property">OriginalPosition</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>, <a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@0@mscorlib/A.html#668d91d771bce54b" class="i method">FromMilliseconds</a>(1)));
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets a heat map value with a given key, then updates every land heat color</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r15 r">key</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">key</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r16 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">new value</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="7081f59a4e9438ea" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">UpdateKey</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r15 rd" class="r15 r">key</span>, <b>double</b> <span id="r16 rd" class="r16 r">value</span>)
+        {
+            <a href="#3b8aa88a80f9e7a7" class="i property">HeatMap</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="r15 r">key</span>] = <span class="r16 r">value</span>;
+            <a href="#9ed854d4dca87a57" class="i method">ShowMeSomeHeat</a>();
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Privates
+
+        <b>private void</b> <a id="ac41d7036d476a83" href="R/ac41d7036d476a83.html" target="n" data-glyph="76,1" class="i method">Draw</a>()
+        {
+            <a href="#353db76a5f78fbde" class="i property">IsDrawn</a> = <b>true</b>;
+
+            <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#5ec678e22d847fa1" class="i method">Clear</a>();
+
+            <b>if</b> (<a href="@0@PresentationFramework/A.html#75f95eee6bd69fa9" class="t t">DesignerProperties</a>.<a href="@0@PresentationFramework/A.html#940ce1b313016b20" class="i method">GetIsInDesignMode</a>(<a href="#91862fbfded92326" class="k">this</a>))
+            {
+                <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#450e4175035f484c" class="t constructor">TextBlock</a>
+                {
+                    <a href="@0@PresentationFramework/A.html#e77c881b0d6f7e9e" class="i property">Text</a> = <span class="s">&quot;Designer preview is not currently available&quot;</span>,
+                    <a href="@0@PresentationFramework/A.html#168af2045b8ac97a" class="i property">Foreground</a> = <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#11eb50ba6c5ef1c6" class="i property">White</a>,
+                    <a href="@0@PresentationFramework/A.html#a6ac992b843eb331" class="i property">FontWeight</a> = <a href="@0@PresentationCore/A.html#c05354a296740eb4" class="t t">FontWeights</a>.<a href="@0@PresentationCore/A.html#87fcda93e4c56b5e" class="i property">Bold</a>,
+                    <a href="@0@PresentationFramework/A.html#606ef85043a0cffb" class="i property">FontSize</a> = 12,
+                    <a href="@0@PresentationCore/A.html#b537a71fdae3ed1c" class="i property">Effect</a> = <b>new</b> <a href="@0@PresentationCore/A.html#cb27c3aafa0ae8e5" class="t constructor">DropShadowEffect</a>
+                    {
+                        <a href="@0@PresentationCore/A.html#984ceacecec77995" class="i property">ShadowDepth</a> = 2,
+                        <a href="@0@PresentationCore/A.html#d21688ce3c05508b" class="i property">RenderingBias</a> = <a href="@0@PresentationCore/A.html#6f54832a490cbde9" class="t t">RenderingBias</a>.<a href="@0@PresentationCore/A.html#34a71ffb467642c1" class="i field">Performance</a>
+                    }
+                });
+                <b>return</b>;
+            }
+
+            <a href="/LiveCharts/A.html#4b840f2465a20e0d" class="k">var</a> <span id="r17 rd" class="r17 r">map</span> = <a href="Maps/MapResolver.cs.html#acae9567fa327932" class="t t">MapResolver</a>.<a href="Maps/MapResolver.cs.html#67019a8eefc28feb" class="i method">Get</a>(<a href="#902be295ca797069" class="i property">Source</a>);
+            <b>if</b> (<span class="r17 r">map</span> == <b>null</b>) <b>return</b>;
+
+            <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="k">var</a> <span id="r18 rd" class="r18 r">desiredSize</span> = <b>new</b> <a href="@0@WindowsBase/A.html#a9e92f9d82abccc2" class="t constructor">Size</a>(<span class="r17 r">map</span>.<a href="/LiveCharts/A.html#6ef9151643bc6af8" class="i property">DesiredWidth</a>, <span class="r17 r">map</span>.<a href="/LiveCharts/A.html#f466f662568cfcb6" class="i property">DesiredHeight</a>);
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r19 rd" class="r19 r">r</span> = <span class="r18 r">desiredSize</span>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>/<span class="r18 r">desiredSize</span>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>;
+
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r20 rd" class="r20 r">wr</span> = <a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>/<span class="r18 r">desiredSize</span>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>;
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r21 rd" class="r21 r">hr</span> = <a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>/<span class="r18 r">desiredSize</span>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>;
+            <b>double</b> <span id="r22 rd" class="r22 r">s</span>;
+
+            <b>if</b> (<span class="r20 r">wr</span> &lt; <span class="r21 r">hr</span>)
+            {
+                <a href="#fabc2beecb664a2b" class="i property">IsWidthDominant</a> = <b>true</b>;
+                <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>;
+                <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a>/<span class="r19 r">r</span>;
+                <span class="r22 r">s</span> = <span class="r20 r">wr</span>;
+                <a href="#70827672b03eae90" class="i property">OriginalPosition</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, (<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a> - <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a>)*.5);
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="#2e87115681998405" class="i property">Map</a>, <a href="#70827672b03eae90" class="i property">OriginalPosition</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>);
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="#2e87115681998405" class="i property">Map</a>, <a href="#70827672b03eae90" class="i property">OriginalPosition</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>);
+            }
+            <b>else</b>
+            {
+                <a href="#fabc2beecb664a2b" class="i property">IsWidthDominant</a> = <b>false</b>;
+                <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>;
+                <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <span class="r19 r">r</span>*<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>;
+                <span class="r22 r">s</span> = <span class="r21 r">hr</span>;
+                <a href="#70827672b03eae90" class="i property">OriginalPosition</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>((<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a> - <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a>)*.5, 0d);
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="#2e87115681998405" class="i property">Map</a>, <a href="#70827672b03eae90" class="i property">OriginalPosition</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>);
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="#2e87115681998405" class="i property">Map</a>, <a href="#70827672b03eae90" class="i property">OriginalPosition</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>);
+            }
+
+            <a href="@0@PresentationCore/A.html#e7edd21a66e74ebb" class="k">var</a> <span id="r23 rd" class="r23 r">t</span> = <b>new</b> <a href="@0@PresentationCore/A.html#4ca1f16164405c58" class="t constructor">ScaleTransform</a>(<span class="r22 r">s</span>, <span class="r22 r">s</span>);
+
+            <b>foreach</b> (<a href="/LiveCharts/A.html#6dc2c20c49c69762" class="k">var</a> <span id="r24 rd" class="r24 r">land</span> <b>in</b> <span class="r17 r">map</span>.<a href="/LiveCharts/A.html#ba5ca26a0b527ffc" class="i property">Data</a>)
+            {
+                <a href="@0@PresentationFramework/A.html#ede77210f20e8cf9" class="k">var</a> <span id="r25 rd" class="r25 r">p</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#f74614a0400b0f04" class="t constructor">Path</a>
+                {
+                    <a href="@0@PresentationFramework/A.html#3f47244595d8fa3d" class="i property">Data</a> = <a href="@0@PresentationCore/A.html#22ca37af0d997a39" class="t t">Geometry</a>.<a href="@0@PresentationCore/A.html#d70af5c8e06913bc" class="i method">Parse</a>(<span class="r24 r">land</span>.<a href="/LiveCharts/A.html#3bd2371f5cd12621" class="i property">Data</a>),
+                    <a href="@0@PresentationCore/A.html#291370cc1b2ddda6" class="i property">RenderTransform</a> = <span class="r23 r">t</span>
+                };
+
+                <span class="r24 r">land</span>.<a href="/LiveCharts/A.html#2a717b377edb1486" class="i property">Shape</a> = <span class="r25 r">p</span>;
+                <a href="#812390efc84e9e1d" class="i property">Lands</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="r24 r">land</span>.<a href="/LiveCharts/A.html#1d3e2b0d6dfef258" class="i property">Id</a>] = <span class="r24 r">land</span>;
+                <a href="#2e87115681998405" class="i property">Map</a>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<span class="r25 r">p</span>);
+
+                <span class="r25 r">p</span>.<a href="@0@PresentationCore/A.html#d55f349888a09381" class="i">MouseEnter</a> += <a href="#a9a905cfde7038f6" class="i method">POnMouseEnter</a>;
+                <span class="r25 r">p</span>.<a href="@0@PresentationCore/A.html#03c2b50c1c615ebb" class="i">MouseLeave</a> += <a href="#c4541ca01fb2f91b" class="i method">POnMouseLeave</a>;
+                <span class="r25 r">p</span>.<a href="@0@PresentationCore/A.html#8af943423996f9bf" class="i">MouseMove</a> += <a href="#35add6ee1cfa86c7" class="i method">POnMouseMove</a>;
+                <span class="r25 r">p</span>.<a href="@0@PresentationCore/A.html#bb42e64a3ed1a0ce" class="i">MouseDown</a> += <a href="#3134550d4ff15cac" class="i method">POnMouseDown</a>;
+
+                <span class="r25 r">p</span>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationFramework/A.html#05936789d07d6eac" class="t t">Shape</a>.<a href="@0@PresentationFramework/A.html#9368a3d6cdd82805" class="i field">StrokeProperty</a>,
+                    <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a> { <a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#cf4296c7d69477b8" class="t constructor">PropertyPath</a>(<a href="#95fc08eb516b3a23" class="i field">LandStrokeProperty</a>), <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#91862fbfded92326" class="k">this</a> });
+                <span class="r25 r">p</span>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationFramework/A.html#05936789d07d6eac" class="t t">Shape</a>.<a href="@0@PresentationFramework/A.html#07ba05faca80c010" class="i field">StrokeThicknessProperty</a>,
+                    <b>new</b> <a href="@0@PresentationFramework/A.html#4ef021f68da6bc91" class="t constructor">MultiBinding</a>
+                    {
+                        <a href="@0@PresentationFramework/A.html#63e79c3e07c302d1" class="i property">Converter</a> = <b>new</b> <a href="#b45cfb82cb07acd7" class="t constructor">ScaleStrokeConverter</a>(),
+                        <a href="@0@PresentationFramework/A.html#029e917e7ce884cd" class="i property">Bindings</a> =
+                        {
+                            <b>new</b> <a href="@0@PresentationFramework/A.html#94f69147a4e4e69b" class="t constructor">Binding</a>(<span class="s">&quot;LandStrokeThickness&quot;</span>) {<a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#91862fbfded92326" class="k">this</a>},
+                            <b>new</b> <a href="@0@PresentationFramework/A.html#94f69147a4e4e69b" class="t constructor">Binding</a>(<span class="s">&quot;ScaleX&quot;</span>) {<a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <span class="r23 r">t</span>}
+                        }
+                    });
+
+            }      
+
+            <a href="#9ed854d4dca87a57" class="i method">ShowMeSomeHeat</a>();
+        }
+
+        <b>private void</b> <a id="9ed854d4dca87a57" href="R/9ed854d4dca87a57.html" target="n" data-glyph="76,1" class="i method">ShowMeSomeHeat</a>()
+        {
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r26 rd" class="r26 r">max</span> = <b>double</b>.<a href="@0@mscorlib/A.html#00c1b741b8eb8a64" class="i field">MinValue</a>;
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r27 rd" class="r27 r">min</span> = <b>double</b>.<a href="@0@mscorlib/A.html#54056123120a0122" class="i field">MaxValue</a>;
+
+            <b>foreach</b> (<a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r28 rd" class="r28 r">i</span> <b>in</b> <a href="#3b8aa88a80f9e7a7" class="i property">HeatMap</a>.<a href="@0@mscorlib/A.html#4367dd1e300ae797" class="i property">Values</a>)
+            {
+                <span class="r26 r">max</span> = <span class="r28 r">i</span> &gt; <span class="r26 r">max</span> ? <span class="r28 r">i</span> : <span class="r26 r">max</span>;
+                <span class="r27 r">min</span> = <span class="r28 r">i</span> &lt; <span class="r27 r">min</span> ? <span class="r28 r">i</span> : <span class="r27 r">min</span>;
+            }
+
+            <b>foreach</b> (<a href="@0@mscorlib/A.html#8585965bb176a426" class="k">var</a> <span id="r29 rd" class="r29 r">land</span> <b>in</b> <a href="#812390efc84e9e1d" class="i property">Lands</a>)
+            {
+                <b>double</b> <span id="r30 rd" class="r30 r">temperature</span>;
+                <a href="@0@PresentationFramework/A.html#05936789d07d6eac" class="k">var</a> <span id="r31 rd" class="r31 r">shape</span> = ((<a href="@0@PresentationFramework/A.html#05936789d07d6eac" class="t t">Shape</a>) <span class="r29 r">land</span>.<a href="@0@mscorlib/A.html#38c0e86cc4b30170" class="i property">Value</a>.<a href="/LiveCharts/A.html#2a717b377edb1486" class="i property">Shape</a>);
+
+                <span class="r31 r">shape</span>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationFramework/A.html#05936789d07d6eac" class="t t">Shape</a>.<a href="@0@PresentationFramework/A.html#9301a6e49e685f7a" class="i field">FillProperty</a>,
+                    <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a> {<a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#cf4296c7d69477b8" class="t constructor">PropertyPath</a>(<a href="#19f4e447099f5b7f" class="i field">DefaultLandFillProperty</a>), <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#91862fbfded92326" class="k">this</a>});
+
+                <b>if</b> (!<a href="#3b8aa88a80f9e7a7" class="i property">HeatMap</a>.<a href="@0@mscorlib/A.html#2e5bc6d8c0f21e67" class="i method">TryGetValue</a>(<span class="r29 r">land</span>.<a href="@0@mscorlib/A.html#f9d1c04feb1af032" class="i property">Key</a>, <b>out</b> <span class="r30 r">temperature</span>)) <b>continue</b>;
+
+                <span class="r30 r">temperature</span> = <a href="#c9225561682da641" class="i method">LinealInterpolation</a>(0, 1, <span class="r27 r">min</span>, <span class="r26 r">max</span>, <span class="r30 r">temperature</span>);
+                <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="k">var</a> <span id="r32 rd" class="r32 r">color</span> = <a href="#e257eae7f3c465f1" class="i method">ColorInterpolation</a>(<span class="r30 r">temperature</span>);
+
+                <b>if</b> (<a href="#ab1b75ac2987b5c1" class="i property">DisableAnimations</a>)
+                {
+                    <span class="r31 r">shape</span>.<a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a> = <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<span class="r32 r">color</span>);
+                }
+                <b>else</b>
+                {
+                    <span class="r31 r">shape</span>.<a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a> = <b>new</b> <a href="@0@PresentationCore/A.html#3387a4fb06ed3ffd" class="t constructor">SolidColorBrush</a>();
+                    ((<a href="@0@PresentationCore/A.html#2bdb4a721050df52" class="t t">SolidColorBrush</a>) <span class="r31 r">shape</span>.<a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a>).<a href="@0@PresentationCore/A.html#bc99d0afb4cfa763" class="i method">BeginAnimation</a>(<a href="@0@PresentationCore/A.html#2bdb4a721050df52" class="t t">SolidColorBrush</a>.<a href="@0@PresentationCore/A.html#b8179e0afc58b350" class="i field">ColorProperty</a>,
+                        <b>new</b> <a href="@0@PresentationCore/A.html#9fb5d8ffe3bb3017" class="t constructor">ColorAnimation</a>(<span class="r32 r">color</span>, <a href="#257ce9fffc23def9" class="i property">AnimationsSpeed</a>));
+                }
+            }
+        }
+
+        <b>private void</b> <a id="3134550d4ff15cac" href="R/3134550d4ff15cac.html" target="n" data-glyph="76,1" class="i method">POnMouseDown</a>(<b>object</b> <span id="r33 rd" class="r33 r">sender</span>, <a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r34 rd" class="r34 r">mouseButtonEventArgs</span>)
+        {
+            <a href="/LiveCharts/A.html#6dc2c20c49c69762" class="k">var</a> <span id="r35 rd" class="r35 r">land</span> = <a href="#812390efc84e9e1d" class="i property">Lands</a>.<a href="@0@mscorlib/A.html#4367dd1e300ae797" class="i property">Values</a>.<a href="@0@System.Core/A.html#b7e5965cab68b1cf" class="i method">FirstOrDefault</a>(<span id="r36 rd" class="r36 r">x</span> =&gt; <span class="r36 r">x</span>.<a href="/LiveCharts/A.html#2a717b377edb1486" class="i property">Shape</a> == <span class="r33 r">sender</span>);
+            <b>if</b> (<span class="r35 r">land</span> == <b>null</b>) <b>return</b>;
+
+            <b>if</b> (<a href="#62a97b171532ac6e" class="i">LandClick</a> != <b>null</b>) <a href="#62a97b171532ac6e" class="i">LandClick</a>.<a href="@0@mscorlib/A.html#928e849f54d2e4af" class="i method">Invoke</a>(<span class="r33 r">sender</span>, <span class="r35 r">land</span>);
+        }
+
+        <b>private void</b> <a id="c4541ca01fb2f91b" href="R/c4541ca01fb2f91b.html" target="n" data-glyph="76,1" class="i method">POnMouseLeave</a>(<b>object</b> <span id="r37 rd" class="r37 r">sender</span>, <a href="@0@PresentationCore/A.html#2bd9049c90bfe71a" class="t t">MouseEventArgs</a> <span id="r38 rd" class="r38 r">mouseEventArgs</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#ede77210f20e8cf9" class="k">var</a> <span id="r39 rd" class="r39 r">path</span> = (<a href="@0@PresentationFramework/A.html#ede77210f20e8cf9" class="t t">Path</a>)<span class="r37 r">sender</span>;
+            <span class="r39 r">path</span>.<a href="@0@PresentationCore/A.html#7ca23bf037950fa0" class="i property">Opacity</a> = 1;
+
+            <a href="#9c056ec9ee816834" class="i property">GeoMapTooltip</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#0024ca32be32c247" class="i field">Hidden</a>;
+        }
+
+        <b>private void</b> <a id="a9a905cfde7038f6" href="R/a9a905cfde7038f6.html" target="n" data-glyph="76,1" class="i method">POnMouseEnter</a>(<b>object</b> <span id="r40 rd" class="r40 r">sender</span>, <a href="@0@PresentationCore/A.html#2bd9049c90bfe71a" class="t t">MouseEventArgs</a> <span id="r41 rd" class="r41 r">mouseEventArgs</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#ede77210f20e8cf9" class="k">var</a> <span id="r42 rd" class="r42 r">path</span> = (<a href="@0@PresentationFramework/A.html#ede77210f20e8cf9" class="t t">Path</a>) <span class="r40 r">sender</span>;
+            <span class="r42 r">path</span>.<a href="@0@PresentationCore/A.html#7ca23bf037950fa0" class="i property">Opacity</a> = .8;
+
+            <a href="/LiveCharts/A.html#6dc2c20c49c69762" class="k">var</a> <span id="r43 rd" class="r43 r">land</span> = <a href="#812390efc84e9e1d" class="i property">Lands</a>.<a href="@0@mscorlib/A.html#4367dd1e300ae797" class="i property">Values</a>.<a href="@0@System.Core/A.html#b7e5965cab68b1cf" class="i method">FirstOrDefault</a>(<span id="r44 rd" class="r44 r">x</span> =&gt; <span class="r44 r">x</span>.<a href="/LiveCharts/A.html#2a717b377edb1486" class="i property">Shape</a> == <span class="r40 r">sender</span>);
+            <b>if</b> (<span class="r43 r">land</span> == <b>null</b>) <b>return</b>;
+
+            <b>double</b> <span id="r45 rd" class="r45 r">value</span>;
+
+            <b>if</b> (!<a href="#3b8aa88a80f9e7a7" class="i property">HeatMap</a>.<a href="@0@mscorlib/A.html#2e5bc6d8c0f21e67" class="i method">TryGetValue</a>(<span class="r43 r">land</span>.<a href="/LiveCharts/A.html#1d3e2b0d6dfef258" class="i property">Id</a>, <b>out</b> <span class="r45 r">value</span>)) <b>return</b>;
+            <b>if</b> (!<a href="#21e0d83fcb9a90f9" class="i property">Hoverable</a>) <b>return</b>;
+
+            <a href="#9c056ec9ee816834" class="i property">GeoMapTooltip</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a>;
+
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r46 rd" class="r46 r">name</span> = <b>null</b>;
+
+            <b>if</b> (<a href="#e44f0174efc2dbc9" class="i property">LanguagePack</a> != <b>null</b>) <a href="#e44f0174efc2dbc9" class="i property">LanguagePack</a>.<a href="@0@mscorlib/A.html#2e5bc6d8c0f21e67" class="i method">TryGetValue</a>(<span class="r43 r">land</span>.<a href="/LiveCharts/A.html#1d3e2b0d6dfef258" class="i property">Id</a>, <b>out</b> <span class="r46 r">name</span>);
+
+            <a href="#9c056ec9ee816834" class="i property">GeoMapTooltip</a>.<a href="DefaultGeoMapTooltip.xaml.cs.html#d74d51f942a14559" class="i property">GeoData</a> = <b>new</b> <a href="DefaultGeoMapTooltip.xaml.cs.html#c28dfe1c58900aa8" class="t constructor">GeoData</a>
+            {
+                <a href="DefaultGeoMapTooltip.xaml.cs.html#7887d414fbadca43" class="i property">Name</a> = <span class="r46 r">name</span> ?? <span class="r43 r">land</span>.<a href="/LiveCharts/A.html#95129cc9a368a421" class="i property">Name</a>,
+                <a href="DefaultGeoMapTooltip.xaml.cs.html#e9fce3736820da86" class="i property">Value</a> = <span class="r45 r">value</span>
+            };
+        }
+
+        <b>private void</b> <a id="35add6ee1cfa86c7" href="R/35add6ee1cfa86c7.html" target="n" data-glyph="76,1" class="i method">POnMouseMove</a>(<b>object</b> <span id="r47 rd" class="r47 r">sender</span>, <a href="@0@PresentationCore/A.html#2bd9049c90bfe71a" class="t t">MouseEventArgs</a> <span id="r48 rd" class="r48 r">mouseEventArgs</span>)
+        {
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r49 rd" class="r49 r">location</span> = <span class="r48 r">mouseEventArgs</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="#91862fbfded92326" class="k">this</a>);
+            <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="#9c056ec9ee816834" class="i property">GeoMapTooltip</a>, <span class="r49 r">location</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> + 5);
+            <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="#9c056ec9ee816834" class="i property">GeoMapTooltip</a>, <span class="r49 r">location</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> + 5);
+        }
+
+        <b>private</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a> <a id="e257eae7f3c465f1" href="R/e257eae7f3c465f1.html" target="n" data-glyph="76,1" class="i method">ColorInterpolation</a>(<b>double</b> <span id="r50 rd" class="r50 r">weight</span>)
+        {
+            <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a> <span id="r51 rd" class="r51 r">from</span> = <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(0, 0, 0), <span id="r52 rd" class="r52 r">to</span> = <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(0, 0, 0);
+            <b>double</b> <span id="r53 rd" class="r53 r">fromOffset</span> = 0, <span id="r54 rd" class="r54 r">toOffset</span> = 0;
+
+            <b>for</b> (<a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r55 rd" class="r55 r">i</span> = 0; <span class="r55 r">i</span> &lt; <a href="#a2ed606ce27c09b1" class="i property">GradientStopCollection</a>.<a href="@0@PresentationCore/A.html#04f3fe523e89f9a8" class="i property">Count</a>-1; <span class="r55 r">i</span>++)
+            {
+                <span class="c">// ReSharper disable once InvertIf</span>
+                <b>if</b> (<a href="#a2ed606ce27c09b1" class="i property">GradientStopCollection</a><a href="@0@PresentationCore/A.html#68ceb7a4014454b0">[</a><span class="r55 r">i</span>].<a href="@0@PresentationCore/A.html#b658e3afba67675f" class="i property">Offset</a> &lt;= <span class="r50 r">weight</span> &amp;&amp; <a href="#a2ed606ce27c09b1" class="i property">GradientStopCollection</a><a href="@0@PresentationCore/A.html#68ceb7a4014454b0">[</a><span class="r55 r">i</span> + 1].<a href="@0@PresentationCore/A.html#b658e3afba67675f" class="i property">Offset</a> &gt;= <span class="r50 r">weight</span>)
+                {
+                    <span class="r51 r">from</span> = <a href="#a2ed606ce27c09b1" class="i property">GradientStopCollection</a><a href="@0@PresentationCore/A.html#68ceb7a4014454b0">[</a><span class="r55 r">i</span>].<a href="@0@PresentationCore/A.html#0f6428e97d42619c" class="i property">Color</a>;
+                    <span class="r52 r">to</span> = <a href="#a2ed606ce27c09b1" class="i property">GradientStopCollection</a><a href="@0@PresentationCore/A.html#68ceb7a4014454b0">[</a><span class="r55 r">i</span> + 1].<a href="@0@PresentationCore/A.html#0f6428e97d42619c" class="i property">Color</a>;
+
+                    <span class="r53 r">fromOffset</span> = <a href="#a2ed606ce27c09b1" class="i property">GradientStopCollection</a><a href="@0@PresentationCore/A.html#68ceb7a4014454b0">[</a><span class="r55 r">i</span>].<a href="@0@PresentationCore/A.html#b658e3afba67675f" class="i property">Offset</a>;
+                    <span class="r54 r">toOffset</span> = <a href="#a2ed606ce27c09b1" class="i property">GradientStopCollection</a><a href="@0@PresentationCore/A.html#68ceb7a4014454b0">[</a><span class="r55 r">i</span> + 1].<a href="@0@PresentationCore/A.html#b658e3afba67675f" class="i property">Offset</a>;
+
+                    <b>break</b>;
+                }
+            }
+
+            <b>return</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#9289c34fb9030bfd" class="i method">FromArgb</a>(
+                (<b>byte</b>) <a href="#c9225561682da641" class="i method">LinealInterpolation</a>(<span class="r51 r">from</span>.<a href="@0@PresentationCore/A.html#e05e060db7ea2081" class="i property">A</a>, <span class="r52 r">to</span>.<a href="@0@PresentationCore/A.html#e05e060db7ea2081" class="i property">A</a>, <span class="r53 r">fromOffset</span>, <span class="r54 r">toOffset</span>, <span class="r50 r">weight</span>),
+                (<b>byte</b>) <a href="#c9225561682da641" class="i method">LinealInterpolation</a>(<span class="r51 r">from</span>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>, <span class="r52 r">to</span>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>, <span class="r53 r">fromOffset</span>, <span class="r54 r">toOffset</span>, <span class="r50 r">weight</span>),
+                (<b>byte</b>) <a href="#c9225561682da641" class="i method">LinealInterpolation</a>(<span class="r51 r">from</span>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>, <span class="r52 r">to</span>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>, <span class="r53 r">fromOffset</span>, <span class="r54 r">toOffset</span>, <span class="r50 r">weight</span>),
+                (<b>byte</b>) <a href="#c9225561682da641" class="i method">LinealInterpolation</a>(<span class="r51 r">from</span>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>, <span class="r52 r">to</span>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>, <span class="r53 r">fromOffset</span>, <span class="r54 r">toOffset</span>, <span class="r50 r">weight</span>));
+        }
+
+        <b>private static double</b> <a id="c9225561682da641" href="R/c9225561682da641.html" target="n" data-glyph="76,1" class="i method">LinealInterpolation</a>(<b>double</b> <span id="r56 rd" class="r56 r">fromComponent</span>, <b>double</b> <span id="r57 rd" class="r57 r">toComponent</span>,
+            <b>double</b> <span id="r58 rd" class="r58 r">fromOffset</span>, <b>double</b> <span id="r59 rd" class="r59 r">toOffset</span>, <b>double</b> <span id="r60 rd" class="r60 r">value</span>)
+        {
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r61 rd" class="r61 r">p1</span> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r58 r">fromOffset</span>, <span class="r56 r">fromComponent</span>);
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r62 rd" class="r62 r">p2</span> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r59 r">toOffset</span>, <span class="r57 r">toComponent</span>);
+
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r63 rd" class="r63 r">deltaX</span> = <span class="r62 r">p2</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> - <span class="r61 r">p1</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>;
+            <span class="c">// ReSharper disable once CompareOfFloatsByEqualityOperator</span>
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r64 rd" class="r64 r">m</span> = (<span class="r62 r">p2</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <span class="r61 r">p1</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>) / (<span class="r63 r">deltaX</span> == 0 ? <b>double</b>.<a href="@0@mscorlib/A.html#00c1b741b8eb8a64" class="i field">MinValue</a> : <span class="r63 r">deltaX</span>);
+
+            <b>return</b> <span class="r64 r">m</span> * (<span class="r60 r">value</span> - <span class="r61 r">p1</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>) + <span class="r61 r">p1</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+        }
+
+        <b>private static void</b> <a id="ec3c0de5f658da96" href="R/ec3c0de5f658da96.html" target="n" data-glyph="76,1" class="i method">OnHeapMapChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r65 rd" class="r65 r">o</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r66 rd" class="r66 r">e</span>)
+        {
+            <a href="#91862fbfded92326" class="k">var</a> <span id="r67 rd" class="r67 r">geoMap</span> = (<a href="#91862fbfded92326" class="t t">GeoMap</a>)<span class="r65 r">o</span>;
+
+            <b>if</b> (!<span class="r67 r">geoMap</span>.<a href="#353db76a5f78fbde" class="i property">IsDrawn</a>) <b>return</b>;
+
+            <span class="r67 r">geoMap</span>.<a href="#9ed854d4dca87a57" class="i method">ShowMeSomeHeat</a>();
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>.<a href="@0@PresentationFramework/A.html#60c26f3054102ef4" class="t t">IMultiValueConverter</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <b>public class</b> <a id="b45cfb82cb07acd7" href="R/b45cfb82cb07acd7.html" target="n" data-glyph="0,0" class="t t"><span id="c2287b84196f9c7c">ScaleStrokeConverter</span></a> : <a href="@0@PresentationFramework/A.html#60c26f3054102ef4" class="t t">IMultiValueConverter</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts source values to a value for the binding target. The data binding engine calls this method when it propagates the values from source bindings to the binding target.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r68 r">values</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The array of values that the source bindings in the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Windows.Data.MultiBinding</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> produces. The value </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">F:System.Windows.DependencyProperty.UnsetValue</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> indicates that the source binding has no value to provide for conversion.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r69 r">targetType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The type of the binding target property.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r70 r">parameter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The converter parameter to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r71 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The culture to use in the converter.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A converted value.If the method returns null, the valid null value is used.A return value of </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Windows.DependencyProperty</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">F:System.Windows.DependencyProperty.UnsetValue</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> indicates that the converter did not produce a value, and that the binding will use the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">P:System.Windows.Data.BindingBase.FallbackValue</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> if it is available, or else will use the default value.A return value of </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Windows.Data.Binding</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">F:System.Windows.Data.Binding.DoNothing</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> indicates that the binding does not transfer the value or use the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">P:System.Windows.Data.BindingBase.FallbackValue</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> or the default value.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="03535639ed127dd0" href="R/03535639ed127dd0.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>[] <span id="r68 rd" class="r68 r">values</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r69 rd" class="r69 r">targetType</span>, <b>object</b> <span id="r70 rd" class="r70 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r71 rd" class="r71 r">culture</span>)
+        {
+            <b>return</b> (<b>double</b>) <span class="r68 r">values</span>[0]/(<b>double</b>) <span class="r68 r">values</span>[1];
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts a binding target value to the source binding values.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r72 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The value that the binding target produces.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r73 r">targetTypes</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The array of types to convert to. The array length indicates the number and types of values that are suggested for the method to return.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r74 r">parameter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The converter parameter to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r75 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The culture to use in the converter.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> An array of values that have been converted from the target value back to the source values.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#a46efa455da3688d" class="t t">NotImplementedException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public object</b>[] <a id="21208ab42932950f" href="R/21208ab42932950f.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r72 rd" class="r72 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>[] <span id="r73 rd" class="r73 r">targetTypes</span>, <b>object</b> <span id="r74 rd" class="r74 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r75 rd" class="r75 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+    }
+}</pre></td></tr></table></div></body></html>

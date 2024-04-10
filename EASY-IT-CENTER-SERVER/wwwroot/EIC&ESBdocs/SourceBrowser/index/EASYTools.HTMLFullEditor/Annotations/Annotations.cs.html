@@ -1,0 +1,1245 @@
+﻿<!DOCTYPE html>
+<html><head><title>Annotations.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(1236);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.HTMLFullEditor/Annotations/Annotations.cs" target="_top">Annotations\Annotations.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.HTMLFullEditor" target="_top">..\..\..\EASY-TOOLS\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor.csproj</a> (EASYTools.HTMLFullEditor)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">/* MIT License
+ 
+Copyright (c) 2016 JetBrains http://www.jetbrains.com
+ 
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+ 
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+ 
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE. */</span>
+ 
+<b>using</b> <span class="i n">System</span>;
+<span class="c">// ReSharper disable InheritdocConsiderUsage</span>
+ 
+<span class="k preprocess">#</span><span class="k preprocess">pragma</span> <span class="k preprocess">warning</span> <span class="k preprocess">disable</span> 1591
+<span class="c">// ReSharper disable UnusedMember.Global</span>
+<span class="c">// ReSharper disable MemberCanBePrivate.Global</span>
+<span class="c">// ReSharper disable UnusedAutoPropertyAccessor.Global</span>
+<span class="c">// ReSharper disable IntroduceOptionalParameters.Global</span>
+<span class="c">// ReSharper disable MemberCanBeProtected.Global</span>
+<span class="c">// ReSharper disable InconsistentNaming</span>
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Annotations</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the value of the marked element could be </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">null</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> sometimes,</span>
+    <span class="c">///</span><span class="c"> so checking for </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">null</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> is required before its usage.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [CanBeNull] object Test() =&gt; null;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> void UseTest() {</span>
+    <span class="c">///</span><span class="c">   var p = Test();</span>
+    <span class="c">///</span><span class="c">   var s = p.ToString(); // Warning: Possible &#39;System.NullReferenceException&#39;</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a> |
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#69007f46c51c42b1" class="i field">Delegate</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#f5b206e2f718cacf" class="i field">Event</a> |
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#16349e8915c7392b" class="i field">Class</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#e688e657eeafcca0" class="i field">Interface</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#f6e228b577be763e" class="i field">GenericParameter</a>)]
+    <b>internal sealed class</b> <a id="24091b2037c1d697" href="../R/24091b2037c1d697.html" target="n" data-glyph="2,0" class="t t"><span id="c133817ec972c6ee">CanBeNullAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the value of the marked element can never be </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">null</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [NotNull] object Foo() {</span>
+    <span class="c">///</span><span class="c">   return null; // Warning: Possible &#39;null&#39; assignment</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a> |
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#69007f46c51c42b1" class="i field">Delegate</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#f5b206e2f718cacf" class="i field">Event</a> |
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#16349e8915c7392b" class="i field">Class</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#e688e657eeafcca0" class="i field">Interface</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#f6e228b577be763e" class="i field">GenericParameter</a>)]
+    <b>internal sealed class</b> <a id="251f12d1b9ea212e" href="../R/251f12d1b9ea212e.html" target="n" data-glyph="2,0" class="t t"><span id="0e616e1c93124aca">NotNullAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Can be applied to symbols of types derived from IEnumerable as well as to symbols of Task</span>
+    <span class="c">///</span><span class="c"> and Lazy classes to indicate that the value of a collection item, of the Task.Result property</span>
+    <span class="c">///</span><span class="c"> or of the Lazy.Value property can never be null.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> public void Foo([ItemNotNull]List</span><span class="c">&amp;lt;</span><span class="c">string</span><span class="c">&amp;gt;</span><span class="c"> books)</span>
+    <span class="c">///</span><span class="c"> {</span>
+    <span class="c">///</span><span class="c">   foreach (var book in books) {</span>
+    <span class="c">///</span><span class="c">     if (book != null) // Warning: Expression is always true</span>
+    <span class="c">///</span><span class="c">      Console.WriteLine(book.ToUpper());</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a> |
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#69007f46c51c42b1" class="i field">Delegate</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a>)]
+    <b>internal sealed class</b> <a id="52ce0ff5b2e61e63" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="73ccd47688e238b1">ItemNotNullAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Can be applied to symbols of types derived from IEnumerable as well as to symbols of Task</span>
+    <span class="c">///</span><span class="c"> and Lazy classes to indicate that the value of a collection item, of the Task.Result property</span>
+    <span class="c">///</span><span class="c"> or of the Lazy.Value property can be null.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> public void Foo([ItemCanBeNull]List</span><span class="c">&amp;lt;</span><span class="c">string</span><span class="c">&amp;gt;</span><span class="c"> books)</span>
+    <span class="c">///</span><span class="c"> {</span>
+    <span class="c">///</span><span class="c">   foreach (var book in books)</span>
+    <span class="c">///</span><span class="c">   {</span>
+    <span class="c">///</span><span class="c">     // Warning: Possible &#39;System.NullReferenceException&#39;</span>
+    <span class="c">///</span><span class="c">     Console.WriteLine(book.ToUpper());</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a> |
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#69007f46c51c42b1" class="i field">Delegate</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a>)]
+    <b>internal sealed class</b> <a id="28c772fdce78bb75" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="8ddba9f76491a2d7">ItemCanBeNullAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the marked method builds string by the format pattern and (optional) arguments.</span>
+    <span class="c">///</span><span class="c"> The parameter, which contains the format string, should be given in constructor. The format string</span>
+    <span class="c">///</span><span class="c"> should be in </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#691a34e179b91fdb" class="i method">Format</a>(<a href="@0@mscorlib/A.html#0dbf315d83aad6ca" class="t t">IFormatProvider</a>,<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>,<b>object</b>[])<span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">-like form.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [StringFormatMethod(&quot;message&quot;)]</span>
+    <span class="c">///</span><span class="c"> void ShowError(string message, params object[] args) { /* do something */ }</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> void Foo() {</span>
+    <span class="c">///</span><span class="c">   ShowError(&quot;Failed: {0}&quot;); // Warning: Non-existing argument in format string</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#4c6023b1fe47d826" class="i field">Constructor</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> |
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#69007f46c51c42b1" class="i field">Delegate</a>)]
+    <b>internal sealed class</b> <a id="41daa7e61dbc9d81" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">StringFormatMethodAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">formatParameterName</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Specifies which parameter of an annotated method should be treated as the format string</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public</b> <a id="c5d240db2ea7975a" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">StringFormatMethodAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">formatParameterName</span>)
+        {
+            <a href="#03e2479d509e7378" class="i property">FormatParameterName</a> = <span class="r0 r">formatParameterName</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="03e2479d509e7378" href="../R/03e2479d509e7378.html" target="n" data-glyph="102,1" class="i property">FormatParameterName</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Use this annotation to specify a type that contains static or const fields</span>
+    <span class="c">///</span><span class="c"> with values for the annotated property/field/parameter.</span>
+    <span class="c">///</span><span class="c"> The specified type will be used to improve completion suggestions.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> namespace TestNamespace</span>
+    <span class="c">///</span><span class="c"> {</span>
+    <span class="c">///</span><span class="c">   public class Constants</span>
+    <span class="c">///</span><span class="c">   {</span>
+    <span class="c">///</span><span class="c">     public static int INT_CONST = 1;</span>
+    <span class="c">///</span><span class="c">     public const string STRING_CONST = &quot;1&quot;;</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span>
+    <span class="c">///</span><span class="c">   public class Class1</span>
+    <span class="c">///</span><span class="c">   {</span>
+    <span class="c">///</span><span class="c">     [ValueProvider(&quot;TestNamespace.Constants&quot;)] public int myField;</span>
+    <span class="c">///</span><span class="c">     public void Foo([ValueProvider(&quot;TestNamespace.Constants&quot;)] string str) { }</span>
+    <span class="c">///</span>
+    <span class="c">///</span><span class="c">     public void Test()</span>
+    <span class="c">///</span><span class="c">     {</span>
+    <span class="c">///</span><span class="c">       Foo(/*try completion here*/);//</span>
+    <span class="c">///</span><span class="c">       myField = /*try completion here*/</span>
+    <span class="c">///</span><span class="c">     }</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a>,
+      <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="fbc52684d5ad71fa" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">ValueProviderAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="48e36a0b27cd856b" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ValueProviderAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r1 rd" class="r1 r">name</span>)
+        {
+            <a href="#990092d576e7f4e3" class="i property">Name</a> = <span class="r1 r">name</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="990092d576e7f4e3" href="../R/990092d576e7f4e3.html" target="n" data-glyph="102,1" class="i property">Name</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the integral value falls into the specified interval.</span>
+    <span class="c">///</span><span class="c"> It&#39;s allowed to specify multiple non-intersecting intervals.</span>
+    <span class="c">///</span><span class="c"> Values of interval boundaries are inclusive.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> void Foo([ValueRange(0, 100)] int value) {</span>
+    <span class="c">///</span><span class="c">   if (value == -1) { // Warning: Expression is always &#39;false&#39;</span>
+    <span class="c">///</span><span class="c">     ...</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a> |
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#69007f46c51c42b1" class="i field">Delegate</a>,
+      <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="88391dfe6ce1e667" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">ValueRangeAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public object</b> <a id="6302b61e8ac96b29" href="../R/6302b61e8ac96b29.html" target="n" data-glyph="102,1" class="i property">From</a> { <b>get</b>; }
+        <b>public object</b> <a id="e06bb954db4b2b7d" href="../R/e06bb954db4b2b7d.html" target="n" data-glyph="102,1" class="i property">To</a> { <b>get</b>; }
+ 
+        <b>public</b> <a id="2823163fc3fe8ee1" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ValueRangeAttribute</a>(<b>long</b> <span id="r2 rd" class="r2 r">from</span>, <b>long</b> <span id="r3 rd" class="r3 r">to</span>)
+        {
+            <a href="#6302b61e8ac96b29" class="i property">From</a> = <span class="r2 r">from</span>;
+            <a href="#e06bb954db4b2b7d" class="i property">To</a> = <span class="r3 r">to</span>;
+        }
+ 
+        <b>public</b> <a id="6174f8b96081782d" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ValueRangeAttribute</a>(<b>ulong</b> <span id="r4 rd" class="r4 r">from</span>, <b>ulong</b> <span id="r5 rd" class="r5 r">to</span>)
+        {
+            <a href="#6302b61e8ac96b29" class="i property">From</a> = <span class="r4 r">from</span>;
+            <a href="#e06bb954db4b2b7d" class="i property">To</a> = <span class="r5 r">to</span>;
+        }
+ 
+        <b>public</b> <a id="ecf341cf74111c97" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ValueRangeAttribute</a>(<b>long</b> <span id="r6 rd" class="r6 r">value</span>)
+        {
+            <a href="#6302b61e8ac96b29" class="i property">From</a> = <a href="#e06bb954db4b2b7d" class="i property">To</a> = <span class="r6 r">value</span>;
+        }
+ 
+        <b>public</b> <a id="86e54d03a3634e6e" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ValueRangeAttribute</a>(<b>ulong</b> <span id="r7 rd" class="r7 r">value</span>)
+        {
+            <a href="#6302b61e8ac96b29" class="i property">From</a> = <a href="#e06bb954db4b2b7d" class="i property">To</a> = <span class="r7 r">value</span>;
+        }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the integral value never falls below zero.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> void Foo([NonNegativeValue] int value) {</span>
+    <span class="c">///</span><span class="c">   if (value == -1) { // Warning: Expression is always &#39;false&#39;</span>
+    <span class="c">///</span><span class="c">     ...</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a> |
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#69007f46c51c42b1" class="i field">Delegate</a>)]
+    <b>internal sealed class</b> <a id="5290fab1b3ba0be8" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="c9aae5e9bde716d6">NonNegativeValueAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the function argument should be a string literal and match one</span>
+    <span class="c">///</span><span class="c"> of the parameters of the caller function. For example, ReSharper annotates</span>
+    <span class="c">///</span><span class="c"> the parameter of </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#c742289497493bb8" class="t t">ArgumentNullException</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> void Foo(string param) {</span>
+    <span class="c">///</span><span class="c">   if (param == null)</span>
+    <span class="c">///</span><span class="c">     throw new ArgumentNullException(&quot;par&quot;); // Warning: Cannot resolve symbol</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a>)]
+    <b>internal sealed class</b> <a id="a495221e4896745a" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="44489edd0bfb5423">InvokerParameterNameAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the method is contained in a type that implements</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.ComponentModel.INotifyPropertyChanged</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> interface and this method</span>
+    <span class="c">///</span><span class="c"> is used to notify that some property value changed.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> The method should be non-static and conform to one of the supported signatures:</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">list</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">NotifyChanged(string)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">NotifyChanged(params string[])</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">NotifyChanged{T}(Expression{Func{T}})</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">NotifyChanged{T,U}(Expression{Func{T,U}})</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">SetProperty{T}(ref T, T, string)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">list</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> public class Foo : INotifyPropertyChanged {</span>
+    <span class="c">///</span><span class="c">   public event PropertyChangedEventHandler PropertyChanged;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c">   [NotifyPropertyChangedInvocator]</span>
+    <span class="c">///</span><span class="c">   protected virtual void NotifyChanged(string propertyName) { ... }</span>
+    <span class="c">///</span>
+    <span class="c">///</span><span class="c">   string _name;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c">   public string Name {</span>
+    <span class="c">///</span><span class="c">     get { return _name; }</span>
+    <span class="c">///</span><span class="c">     set { _name = value; NotifyChanged(&quot;LastName&quot;); /* Warning */ }</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Examples of generated notifications:</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">list</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">NotifyChanged(&quot;Property&quot;)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">NotifyChanged(() =</span><span class="c">&amp;gt;</span><span class="c"> Property)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">NotifyChanged((VM x) =</span><span class="c">&amp;gt;</span><span class="c"> x.Property)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">SetProperty(ref myField, value, &quot;Property&quot;)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">list</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="609ba7c17f4ea1a4" href="../R/609ba7c17f4ea1a4.html" target="n" data-glyph="2,0" class="t t">NotifyPropertyChangedInvocatorAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="7aecd317b6c50991" href="../R/7aecd317b6c50991.html" target="n" data-glyph="72,1" class="t constructor">NotifyPropertyChangedInvocatorAttribute</a>() { }
+        <b>public</b> <a id="291fb18872515a9e" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">NotifyPropertyChangedInvocatorAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r8 rd" class="r8 r">parameterName</span>)
+        {
+            <a href="#0b2ccdc0cfda5746" class="i property">ParameterName</a> = <span class="r8 r">parameterName</span>;
+        }
+ 
+        [<a href="#24091b2037c1d697" class="t constructor">CanBeNull</a>] <b>public string</b> <a id="0b2ccdc0cfda5746" href="../R/0b2ccdc0cfda5746.html" target="n" data-glyph="102,1" class="i property">ParameterName</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Describes dependency between method input and output.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">syntax</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">p</span><span class="c">&gt;</span><span class="c">Function Definition Table syntax:</span><span class="c">&lt;/</span><span class="c">p</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">list</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">FDT      ::= FDTRow [;FDTRow]*</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">FDTRow   ::= Input =</span><span class="c">&amp;gt;</span><span class="c"> Output | Output </span><span class="c">&amp;lt;</span><span class="c">= Input</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">Input    ::= ParameterName: Value [, Input]*</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">Output   ::= [ParameterName: Value]* {halt|stop|void|nothing|Value}</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">Value    ::= true | false | null | notnull | canbenull</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">list</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> If the method has a single input parameter, its name could be omitted.</span><span class="c">&lt;</span><span class="c">br</span><span class="c">/&gt;</span>
+    <span class="c">///</span><span class="c"> Using </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">halt</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> (or </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">void</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">/</span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">nothing</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">, which is the same) for the method output</span>
+    <span class="c">///</span><span class="c"> means that the method doesn&#39;t return normally (throws or terminates the process).</span><span class="c">&lt;</span><span class="c">br</span><span class="c">/&gt;</span>
+    <span class="c">///</span><span class="c"> Value </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">canbenull</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> is only applicable for output parameters.</span><span class="c">&lt;</span><span class="c">br</span><span class="c">/&gt;</span>
+    <span class="c">///</span><span class="c"> You can use multiple </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">[ContractAnnotation]</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> for each FDT row, or use single attribute</span>
+    <span class="c">///</span><span class="c"> with rows separated by semicolon. There is no notion of order rows, all rows are checked</span>
+    <span class="c">///</span><span class="c"> for applicability and applied per each program state tracked by the analysis engine.</span><span class="c">&lt;</span><span class="c">br</span><span class="c">/&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">syntax</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">examples</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">list</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [ContractAnnotation(&quot;=</span><span class="c">&amp;gt;</span><span class="c"> halt&quot;)]</span>
+    <span class="c">///</span><span class="c"> public void TerminationMethod()</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [ContractAnnotation(&quot;null </span><span class="c">&amp;lt;</span><span class="c">= param:null&quot;)] // reverse condition syntax</span>
+    <span class="c">///</span><span class="c"> public string GetName(string surname)</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [ContractAnnotation(&quot;s:null =</span><span class="c">&amp;gt;</span><span class="c"> true&quot;)]</span>
+    <span class="c">///</span><span class="c"> public bool IsNullOrEmpty(string s) // string.IsNullOrEmpty()</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> // A method that returns null if the parameter is null,</span>
+    <span class="c">///</span><span class="c"> // and not null if the parameter is not null</span>
+    <span class="c">///</span><span class="c"> [ContractAnnotation(&quot;null =</span><span class="c">&amp;gt;</span><span class="c"> null; notnull =</span><span class="c">&amp;gt;</span><span class="c"> notnull&quot;)]</span>
+    <span class="c">///</span><span class="c"> public object Transform(object data)</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [ContractAnnotation(&quot;=</span><span class="c">&amp;gt;</span><span class="c"> true, result: notnull; =</span><span class="c">&amp;gt;</span><span class="c"> false, result: null&quot;)]</span>
+    <span class="c">///</span><span class="c"> public bool TryParse(string s, out Person result)</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">list</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">examples</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="b44cf3cf6fa20579" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">ContractAnnotationAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="f85e5423136f7f5e" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ContractAnnotationAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r9 rd" class="r9 r">contract</span>)
+          : <a href="#8cb977ca1b96b2fe" class="k">this</a>(<span class="r9 r">contract</span>, <b>false</b>) { }
+ 
+        <b>public</b> <a id="8cb977ca1b96b2fe" href="../R/8cb977ca1b96b2fe.html" target="n" data-glyph="72,1" class="t constructor">ContractAnnotationAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r10 rd" class="r10 r">contract</span>, <b>bool</b> <span id="r11 rd" class="r11 r">forceFullStates</span>)
+        {
+            <a href="#3b3a1614313fe0a6" class="i property">Contract</a> = <span class="r10 r">contract</span>;
+            <a href="#17069e39e361cf40" class="i property">ForceFullStates</a> = <span class="r11 r">forceFullStates</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="3b3a1614313fe0a6" href="../R/3b3a1614313fe0a6.html" target="n" data-glyph="102,1" class="i property">Contract</a> { <b>get</b>; }
+ 
+        <b>public bool</b> <a id="17069e39e361cf40" href="../R/17069e39e361cf40.html" target="n" data-glyph="102,1" class="i property">ForceFullStates</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates whether the marked element should be localized.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [LocalizationRequiredAttribute(true)]</span>
+    <span class="c">///</span><span class="c"> class Foo {</span>
+    <span class="c">///</span><span class="c">   string str = &quot;my string&quot;; // Warning: Localizable string</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#d689f141974fe1b0" class="i field">All</a>)]
+    <b>internal sealed class</b> <a id="f4d9ab9bff93e733" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">LocalizationRequiredAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="b8fcf2640035f142" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">LocalizationRequiredAttribute</a>() : <a href="#9395663647d385b0" class="k">this</a>(<b>true</b>) { }
+ 
+        <b>public</b> <a id="9395663647d385b0" href="../R/9395663647d385b0.html" target="n" data-glyph="72,1" class="t constructor">LocalizationRequiredAttribute</a>(<b>bool</b> <span id="r12 rd" class="r12 r">required</span>)
+        {
+            <a href="#d1691e545ac34e62" class="i property">Required</a> = <span class="r12 r">required</span>;
+        }
+ 
+        <b>public bool</b> <a id="d1691e545ac34e62" href="../R/d1691e545ac34e62.html" target="n" data-glyph="102,1" class="i property">Required</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the value of the marked type (or its derivatives)</span>
+    <span class="c">///</span><span class="c"> cannot be compared using &#39;==&#39; or &#39;!=&#39; operators and </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">Equals()</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> should be used instead. However, using &#39;==&#39; or &#39;!=&#39; for comparison</span>
+    <span class="c">///</span><span class="c"> with </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">null</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> is always permitted.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [CannotApplyEqualityOperator]</span>
+    <span class="c">///</span><span class="c"> class NoEquality { }</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> class UsesNoEquality {</span>
+    <span class="c">///</span><span class="c">   void Test() {</span>
+    <span class="c">///</span><span class="c">     var ca1 = new NoEquality();</span>
+    <span class="c">///</span><span class="c">     var ca2 = new NoEquality();</span>
+    <span class="c">///</span><span class="c">     if (ca1 != null) { // OK</span>
+    <span class="c">///</span><span class="c">       bool condition = ca1 == ca2; // Warning</span>
+    <span class="c">///</span><span class="c">     }</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#e688e657eeafcca0" class="i field">Interface</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#16349e8915c7392b" class="i field">Class</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#a12699caf98e49eb" class="i field">Struct</a>)]
+    <b>internal sealed class</b> <a id="5414910cd8a29ca6" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="394d081484ed8da3">CannotApplyEqualityOperatorAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> When applied to a target attribute, specifies a requirement for any type marked</span>
+    <span class="c">///</span><span class="c"> with the target attribute to implement or inherit specific type or types.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [BaseTypeRequired(typeof(IComponent)] // Specify requirement</span>
+    <span class="c">///</span><span class="c"> class ComponentAttribute : Attribute { }</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> [Component] // ComponentAttribute requires implementing IComponent interface</span>
+    <span class="c">///</span><span class="c"> class MyComponent : IComponent { }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#16349e8915c7392b" class="i field">Class</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    [<a href="#60c108f8b4d5e971" class="t constructor">BaseTypeRequired</a>(<b>typeof</b>(<a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>))]
+    <b>internal sealed class</b> <a id="42c938739a191d29" href="../R/42c938739a191d29.html" target="n" data-glyph="2,0" class="t t">BaseTypeRequiredAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="60c108f8b4d5e971" href="../R/60c108f8b4d5e971.html" target="n" data-glyph="72,1" class="t constructor">BaseTypeRequiredAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r13 rd" class="r13 r">baseType</span>)
+        {
+            <a href="#81a935b3089c9ed8" class="i property">BaseType</a> = <span class="r13 r">baseType</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public</b> <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <a id="81a935b3089c9ed8" href="../R/81a935b3089c9ed8.html" target="n" data-glyph="102,1" class="i property">BaseType</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the marked symbol is used implicitly (e.g. via reflection, in external library),</span>
+    <span class="c">///</span><span class="c"> so this symbol will not be reported as unused (as well as by other usage inspections).</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#d689f141974fe1b0" class="i field">All</a>)]
+    <b>internal sealed class</b> <a id="d300f1c1687ba88e" href="../R/d300f1c1687ba88e.html" target="n" data-glyph="2,0" class="t t">UsedImplicitlyAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="0f21bf090ca2fd10" href="../R/0f21bf090ca2fd10.html" target="n" data-glyph="72,1" class="t constructor">UsedImplicitlyAttribute</a>()
+          : <a href="#4a1d21d5036e5bb2" class="k">this</a>(<a href="#0b1b5600f4961fb8" class="t t">ImplicitUseKindFlags</a>.<a href="#443f1617dc62e71d" class="i field">Default</a>, <a href="#2b564ab602c1531f" class="t t">ImplicitUseTargetFlags</a>.<a href="#79e4d6788996f92e" class="i field">Default</a>) { }
+ 
+        <b>public</b> <a id="0058d081ac2fd9c1" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">UsedImplicitlyAttribute</a>(<a href="#0b1b5600f4961fb8" class="t t">ImplicitUseKindFlags</a> <span id="r14 rd" class="r14 r">useKindFlags</span>)
+          : <a href="#4a1d21d5036e5bb2" class="k">this</a>(<span class="r14 r">useKindFlags</span>, <a href="#2b564ab602c1531f" class="t t">ImplicitUseTargetFlags</a>.<a href="#79e4d6788996f92e" class="i field">Default</a>) { }
+ 
+        <b>public</b> <a id="406269066b5f6725" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">UsedImplicitlyAttribute</a>(<a href="#2b564ab602c1531f" class="t t">ImplicitUseTargetFlags</a> <span id="r15 rd" class="r15 r">targetFlags</span>)
+          : <a href="#4a1d21d5036e5bb2" class="k">this</a>(<a href="#0b1b5600f4961fb8" class="t t">ImplicitUseKindFlags</a>.<a href="#443f1617dc62e71d" class="i field">Default</a>, <span class="r15 r">targetFlags</span>) { }
+ 
+        <b>public</b> <a id="4a1d21d5036e5bb2" href="../R/4a1d21d5036e5bb2.html" target="n" data-glyph="72,1" class="t constructor">UsedImplicitlyAttribute</a>(<a href="#0b1b5600f4961fb8" class="t t">ImplicitUseKindFlags</a> <span id="r16 rd" class="r16 r">useKindFlags</span>, <a href="#2b564ab602c1531f" class="t t">ImplicitUseTargetFlags</a> <span id="r17 rd" class="r17 r">targetFlags</span>)
+        {
+            <a href="#c57dddfda6d07cd9" class="i property">UseKindFlags</a> = <span class="r16 r">useKindFlags</span>;
+            <a href="#ef54f5c79f5c7475" class="i property">TargetFlags</a> = <span class="r17 r">targetFlags</span>;
+        }
+ 
+        <b>public</b> <a href="#0b1b5600f4961fb8" class="t t">ImplicitUseKindFlags</a> <a id="c57dddfda6d07cd9" href="../R/c57dddfda6d07cd9.html" target="n" data-glyph="102,1" class="i property">UseKindFlags</a> { <b>get</b>; }
+ 
+        <b>public</b> <a href="#2b564ab602c1531f" class="t t">ImplicitUseTargetFlags</a> <a id="ef54f5c79f5c7475" href="../R/ef54f5c79f5c7475.html" target="n" data-glyph="102,1" class="i property">TargetFlags</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Can be applied to attributes, type parameters, and parameters of a type assignable from </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> .</span>
+    <span class="c">///</span><span class="c"> When applied to an attribute, the decorated attribute behaves the same as </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#d300f1c1687ba88e" class="t t">UsedImplicitlyAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> When applied to a type parameter or to a parameter of type </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">,  indicates that the corresponding type</span>
+    <span class="c">///</span><span class="c"> is used implicitly.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#16349e8915c7392b" class="i field">Class</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#f6e228b577be763e" class="i field">GenericParameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a>)]
+    <b>internal sealed class</b> <a id="7672d67f05e49ae1" href="../R/7672d67f05e49ae1.html" target="n" data-glyph="2,0" class="t t">MeansImplicitUseAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="f3582b717aa4112e" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MeansImplicitUseAttribute</a>()
+          : <a href="#aa8d308379fb2967" class="k">this</a>(<a href="#0b1b5600f4961fb8" class="t t">ImplicitUseKindFlags</a>.<a href="#443f1617dc62e71d" class="i field">Default</a>, <a href="#2b564ab602c1531f" class="t t">ImplicitUseTargetFlags</a>.<a href="#79e4d6788996f92e" class="i field">Default</a>) { }
+ 
+        <b>public</b> <a id="d2c90bf2c68b7cd7" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MeansImplicitUseAttribute</a>(<a href="#0b1b5600f4961fb8" class="t t">ImplicitUseKindFlags</a> <span id="r18 rd" class="r18 r">useKindFlags</span>)
+          : <a href="#aa8d308379fb2967" class="k">this</a>(<span class="r18 r">useKindFlags</span>, <a href="#2b564ab602c1531f" class="t t">ImplicitUseTargetFlags</a>.<a href="#79e4d6788996f92e" class="i field">Default</a>) { }
+ 
+        <b>public</b> <a id="b4e69873e933aae9" href="../R/b4e69873e933aae9.html" target="n" data-glyph="72,1" class="t constructor">MeansImplicitUseAttribute</a>(<a href="#2b564ab602c1531f" class="t t">ImplicitUseTargetFlags</a> <span id="r19 rd" class="r19 r">targetFlags</span>)
+          : <a href="#aa8d308379fb2967" class="k">this</a>(<a href="#0b1b5600f4961fb8" class="t t">ImplicitUseKindFlags</a>.<a href="#443f1617dc62e71d" class="i field">Default</a>, <span class="r19 r">targetFlags</span>) { }
+ 
+        <b>public</b> <a id="aa8d308379fb2967" href="../R/aa8d308379fb2967.html" target="n" data-glyph="72,1" class="t constructor">MeansImplicitUseAttribute</a>(<a href="#0b1b5600f4961fb8" class="t t">ImplicitUseKindFlags</a> <span id="r20 rd" class="r20 r">useKindFlags</span>, <a href="#2b564ab602c1531f" class="t t">ImplicitUseTargetFlags</a> <span id="r21 rd" class="r21 r">targetFlags</span>)
+        {
+            <a href="#fe7f3450983ca359" class="i property">UseKindFlags</a> = <span class="r20 r">useKindFlags</span>;
+            <a href="#93fab668a4de8d78" class="i property">TargetFlags</a> = <span class="r21 r">targetFlags</span>;
+        }
+ 
+        [<a href="#0f21bf090ca2fd10" class="t constructor">UsedImplicitly</a>] <b>public</b> <a href="#0b1b5600f4961fb8" class="t t">ImplicitUseKindFlags</a> <a id="fe7f3450983ca359" href="../R/fe7f3450983ca359.html" target="n" data-glyph="102,1" class="i property">UseKindFlags</a> { <b>get</b>; }
+ 
+        [<a href="#0f21bf090ca2fd10" class="t constructor">UsedImplicitly</a>] <b>public</b> <a href="#2b564ab602c1531f" class="t t">ImplicitUseTargetFlags</a> <a id="93fab668a4de8d78" href="../R/93fab668a4de8d78.html" target="n" data-glyph="102,1" class="i property">TargetFlags</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Specify the details of implicitly used symbol when it is marked</span>
+    <span class="c">///</span><span class="c"> with </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7672d67f05e49ae1" class="t t">MeansImplicitUseAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> or </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#d300f1c1687ba88e" class="t t">UsedImplicitlyAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#5bbb5168ad9d1021" class="t constructor">Flags</a>]
+    <b>internal enum</b> <a id="0b1b5600f4961fb8" href="../R/0b1b5600f4961fb8.html" target="n" data-glyph="20,0" class="t t"><span id="91205532047e65d5">ImplicitUseKindFlags</span></a>
+    {
+        <a id="443f1617dc62e71d" href="../R/443f1617dc62e71d.html" target="n" data-glyph="24,1" class="i field">Default</a> = <a href="#2bd2fd30dc01ffef" class="i field">Access</a> | <a href="#45fb004d596602a3" class="i field">Assign</a> | <a href="#ce80a7053b1edd98" class="i field">InstantiatedWithFixedConstructorSignature</a>,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Only entity marked with attribute considered used.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="2bd2fd30dc01ffef" href="../R/2bd2fd30dc01ffef.html" target="n" data-glyph="24,1" class="i field">Access</a> = 1,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Indicates implicit assignment to a member.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="45fb004d596602a3" href="../R/45fb004d596602a3.html" target="n" data-glyph="24,1" class="i field">Assign</a> = 2,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Indicates implicit instantiation of a type with fixed constructor signature.</span>
+        <span class="c">///</span><span class="c"> That means any unused constructor parameters won&#39;t be reported as such.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="ce80a7053b1edd98" href="../R/ce80a7053b1edd98.html" target="n" data-glyph="24,1" class="i field">InstantiatedWithFixedConstructorSignature</a> = 4,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Indicates implicit instantiation of a type.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="69593560dbc515b9" href="../R/../../0000000000.html" target="n" data-glyph="24,1" class="i field">InstantiatedNoFixedConstructorSignature</a> = 8,
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Specify what is considered to be used implicitly when marked</span>
+    <span class="c">///</span><span class="c"> with </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7672d67f05e49ae1" class="t t">MeansImplicitUseAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> or </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#d300f1c1687ba88e" class="t t">UsedImplicitlyAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#5bbb5168ad9d1021" class="t constructor">Flags</a>]
+    <b>internal enum</b> <a id="2b564ab602c1531f" href="../R/2b564ab602c1531f.html" target="n" data-glyph="20,0" class="t t"><span id="603bd7ec12578a1e">ImplicitUseTargetFlags</span></a>
+    {
+        <a id="79e4d6788996f92e" href="../R/79e4d6788996f92e.html" target="n" data-glyph="24,1" class="i field">Default</a> = <a href="#875d094a23c86a54" class="i field">Itself</a>,
+        <a id="875d094a23c86a54" href="../R/875d094a23c86a54.html" target="n" data-glyph="24,1" class="i field">Itself</a> = 1,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Members of entity marked with attribute are considered used.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="56caaaf6175be2d5" href="../R/56caaaf6175be2d5.html" target="n" data-glyph="24,1" class="i field">Members</a> = 2,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c"> Inherited entities are considered used. </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="7032f92b8494ca5c" href="../R/../../0000000000.html" target="n" data-glyph="24,1" class="i field">WithInheritors</a> = 4,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Entity marked with attribute and all its members considered used.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="32d694b229b4a71e" href="../R/32d694b229b4a71e.html" target="n" data-glyph="24,1" class="i field">WithMembers</a> = <a href="#875d094a23c86a54" class="i field">Itself</a> | <a href="#56caaaf6175be2d5" class="i field">Members</a>
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> This attribute is intended to mark publicly available API</span>
+    <span class="c">///</span><span class="c"> which should not be removed and so is treated as used.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="#b4e69873e933aae9" class="t constructor">MeansImplicitUse</a>(<a href="#2b564ab602c1531f" class="t t">ImplicitUseTargetFlags</a>.<a href="#32d694b229b4a71e" class="i field">WithMembers</a>)]
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#d689f141974fe1b0" class="i field">All</a>, <a href="@0@mscorlib/A.html#390271738e01f721" class="i property">Inherited</a> = <b>false</b>)]
+    <b>internal sealed class</b> <a id="8cb2ddfdb64ade6c" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">PublicAPIAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="d2c2ff01b43e7be8" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">PublicAPIAttribute</a>() { }
+ 
+        <b>public</b> <a id="fcba8abe396d4567" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">PublicAPIAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r22 rd" class="r22 r">comment</span>)
+        {
+            <a href="#c71d96059d6087e1" class="i property">Comment</a> = <span class="r22 r">comment</span>;
+        }
+ 
+        [<a href="#24091b2037c1d697" class="t constructor">CanBeNull</a>] <b>public string</b> <a id="c71d96059d6087e1" href="../R/c71d96059d6087e1.html" target="n" data-glyph="102,1" class="i property">Comment</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Tells code analysis engine if the parameter is completely handled when the invoked method is on stack.</span>
+    <span class="c">///</span><span class="c"> If the parameter is a delegate, indicates that delegate is executed while the method is executed.</span>
+    <span class="c">///</span><span class="c"> If the parameter is an enumerable, indicates that it is enumerated while the method is executed.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a>)]
+    <b>internal sealed class</b> <a id="05db90684a4d5b0b" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="7002564bdd3f5811">InstantHandleAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that a method does not make any observable state changes.</span>
+    <span class="c">///</span><span class="c"> The same as </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.Diagnostics.Contracts.PureAttribute</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [Pure] int Multiply(int x, int y) =&gt; x * y;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> void M() {</span>
+    <span class="c">///</span><span class="c">   Multiply(123, 42); // Warning: Return value of pure method is not used</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="7699328db5e5fa08" href="../R/7699328db5e5fa08.html" target="n" data-glyph="2,0" class="t t"><span id="8db7c77be02a242c">PureAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the return value of the method invocation must be used.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Methods decorated with this attribute (in contrast to pure methods) might change state,</span>
+    <span class="c">///</span><span class="c"> but make no sense without using their return value. </span><span class="c">&lt;</span><span class="c">br</span><span class="c">/&gt;</span>
+    <span class="c">///</span><span class="c"> Similarly to </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7699328db5e5fa08" class="t t">PureAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">, this attribute</span>
+    <span class="c">///</span><span class="c"> will help detecting usages of the method when the return value in not used.</span>
+    <span class="c">///</span><span class="c"> Additionally, you can optionally specify a custom message, which will be used when showing warnings, e.g.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span><span class="c">[MustUseReturnValue(&quot;Use the return value to...&quot;)]</span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="b81b423c8a106696" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">MustUseReturnValueAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="c16312f4d2e886d8" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MustUseReturnValueAttribute</a>() { }
+ 
+        <b>public</b> <a id="259188bcaa1ac9a8" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MustUseReturnValueAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r23 rd" class="r23 r">justification</span>)
+        {
+            <a href="#b2d16d8cbd04cbe6" class="i property">Justification</a> = <span class="r23 r">justification</span>;
+        }
+ 
+        [<a href="#24091b2037c1d697" class="t constructor">CanBeNull</a>] <b>public string</b> <a id="b2d16d8cbd04cbe6" href="../R/b2d16d8cbd04cbe6.html" target="n" data-glyph="102,1" class="i property">Justification</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates the type member or parameter of some type, that should be used instead of all other ways</span>
+    <span class="c">///</span><span class="c"> to get the value of that type. This annotation is useful when you have some &quot;context&quot; value evaluated</span>
+    <span class="c">///</span><span class="c"> and stored somewhere, meaning that all other ways to get this value must be consolidated with existing one.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> class Foo {</span>
+    <span class="c">///</span><span class="c">   [ProvidesContext] IBarService _barService = ...;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c">   void ProcessNode(INode node) {</span>
+    <span class="c">///</span><span class="c">     DoSomething(node, node.GetGlobalServices().Bar);</span>
+    <span class="c">///</span><span class="c">     //              ^ Warning: use value of &#39;_barService&#39; field</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> |
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#16349e8915c7392b" class="i field">Class</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#e688e657eeafcca0" class="i field">Interface</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#a12699caf98e49eb" class="i field">Struct</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#f6e228b577be763e" class="i field">GenericParameter</a>)]
+    <b>internal sealed class</b> <a id="4c64ded04018e2ba" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="11965fd36cb7e1bc">ProvidesContextAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that a parameter is a path to a file or a folder within a web project.</span>
+    <span class="c">///</span><span class="c"> Path can be relative or absolute, starting from web root (~).</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a>)]
+    <b>internal sealed class</b> <a id="320af9c38b7e4bdc" href="../R/320af9c38b7e4bdc.html" target="n" data-glyph="2,0" class="t t">PathReferenceAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="3879edb3ca85c734" href="../R/3879edb3ca85c734.html" target="n" data-glyph="72,1" class="t constructor">PathReferenceAttribute</a>() { }
+ 
+        <b>public</b> <a id="44e9e7b91ee3e900" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">PathReferenceAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>, <a href="#3879edb3ca85c734" class="t constructor">PathReference</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r24 rd" class="r24 r">basePath</span>)
+        {
+            <a href="#3fa4faab8689d832" class="i property">BasePath</a> = <span class="r24 r">basePath</span>;
+        }
+ 
+        [<a href="#24091b2037c1d697" class="t constructor">CanBeNull</a>] <b>public string</b> <a id="3fa4faab8689d832" href="../R/3fa4faab8689d832.html" target="n" data-glyph="102,1" class="i property">BasePath</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> An extension method marked with this attribute is processed by code completion</span>
+    <span class="c">///</span><span class="c"> as a &#39;Source Template&#39;. When the extension method is completed over some expression, its source code</span>
+    <span class="c">///</span><span class="c"> is automatically expanded like a template at call site.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Template method body can contain valid source code and/or special comments starting with &#39;$&#39;.</span>
+    <span class="c">///</span><span class="c"> Text inside these comments is added as source code when the template is applied. Template parameters</span>
+    <span class="c">///</span><span class="c"> can be used either as additional method parameters or as identifiers wrapped in two &#39;$&#39; signs.</span>
+    <span class="c">///</span><span class="c"> Use the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#238ee8d9334c1e4c" class="t t">MacroAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> attribute to specify macros for parameters.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> In this example, the &#39;forEach&#39; method is a source template available over all values</span>
+    <span class="c">///</span><span class="c"> of enumerable types, producing ordinary C# &#39;foreach&#39; statement and placing caret inside block:</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [SourceTemplate]</span>
+    <span class="c">///</span><span class="c"> public static void forEach</span><span class="c">&amp;lt;</span><span class="c">T</span><span class="c">&amp;gt;</span><span class="c">(this IEnumerable</span><span class="c">&amp;lt;</span><span class="c">T</span><span class="c">&amp;gt;</span><span class="c"> xs) {</span>
+    <span class="c">///</span><span class="c">   foreach (var x in xs) {</span>
+    <span class="c">///</span><span class="c">      //$ $END$</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="be52e8e7f673d66a" href="../R/be52e8e7f673d66a.html" target="n" data-glyph="2,0" class="t t"><span id="cba841cc73c7991d">SourceTemplateAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Allows specifying a macro for a parameter of a </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#be52e8e7f673d66a" class="t t">SourceTemplateAttribute</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">source template</span><span class="c">&lt;/</span><span class="c">see</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> You can apply the attribute on the whole method or on any of its additional parameters. The macro expression</span>
+    <span class="c">///</span><span class="c"> is defined in the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#238ee8d9334c1e4c" class="t t">MacroAttribute</a>.<a href="#1cb96de846cd0a6a" class="i property">Expression</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> property. When applied on a method, the target</span>
+    <span class="c">///</span><span class="c"> template parameter is defined in the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#238ee8d9334c1e4c" class="t t">MacroAttribute</a>.<a href="#ec27dea1076be6b5" class="i property">Target</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> property. To apply the macro silently</span>
+    <span class="c">///</span><span class="c"> for the parameter, set the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#238ee8d9334c1e4c" class="t t">MacroAttribute</a>.<a href="#d3ab34743f3f0638" class="i property">Editable</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> property value = -1.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Applying the attribute on a source template method:</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [SourceTemplate, Macro(Target = &quot;item&quot;, Expression = &quot;suggestVariableName()&quot;)]</span>
+    <span class="c">///</span><span class="c"> public static void forEach</span><span class="c">&amp;lt;</span><span class="c">T</span><span class="c">&amp;gt;</span><span class="c">(this IEnumerable</span><span class="c">&amp;lt;</span><span class="c">T</span><span class="c">&amp;gt;</span><span class="c"> collection) {</span>
+    <span class="c">///</span><span class="c">   foreach (var item in collection) {</span>
+    <span class="c">///</span><span class="c">     //$ $END$</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Applying the attribute on a template method parameter:</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [SourceTemplate]</span>
+    <span class="c">///</span><span class="c"> public static void something(this Entity x, [Macro(Expression = &quot;guid()&quot;, Editable = -1)] string newguid) {</span>
+    <span class="c">///</span><span class="c">   /*$ var $x$Id = &quot;$newguid$&quot; + x.ToString();</span>
+    <span class="c">///</span><span class="c">   x.DoSomething($x$Id); */</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="238ee8d9334c1e4c" href="../R/238ee8d9334c1e4c.html" target="n" data-glyph="2,0" class="t t"><span id="7ac09781ea4a697e">MacroAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Allows specifying a macro that will be executed for a </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#be52e8e7f673d66a" class="t t">SourceTemplateAttribute</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">source template</span><span class="c">&lt;/</span><span class="c">see</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> parameter when the template is expanded.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="#24091b2037c1d697" class="t constructor">CanBeNull</a>] <b>public string</b> <a id="1cb96de846cd0a6a" href="../R/1cb96de846cd0a6a.html" target="n" data-glyph="102,1" class="i property">Expression</a> { <b>get</b>; <b>set</b>; }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Allows specifying which occurrence of the target parameter becomes editable when the template is deployed.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> If the target parameter is used several times in the template, only one occurrence becomes editable;</span>
+        <span class="c">///</span><span class="c"> other occurrences are changed synchronously. To specify the zero-based index of the editable occurrence,</span>
+        <span class="c">///</span><span class="c"> use values &gt;= 0. To make the parameter non-editable when the template is expanded, use -1.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>public int</b> <a id="d3ab34743f3f0638" href="../R/d3ab34743f3f0638.html" target="n" data-glyph="102,1" class="i property">Editable</a> { <b>get</b>; <b>set</b>; }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Identifies the target parameter of a </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#be52e8e7f673d66a" class="t t">SourceTemplateAttribute</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">source template</span><span class="c">&lt;/</span><span class="c">see</span><span class="c">&gt;</span><span class="c"> if the</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#238ee8d9334c1e4c" class="t t">MacroAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> is applied on a template method.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="#24091b2037c1d697" class="t constructor">CanBeNull</a>] <b>public string</b> <a id="ec27dea1076be6b5" href="../R/ec27dea1076be6b5.html" target="n" data-glyph="102,1" class="i property">Target</a> { <b>get</b>; <b>set</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#39d388c7ec16ec13" class="i field">Assembly</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="5d99e4c6f7f1b63c" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">AspMvcAreaMasterLocationFormatAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="1cf4d1cd7ea7662e" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspMvcAreaMasterLocationFormatAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r25 rd" class="r25 r">format</span>)
+        {
+            <a href="#2a32c007deeb77dd" class="i property">Format</a> = <span class="r25 r">format</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="2a32c007deeb77dd" href="../R/2a32c007deeb77dd.html" target="n" data-glyph="102,1" class="i property">Format</a> { <b>get</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#39d388c7ec16ec13" class="i field">Assembly</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="4e24fe2aecafe0c5" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">AspMvcAreaPartialViewLocationFormatAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="8c008a84c4c498fe" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspMvcAreaPartialViewLocationFormatAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r26 rd" class="r26 r">format</span>)
+        {
+            <a href="#b2d7312797847fb6" class="i property">Format</a> = <span class="r26 r">format</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="b2d7312797847fb6" href="../R/b2d7312797847fb6.html" target="n" data-glyph="102,1" class="i property">Format</a> { <b>get</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#39d388c7ec16ec13" class="i field">Assembly</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="ed3d23aa448200e2" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">AspMvcAreaViewLocationFormatAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="f4787ae17d983e0c" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspMvcAreaViewLocationFormatAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r27 rd" class="r27 r">format</span>)
+        {
+            <a href="#20da17ff6521bee6" class="i property">Format</a> = <span class="r27 r">format</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="20da17ff6521bee6" href="../R/20da17ff6521bee6.html" target="n" data-glyph="102,1" class="i property">Format</a> { <b>get</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#39d388c7ec16ec13" class="i field">Assembly</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="f56acc124d0b2a88" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">AspMvcMasterLocationFormatAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="9f65a860954425b2" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspMvcMasterLocationFormatAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r28 rd" class="r28 r">format</span>)
+        {
+            <a href="#5df2b06214870195" class="i property">Format</a> = <span class="r28 r">format</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="5df2b06214870195" href="../R/5df2b06214870195.html" target="n" data-glyph="102,1" class="i property">Format</a> { <b>get</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#39d388c7ec16ec13" class="i field">Assembly</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="fc714032555cbc0d" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">AspMvcPartialViewLocationFormatAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="72e83af35bbc6e14" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspMvcPartialViewLocationFormatAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r29 rd" class="r29 r">format</span>)
+        {
+            <a href="#18db34bc7021c191" class="i property">Format</a> = <span class="r29 r">format</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="18db34bc7021c191" href="../R/18db34bc7021c191.html" target="n" data-glyph="102,1" class="i property">Format</a> { <b>get</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#39d388c7ec16ec13" class="i field">Assembly</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="c398f1cd781ed62c" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">AspMvcViewLocationFormatAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="7260df0c69cc8424" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspMvcViewLocationFormatAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r30 rd" class="r30 r">format</span>)
+        {
+            <a href="#2d3562f483735060" class="i property">Format</a> = <span class="r30 r">format</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="2d3562f483735060" href="../R/2d3562f483735060.html" target="n" data-glyph="102,1" class="i property">Format</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter</span>
+    <span class="c">///</span><span class="c"> is an MVC action. If applied to a method, the MVC action name is calculated</span>
+    <span class="c">///</span><span class="c"> implicitly from the context. Use this attribute for custom wrappers similar to</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="ed7fa0ddbf5b6ca9" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">AspMvcActionAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="eb1d77fe999b6fac" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspMvcActionAttribute</a>() { }
+ 
+        <b>public</b> <a id="ed270a748a2574e8" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspMvcActionAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r31 rd" class="r31 r">anonymousProperty</span>)
+        {
+            <a href="#4582be3b58daecf4" class="i property">AnonymousProperty</a> = <span class="r31 r">anonymousProperty</span>;
+        }
+ 
+        [<a href="#24091b2037c1d697" class="t constructor">CanBeNull</a>] <b>public string</b> <a id="4582be3b58daecf4" href="../R/4582be3b58daecf4.html" target="n" data-glyph="102,1" class="i property">AnonymousProperty</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. Indicates that the marked parameter is an MVC area.</span>
+    <span class="c">///</span><span class="c"> Use this attribute for custom wrappers similar to</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="2d734e7a62d0cbb1" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">AspMvcAreaAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="f712d7fd31451d30" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspMvcAreaAttribute</a>() { }
+ 
+        <b>public</b> <a id="2b477507f1b97d0a" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspMvcAreaAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r32 rd" class="r32 r">anonymousProperty</span>)
+        {
+            <a href="#e4add76e348bb0f5" class="i property">AnonymousProperty</a> = <span class="r32 r">anonymousProperty</span>;
+        }
+ 
+        [<a href="#24091b2037c1d697" class="t constructor">CanBeNull</a>] <b>public string</b> <a id="e4add76e348bb0f5" href="../R/e4add76e348bb0f5.html" target="n" data-glyph="102,1" class="i property">AnonymousProperty</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter is</span>
+    <span class="c">///</span><span class="c"> an MVC controller. If applied to a method, the MVC controller name is calculated</span>
+    <span class="c">///</span><span class="c"> implicitly from the context. Use this attribute for custom wrappers similar to</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String, String)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="1ce6e0161fed477d" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">AspMvcControllerAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="a0e28b54dced94ce" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspMvcControllerAttribute</a>() { }
+ 
+        <b>public</b> <a id="084517422eb2bc89" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspMvcControllerAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r33 rd" class="r33 r">anonymousProperty</span>)
+        {
+            <a href="#922d7004fca38ad8" class="i property">AnonymousProperty</a> = <span class="r33 r">anonymousProperty</span>;
+        }
+ 
+        [<a href="#24091b2037c1d697" class="t constructor">CanBeNull</a>] <b>public string</b> <a id="922d7004fca38ad8" href="../R/922d7004fca38ad8.html" target="n" data-glyph="102,1" class="i property">AnonymousProperty</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. Indicates that the marked parameter is an MVC Master. Use this attribute</span>
+    <span class="c">///</span><span class="c"> for custom wrappers similar to </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.Web.Mvc.Controller.View(String, String)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="5d7fc0702a0bb7ab" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="3096437d79f655f8">AspMvcMasterAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. Indicates that the marked parameter is an MVC model type. Use this attribute</span>
+    <span class="c">///</span><span class="c"> for custom wrappers similar to </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.Web.Mvc.Controller.View(String, Object)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a>)]
+    <b>internal sealed class</b> <a id="10e9654a724590a0" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="1bd5c8db455205ac">AspMvcModelTypeAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter is an MVC</span>
+    <span class="c">///</span><span class="c"> partial view. If applied to a method, the MVC partial view name is calculated implicitly</span>
+    <span class="c">///</span><span class="c"> from the context. Use this attribute for custom wrappers similar to</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.Web.Mvc.Html.RenderPartialExtensions.RenderPartial(HtmlHelper, String)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="0399045fa0fea885" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="aa25b407df401b95">AspMvcPartialViewAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. Allows disabling inspections for MVC views within a class or a method.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#16349e8915c7392b" class="i field">Class</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="0b2973eccc97654d" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="249b75c03793bc56">AspMvcSuppressViewErrorAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. Indicates that a parameter is an MVC display template.</span>
+    <span class="c">///</span><span class="c"> Use this attribute for custom wrappers similar to</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.Web.Mvc.Html.DisplayExtensions.DisplayForModel(HtmlHelper, String)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="246acc7eb65cdb83" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="bf4d07e79710a3a5">AspMvcDisplayTemplateAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. Indicates that the marked parameter is an MVC editor template.</span>
+    <span class="c">///</span><span class="c"> Use this attribute for custom wrappers similar to</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.Web.Mvc.Html.EditorExtensions.EditorForModel(HtmlHelper, String)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="d4c8456d089892d3" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="8785ff1c69fce648">AspMvcEditorTemplateAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. Indicates that the marked parameter is an MVC template.</span>
+    <span class="c">///</span><span class="c"> Use this attribute for custom wrappers similar to</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.ComponentModel.DataAnnotations.UIHintAttribute(System.String)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="db67c42c6870ecdd" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="271d202e14ed3d03">AspMvcTemplateAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter</span>
+    <span class="c">///</span><span class="c"> is an MVC view component. If applied to a method, the MVC view name is calculated implicitly</span>
+    <span class="c">///</span><span class="c"> from the context. Use this attribute for custom wrappers similar to</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.Web.Mvc.Controller.View(Object)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="a9e549b08f1977d3" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="cccbb60478804c4e">AspMvcViewAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter</span>
+    <span class="c">///</span><span class="c"> is an MVC view component name.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="e0994e0e0e3b1ca4" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="0f3ae55e00839d50">AspMvcViewComponentAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter</span>
+    <span class="c">///</span><span class="c"> is an MVC view component view. If applied to a method, the MVC view component view name is default.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="a888092602044227" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="6c07d4519bab586f">AspMvcViewComponentViewAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ASP.NET MVC attribute. When applied to a parameter of an attribute,</span>
+    <span class="c">///</span><span class="c"> indicates that this parameter is an MVC action name.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> [ActionName(&quot;Foo&quot;)]</span>
+    <span class="c">///</span><span class="c"> public ActionResult Login(string returnUrl) {</span>
+    <span class="c">///</span><span class="c">   ViewBag.ReturnUrl = Url.Action(&quot;Foo&quot;); // OK</span>
+    <span class="c">///</span><span class="c">   return RedirectToAction(&quot;Bar&quot;); // Error: Cannot resolve action</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="85fd70a7b44ef3aa" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="672a25f29a54fea1">AspMvcActionSelectorAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a>)]
+    <b>internal sealed class</b> <a id="1eaf9e8331a388ae" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">HtmlElementAttributesAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="eba0da7577da0970" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">HtmlElementAttributesAttribute</a>() { }
+ 
+        <b>public</b> <a id="1e155421ac9df759" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">HtmlElementAttributesAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r34 rd" class="r34 r">name</span>)
+        {
+            <a href="#e7bb7e328d7cdd7a" class="i property">Name</a> = <span class="r34 r">name</span>;
+        }
+ 
+        [<a href="#24091b2037c1d697" class="t constructor">CanBeNull</a>] <b>public string</b> <a id="e7bb7e328d7cdd7a" href="../R/e7bb7e328d7cdd7a.html" target="n" data-glyph="102,1" class="i property">Name</a> { <b>get</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="8fc66b0ed4a0b87d" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">HtmlAttributeValueAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="ae2ecb2da27fcf51" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">HtmlAttributeValueAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r35 rd" class="r35 r">name</span>)
+        {
+            <a href="#aac62e04ea96bbfb" class="i property">Name</a> = <span class="r35 r">name</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="aac62e04ea96bbfb" href="../R/aac62e04ea96bbfb.html" target="n" data-glyph="102,1" class="i property">Name</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Razor attribute. Indicates that the marked parameter or method is a Razor section.</span>
+    <span class="c">///</span><span class="c"> Use this attribute for custom wrappers similar to</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">System.Web.WebPages.WebPageBase.RenderSection(String)</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="368cbfdcc36c0084" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="6368868eee0d5a8c">RazorSectionAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates how method, constructor invocation, or property access</span>
+    <span class="c">///</span><span class="c"> over collection type affects the contents of the collection.</span>
+    <span class="c">///</span><span class="c"> Use </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#940ec18b556f43c8" class="i property">CollectionAccessType</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> to specify the access type.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Using this attribute only makes sense if all collection methods are marked with this attribute.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> public class MyStringCollection : List</span><span class="c">&amp;lt;</span><span class="c">string</span><span class="c">&amp;gt;</span>
+    <span class="c">///</span><span class="c"> {</span>
+    <span class="c">///</span><span class="c">   [CollectionAccess(CollectionAccessType.Read)]</span>
+    <span class="c">///</span><span class="c">   public string GetFirstString()</span>
+    <span class="c">///</span><span class="c">   {</span>
+    <span class="c">///</span><span class="c">     return this.ElementAt(0);</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> class Test</span>
+    <span class="c">///</span><span class="c"> {</span>
+    <span class="c">///</span><span class="c">   public void Foo()</span>
+    <span class="c">///</span><span class="c">   {</span>
+    <span class="c">///</span><span class="c">     // Warning: Contents of the collection is never updated</span>
+    <span class="c">///</span><span class="c">     var col = new MyStringCollection();</span>
+    <span class="c">///</span><span class="c">     string x = col.GetFirstString();</span>
+    <span class="c">///</span><span class="c">   }</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#4c6023b1fe47d826" class="i field">Constructor</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="a663b180931534dd" href="../R/a663b180931534dd.html" target="n" data-glyph="2,0" class="t t">CollectionAccessAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="4f7e27688a987ff2" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">CollectionAccessAttribute</a>(<a href="#f4b88869d82640d1" class="t t">CollectionAccessType</a> <span id="r36 rd" class="r36 r">collectionAccessType</span>)
+        {
+            <a href="#940ec18b556f43c8" class="i property">CollectionAccessType</a> = <span class="r36 r">collectionAccessType</span>;
+        }
+ 
+        <b>public</b> <a href="#f4b88869d82640d1" class="t t">CollectionAccessType</a> <a id="940ec18b556f43c8" href="../R/940ec18b556f43c8.html" target="n" data-glyph="102,1" class="i property">CollectionAccessType</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Provides a value for the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#a663b180931534dd" class="t t">CollectionAccessAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> to define</span>
+    <span class="c">///</span><span class="c"> how the collection method invocation affects the contents of the collection.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#5bbb5168ad9d1021" class="t constructor">Flags</a>]
+    <b>internal enum</b> <a id="f4b88869d82640d1" href="../R/f4b88869d82640d1.html" target="n" data-glyph="20,0" class="t t"><span id="00e34a96241bd402">CollectionAccessType</span></a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Method does not use or modify content of the collection.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="84bf8999c62f049a" href="../R/../../0000000000.html" target="n" data-glyph="24,1" class="i field">None</a> = 0,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Method only reads content of the collection but does not modify it.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="139090fe4dcfdaad" href="../R/../../0000000000.html" target="n" data-glyph="24,1" class="i field">Read</a> = 1,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Method can change content of the collection but does not add new elements.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="915aab6163e54ab6" href="../R/915aab6163e54ab6.html" target="n" data-glyph="24,1" class="i field">ModifyExistingContent</a> = 2,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Method can add new elements to the collection.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="2b4a46df2b974076" href="../R/../../0000000000.html" target="n" data-glyph="24,1" class="i field">UpdatedContent</a> = <a href="#915aab6163e54ab6" class="i field">ModifyExistingContent</a> | 4
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the marked method is assertion method, i.e. it halts the control flow if</span>
+    <span class="c">///</span><span class="c"> one of the conditions is satisfied. To set the condition, mark one of the parameters with</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#b4b16d3f985636a4" class="t t">AssertionConditionAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> attribute.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="d191657a933e2e19" href="../R/d191657a933e2e19.html" target="n" data-glyph="2,0" class="t t"><span id="e07de6a11664391a">AssertionMethodAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates the condition parameter of the assertion method. The method itself should be</span>
+    <span class="c">///</span><span class="c"> marked by </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#d191657a933e2e19" class="t t">AssertionMethodAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> attribute. The mandatory argument of</span>
+    <span class="c">///</span><span class="c"> the attribute is the assertion type.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a>)]
+    <b>internal sealed class</b> <a id="b4b16d3f985636a4" href="../R/b4b16d3f985636a4.html" target="n" data-glyph="2,0" class="t t">AssertionConditionAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="e7e7a401df3742ec" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AssertionConditionAttribute</a>(<a href="#2ca9f79c6f54af4f" class="t t">AssertionConditionType</a> <span id="r37 rd" class="r37 r">conditionType</span>)
+        {
+            <a href="#aa21f897a2259c2b" class="i property">ConditionType</a> = <span class="r37 r">conditionType</span>;
+        }
+ 
+        <b>public</b> <a href="#2ca9f79c6f54af4f" class="t t">AssertionConditionType</a> <a id="aa21f897a2259c2b" href="../R/aa21f897a2259c2b.html" target="n" data-glyph="102,1" class="i property">ConditionType</a> { <b>get</b>; }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Specifies assertion type. If the assertion method argument satisfies the condition,</span>
+    <span class="c">///</span><span class="c"> then the execution continues. Otherwise, execution is assumed to be halted.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>internal enum</b> <a id="2ca9f79c6f54af4f" href="../R/2ca9f79c6f54af4f.html" target="n" data-glyph="20,0" class="t t"><span id="5a752c770d9aecb3">AssertionConditionType</span></a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Marked parameter should be evaluated to true.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="5c4b57a3d5871b8c" href="../R/../../0000000000.html" target="n" data-glyph="24,1" class="i field">IS_TRUE</a> = 0,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Marked parameter should be evaluated to false.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="eaf882467a4b8ae2" href="../R/../../0000000000.html" target="n" data-glyph="24,1" class="i field">IS_FALSE</a> = 1,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Marked parameter should be evaluated to null value.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="7b9df37da449ce18" href="../R/../../0000000000.html" target="n" data-glyph="24,1" class="i field">IS_NULL</a> = 2,
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Marked parameter should be evaluated to not null value.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a id="e4a767c2ff18e7bb" href="../R/../../0000000000.html" target="n" data-glyph="24,1" class="i field">IS_NOT_NULL</a> = 3,
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the marked method unconditionally terminates control flow execution.</span>
+    <span class="c">///</span><span class="c"> For example, it could unconditionally throw exception.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#66ed4e142f4e14e7" class="t constructor">Obsolete</a>(<span class="s">&quot;Use [ContractAnnotation(&#39;=&gt; halt&#39;)] instead&quot;</span>)]
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="d5e324bfb6a59467" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="cacca7a7fedbb1b3">TerminatesProgramAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that method is pure LINQ method, with postponed enumeration (like Enumerable.Select,</span>
+    <span class="c">///</span><span class="c"> .Where). This annotation allows inference of [InstantHandle] annotation for parameters</span>
+    <span class="c">///</span><span class="c"> of delegate type by analyzing LINQ method chains.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="beffef660058a117" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="a396206137e2e3b1">LinqTunnelAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that IEnumerable passed as a parameter is not enumerated.</span>
+    <span class="c">///</span><span class="c"> Use this annotation to suppress the &#39;Possible multiple enumeration of IEnumerable&#39; inspection.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">example</span><span class="c">&gt;</span><span class="c">&lt;</span><span class="c">code</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> static void ThrowIfNull</span><span class="c">&amp;lt;</span><span class="c">T</span><span class="c">&amp;gt;</span><span class="c">([NoEnumeration] T v, string n) where T : class</span>
+    <span class="c">///</span><span class="c"> {</span>
+    <span class="c">///</span><span class="c">   // custom check for null but no enumeration</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> void Foo(IEnumerable</span><span class="c">&amp;lt;</span><span class="c">string</span><span class="c">&amp;gt;</span><span class="c"> values)</span>
+    <span class="c">///</span><span class="c"> {</span>
+    <span class="c">///</span><span class="c">   ThrowIfNull(values, nameof(values));</span>
+    <span class="c">///</span><span class="c">   var x = values.ToList(); // No warnings about multiple enumeration</span>
+    <span class="c">///</span><span class="c"> }</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">code</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">example</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a>)]
+    <b>internal sealed class</b> <a id="a039d16593c15790" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="f23e254ec9461936">NoEnumerationAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Indicates that the marked parameter is a regular expression pattern.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#ec95a76a5b6dfd85" class="i field">Field</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="5540c245bac8d8fe" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="a321fc5ae1014b08">RegexPatternAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Prevents the Member Reordering feature from tossing members of the marked class.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> The attribute must be mentioned in your member reordering patterns.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(
+      <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#16349e8915c7392b" class="i field">Class</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#e688e657eeafcca0" class="i field">Interface</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#a12699caf98e49eb" class="i field">Struct</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b48fa9009cd09c66" class="i field">Enum</a>)]
+    <b>internal sealed class</b> <a id="d463256fdb39ab12" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="40e95486417f1256">NoReorderAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> XAML attribute. Indicates the type that has </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">ItemsSource</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> property and should be treated</span>
+    <span class="c">///</span><span class="c"> as </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">ItemsControl</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">-derived type, to enable inner items </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">DataContext</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> type resolve.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#16349e8915c7392b" class="i field">Class</a>)]
+    <b>internal sealed class</b> <a id="0aab0d90d52743c7" href="../R/0aab0d90d52743c7.html" target="n" data-glyph="2,0" class="t t"><span id="460d73fdf03ed1c5">XamlItemsControlAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> XAML attribute. Indicates the property of some </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">BindingBase</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">-derived type, that</span>
+    <span class="c">///</span><span class="c"> is used to bind some item of </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">ItemsControl</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">-derived type. This annotation will</span>
+    <span class="c">///</span><span class="c"> enable the </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">DataContext</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> type resolve for XAML bindings for such properties.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Property should have the tree ancestor of the </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">ItemsControl</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> type or</span>
+    <span class="c">///</span><span class="c"> marked with the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#0aab0d90d52743c7" class="t t">XamlItemsControlAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> attribute.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="4efb80eafa0c175f" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="612d0df4878994eb">XamlItemBindingOfItemsControlAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> XAML attribute. Indicates the property of some </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">Style</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">-derived type, that</span>
+    <span class="c">///</span><span class="c"> is used to style items of </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">ItemsControl</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">-derived type. This annotation will</span>
+    <span class="c">///</span><span class="c"> enable the </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">DataContext</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> type resolve for XAML bindings for such properties.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Property should have the tree ancestor of the </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">ItemsControl</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> type or</span>
+    <span class="c">///</span><span class="c"> marked with the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#0aab0d90d52743c7" class="t t">XamlItemsControlAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> attribute.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="b8e5babc408d41d7" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="dbd15d76befa4af3">XamlItemStyleOfItemsControlAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#16349e8915c7392b" class="i field">Class</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="9ed014fe572310c8" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">AspChildControlTypeAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="5d7d7f77bce88085" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspChildControlTypeAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r38 rd" class="r38 r">tagName</span>, [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r39 rd" class="r39 r">controlType</span>)
+        {
+            <a href="#67e8ccb43ecb2148" class="i property">TagName</a> = <span class="r38 r">tagName</span>;
+            <a href="#60b3e97afa1501b4" class="i property">ControlType</a> = <span class="r39 r">controlType</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="67e8ccb43ecb2148" href="../R/67e8ccb43ecb2148.html" target="n" data-glyph="102,1" class="i property">TagName</a> { <b>get</b>; }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public</b> <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <a id="60b3e97afa1501b4" href="../R/60b3e97afa1501b4.html" target="n" data-glyph="102,1" class="i property">ControlType</a> { <b>get</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="0c78575a99139768" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="d0bbd543c2e9dba0">AspDataFieldAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a> | <a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="0e1778873fa0f70b" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="9409fce8c29a2b39">AspDataFieldsAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="003134e540dd5bdb" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="02cf400c342b95c1">AspMethodPropertyAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#16349e8915c7392b" class="i field">Class</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="04cdb6ba54e01142" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">AspRequiredAttributeAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="e12ea9e953d64303" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspRequiredAttributeAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r40 rd" class="r40 r">attribute</span>)
+        {
+            <a href="#3301663fbaa3edc5" class="i property">Attribute</a> = <span class="r40 r">attribute</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="3301663fbaa3edc5" href="../R/3301663fbaa3edc5.html" target="n" data-glyph="102,1" class="i property">Attribute</a> { <b>get</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="c32068c9e4bb4960" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">AspTypePropertyAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public bool</b> <a id="662bc8dc10715d73" href="../R/662bc8dc10715d73.html" target="n" data-glyph="102,1" class="i property">CreateConstructorReferences</a> { <b>get</b>; }
+ 
+        <b>public</b> <a id="b25000cbc327c589" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AspTypePropertyAttribute</a>(<b>bool</b> <span id="r41 rd" class="r41 r">createConstructorReferences</span>)
+        {
+            <a href="#662bc8dc10715d73" class="i property">CreateConstructorReferences</a> = <span class="r41 r">createConstructorReferences</span>;
+        }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#39d388c7ec16ec13" class="i field">Assembly</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="5fe52911a1b5a6ac" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">RazorImportNamespaceAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="7861258469d48b20" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">RazorImportNamespaceAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r42 rd" class="r42 r">name</span>)
+        {
+            <a href="#a87e6480dd41155f" class="i property">Name</a> = <span class="r42 r">name</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="a87e6480dd41155f" href="../R/a87e6480dd41155f.html" target="n" data-glyph="102,1" class="i property">Name</a> { <b>get</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#39d388c7ec16ec13" class="i field">Assembly</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="116fe4f222ddc8ce" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">RazorInjectionAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="0abfdb8dfbf5b158" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">RazorInjectionAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r43 rd" class="r43 r">type</span>, [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r44 rd" class="r44 r">fieldName</span>)
+        {
+            <a href="#25ab62c479b634bc" class="i property">Type</a> = <span class="r43 r">type</span>;
+            <a href="#f4b62eec614c7ff8" class="i property">FieldName</a> = <span class="r44 r">fieldName</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="25ab62c479b634bc" href="../R/25ab62c479b634bc.html" target="n" data-glyph="102,1" class="i property">Type</a> { <b>get</b>; }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="f4b62eec614c7ff8" href="../R/f4b62eec614c7ff8.html" target="n" data-glyph="102,1" class="i property">FieldName</a> { <b>get</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#39d388c7ec16ec13" class="i field">Assembly</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="db1ad9816df2541b" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">RazorDirectiveAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="6961792a9393f3aa" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">RazorDirectiveAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r45 rd" class="r45 r">directive</span>)
+        {
+            <a href="#0ef1f792047d13e4" class="i property">Directive</a> = <span class="r45 r">directive</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="0ef1f792047d13e4" href="../R/0ef1f792047d13e4.html" target="n" data-glyph="102,1" class="i property">Directive</a> { <b>get</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#39d388c7ec16ec13" class="i field">Assembly</a>, <a href="@0@mscorlib/A.html#d903bd9308253ef8" class="i property">AllowMultiple</a> = <b>true</b>)]
+    <b>internal sealed class</b> <a id="5152f781ee32dca2" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t">RazorPageBaseTypeAttribute</a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a>
+    {
+        <b>public</b> <a id="979ec475b20101f5" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">RazorPageBaseTypeAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r46 rd" class="r46 r">baseType</span>)
+        {
+            <a href="#bff00fecaf69b7e2" class="i property">BaseType</a> = <span class="r46 r">baseType</span>;
+        }
+        <b>public</b> <a id="396cdee28f845ce7" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">RazorPageBaseTypeAttribute</a>([<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r47 rd" class="r47 r">baseType</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r48 rd" class="r48 r">pageName</span>)
+        {
+            <a href="#bff00fecaf69b7e2" class="i property">BaseType</a> = <span class="r47 r">baseType</span>;
+            <a href="#f359c2733dd32e7b" class="i property">PageName</a> = <span class="r48 r">pageName</span>;
+        }
+ 
+        [<a href="#251f12d1b9ea212e" class="t constructor">NotNull</a>] <b>public string</b> <a id="bff00fecaf69b7e2" href="../R/bff00fecaf69b7e2.html" target="n" data-glyph="102,1" class="i property">BaseType</a> { <b>get</b>; }
+        [<a href="#24091b2037c1d697" class="t constructor">CanBeNull</a>] <b>public string</b> <a id="f359c2733dd32e7b" href="../R/f359c2733dd32e7b.html" target="n" data-glyph="102,1" class="i property">PageName</a> { <b>get</b>; }
+    }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="e1bfe011d31d261d" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="3ba50bc179c1f5ea">RazorHelperCommonAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#068ce473fe243b43" class="i field">Property</a>)]
+    <b>internal sealed class</b> <a id="bb09b01419a90c21" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="d8190018facb02c3">RazorLayoutAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="044fef5f76810718" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="bc910dda4a4f6193">RazorWriteLiteralMethodAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#b5e7311a202ba2d4" class="i field">Method</a>)]
+    <b>internal sealed class</b> <a id="b2a11da072f01bdc" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="2d1829c4ac4c7f1f">RazorWriteMethodAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+ 
+    [<a href="@0@mscorlib/A.html#2b75b4729f275854" class="t constructor">AttributeUsage</a>(<a href="@0@mscorlib/A.html#bbeab60ef22e6977" class="t t">AttributeTargets</a>.<a href="@0@mscorlib/A.html#93428a8ad8121fa4" class="i field">Parameter</a>)]
+    <b>internal sealed class</b> <a id="d10e954410d4f838" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="b658e6d4fdb7ef56">RazorWriteMethodParameterAttribute</span></a> : <a href="@0@mscorlib/A.html#707d3dbc6c887265" class="t t">Attribute</a> { }
+}</pre></td></tr></table></div></body></html>

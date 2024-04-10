@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html><head><title>ConnectionStringFactory.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(74);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.SqlConnectionDialog/ConnectionStringFactory.cs" target="_top">ConnectionStringFactory.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.SqlConnectionDialog" target="_top">..\..\..\EASY-TOOLS\EASYTools.SqlConnectionDialog\EASYTools.SqlConnectionDialog.csproj</a> (EASYTools.SqlConnectionDialog)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">SqlConnectionDialog</span>
+{
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+	<span class="c">///</span><span class="c"> Constructs Sql Server connection string.</span>
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+	<b>public sealed class</b> <a id="c9a2b1d0ee6a8cb2" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="4cc64b4aa1cce30c">ConnectionStringFactory</span></a>
+	{
+        <b>private const string</b> <a id="94671f637cddde39" href="R/94671f637cddde39.html" target="n" data-glyph="10,1" class="i field">FILE_NAME</a> = <span class="s">&quot;ConnectionString.txt&quot;</span>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Construct connection string.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Connection string or empty string.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="f447d60daa74301c" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">BuildConnectionString</a>()
+        {
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r0 rd" class="r0 r">Conn</span> = <a href="#6f84ba1366255f95" class="i method">Read</a>();
+            <a href="@0@mscorlib/A.html#f1b135ff6c380b37" class="k">var</a> <span id="r1 rd" class="r1 r">CanConnect</span> = <span class="r0 r">Conn</span> != <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+            <b>if</b> (<span class="r1 r">CanConnect</span>)
+                <span class="r1 r">CanConnect</span> &amp;= <a href="P/e39199a8b5036d1f.html#e39199a8b5036d1f" class="t t">Dialog</a>.<a href="Dialog.xaml.cs.html#1181e9203181531f" class="i method">TestConnection</a>(<span class="r0 r">Conn</span>);
+ 
+            <b>if</b> (<span class="r1 r">CanConnect</span>)
+            {
+                <b>return</b> <span class="r0 r">Conn</span>;
+            }
+            <b>else</b>
+            {
+                <a href="P/e39199a8b5036d1f.html#e39199a8b5036d1f" class="k">var</a> <span id="r2 rd" class="r2 r">dialog</span> = <b>new</b> <a href="Dialog.xaml.cs.html#6837e2d01c0728be" class="t constructor">Dialog</a>();
+                <a href="@0@mscorlib/A.html#ffebe438fd9cbf0e" class="k">var</a> <span id="r3 rd" class="r3 r">dialogResult</span> = <span class="r2 r">dialog</span>.<a href="@0@PresentationFramework/A.html#61d39b218b53dbbe" class="i method">ShowDialog</a>();
+                <b>if</b> (<span class="r3 r">dialogResult</span>.<a href="@0@mscorlib/A.html#8b928034cfee7d43" class="i method">GetValueOrDefault</a>())
+                {
+                    <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r4 rd" class="r4 r">_cconnstring</span> = <span class="r2 r">dialog</span>.<a href="Dialog.xaml.cs.html#77ccf4566a910793" class="i property">ConnectionString</a>;
+                    <a href="#7aa8a82e54fb4dc1" class="i method">Write</a>(<span class="r4 r">_cconnstring</span>);
+                    <b>return</b> <span class="r4 r">_cconnstring</span>;
+                }
+                <b>else</b>
+                {
+                    <b>return</b> <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+                }
+            }
+        }
+ 
+        <b>private string</b> <a id="6f84ba1366255f95" href="R/6f84ba1366255f95.html" target="n" data-glyph="76,1" class="i method">Read</a>()
+        {
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r5 rd" class="r5 r">BaseDirectory</span> = <span class="i n">System</span>.<a href="@0@mscorlib/A.html#2e9e7922eace2be8" class="t t">AppDomain</a>.<a href="@0@mscorlib/A.html#0f1cf66beffbb219" class="i property">CurrentDomain</a>.<a href="@0@mscorlib/A.html#694882fc5fb59a81" class="i property">BaseDirectory</a>;
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r6 rd" class="r6 r">ConfigFile</span> = <span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#090eca8621a248ee" class="t t">Path</a>.<a href="@0@mscorlib/A.html#2d7263f86a526264" class="i method">Combine</a>(<span class="r5 r">BaseDirectory</span>, <a href="#94671f637cddde39" class="i field">FILE_NAME</a>);
+            <b>if</b> (<span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#1c7421e464f67b7e" class="t t">File</a>.<a href="@0@mscorlib/A.html#3360368484a9f131" class="i method">Exists</a>(<span class="r6 r">ConfigFile</span>))
+            {
+                <b>using</b> (<a href="@0@mscorlib/A.html#b5fe1efcec14de32" class="k">var</a> <span id="r7 rd" class="r7 r">str</span> = <span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#1c7421e464f67b7e" class="t t">File</a>.<a href="@0@mscorlib/A.html#019a819484daf2d2" class="i method">OpenText</a>(<span class="r6 r">ConfigFile</span>))
+                {
+                    <b>return</b> <span class="r7 r">str</span>.<a href="@0@mscorlib/A.html#a4ada5f765646068" class="i method">ReadLine</a>();
+                }
+            }
+            <b>return</b> <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+        }
+ 
+        <b>private void</b> <a id="7aa8a82e54fb4dc1" href="R/7aa8a82e54fb4dc1.html" target="n" data-glyph="76,1" class="i method">Write</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r8 rd" class="r8 r">connectionStrngModel</span>)
+        {
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r9 rd" class="r9 r">BaseDirectory</span> = <span class="i n">System</span>.<a href="@0@mscorlib/A.html#2e9e7922eace2be8" class="t t">AppDomain</a>.<a href="@0@mscorlib/A.html#0f1cf66beffbb219" class="i property">CurrentDomain</a>.<a href="@0@mscorlib/A.html#694882fc5fb59a81" class="i property">BaseDirectory</a>;
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r10 rd" class="r10 r">ConfigFile</span> = <span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#090eca8621a248ee" class="t t">Path</a>.<a href="@0@mscorlib/A.html#2d7263f86a526264" class="i method">Combine</a>(<span class="r9 r">BaseDirectory</span>, <a href="#94671f637cddde39" class="i field">FILE_NAME</a>);
+            <b>if</b> (!<span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#1c7421e464f67b7e" class="t t">File</a>.<a href="@0@mscorlib/A.html#3360368484a9f131" class="i method">Exists</a>(<span class="r10 r">ConfigFile</span>))
+            {
+                <b>using</b> (<a href="@0@mscorlib/A.html#9e38cb1c84769eba" class="k">var</a> <span id="r11 rd" class="r11 r">str</span> = <span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#1c7421e464f67b7e" class="t t">File</a>.<a href="@0@mscorlib/A.html#56f09f4144421ebc" class="i method">CreateText</a>(<span class="r10 r">ConfigFile</span>))
+                {
+                    <span class="r11 r">str</span>.<a href="@0@mscorlib/A.html#5238cceaebfeaa74" class="i method">WriteLine</a>(<span class="r8 r">connectionStrngModel</span>);
+                }
+            }
+            <b>else</b>
+            {
+                <span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#1c7421e464f67b7e" class="t t">File</a>.<a href="@0@mscorlib/A.html#3768ad284a63029f" class="i method">WriteAllText</a>(<span class="r10 r">ConfigFile</span>, <span class="r8 r">connectionStrngModel</span>);
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

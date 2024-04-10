@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html><head><title>HeatAlgorithm.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(196);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts/SeriesAlgorithms/HeatAlgorithm.cs" target="_top">SeriesAlgorithms\HeatAlgorithm.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Core\Core.csproj</a> (LiveCharts)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.5</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Defaults</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Points</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Series</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Dtos</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Helpers</span>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>.<span class="i n">SeriesAlgorithms</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">LiveCharts</span>.<a href="../Seriesalgorithm.cs.html#b0e5e2af002a60c6" class="t t">SeriesAlgorithm</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Series</span>.<a href="../Definitions/Series/ICartesianSeries.cs.html#c1eabe091ca49d37" class="t t">ICartesianSeries</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <b>public class</b> <a id="1aa53c40ea5030be" href="../R/1aa53c40ea5030be.html" target="n" data-glyph="0,0" class="t t">HeatAlgorithm</a> : <a href="../Seriesalgorithm.cs.html#b0e5e2af002a60c6" class="t t">SeriesAlgorithm</a>, <a href="../Definitions/Series/ICartesianSeries.cs.html#c1eabe091ca49d37" class="t t">ICartesianSeries</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#1aa53c40ea5030be" class="t t">HeatAlgorithm</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> class.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">view</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The view.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public</b> <a id="2e382710ad9439de" href="../R/2e382710ad9439de.html" target="n" data-glyph="72,1" class="t constructor">HeatAlgorithm</a>(<a href="../Definitions/Series/ISeriesView.cs.html#44463e44050cefb2" class="t t">ISeriesView</a> <span id="r0 rd" class="r0 r">view</span>) : <a href="../Seriesalgorithm.cs.html#56e40d8c26e33997" class="k">base</a>(<span class="r0 r">view</span>)
+        {
+            <a href="../Seriesalgorithm.cs.html#f0cfbd4acf4f528c" class="i property">PreferredSelectionMode</a> = <a href="../TooltipSelectionMode.cs.html#4eeb795ac9de2c4d" class="t t">TooltipSelectionMode</a>.<a href="../TooltipSelectionMode.cs.html#48cfbfe026ec4b90" class="i field">OnlySender</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Updates this instance.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">LiveCharts</span>.<span class="i n">Helpers</span>.<a href="../Helpers/LiveChartsException.cs.html#e7253eb6d52c5326" class="t t">LiveChartsException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">There is no a valid gradient to create a heat series.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="f923450c8e630604" href="../R/f923450c8e630604.html" target="n" data-glyph="72,1" class="i method">Update</a>()
+        {
+            <a href="../Definitions/Series/IHeatSeriesView.cs.html#aa6ae0c722739410" class="k">var</a> <span id="r1 rd" class="r1 r">heatSeries</span> = (<a href="../Definitions/Series/IHeatSeriesView.cs.html#aa6ae0c722739410" class="t t">IHeatSeriesView</a>)<a href="../Seriesalgorithm.cs.html#a5eb5ffe3a13e072" class="i property">View</a>;
+
+            <a href="../Dtos/CorePoint.cs.html#7714554f66fd5190" class="k">var</a> <span id="r2 rd" class="r2 r">uw</span> = <b>new</b> <a href="../Dtos/CorePoint.cs.html#aa2e8cce13e92917" class="t constructor">CorePoint</a>(
+                0 * <a href="../ChartFunctions.cs.html#93b00e47b186a947" class="t t">ChartFunctions</a>.<a href="../ChartFunctions.cs.html#87f75cc3f896c586" class="i method">GetUnitWidth</a>(<a href="../AxisOrientation.cs.html#294f3d11a155a9e1" class="t t">AxisOrientation</a>.<a href="../AxisOrientation.cs.html#bd744e223a4b16a1" class="i field">X</a>, <a href="../Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>, <a href="../Seriesalgorithm.cs.html#a5eb5ffe3a13e072" class="i property">View</a>.<a href="../Definitions/Series/ISeriesView.cs.html#d22de8bdf0e37222" class="i property">ScalesXAt</a>) / 2,
+                -<a href="../ChartFunctions.cs.html#93b00e47b186a947" class="t t">ChartFunctions</a>.<a href="../ChartFunctions.cs.html#87f75cc3f896c586" class="i method">GetUnitWidth</a>(<a href="../AxisOrientation.cs.html#294f3d11a155a9e1" class="t t">AxisOrientation</a>.<a href="../AxisOrientation.cs.html#2677ed589f02cb28" class="i field">Y</a>, <a href="../Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>, <a href="../Seriesalgorithm.cs.html#a5eb5ffe3a13e072" class="i property">View</a>.<a href="../Definitions/Series/ISeriesView.cs.html#589b71410f1f3c80" class="i property">ScalesYAt</a>));
+
+            <span class="c">// ReSharper disable once CompareOfFloatsByEqualityOperator</span>
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r3 rd" class="r3 r">wd</span> = <a href="../Seriesalgorithm.cs.html#2e97b4c78acd7a26" class="i property">CurrentXAxis</a>.<a href="../AxisCore.cs.html#0baa4f00e73409e5" class="i property">TopLimit</a> - <a href="../Seriesalgorithm.cs.html#2e97b4c78acd7a26" class="i property">CurrentXAxis</a>.<a href="../AxisCore.cs.html#ac6dc5ac31577634" class="i property">BotLimit</a> == 0
+                ? <b>double</b>.<a href="@1@System.Runtime/A.html#54056123120a0122" class="i field">MaxValue</a>
+                : <a href="../Seriesalgorithm.cs.html#2e97b4c78acd7a26" class="i property">CurrentXAxis</a>.<a href="../AxisCore.cs.html#0baa4f00e73409e5" class="i property">TopLimit</a> - <a href="../Seriesalgorithm.cs.html#2e97b4c78acd7a26" class="i property">CurrentXAxis</a>.<a href="../AxisCore.cs.html#ac6dc5ac31577634" class="i property">BotLimit</a>;
+            <span class="c">// ReSharper disable once CompareOfFloatsByEqualityOperator</span>
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r4 rd" class="r4 r">hd</span> = <a href="../Seriesalgorithm.cs.html#4508d1feaed73766" class="i property">CurrentYAxis</a>.<a href="../AxisCore.cs.html#0baa4f00e73409e5" class="i property">TopLimit</a> - <a href="../Seriesalgorithm.cs.html#4508d1feaed73766" class="i property">CurrentYAxis</a>.<a href="../AxisCore.cs.html#ac6dc5ac31577634" class="i property">BotLimit</a> == 0
+                ? <b>double</b>.<a href="@1@System.Runtime/A.html#54056123120a0122" class="i field">MaxValue</a>
+                : <a href="../Seriesalgorithm.cs.html#4508d1feaed73766" class="i property">CurrentYAxis</a>.<a href="../AxisCore.cs.html#0baa4f00e73409e5" class="i property">TopLimit</a> - <a href="../Seriesalgorithm.cs.html#4508d1feaed73766" class="i property">CurrentYAxis</a>.<a href="../AxisCore.cs.html#ac6dc5ac31577634" class="i property">BotLimit</a>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r5 rd" class="r5 r">w</span> = <a href="../Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>.<a href="../Charts/ChartCore.cs.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="../Dtos/CoreRectangle.cs.html#e788b76518ec3a6a" class="i property">Width</a> / <span class="r3 r">wd</span>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r6 rd" class="r6 r">h</span> = <a href="../Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>.<a href="../Charts/ChartCore.cs.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="../Dtos/CoreRectangle.cs.html#9e61384d81520099" class="i property">Height</a> / <span class="r4 r">hd</span>;
+
+            <span class="c">//lets force the gradients to always have an &#39;interpol-able&#39; model</span>
+
+            <b>if</b> (!<span class="r1 r">heatSeries</span>.<a href="../Definitions/Series/IHeatSeriesView.cs.html#e460bd5fb8a17ddc" class="i property">Stops</a>.<span class="i method">Any</span>())
+                <b>throw</b> <b>new</b> <a href="../Helpers/LiveChartsException.cs.html#ccb1cc01ec9b8a77" class="t constructor">LiveChartsException</a>(<span class="s">&quot;There is no a valid gradient to create a heat series.&quot;</span>);
+
+            <b>var</b> <span id="r7 rd" class="r7 r">correctedGradients</span> = <span class="r1 r">heatSeries</span>.<a href="../Definitions/Series/IHeatSeriesView.cs.html#e460bd5fb8a17ddc" class="i property">Stops</a>.<span class="i method">Select</span>(<span id="r8 rd" class="r8 r">x</span> =&gt; <b>new</b> <a href="../Dtos/CoreGradientStop.cs.html#87cd4de961a8bc46" class="t constructor">CoreGradientStop</a>
+            {
+                <a href="../Dtos/CoreGradientStop.cs.html#80e9d6c414ed629e" class="i property">Color</a> = <span class="r8 r">x</span>.<a href="../Dtos/CoreGradientStop.cs.html#80e9d6c414ed629e" class="i property">Color</a>,
+                <a href="../Dtos/CoreGradientStop.cs.html#2f27938a63669168" class="i property">Offset</a> = <span class="r8 r">x</span>.<a href="../Dtos/CoreGradientStop.cs.html#2f27938a63669168" class="i property">Offset</a> &lt; 0 ? 0 : (<span class="r8 r">x</span>.<a href="../Dtos/CoreGradientStop.cs.html#2f27938a63669168" class="i property">Offset</a> &gt; 1 ? 1 : <span class="r8 r">x</span>.<a href="../Dtos/CoreGradientStop.cs.html#2f27938a63669168" class="i property">Offset</a>)
+            }).<span class="i method">ToList</span>();
+            <a href="../Dtos/CoreGradientStop.cs.html#87cd4de961a8bc46" class="k">var</a> <span id="r9 rd" class="r9 r">min</span> = <span class="r7 r">correctedGradients</span>[0];
+            <span class="r9 r">min</span>.<a href="../Dtos/CoreGradientStop.cs.html#2f27938a63669168" class="i property">Offset</a> = 0;
+            <span class="r7 r">correctedGradients</span>.<span class="i method">Insert</span>(0, <span class="r9 r">min</span>);
+            <a href="../Dtos/CoreGradientStop.cs.html#87cd4de961a8bc46" class="k">var</a> <span id="r10 rd" class="r10 r">max</span> = <span class="r7 r">correctedGradients</span>[<span class="r7 r">correctedGradients</span>.<span class="i property">Count</span> - 1];
+            <span class="r10 r">max</span>.<a href="../Dtos/CoreGradientStop.cs.html#2f27938a63669168" class="i property">Offset</a> = 1;
+            <span class="r7 r">correctedGradients</span>.<span class="i method">Add</span>(<span class="r10 r">max</span>);
+
+            <b>foreach</b> (<a href="../ChartPoint.cs.html#a7b99b1eebb29334" class="k">var</a> <span id="r11 rd" class="r11 r">chartPoint</span> <b>in</b> <a href="../Seriesalgorithm.cs.html#a5eb5ffe3a13e072" class="i property">View</a>.<a href="../Definitions/Series/ISeriesView.cs.html#e813c8de38c6be36" class="i property">ActualValues</a>.<a href="../IChartValues.cs.html#46f3badf02da2a16" class="i method">GetPoints</a>(<a href="../Seriesalgorithm.cs.html#a5eb5ffe3a13e072" class="i property">View</a>))
+            {
+                <span class="r11 r">chartPoint</span>.<a href="../ChartPoint.cs.html#d2be8291e6060c20" class="i property">ChartLocation</a> = <a href="../ChartFunctions.cs.html#93b00e47b186a947" class="t t">ChartFunctions</a>.<a href="../ChartFunctions.cs.html#52a7d6b648a49654" class="i method">ToDrawMargin</a>(
+                    <span class="r11 r">chartPoint</span>, <a href="../Seriesalgorithm.cs.html#a5eb5ffe3a13e072" class="i property">View</a>.<a href="../Definitions/Series/ISeriesView.cs.html#d22de8bdf0e37222" class="i property">ScalesXAt</a>, <a href="../Seriesalgorithm.cs.html#a5eb5ffe3a13e072" class="i property">View</a>.<a href="../Definitions/Series/ISeriesView.cs.html#589b71410f1f3c80" class="i property">ScalesYAt</a>, <a href="../Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>) + <span class="r2 r">uw</span>;
+
+                <span class="r11 r">chartPoint</span>.<a href="../ChartPoint.cs.html#c90f7635ddd134a4" class="i property">SeriesView</a> = <a href="../Seriesalgorithm.cs.html#a5eb5ffe3a13e072" class="i property">View</a>;
+
+                <span class="r11 r">chartPoint</span>.<a href="../ChartPoint.cs.html#47cca818cf851bef" class="i property">View</a> = <a href="../Seriesalgorithm.cs.html#a5eb5ffe3a13e072" class="i property">View</a>.<a href="../Definitions/Series/ISeriesView.cs.html#572f6b14af645d85" class="i method">GetPointView</a>(<span class="r11 r">chartPoint</span>,
+                    <a href="../Seriesalgorithm.cs.html#a5eb5ffe3a13e072" class="i property">View</a>.<a href="../Definitions/Series/ISeriesView.cs.html#f758c7495299b122" class="i property">DataLabels</a> ? <a href="../Seriesalgorithm.cs.html#a5eb5ffe3a13e072" class="i property">View</a>.<a href="../Definitions/Series/ISeriesView.cs.html#a24a22642e7e53b0" class="i method">GetLabelPointFormatter</a>()(<span class="r11 r">chartPoint</span>) : <b>null</b>);
+
+                <a href="../Definitions/Points/IHeatPointView.cs.html#032e05c5b33a0a61" class="k">var</a> <span id="r12 rd" class="r12 r">heatView</span> = (<a href="../Definitions/Points/IHeatPointView.cs.html#032e05c5b33a0a61" class="t t">IHeatPointView</a>)<span class="r11 r">chartPoint</span>.<a href="../ChartPoint.cs.html#47cca818cf851bef" class="i property">View</a>;
+
+                <span class="r12 r">heatView</span>.<a href="../Definitions/Points/IHeatPointView.cs.html#3bebf31d82896abf" class="i property">ColorComponents</a> = <a href="#60bb917dbd3a6a16" class="i method">ColorInterpolation</a>(<span class="r7 r">correctedGradients</span>,
+                    (<span class="r11 r">chartPoint</span>.<a href="../ChartPoint.cs.html#4b5dd7e741cfa3cd" class="i property">Weight</a> - <a href="../Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>.<a href="../Charts/ChartCore.cs.html#d0bf804d18653568" class="i property">WLimit</a>.<a href="../Dtos/CoreLimit.cs.html#e043273af15e9b47" class="i property">Min</a>)/(<a href="../Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>.<a href="../Charts/ChartCore.cs.html#d0bf804d18653568" class="i property">WLimit</a>.<a href="../Dtos/CoreLimit.cs.html#fa94bcd0a8c38366" class="i property">Max</a> - <a href="../Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>.<a href="../Charts/ChartCore.cs.html#d0bf804d18653568" class="i property">WLimit</a>.<a href="../Dtos/CoreLimit.cs.html#e043273af15e9b47" class="i property">Min</a>));
+
+                <span class="r12 r">heatView</span>.<a href="../Definitions/Points/IHeatPointView.cs.html#ee6b1e4424fe7ba0" class="i property">Width</a> = <span class="r5 r">w</span>;
+                <span class="r12 r">heatView</span>.<a href="../Definitions/Points/IHeatPointView.cs.html#10bb814cbe7ac539" class="i property">Height</a> = <span class="r6 r">h</span>;
+
+                <span class="r11 r">chartPoint</span>.<a href="../ChartPoint.cs.html#47cca818cf851bef" class="i property">View</a>.<a href="../Definitions/Points/IChartPointView.cs.html#9fa7b3628231bd9d" class="i method">DrawOrMove</a>(<b>null</b>, <span class="r11 r">chartPoint</span>, 0, <a href="../Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>);
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the minimum x.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r13 r">axis</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The axis.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="42ca717b7256abfa" href="../R/42ca717b7256abfa.html" target="n" data-glyph="72,1" class="i method">GetMinX</a>(<a href="../AxisCore.cs.html#cbae04475ce2fa76" class="t t">AxisCore</a> <span id="r13 rd" class="r13 r">axis</span>)
+        {
+            <b>return</b> <a href="../Defaults/AxisLimits.cs.html#f42eeb639ba3134a" class="t t">AxisLimits</a>.<a href="../Defaults/AxisLimits.cs.html#8295fd9817dd1fd6" class="i method">StretchMin</a>(<span class="r13 r">axis</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the maximum x.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r14 r">axis</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The axis.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="b7b5c69222f29abb" href="../R/b7b5c69222f29abb.html" target="n" data-glyph="72,1" class="i method">GetMaxX</a>(<a href="../AxisCore.cs.html#cbae04475ce2fa76" class="t t">AxisCore</a> <span id="r14 rd" class="r14 r">axis</span>)
+        {
+            <b>return</b> <a href="../Defaults/AxisLimits.cs.html#f42eeb639ba3134a" class="t t">AxisLimits</a>.<a href="../Defaults/AxisLimits.cs.html#dba047c7e2a1e090" class="i method">StretchMax</a>(<span class="r14 r">axis</span>) + 1;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the minimum y.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r15 r">axis</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The axis.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="ccf50cb38ddadce9" href="../R/ccf50cb38ddadce9.html" target="n" data-glyph="72,1" class="i method">GetMinY</a>(<a href="../AxisCore.cs.html#cbae04475ce2fa76" class="t t">AxisCore</a> <span id="r15 rd" class="r15 r">axis</span>)
+        {
+            <b>return</b> <a href="../Defaults/AxisLimits.cs.html#f42eeb639ba3134a" class="t t">AxisLimits</a>.<a href="../Defaults/AxisLimits.cs.html#8295fd9817dd1fd6" class="i method">StretchMin</a>(<span class="r15 r">axis</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the maximum y.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r16 r">axis</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The axis.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="956ba96a64180553" href="../R/956ba96a64180553.html" target="n" data-glyph="72,1" class="i method">GetMaxY</a>(<a href="../AxisCore.cs.html#cbae04475ce2fa76" class="t t">AxisCore</a> <span id="r16 rd" class="r16 r">axis</span>)
+        {
+            <b>return</b> <a href="../Defaults/AxisLimits.cs.html#f42eeb639ba3134a" class="t t">AxisLimits</a>.<a href="../Defaults/AxisLimits.cs.html#dba047c7e2a1e090" class="i method">StretchMax</a>(<span class="r16 r">axis</span>) + 1;
+        }
+
+        <b>private static</b> <a href="../Dtos/CoreColor.cs.html#b1c61e28f8e3fe42" class="t t">CoreColor</a> <a id="60bb917dbd3a6a16" href="../R/60bb917dbd3a6a16.html" target="n" data-glyph="76,1" class="i method">ColorInterpolation</a>(<a href="@1@System.Runtime/A.html#b19f71a84062554b" class="t t">IList</a>&lt;<a href="../Dtos/CoreGradientStop.cs.html#87cd4de961a8bc46" class="t t">CoreGradientStop</a>&gt; <span id="r17 rd" class="r17 r">gradients</span>, <b>double</b> <span id="r18 rd" class="r18 r">weight</span>)
+        {
+            <a href="../Dtos/CoreColor.cs.html#b1c61e28f8e3fe42" class="t t">CoreColor</a> <span id="r19 rd" class="r19 r">from</span> = <b>new</b> <a href="../Dtos/CoreColor.cs.html#defa1b27e2ffb06f" class="t constructor">CoreColor</a>(0, 0, 0, 0), <span id="r20 rd" class="r20 r">to</span> = <b>new</b> <a href="../Dtos/CoreColor.cs.html#defa1b27e2ffb06f" class="t constructor">CoreColor</a>(0, 0, 0, 0);
+            <b>double</b> <span id="r21 rd" class="r21 r">fromOffset</span> = 0, <span id="r22 rd" class="r22 r">toOffset</span> = 0;
+
+            <b>for</b> (<a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r23 rd" class="r23 r">i</span> = 0; <span class="r23 r">i</span> &lt; <span class="r17 r">gradients</span>.<a href="@1@System.Runtime/A.html#3d6c21c4e9bd5f63" class="i property">Count</a>; <span class="r23 r">i</span>++)
+            {
+                <span class="c">// ReSharper disable once InvertIf</span>
+                <b>if</b> (<b>double</b>.<a href="@1@System.Runtime/A.html#b3843db5f359a0fd" class="i method">IsNaN</a>(<span class="r18 r">weight</span>) || <span class="r17 r">gradients</span><a href="@1@System.Runtime/A.html#396bb785d31f5979">[</a><span class="r23 r">i</span>].<a href="../Dtos/CoreGradientStop.cs.html#2f27938a63669168" class="i property">Offset</a> &lt;= <span class="r18 r">weight</span> &amp;&amp; <span class="r17 r">gradients</span><a href="@1@System.Runtime/A.html#396bb785d31f5979">[</a><span class="r23 r">i</span> + 1].<a href="../Dtos/CoreGradientStop.cs.html#2f27938a63669168" class="i property">Offset</a> &gt;= <span class="r18 r">weight</span>)
+                {
+                    <span class="r19 r">from</span> = <span class="r17 r">gradients</span><a href="@1@System.Runtime/A.html#396bb785d31f5979">[</a><span class="r23 r">i</span>].<a href="../Dtos/CoreGradientStop.cs.html#80e9d6c414ed629e" class="i property">Color</a>;
+                    <span class="r20 r">to</span> = <span class="r17 r">gradients</span><a href="@1@System.Runtime/A.html#396bb785d31f5979">[</a><span class="r23 r">i</span> + 1].<a href="../Dtos/CoreGradientStop.cs.html#80e9d6c414ed629e" class="i property">Color</a>;
+
+                    <span class="r21 r">fromOffset</span> = <span class="r17 r">gradients</span><a href="@1@System.Runtime/A.html#396bb785d31f5979">[</a><span class="r23 r">i</span>].<a href="../Dtos/CoreGradientStop.cs.html#2f27938a63669168" class="i property">Offset</a>;
+                    <span class="r22 r">toOffset</span> = <span class="r17 r">gradients</span><a href="@1@System.Runtime/A.html#396bb785d31f5979">[</a><span class="r23 r">i</span> + 1].<a href="../Dtos/CoreGradientStop.cs.html#2f27938a63669168" class="i property">Offset</a>;
+
+                    <b>break</b>;
+                }
+            }
+
+            <b>return</b> <b>new</b> <a href="../Dtos/CoreColor.cs.html#defa1b27e2ffb06f" class="t constructor">CoreColor</a>(
+                <a href="#0eaac50a70d8634a" class="i method">InterpolateColorComponent</a>(<span class="r19 r">from</span>.<a href="../Dtos/CoreColor.cs.html#0f7910a959a1b9dc" class="i property">A</a>, <span class="r20 r">to</span>.<a href="../Dtos/CoreColor.cs.html#0f7910a959a1b9dc" class="i property">A</a>, <span class="r21 r">fromOffset</span>, <span class="r22 r">toOffset</span>, <span class="r18 r">weight</span>),
+                <a href="#0eaac50a70d8634a" class="i method">InterpolateColorComponent</a>(<span class="r19 r">from</span>.<a href="../Dtos/CoreColor.cs.html#52c0311310fa8d63" class="i property">R</a>, <span class="r20 r">to</span>.<a href="../Dtos/CoreColor.cs.html#52c0311310fa8d63" class="i property">R</a>, <span class="r21 r">fromOffset</span>, <span class="r22 r">toOffset</span>, <span class="r18 r">weight</span>),
+                <a href="#0eaac50a70d8634a" class="i method">InterpolateColorComponent</a>(<span class="r19 r">from</span>.<a href="../Dtos/CoreColor.cs.html#ac7ad0fdfbf90cb3" class="i property">G</a>, <span class="r20 r">to</span>.<a href="../Dtos/CoreColor.cs.html#ac7ad0fdfbf90cb3" class="i property">G</a>, <span class="r21 r">fromOffset</span>, <span class="r22 r">toOffset</span>, <span class="r18 r">weight</span>),
+                <a href="#0eaac50a70d8634a" class="i method">InterpolateColorComponent</a>(<span class="r19 r">from</span>.<a href="../Dtos/CoreColor.cs.html#3b697536a81b3bad" class="i property">B</a>, <span class="r20 r">to</span>.<a href="../Dtos/CoreColor.cs.html#3b697536a81b3bad" class="i property">B</a>, <span class="r21 r">fromOffset</span>, <span class="r22 r">toOffset</span>, <span class="r18 r">weight</span>));
+        }
+
+        <b>private static byte</b> <a id="0eaac50a70d8634a" href="../R/0eaac50a70d8634a.html" target="n" data-glyph="76,1" class="i method">InterpolateColorComponent</a>(<b>byte</b> <span id="r24 rd" class="r24 r">fromComponent</span>, <b>byte</b> <span id="r25 rd" class="r25 r">toComponent</span>,
+            <b>double</b> <span id="r26 rd" class="r26 r">fromOffset</span>, <b>double</b> <span id="r27 rd" class="r27 r">toOffset</span>, <b>double</b> <span id="r28 rd" class="r28 r">value</span>)
+        {
+            <b>if</b> (<span class="r24 r">fromComponent</span> == <span class="r25 r">toComponent</span>)
+            {
+                <b>return</b> <span class="r24 r">fromComponent</span>;
+            }
+            <b>else</b>
+            {
+                <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r29 rd" class="r29 r">deltaX</span> = <span class="r27 r">toOffset</span> - <span class="r26 r">fromOffset</span>;
+                <span class="c">// ReSharper disable once CompareOfFloatsByEqualityOperator</span>
+                <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r30 rd" class="r30 r">m</span> = (<span class="r25 r">toComponent</span> - <span class="r24 r">fromComponent</span>) / (<span class="r29 r">deltaX</span> == 0 ? <b>double</b>.<a href="@1@System.Runtime/A.html#00c1b741b8eb8a64" class="i field">MinValue</a> : <span class="r29 r">deltaX</span>);
+
+                <b>return</b> (<b>byte</b>)(<span class="r30 r">m</span> * (<span class="r28 r">value</span> - <span class="r26 r">fromOffset</span>) + <span class="r24 r">fromComponent</span>);
+            }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

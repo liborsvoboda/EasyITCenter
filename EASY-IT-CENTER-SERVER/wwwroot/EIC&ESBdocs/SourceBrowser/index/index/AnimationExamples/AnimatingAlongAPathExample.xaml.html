@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html><head><title>AnimatingAlongAPathExample.xaml</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="ix(144);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#AnimationExamples/AnimatingAlongAPathExample.xaml" target="_top">AnimatingAlongAPathExample.xaml</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#AnimationExamples" target="_top">HelpProjects\WPF-MORE\Animation\AnimationExamples\AnimationExamples.csproj</a> (AnimationExamples)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="xd">&lt;!--</span><span class="c"> AnimatingALongAPathExample.xaml
+     Demonstrates how to use a PathGeometry and a
+     DoubleAnimationUsingPath to animate
+     along a path.
+</span><span class="xd">--&gt;</span><span class="xd">
+&lt;</span><span class="xn">Page </span><span class="xan">x:Class</span><span class="xd">=</span>&quot;<span class="xav">Microsoft.Samples.Animation.AnimatingAlongAPathExample</span>&quot; <span class="xan">
+  xmlns</span><span class="xd">=</span>&quot;<span class="xav">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span>&quot;<span class="xan">
+  xmlns:x</span><span class="xd">=</span>&quot;<span class="xav">http://schemas.microsoft.com/winfx/2006/xaml</span>&quot; <span class="xan">
+  Background</span><span class="xd">=</span>&quot;<span class="xav">Black</span>&quot;<span class="xd">&gt;</span><span class="xd">
+  &lt;</span><span class="xn">DockPanel </span><span class="xan">VerticalAlignment</span><span class="xd">=</span>&quot;<span class="xav">Stretch</span>&quot; <span class="xan">HorizontalAlignment</span><span class="xd">=</span>&quot;<span class="xav">Stretch</span>&quot;<span class="xd">&gt;</span><span class="xd">
+
+    &lt;</span><span class="xn">Viewbox </span><span class="xan">VerticalAlignment</span><span class="xd">=</span>&quot;<span class="xav">Center</span>&quot; <span class="xd">&gt;</span><span class="xd">
+      &lt;</span><span class="xn">Canvas </span><span class="xan">Width</span><span class="xd">=</span>&quot;<span class="xav">321</span>&quot; <span class="xan">Height</span><span class="xd">=</span>&quot;<span class="xav">201</span>&quot; <span class="xan">Margin</span><span class="xd">=</span>&quot;<span class="xav">50</span>&quot;<span class="xd">&gt;</span><span class="xd">
+        &lt;</span><span class="xn">Rectangle </span><span class="xan">Width</span><span class="xd">=</span>&quot;<span class="xav">321</span>&quot; <span class="xan">Height</span><span class="xd">=</span>&quot;<span class="xav">201</span>&quot; <span class="xan">
+          Fill</span><span class="xd">=</span>&quot;<span class="xav">{StaticResource MyWireBrushResource}</span>&quot;<span class="xd">&gt;</span><span class="xd">
+          &lt;</span><span class="xn">Rectangle.OpacityMask</span><span class="xd">&gt;</span><span class="xd">
+            &lt;</span><span class="xn">RadialGradientBrush</span><span class="xd">&gt;</span><span class="xd">
+              &lt;</span><span class="xn">RadialGradientBrush.GradientStops</span><span class="xd">&gt;</span><span class="xd">
+                &lt;</span><span class="xn">GradientStop </span><span class="xan">Offset</span><span class="xd">=</span>&quot;<span class="xav">0.0</span>&quot; <span class="xan">Color</span><span class="xd">=</span>&quot;<span class="xav">#FF000000</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+                &lt;</span><span class="xn">GradientStop </span><span class="xan">Offset</span><span class="xd">=</span>&quot;<span class="xav">1.0</span>&quot; <span class="xan">Color</span><span class="xd">=</span>&quot;<span class="xav">#00000000</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+              &lt;/</span><span class="xn">RadialGradientBrush.GradientStops</span><span class="xd">&gt;</span><span class="xd">
+            &lt;/</span><span class="xn">RadialGradientBrush</span><span class="xd">&gt;</span><span class="xd">
+          &lt;/</span><span class="xn">Rectangle.OpacityMask</span><span class="xd">&gt;</span><span class="xd">          
+        &lt;/</span><span class="xn">Rectangle</span><span class="xd">&gt;</span><span class="xd">
+        
+        &lt;!--</span><span class="c"> Shows what the animation path looks like. </span><span class="xd">--&gt;</span><span class="xd">
+        &lt;</span><span class="xn">Path </span><span class="xan">Data</span><span class="xd">=</span>&quot;<span class="xav">M 10,100 C35,0 135,0 160,100 S285,200 310,100</span>&quot;<span class="xan">
+          Stroke</span><span class="xd">=</span>&quot;<span class="xav">White</span>&quot; <span class="xan">StrokeThickness</span><span class="xd">=</span>&quot;<span class="xav">2</span>&quot;<span class="xan">
+          Stretch</span><span class="xd">=</span>&quot;<span class="xav">None</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+
+        &lt;</span><span class="xn">Viewport3D </span><span class="xan">Name</span><span class="xd">=</span>&quot;<span class="xav">MyAnimatedObject</span>&quot;<span class="xan">
+          ClipToBounds</span><span class="xd">=</span>&quot;<span class="xav">True</span>&quot; <span class="xan">Width</span><span class="xd">=</span>&quot;<span class="xav">150</span>&quot; <span class="xan">Height</span><span class="xd">=</span>&quot;<span class="xav">150</span>&quot;<span class="xan">
+          Canvas.Left</span><span class="xd">=</span>&quot;<span class="xav">0</span>&quot; <span class="xan">Canvas.Top</span><span class="xd">=</span>&quot;<span class="xav">10</span>&quot;<span class="xd">&gt;</span><span class="xd">
+          &lt;</span><span class="xn">Viewport3D.Camera</span><span class="xd">&gt;</span><span class="xd">
+            &lt;</span><span class="xn">PerspectiveCamera </span><span class="xan">x:Name</span><span class="xd">=</span>&quot;<span class="xav">myPerspectiveCamera</span>&quot;<span class="xan">
+               LookDirection</span><span class="xd">=</span>&quot;<span class="xav">0,0,-1</span>&quot; <span class="xan">UpDirection</span><span class="xd">=</span>&quot;<span class="xav">0,1,0</span>&quot; <span class="xan">
+             Position</span><span class="xd">=</span>&quot;<span class="xav">0,0,2.25</span>&quot; <span class="xan">FieldOfView</span><span class="xd">=</span>&quot;<span class="xav">45</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+          &lt;/</span><span class="xn">Viewport3D.Camera</span><span class="xd">&gt;</span><span class="xd">
+          &lt;</span><span class="xn">Viewport3D.Children</span><span class="xd">&gt;</span><span class="xd">
+          &lt;</span><span class="xn">ModelVisual3D</span><span class="xd">&gt;</span><span class="xd">
+            &lt;</span><span class="xn">ModelVisual3D.Children</span><span class="xd">&gt;</span><span class="xd">
+              &lt;</span><span class="xn">StaticResource </span><span class="xan">ResourceKey</span><span class="xd">=</span>&quot;<span class="xav">PictureCubeModelVisual3DResource</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+            &lt;/</span><span class="xn">ModelVisual3D.Children</span><span class="xd">&gt;</span><span class="xd">
+            &lt;</span><span class="xn">ModelVisual3D.Transform</span><span class="xd">&gt;</span><span class="xd">
+              &lt;</span><span class="xn">Transform3DGroup </span><span class="xd">&gt;</span><span class="xd">
+                &lt;</span><span class="xn">Transform3DGroup.Children</span><span class="xd">&gt;</span><span class="xd">
+                  &lt;</span><span class="xn">RotateTransform3D</span><span class="xd">&gt;</span><span class="xd">
+                    &lt;</span><span class="xn">RotateTransform3D.Rotation</span><span class="xd">&gt;</span><span class="xd">
+                      &lt;</span><span class="xn">AxisAngleRotation3D </span><span class="xan">x:Name</span><span class="xd">=</span>&quot;<span class="xav">MyZRotation</span>&quot; <span class="xan">Angle</span><span class="xd">=</span>&quot;<span class="xav">0</span>&quot; <span class="xan">Axis</span><span class="xd">=</span>&quot;<span class="xav">0 0 1</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+                    &lt;/</span><span class="xn">RotateTransform3D.Rotation</span><span class="xd">&gt;</span><span class="xd">
+                  &lt;/</span><span class="xn">RotateTransform3D</span><span class="xd">&gt;</span><span class="xd">
+                  &lt;</span><span class="xn">RotateTransform3D</span><span class="xd">&gt;</span><span class="xd">
+                    &lt;</span><span class="xn">RotateTransform3D.Rotation</span><span class="xd">&gt;</span><span class="xd">
+                      &lt;</span><span class="xn">AxisAngleRotation3D </span><span class="xan">x:Name</span><span class="xd">=</span>&quot;<span class="xav">MyHorizontalRotation</span>&quot; <span class="xan">Angle</span><span class="xd">=</span>&quot;<span class="xav">0</span>&quot; <span class="xan">Axis</span><span class="xd">=</span>&quot;<span class="xav">0 1 0</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+                    &lt;/</span><span class="xn">RotateTransform3D.Rotation</span><span class="xd">&gt;</span><span class="xd">
+                  &lt;/</span><span class="xn">RotateTransform3D</span><span class="xd">&gt;</span><span class="xd">
+                  &lt;</span><span class="xn">RotateTransform3D</span><span class="xd">&gt;</span><span class="xd">
+                    &lt;</span><span class="xn">RotateTransform3D.Rotation</span><span class="xd">&gt;</span><span class="xd">
+                      &lt;</span><span class="xn">AxisAngleRotation3D </span><span class="xan">x:Name</span><span class="xd">=</span>&quot;<span class="xav">MyVerticalRotation</span>&quot; <span class="xan">Angle</span><span class="xd">=</span>&quot;<span class="xav">0</span>&quot; <span class="xan">Axis</span><span class="xd">=</span>&quot;<span class="xav">1 0 0</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+                    &lt;/</span><span class="xn">RotateTransform3D.Rotation</span><span class="xd">&gt;</span><span class="xd">
+                  &lt;/</span><span class="xn">RotateTransform3D</span><span class="xd">&gt;</span><span class="xd">
+                &lt;/</span><span class="xn">Transform3DGroup.Children</span><span class="xd">&gt;</span><span class="xd">
+              &lt;/</span><span class="xn">Transform3DGroup</span><span class="xd">&gt;</span><span class="xd">
+            &lt;/</span><span class="xn">ModelVisual3D.Transform</span><span class="xd">&gt;</span><span class="xd">
+          &lt;/</span><span class="xn">ModelVisual3D</span><span class="xd">&gt;</span><span class="xd">
+          &lt;/</span><span class="xn">Viewport3D.Children</span><span class="xd">&gt;</span><span class="xd">
+          &lt;</span><span class="xn">Viewport3D.RenderTransform</span><span class="xd">&gt;</span><span class="xd">
+            &lt;</span><span class="xn">TransformGroup</span><span class="xd">&gt;</span><span class="xd">
+              &lt;</span><span class="xn">TranslateTransform </span><span class="xan">X</span><span class="xd">=</span>&quot;<span class="xav">-75</span>&quot;  <span class="xan">Y</span><span class="xd">=</span>&quot;<span class="xav">-75</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+              &lt;</span><span class="xn">TranslateTransform </span><span class="xan">x:Name</span><span class="xd">=</span>&quot;<span class="xav">PictureCubeTranslateTransform</span>&quot; <span class="xan">X</span><span class="xd">=</span>&quot;<span class="xav">0</span>&quot; <span class="xan">Y</span><span class="xd">=</span>&quot;<span class="xav">0</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+            &lt;/</span><span class="xn">TransformGroup</span><span class="xd">&gt;</span><span class="xd">
+          &lt;/</span><span class="xn">Viewport3D.RenderTransform</span><span class="xd">&gt;</span><span class="xd">       
+          &lt;</span><span class="xn">Viewport3D.Triggers</span><span class="xd">&gt;</span><span class="xd">
+            &lt;</span><span class="xn">EventTrigger </span><span class="xan">RoutedEvent</span><span class="xd">=</span>&quot;<span class="xav">Viewport3D.Loaded</span>&quot;<span class="xd">&gt;</span><span class="xd">
+              &lt;</span><span class="xn">BeginStoryboard</span><span class="xd">&gt;</span><span class="xd">
+                &lt;</span><span class="xn">Storyboard</span><span class="xd">&gt;</span><span class="xd">
+                  &lt;!--</span><span class="c"> Animates the cube horizontally along the path. </span><span class="xd">--&gt;</span><span class="xd">
+                  &lt;</span><span class="xn">DoubleAnimationUsingPath</span><span class="xan">
+                    Storyboard.TargetName</span><span class="xd">=</span>&quot;<span class="xav">PictureCubeTranslateTransform</span>&quot;<span class="xan">
+                    Storyboard.TargetProperty</span><span class="xd">=</span>&quot;<span class="xav">X</span>&quot;<span class="xan">
+                    Source</span><span class="xd">=</span>&quot;<span class="xav">X</span>&quot; <span class="xan">
+                    Duration</span><span class="xd">=</span>&quot;<span class="xav">0:0:5</span>&quot; <span class="xan">
+                    RepeatBehavior</span><span class="xd">=</span>&quot;<span class="xav">Forever</span>&quot; <span class="xan">AutoReverse</span><span class="xd">=</span>&quot;<span class="xav">True</span>&quot;<span class="xd">&gt;</span><span class="xd">
+                    &lt;</span><span class="xn">DoubleAnimationUsingPath.PathGeometry</span><span class="xd">&gt;</span><span class="xd">
+                      &lt;</span><span class="xn">PathGeometry </span><span class="xan">Figures</span><span class="xd">=</span>&quot;<span class="xav">M 10,100 C35,0 135,0 160,100 S285,200 310,100</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+                    &lt;/</span><span class="xn">DoubleAnimationUsingPath.PathGeometry</span><span class="xd">&gt;</span><span class="xd">
+                  &lt;/</span><span class="xn">DoubleAnimationUsingPath</span><span class="xd">&gt;</span><span class="xd">                    
+                    
+                  &lt;!--</span><span class="c"> Animates the cube vertically along the path. </span><span class="xd">--&gt;</span><span class="xd">
+                  &lt;</span><span class="xn">DoubleAnimationUsingPath</span><span class="xan">
+                    Storyboard.TargetName</span><span class="xd">=</span>&quot;<span class="xav">PictureCubeTranslateTransform</span>&quot;<span class="xan">
+                    Storyboard.TargetProperty</span><span class="xd">=</span>&quot;<span class="xav">Y</span>&quot;  <span class="xan">
+                    Source</span><span class="xd">=</span>&quot;<span class="xav">Y</span>&quot; <span class="xan">
+                    Duration</span><span class="xd">=</span>&quot;<span class="xav">0:0:5</span>&quot; <span class="xan">
+                    RepeatBehavior</span><span class="xd">=</span>&quot;<span class="xav">Forever</span>&quot; <span class="xan">AutoReverse</span><span class="xd">=</span>&quot;<span class="xav">True</span>&quot;<span class="xd">&gt;</span><span class="xd">
+                    &lt;</span><span class="xn">DoubleAnimationUsingPath.PathGeometry</span><span class="xd">&gt;</span><span class="xd">
+                      &lt;</span><span class="xn">PathGeometry </span><span class="xan">Figures</span><span class="xd">=</span>&quot;<span class="xav">M 10,100 C35,0 135,0 160,100 S285,200 310,100</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+                    &lt;/</span><span class="xn">DoubleAnimationUsingPath.PathGeometry</span><span class="xd">&gt;</span><span class="xd">
+                  &lt;/</span><span class="xn">DoubleAnimationUsingPath</span><span class="xd">&gt;</span><span class="xd">
+                    
+                  &lt;!--</span><span class="c"> Rotates the cube in the Z-axis along the path. </span><span class="xd">--&gt;</span><span class="xd">  
+                  &lt;</span><span class="xn">DoubleAnimationUsingPath</span><span class="xan">
+                    Storyboard.TargetName</span><span class="xd">=</span>&quot;<span class="xav">MyZRotation</span>&quot;<span class="xan">
+                    Storyboard.TargetProperty</span><span class="xd">=</span>&quot;<span class="xav">Angle</span>&quot;<span class="xan">
+                    Source</span><span class="xd">=</span>&quot;<span class="xav">Angle</span>&quot; <span class="xan">
+                    Duration</span><span class="xd">=</span>&quot;<span class="xav">0:0:5</span>&quot; <span class="xan">
+                    RepeatBehavior</span><span class="xd">=</span>&quot;<span class="xav">Forever</span>&quot; <span class="xan">AutoReverse</span><span class="xd">=</span>&quot;<span class="xav">True</span>&quot;<span class="xd">&gt;</span><span class="xd">
+                    &lt;</span><span class="xn">DoubleAnimationUsingPath.PathGeometry</span><span class="xd">&gt;</span><span class="xd">
+                      &lt;</span><span class="xn">PathGeometry </span><span class="xan">Figures</span><span class="xd">=</span>&quot;<span class="xav">M 10,100 C35,0 135,0 160,100 S285,200 310,100</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+                    &lt;/</span><span class="xn">DoubleAnimationUsingPath.PathGeometry</span><span class="xd">&gt;</span><span class="xd">
+                  &lt;/</span><span class="xn">DoubleAnimationUsingPath</span><span class="xd">&gt;</span><span class="xd">                    
+                  
+                  &lt;!--</span><span class="c"> Rotates the cube in the Y-axis along the path. </span><span class="xd">--&gt;</span><span class="xd">
+                  &lt;</span><span class="xn">DoubleAnimationUsingPath</span><span class="xan">
+                    Storyboard.TargetName</span><span class="xd">=</span>&quot;<span class="xav">MyVerticalRotation</span>&quot;<span class="xan">
+                    Storyboard.TargetProperty</span><span class="xd">=</span>&quot;<span class="xav">Angle</span>&quot;<span class="xan">
+                    Source</span><span class="xd">=</span>&quot;<span class="xav">Angle</span>&quot; <span class="xan">
+                    Duration</span><span class="xd">=</span>&quot;<span class="xav">0:0:5</span>&quot;<span class="xan">
+                    RepeatBehavior</span><span class="xd">=</span>&quot;<span class="xav">Forever</span>&quot; <span class="xan">AutoReverse</span><span class="xd">=</span>&quot;<span class="xav">True</span>&quot; <span class="xd">&gt;</span><span class="xd">
+                    &lt;</span><span class="xn">DoubleAnimationUsingPath.PathGeometry</span><span class="xd">&gt;</span><span class="xd">
+                      &lt;</span><span class="xn">PathGeometry </span><span class="xan">Figures</span><span class="xd">=</span>&quot;<span class="xav">M 10,100 C35,0 135,0 160,100 S285,200 310,100</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+                    &lt;/</span><span class="xn">DoubleAnimationUsingPath.PathGeometry</span><span class="xd">&gt;</span><span class="xd">                  &lt;/</span><span class="xn">DoubleAnimationUsingPath</span><span class="xd">&gt;</span><span class="xd">                    
+                    
+                  &lt;!--</span><span class="c"> Rotates the cube in the X-axis along the path. </span><span class="xd">--&gt;</span><span class="xd">  
+                  &lt;</span><span class="xn">DoubleAnimationUsingPath</span><span class="xan">
+                    Storyboard.TargetName</span><span class="xd">=</span>&quot;<span class="xav">MyHorizontalRotation</span>&quot;<span class="xan">
+                    Storyboard.TargetProperty</span><span class="xd">=</span>&quot;<span class="xav">Angle</span>&quot;<span class="xan">
+                    Source</span><span class="xd">=</span>&quot;<span class="xav">Angle</span>&quot; <span class="xan">
+                    Duration</span><span class="xd">=</span>&quot;<span class="xav">0:0:5</span>&quot;<span class="xan">
+                    RepeatBehavior</span><span class="xd">=</span>&quot;<span class="xav">Forever</span>&quot; <span class="xan">AutoReverse</span><span class="xd">=</span>&quot;<span class="xav">True</span>&quot; <span class="xd">&gt;</span><span class="xd">
+                    &lt;</span><span class="xn">DoubleAnimationUsingPath.PathGeometry</span><span class="xd">&gt;</span><span class="xd">
+                      &lt;</span><span class="xn">PathGeometry </span><span class="xan">Figures</span><span class="xd">=</span>&quot;<span class="xav">M 10,100 C35,0 135,0 160,100 S285,200 310,100</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+                    &lt;/</span><span class="xn">DoubleAnimationUsingPath.PathGeometry</span><span class="xd">&gt;</span><span class="xd">                  &lt;/</span><span class="xn">DoubleAnimationUsingPath</span><span class="xd">&gt;</span><span class="xd">                    
+                &lt;/</span><span class="xn">Storyboard</span><span class="xd">&gt;</span><span class="xd">
+              &lt;/</span><span class="xn">BeginStoryboard</span><span class="xd">&gt;</span><span class="xd">
+            &lt;/</span><span class="xn">EventTrigger</span><span class="xd">&gt;</span><span class="xd">
+          &lt;/</span><span class="xn">Viewport3D.Triggers</span><span class="xd">&gt;</span><span class="xd"> 
+        &lt;/</span><span class="xn">Viewport3D</span><span class="xd">&gt;</span><span class="xd">
+      &lt;/</span><span class="xn">Canvas</span><span class="xd">&gt;</span><span class="xd">
+
+    &lt;/</span><span class="xn">Viewbox</span><span class="xd">&gt;</span><span class="xd">
+  &lt;/</span><span class="xn">DockPanel</span><span class="xd">&gt;</span><span class="xd">
+&lt;/</span><span class="xn">Page</span><span class="xd">&gt;</span>
+
+</pre></td></tr></table></div></body></html>

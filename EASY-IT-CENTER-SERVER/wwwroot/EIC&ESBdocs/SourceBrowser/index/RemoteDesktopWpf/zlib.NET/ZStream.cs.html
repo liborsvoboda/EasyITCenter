@@ -1,0 +1,242 @@
+﻿<!DOCTYPE html>
+<html><head><title>ZStream.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(233);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RemoteDesktopWpf/zlib.NET/ZStream.cs" target="_top">zlib.NET\ZStream.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RemoteDesktopWpf" target="_top">..\..\..\EASY-TOOLS\EASYTools.VNCLib\EASYTools.VNCLib.csproj</a> (RemoteDesktopWpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Copyright (c) 2006, ComponentAce</span>
+<span class="c">// http://www.componentace.com</span>
+<span class="c">// All rights reserved.</span>
+ 
+<span class="c">// Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</span>
+ 
+<span class="c">// Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. </span>
+<span class="c">// Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. </span>
+<span class="c">// Neither the name of ComponentAce nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. </span>
+<span class="c">// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+ 
+<span class="c">/*
+Copyright (c) 2000,2001,2002,2003 ymnk, JCraft,Inc. All rights reserved.
+ 
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+ 
+1. Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
+ 
+2. Redistributions in binary form must reproduce the above copyright 
+notice, this list of conditions and the following disclaimer in 
+the documentation and/or other materials provided with the distribution.
+ 
+3. The names of the authors may not be used to endorse or promote products
+derived from this software without specific prior written permission.
+ 
+THIS SOFTWARE IS PROVIDED ``AS IS&#39;&#39; AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JCRAFT,
+INC. OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/</span>
+<span class="c">/*
+* This program is based on zlib-1.1.3, so all credit should go authors
+* Jean-loup Gailly(jloup@gzip.org) and Mark Adler(madler@alumni.caltech.edu)
+* and contributors of zlib.
+*/</span>
+<b>using</b> <span class="i n">System</span>;
+<b>namespace</b> <span class="i n">ComponentAce</span>.<span class="i n">Compression</span>.<span class="i n">Libs</span>.<span class="i n">zlib</span>
+{
+	
+	<b>sealed public class</b> <a id="365c5b87c76eccc4" href="../R/365c5b87c76eccc4.html" target="n" data-glyph="0,0" class="t t"><span id="912fb583e5553fc8">ZStream</span></a>
+	{
+		
+		<b>private const int</b> <a id="3b9d4bb775203d69" href="../R/3b9d4bb775203d69.html" target="n" data-glyph="10,1" class="i field">MAX_WBITS</a> = 15; <span class="c">// 32K LZ77 window		</span>
+		<b>private static readonly int</b> <a id="e499a2745607c682" href="../R/e499a2745607c682.html" target="n" data-glyph="46,1" class="i field">DEF_WBITS</a> = <a href="#3b9d4bb775203d69" class="i field">MAX_WBITS</a>;
+		
+		<b>private const int</b> <a id="41144aef8f028cf2" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_NO_FLUSH</a> = 0;
+		<b>private const int</b> <a id="1f29e3c90167cedc" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_PARTIAL_FLUSH</a> = 1;
+		<b>private const int</b> <a id="dff9c8b195447072" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_SYNC_FLUSH</a> = 2;
+		<b>private const int</b> <a id="a77995abed228b4d" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_FULL_FLUSH</a> = 3;
+		<b>private const int</b> <a id="241fd9c317852c83" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_FINISH</a> = 4;
+		
+		<b>private const int</b> <a id="c22ba9588c712067" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">MAX_MEM_LEVEL</a> = 9;
+		
+		<b>private const int</b> <a id="1a4431854e579ebb" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_OK</a> = 0;
+		<b>private const int</b> <a id="173fee2733715bd7" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_STREAM_END</a> = 1;
+		<b>private const int</b> <a id="b853f5df02e1c8e3" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_NEED_DICT</a> = 2;
+		<b>private const int</b> <a id="85c1b81215fa45d1" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_ERRNO</a> = - 1;
+		<b>private const int</b> <a id="4bdb66b3babfdfda" href="../R/4bdb66b3babfdfda.html" target="n" data-glyph="10,1" class="i field">Z_STREAM_ERROR</a> = - 2;
+		<b>private const int</b> <a id="06570c3db3e14764" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_DATA_ERROR</a> = - 3;
+		<b>private const int</b> <a id="072222121bc97f32" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_MEM_ERROR</a> = - 4;
+		<b>private const int</b> <a id="288b114d7e1b8822" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_BUF_ERROR</a> = - 5;
+		<b>private const int</b> <a id="2accf072da217e23" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_VERSION_ERROR</a> = - 6;
+		
+		<b>public byte</b>[] <a id="cbc91141f69d3d83" href="../R/cbc91141f69d3d83.html" target="n" data-glyph="42,1" class="i field">next_in</a>; <span class="c">// next input byte</span>
+		<b>public int</b> <a id="248a6719ea8874c2" href="../R/248a6719ea8874c2.html" target="n" data-glyph="42,1" class="i field">next_in_index</a>;
+		<b>public int</b> <a id="5d97a818af214217" href="../R/5d97a818af214217.html" target="n" data-glyph="42,1" class="i field">avail_in</a>; <span class="c">// number of bytes available at next_in</span>
+		<b>public long</b> <a id="83fcde1b9cc10f8c" href="../R/83fcde1b9cc10f8c.html" target="n" data-glyph="42,1" class="i field">total_in</a>; <span class="c">// total nb of input bytes read so far</span>
+		
+		<b>public byte</b>[] <a id="74fa8b4826c731d2" href="../R/74fa8b4826c731d2.html" target="n" data-glyph="42,1" class="i field">next_out</a>; <span class="c">// next output byte should be put there</span>
+		<b>public int</b> <a id="a10769e24d50abed" href="../R/a10769e24d50abed.html" target="n" data-glyph="42,1" class="i field">next_out_index</a>;
+		<b>public int</b> <a id="41bbdb79e61b8518" href="../R/41bbdb79e61b8518.html" target="n" data-glyph="42,1" class="i field">avail_out</a>; <span class="c">// remaining free space at next_out</span>
+		<b>public long</b> <a id="cbbe8a5a89555d7d" href="../R/cbbe8a5a89555d7d.html" target="n" data-glyph="42,1" class="i field">total_out</a>; <span class="c">// total nb of bytes output so far</span>
+		
+		<b>public</b> <span class="i n">System</span>.<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="t t">String</a> <a id="5fca80ad93aac623" href="../R/5fca80ad93aac623.html" target="n" data-glyph="42,1" class="i field">msg</a>;
+		
+		<b>internal</b> <a href="Deflate.cs.html#3496d1fb392d4fee" class="t t">Deflate</a> <a id="4b921247545c03d9" href="../R/4b921247545c03d9.html" target="n" data-glyph="44,1" class="i field">dstate</a>;
+		<b>internal</b> <a href="Inflate.cs.html#0c8a45e538909c15" class="t t">Inflate</a> <a id="f49f9215d125b94c" href="../R/f49f9215d125b94c.html" target="n" data-glyph="44,1" class="i field">istate</a>;
+		
+		<b>internal int</b> <a id="faf8d74bac73b756" href="../R/faf8d74bac73b756.html" target="n" data-glyph="44,1" class="i field">data_type</a>; <span class="c">// best guess about the data type: ascii or binary</span>
+		
+		<b>public long</b> <a id="1063ffa41b0fb599" href="../R/1063ffa41b0fb599.html" target="n" data-glyph="42,1" class="i field">adler</a>;
+		<b>internal</b> <a href="Adler32.cs.html#b7a0d653d52921b1" class="t t">Adler32</a> <a id="8cde0a3999744a52" href="../R/8cde0a3999744a52.html" target="n" data-glyph="44,1" class="i field">_adler</a> = <b>new</b> <a href="Adler32.cs.html#b7a0d653d52921b1" class="t constructor">Adler32</a>();
+		
+		<b>public int</b> <a id="8b78347d18610711" href="../R/8b78347d18610711.html" target="n" data-glyph="72,1" class="i method">inflateInit</a>()
+		{
+			<b>return</b> <a href="#4da243a811a556cb" class="i method">inflateInit</a>(<a href="#e499a2745607c682" class="i field">DEF_WBITS</a>);
+		}
+		<b>public int</b> <a id="4da243a811a556cb" href="../R/4da243a811a556cb.html" target="n" data-glyph="72,1" class="i method">inflateInit</a>(<b>int</b> <span id="r0 rd" class="r0 r">w</span>)
+		{
+			<a href="#f49f9215d125b94c" class="i field">istate</a> = <b>new</b> <a href="Inflate.cs.html#0c8a45e538909c15" class="t constructor">Inflate</a>();
+			<b>return</b> <a href="#f49f9215d125b94c" class="i field">istate</a>.<a href="Inflate.cs.html#71dd3e716995c2f0" class="i method">inflateInit</a>(<a href="#365c5b87c76eccc4" class="k">this</a>, <span class="r0 r">w</span>);
+		}
+		
+		<b>public int</b> <a id="60795c173c407b8e" href="../R/60795c173c407b8e.html" target="n" data-glyph="72,1" class="i method">inflate</a>(<b>int</b> <span id="r1 rd" class="r1 r">f</span>)
+		{
+			<b>if</b> (<a href="#f49f9215d125b94c" class="i field">istate</a> == <b>null</b>)
+				<b>return</b> <a href="#4bdb66b3babfdfda" class="i field">Z_STREAM_ERROR</a>;
+			<b>return</b> <a href="#f49f9215d125b94c" class="i field">istate</a>.<a href="Inflate.cs.html#8208de3823a4e450" class="i method">inflate</a>(<a href="#365c5b87c76eccc4" class="k">this</a>, <span class="r1 r">f</span>);
+		}
+		<b>public int</b> <a id="0bf7dbe33924cc6f" href="../R/0bf7dbe33924cc6f.html" target="n" data-glyph="72,1" class="i method">inflateEnd</a>()
+		{
+			<b>if</b> (<a href="#f49f9215d125b94c" class="i field">istate</a> == <b>null</b>)
+				<b>return</b> <a href="#4bdb66b3babfdfda" class="i field">Z_STREAM_ERROR</a>;
+			<b>int</b> <span id="r2 rd" class="r2 r">ret</span> = <a href="#f49f9215d125b94c" class="i field">istate</a>.<a href="Inflate.cs.html#d4b8ee5cab985ba4" class="i method">inflateEnd</a>(<a href="#365c5b87c76eccc4" class="k">this</a>);
+			<a href="#f49f9215d125b94c" class="i field">istate</a> = <b>null</b>;
+			<b>return</b> <span class="r2 r">ret</span>;
+		}
+		<b>public int</b> <a id="321751ff014cc2dd" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">inflateSync</a>()
+		{
+			<b>if</b> (<a href="#f49f9215d125b94c" class="i field">istate</a> == <b>null</b>)
+				<b>return</b> <a href="#4bdb66b3babfdfda" class="i field">Z_STREAM_ERROR</a>;
+			<b>return</b> <a href="#f49f9215d125b94c" class="i field">istate</a>.<a href="Inflate.cs.html#c7f1ded14b7c97ec" class="i method">inflateSync</a>(<a href="#365c5b87c76eccc4" class="k">this</a>);
+		}
+		<b>public int</b> <a id="1c6ee9793223b4a5" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">inflateSetDictionary</a>(<b>byte</b>[] <span id="r3 rd" class="r3 r">dictionary</span>, <b>int</b> <span id="r4 rd" class="r4 r">dictLength</span>)
+		{
+			<b>if</b> (<a href="#f49f9215d125b94c" class="i field">istate</a> == <b>null</b>)
+				<b>return</b> <a href="#4bdb66b3babfdfda" class="i field">Z_STREAM_ERROR</a>;
+			<b>return</b> <a href="#f49f9215d125b94c" class="i field">istate</a>.<a href="Inflate.cs.html#6201484c170561a6" class="i method">inflateSetDictionary</a>(<a href="#365c5b87c76eccc4" class="k">this</a>, <span class="r3 r">dictionary</span>, <span class="r4 r">dictLength</span>);
+		}
+		
+		<b>public int</b> <a id="0b9934b62e68e43c" href="../R/0b9934b62e68e43c.html" target="n" data-glyph="72,1" class="i method">deflateInit</a>(<b>int</b> <span id="r5 rd" class="r5 r">level</span>)
+		{
+			<b>return</b> <a href="#b127f87fdaf1d36e" class="i method">deflateInit</a>(<span class="r5 r">level</span>, <a href="#3b9d4bb775203d69" class="i field">MAX_WBITS</a>);
+		}
+		<b>public int</b> <a id="b127f87fdaf1d36e" href="../R/b127f87fdaf1d36e.html" target="n" data-glyph="72,1" class="i method">deflateInit</a>(<b>int</b> <span id="r6 rd" class="r6 r">level</span>, <b>int</b> <span id="r7 rd" class="r7 r">bits</span>)
+		{
+			<a href="#4b921247545c03d9" class="i field">dstate</a> = <b>new</b> <a href="Deflate.cs.html#3b1e1f621d72798d" class="t constructor">Deflate</a>();
+			<b>return</b> <a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#3be5bb4b452db7f5" class="i method">deflateInit</a>(<a href="#365c5b87c76eccc4" class="k">this</a>, <span class="r6 r">level</span>, <span class="r7 r">bits</span>);
+		}
+		<b>public int</b> <a id="252377b3a0423514" href="../R/252377b3a0423514.html" target="n" data-glyph="72,1" class="i method">deflate</a>(<b>int</b> <span id="r8 rd" class="r8 r">flush</span>)
+		{
+			<b>if</b> (<a href="#4b921247545c03d9" class="i field">dstate</a> == <b>null</b>)
+			{
+				<b>return</b> <a href="#4bdb66b3babfdfda" class="i field">Z_STREAM_ERROR</a>;
+			}
+			<b>return</b> <a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#3f42d01e2b3eec9b" class="i method">deflate</a>(<a href="#365c5b87c76eccc4" class="k">this</a>, <span class="r8 r">flush</span>);
+		}
+		<b>public int</b> <a id="5f5dfa3b2d91cabb" href="../R/5f5dfa3b2d91cabb.html" target="n" data-glyph="72,1" class="i method">deflateEnd</a>()
+		{
+			<b>if</b> (<a href="#4b921247545c03d9" class="i field">dstate</a> == <b>null</b>)
+				<b>return</b> <a href="#4bdb66b3babfdfda" class="i field">Z_STREAM_ERROR</a>;
+			<b>int</b> <span id="r9 rd" class="r9 r">ret</span> = <a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#fa9fca64dabfcd37" class="i method">deflateEnd</a>();
+			<a href="#4b921247545c03d9" class="i field">dstate</a> = <b>null</b>;
+			<b>return</b> <span class="r9 r">ret</span>;
+		}
+		<b>public int</b> <a id="ba986539e367a2fe" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">deflateParams</a>(<b>int</b> <span id="r10 rd" class="r10 r">level</span>, <b>int</b> <span id="r11 rd" class="r11 r">strategy</span>)
+		{
+			<b>if</b> (<a href="#4b921247545c03d9" class="i field">dstate</a> == <b>null</b>)
+				<b>return</b> <a href="#4bdb66b3babfdfda" class="i field">Z_STREAM_ERROR</a>;
+			<b>return</b> <a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#3ebdfa9506faa21d" class="i method">deflateParams</a>(<a href="#365c5b87c76eccc4" class="k">this</a>, <span class="r10 r">level</span>, <span class="r11 r">strategy</span>);
+		}
+		<b>public int</b> <a id="e2de6d6791222f68" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">deflateSetDictionary</a>(<b>byte</b>[] <span id="r12 rd" class="r12 r">dictionary</span>, <b>int</b> <span id="r13 rd" class="r13 r">dictLength</span>)
+		{
+			<b>if</b> (<a href="#4b921247545c03d9" class="i field">dstate</a> == <b>null</b>)
+				<b>return</b> <a href="#4bdb66b3babfdfda" class="i field">Z_STREAM_ERROR</a>;
+			<b>return</b> <a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#ec9acdebc8247370" class="i method">deflateSetDictionary</a>(<a href="#365c5b87c76eccc4" class="k">this</a>, <span class="r12 r">dictionary</span>, <span class="r13 r">dictLength</span>);
+		}
+		
+		<span class="c">// Flush as much pending output as possible. All deflate() output goes</span>
+		<span class="c">// through this function so some applications may wish to modify it</span>
+		<span class="c">// to avoid allocating a large strm-&gt;next_out buffer and copying into it.</span>
+		<span class="c">// (See also read_buf()).</span>
+		<b>internal void</b>  <a id="f63fd3095c4b7c30" href="../R/f63fd3095c4b7c30.html" target="n" data-glyph="74,1" class="i method">flush_pending</a>()
+		{
+			<b>int</b> <span id="r14 rd" class="r14 r">len</span> = <a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#b0eb4cc9176a8e37" class="i field">pending</a>;
+			
+			<b>if</b> (<span class="r14 r">len</span> &gt; <a href="#41bbdb79e61b8518" class="i field">avail_out</a>)
+				<span class="r14 r">len</span> = <a href="#41bbdb79e61b8518" class="i field">avail_out</a>;
+			<b>if</b> (<span class="r14 r">len</span> == 0)
+				<b>return</b> ;
+			
+			<b>if</b> (<a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#d4fef741fab12e21" class="i field">pending_buf</a>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a> &lt;= <a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#ee7a72ff7a1d15cb" class="i field">pending_out</a> || <a href="#74fa8b4826c731d2" class="i field">next_out</a>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a> &lt;= <a href="#a10769e24d50abed" class="i field">next_out_index</a> || <a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#d4fef741fab12e21" class="i field">pending_buf</a>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a> &lt; (<a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#ee7a72ff7a1d15cb" class="i field">pending_out</a> + <span class="r14 r">len</span>) || <a href="#74fa8b4826c731d2" class="i field">next_out</a>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a> &lt; (<a href="#a10769e24d50abed" class="i field">next_out_index</a> + <span class="r14 r">len</span>))
+			{
+				<span class="c">//System.Console.Out.WriteLine(dstate.pending_buf.Length + &quot;, &quot; + dstate.pending_out + &quot;, &quot; + next_out.Length + &quot;, &quot; + next_out_index + &quot;, &quot; + len);</span>
+				<span class="c">//System.Console.Out.WriteLine(&quot;avail_out=&quot; + avail_out);</span>
+			}
+			
+			<a href="@0@mscorlib/A.html#156e066ecc4ccedf" class="t t">Array</a>.<a href="@0@mscorlib/A.html#7441c6721593042c" class="i method">Copy</a>(<a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#d4fef741fab12e21" class="i field">pending_buf</a>, <a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#ee7a72ff7a1d15cb" class="i field">pending_out</a>, <a href="#74fa8b4826c731d2" class="i field">next_out</a>, <a href="#a10769e24d50abed" class="i field">next_out_index</a>, <span class="r14 r">len</span>);
+			
+			<a href="#a10769e24d50abed" class="i field">next_out_index</a> += <span class="r14 r">len</span>;
+			<a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#ee7a72ff7a1d15cb" class="i field">pending_out</a> += <span class="r14 r">len</span>;
+			<a href="#cbbe8a5a89555d7d" class="i field">total_out</a> += <span class="r14 r">len</span>;
+			<a href="#41bbdb79e61b8518" class="i field">avail_out</a> -= <span class="r14 r">len</span>;
+			<a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#b0eb4cc9176a8e37" class="i field">pending</a> -= <span class="r14 r">len</span>;
+			<b>if</b> (<a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#b0eb4cc9176a8e37" class="i field">pending</a> == 0)
+			{
+				<a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#ee7a72ff7a1d15cb" class="i field">pending_out</a> = 0;
+			}
+		}
+		
+		<span class="c">// Read a new buffer from the current input stream, update the adler32</span>
+		<span class="c">// and total number of bytes read.  All deflate() input goes through</span>
+		<span class="c">// this function so some applications may wish to modify it to avoid</span>
+		<span class="c">// allocating a large strm-&gt;next_in buffer and copying from it.</span>
+		<span class="c">// (See also flush_pending()).</span>
+		<b>internal int</b> <a id="5481efa9c5d6f67f" href="../R/5481efa9c5d6f67f.html" target="n" data-glyph="74,1" class="i method">read_buf</a>(<b>byte</b>[] <span id="r15 rd" class="r15 r">buf</span>, <b>int</b> <span id="r16 rd" class="r16 r">start</span>, <b>int</b> <span id="r17 rd" class="r17 r">size</span>)
+		{
+			<b>int</b> <span id="r18 rd" class="r18 r">len</span> = <a href="#5d97a818af214217" class="i field">avail_in</a>;
+			
+			<b>if</b> (<span class="r18 r">len</span> &gt; <span class="r17 r">size</span>)
+				<span class="r18 r">len</span> = <span class="r17 r">size</span>;
+			<b>if</b> (<span class="r18 r">len</span> == 0)
+				<b>return</b> 0;
+			
+			<a href="#5d97a818af214217" class="i field">avail_in</a> -= <span class="r18 r">len</span>;
+			
+			<b>if</b> (<a href="#4b921247545c03d9" class="i field">dstate</a>.<a href="Deflate.cs.html#ee5b3a45764a3e53" class="i field">noheader</a> == 0)
+			{
+				<a href="#1063ffa41b0fb599" class="i field">adler</a> = <a href="#8cde0a3999744a52" class="i field">_adler</a>.<a href="Adler32.cs.html#d5495b7b6d17d765" class="i method">adler32</a>(<a href="#1063ffa41b0fb599" class="i field">adler</a>, <a href="#cbc91141f69d3d83" class="i field">next_in</a>, <a href="#248a6719ea8874c2" class="i field">next_in_index</a>, <span class="r18 r">len</span>);
+			}
+			<a href="@0@mscorlib/A.html#156e066ecc4ccedf" class="t t">Array</a>.<a href="@0@mscorlib/A.html#7441c6721593042c" class="i method">Copy</a>(<a href="#cbc91141f69d3d83" class="i field">next_in</a>, <a href="#248a6719ea8874c2" class="i field">next_in_index</a>, <span class="r15 r">buf</span>, <span class="r16 r">start</span>, <span class="r18 r">len</span>);
+			<a href="#248a6719ea8874c2" class="i field">next_in_index</a> += <span class="r18 r">len</span>;
+			<a href="#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r18 r">len</span>;
+			<b>return</b> <span class="r18 r">len</span>;
+		}
+		
+		<b>public void</b>  <a id="84a6a5c684428640" href="../R/84a6a5c684428640.html" target="n" data-glyph="72,1" class="i method">free</a>()
+		{
+			<a href="#cbc91141f69d3d83" class="i field">next_in</a> = <b>null</b>;
+			<a href="#74fa8b4826c731d2" class="i field">next_out</a> = <b>null</b>;
+			<a href="#5fca80ad93aac623" class="i field">msg</a> = <b>null</b>;
+			<a href="#8cde0a3999744a52" class="i field">_adler</a> = <b>null</b>;
+		}
+	}
+}</pre></td></tr></table></div></body></html>

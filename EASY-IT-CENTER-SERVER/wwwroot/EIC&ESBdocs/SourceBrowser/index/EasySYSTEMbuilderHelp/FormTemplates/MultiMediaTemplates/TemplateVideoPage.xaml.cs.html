@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html><head><title>TemplateVideoPage.xaml.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(107);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasySYSTEMbuilderHelp/FormTemplates/MultiMediaTemplates/TemplateVideoPage.xaml.cs" target="_top">FormTemplates\MultiMediaTemplates\TemplateVideoPage.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasySYSTEMbuilderHelp" target="_top">HelpProjects\EasySYSTEMbuilderHelp\EasySYSTEMbuilderHelp.vbproj</a> (EasySYSTEMbuilderHelp)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i">EasyITSystemCenter</span>.<span class="i">Classes</span>;
+<b>using</b> <span class="i">EasyITSystemCenter</span>.<span class="i">GlobalOperations</span>;
+<b>using</b> <span class="i">MahApps</span>.<span class="i">Metro</span>.<span class="i">Controls</span>;
+<b>using</b> <span class="i">Newtonsoft</span>.<span class="i">Json</span>;
+<b>using</b> <span class="i">Org</span>.<span class="i">BouncyCastle</span>.<span class="i">Asn1</span>;
+<b>using</b> <span class="i">System</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">IO</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Linq</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Timers</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Controls</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Controls</span>.<span class="i">Primitives</span>;
+ 
+// <span class="i">This</span> <b>is</b> <span class="i">Template</span> <b>Is</b> <span class="i">Customized</span> <b>For</b> <span class="i">Play</span> <span class="i">Video</span>
+<b>namespace</b> <span class="i n">EasyITSystemCenter</span>.<span class="i n">Pages</span> {
+ 
+    <b>public</b> <b>partial</b> <b>class</b> <a id="9c37a14cbbc8b860" href="../../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="58d87722c43d1a11">TemplateVideoPage</span></a> : <span class="i">UserControl</span> {
+ 
+        /// &lt;<span class="i">summary</span>&gt;
+        /// <span class="i">Standartized</span> <span class="i">declaring</span> <b>static</b> <span class="i">page</span> <span class="i">data</span> <b>for global</b> <span class="i">vorking</span> <b>with</b> <span class="i">pages</span>
+        /// &lt;/<span class="i">summary</span>&gt;
+        <b>public static</b> <a id="521f48888b15af23" href="../../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">DataViewSupport</a> <span class="i">dataViewSupport</span> = <b>new</b> <span class="i">DataViewSupport</span>();
+ 
+        <b>public static</b> <a id="8f80856ff8bb3e26" href="../../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">TemplateClassList</a> <span class="i">selectedRecord</span> = <b>new</b> <span class="i">TemplateClassList</span>();
+ 
+        <b>private</b> <a id="6e9d93a47376db64" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">bool</a> <span class="i">userIsDraggingSlider</span> = <b>false;
+        private readonly</b> <a id="0828bed17daa55f9" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">Timer</a> <span class="i">timer1Sec</span> = <b>new</b> <span class="i">Timer</span>() { <span class="i">Enabled</span> = <b>false</b>, <span class="i">Interval</span> = 1000 };
+ 
+        <b>public</b> <a id="1afdc9a9c3756fac" href="../../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">TemplateVideoPage</a>() {
+            <span class="i">InitializeComponent</span>();
+            _ = <span class="i">SystemOperations</span>.<span class="i">SetLanguageDictionary</span>(<span class="i">Resources</span>, <span class="i">App</span>.<span class="i">appRuntimeData</span>.<span class="i">AppClientSettings</span>.<span class="i">First</span>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">Key</span> == <span class="s">&quot;sys_defaultLanguage&quot;</span>).<span class="i">Value</span>);
+ 
+            <span class="i">btn_play</span>.<span class="i">Content</span> = <span class="i">Resources</span>[<span class="s">&quot;play&quot;</span>].<span class="i">ToString</span>();
+            <span class="i">btn_pause</span>.<span class="i">Content</span> = <span class="i">Resources</span>[<span class="s">&quot;pause&quot;</span>].<span class="i">ToString</span>();
+            <span class="i">btn_stop</span>.<span class="i">Content</span> = <span class="i">Resources</span>[<span class="s">&quot;stop&quot;</span>].<span class="i">ToString</span>();
+ 
+            <span class="i">timer1Sec</span>.<span class="i">Elapsed</span> += <span class="i">Timer1sec_Elapsed</span>;
+            <span class="i">me_videPlayer</span>.<span class="i">Source</span> = <b>new</b> <span class="i">Uri</span>(<span class="i">Path</span>.<span class="i">Combine</span>(<span class="i">App</span>.<span class="i">appRuntimeData</span>.<span class="i">startupPath</span>, <span class="s">&quot;Data&quot;</span>, <span class="s">&quot;speed.mp4&quot;</span>));
+        }
+ 
+        <b>private</b> <a id="df1dceff3ef846e1" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">Timer1sec_Elapsed</span>(<b>object</b> <span class="i">sender</span>, <span class="i">ElapsedEventArgs</span> <span class="i">e</span>) {
+            <span class="i">this</span>.<span class="i">Invoke</span>(() =&gt; {
+                <b>if</b> (<span class="i">me_videPlayer</span>.<span class="i">NaturalDuration</span>.<span class="i">HasTimeSpan</span> &amp; !<span class="i">userIsDraggingSlider</span>) {
+                    <span class="i">s_timelineSlider</span>.<span class="i">Minimum</span> = 0;
+                    <span class="i">s_timelineSlider</span>.<span class="i">Maximum</span> = <span class="i">me_videPlayer</span>.<span class="i">NaturalDuration</span>.<span class="i">TimeSpan</span>.<span class="i">TotalSeconds</span>;
+                    <span class="i">s_timelineSlider</span>.<span class="i">Value</span> = <span class="i">me_videPlayer</span>.<span class="i">Position</span>.<span class="i">TotalSeconds</span>;
+                }
+            });
+        }
+ 
+        <b>private</b> <a id="df1dceff3ef846e1" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">Btn_playClick</span>(<b>object</b> <span class="i">sender</span>, <span class="i">RoutedEventArgs</span> <span class="i">e</span>) {
+            <span class="i">me_videPlayer</span>.<span class="i">Play</span>();
+            <span class="i">timer1Sec</span>.<span class="i">Enabled</span> = <b>true</b>;
+            <span class="i">InitializePropertyValues</span>();
+        }
+ 
+        <b>private</b> <a id="df1dceff3ef846e1" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">Btn_pauseClick</span>(<b>object</b> <span class="i">sender</span>, <span class="i">RoutedEventArgs</span> <span class="i">e</span>) {
+            <span class="i">me_videPlayer</span>.<span class="i">Pause</span>();
+            <span class="i">timer1Sec</span>.<span class="i">Enabled</span> = <b>false</b>;
+        }
+ 
+        <b>private</b> <a id="df1dceff3ef846e1" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">Btn_stopClick</span>(<b>object</b> <span class="i">sender</span>, <span class="i">RoutedEventArgs</span> <span class="i">e</span>) {
+            <span class="i">me_videPlayer</span>.<b>Stop</b>();
+            <span class="i">me_videPlayer</span>.<span class="i">Position</span> = <span class="i">TimeSpan</span>.<span class="i">FromSeconds</span>(0);
+            <span class="i">timer1Sec</span>.<span class="i">Enabled</span> = <b>false</b>;
+        }
+ 
+        <b>private</b> <a id="df1dceff3ef846e1" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">SliProgress_DragStarted</span>(<b>object</b> <span class="i">sender</span>, <span class="i">DragStartedEventArgs</span> <span class="i">e</span>) {
+            <span class="i">userIsDraggingSlider</span> = <b>true</b>;
+        }
+ 
+        <b>private</b> <a id="df1dceff3ef846e1" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">SliProgress_DragCompleted</span>(<b>object</b> <span class="i">sender</span>, <span class="i">DragCompletedEventArgs</span> <span class="i">e</span>) {
+            <span class="i">userIsDraggingSlider</span> = <b>false</b>;
+            <span class="i">me_videPlayer</span>.<span class="i">Position</span> = <span class="i">TimeSpan</span>.<span class="i">FromSeconds</span>(<span class="i">s_timelineSlider</span>.<span class="i">Value</span>);
+        }
+ 
+        <b>private</b> <a id="df1dceff3ef846e1" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">VidePlayerMediaEnded</span>(<b>object</b> <span class="i">sender</span>, <span class="i">EventArgs</span> <span class="i">e</span>) {
+            <span class="i">me_videPlayer</span>.<b>Stop</b>();
+            <span class="i">timer1Sec</span>.<span class="i">Enabled</span> = <b>false</b>;
+        }
+ 
+        <b>private</b> <a id="df1dceff3ef846e1" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">InitializePropertyValues</span>() {
+            <span class="i">me_videPlayer</span>.<span class="i">Volume</span> = (<b>double</b>)<span class="i">volumeSlider</span>.<span class="i">Value</span>;
+        }
+ 
+        <b>private</b> <a id="df1dceff3ef846e1" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">ChangeMediaVolume</span>(<b>object</b> <span class="i">sender</span>, <span class="i">RoutedPropertyChangedEventArgs</span>&lt;<b>double</b>&gt; <span class="i">args</span>) {
+            <span class="i">me_videPlayer</span>.<span class="i">Volume</span> = (<b>double</b>)<span class="i">volumeSlider</span>.<span class="i">Value</span>;
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> <span class="i">helper</span> <span class="i">methods</span>
+ 
+        <b>private class</b> <a id="41b0c3a28f581307" href="../../R/../../0000000000.html" target="n" data-glyph="4,1" class="t t"><span id="844f830eb3ea2e90">ExtensionsItem</span></a> {
+ 
+            <b>public</b> <a id="a4304be8fa69cac1" href="../../R/../../0000000000.html" target="n" data-glyph="42,2" class="i field">ExtensionsItem</a>() {
+                <span class="i">ident</span> = <span class="i">null</span>;
+                <span class="i">isTrue</span> = <b>false</b>;
+                <span class="i">asn1OctetString</span> = <span class="i">null</span>;
+            }
+ 
+            <b>public</b> <a id="8ea6ed4dbe98b5dd" href="../../R/../../0000000000.html" target="n" data-glyph="42,2" class="i field">DerObjectIdentifier</a> <span class="i">ident</span> { <b>get; set</b>; }
+            <b>public</b> <a id="05ae5d488f0184d6" href="../../R/../../0000000000.html" target="n" data-glyph="42,2" class="i field">bool</a> <span class="i">isTrue</span> { <b>get; set</b>; }
+            <b>public</b> <a id="8643843c9c7d4019" href="../../R/../../0000000000.html" target="n" data-glyph="42,2" class="i field">Asn1OctetString</a> <span class="i">asn1OctetString</span> { <b>get; set</b>; }
+        }
+ 
+        <span class="k preprocess">#</span><span class="i">endregion</span> <span class="i">helper</span> <span class="i">methods</span>
+    }
+}</pre></td></tr></table></div></body></html>

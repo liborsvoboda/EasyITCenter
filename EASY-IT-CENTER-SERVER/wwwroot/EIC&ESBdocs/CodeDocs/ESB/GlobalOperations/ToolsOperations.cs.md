@@ -1,4 +1,7 @@
-﻿using ICSharpCode.AvalonEdit;
+﻿[Zpět](../../index)   
+
+```cshtml   
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Search;

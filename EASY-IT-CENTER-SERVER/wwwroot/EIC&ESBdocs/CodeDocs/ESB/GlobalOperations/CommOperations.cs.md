@@ -1,4 +1,7 @@
-﻿using System;
+﻿[Zpět](../../index)   
+
+```cshtml   
+using System;
 
 namespace EasyITSystemCenter.GlobalOperations {
 

@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html>
+<html><head><title>ServerModulesManagement.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(295);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasyITcenter-HELP/ServerCoreStartUp/ServerModulesManagement.cs" target="_top">ServerCoreStartUp\ServerModulesManagement.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasyITcenter-HELP" target="_top">HelpProjects\EasyITcenter-HELP\EasyITcenter-HELP.csproj</a> (EasyITcenter-HELP)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i">DBEntitySchema</span>.<span class="i">Core</span>;
+<b>using</b> <span class="i">Irony</span>.<span class="i">Ast</span>;
+<b>using</b> <span class="i">MarkdownDocumenting</span>.<span class="i">Extensions</span>;
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">CodeAnalysis</span>.<span class="i">FlowAnalysis</span>;
+<b>using</b> <span class="i n">Quartz</span>;
+<b>using</b> <span class="i n">Quartz</span>.<span class="i n">Impl</span>;
+<b>using</b> <span class="i n">Quartz</span>.<span class="i n">Spi</span>;
+<b>using</b> <span class="i">Swashbuckle</span>.<span class="i">AspNetCore</span>.<span class="i">SchemaBuilder</span>;
+<b>using</b> <span class="i">Westwind</span>.<span class="i">AspNetCore</span>.<span class="i">LiveReload</span>;
+<b>using static</b> <span class="i n">Quartz</span>.<span class="i n">Logging</span>.<span class="t t">OperationName</span>;
+ 
+<b>namespace</b> <span class="i n">EasyITCenter</span>.<span class="i n">ServerCoreConfiguration</span> {
+   
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Configure Server Ad-dons and Modules</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="7be8d9a2ad381ee8" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="d7f79606659ea397">ServerModules</span></a> {
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Module: Configures the Scheduler Module.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The services.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        [<a href="@1@System.Runtime/A.html#8eeaa59a3d0743c0" class="t constructor">Obsolete</a>]
+        <b>internal static void</b> <a id="87bc8b5e1c032308" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureScheduler</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r0 rd" class="r0 r">services</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">ModuleAutoSchedulerEnabled</span>) {
+                <span class="r0 r">services</span>.<span class="i method">AddSingleton</span>&lt;<span class="t t">IJobFactory</span>, <span class="i">JobFactory</span>&gt;();
+                <b>var</b> <span id="r1 rd" class="r1 r">scheduler</span> = <b>new</b> <span class="t constructor">StdSchedulerFactory</span>().<span class="i method">GetScheduler</span>().<a href="@1@System.Runtime/A.html#07ef75a8fa372c94" class="i method">ConfigureAwait</a>(<b>false</b>).<a href="@1@System.Runtime/A.html#e356d5440a3c14ad" class="i method">GetAwaiter</a>().<a href="@1@System.Runtime/A.html#6979b218613f292b" class="i method">GetResult</a>();
+                <span class="r0 r">services</span>.<span class="i method">AddSingleton</span>(<span id="r2 rd" class="r2 r">provider</span> =&gt; { <span class="r1 r">scheduler</span>.<span class="i property">JobFactory</span> = <span class="r2 r">provider</span>.<span class="i method">GetService</span>&lt;<span class="t t">IJobFactory</span>&gt;(); <b>return</b> <span class="r1 r">scheduler</span>; });
+                <span class="i">ServerRuntimeData</span>.<span class="i">ServerAutoSchedulerProvider</span> = <span class="r1 r">scheduler</span>;
+                <span class="r0 r">services</span>.<span class="i method">AddHostedService</span>&lt;<span class="i">AutoSchedulerService</span>&gt;();
+                <span class="i">ServerCoreAutoScheduler</span>.<span class="i">AutoSchedulerPlanner</span>().<span class="i">GetAwaiter</span>().<span class="i">GetResult</span>();
+            }
+        }
+ 
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Module: Generted Developer Documentation for Defvelopers Documentation contain</span>
+        <span class="c">///</span><span class="c"> full Server Structure for extremelly simple developing</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r3 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="d0056caee9df96dd" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureDocumentation</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r3 rd" class="r3 r">services</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">ModuleMdDocumentationEnabled</span>) { <span class="r3 r">services</span>.<span class="i">AddDocumentation</span>(); }
+        }
+ 
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Module Entity Schema Design Generator</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r4 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="338ac34e2c4cac3c" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureDBEntitySchema</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r4 rd" class="r4 r">services</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">ModuleDBEntitySchemaEnabled</span>) { <span class="r4 r">services</span>.<span class="i">AddDBEntitySchema</span>(<span class="i">ServerConfigSettings</span>.<span class="i">DatabaseConnectionString</span>); }
+        }
+ 
+ 
+        
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Module: Generted Developer Documentation for Defvelopers Documentation contain</span>
+        <span class="c">///</span><span class="c"> full Server Structure for extremelly simple developing</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r5 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="3f0454069178e3e6" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureLiveDataMonitor</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r5 rd" class="r5 r">services</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">WebLiveDataMonitorEnabled</span>) {
+                <b>try</b> {
+                    <span class="t t">List</span>&lt;<span class="i">ServerLiveDataMonitorList</span>&gt; <span id="r6 rd" class="r6 r">data</span>;
+                    <b>using</b> (<b>new</b> <span class="i">TransactionScope</span>(<span class="i">TransactionScopeOption</span>.<span class="i">Required</span>, <b>new</b> <span class="i">TransactionOptions</span> { <span class="i">IsolationLevel</span> = <span class="i">IsolationLevel</span>.<span class="i">ReadUncommitted</span> })) {
+                        <span class="r6 r">data</span> = <b>new</b> <span class="i">EasyITCenterContext</span>().<span class="i">ServerLiveDataMonitorLists</span>.<span class="i">Where</span>(<span id="r7 rd" class="r7 r">a</span> =&gt; <span class="r7 r">a</span>.<span class="i">Active</span>).<span class="i">ToList</span>();
+                    }
+ 
+                    <b>foreach</b> (<span class="i">ServerLiveDataMonitorList</span> <span id="r8 rd" class="r8 r">monitor</span> <b>in</b> <span class="r6 r">data</span>) {
+                        <span class="r5 r">services</span>.<span class="i">AddLiveReload</span>(<span id="r9 rd" class="r9 r">config</span> =&gt; {
+                            <b>try</b> {
+                                <b>if</b> (<span class="i">FileOperations</span>.<span class="i">CheckDirectory</span>(<span class="i n">System</span>.<span class="i n">IO</span>.<a href="@1@System.Runtime/A.html#090eca8621a248ee" class="t t">Path</a>.<span class="i">Combine</span>(<span class="i">ServerRuntimeData</span>.<span class="i">Startup_path</span>, <span class="r8 r">monitor</span>.<span class="i">RootPath</span>.<span class="i">StartsWith</span>(<span class="s">&quot;/&quot;</span>) ? <span class="r8 r">monitor</span>.<span class="i">RootPath</span>.<span class="i">Substring</span>(1) : <span class="r8 r">monitor</span>.<span class="i">RootPath</span>))) {
+                                    <span class="r9 r">config</span>.<span class="i">LiveReloadEnabled</span> = <b>true</b>;
+                                    <span class="r9 r">config</span>.<span class="i">ServerRefreshTimeout</span> = 1000;
+                                    <span class="r9 r">config</span>.<span class="i">FolderToMonitor</span> = <span class="i n">System</span>.<span class="i n">IO</span>.<a href="@1@System.Runtime/A.html#090eca8621a248ee" class="t t">Path</a>.<span class="i">Combine</span>(<span class="i">ServerRuntimeData</span>.<span class="i">Startup_path</span>, <span class="r8 r">monitor</span>.<span class="i">RootPath</span>.<span class="i">StartsWith</span>(<span class="s">&quot;/&quot;</span>) ? <span class="r8 r">monitor</span>.<span class="i">RootPath</span>.<span class="i">Substring</span>(1) : <span class="r8 r">monitor</span>.<span class="i">RootPath</span>);
+                                    <b>if</b> (<span class="r8 r">monitor</span>.<span class="i">FileExtensions</span>.<span class="i">Length</span> &gt; 0) { <span class="r9 r">config</span>.<span class="i">ClientFileExtensions</span> = <span class="r8 r">monitor</span>.<span class="i">FileExtensions</span>; }
+                                }
+                                <b>else</b> { <span class="i">CoreOperations</span>.<span class="i">SendEmail</span>(<b>new</b> <span class="i">MailRequest</span>() { <span class="i">Content</span> = <span class="s">&quot;Path For Live Data Monitoring not Exist&quot;</span> + <span class="i n">System</span>.<span class="i n">IO</span>.<a href="@1@System.Runtime/A.html#090eca8621a248ee" class="t t">Path</a>.<span class="i">Combine</span>(<span class="i">ServerRuntimeData</span>.<span class="i">Startup_path</span>, <span class="r8 r">monitor</span>.<span class="i">RootPath</span>.<span class="i">StartsWith</span>(<span class="s">&quot;/&quot;</span>) ? <span class="r8 r">monitor</span>.<span class="i">RootPath</span>.<span class="i">Substring</span>(1) : <span class="r8 r">monitor</span>.<span class="i">RootPath</span>) }); }
+                            } <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r10 rd" class="r10 r">Ex</span>) { <span class="i">CoreOperations</span>.<span class="i">SendEmail</span>(<b>new</b> <span class="i">MailRequest</span>() { <span class="i">Content</span> = <span class="i">DataOperations</span>.<span class="i">GetSystemErrMessage</span>(<span class="r10 r">Ex</span>) }); }
+                        });
+                    }
+                } <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r11 rd" class="r11 r">Ex</span>) { <span class="i">CoreOperations</span>.<span class="i">SendEmail</span>(<b>new</b> <span class="i">MailRequest</span>() { <span class="i">Content</span> = <span class="i">DataOperations</span>.<span class="i">GetSystemErrMessage</span>(<span class="r11 r">Ex</span>) }); }
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Module: Automatic DB Data Manager for work with data directly Extreme</span>
+        <span class="c">///</span><span class="c"> Posibilities https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r12 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="5fb7738689b19ea0" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureHealthCheck</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r12 rd" class="r12 r">services</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">ModuleHealthServiceEnabled</span>) {
+                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>()
+                .<span class="i">AddSqlServer</span>(<span class="i">ServerConfigSettings</span>.<span class="i">DatabaseConnectionString</span>, <b>null</b>, <span class="s">&quot;Kontrola připojení k DB &quot;</span>)
+                .<span class="i">AddDbContextCheck</span>&lt;<span class="i">EasyITCenterContext</span>&gt;(<span class="s">&quot;Importované DB Schema&quot;</span>);
+ 
+                <span class="t t">List</span>&lt;<span class="i">ServerHealthCheckTaskList</span>&gt; <span id="r13 rd" class="r13 r">data</span>;
+                <b>using</b> (<b>new</b> <span class="i">TransactionScope</span>(<span class="i">TransactionScopeOption</span>.<span class="i">Required</span>, <b>new</b> <span class="i">TransactionOptions</span> { <span class="i">IsolationLevel</span> = <span class="i">IsolationLevel</span>.<span class="i">ReadUncommitted</span> })) {
+                    <span class="r13 r">data</span> = <b>new</b> <span class="i">EasyITCenterContext</span>().<span class="i">ServerHealthCheckTaskLists</span>.<span class="i">Where</span>(<span id="r14 rd" class="r14 r">a</span> =&gt; <span class="r14 r">a</span>.<span class="i">Active</span>).<span class="i">ToList</span>();
+                }
+ 
+                <b>foreach</b> (<b>var</b> <span id="r15 rd" class="r15 r">item</span> <b>in</b> <span class="r13 r">data</span>) {
+                    <b>try</b> {
+                        <b>switch</b> (<span class="r15 r">item</span>.<span class="i">Type</span>) {
+                            <b>case</b> <span class="s">&quot;driveSize&quot;</span>:
+                                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>().<span class="i">AddDiskStorageHealthCheck</span>(<span id="r16 rd" class="r16 r">diskOptions</span> =&gt; { <span class="r16 r">diskOptions</span>.<span class="i">AddDrive</span>(<span class="i">driveName</span>: <span class="r15 r">item</span>.<span class="i">ServerDrive</span>, <span class="r15 r">item</span>.<span class="i">SizeMb</span>.<span class="i">Value</span>); }, <span class="r15 r">item</span>.<span class="i">TaskName</span>);
+                                <b>break</b>;
+ 
+                            <b>case</b> <span class="s">&quot;folderExist&quot;</span>:
+                                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>().<span class="i">AddFolder</span>(<span id="r17 rd" class="r17 r">folderOption</span> =&gt; { <span class="r17 r">folderOption</span>.<span class="i">AddFolder</span>(<span class="r15 r">item</span>.<span class="i">FolderPath</span>); }, <span class="r15 r">item</span>.<span class="i">TaskName</span>);
+                                <b>break</b>;
+ 
+                            <b>case</b> <span class="s">&quot;processMemory&quot;</span>:
+                                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>().<span class="i">AddProcessAllocatedMemoryHealthCheck</span>(<span class="r15 r">item</span>.<span class="i">SizeMb</span>.<span class="i">Value</span>, <span class="r15 r">item</span>.<span class="i">TaskName</span>);
+                                <b>break</b>;
+ 
+                            <b>case</b> <span class="s">&quot;allocatedMemory&quot;</span>:
+                                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>().<span class="i">AddWorkingSetHealthCheck</span>(<span class="r15 r">item</span>.<span class="i">SizeMb</span>.<span class="i">Value</span> * 1024 * 1024, <span class="r15 r">item</span>.<span class="i">TaskName</span>);
+                                <b>break</b>;
+ 
+                            <b>case</b> <span class="s">&quot;ping&quot;</span>:
+                                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>().<span class="i">AddPingHealthCheck</span>(<span id="r18 rd" class="r18 r">option</span> =&gt; { <span class="r18 r">option</span>.<span class="i">AddHost</span>(<span class="r15 r">item</span>.<span class="i">IpAddress</span>, 10); }, <span class="r15 r">item</span>.<span class="i">TaskName</span>);
+                                <b>break</b>;
+ 
+                            <b>case</b> <span class="s">&quot;tcpPort&quot;</span>:
+                                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>().<span class="i">AddTcpHealthCheck</span>(<span id="r19 rd" class="r19 r">option</span> =&gt; { <span class="r19 r">option</span>.<span class="i">AddHost</span>(<span class="r15 r">item</span>.<span class="i">IpAddress</span>, <span class="r15 r">item</span>.<span class="i">Port</span>.<span class="i">Value</span>); }, <span class="r15 r">item</span>.<span class="i">TaskName</span>);
+                                <b>break</b>;
+ 
+                            <b>case</b> <span class="s">&quot;serverUrlPath&quot;</span>:
+                                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>().<span class="i">AddUrlGroup</span>(<b>new</b> <span class="t">Uri</span>(<span class="i">ServerConfigSettings</span>.<span class="i">ConfigServerStartupOnHttps</span> ? <span class="s">$&quot;</span><span class="s">https://localhost:</span>{<span class="i">ServerConfigSettings</span>.<span class="i">ConfigServerStartupPort</span>}<span class="s">&quot;</span> + <span class="r15 r">item</span>.<span class="i">ServerUrlPath</span> : <span class="s">$&quot;</span><span class="s">http://localhost:</span>{<span class="i">ServerConfigSettings</span>.<span class="i">ConfigServerStartupPort</span>}<span class="s">&quot;</span> + <span class="r15 r">item</span>.<span class="i">ServerUrlPath</span>), <span class="r15 r">item</span>.<span class="i">TaskName</span>);
+                                <b>break</b>;
+ 
+                            <b>case</b> <span class="s">&quot;urlPath&quot;</span>:
+                                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>().<span class="i">AddUrlGroup</span>(<b>new</b> <span class="t">Uri</span>(<span class="r15 r">item</span>.<span class="i">UrlPath</span>), <span class="r15 r">item</span>.<span class="i">TaskName</span>);
+                                <b>break</b>;
+ 
+                            <b>case</b> <span class="s">&quot;mssqlConnection&quot;</span>:
+                                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>().<span class="i">AddSqlServer</span>(<span class="r15 r">item</span>.<span class="i">DbSqlConnection</span>, <b>null</b>, <span class="r15 r">item</span>.<span class="i">TaskName</span>);
+                                <b>break</b>;
+ 
+                            <b>case</b> <span class="s">&quot;mysqlConnection&quot;</span>:
+                                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>().<span class="i">AddMySql</span>(<span class="r15 r">item</span>.<span class="i">DbSqlConnection</span>, <span class="r15 r">item</span>.<span class="i">TaskName</span>);
+                                <b>break</b>;
+ 
+                            <b>case</b> <span class="s">&quot;oracleConnection&quot;</span>:
+                                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>().<span class="i">AddOracle</span>(<span class="r15 r">item</span>.<span class="i">DbSqlConnection</span>, <span class="s">&quot;select * from v$version&quot;</span>, <span class="r15 r">item</span>.<span class="i">TaskName</span>);
+                                <b>break</b>;
+ 
+                            <b>case</b> <span class="s">&quot;postgresConnection&quot;</span>:
+                                <span class="r12 r">services</span>.<span class="i method">AddHealthChecks</span>().<span class="i">AddNpgSql</span>(<span class="r15 r">item</span>.<span class="i">DbSqlConnection</span>, <span class="s">&quot;SELECT 1;&quot;</span>, <b>null</b>, <span class="r15 r">item</span>.<span class="i">TaskName</span>);
+                                <b>break</b>;
+                        }
+                    } <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r20 rd" class="r20 r">Ex</span>) { <span class="i">CoreOperations</span>.<span class="i">SendEmail</span>(<b>new</b> <span class="i">MailRequest</span>() { <span class="i">Content</span> = <span class="i">DataOperations</span>.<span class="i">GetSystemErrMessage</span>(<span class="r20 r">Ex</span>) }); }
+                };
+                <span class="r12 r">services</span>.<span class="i">AddHealthChecksUI</span>(<span id="r21 rd" class="r21 r">setup</span> =&gt; {
+                    <span class="r21 r">setup</span>.<span class="i">SetHeaderText</span>(<span class="i">ServerConfigSettings</span>.<span class="i">ConfigCoreServerRegisteredName</span> + <span class="s">&quot;IT Dohledové Centrum&quot;</span>);
+                    <span class="r21 r">setup</span>.<span class="i">AddHealthCheckEndpoint</span>(<span class="s">&quot;IT:  NET | HW | SW | OS | DB  Monitoring&quot;</span>, (<span class="i">ServerConfigSettings</span>.<span class="i">ConfigServerStartupOnHttps</span>) ? <span class="s">$&quot;</span><span class="s">https://localhost:</span>{<span class="i">ServerConfigSettings</span>.<span class="i">ConfigServerStartupPort</span>}<span class="s">&quot;</span> + <span class="s">&quot;/HealthResultService&quot;</span> : <span class="s">$&quot;</span><span class="s">http://localhost:</span>{<span class="i">ServerConfigSettings</span>.<span class="i">ConfigServerStartupPort</span>}<span class="s">&quot;</span> + <span class="s">&quot;/HealthResultService&quot;</span>);
+                    <span class="r21 r">setup</span>.<span class="i">DisableDatabaseMigrations</span>();
+                    <span class="r21 r">setup</span>.<span class="i">SetApiMaxActiveRequests</span>(200);
+                    <span class="r21 r">setup</span>.<span class="i">SetMinimumSecondsBetweenFailureNotifications</span>(10);
+                    <span class="r21 r">setup</span>.<span class="i">SetEvaluationTimeInSeconds</span>(<span class="i">ServerConfigSettings</span>.<span class="i">ModuleHealthServiceRefreshIntervalSec</span>);
+                    <span class="r21 r">setup</span>.<span class="i">MaximumHistoryEntriesPerEndpoint</span>(10);
+                }).<span class="i">AddInMemoryStorage</span>(<span id="r22 rd" class="r22 r">optionsBuilder</span> =&gt; { <span class="r22 r">optionsBuilder</span>.<span class="i">EnableSensitiveDataLogging</span>(<b>false</b>); });
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Module: Swagger Api Doc Generator And Online Tester Configuration</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r23 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="960d978407828cfd" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureSwagger</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r23 rd" class="r23 r">services</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">ModuleSwaggerApiDocEnabled</span>) {
+                <span class="r23 r">services</span>.<span class="i">AddSwaggerSchemaBuilder</span>(<span id="r24 rd" class="r24 r">s</span> =&gt; {<span class="r24 r">s</span>.<span class="i">CamelCase</span> = <b>false</b>;});
+ 
+                <span class="r23 r">services</span>.<span class="i">AddSwaggerGen</span>(<span id="r25 rd" class="r25 r">c</span> =&gt; {
+                    <span class="r25 r">c</span>.<span class="i">AddSecurityDefinition</span>(<span class="s">&quot;Basic&quot;</span>, <b>new</b> <span class="i">OpenApiSecurityScheme</span> { <span class="i">Name</span> = <span class="s">&quot;Authorization&quot;</span>, <span class="i">Type</span> = <span class="i">SecuritySchemeType</span>.<span class="i">Http</span>, <span class="i">Scheme</span> = <span class="s">&quot;basic&quot;</span>, <span class="i">In</span> = <span class="i">ParameterLocation</span>.<span class="i">Header</span>, <span class="i">Description</span> = <span class="s">&quot;Basic Authorization header for getting Bearer Token.&quot;</span> });
+                    <span class="r25 r">c</span>.<span class="i">AddSecurityRequirement</span>(<b>new</b> <span class="i">OpenApiSecurityRequirement</span>
+                    { { <b>new</b> <span class="i">OpenApiSecurityScheme</span> { <span class="i">Reference</span> = <b>new</b> <span class="i">OpenApiReference</span> { <span class="i">Type</span> = <span class="i">ReferenceType</span>.<span class="i">SecurityScheme</span>, <span class="i">Id</span> = <span class="s">&quot;Basic&quot;</span> } }, <b>new</b> <span class="t constructor">List</span>&lt;<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>&gt;() } });
+                    <span class="r25 r">c</span>.<span class="i">AddSecurityDefinition</span>(<span class="s">&quot;Bearer&quot;</span>, <b>new</b> <span class="i">OpenApiSecurityScheme</span> { <span class="i">Description</span> = <span class="s">&quot;JWT Authorization header using the Bearer scheme for All safe APIs.&quot;</span>, <span class="i">Name</span> = <span class="s">&quot;Authorization&quot;</span>, <span class="i">In</span> = <span class="i">ParameterLocation</span>.<span class="i">Header</span>, <span class="i">Scheme</span> = <span class="s">&quot;bearer&quot;</span>, <span class="i">Type</span> = <span class="i">SecuritySchemeType</span>.<span class="i">Http</span>, <span class="i">BearerFormat</span> = <span class="s">&quot;JWT&quot;</span> });
+                    <span class="r25 r">c</span>.<span class="i">AddSecurityRequirement</span>(<b>new</b> <span class="i">OpenApiSecurityRequirement</span>
+                    { { <b>new</b> <span class="i">OpenApiSecurityScheme</span> { <span class="i">Reference</span> = <b>new</b> <span class="i">OpenApiReference</span> { <span class="i">Type</span> = <span class="i">ReferenceType</span>.<span class="i">SecurityScheme</span>, <span class="i">Id</span> = <span class="s">&quot;Bearer&quot;</span> } }, <b>new</b> <span class="t constructor">List</span>&lt;<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>&gt;() } });
+                    
+                    <span class="r25 r">c</span>.<span class="i">SchemaGeneratorOptions</span> = <b>new</b> <span class="i">SchemaGeneratorOptions</span> { <span class="i">SchemaIdSelector</span> = <span id="r26 rd" class="r26 r">type</span> =&gt; <span class="r26 r">type</span>.<span class="i">FullName</span> };
+                    <span class="r25 r">c</span>.<span class="i">SwaggerDoc</span>(<span class="i">Assembly</span>.<span class="i">GetEntryAssembly</span>()?.<span class="i">GetName</span>()?.<span class="i">Version</span>?.<span class="i">ToString</span>(), <b>new</b> <span class="i">OpenApiInfo</span> {
+                        <span class="i">Title</span> = <span class="i">ServerConfigSettings</span>.<span class="i">ConfigCoreServerRegisteredName</span> + <span class="s">&quot; Server API&quot;</span>,
+                        <span class="i">Version</span> = <span class="i">Assembly</span>.<span class="i">GetEntryAssembly</span>()?.<span class="i">GetName</span>()?.<span class="i">Version</span>?.<span class="i">ToString</span>(),
+                        <span class="i">TermsOfService</span> = <b>new</b> <span class="t">Uri</span>(<span class="i">ServerConfigSettings</span>.<span class="i">ServerPublicUrl</span>),
+                        <span class="i">Description</span> = <span class="i">BackendServer</span>.<span class="i">SwaggerModuleDescription</span>,
+                        <span class="i">Contact</span> = <b>new</b> <span class="i">OpenApiContact</span> { <span class="i">Name</span> = <span class="s">&quot;Libor Svoboda&quot;</span>, <span class="i">Email</span> = <span class="i">ServerConfigSettings</span>.<span class="i">EmailerServiceEmailAddress</span>, <span class="i">Url</span> = <b>new</b> <a href="@1@System.Runtime/A.html#9e1bb2fef0d1159b" class="t constructor">Uri</a>(<span class="s">&quot;https://groupware-solution.eu/contactus&quot;</span>) },
+                        <span class="i">License</span> = <b>new</b> <span class="i">OpenApiLicense</span> { <span class="i">Name</span> = <span class="i">ServerConfigSettings</span>.<span class="i">ConfigCoreServerRegisteredName</span> + <span class="s">&quot; Server License&quot;</span>, <span class="i">Url</span> = <b>new</b> <a href="@1@System.Runtime/A.html#9e1bb2fef0d1159b" class="t constructor">Uri</a>(<span class="s">&quot;https://www.groupware-solution.eu/&quot;</span>) }
+                    });
+ 
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r27 rd" class="r27 r">xmlFile</span> = <span class="i n">System</span>.<span class="i n">IO</span>.<a href="@1@System.Runtime/A.html#090eca8621a248ee" class="t t">Path</a>.<a href="@1@System.Runtime/A.html#2d7263f86a526264" class="i method">Combine</a>(<a href="@1@System.Runtime/A.html#b054bba9a22c6b4d" class="t t">AppContext</a>.<a href="@1@System.Runtime/A.html#97e151d1414f983f" class="i property">BaseDirectory</a>, <span class="s">$&quot;</span>{<span class="i">ServerConfigSettings</span>.<span class="i">ConfigCoreServerRegisteredName</span>}<span class="s">.xml</span><span class="s">&quot;</span>);
+                    <b>if</b> (<a href="@1@System.Runtime/A.html#1c7421e464f67b7e" class="t t">File</a>.<a href="@1@System.Runtime/A.html#3360368484a9f131" class="i method">Exists</a>(<span class="r27 r">xmlFile</span>)) <span class="r25 r">c</span>.<span class="i">IncludeXmlComments</span>(<span class="r27 r">xmlFile</span>, <b>true</b>);
+ 
+                    <span class="c">//c.InferSecuritySchemes();</span>
+                    <span class="r25 r">c</span>.<span class="i">UseOneOfForPolymorphism</span>();
+                    <span class="c">//c.UseInlineDefinitionsForEnums();</span>
+                    <span class="r25 r">c</span>.<span class="i">DescribeAllParametersInCamelCase</span>();
+                    <span class="r25 r">c</span>.<span class="i">EnableAnnotations</span>(<b>true</b>, <b>true</b>);
+                    <span class="r25 r">c</span>.<span class="i">UseAllOfForInheritance</span>();
+                    <span class="r25 r">c</span>.<span class="i">SupportNonNullableReferenceTypes</span>();
+                    <span class="c">//c.UseAllOfToExtendReferenceSchemas();</span>
+                    <span class="r25 r">c</span>.<span class="i">DocInclusionPredicate</span>((<span id="r28 rd" class="r28 r">docName</span>, <span id="r29 rd" class="r29 r">description</span>) =&gt; <b>true</b>);
+                    <span class="r25 r">c</span>.<span class="i">CustomSchemaIds</span>(<span id="r30 rd" class="r30 r">type</span> =&gt; <span class="r30 r">type</span>.<span class="i">FullName</span>);
+                    <span class="r25 r">c</span>.<span class="i">ResolveConflictingActions</span>(<span id="r31 rd" class="r31 r">x</span> =&gt; <span class="r31 r">x</span>.<span class="i">First</span>());
+                });
+            }
+        }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Enable Configured Server Ad-dons and Modules</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="c6a30e235660cd39" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="89709e40a000a031">ServerModulesEnabling</span></a> {
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Module: Enable Generated Developer Documentation</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="c5347e12379d1904" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">EnableDocumentation</a>(<b>ref</b> <span class="t t">IApplicationBuilder</span> <span id="r32 rd" class="r32 r">app</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">ModuleMdDocumentationEnabled</span>) {
+                <span class="r32 r">app</span>.<span class="i">UseDocumentation</span>(<span id="r33 rd" class="r33 r">builder</span> =&gt; {
+                    <span class="r33 r">builder</span>.<span class="i">HighlightJsStyle</span> = <span class="s">&quot;/metro/css/material-darker.css&quot;</span>;
+                    <span class="r33 r">builder</span>.<span class="i">GetMdlStyle</span> = <span class="s">&quot;/metro/css/material.min.css&quot;</span>;
+                    <span class="r33 r">builder</span>.<span class="i">NavBarStyle</span> = <span class="i">MarkdownDocumenting</span>.<span class="i">Elements</span>.<span class="i">NavBarStyle</span>.<span class="i">Default</span>;
+                    <span class="r33 r">builder</span>.<span class="i">RootPathHandling</span> = <span class="i">HandlingType</span>.<span class="i">HandleWithHighOrder</span>;
+                    <span class="r33 r">builder</span>.<span class="i">IndexDocument</span> = <span class="s">&quot;Docs&quot;</span>;
+ 
+                    <span class="c">//if (ServerConfigSettings.ServerRazorWebPagesEngineEnabled) builder.AddCustomLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate(&quot;DashBoard&quot;, ServerConfigSettings.ServiceServerLanguage), &quot;/DashBoard&quot;));</span>
+                    <span class="c">//if (ServerConfigSettings.ModuleHealthServiceEnabled) builder.AddCustomLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate(&quot;GithubInteli&quot;, ServerConfigSettings.ServiceServerLanguage), &quot;/Tools/EDC_ESB_InteliHelp/book/&quot;));</span>
+ 
+                    <span class="c">//if (ServerConfigSettings.ServerRazorWebPagesEngineEnabled) builder.AddFooterLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate(&quot;DashBoard&quot;, ServerConfigSettings.ServiceServerLanguage), &quot;/&quot;));</span>
+                    <span class="c">//if (ServerConfigSettings.ServerWebBrowserEnabled) builder.AddFooterLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate(&quot;ServerFiles&quot;, ServerConfigSettings.ServiceServerLanguage), &quot;/server&quot;));</span>
+                    <span class="c">//if (ServerConfigSettings.ModuleSwaggerApiDocEnabled) builder.AddFooterLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate(&quot;AutoGeneratedApiDocsWithTesting&quot;, ServerConfigSettings.ServiceServerLanguage), &quot;/AdminApiDocs&quot;));</span>
+                    <span class="c">//if (ServerConfigSettings.ModuleDataManagerEnabled) builder.AddFooterLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate(&quot;DataManagementForDevMode&quot;, ServerConfigSettings.ServiceServerLanguage), &quot;/CoreAdmin&quot;));</span>
+                    <span class="c">//if (ServerConfigSettings.ModuleDbDiagramGeneratorEnabled) builder.AddFooterLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate(&quot;DbDgmlSchema&quot;, ServerConfigSettings.ServiceServerLanguage), &quot;/DbDgmlSchema&quot;));</span>
+                    <span class="c">//if (ServerConfigSettings.ModuleHealthServiceEnabled) builder.AddFooterLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate(&quot;ConfiguredServerHeathCheckService(&gt;200)&quot;, ServerConfigSettings.ServiceServerLanguage), &quot;/ServerHealthService&quot;));</span>
+ 
+                    <span class="c">//builder.AddFooterLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate(&quot;Groupware-Solution.Eu&quot;, ServerConfigSettings.ServiceServerLanguage), &quot;https://Groupware-Solution.Eu&quot;));</span>
+                    <span class="c">//builder.AddFooterLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate(&quot;GitHub&quot;, ServerConfigSettings.ServiceServerLanguage), &quot;https://github.com/liborsvoboda&quot;));</span>
+                    <span class="c">//builder.AddFooterLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate(&quot;GitHubInteli&quot;, ServerConfigSettings.ServiceServerLanguage), &quot;/Tools/EDC_ESB_InteliHelp/book/&quot;));</span>
+                    <span class="c">//builder.AddFooterLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate(&quot;OnlineExamples&quot;, ServerConfigSettings.ServiceServerLanguage), &quot;https://KlikneteZde.Cz&quot;));</span>
+                });
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Module: Enable Swagger Api Doc Generator And Online Tester</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="80294659adc6c140" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">EnableSwagger</a>(<b>ref</b> <span class="t t">IApplicationBuilder</span> <span id="r34 rd" class="r34 r">app</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">ModuleSwaggerApiDocEnabled</span>) {
+                <span class="r34 r">app</span>.<span class="i">UseSwagger</span>();
+                <span class="r34 r">app</span>.<span class="i">UseSwaggerUI</span>(<span id="r35 rd" class="r35 r">c</span> =&gt; {
+                    <span class="r35 r">c</span>.<span class="i">RoutePrefix</span> = <span class="i">ServerConfigSettings</span>.<span class="i">ModuleSwaggerApiDocPath</span>.<span class="i">StartsWith</span>(<span class="s">&quot;/&quot;</span>) ? <span class="i">ServerConfigSettings</span>.<span class="i">ModuleSwaggerApiDocPath</span>.<span class="i">Substring</span>(1) : <span class="i">ServerConfigSettings</span>.<span class="i">ModuleSwaggerApiDocPath</span>;
+                    <span class="r35 r">c</span>.<span class="i">DocumentTitle</span> = <span class="i">BackendServer</span>.<span class="i">SwaggerModuleDescription</span>;
+                    <span class="r35 r">c</span>.<span class="i">SwaggerEndpoint</span>(<span class="s">&quot;/swagger/&quot;</span> + <span class="i">Assembly</span>.<span class="i">GetEntryAssembly</span>()?.<span class="i">GetName</span>()?.<span class="i">Version</span>?.<span class="i">ToString</span>() + <span class="s">&quot;/swagger.json&quot;</span>, <span class="s">&quot;Server API version &quot;</span> + <span class="i">Assembly</span>.<span class="i">GetEntryAssembly</span>()?.<span class="i">GetName</span>()?.<span class="i">Version</span>?.<span class="i">ToString</span>());
+                    <span class="r35 r">c</span>.<span class="i">DocExpansion</span>(<span class="i">DocExpansion</span>.<span class="i">None</span>);
+                    <span class="r35 r">c</span>.<span class="i">EnableTryItOutByDefault</span>();
+                    <span class="r35 r">c</span>.<span class="i">DisplayRequestDuration</span>();
+                    <span class="c">//c.EnableDeepLinking();</span>
+                    <span class="r35 r">c</span>.<span class="i">EnableFilter</span>();
+                    <span class="c">//c.DisplayOperationId();</span>
+                    <span class="r35 r">c</span>.<span class="i">DefaultModelExpandDepth</span>(1);
+                    <span class="r35 r">c</span>.<span class="i">DefaultModelRendering</span>(<span class="i">ModelRendering</span>.<span class="i">Model</span>);
+                    <span class="r35 r">c</span>.<span class="i">DefaultModelsExpandDepth</span>(1);
+                    <span class="c">//c.EnablePersistAuthorization();</span>
+                    <span class="c">//c.EnableValidator();</span>
+                    <span class="c">//c.ShowCommonExtensions();</span>
+                    <span class="c">//c.ShowExtensions();</span>
+                    <span class="r35 r">c</span>.<span class="i">SupportedSubmitMethods</span>(<span class="i">SubmitMethod</span>.<span class="i">Get</span>,<span class="i">SubmitMethod</span>.<span class="i">Put</span>, <span class="i">SubmitMethod</span>.<span class="i">Delete</span>, <span class="i">SubmitMethod</span>.<span class="i">Head</span>, <span class="i">SubmitMethod</span>.<span class="i">Post</span>);
+                    <span class="r35 r">c</span>.<span class="i">UseRequestInterceptor</span>(<span class="s">&quot;(request) =&gt; { return request; }&quot;</span>);
+                    <span class="r35 r">c</span>.<span class="i">UseResponseInterceptor</span>(<span class="s">&quot;(response) =&gt; { return response; }&quot;</span>);
+                });
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Module: Enable Live Data Monitor</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="16d18cfe49d9672b" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">EnableLiveDataMonitor</a>(<b>ref</b> <span class="t t">IApplicationBuilder</span> <span id="r36 rd" class="r36 r">app</span>) { <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">WebLiveDataMonitorEnabled</span>) { <span class="r36 r">app</span>.<span class="i">UseLiveReload</span>(); } }
+ 
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Module: Enable DBEntitySchema Web Page</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="847491e7b9d35a90" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">EnableDBEntitySchema</a>(<b>ref</b> <span class="t t">IApplicationBuilder</span> <span id="r37 rd" class="r37 r">app</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">ModuleDBEntitySchemaEnabled</span>) { 
+                <span class="r37 r">app</span>.<span class="i">UseDBEntitySchema</span>(<span id="r38 rd" class="r38 r">cfg</span> =&gt; { 
+                <span class="r38 r">cfg</span>.<span class="i">PathMatch</span> = <span class="i">ServerConfigSettings</span>.<span class="i">ModuleDBEntitySchemaPath</span>.<span class="i">StartsWith</span>(<span class="s">&quot;/&quot;</span>) 
+                    ? <span class="i">ServerConfigSettings</span>.<span class="i">ModuleDBEntitySchemaPath</span> 
+                    : <span class="s">&quot;/&quot;</span> + <span class="i">ServerConfigSettings</span>.<span class="i">ModuleDBEntitySchemaPath</span>; }); 
+            } 
+        }
+    }
+}</pre></td></tr></table></div></body></html>

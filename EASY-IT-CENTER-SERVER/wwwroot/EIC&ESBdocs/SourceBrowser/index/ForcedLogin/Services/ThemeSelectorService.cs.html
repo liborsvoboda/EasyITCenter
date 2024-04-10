@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html><head><title>ThemeSelectorService.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(72);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#ForcedLogin/Services/ThemeSelectorService.cs" target="_top">Services\ThemeSelectorService.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#ForcedLogin" target="_top">HelpProjects\WPF-MAIN\WPFprism\ForcedLogin\ForcedLogin\ForcedLogin.csproj</a> (ForcedLogin)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+
+<b>using</b> <span class="i n">ForcedLogin</span>.<span class="i n">Contracts</span>.<span class="i n">Services</span>;
+<b>using</b> <span class="i n">ForcedLogin</span>.<span class="i n">Models</span>;
+
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>;
+
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Win32</span>;
+
+<b>namespace</b> <span class="i n">ForcedLogin</span>.<span class="i n">Services</span>
+{
+    <b>public class</b> <a id="04e0fe3d47584357" href="../R/04e0fe3d47584357.html" target="n" data-glyph="0,0" class="t t">ThemeSelectorService</a> : <a href="../Contracts/Services/IThemeSelectorService.cs.html#59961216401f84c2" class="t t">IThemeSelectorService</a>
+    {
+        <b>private bool</b> <a id="73bc08a35855ff5a" href="../R/73bc08a35855ff5a.html" target="n" data-glyph="106,1" class="i property">IsHighContrastActive</a>
+                        =&gt; <a href="@0@PresentationFramework/A.html#02007600b4eb5699" class="t t">SystemParameters</a>.<a href="@0@PresentationFramework/A.html#e0d5765861dd1eca" class="i property">HighContrast</a>;
+
+        <b>public</b> <a id="6330c25cbdd9d298" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ThemeSelectorService</a>()
+        {
+            <span class="t t">SystemEvents</span>.<span class="i">UserPreferenceChanging</span> += <a href="#1e848777683fd856" class="i method">OnUserPreferenceChanging</a>;
+        }
+
+        <b>public bool</b> <a id="56b398cbb0d4d2dc" href="../R/56b398cbb0d4d2dc.html" target="n" data-glyph="72,1" class="i method">SetTheme</a>(<a href="../Models/AppTheme.cs.html#18b41336037cde52" class="t t">AppTheme</a>? <span id="r0 rd" class="r0 r">theme</span> = <b>null</b>)
+        {
+            <b>if</b> (<a href="#73bc08a35855ff5a" class="i property">IsHighContrastActive</a>)
+            {
+                <span class="c">// TODO: Set high contrast theme name</span>
+            }
+            <b>else</b> <b>if</b> (<span class="r0 r">theme</span> == <b>null</b>)
+            {
+                <b>if</b> (<a href="../P/70f20b51bb734670.html#70f20b51bb734670" class="t t">App</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>.<a href="@0@PresentationFramework/A.html#61c9e4f4b42c5fa0" class="i property">Properties</a>.<a href="@1@System.Runtime/A.html#eff0bd07d53691c6" class="i method">Contains</a>(<span class="s">&quot;Theme&quot;</span>))
+                {
+                    <span class="c">// Saved theme</span>
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r1 rd" class="r1 r">themeName</span> = <a href="../P/70f20b51bb734670.html#70f20b51bb734670" class="t t">App</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>.<a href="@0@PresentationFramework/A.html#61c9e4f4b42c5fa0" class="i property">Properties</a><a href="@1@System.Runtime/A.html#121995d2df15485a">[</a><span class="s">&quot;Theme&quot;</span>].<a href="@1@System.Runtime/A.html#ff31a6bf27c58f89" class="i method">ToString</a>();
+                    <span class="r0 r">theme</span> = (<a href="../Models/AppTheme.cs.html#18b41336037cde52" class="t t">AppTheme</a>)<a href="@1@System.Runtime/A.html#36729210e317a805" class="t t">Enum</a>.<a href="@1@System.Runtime/A.html#6c84f29508754e27" class="i method">Parse</a>(<b>typeof</b>(<a href="../Models/AppTheme.cs.html#18b41336037cde52" class="t t">AppTheme</a>), <span class="r1 r">themeName</span>);
+                }
+                <b>else</b>
+                {
+                    <span class="c">// Default theme</span>
+                    <span class="r0 r">theme</span> = <a href="../Models/AppTheme.cs.html#18b41336037cde52" class="t t">AppTheme</a>.<a href="../Models/AppTheme.cs.html#e8857fa616635d5d" class="i field">Light</a>;
+                }
+            }
+
+            <a href="/MahApps.Metro/A.html#5fd94fbc10f1291e" class="k">var</a> <span id="r2 rd" class="r2 r">currentTheme</span> = <a href="/MahApps.Metro/A.html#b84540aa3d139f17" class="t t">ThemeManager</a>.<a href="/MahApps.Metro/A.html#89a4dbb6eebd836b" class="i method">DetectTheme</a>(<a href="@0@PresentationFramework/A.html#cf9c51e402f97b05" class="t t">Application</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>);
+            <b>if</b> (<span class="r2 r">currentTheme</span> == <b>null</b> || <span class="r2 r">currentTheme</span>.<a href="/MahApps.Metro/A.html#9b03e697632b4d84" class="i property">Name</a> != <span class="r0 r">theme</span>.<a href="@1@System.Runtime/A.html#d83d2db767b43db7" class="i method">ToString</a>())
+            {
+                <a href="/MahApps.Metro/A.html#b84540aa3d139f17" class="t t">ThemeManager</a>.<a href="/MahApps.Metro/A.html#3bb304ec4cdf359e" class="i method">ChangeTheme</a>(<a href="@0@PresentationFramework/A.html#cf9c51e402f97b05" class="t t">Application</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>, <span class="s">$&quot;</span>{<span class="r0 r">theme</span>}<span class="s">.Blue</span><span class="s">&quot;</span>);
+                <a href="../P/70f20b51bb734670.html#70f20b51bb734670" class="t t">App</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>.<a href="@0@PresentationFramework/A.html#61c9e4f4b42c5fa0" class="i property">Properties</a><a href="@1@System.Runtime/A.html#121995d2df15485a">[</a><span class="s">&quot;Theme&quot;</span>] = <span class="r0 r">theme</span>.<a href="@1@System.Runtime/A.html#d83d2db767b43db7" class="i method">ToString</a>();
+                <b>return</b> <b>true</b>;
+            }
+
+            <b>return</b> <b>false</b>;
+        }
+
+        <b>public</b> <a href="../Models/AppTheme.cs.html#18b41336037cde52" class="t t">AppTheme</a> <a id="e2d350a416d7b54b" href="../R/e2d350a416d7b54b.html" target="n" data-glyph="72,1" class="i method">GetCurrentTheme</a>()
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r3 rd" class="r3 r">themeName</span> = <a href="../P/70f20b51bb734670.html#70f20b51bb734670" class="t t">App</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>.<a href="@0@PresentationFramework/A.html#61c9e4f4b42c5fa0" class="i property">Properties</a><a href="@1@System.Runtime/A.html#121995d2df15485a">[</a><span class="s">&quot;Theme&quot;</span>]?.<a href="@1@System.Runtime/A.html#ff31a6bf27c58f89" class="i method">ToString</a>();
+            <a href="@1@System.Runtime/A.html#36729210e317a805" class="t t">Enum</a>.<a href="@1@System.Runtime/A.html#6da2ad9fd66be476" class="i method">TryParse</a>(<span class="r3 r">themeName</span>, <b>out</b> <a href="../Models/AppTheme.cs.html#18b41336037cde52" class="t t">AppTheme</a> <span id="r4 rd" class="r4 r">theme</span>);
+            <b>return</b> <span class="r4 r">theme</span>;
+        }
+
+        <b>private void</b> <a id="1e848777683fd856" href="../R/1e848777683fd856.html" target="n" data-glyph="76,1" class="i method">OnUserPreferenceChanging</a>(<b>object</b> <span id="r5 rd" class="r5 r">sender</span>, <span class="t t">UserPreferenceChangingEventArgs</span> <span id="r6 rd" class="r6 r">e</span>)
+        {
+            <b>if</b> (<span class="r6 r">e</span>.<span class="i property">Category</span> == <span class="t t">UserPreferenceCategory</span>.<span class="i field">Color</span> ||
+                <span class="r6 r">e</span>.<span class="i property">Category</span> == <span class="t t">UserPreferenceCategory</span>.<span class="i field">VisualStyle</span>)
+            {
+                <a href="#56b398cbb0d4d2dc" class="i method">SetTheme</a>();
+            }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

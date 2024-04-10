@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+<html><head><title>TabControlHelper.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(347);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/Helper/TabControlHelper.cs" target="_top">Controls\Helper\TabControlHelper.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<span class="i n">Primitives</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Specifies the underline position of a TabControl.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public enum</b> <a id="10a3801ce2d7c097" href="../../R/10a3801ce2d7c097.html" target="n" data-glyph="18,0" class="t t"><span id="9c2f9c1c12822933">UnderlinedType</span></a>
+    {
+        <a id="cab8c2260fc94798" href="../../R/cab8c2260fc94798.html" target="n" data-glyph="24,1" class="i field">None</a>,
+        <a id="9dd9d71231f96efc" href="../../R/../../0000000000.html" target="n" data-glyph="24,1" class="i field">TabItems</a>,
+        <a id="d5a30b856cebed29" href="../../R/../../0000000000.html" target="n" data-glyph="24,1" class="i field">SelectedTabItem</a>,
+        <a id="2bdca8f27207e536" href="../../R/../../0000000000.html" target="n" data-glyph="24,1" class="i field">TabPanel</a>
+    }
+
+    <b>public static class</b> <a id="c808af4f13050299" href="../../R/c808af4f13050299.html" target="n" data-glyph="0,0" class="t t">TabControlHelper</a>
+    {
+        <span class="c">///</span><span class="c"> Sets the Style and Template property to null.</span>
+        <span class="c">///</span>
+        <span class="c">///</span><span class="c"> Removing a TabItem in code behind can produce such nasty output</span>
+        <span class="c">///</span><span class="c"> System.Windows.Data Warning: 4 : Cannot find source for binding with reference &#39;RelativeSource FindAncestor, AncestorType=&#39;System.Windows.Controls.TabControl&#39;, AncestorLevel=&#39;1&#39;&#39;. BindingExpression:Path=Background; DataItem=null; target element is &#39;TabItem&#39; (Name=&#39;&#39;); target property is &#39;Background&#39; (type &#39;Brush&#39;)</span>
+        <span class="c">///</span><span class="c"> or</span>
+        <span class="c">///</span><span class="c"> System.Windows.Data Error: 4 : Cannot find source for binding with reference &#39;RelativeSource FindAncestor, AncestorType=&#39;System.Windows.Controls.TabControl&#39;, AncestorLevel=&#39;1&#39;&#39;. BindingExpression:Path=(0); DataItem=null; target element is &#39;TabItem&#39; (Name=&#39;&#39;); target property is &#39;UnderlineBrush&#39; (type &#39;Brush&#39;)</span>
+        <span class="c">///</span>
+        <span class="c">///</span><span class="c"> This is a timing problem in WPF of the binding mechanism itself.</span>
+        <span class="c">///</span>
+        <span class="c">///</span><span class="c"> To avoid this, we can set the Style and Template to null.</span>
+        <b>public static void</b> <a id="5b5384dadc87c8a0" href="../../R/5b5384dadc87c8a0.html" target="n" data-glyph="220,1" class="i method">ClearStyle</a>(<b>this</b> <a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>? <span id="r0 rd" class="r0 r">tabItem</span>)
+        {
+            <b>if</b> (<span class="r0 r">tabItem</span> <b>is null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <span class="r0 r">tabItem</span>.<a href="@0@PresentationFramework/A.html#daecaeeeebb2beb9" class="i property">Template</a> = <b>null</b>;
+            <span class="r0 r">tabItem</span>.<a href="@0@PresentationFramework/A.html#9e86dfc6412c0fe7" class="i property">Style</a> = <b>null</b>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Identifies the CloseButtonEnabled attached property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="d9cb7739f05a5bb8" href="../../R/d9cb7739f05a5bb8.html" target="n" data-glyph="42,1" class="i field">CloseButtonEnabledProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;CloseButtonEnabled&quot;</span>,
+                <b>typeof</b>(<b>bool</b>),
+                <b>typeof</b>(<a href="#c808af4f13050299" class="t t">TabControlHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#b3ede21c21163c04" class="i field">AffectsArrange</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#346d0d32656c4827" class="i field">Inherits</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets whether a close button should be visible or not.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static bool</b> <a id="6e007de0252ff106" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetCloseButtonEnabled</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r1 rd" class="r1 r">element</span>)
+        {
+            <b>return</b> (<b>bool</b>)<span class="r1 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#d9cb7739f05a5bb8" class="i field">CloseButtonEnabledProperty</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets whether a close button should be visible or not.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static void</b> <a id="fd0dcc9c6f7f497c" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetCloseButtonEnabled</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r2 rd" class="r2 r">element</span>, <b>bool</b> <span id="r3 rd" class="r3 r">value</span>)
+        {
+            <span class="r2 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#d9cb7739f05a5bb8" class="i field">CloseButtonEnabledProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<span class="r3 r">value</span>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Identifies the CloseTabCommand attached property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="3800638a3efeebf0" href="../../R/3800638a3efeebf0.html" target="n" data-glyph="42,1" class="i field">CloseTabCommandProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;CloseTabCommand&quot;</span>,
+                <b>typeof</b>(<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>),
+                <b>typeof</b>(<a href="#c808af4f13050299" class="t t">TabControlHelper</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets a command for the TabItem which executes if the TabItem will be closed.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static</b> <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <a id="1408cfc22d3802b7" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetCloseTabCommand</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r4 rd" class="r4 r">element</span>)
+        {
+            <b>return</b> (<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>?)<span class="r4 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#3800638a3efeebf0" class="i field">CloseTabCommandProperty</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets a command for the TabItem which executes if the TabItem will be closed.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static void</b> <a id="0f6075525890100f" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetCloseTabCommand</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r5 rd" class="r5 r">element</span>, <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <span id="r6 rd" class="r6 r">value</span>)
+        {
+            <span class="r5 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#3800638a3efeebf0" class="i field">CloseTabCommandProperty</a>, <span class="r6 r">value</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Identifies the CloseTabCommandParameter attached property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="ddc8de49a9f158fd" href="../../R/ddc8de49a9f158fd.html" target="n" data-glyph="42,1" class="i field">CloseTabCommandParameterProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;CloseTabCommandParameter&quot;</span>,
+                <b>typeof</b>(<b>object</b>),
+                <b>typeof</b>(<a href="#c808af4f13050299" class="t t">TabControlHelper</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets a command parameter for the TabItem that will be passed to the CloseTabCommand.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static object</b>? <a id="9509fc5728eb9ac2" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetCloseTabCommandParameter</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r7 rd" class="r7 r">element</span>)
+        {
+            <b>return</b> (<b>object</b>?)<span class="r7 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#ddc8de49a9f158fd" class="i field">CloseTabCommandParameterProperty</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets a command parameter for the TabItem that will be passed to the CloseTabCommand.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static void</b> <a id="b056988cb5cfc25b" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetCloseTabCommandParameter</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r8 rd" class="r8 r">element</span>, <b>object</b>? <span id="r9 rd" class="r9 r">value</span>)
+        {
+            <span class="r8 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#ddc8de49a9f158fd" class="i field">CloseTabCommandParameterProperty</a>, <span class="r9 r">value</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Defines whether the underline below the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> or </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#76951103bce8068a" class="t t">TabPanel</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> is shown or not.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f5ef52f82780d1ee" href="../../R/f5ef52f82780d1ee.html" target="n" data-glyph="42,1" class="i field">UnderlinedProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;Underlined&quot;</span>,
+                <b>typeof</b>(<a href="#10a3801ce2d7c097" class="t t">UnderlinedType</a>),
+                <b>typeof</b>(<a href="#c808af4f13050299" class="t t">TabControlHelper</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="#10a3801ce2d7c097" class="t t">UnderlinedType</a>.<a href="#cab8c2260fc94798" class="i field">None</a>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        <b>public static</b> <a href="#10a3801ce2d7c097" class="t t">UnderlinedType</a> <a id="db426211d255eba5" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetUnderlined</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r10 rd" class="r10 r">element</span>)
+        {
+            <b>return</b> (<a href="#10a3801ce2d7c097" class="t t">UnderlinedType</a>)<span class="r10 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f5ef52f82780d1ee" class="i field">UnderlinedProperty</a>);
+        }
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        <b>public static void</b> <a id="0ef3d74b4f1eff51" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetUnderlined</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r11 rd" class="r11 r">element</span>, <a href="#10a3801ce2d7c097" class="t t">UnderlinedType</a> <span id="r12 rd" class="r12 r">value</span>)
+        {
+            <span class="r11 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f5ef52f82780d1ee" class="i field">UnderlinedProperty</a>, <span class="r12 r">value</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Defines the underline brush below the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> or </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#76951103bce8068a" class="t t">TabPanel</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="a4974e0a858412fc" href="../../R/a4974e0a858412fc.html" target="n" data-glyph="42,1" class="i field">UnderlineBrushProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;UnderlineBrush&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>),
+                <b>typeof</b>(<a href="#c808af4f13050299" class="t t">TabControlHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#346d0d32656c4827" class="i field">Inherits</a>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <a id="ecdb2ccc53392a34" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetUnderlineBrush</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r13 rd" class="r13 r">element</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>?)<span class="r13 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#a4974e0a858412fc" class="i field">UnderlineBrushProperty</a>);
+        }
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static void</b> <a id="4e809360c3397bd1" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetUnderlineBrush</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r14 rd" class="r14 r">element</span>, <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <span id="r15 rd" class="r15 r">value</span>)
+        {
+            <span class="r14 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#a4974e0a858412fc" class="i field">UnderlineBrushProperty</a>, <span class="r15 r">value</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Defines the underline brush below the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> or </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#76951103bce8068a" class="t t">TabPanel</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> of an selected item.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="81d7a00b953c23ff" href="../../R/81d7a00b953c23ff.html" target="n" data-glyph="42,1" class="i field">UnderlineSelectedBrushProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;UnderlineSelectedBrush&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>),
+                <b>typeof</b>(<a href="#c808af4f13050299" class="t t">TabControlHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#346d0d32656c4827" class="i field">Inherits</a>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <a id="58545e4ccc60b05c" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetUnderlineSelectedBrush</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r16 rd" class="r16 r">element</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>?)<span class="r16 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#81d7a00b953c23ff" class="i field">UnderlineSelectedBrushProperty</a>);
+        }
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static void</b> <a id="7e67b1cff68364e8" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetUnderlineSelectedBrush</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r17 rd" class="r17 r">element</span>, <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <span id="r18 rd" class="r18 r">value</span>)
+        {
+            <span class="r17 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#81d7a00b953c23ff" class="i field">UnderlineSelectedBrushProperty</a>, <span class="r18 r">value</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Defines the underline brush below the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> or </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#76951103bce8068a" class="t t">TabPanel</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> if the mouse is over an item.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="1cab33efb6700830" href="../../R/1cab33efb6700830.html" target="n" data-glyph="42,1" class="i field">UnderlineMouseOverBrushProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;UnderlineMouseOverBrush&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>),
+                <b>typeof</b>(<a href="#c808af4f13050299" class="t t">TabControlHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#346d0d32656c4827" class="i field">Inherits</a>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <a id="736042dd1ba5b27f" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetUnderlineMouseOverBrush</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r19 rd" class="r19 r">element</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>?)<span class="r19 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#1cab33efb6700830" class="i field">UnderlineMouseOverBrushProperty</a>);
+        }
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static void</b> <a id="7370d59f7dfea226" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetUnderlineMouseOverBrush</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r20 rd" class="r20 r">element</span>, <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <span id="r21 rd" class="r21 r">value</span>)
+        {
+            <span class="r20 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#1cab33efb6700830" class="i field">UnderlineMouseOverBrushProperty</a>, <span class="r21 r">value</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Defines the underline brush below the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> or </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#76951103bce8068a" class="t t">TabPanel</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> if the mouse is over a selected item.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="661bd9546cc72ab4" href="../../R/661bd9546cc72ab4.html" target="n" data-glyph="42,1" class="i field">UnderlineMouseOverSelectedBrushProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;UnderlineMouseOverSelectedBrush&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>),
+                <b>typeof</b>(<a href="#c808af4f13050299" class="t t">TabControlHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#346d0d32656c4827" class="i field">Inherits</a>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <a id="671dd7bdf35b7a2c" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetUnderlineMouseOverSelectedBrush</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r22 rd" class="r22 r">element</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>?)<span class="r22 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#661bd9546cc72ab4" class="i field">UnderlineMouseOverSelectedBrushProperty</a>);
+        }
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static void</b> <a id="183683fb210e0062" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetUnderlineMouseOverSelectedBrush</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r23 rd" class="r23 r">element</span>, <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <span id="r24 rd" class="r24 r">value</span>)
+        {
+            <span class="r23 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#661bd9546cc72ab4" class="i field">UnderlineMouseOverSelectedBrushProperty</a>, <span class="r24 r">value</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This property can be used to set the Transition for animated TabControls</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="5395ee4dd7993b8c" href="../../R/5395ee4dd7993b8c.html" target="n" data-glyph="42,1" class="i field">TransitionProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;Transition&quot;</span>,
+                <b>typeof</b>(<a href="../TransitioningContentControl.cs.html#6f2bb469cb40784a" class="t t">TransitionType</a>),
+                <b>typeof</b>(<a href="#c808af4f13050299" class="t t">TabControlHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../TransitioningContentControl.cs.html#6f2bb469cb40784a" class="t t">TransitionType</a>.<a href="../TransitioningContentControl.cs.html#14f3d981b19e332b" class="i field">Default</a>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#b3ede21c21163c04" class="i field">AffectsArrange</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#346d0d32656c4827" class="i field">Inherits</a>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        <b>public static</b> <a href="../TransitioningContentControl.cs.html#6f2bb469cb40784a" class="t t">TransitionType</a> <a id="875ee7a774c3f171" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetTransition</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r25 rd" class="r25 r">obj</span>)
+        {
+            <b>return</b> (<a href="../TransitioningContentControl.cs.html#6f2bb469cb40784a" class="t t">TransitionType</a>)<span class="r25 r">obj</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#5395ee4dd7993b8c" class="i field">TransitionProperty</a>);
+        }
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        <b>public static void</b> <a id="ec48213666c43720" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetTransition</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r26 rd" class="r26 r">obj</span>, <a href="../TransitioningContentControl.cs.html#6f2bb469cb40784a" class="t t">TransitionType</a> <span id="r27 rd" class="r27 r">value</span>)
+        {
+            <span class="r26 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#5395ee4dd7993b8c" class="i field">TransitionProperty</a>, <span class="r27 r">value</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Defines the position of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> Underline</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f1e3741e40e5dd6b" href="../../R/f1e3741e40e5dd6b.html" target="n" data-glyph="42,1" class="i field">UnderlinePlacementProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;UnderlinePlacement&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationFramework/A.html#247b2a9cc539228a" class="t t">Dock</a>?),
+                <b>typeof</b>(<a href="#c808af4f13050299" class="t t">TabControlHelper</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        <b>public static</b> <a href="@0@PresentationFramework/A.html#247b2a9cc539228a" class="t t">Dock</a>? <a id="a542afe1e62cb29c" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetUnderlinePlacement</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r28 rd" class="r28 r">element</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationFramework/A.html#247b2a9cc539228a" class="t t">Dock</a>?)<span class="r28 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f1e3741e40e5dd6b" class="i field">UnderlinePlacementProperty</a>);
+        }
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        <b>public static void</b> <a id="69301de763a4bd93" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetUnderlinePlacement</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r29 rd" class="r29 r">element</span>, <a href="@0@PresentationFramework/A.html#247b2a9cc539228a" class="t t">Dock</a>? <span id="r30 rd" class="r30 r">value</span>)
+        {
+            <span class="r29 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f1e3741e40e5dd6b" class="i field">UnderlinePlacementProperty</a>, <span class="r30 r">value</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Defines the margin of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> or </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> underline.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="6a9a8e7435841ee0" href="../../R/6a9a8e7435841ee0.html" target="n" data-glyph="42,1" class="i field">UnderlineMarginProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;UnderlineMargin&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a>),
+                <b>typeof</b>(<a href="#c808af4f13050299" class="t t">TabControlHelper</a>),
+                <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t constructor">Thickness</a>()));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or s ets the margin for the underline.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static</b> <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a> <a id="8a05033a338571b6" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetUnderlineMargin</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r31 rd" class="r31 r">element</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a>)<span class="r31 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#6a9a8e7435841ee0" class="i field">UnderlineMarginProperty</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets or sets the outer margin for the underline.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#aa40249032b289f4" class="t t">TabControl</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#f6a592e69d86f1fc" class="t t">TabItem</a>))]
+        <b>public static void</b> <a id="79098d44c398584b" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetUnderlineMargin</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r32 rd" class="r32 r">element</span>, <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a> <span id="r33 rd" class="r33 r">value</span>)
+        {
+            <span class="r32 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#6a9a8e7435841ee0" class="i field">UnderlineMarginProperty</a>, <span class="r33 r">value</span>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

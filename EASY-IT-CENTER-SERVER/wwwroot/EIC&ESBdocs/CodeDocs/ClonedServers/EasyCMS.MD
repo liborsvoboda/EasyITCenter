@@ -1,4 +1,4 @@
-﻿
+﻿[Zpět](../index)   
 
 ### Installation Free Full EasyCMS Web System Standalone/IIS on WIN/LIN/OS  
 
@@ -29,3 +29,4 @@ složka tmp vypada že ma všechny pluginy
 	- admin
 	- App_data
 
+---   

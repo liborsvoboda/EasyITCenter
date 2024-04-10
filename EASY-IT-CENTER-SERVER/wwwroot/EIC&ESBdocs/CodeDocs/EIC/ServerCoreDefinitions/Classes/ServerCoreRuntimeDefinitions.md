@@ -1,4 +1,7 @@
-﻿
+﻿[Zpět](../../../index)   
+
+
+
 * Server Core Definitions and extensions
 * for optimal running in One clean code structure
 

@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html><head><title>HamburgerMenuItem.cs</title><link rel="stylesheet" href="../../../../styles.css"><script src="../../../../scripts.js"></script></head>
+<body class="cB" onload="i(231);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/HamburgerMenu/MenuItems/HamburgerMenuItem.cs" target="_top">Controls\HamburgerMenu\MenuItems\HamburgerMenuItem.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">JetBrains</span>.<span class="i n">Annotations</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> The HamburgerMenuItem provides an implementation for HamburgerMenu entries.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="1bba5e5176ace3ac" href="../../../R/1bba5e5176ace3ac.html" target="n" data-glyph="0,0" class="t t"><span id="4890ad0e1ebad253">HamburgerMenuItem</span></a> : <a href="HamburgerMenuItemBase.cs.html#f13186c25fdd456f" class="t t">HamburgerMenuItemBase</a>, <a href="IHamburgerMenuItem.cs.html#c8d1e9cc10ad476d" class="t t">IHamburgerMenuItem</a>, <a href="@0@PresentationCore/A.html#1c1aab4a272b7852" class="t t">ICommandSource</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7757a14ecc42d301" class="i property">Label</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="875229498669cdf6" href="../../../R/875229498669cdf6.html" target="n" data-glyph="42,1" class="i field">LabelProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#7757a14ecc42d301" class="i property">Label</a>),
+                                          <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>),
+                                          <b>typeof</b>(<a href="#1bba5e5176ace3ac" class="t t">HamburgerMenuItem</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a value that specifies label to display.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b>? <a id="7757a14ecc42d301" href="../../../R/7757a14ecc42d301.html" target="n" data-glyph="102,1" class="i property">Label</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>?)<a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#875229498669cdf6" class="i field">LabelProperty</a>);
+            <b>set</b> =&gt; <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#875229498669cdf6" class="i field">LabelProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#b83c92b079b0cd64" class="i property">TargetPageType</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="0b14a00d94b85be4" href="../../../R/0b14a00d94b85be4.html" target="n" data-glyph="42,1" class="i field">TargetPageTypeProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#b83c92b079b0cd64" class="i property">TargetPageType</a>),
+                                          <b>typeof</b>(<a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>),
+                                          <b>typeof</b>(<a href="#1bba5e5176ace3ac" class="t t">HamburgerMenuItem</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a value that specifies the page to navigate to (if you use the HamburgerMenu with a Frame content)</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>? <a id="b83c92b079b0cd64" href="../../../R/b83c92b079b0cd64.html" target="n" data-glyph="102,1" class="i property">TargetPageType</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>?)<a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#0b14a00d94b85be4" class="i field">TargetPageTypeProperty</a>);
+            <b>set</b> =&gt; <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#0b14a00d94b85be4" class="i field">TargetPageTypeProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#19a381ba440fdd83" class="i property">Command</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="4cfc6cad9b1596c6" href="../../../R/4cfc6cad9b1596c6.html" target="n" data-glyph="42,1" class="i field">CommandProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#19a381ba440fdd83" class="i property">Command</a>),
+                                          <b>typeof</b>(<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>),
+                                          <b>typeof</b>(<a href="#1bba5e5176ace3ac" class="t t">HamburgerMenuItem</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>null</b>, <a href="#4fce4eb707929a2d" class="i method">OnCommandPropertyChanged</a>));
+
+        <b>private static void</b> <a id="4fce4eb707929a2d" href="../../../R/4fce4eb707929a2d.html" target="n" data-glyph="76,1" class="i method">OnCommandPropertyChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            ((<a href="#1bba5e5176ace3ac" class="t t">HamburgerMenuItem</a>)<span class="r0 r">d</span>).<a href="#975968695e8422a9" class="i method">OnCommandChanged</a>(<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a> <b>as</b> <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>, <span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a> <b>as</b> <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a command which will be executed if an item is clicked by the user.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <a id="19a381ba440fdd83" href="../../../R/19a381ba440fdd83.html" target="n" data-glyph="102,1" class="i property">Command</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>?)<a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#4cfc6cad9b1596c6" class="i field">CommandProperty</a>);
+            <b>set</b> =&gt; <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#4cfc6cad9b1596c6" class="i field">CommandProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#b15572bc952dd50c" class="i property">CommandParameter</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f19f5c42b93aa2cc" href="../../../R/f19f5c42b93aa2cc.html" target="n" data-glyph="42,1" class="i field">CommandParameterProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#b15572bc952dd50c" class="i property">CommandParameter</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#1bba5e5176ace3ac" class="t t">HamburgerMenuItem</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the command parameter which will be passed by the Command.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b>? <a id="b15572bc952dd50c" href="../../../R/b15572bc952dd50c.html" target="n" data-glyph="102,1" class="i property">CommandParameter</a>
+        {
+            <b>get</b> =&gt; <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f19f5c42b93aa2cc" class="i field">CommandParameterProperty</a>);
+            <b>set</b> =&gt; <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f19f5c42b93aa2cc" class="i field">CommandParameterProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#5e3e7de50f4cea97" class="i property">CommandTarget</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="0dcf2e5ff2048358" href="../../../R/0dcf2e5ff2048358.html" target="n" data-glyph="42,1" class="i field">CommandTargetProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#5e3e7de50f4cea97" class="i property">CommandTarget</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>),
+                                          <b>typeof</b>(<a href="#1bba5e5176ace3ac" class="t t">HamburgerMenuItem</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the element on which to raise the specified command.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Element on which to raise a command.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>? <a id="5e3e7de50f4cea97" href="../../../R/5e3e7de50f4cea97.html" target="n" data-glyph="102,1" class="i property">CommandTarget</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>?)<a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#0dcf2e5ff2048358" class="i field">CommandTargetProperty</a>);
+            <b>set</b> =&gt; <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#0dcf2e5ff2048358" class="i field">CommandTargetProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#4ecda38b62ac4979" class="i property">IsEnabled</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="cabab763241332c3" href="../../../R/cabab763241332c3.html" target="n" data-glyph="42,1" class="i field">IsEnabledProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#4ecda38b62ac4979" class="i property">IsEnabled</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#1bba5e5176ace3ac" class="t t">HamburgerMenuItem</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#be7c6db947204df3" class="t constructor">PropertyMetadata</a>(<a href="../../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>, <b>null</b>, <a href="#a84daa8e1aa9a6f7" class="i method">IsEnabledCoerceValueCallback</a>));
+
+        [<span class="t constructor">MustUseReturnValue</span>]
+        <b>private static object</b> <a id="a84daa8e1aa9a6f7" href="../../../R/a84daa8e1aa9a6f7.html" target="n" data-glyph="76,1" class="i method">IsEnabledCoerceValueCallback</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r2 rd" class="r2 r">d</span>, <b>object</b>? <span id="r3 rd" class="r3 r">value</span>)
+        {
+            <b>if</b> (<span class="r3 r">value</span> <b>is bool</b> <span id="r4 rd" class="r4 r">isEnabled</span> &amp;&amp; <span class="r4 r">isEnabled</span> == <b>false</b>)
+            {
+                <b>return</b> <a href="../../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>;
+            }
+
+            <b>return</b> ((<a href="#1bba5e5176ace3ac" class="t t">HamburgerMenuItem</a>)<span class="r2 r">d</span>).<a href="#ec7b8120a5f94ac5" class="i property">CanExecute</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a value indicating whether this item is enabled in the user interface (UI). This is a dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> true if the item is enabled; otherwise, false. The default value is true.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="4ecda38b62ac4979" href="../../../R/4ecda38b62ac4979.html" target="n" data-glyph="102,1" class="i property">IsEnabled</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#cabab763241332c3" class="i field">IsEnabledProperty</a>);
+            <b>set</b> =&gt; <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#cabab763241332c3" class="i field">IsEnabledProperty</a>, <a href="../../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#4bed1b9b6143e0aa" class="i property">ToolTip</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property. </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f6e5615503e08ed9" href="../../../R/f6e5615503e08ed9.html" target="n" data-glyph="42,1" class="i field">ToolTipProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#4bed1b9b6143e0aa" class="i property">ToolTip</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#1bba5e5176ace3ac" class="t t">HamburgerMenuItem</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a value that specifies ToolTip to display.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b>? <a id="4bed1b9b6143e0aa" href="../../../R/4bed1b9b6143e0aa.html" target="n" data-glyph="102,1" class="i property">ToolTip</a>
+        {
+            <b>get</b> =&gt; <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f6e5615503e08ed9" class="i field">ToolTipProperty</a>);
+            <b>set</b> =&gt; <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f6e5615503e08ed9" class="i field">ToolTipProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Executes the command which can be set by the user.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="a8e9e72b448169b9" href="../../../R/a8e9e72b448169b9.html" target="n" data-glyph="72,1" class="i method">RaiseCommand</a>()
+        {
+            <a href="../../CommandHelpers.cs.html#2c7f1bc32925312e" class="t t">CommandHelpers</a>.<a href="../../CommandHelpers.cs.html#a8073c750a20238a" class="i method">ExecuteCommandSource</a>(<a href="#1bba5e5176ace3ac" class="k">this</a>);
+        }
+
+        <b>private void</b> <a id="975968695e8422a9" href="../../../R/975968695e8422a9.html" target="n" data-glyph="76,1" class="i method">OnCommandChanged</a>(<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <span id="r5 rd" class="r5 r">oldCommand</span>, <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <span id="r6 rd" class="r6 r">newCommand</span>)
+        {
+            <b>if</b> (<span class="r5 r">oldCommand</span> != <b>null</b>)
+            {
+                <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="#8200c5f4060a0637" class="i method">UnhookCommand</a>(<span class="r5 r">oldCommand</span>);
+            }
+
+            <b>if</b> (<span class="r6 r">newCommand</span> != <b>null</b>)
+            {
+                <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="#a788fcbe6b55981b" class="i method">HookCommand</a>(<span class="r6 r">newCommand</span>);
+            }
+        }
+
+        <b>private void</b> <a id="8200c5f4060a0637" href="../../../R/8200c5f4060a0637.html" target="n" data-glyph="76,1" class="i method">UnhookCommand</a>(<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a> <span id="r7 rd" class="r7 r">command</span>)
+        {
+            <a href="@0@PresentationCore/A.html#8cceaa80bd7582e3" class="t t">CanExecuteChangedEventManager</a>.<a href="@0@PresentationCore/A.html#dcf06a16b1abd525" class="i method">RemoveHandler</a>(<span class="r7 r">command</span>, <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="#2359157b0671b50a" class="i method">OnCanExecuteChanged</a>);
+            <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="#cc2193775f6b619c" class="i method">UpdateCanExecute</a>();
+        }
+
+        <b>private void</b> <a id="a788fcbe6b55981b" href="../../../R/a788fcbe6b55981b.html" target="n" data-glyph="76,1" class="i method">HookCommand</a>(<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a> <span id="r8 rd" class="r8 r">command</span>)
+        {
+            <a href="@0@PresentationCore/A.html#8cceaa80bd7582e3" class="t t">CanExecuteChangedEventManager</a>.<a href="@0@PresentationCore/A.html#8723e418493212d6" class="i method">AddHandler</a>(<span class="r8 r">command</span>, <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="#2359157b0671b50a" class="i method">OnCanExecuteChanged</a>);
+            <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="#cc2193775f6b619c" class="i method">UpdateCanExecute</a>();
+        }
+
+        <b>private void</b> <a id="2359157b0671b50a" href="../../../R/2359157b0671b50a.html" target="n" data-glyph="76,1" class="i method">OnCanExecuteChanged</a>(<b>object</b>? <span id="r9 rd" class="r9 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r10 rd" class="r10 r">e</span>)
+        {
+            <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="#cc2193775f6b619c" class="i method">UpdateCanExecute</a>();
+        }
+
+        <b>private void</b> <a id="cc2193775f6b619c" href="../../../R/cc2193775f6b619c.html" target="n" data-glyph="76,1" class="i method">UpdateCanExecute</a>()
+        {
+            <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="#ec7b8120a5f94ac5" class="i property">CanExecute</a> = <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="#19a381ba440fdd83" class="i property">Command</a> <b>is null</b> || <a href="../../CommandHelpers.cs.html#2c7f1bc32925312e" class="t t">CommandHelpers</a>.<a href="../../CommandHelpers.cs.html#5653990cd65d389c" class="i method">CanExecuteCommandSource</a>(<a href="#1bba5e5176ace3ac" class="k">this</a>);
+        }
+
+        <b>private bool</b> <a id="2605948e92429e33" href="../../../R/2605948e92429e33.html" target="n" data-glyph="46,1" class="i field">canExecute</a> = <b>true</b>;
+
+        <b>private bool</b> <a id="ec7b8120a5f94ac5" href="../../../R/ec7b8120a5f94ac5.html" target="n" data-glyph="106,1" class="i property">CanExecute</a>
+        {
+            <b>get</b> =&gt; <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="#2605948e92429e33" class="i field">canExecute</a>;
+            <b>set</b>
+            {
+                <b>if</b> (<b>value</b> == <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="#2605948e92429e33" class="i field">canExecute</a>)
+                {
+                    <b>return</b>;
+                }
+
+                <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="#2605948e92429e33" class="i field">canExecute</a> = <b>value</b>;
+                <a href="#1bba5e5176ace3ac" class="k">this</a>.<a href="@0@WindowsBase/A.html#d7d60b06f633a857" class="i method">CoerceValue</a>(<a href="#cabab763241332c3" class="i field">IsEnabledProperty</a>);
+            }
+        }
+
+        <b>protected override</b> <a href="@0@WindowsBase/A.html#066003ffe0442caa" class="t t">Freezable</a> <a id="958a12b02a698875" href="../../../R/958a12b02a698875.html" target="n" data-glyph="75,1" class="i method">CreateInstanceCore</a>()
+        {
+            <b>return</b> <b>new</b> <a href="#1bba5e5176ace3ac" class="t constructor">HamburgerMenuItem</a>();
+        }
+    }
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html><head><title>CssStylesheet.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(255);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#HtmlToXamlDemo/CssStylesheet.cs" target="_top">CssStylesheet.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#HtmlToXamlDemo" target="_top">HelpProjects\WPF-MORE\Sample Applications\HtmlToXamlDemo\HtmlToXamlDemo.csproj</a> (HtmlToXamlDemo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Xml</span>;
+
+<b>namespace</b> <span class="i n">HtmlToXamlDemo</span>
+{
+    <b>internal class</b> <a id="1b57443e12b375e7" href="R/1b57443e12b375e7.html" target="n" data-glyph="2,0" class="t t">CssStylesheet</a>
+    {
+        <b>private</b> <span class="t t">List</span>&lt;<a href="#52219e9bead59097" class="t t">StyleDefinition</a>&gt; <a id="b65f18813df72a0e" href="R/b65f18813df72a0e.html" target="n" data-glyph="46,1" class="i field">_styleDefinitions</a>;
+        <span class="c">// Constructor</span>
+        <b>public</b> <a id="d9bd4e70f68c69ed" href="R/d9bd4e70f68c69ed.html" target="n" data-glyph="72,1" class="t constructor">CssStylesheet</a>(<span class="t t">XmlElement</span> <span id="r0 rd" class="r0 r">htmlElement</span>)
+        {
+            <b>if</b> (<span class="r0 r">htmlElement</span> != <b>null</b>)
+            {
+                <a href="#50269361cc722218" class="i method">DiscoverStyleDefinitions</a>(<span class="r0 r">htmlElement</span>);
+            }
+        }
+
+        <span class="c">// Recursively traverses an html tree, discovers STYLE elements and creates a style definition table</span>
+        <span class="c">// for further cascading style application</span>
+        <b>public void</b> <a id="50269361cc722218" href="R/50269361cc722218.html" target="n" data-glyph="72,1" class="i method">DiscoverStyleDefinitions</a>(<span class="t t">XmlElement</span> <span id="r1 rd" class="r1 r">htmlElement</span>)
+        {
+            <b>if</b> (<span class="r1 r">htmlElement</span>.<span class="i property">LocalName</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>() == <span class="s">&quot;link&quot;</span>)
+            {
+                <b>return</b>;
+                <span class="c">//  Add LINK elements processing for included stylesheets</span>
+                <span class="c">// &lt;LINK href=&quot;http://sc.msn.com/global/css/ptnr/orange.css&quot; type=text/css \r\nrel=stylesheet&gt;</span>
+            }
+
+            <b>if</b> (<span class="r1 r">htmlElement</span>.<span class="i property">LocalName</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>() != <span class="s">&quot;style&quot;</span>)
+            {
+                <span class="c">// This is not a STYLE element. Recurse into it</span>
+                <b>for</b> (<b>var</b> <span id="r2 rd" class="r2 r">htmlChildNode</span> = <span class="r1 r">htmlElement</span>.<span class="i property">FirstChild</span>;
+                    <span class="r2 r">htmlChildNode</span> != <b>null</b>;
+                    <span class="r2 r">htmlChildNode</span> = <span class="r2 r">htmlChildNode</span>.<span class="i property">NextSibling</span>)
+                {
+                    <b>if</b> (<span class="r2 r">htmlChildNode</span> <b>is</b> <span class="t t">XmlElement</span>)
+                    {
+                        <a href="#50269361cc722218" class="i method">DiscoverStyleDefinitions</a>((<span class="t t">XmlElement</span>) <span class="r2 r">htmlChildNode</span>);
+                    }
+                }
+                <b>return</b>;
+            }
+
+            <span class="c">// Add style definitions from this style.</span>
+
+            <span class="c">// Collect all text from this style definition</span>
+            <a href="@1@System.Runtime/A.html#adf60ee46ebd299f" class="k">var</a> <span id="r3 rd" class="r3 r">stylesheetBuffer</span> = <b>new</b> <a href="@1@System.Runtime/A.html#6e631639c1e2746b" class="t constructor">StringBuilder</a>();
+
+            <b>for</b> (<b>var</b> <span id="r4 rd" class="r4 r">htmlChildNode</span> = <span class="r1 r">htmlElement</span>.<span class="i property">FirstChild</span>;
+                <span class="r4 r">htmlChildNode</span> != <b>null</b>;
+                <span class="r4 r">htmlChildNode</span> = <span class="r4 r">htmlChildNode</span>.<span class="i property">NextSibling</span>)
+            {
+                <b>if</b> (<span class="r4 r">htmlChildNode</span> <b>is</b> <span class="t t">XmlText</span> || <span class="r4 r">htmlChildNode</span> <b>is</b> <span class="t t">XmlComment</span>)
+                {
+                    <span class="r3 r">stylesheetBuffer</span>.<a href="@1@System.Runtime/A.html#e8eaef3c361184bc" class="i method">Append</a>(<a href="#e36d1a41b875ceab" class="i method">RemoveComments</a>(<span class="r4 r">htmlChildNode</span>.<span class="i property">Value</span>));
+                }
+            }
+
+            <span class="c">// CssStylesheet has the following syntactical structure:</span>
+            <span class="c">//     @import declaration;</span>
+            <span class="c">//     selector { definition }</span>
+            <span class="c">// where &quot;selector&quot; is one of: &quot;.classname&quot;, &quot;tagname&quot;</span>
+            <span class="c">// It can contain comments in the following form: /*...*/</span>
+
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r5 rd" class="r5 r">nextCharacterIndex</span> = 0;
+            <b>while</b> (<span class="r5 r">nextCharacterIndex</span> &lt; <span class="r3 r">stylesheetBuffer</span>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a>)
+            {
+                <span class="c">// Extract selector</span>
+                <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r6 rd" class="r6 r">selectorStart</span> = <span class="r5 r">nextCharacterIndex</span>;
+                <b>while</b> (<span class="r5 r">nextCharacterIndex</span> &lt; <span class="r3 r">stylesheetBuffer</span>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a> &amp;&amp; <span class="r3 r">stylesheetBuffer</span><a href="@1@System.Runtime/A.html#fdc8eb61b5bf468a">[</a><span class="r5 r">nextCharacterIndex</span>] != <span class="s">&#39;{&#39;</span>)
+                {
+                    <span class="c">// Skip declaration directive starting from @</span>
+                    <b>if</b> (<span class="r3 r">stylesheetBuffer</span><a href="@1@System.Runtime/A.html#fdc8eb61b5bf468a">[</a><span class="r5 r">nextCharacterIndex</span>] == <span class="s">&#39;@&#39;</span>)
+                    {
+                        <b>while</b> (<span class="r5 r">nextCharacterIndex</span> &lt; <span class="r3 r">stylesheetBuffer</span>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a> &amp;&amp;
+                               <span class="r3 r">stylesheetBuffer</span><a href="@1@System.Runtime/A.html#fdc8eb61b5bf468a">[</a><span class="r5 r">nextCharacterIndex</span>] != <span class="s">&#39;;&#39;</span>)
+                        {
+                            <span class="r5 r">nextCharacterIndex</span>++;
+                        }
+                        <span class="r6 r">selectorStart</span> = <span class="r5 r">nextCharacterIndex</span> + 1;
+                    }
+                    <span class="r5 r">nextCharacterIndex</span>++;
+                }
+
+                <b>if</b> (<span class="r5 r">nextCharacterIndex</span> &lt; <span class="r3 r">stylesheetBuffer</span>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a>)
+                {
+                    <span class="c">// Extract definition</span>
+                    <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r7 rd" class="r7 r">definitionStart</span> = <span class="r5 r">nextCharacterIndex</span>;
+                    <b>while</b> (<span class="r5 r">nextCharacterIndex</span> &lt; <span class="r3 r">stylesheetBuffer</span>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a> &amp;&amp; <span class="r3 r">stylesheetBuffer</span><a href="@1@System.Runtime/A.html#fdc8eb61b5bf468a">[</a><span class="r5 r">nextCharacterIndex</span>] != <span class="s">&#39;}&#39;</span>)
+                    {
+                        <span class="r5 r">nextCharacterIndex</span>++;
+                    }
+
+                    <span class="c">// Define a style</span>
+                    <b>if</b> (<span class="r5 r">nextCharacterIndex</span> - <span class="r7 r">definitionStart</span> &gt; 2)
+                    {
+                        <a href="#e665a58aa90d9f82" class="i method">AddStyleDefinition</a>(
+                            <span class="r3 r">stylesheetBuffer</span>.<a href="@1@System.Runtime/A.html#5ab5da2dedc5f850" class="i method">ToString</a>(<span class="r6 r">selectorStart</span>, <span class="r7 r">definitionStart</span> - <span class="r6 r">selectorStart</span>),
+                            <span class="r3 r">stylesheetBuffer</span>.<a href="@1@System.Runtime/A.html#5ab5da2dedc5f850" class="i method">ToString</a>(<span class="r7 r">definitionStart</span> + 1, <span class="r5 r">nextCharacterIndex</span> - <span class="r7 r">definitionStart</span> - 2));
+                    }
+
+                    <span class="c">// Skip closing brace</span>
+                    <b>if</b> (<span class="r5 r">nextCharacterIndex</span> &lt; <span class="r3 r">stylesheetBuffer</span>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a>)
+                    {
+                        <span class="t t">Debug</span>.<span class="i method">Assert</span>(<span class="r3 r">stylesheetBuffer</span><a href="@1@System.Runtime/A.html#fdc8eb61b5bf468a">[</a><span class="r5 r">nextCharacterIndex</span>] == <span class="s">&#39;}&#39;</span>);
+                        <span class="r5 r">nextCharacterIndex</span>++;
+                    }
+                }
+            }
+        }
+
+        <span class="c">// Returns a string with all c-style comments replaced by spaces</span>
+        <b>private string</b> <a id="e36d1a41b875ceab" href="R/e36d1a41b875ceab.html" target="n" data-glyph="76,1" class="i method">RemoveComments</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r8 rd" class="r8 r">text</span>)
+        {
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r9 rd" class="r9 r">commentStart</span> = <span class="r8 r">text</span>.<a href="@1@System.Runtime/A.html#7d6aed52d875ec59" class="i method">IndexOf</a>(<span class="s">&quot;/*&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>);
+            <b>if</b> (<span class="r9 r">commentStart</span> &lt; 0)
+            {
+                <b>return</b> <span class="r8 r">text</span>;
+            }
+
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r10 rd" class="r10 r">commentEnd</span> = <span class="r8 r">text</span>.<a href="@1@System.Runtime/A.html#3b7fbc076e08ccb8" class="i method">IndexOf</a>(<span class="s">&quot;*/&quot;</span>, <span class="r9 r">commentStart</span> + 2, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>);
+            <b>if</b> (<span class="r10 r">commentEnd</span> &lt; 0)
+            {
+                <b>return</b> <span class="r8 r">text</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(0, <span class="r9 r">commentStart</span>);
+            }
+
+            <b>return</b> <span class="r8 r">text</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(0, <span class="r9 r">commentStart</span>) + <span class="s">&quot; &quot;</span> + <a href="#e36d1a41b875ceab" class="i method">RemoveComments</a>(<span class="r8 r">text</span>.<a href="@1@System.Runtime/A.html#882fa7998d6ca35a" class="i method">Substring</a>(<span class="r10 r">commentEnd</span> + 2));
+        }
+
+        <b>public void</b> <a id="e665a58aa90d9f82" href="R/e665a58aa90d9f82.html" target="n" data-glyph="72,1" class="i method">AddStyleDefinition</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r11 rd" class="r11 r">selector</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r12 rd" class="r12 r">definition</span>)
+        {
+            <span class="c">// Notrmalize parameter values</span>
+            <span class="r11 r">selector</span> = <span class="r11 r">selector</span>.<a href="@1@System.Runtime/A.html#06a5f7c688e69307" class="i method">Trim</a>().<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>();
+            <span class="r12 r">definition</span> = <span class="r12 r">definition</span>.<a href="@1@System.Runtime/A.html#06a5f7c688e69307" class="i method">Trim</a>().<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>();
+            <b>if</b> (<span class="r11 r">selector</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> == 0 || <span class="r12 r">definition</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> == 0)
+            {
+                <b>return</b>;
+            }
+
+            <b>if</b> (<a href="#b65f18813df72a0e" class="i field">_styleDefinitions</a> == <b>null</b>)
+            {
+                <a href="#b65f18813df72a0e" class="i field">_styleDefinitions</a> = <b>new</b> <span class="t constructor">List</span>&lt;<a href="#52219e9bead59097" class="t t">StyleDefinition</a>&gt;();
+            }
+
+            <b>var</b> <span id="r13 rd" class="r13 r">simpleSelectors</span> = <span class="r11 r">selector</span>.<a href="@1@System.Runtime/A.html#b06c6275ef677846" class="i method">Split</a>(<span class="s">&#39;,&#39;</span>);
+
+            <b>foreach</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r14 rd" class="r14 r">t</span> <b>in</b> <span class="r13 r">simpleSelectors</span>)
+            {
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r15 rd" class="r15 r">simpleSelector</span> = <span class="r14 r">t</span>.<a href="@1@System.Runtime/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+                <b>if</b> (<span class="r15 r">simpleSelector</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> &gt; 0)
+                {
+                    <a href="#b65f18813df72a0e" class="i field">_styleDefinitions</a>.<span class="i method">Add</span>(<b>new</b> <a href="#44f06a8d6c07e81d" class="t constructor">StyleDefinition</a>(<span class="r15 r">simpleSelector</span>, <span class="r12 r">definition</span>));
+                }
+            }
+        }
+
+        <b>public string</b> <a id="595a747c96d49ca9" href="R/595a747c96d49ca9.html" target="n" data-glyph="72,1" class="i method">GetStyle</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r16 rd" class="r16 r">elementName</span>, <span class="t t">List</span>&lt;<span class="t t">XmlElement</span>&gt; <span id="r17 rd" class="r17 r">sourceContext</span>)
+        {
+            <span class="t t">Debug</span>.<span class="i method">Assert</span>(<span class="r17 r">sourceContext</span>.<span class="i property">Count</span> &gt; 0);
+            <span class="t t">Debug</span>.<span class="i method">Assert</span>(<span class="r16 r">elementName</span> == <span class="r17 r">sourceContext</span>[<span class="r17 r">sourceContext</span>.<span class="i property">Count</span> - 1].<span class="i property">LocalName</span>);
+
+            <span class="c">//  Add id processing for style selectors</span>
+            <b>if</b> (<a href="#b65f18813df72a0e" class="i field">_styleDefinitions</a> != <b>null</b>)
+            {
+                <b>for</b> (<a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r18 rd" class="r18 r">i</span> = <a href="#b65f18813df72a0e" class="i field">_styleDefinitions</a>.<span class="i property">Count</span> - 1; <span class="r18 r">i</span> &gt;= 0; <span class="r18 r">i</span>--)
+                {
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r19 rd" class="r19 r">selector</span> = <a href="#b65f18813df72a0e" class="i field">_styleDefinitions</a>[<span class="r18 r">i</span>].<a href="#6071fe6bb4dd18da" class="i field">Selector</a>;
+
+                    <b>var</b> <span id="r20 rd" class="r20 r">selectorLevels</span> = <span class="r19 r">selector</span>.<a href="@1@System.Runtime/A.html#b06c6275ef677846" class="i method">Split</a>(<span class="s">&#39; &#39;</span>);
+
+                    <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r21 rd" class="r21 r">indexInSelector</span> = <span class="r20 r">selectorLevels</span>.<a href="@1@System.Runtime/A.html#42e9b7616956cf94" class="i property">Length</a> - 1;
+                    <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r22 rd" class="r22 r">indexInContext</span> = <span class="r17 r">sourceContext</span>.<span class="i property">Count</span> - 1;
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r23 rd" class="r23 r">selectorLevel</span> = <span class="r20 r">selectorLevels</span>[<span class="r21 r">indexInSelector</span>].<a href="@1@System.Runtime/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+
+                    <b>if</b> (<a href="#4011d2dc737587c5" class="i method">MatchSelectorLevel</a>(<span class="r23 r">selectorLevel</span>, <span class="r17 r">sourceContext</span>[<span class="r17 r">sourceContext</span>.<span class="i property">Count</span> - 1]))
+                    {
+                        <b>return</b> <a href="#b65f18813df72a0e" class="i field">_styleDefinitions</a>[<span class="r18 r">i</span>].<a href="#6cfb41b2bc295a56" class="i field">Definition</a>;
+                    }
+                }
+            }
+
+            <b>return</b> <b>null</b>;
+        }
+
+        <b>private bool</b> <a id="4011d2dc737587c5" href="R/4011d2dc737587c5.html" target="n" data-glyph="76,1" class="i method">MatchSelectorLevel</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r24 rd" class="r24 r">selectorLevel</span>, <span class="t t">XmlElement</span> <span id="r25 rd" class="r25 r">xmlElement</span>)
+        {
+            <b>if</b> (<span class="r24 r">selectorLevel</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> == 0)
+            {
+                <b>return</b> <b>false</b>;
+            }
+
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r26 rd" class="r26 r">indexOfDot</span> = <span class="r24 r">selectorLevel</span>.<a href="@1@System.Runtime/A.html#eb06d6d166f6a3d9" class="i method">IndexOf</a>(<span class="s">&#39;.&#39;</span>);
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r27 rd" class="r27 r">indexOfPound</span> = <span class="r24 r">selectorLevel</span>.<a href="@1@System.Runtime/A.html#eb06d6d166f6a3d9" class="i method">IndexOf</a>(<span class="s">&#39;#&#39;</span>);
+
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r28 rd" class="r28 r">selectorClass</span> = <b>null</b>;
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r29 rd" class="r29 r">selectorId</span> = <b>null</b>;
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r30 rd" class="r30 r">selectorTag</span> = <b>null</b>;
+            <b>if</b> (<span class="r26 r">indexOfDot</span> &gt;= 0)
+            {
+                <b>if</b> (<span class="r26 r">indexOfDot</span> &gt; 0)
+                {
+                    <span class="r30 r">selectorTag</span> = <span class="r24 r">selectorLevel</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(0, <span class="r26 r">indexOfDot</span>);
+                }
+                <span class="r28 r">selectorClass</span> = <span class="r24 r">selectorLevel</span>.<a href="@1@System.Runtime/A.html#882fa7998d6ca35a" class="i method">Substring</a>(<span class="r26 r">indexOfDot</span> + 1);
+            }
+            <b>else</b> <b>if</b> (<span class="r27 r">indexOfPound</span> &gt;= 0)
+            {
+                <b>if</b> (<span class="r27 r">indexOfPound</span> &gt; 0)
+                {
+                    <span class="r30 r">selectorTag</span> = <span class="r24 r">selectorLevel</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(0, <span class="r27 r">indexOfPound</span>);
+                }
+                <span class="r29 r">selectorId</span> = <span class="r24 r">selectorLevel</span>.<a href="@1@System.Runtime/A.html#882fa7998d6ca35a" class="i method">Substring</a>(<span class="r27 r">indexOfPound</span> + 1);
+            }
+            <b>else</b>
+            {
+                <span class="r30 r">selectorTag</span> = <span class="r24 r">selectorLevel</span>;
+            }
+
+            <b>if</b> (<span class="r30 r">selectorTag</span> != <b>null</b> &amp;&amp; <span class="r30 r">selectorTag</span> != <span class="r25 r">xmlElement</span>.<span class="i property">LocalName</span>)
+            {
+                <b>return</b> <b>false</b>;
+            }
+
+            <b>if</b> (<span class="r29 r">selectorId</span> != <b>null</b> &amp;&amp; <a href="HtmlToXamlConverter.cs.html#0275cb1bce27f200" class="t t">HtmlToXamlConverter</a>.<a href="HtmlToXamlConverter.cs.html#b08ffeae8f65e4a8" class="i method">GetAttribute</a>(<span class="r25 r">xmlElement</span>, <span class="s">&quot;id&quot;</span>) != <span class="r29 r">selectorId</span>)
+            {
+                <b>return</b> <b>false</b>;
+            }
+
+            <b>if</b> (<span class="r28 r">selectorClass</span> != <b>null</b> &amp;&amp; <a href="HtmlToXamlConverter.cs.html#0275cb1bce27f200" class="t t">HtmlToXamlConverter</a>.<a href="HtmlToXamlConverter.cs.html#b08ffeae8f65e4a8" class="i method">GetAttribute</a>(<span class="r25 r">xmlElement</span>, <span class="s">&quot;class&quot;</span>) != <span class="r28 r">selectorClass</span>)
+            {
+                <b>return</b> <b>false</b>;
+            }
+
+            <b>return</b> <b>true</b>;
+        }
+
+        <b>private class</b> <a id="52219e9bead59097" href="R/52219e9bead59097.html" target="n" data-glyph="4,1" class="t t">StyleDefinition</a>
+        {
+            <b>public readonly string</b> <a id="6cfb41b2bc295a56" href="R/6cfb41b2bc295a56.html" target="n" data-glyph="42,2" class="i field">Definition</a>;
+            <b>public readonly string</b> <a id="6071fe6bb4dd18da" href="R/6071fe6bb4dd18da.html" target="n" data-glyph="42,2" class="i field">Selector</a>;
+
+            <b>public</b> <a id="44f06a8d6c07e81d" href="R/44f06a8d6c07e81d.html" target="n" data-glyph="72,2" class="t constructor">StyleDefinition</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r31 rd" class="r31 r">selector</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r32 rd" class="r32 r">definition</span>)
+            {
+                <a href="#6071fe6bb4dd18da" class="i field">Selector</a> = <span class="r31 r">selector</span>;
+                <a href="#6cfb41b2bc295a56" class="i field">Definition</a> = <span class="r32 r">definition</span>;
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

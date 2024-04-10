@@ -1,4 +1,7 @@
-﻿using EasyITSystemCenter.GlobalClasses;
+﻿[Zpět](../../index)   
+
+```cshtml   
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using Newtonsoft.Json;
 using System;

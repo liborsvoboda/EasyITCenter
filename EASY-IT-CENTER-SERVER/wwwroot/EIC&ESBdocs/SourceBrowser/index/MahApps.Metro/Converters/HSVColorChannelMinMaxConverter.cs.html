@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html><head><title>HSVColorChannelMinMaxConverter.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(150);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Converters/HSVColorChannelMinMaxConverter.cs" target="_top">Converters\HSVColorChannelMinMaxConverter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Converters</span>
+{
+    <b>public enum</b> <a id="79aeed6d05891ff2" href="../R/79aeed6d05891ff2.html" target="n" data-glyph="18,0" class="t t"><span id="f374145f8d09d0f5">HSVColorChannelType</span></a>
+    {
+        <a id="3a4073c6d23cc895" href="../R/3a4073c6d23cc895.html" target="n" data-glyph="24,1" class="i field">SMin</a>,
+        <a id="e9eef01be3e9108c" href="../R/e9eef01be3e9108c.html" target="n" data-glyph="24,1" class="i field">SMax</a>,
+        <a id="ec3882a4c672a022" href="../R/ec3882a4c672a022.html" target="n" data-glyph="24,1" class="i field">S</a>,
+        <a id="1a9d3970e24a2b8f" href="../R/1a9d3970e24a2b8f.html" target="n" data-glyph="24,1" class="i field">VMin</a>,
+        <a id="e72e085cf9e08dfe" href="../R/e72e085cf9e08dfe.html" target="n" data-glyph="24,1" class="i field">VMax</a>,
+        <a id="5f5a47c160642881" href="../R/5f5a47c160642881.html" target="n" data-glyph="24,1" class="i field">V</a>,
+        <a id="9d29587cd1fb4a93" href="../R/9d29587cd1fb4a93.html" target="n" data-glyph="24,1" class="i field">SVMax</a>
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Converts a given Color to a new Color with the specified Channel turned to the Min or Max Value</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@PresentationFramework/A.html#ddd8a157949fec4d" class="t constructor">ValueConversion</a>(<b>typeof</b>(<a href="../Controls/ColorPicker/HSVColor.cs.html#660b07de7e9bab89" class="t t">HSVColor</a>), <b>typeof</b>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>), <a href="@0@PresentationFramework/A.html#971265abb4b824aa" class="i property">ParameterType</a> = <b>typeof</b>(<a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>))]
+    <b>public sealed class</b> <a id="0d78cba9cd17e303" href="../R/0d78cba9cd17e303.html" target="n" data-glyph="0,0" class="t t"><span id="520a621c41212c0d">HSVColorChannelMinMaxConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets a static default instance of </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#0d78cba9cd17e303" class="t t">HSVColorChannelMinMaxConverter</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="#0d78cba9cd17e303" class="t t">HSVColorChannelMinMaxConverter</a> <a id="d6a3211f9ec4c3d5" href="../R/d6a3211f9ec4c3d5.html" target="n" data-glyph="42,1" class="i field">Default</a> = <a href="#0d78cba9cd17e303" class="k">new</a>();
+
+        <b>public object</b>? <a id="0a92a77f5d28dafc" href="../R/0a92a77f5d28dafc.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>? <span id="r0 rd" class="r0 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r1 rd" class="r1 r">targetType</span>, <b>object</b>? <span id="r2 rd" class="r2 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r3 rd" class="r3 r">culture</span>)
+        {
+            <b>if</b> (<span class="r0 r">value</span> <b>is</b> <a href="../Controls/ColorPicker/HSVColor.cs.html#660b07de7e9bab89" class="t t">HSVColor</a> <span id="r4 rd" class="r4 r">hsv</span> &amp;&amp; <span class="r2 r">parameter</span> <b>is</b> <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a> <span id="r5 rd" class="r5 r">channel</span>)
+            {
+                <b>switch</b> (<span class="r5 r">channel</span>)
+                {
+                    <b>case</b> <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#3a4073c6d23cc895" class="i field">SMin</a>: <b>return</b> <b>new</b> <a href="../Controls/ColorPicker/HSVColor.cs.html#8f202cc25aec4790" class="t constructor">HSVColor</a>(<span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#522396cb9a726539" class="i property">Hue</a>, 0, <span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#1bfca96ba0d50570" class="i property">Value</a>).<a href="../Controls/ColorPicker/HSVColor.cs.html#95428ca91e939a72" class="i method">ToColor</a>();
+                    <b>case</b> <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#e9eef01be3e9108c" class="i field">SMax</a>: <b>return</b> <b>new</b> <a href="../Controls/ColorPicker/HSVColor.cs.html#8f202cc25aec4790" class="t constructor">HSVColor</a>(<span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#522396cb9a726539" class="i property">Hue</a>, 1, <span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#1bfca96ba0d50570" class="i property">Value</a>).<a href="../Controls/ColorPicker/HSVColor.cs.html#95428ca91e939a72" class="i method">ToColor</a>();
+                    <b>case</b> <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#ec3882a4c672a022" class="i field">S</a>: <b>return</b> <b>new</b> <a href="../Controls/ColorPicker/HSVColor.cs.html#8f202cc25aec4790" class="t constructor">HSVColor</a>(<span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#522396cb9a726539" class="i property">Hue</a>, <span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#9dbf83a963fbae21" class="i property">Saturation</a>, <span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#1bfca96ba0d50570" class="i property">Value</a>).<a href="../Controls/ColorPicker/HSVColor.cs.html#95428ca91e939a72" class="i method">ToColor</a>();
+                    <b>case</b> <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#1a9d3970e24a2b8f" class="i field">VMin</a>: <b>return</b> <b>new</b> <a href="../Controls/ColorPicker/HSVColor.cs.html#8f202cc25aec4790" class="t constructor">HSVColor</a>(<span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#522396cb9a726539" class="i property">Hue</a>, <span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#9dbf83a963fbae21" class="i property">Saturation</a>, 0).<a href="../Controls/ColorPicker/HSVColor.cs.html#95428ca91e939a72" class="i method">ToColor</a>();
+                    <b>case</b> <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#e72e085cf9e08dfe" class="i field">VMax</a>: <b>return</b> <b>new</b> <a href="../Controls/ColorPicker/HSVColor.cs.html#8f202cc25aec4790" class="t constructor">HSVColor</a>(<span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#522396cb9a726539" class="i property">Hue</a>, <span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#9dbf83a963fbae21" class="i property">Saturation</a>, 1).<a href="../Controls/ColorPicker/HSVColor.cs.html#95428ca91e939a72" class="i method">ToColor</a>();
+                    <b>case</b> <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#5f5a47c160642881" class="i field">V</a>: <b>return</b> <b>new</b> <a href="../Controls/ColorPicker/HSVColor.cs.html#8f202cc25aec4790" class="t constructor">HSVColor</a>(<span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#522396cb9a726539" class="i property">Hue</a>, <span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#9dbf83a963fbae21" class="i property">Saturation</a>, <span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#1bfca96ba0d50570" class="i property">Value</a>).<a href="../Controls/ColorPicker/HSVColor.cs.html#95428ca91e939a72" class="i method">ToColor</a>();
+                    <b>case</b> <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#9d29587cd1fb4a93" class="i field">SVMax</a>: <b>return</b> <b>new</b> <a href="../Controls/ColorPicker/HSVColor.cs.html#8f202cc25aec4790" class="t constructor">HSVColor</a>(<span class="r4 r">hsv</span>.<a href="../Controls/ColorPicker/HSVColor.cs.html#522396cb9a726539" class="i property">Hue</a>, 1, 1).<a href="../Controls/ColorPicker/HSVColor.cs.html#95428ca91e939a72" class="i method">ToColor</a>();
+                    <b>default</b>:
+                    {
+                        <a href="@0@System/A.html#c63a0f19b2d4db69" class="t t">Trace</a>.<a href="@0@System/A.html#ed0a145461a37c94" class="i method">TraceWarning</a>(<span class="s">$&quot;</span><span class="s">Unexpected value </span>{<b>nameof</b>(<span class="r2 r">parameter</span>)}<span class="s"> = </span>{<span class="r5 r">channel</span>}<span class="s">&quot;</span>);
+                        <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+                    }
+                }
+            }
+
+            <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+        }
+
+        <b>public object</b>? <a id="d6362c031e414767" href="../R/d6362c031e414767.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r6 rd" class="r6 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r7 rd" class="r7 r">targetType</span>, <b>object</b>? <span id="r8 rd" class="r8 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r9 rd" class="r9 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Converts a given HSVColor to a new SolidColorBrush with the specified Channel.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@PresentationFramework/A.html#ddd8a157949fec4d" class="t constructor">ValueConversion</a>(<b>typeof</b>(<a href="../Controls/ColorPicker/HSVColor.cs.html#660b07de7e9bab89" class="t t">HSVColor</a>), <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>), <a href="@0@PresentationFramework/A.html#971265abb4b824aa" class="i property">ParameterType</a> = <b>typeof</b>(<a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>))]
+    <b>public sealed class</b> <a id="18bc32a2b201e78e" href="../R/18bc32a2b201e78e.html" target="n" data-glyph="0,0" class="t t"><span id="48ce8ba4e3a882b7">HSVColorChannel2BrushConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c"> Gets the default instance </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static</b> <a href="#18bc32a2b201e78e" class="t t">HSVColorChannel2BrushConverter</a> <a id="dfc223ed20748b81" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Default</a> { <b>get</b>; } = <a href="#18bc32a2b201e78e" class="k">new</a>();
+
+        <b>public object</b> <a id="d674d9cd24fc779e" href="../R/d674d9cd24fc779e.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b> <span id="r10 rd" class="r10 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r11 rd" class="r11 r">targetType</span>, <b>object</b> <span id="r12 rd" class="r12 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r13 rd" class="r13 r">culture</span>)
+        {
+            <a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r14 rd" class="r14 r">result</span> = <a href="#0d78cba9cd17e303" class="t t">HSVColorChannelMinMaxConverter</a>.<a href="#d6a3211f9ec4c3d5" class="i field">Default</a>.<a href="#0a92a77f5d28dafc" class="i method">Convert</a>(<span class="r10 r">value</span>, <span class="r11 r">targetType</span>, <span class="r12 r">parameter</span>, <span class="r13 r">culture</span>);
+            <b>if</b> (<span class="r14 r">result</span> <b>is</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a> <span id="r15 rd" class="r15 r">color</span>)
+            {
+                <a href="@0@PresentationCore/A.html#2bdb4a721050df52" class="k">var</a> <span id="r16 rd" class="r16 r">brush</span> = <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<span class="r15 r">color</span>);
+                <span class="r16 r">brush</span>.<a href="@0@WindowsBase/A.html#75947ff41474f34b" class="i method">Freeze</a>();
+                <b>return</b> <span class="r16 r">brush</span>;
+            }
+
+            <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+        }
+
+        <b>public object</b> <a id="bca72f93ef1802c4" href="../R/bca72f93ef1802c4.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r17 rd" class="r17 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r18 rd" class="r18 r">targetType</span>, <b>object</b> <span id="r19 rd" class="r19 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r20 rd" class="r20 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Converts a given HSVColor to a new LinearGradientBrush with the specified Channel.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@PresentationFramework/A.html#ddd8a157949fec4d" class="t constructor">ValueConversion</a>(<b>typeof</b>(<a href="../Controls/ColorPicker/HSVColor.cs.html#660b07de7e9bab89" class="t t">HSVColor</a>), <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>), <a href="@0@PresentationFramework/A.html#971265abb4b824aa" class="i property">ParameterType</a> = <b>typeof</b>(<a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>))]
+    <b>public sealed class</b> <a id="8ef59d2295e7aba2" href="../R/8ef59d2295e7aba2.html" target="n" data-glyph="0,0" class="t t"><span id="e298ad1bc61df385">HSVColorChannel2GradientBrushConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c"> Gets the default instance </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static</b> <a href="#8ef59d2295e7aba2" class="t t">HSVColorChannel2GradientBrushConverter</a> <a id="386d725a4a023692" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Default</a> { <b>get</b>; } = <a href="#8ef59d2295e7aba2" class="k">new</a>();
+
+        <b>public object</b> <a id="c402394888ad29c4" href="../R/c402394888ad29c4.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b> <span id="r21 rd" class="r21 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r22 rd" class="r22 r">targetType</span>, <b>object</b> <span id="r23 rd" class="r23 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r24 rd" class="r24 r">culture</span>)
+        {
+            <b>if</b> (<span class="r23 r">parameter</span> <b>is</b> <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a> <span id="r25 rd" class="r25 r">channel</span>)
+            {
+                <b>object</b>? <span id="r26 rd" class="r26 r">minResult</span>;
+                <b>object</b>? <span id="r27 rd" class="r27 r">maxResult</span>;
+
+                <b>switch</b> (<span class="r25 r">channel</span>)
+                {
+                    <b>case</b> <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#ec3882a4c672a022" class="i field">S</a>:
+                        <span class="r26 r">minResult</span> = <a href="#0d78cba9cd17e303" class="t t">HSVColorChannelMinMaxConverter</a>.<a href="#d6a3211f9ec4c3d5" class="i field">Default</a>.<a href="#0a92a77f5d28dafc" class="i method">Convert</a>(<span class="r21 r">value</span>, <span class="r22 r">targetType</span>, <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#3a4073c6d23cc895" class="i field">SMin</a>, <span class="r24 r">culture</span>);
+                        <span class="r27 r">maxResult</span> = <a href="#0d78cba9cd17e303" class="t t">HSVColorChannelMinMaxConverter</a>.<a href="#d6a3211f9ec4c3d5" class="i field">Default</a>.<a href="#0a92a77f5d28dafc" class="i method">Convert</a>(<span class="r21 r">value</span>, <span class="r22 r">targetType</span>, <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#e9eef01be3e9108c" class="i field">SMax</a>, <span class="r24 r">culture</span>);
+                        <b>break</b>;
+                    <b>case</b> <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#5f5a47c160642881" class="i field">V</a>:
+                        <span class="r26 r">minResult</span> = <a href="#0d78cba9cd17e303" class="t t">HSVColorChannelMinMaxConverter</a>.<a href="#d6a3211f9ec4c3d5" class="i field">Default</a>.<a href="#0a92a77f5d28dafc" class="i method">Convert</a>(<span class="r21 r">value</span>, <span class="r22 r">targetType</span>, <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#1a9d3970e24a2b8f" class="i field">VMin</a>, <span class="r24 r">culture</span>);
+                        <span class="r27 r">maxResult</span> = <a href="#0d78cba9cd17e303" class="t t">HSVColorChannelMinMaxConverter</a>.<a href="#d6a3211f9ec4c3d5" class="i field">Default</a>.<a href="#0a92a77f5d28dafc" class="i method">Convert</a>(<span class="r21 r">value</span>, <span class="r22 r">targetType</span>, <a href="#79aeed6d05891ff2" class="t t">HSVColorChannelType</a>.<a href="#e72e085cf9e08dfe" class="i field">VMax</a>, <span class="r24 r">culture</span>);
+                        <b>break</b>;
+                    <b>default</b>:
+                    {
+                        <a href="@0@System/A.html#c63a0f19b2d4db69" class="t t">Trace</a>.<a href="@0@System/A.html#ed0a145461a37c94" class="i method">TraceWarning</a>(<span class="s">$&quot;</span><span class="s">Unexpected value </span>{<b>nameof</b>(<span class="r23 r">parameter</span>)}<span class="s"> = </span>{<span class="r25 r">channel</span>}<span class="s">&quot;</span>);
+                        <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+                    }
+                }
+
+                <b>if</b> (<span class="r26 r">minResult</span> <b>is</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a> <span id="r28 rd" class="r28 r">minColor</span> &amp;&amp; <span class="r27 r">maxResult</span> <b>is</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a> <span id="r29 rd" class="r29 r">maxColor</span>)
+                {
+                    <a href="@0@PresentationCore/A.html#95e063a8a6c98a51" class="k">var</a> <span id="r30 rd" class="r30 r">brush</span> = <b>new</b> <a href="@0@PresentationCore/A.html#cab8ccfc27cff4b9" class="t constructor">LinearGradientBrush</a>
+                                {
+                                    <a href="@0@PresentationCore/A.html#b1eee9a6882b4bcd" class="i property">StartPoint</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, 0.5),
+                                    <a href="@0@PresentationCore/A.html#f263c2997c4cfda3" class="i property">EndPoint</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(1, 0.5)
+                                };
+                    <span class="r30 r">brush</span>.<a href="@0@PresentationCore/A.html#0392ede480e9384d" class="i property">GradientStops</a>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>(<span class="r28 r">minColor</span>, 0));
+                    <span class="r30 r">brush</span>.<a href="@0@PresentationCore/A.html#0392ede480e9384d" class="i property">GradientStops</a>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>(<span class="r29 r">maxColor</span>, 1));
+                    <span class="r30 r">brush</span>.<a href="@0@WindowsBase/A.html#75947ff41474f34b" class="i method">Freeze</a>();
+                    <b>return</b> <span class="r30 r">brush</span>;
+                }
+            }
+
+            <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+        }
+
+        <b>public object</b> <a id="461c3ca69a54a95b" href="../R/461c3ca69a54a95b.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r31 rd" class="r31 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r32 rd" class="r32 r">targetType</span>, <b>object</b> <span id="r33 rd" class="r33 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r34 rd" class="r34 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+    }
+}</pre></td></tr></table></div></body></html>

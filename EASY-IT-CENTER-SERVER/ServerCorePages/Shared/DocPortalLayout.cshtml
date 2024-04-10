@@ -1,0 +1,276 @@
+@model ServerCorePages.DocPortalModel
+
+@addTagHelper *, WebOptimizer.Core
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Westwind.AspNetCore.Markdown
+@using Microsoft.AspNetCore.Html;
+@using EasyITCenter.ServerCoreStructure;
+@using Westwind.AspNetCore.Markdown;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EIC-MarkDown Viewer</title>
+    <link rel="stylesheet" href="~/ServerCoreTools/markdown/css/bootstrap.css"/>
+    <link href="~/ServerCoreTools/markdown/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/ServerCoreTools/markdown/metro/css/metro3.css" rel="stylesheet" />
+    <link href="~/ServerCoreTools/markdown/metro/css/metro-schemes.css" rel="stylesheet" />
+    <link href="~/ServerCoreTools/markdown/metro/css/metro-icons.css" rel="stylesheet" />
+
+
+    <script type="text/javascript" src="~/ServerCoreTools/markdown/js/jquery-3.6.0.min.js"> </script>
+    <script type="text/javascript" src="~/ServerCoreTools/markdown/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/ServerCoreTools/markdown/js/jspdf.js"></script>
+    <script type="text/javascript" src="~/ServerCoreTools/markdown/js/clipboard.min.js"></script>
+
+    <script type="text/javascript" src="~/ServerCoreTools/markdown/metro/js/metro-addon.js"></script>
+    <script type="text/javascript" src="~/ServerCoreTools/markdown/metro/js/metro3.js"></script>
+
+    <script type="text/javascript" src="~/ServerCoreTools/markdown/js/globalStorage.js"></script>
+    <script type="text/javascript" src="~/ServerCoreTools/markdown/js/globalScript.js"></script>
+    <style>
+        img {
+            max-width: 100%
+        }
+        .skiptranslate { /* display:none !important; */
+            /*  zoom: 1.2; */
+        }
+
+        .audio-player {
+            zoom: 0.7;
+            background-color: transparent !important;
+        }
+
+        #\:1\.container {
+            visibility: hidden !important;
+        }
+    </style>
+
+    <!--  Google Translation -->
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script>document.title = (Metro.storage.getItem('WebPagesName', null) == null ? "EDC+ESB IT GroupWare-Solution.Eu" : Metro.storage.getItem('WebPagesName', null)) + (decodeURI(window.location.pathname).split("-")[1] == undefined ? "" : decodeURI(window.location.pathname).split("-")[1])</script>
+</head>
+
+<body>
+    <div id="docLoader" data-role="preloader" data-type="square" data-style="color" style="position: absolute;top:50%;left: 50%;z-index: 100000;" class="shadow"></div>
+    <div id="toolPanel" data-role="charm" data-position="top" class="pos-fixed list-list grid-style opened shadow" style="top: 0px; z-index:10000;min-width: 400px;max-width: 400px;background-color: bisque;left: 40% !important;}}">
+        <div class="w-100 text-left" style="z-index: 1000000;"><div id="google_translate_element"></div></div>
+        <div class="w-100 d-inline-flex">
+            <div class="w-50 text-left">
+                <label class="input-control checkbox">
+                    <input id="UserAutomaticTranslate" type="checkbox" checked>
+                    <span class="check"></span>
+                    <span class="caption fg-black">Překládat Automaticky</span>
+                </label>
+            </div><div class="w-25 mt-1 text-right"><button class="button secondary mini" onclick="CancelTranslation()">Zrušit Překlad</button></div>
+        </div>
+        <div class="c-pointer mif-cancel icon pos-absolute fg-red" style="top:5px;right:5px;" onclick="ShowToolPanel()"></div>
+    </div>
+
+    <nav data-role="app-bar" class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <ul class="m-menu bg-darkCobalt shadow">
+                <li><a href="/server-doc/md-book/book/" title="Vyhledat v Dokumentaci s Fultextovým Vyhledáváním" target="_blank"><strong>Vyhledat</strong></a></li>
+                <li>
+                    <a href="#" class="dropdown-toggle">EIC&ESB Řešení</a>
+                    <div class="m-menu-container  bg-darkBlue shadow" data-role="dropdown" data-no-close="false" style="padding: 30px;">
+                        <div class="grid no-margin">
+                            <div class="row cells6">
+                                <div class="cell colspan4">
+                                    <h2 class="fg-white text-bold text-shadow">EIC & ESB = Servery, Systémy, Weby v 1 řešení</h2>
+                                    <p class="padding20 no-padding-top no-padding-left no-padding-bottom fg-white mif-2x">
+                                        Fultextová Dokumentace bude Aktualizována se svýšeným Zájmem Dřívěji,<br />
+                                        nebo jak to jde o volném čase. Aktálně je nachystáno cca 500 nástrojů<br />
+                                        k implementaci. Nyní probíhá vývoj jen ve volném čase. Musím pracovat jinde.<br />
+                                        I tak každý den vývoje znamená Doslova přidání něčeho zásadního.<br />
+                                        Tak neváhejte a sobě i mně ulehčete práci s IT,<br />
+                                        začněte Šetřit a Kontaktujte mne ještě DNES. <br /><br />
+                                        <a class="mif-3x fg-orange" style='padding-bottom: 10px;' href="https://kliknetezde.cz/Downloads" target="_blank"> 30 denní Plná verze je ke Stažení.</a><br />
+                                        <span class="mif-2x fg-orange" style='padding-bottom: 10px;'>Cena za ŘEŠENÍ bez Kódů POUHÝCH od 35 000Kč.</span> <br />
+                                        Obsahuje kromě Mail serveru celé IT. <br /> Technologie a Řešení, které jinde nenajdete. Převratné Updaty každý měsíc.  <br />
+                                        Neomezený Rozvoj. Objednejte si Systém na Míru,či libovolnou Zakázkovou úpravu.<br />
+                                        Vyvíjejte si svou Vlastní verzi. Již Brzy Vývoj Online přímo z Portálu.<br />
+                                    </p>
+                                    <p class="fg-white mif-2x text-bold fg-white">
+                                        Kontakt:
+                                        <div class="d-block w-100 padding10 c-pointer fg-white ani-hover-horizontal mif-3x" onclick="window.open('tel:+420724986873','_blank');">Phone: +420 724 986 873</div>
+                                        <div class="d-block w-100 padding10 c-pointer fg-white ani-hover-horizontal mif-3x" onclick="window.open('mailto:Libor.Svoboda@GroupWare-Solution.Eu','_blank');"> Libor.Svoboda@GroupWare-Solution.Eu</div>
+                                        <div class="d-block w-100 padding10 c-pointer fg-white ani-hover-horizontal mif-3x" onclick="window.open('mailto:Libor.Svoboda@KlikneteZde.Cz','_blank');">Libor.Svoboda@KlikneteZde.Cz</div>
+                                        <div class="d-block w-100 padding10 c-pointer fg-white ani-hover-horizontal mif-3x" onclick="window.open('skype:Chrasty80','_blank');">Skype: Chrasty80</div>
+                                        <div class="d-block w-100 padding10 c-pointer fg-white ani-hover-horizontal mif-3x" onclick="window.open('https://api.whatsapp.com/send?phone=00420724986873','_blank');">WhatsApp</div>
+                                    </p>
+                                </div>
+                                <div class="cell text-right colspan2">
+                                    <ul class="unstyled-list mif-2x text-right">
+                                        <li><h3 class="text-shadow mif-2x">EIC & ESB Docs</h3></li>
+                                        <li><a class="fg-white" href="/EIC&ESBdocs/CodeDocs/">Úvodní Dokumentace</a></li>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/server-doc/md-book/book/')">FullText Help</a></li>
+                                        <li><a class="fg-white" href="https://Kliknetezde.cz:8000" target="_blank">ESB Systém Online</a></li>
+                                        <li><a class="fg-white" href="/Portal" target="_blank">Web Portal</a></li>
+                                        <li><a class="fg-white" onclick="ChangeSource('/EIC&ESBdocs/CodeDocs/OnlineTools')">Online Nástroje</a></li>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/EIC&ESBdocs/EIC-InfoWeb/')">InfoDocs EIC</a></li>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/EIC&ESBdocs/ESB-InfoWeb/')">InfoDocs ESB</a></li>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/EIC&ESBdocs/EIC-XmlWeb/')">EIC Projekt XML-Objekty</a></li>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/EIC&ESBdocs/ESB-XmlWeb/')">ESB Projekt XML-Objekty</a></li>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/EIC&ESBdocs/CodeDocs/InspiredByGithub.md')">Github Inspirace Aktuálně</a></li>
+                                        <p></p>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/ServerCoreTools/csharpedit/')">C# Vývoj Online CZ</a></li>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/ServerCoreTools/monaco/')">All Code Type Nápověda CZ</a></li>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/ServerCoreTools/monacospeech/')">C# Mluvený Vývoj</a></li>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/ServerCoreTools/sqldesigner/')">Vývoj Databáze Online</a></li>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/ServerCoreTools/ExternalServices/csharponline.html')">C# Testování Kódu Online</a></li>
+                                        <p></p>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/EIC&ESBdocs/EIC-Gallery/')">Galerie EIC</a></li>
+                                        <li><a class="fg-white" href="#" onclick="ChangeSource('/EIC&ESBdocs/ESB-Gallery/')">Galerie ESB</a></li>
+
+                                        @* <li><a class="fg-white" onclick="ChangeSource('/EIC&ESBdocs/CodeDocs/InspiredByGithub.md')"href="~/EIC&ESBdocs/CodeDocs/InspiredByGithub.md">Docs Impl.Nástroje</a></li>
+                                        <li><a class="fg-white" onclick="ChangeSource('/EIC&ESBdocs/CodeDocs/InspiredByGithub.md')"href="~/EIC&ESBdocs/CodeDocs/InspiredByGithub.md">Sub Servery a Clony</a></li>
+                                        <li><a class="fg-white" onclick="ChangeSource('/EIC&ESBdocs/CodeDocs/InspiredByGithub.md')"href="~/EIC&ESBdocs/CodeDocs/InspiredByGithub.md">Ceník Řešení a Služeb</a></li> *@
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <a href="#" class="dropdown-toggle">Metro 3,4</a>
+                    <div class="m-menu-container" data-role="dropdown" data-no-close="false" style="padding: 30px;">
+                        <ul class="inline-list mif-3x padding10">
+                            <li><a href="#" onclick="ChangeSource('/ServerCoreTools/JsCssLibrary/Metro/Docs3')">Metro3 Ui</a></li>
+                            <li><a href="#" onclick="ChangeSource('/ServerCoreTools/JsCssLibrary/Metro/Docs3a/start.html')">Metro 3 Board</a></li>
+                            <li><a href="#" onclick="ChangeSource('/ServerCoreTools/JsCssLibrary/Metro/Metro3Docs/docs/')">Metro 3 Official Docs</a></li>
+                            <li><a href="#" onclick="ChangeSource('/ServerCoreTools/JsCssLibrary/Metro/Metro4Doc/')">Metro 4 Ui</a></li>
+                            <li><a href="#" onclick="ChangeSource('/ServerCoreTools/JsCssLibrary/Metro/PandoraDocs/')">Metro 4 Portal</a></li>
+                            <li><a href="#" onclick="ChangeSource('/ServerCoreTools/JsCssLibrary/Metro/DesktopDocs/')">Metro 4 System</a></li>
+                            <li><a href="#" onclick="ChangeSource('/ServerCoreTools/JsCssLibrary/Metro/SystemToolDocs/')">Metro 4 Panel</a></li>
+                            <li><a href="#" onclick="ChangeSource('/ServerCoreTools/JsCssLibrary/Metro/Metro4NextDoc/cypress')">Metro 4 Rozšížení</a></li>
+                            <li><a href="#" onclick="ChangeSource('/ServerCoreTools/JsCssLibrary/Metro/MetroUiDocs/test/')">Metro 4 Ui+</a></li>
+							 <li><a href="#" onclick="ChangeSource('/ServerCoreTools/JsCssLibrary/Metro/MahAppsDocs/')">Metro WPF</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#" class="dropdown-toggle">Frameworky</a>
+                    <div class="m-menu-container" data-role="dropdown" style="padding: 30px;">
+                        <ul class="inline-list mif-3x padding10">
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/Alloy/readme.md')">Alloy</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/Ax5Ui/')">Ax5Ui</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/BootStrap/')">BootStrap</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/FoundationUi/')">FoundationUi</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/JQueryUi/')">JQueryUi</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/JUi/basic.html')">JUi</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/LayerJs/examples/simpleexample.html')">LayerJs</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/MotionUi/test/')">MotionUi</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/MuseUi/2.1.0/index.html')">MuseUi</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/PrimeNg/')">PrimeNg</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/PrimeUi/')">PrimeUi</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/SemanticUi/examples/homepage.html')">SemanticUi</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/TablerEngine/')">TablerEngine</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/UiKit/docs/')">UiKit</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/Yui3/Docs')">Yui3</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiFrameworks/ZUi3/')">ZUi3</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#" class="dropdown-toggle">DashBoardy</a>
+                    <div class="m-menu-container" data-role="dropdown" style="padding: 30px;">
+                        <ul class="inline-list mif-3x padding10">
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiDashBoards/AdminDashboard/')">AdminDashboard</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiDashBoards/AdminLte3Dashboard/pages/UI/general.html')">AdminLte3Dashboard</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiDashBoards/AdminLTE4Dashboard/pages/UI/general.html')">AdminLTE4Dashboard</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiDashBoards/BSBDashboard/')">BSBDashboard</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiDashBoards/EuroDashboard/examples/')">EuroDashboard</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiDashBoards/MaterialDashboard/examples/dashboard.html')">MaterialDashboard</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiDashBoards/MatrixDashboard/matrix-admin-bt4/html/ltr/')">MatrixDashboard</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiDashBoards/MetroDashboard/')">MetroDashboard</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiDashBoards/MetronicDashboard/')">MetronicDashboard</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiDashBoards/ModernDashboard/production/')">ModernDashboard</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiDashBoards/NowUiDashboard/examples/dashboard.html')">NowUiDashboard</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebUiDashBoards/SmallDashboard/')">SmallDashboard</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#" class="dropdown-toggle">Editory</a>
+                    <div class="m-menu-container" data-role="dropdown" style="padding: 30px;">
+                        <ul class="inline-list mif-3x padding10">
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/CodeEditorTools/BenchMarkCodeQuality/')">BenchMarkCodeQuality</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/CodeEditorTools/code2-editor/')">code2-editor</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/CodeEditorTools/CodeCheckEditor/index.html')">CodeCheckEditor</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/CodeEditorTools/js-editor/')">js-editor</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/CodeEditorTools/PenEditor/')">PenEditor</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/CodeEditorTools/SimpleCodeEditor/website/dist/')">SimpleCodeEditor</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/CodeEditorTools/tool-creator/')">tool-creator</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/CodeEditorTools/TypoEditor/')">TypoEditor</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/WebEditorTools/bootstrap/')">bootstrap</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/WebEditorTools/ckeditor/')">ckeditor</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/WebEditorTools/CkEditor4/')">CkEditor4</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/WebEditorTools/ModernEditor/')">ModernEditor</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/WebEditorTools/PopupEditor/example/example.html')">PopupEditor</a></li>
+
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#" class="dropdown-toggle">Ostatní</a>
+                    <div class="m-menu-container" data-role="dropdown" style="padding: 30px;">
+                        <ul class="inline-list mif-3x padding10">
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/WebSiteGenTools/DragDropBuilder/')">DragDropBuilder</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/WebSiteGenTools/revealjs/demo.html')">revealjs</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/WebSiteGenTools/webpage/dist/')">webpage</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/WebSiteGenTools/webpagebuilder/dist/htmlbuilder.html')">webpagebuilder</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebDocsLibrary/AnimateDocs/')">AnimateDocs</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebDocsLibrary/Docsify/')">Docsify</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebDocsLibrary/ChartJSDoc/')">ChartJSDoc</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebDocsLibrary/jsPDFdoc/')">jsPDFdoc</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebDocsLibrary/LiveCodeEdit/')">LiveCodeEdit</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebDocsLibrary/MonacoDocs/')">MonacoDocs</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebDocsLibrary/RevealJSDoc/media.html')">RevealJSDoc</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/DatabaseTools/flow-db-editor/minified/old.html')">flow-db-editor</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/DatabaseTools/SqlBuilder/')">SqlBuilder</a></li>
+                            <li><a href="#" onclick="ChangeSource('/server-provider/WebToolLibrary/DatabaseTools/sqllite-manager/')">sqllite-manager</a></li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="place-right no-hovered bg-black" style="max-height: 50px !important;max-width:60px !important;" title="Přeložit do libovolného jazyku">
+                    <a href="#" onclick="ShowToolPanel()" style="cursor: pointer;padding:10px !important;">
+                        <span class="mif-earth mif-4x fg-white padding0"></span>
+                    </a>
+                </li>
+                <li class="place-right no-hovered bg-darkRed" style="max-height:50px !important;max-width:60px !important;" title="Zpět">
+                    <a href="#" onclick="history.back();"><span class="mif-first mif-2x padding0"></span></a>
+                </li>
+               
+            </ul>
+        
+        </div>
+    </nav>
+
+    <div class="container body-content" >
+        <div id="SubPage" class="w-100" style="min-width: 1024px !important;width: 1024px !important;max-width: 1024px !important; height: 100%;">
+            @RenderBody()
+        </div>
+
+        <hr />
+        <h3 class ="text-center"><a href="https://www.youtube.com/embed/6ThVBv_diGo?list=PLmE7gP9LTBimNJQ444ypG8HVce23fa2Hb" target="_blank">Sjedujte Vývoj Řešení i na Youtube</a></h3>
+        <iframe width="1024" height="600" src="https://www.youtube.com/embed/6ThVBv_diGo?list=PLmE7gP9LTBimNJQ444ypG8HVce23fa2Hb" class="text-center"
+                title="SYSTEMsupportAnyLANG System was extended for ANY programming Language Module. Full Github Supported" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+        </iframe>
+
+        <hr />
+        <footer style ="padding-bottom:50px;">
+            <div class="pull-right">
+                <a href="https://GroupWare-solution.Eu">
+                    <img src="~/logo.png" style="height:30px;"/>
+                </a>
+            </div>
+            <p><strong>&copy; @DateTime.Now.Year, GroupWare Solution IT Technologies</strong></p>
+        </footer>
+    </div>
+</body>
+</html>

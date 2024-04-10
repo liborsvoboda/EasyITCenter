@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html><head><title>StartupTasks.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(71);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro.Caliburn.Demo/Controls/StartupTasks.cs" target="_top">Controls\StartupTasks.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro.Caliburn.Demo" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro.Samples\MahApps.Metro.Caliburn.Demo\MahApps.Metro.Caliburn.Demo.csproj</a> (MahApps.Metro.Caliburn.Demo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>.<span class="i n">Composition</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Reflection</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">Caliburn</span>.<span class="i n">Metro</span>.<span class="i n">Demo</span>.<span class="i n">Services</span>;
+<b>using</b> <span class="i n">Caliburn</span>.<span class="i n">Micro</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>;
+
+<b>namespace</b> <span class="i n">Caliburn</span>.<span class="i n">Metro</span>.<span class="i n">Demo</span>.<span class="i n">Controls</span>
+{
+    <b>public delegate void</b> <a id="9b808d2840070f4a" href="../R/9b808d2840070f4a.html" target="n" data-glyph="12,0" class="t t"><span id="b2f3e263c818d0d4">StartupTask</span></a>();
+
+    <b>public class</b> <a id="f578ba6922d9d271" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">StartupTasks</a>
+    {
+        <b>private readonly</b> <a href="../Services/IServiceLocator.cs.html#f5c504f65024653d" class="t t">IServiceLocator</a> <a id="eb5e7becfc3692a3" href="../R/eb5e7becfc3692a3.html" target="n" data-glyph="46,1" class="i field">serviceLocator</a>;
+
+        [<a href="@0@System.ComponentModel.Composition/A.html#937c48b7233cd56b" class="t constructor">ImportingConstructor</a>]
+        <b>public</b> <a id="01e7448bcae910ea" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">StartupTasks</a>(<a href="../Services/IServiceLocator.cs.html#f5c504f65024653d" class="t t">IServiceLocator</a> <span id="r0 rd" class="r0 r">serviceLocator</span>)
+        {
+            <a href="#f578ba6922d9d271" class="k">this</a>.<a href="#eb5e7becfc3692a3" class="i field">serviceLocator</a> = <span class="r0 r">serviceLocator</span>;
+        }
+
+        [<a href="@0@System.ComponentModel.Composition/A.html#a2a14721c3852bea" class="t constructor">Export</a>(<b>typeof</b>(<a href="#9b808d2840070f4a" class="t t">StartupTask</a>))]
+        <b>public void</b> <a id="d5842a83a7e6b718" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">ApplyBindingScopeOverride</a>()
+        {
+            <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="k">var</a> <span id="r1 rd" class="r1 r">getNamedElements</span> = <span class="t t">BindingScope</span>.<span class="i field">GetNamedElements</span>;
+            <span class="t t">BindingScope</span>.<span class="i field">GetNamedElements</span> = <span id="r2 rd" class="r2 r">o</span> =&gt;
+                {
+                    <a href="/MahApps.Metro/A.html#5a37f9897ea7f8e0" class="k">var</a> <span id="r3 rd" class="r3 r">metroWindow</span> = <span class="r2 r">o</span> <b>as</b> <a href="/MahApps.Metro/A.html#5a37f9897ea7f8e0" class="t t">MetroWindow</a>;
+                    <b>if</b> (<span class="r3 r">metroWindow</span> == <b>null</b>)
+                    {
+                        <b>return</b> <span class="r1 r">getNamedElements</span>(<span class="r2 r">o</span>);
+                    }
+
+                    <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="k">var</a> <span id="r4 rd" class="r4 r">list</span> = <b>new</b> <a href="@0@mscorlib/A.html#d2ac2c19c9cf1d44" class="t constructor">List</a>&lt;<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>&gt;(<span class="r1 r">getNamedElements</span>(<span class="r2 r">o</span>));
+                    <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="k">var</a> <span id="r5 rd" class="r5 r">type</span> = <span class="r2 r">o</span>.<a href="@0@mscorlib/A.html#4d73eb225aef8a61" class="i method">GetType</a>();
+                    <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="k">var</a> <span id="r6 rd" class="r6 r">fields</span> =
+                        <span class="r2 r">o</span>.<a href="@0@mscorlib/A.html#4d73eb225aef8a61" class="i method">GetType</a>()
+                         .<a href="@0@mscorlib/A.html#6e620aa7cbd52b97" class="i method">GetFields</a>(<a href="@0@mscorlib/A.html#4795caf3b483702d" class="t t">BindingFlags</a>.<a href="@0@mscorlib/A.html#54a14f747b06c614" class="i field">Instance</a> | <a href="@0@mscorlib/A.html#4795caf3b483702d" class="t t">BindingFlags</a>.<a href="@0@mscorlib/A.html#5144189c11f6b668" class="i field">NonPublic</a>)
+                         .<a href="@0@System.Core/A.html#e73922753675387a" class="i method">Where</a>(<span id="r7 rd" class="r7 r">f</span> =&gt; <span class="r7 r">f</span>.<a href="@0@mscorlib/A.html#3eb1391de297c1a8" class="i property">DeclaringType</a> == <span class="r5 r">type</span>);
+                    <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="k">var</a> <span id="r8 rd" class="r8 r">flyouts</span> =
+                        <span class="r6 r">fields</span>.<a href="@0@System.Core/A.html#e73922753675387a" class="i method">Where</a>(<span id="r9 rd" class="r9 r">f</span> =&gt; <span class="r9 r">f</span>.<a href="@0@mscorlib/A.html#d630ef4efefb487f" class="i property">FieldType</a> == <b>typeof</b>(<a href="/MahApps.Metro/A.html#35b920504ab209c8" class="t t">FlyoutsControl</a>))
+                              .<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>(<span id="r10 rd" class="r10 r">f</span> =&gt; <span class="r10 r">f</span>.<a href="@0@mscorlib/A.html#f8ddbb1dc1c6b29e" class="i method">GetValue</a>(<span class="r2 r">o</span>))
+                              .<a href="@0@System.Core/A.html#27bb217a6d5457ec" class="i method">Cast</a>&lt;<a href="/MahApps.Metro/A.html#35b920504ab209c8" class="t t">FlyoutsControl</a>&gt;();
+                    <span class="r4 r">list</span>.<a href="@0@mscorlib/A.html#e569d850a66a1771" class="i method">AddRange</a>(<span class="r8 r">flyouts</span>);
+                    <b>return</b> <span class="r4 r">list</span>;
+                };
+        }
+
+        [<a href="@0@System.ComponentModel.Composition/A.html#a2a14721c3852bea" class="t constructor">Export</a>(<b>typeof</b>(<a href="#9b808d2840070f4a" class="t t">StartupTask</a>))]
+        <b>public void</b> <a id="cf34eba6dc8f6788" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">ApplyViewLocatorOverride</a>()
+        {
+            <a href="IThemeManager.cs.html#4d89d9a9ff6fda94" class="k">var</a> <span id="r11 rd" class="r11 r">themeManager</span> = <a href="#f578ba6922d9d271" class="k">this</a>.<a href="#eb5e7becfc3692a3" class="i field">serviceLocator</a>.<a href="../Services/IServiceLocator.cs.html#af9ac86b9ccae4c9" class="i method">GetInstance</a>&lt;<a href="IThemeManager.cs.html#4d89d9a9ff6fda94" class="t t">IThemeManager</a>&gt;();
+            <b>if</b> (<span class="r11 r">themeManager</span> <b>is not null</b>)
+            {
+                <a href="@0@PresentationFramework/A.html#cf9c51e402f97b05" class="t t">Application</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>.<a href="@0@PresentationFramework/A.html#ef90537e0e805697" class="i property">Resources</a>.<a href="@0@PresentationFramework/A.html#864bafd614698a44" class="i property">MergedDictionaries</a>.<a href="@0@mscorlib/A.html#5c61cc24de82f7e7" class="i method">Add</a>(<span class="r11 r">themeManager</span>.<a href="IThemeManager.cs.html#280b150689a793de" class="i method">GetThemeResources</a>());
+            }
+
+            <a href="IViewLocator.cs.html#ef6453ae956bd8de" class="k">var</a> <span id="r12 rd" class="r12 r">viewLocator</span> = <a href="#f578ba6922d9d271" class="k">this</a>.<a href="#eb5e7becfc3692a3" class="i field">serviceLocator</a>.<a href="../Services/IServiceLocator.cs.html#af9ac86b9ccae4c9" class="i method">GetInstance</a>&lt;<a href="IViewLocator.cs.html#ef6453ae956bd8de" class="t t">IViewLocator</a>&gt;();
+            <b>if</b> (<span class="r12 r">viewLocator</span> <b>is not null</b>)
+            {
+                <span class="i n">Micro</span>.<span class="t t">ViewLocator</span>.<span class="i field">GetOrCreateViewType</span> = <span class="r12 r">viewLocator</span>.<a href="IViewLocator.cs.html#46541d62482292e8" class="i method">GetOrCreateViewType</a>;
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

@@ -1,4 +1,7 @@
-﻿using EasyITSystemCenter.Classes;
+﻿[Zpět](../../index)   
+
+```cshtml   
+using EasyITSystemCenter.Classes;
 using System;
 using System.Diagnostics;
 using System.IO;

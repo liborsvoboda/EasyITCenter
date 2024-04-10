@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html><head><title>FontPickerElement.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(80);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.HTMLFullEditor/Code/Internal/FontPickerElement.cs" target="_top">Code\Internal\FontPickerElement.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.HTMLFullEditor" target="_top">..\..\..\EASY-TOOLS\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor.csproj</a> (EASYTools.HTMLFullEditor)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Interfaces</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Code</span>
+{
+    <b>internal sealed class</b> <a id="974d39879a3ed362" href="../../R/974d39879a3ed362.html" target="n" data-glyph="2,0" class="t t">FontPickerElement</a> : <a href="../ToolbarElement.cs.html#6f06dfe34ecfa452" class="t t">ToolbarElement</a>
+    {
+        <b>public</b> <a id="fade6f679ba8e58b" href="../../R/fade6f679ba8e58b.html" target="n" data-glyph="72,1" class="t constructor">FontPickerElement</a>() : <a href="../ToolbarElement.cs.html#b4f2263062d62575" class="k">base</a>(<b>nameof</b>(<a href="../StandardToolbarElement.cs.html#6f41b6076ee33159" class="t t">StandardToolbarElement</a>.<a href="../StandardToolbarElement.cs.html#41a9c651e1e12ec6" class="i field">FontFamily</a>))
+        {
+            <a href="../ToolbarElement.cs.html#ce5d19eac2a81505" class="i property">EnableCheckState</a> = <b>true</b>;
+        }
+ 
+        <b>protected override void</b> <a id="0dcd099dd19f5025" href="../../R/0dcd099dd19f5025.html" target="n" data-glyph="75,1" class="i method">CheckState</a>(<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r0 rd" class="r0 r">element</span>, <a href="../../Interfaces/IBrowserControl.cs.html#c6664bab75da7ecf" class="t t">IBrowserControl</a> <span id="r1 rd" class="r1 r">browserControl</span>)
+        {
+            <a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="k">var</a> <span id="r2 rd" class="r2 r">currentFont</span> = <a href="#9a0c51a894de5366" class="i method">GetCurrentFont</a>(<span class="r1 r">browserControl</span>);
+            <b>if</b> (<span class="r2 r">currentFont</span> != <b>null</b>)
+            {
+                ((<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>)<span class="r0 r">element</span>).<a href="@0@PresentationFramework/A.html#f053c8f858b51411" class="i property">SelectedItem</a> = <span class="r2 r">currentFont</span>;
+            }
+        }
+ 
+        <b>protected override</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <a id="bd51a5f96c74270a" href="../../R/bd51a5f96c74270a.html" target="n" data-glyph="75,1" class="i method">CreateElement</a>(<a href="../../Interfaces/IBrowserControl.cs.html#c6664bab75da7ecf" class="t t">IBrowserControl</a> <span id="r3 rd" class="r3 r">browserControl</span>)
+        {
+            <span class="c">/*
+             * &lt;ComboBox Width=&quot;128&quot;&gt;
+                    &lt;ComboBox.ItemContainerStyle&gt;
+                        &lt;Style TargetType=&quot;{x:Type ComboBoxItem}&quot;&gt;
+                            &lt;Setter Property=&quot;FontFamily&quot;
+                                    Value=&quot;{Binding Content, RelativeSource={RelativeSource Mode=Self}}&quot; /&gt;
+                            &lt;Setter Property=&quot;FontSize&quot;
+                                    Value=&quot;14&quot; /&gt;
+                        &lt;/Style&gt;
+                    &lt;/ComboBox.ItemContainerStyle&gt;
+                &lt;/ComboBox&gt;
+             */</span>
+ 
+            <a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="k">var</a> <span id="r4 rd" class="r4 r">comboBox</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#fa09a8700d0446b6" class="t constructor">ComboBox</a>();
+            <span class="r4 r">comboBox</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = 128;
+ 
+            <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="k">var</a> <span id="r5 rd" class="r5 r">itemStyle</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#77e1492c499487f0" class="t constructor">Style</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#bbfb34dbfda7f718" class="t t">ComboBoxItem</a>));
+            <span class="r5 r">itemStyle</span>.<a href="@0@PresentationFramework/A.html#b184603284693a4f" class="i property">Setters</a>.<a href="@0@mscorlib/A.html#5c61cc24de82f7e7" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#c48706a61a5d8f59" class="t constructor">Setter</a>(<a href="@0@PresentationFramework/A.html#6750b721a2294fc5" class="t t">Control</a>.<a href="@0@PresentationFramework/A.html#864f8c717160e654" class="i field">FontFamilyProperty</a>, <b>new</b> <a href="@0@PresentationFramework/A.html#94f69147a4e4e69b" class="t constructor">Binding</a>(<span class="s">&quot;.&quot;</span>)));
+            <span class="r5 r">itemStyle</span>.<a href="@0@PresentationFramework/A.html#b184603284693a4f" class="i property">Setters</a>.<a href="@0@mscorlib/A.html#5c61cc24de82f7e7" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#c48706a61a5d8f59" class="t constructor">Setter</a>(<a href="@0@PresentationFramework/A.html#6750b721a2294fc5" class="t t">Control</a>.<a href="@0@PresentationFramework/A.html#c8d2ef2e2ec9f087" class="i field">FontSizeProperty</a>, (<b>double</b>)14));
+            <span class="r4 r">comboBox</span>.<a href="@0@PresentationFramework/A.html#d277af8d90668758" class="i property">ItemContainerStyle</a> = <span class="r5 r">itemStyle</span>;
+ 
+            <span class="r4 r">comboBox</span>.<a href="@0@PresentationFramework/A.html#3bb5cb5ee01ee8d2" class="i property">ItemsSource</a> = <a href="@0@PresentationCore/A.html#4038fbf5f7c2623f" class="t t">Fonts</a>.<a href="@0@PresentationCore/A.html#403dc7b7dcd3b896" class="i property">SystemFontFamilies</a>.<a href="@0@System.Core/A.html#e449fbc07f49dc52" class="i method">OrderBy</a>(<span id="r6 rd" class="r6 r">f</span> =&gt; <span class="r6 r">f</span>.<a href="@0@PresentationCore/A.html#8c4d6f6d7c40ac4a" class="i property">Source</a>).<a href="@0@System.Core/A.html#e276d6892241255b" class="i method">ToList</a>();
+            <span class="r4 r">comboBox</span>.<a href="@0@PresentationFramework/A.html#76f03b62b2915375" class="i">SelectionChanged</a> += (<span id="r7 rd" class="r7 r">s</span>, <span id="r8 rd" class="r8 r">e</span>) =&gt;
+            {
+                <a href="#cc5cf9b3add62170" class="i method">FontChanged</a>(<span class="r3 r">browserControl</span>, <span class="r4 r">comboBox</span>);
+            };
+ 
+            <b>return</b> <span class="r4 r">comboBox</span>;
+        }
+ 
+        <b>private static void</b> <a id="cc5cf9b3add62170" href="../../R/cc5cf9b3add62170.html" target="n" data-glyph="76,1" class="i method">FontChanged</a>(<a href="../../Interfaces/IBrowserControl.cs.html#c6664bab75da7ecf" class="t t">IBrowserControl</a> <span id="r9 rd" class="r9 r">browserControl</span>, <a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a> <span id="r10 rd" class="r10 r">comboBox</span>)
+        {
+            <a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a> <span id="r11 rd" class="r11 r">currentFont</span> = <a href="#9a0c51a894de5366" class="i method">GetCurrentFont</a>(<span class="r9 r">browserControl</span>);
+            <a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a> <span id="r12 rd" class="r12 r">selectedFont</span> = (<a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a>)<span class="r10 r">comboBox</span>.<a href="@0@PresentationFramework/A.html#0d4c8aaba2f2a87a" class="i property">SelectedValue</a>;
+ 
+            <span class="c">// only when change occurred</span>
+            <b>if</b> (!<a href="@0@mscorlib/A.html#f2a579c50b414717" class="i method">Equals</a>(<span class="r12 r">selectedFont</span>, <span class="r11 r">currentFont</span>))
+            {
+                <span class="r9 r">browserControl</span>.<a href="../../Interfaces/IBrowserControl.cs.html#e082468432d785ef" class="i method">SetFont</a>(<span class="r12 r">selectedFont</span>);
+            }
+        }
+ 
+        <b>private static</b> <a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a> <a id="9a0c51a894de5366" href="../../R/9a0c51a894de5366.html" target="n" data-glyph="76,1" class="i method">GetCurrentFont</a>(<a href="../../Interfaces/IBrowserControl.cs.html#c6664bab75da7ecf" class="t t">IBrowserControl</a> <span id="r13 rd" class="r13 r">browserControl</span>)
+        {
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r14 rd" class="r14 r">name</span> = <span class="r13 r">browserControl</span>.<a href="../../Interfaces/IBrowserControl.cs.html#a9769112da0c78f4" class="i property">CurrentDocument</a>?.<span class="i method">queryCommandValue</span>(<span class="s">&quot;FontName&quot;</span>)?.<span class="i">ToString</span>();
+            <b>if</b> (<span class="r14 r">name</span> == <b>null</b>)
+                <b>return</b> <b>null</b>;
+ 
+            <b>return</b> <b>new</b> <a href="@0@PresentationCore/A.html#a689959282d4aced" class="t constructor">FontFamily</a>(<span class="r14 r">name</span>);
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

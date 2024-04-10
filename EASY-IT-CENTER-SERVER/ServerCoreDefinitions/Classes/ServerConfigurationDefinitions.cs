@@ -74,6 +74,22 @@
         /// </summary>
         public static bool ConfigLogWarnPlusToDbEnabled { get; set; } = false;
 
+
+
+        public static string ResourceAccessMode { get; set; } = "DbResourceManager";
+        public static string ResourceTableName { get; set; } = "SolutionDatabaseGeneratorList";
+        public static string StronglyTypedGlobalResource { get; set; } = "~/Properties/DynamicApiDefinitions.cs";
+        public static string ResourceBaseNamespace { get; set; } = "EasyITCenter.DynamicControllers";
+        public static string ResxExportProjectType { get; set; } = "Project";
+        public static string ResxBaseFolder { get; set; } = "~/Properties/";
+        public static bool AddMissingResources { get; set; } = true;
+        public static string? ActiveConfiguration { get; set; } = null;
+        public static string LocalizationFormWebPath { get; set; } = "/ServerCoreTools/DatabaseAdmin";
+        public static string BingClientId { get; set; } = "";
+        public static string GoogleApiKey { get; set; } = "";
+
+
+
         #endregion Server Database
 
         #region Server Future Technologies

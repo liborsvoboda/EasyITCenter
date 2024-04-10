@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html><head><title>Pivot.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(204);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/Pivot.cs" target="_top">Controls\Pivot.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;PART_Scroll&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;PART_Headers&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#40ea569cece57872" class="t t">ListView</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;PART_Mediator&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="ScrollViewerOffsetMediator.cs.html#35c16a6da368342e" class="t t">ScrollViewerOffsetMediator</a>))]
+    <b>public class</b> <a id="79d4f279b47d366d" href="../R/79d4f279b47d366d.html" target="n" data-glyph="0,0" class="t t"><span id="ed023d89592e9881">Pivot</span></a> : <a href="@0@PresentationFramework/A.html#dee33c98c4dcf3f2" class="t t">ItemsControl</a>
+    {
+        <b>private</b> <a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>? <a id="7fa71cce09b295cc" href="../R/7fa71cce09b295cc.html" target="n" data-glyph="46,1" class="i field">scrollViewer</a>;
+        <b>private</b> <a href="@0@PresentationFramework/A.html#40ea569cece57872" class="t t">ListView</a>? <a id="64bb225751e46b21" href="../R/64bb225751e46b21.html" target="n" data-glyph="46,1" class="i field">headers</a>;
+        <b>private</b> <a href="PivotItem.cs.html#83218afec1a16d13" class="t t">PivotItem</a>? <a id="7b68a9d90f105865" href="../R/7b68a9d90f105865.html" target="n" data-glyph="46,1" class="i field">selectedItem</a>;
+        <b>private</b> <a href="ScrollViewerOffsetMediator.cs.html#35c16a6da368342e" class="t t">ScrollViewerOffsetMediator</a>? <a id="d56cfde0be2041a1" href="../R/d56cfde0be2041a1.html" target="n" data-glyph="46,1" class="i field">mediator</a>;
+        <b>internal int</b> <a id="ce93ce1540e89fbb" href="../R/ce93ce1540e89fbb.html" target="n" data-glyph="44,1" class="i field">internalIndex</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#d5ae439363106181" class="i">SelectionChanged</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> routed event.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@PresentationCore/A.html#1494cfe9a0c5ee74" class="t t">RoutedEvent</a> <a id="152a2594e7d38766" href="../R/152a2594e7d38766.html" target="n" data-glyph="42,1" class="i field">SelectionChangedEvent</a>
+            = <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#a5460796900a6473" class="i method">RegisterRoutedEvent</a>(<b>nameof</b>(<a href="#d5ae439363106181" class="i">SelectionChanged</a>),
+                                               <a href="@0@PresentationCore/A.html#2144a30d9ece7dfe" class="t t">RoutingStrategy</a>.<a href="@0@PresentationCore/A.html#43b9d70d58d66c4c" class="i field">Bubble</a>,
+                                               <b>typeof</b>(<a href="@0@PresentationCore/A.html#af107ecb60427a17" class="t t">RoutedEventHandler</a>),
+                                               <b>typeof</b>(<a href="#79d4f279b47d366d" class="t t">Pivot</a>));
+
+        <b>public event</b> <a href="@0@PresentationCore/A.html#af107ecb60427a17" class="t t">RoutedEventHandler</a> <a id="d5ae439363106181" href="../R/d5ae439363106181.html" target="n" data-glyph="30,1" class="i">SelectionChanged</a>
+        {
+            <b>add</b> =&gt; <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@PresentationCore/A.html#18cd7adc001fa956" class="i method">AddHandler</a>(<a href="#152a2594e7d38766" class="i field">SelectionChangedEvent</a>, <b>value</b>);
+            <b>remove</b> =&gt; <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@PresentationCore/A.html#221a746a1b193eb1" class="i method">RemoveHandler</a>(<a href="#152a2594e7d38766" class="i field">SelectionChangedEvent</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#498ca77fbf03cef1" class="i property">Header</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b098847aa27d5c1f" href="../R/b098847aa27d5c1f.html" target="n" data-glyph="42,1" class="i field">HeaderProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#498ca77fbf03cef1" class="i property">Header</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#79d4f279b47d366d" class="t t">Pivot</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>)));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Header of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#79d4f279b47d366d" class="t t">Pivot</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b>? <a id="498ca77fbf03cef1" href="../R/498ca77fbf03cef1.html" target="n" data-glyph="102,1" class="i property">Header</a>
+        {
+            <b>get</b> =&gt; (<b>object</b>?)<a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b098847aa27d5c1f" class="i field">HeaderProperty</a>);
+            <b>set</b> =&gt; <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b098847aa27d5c1f" class="i field">HeaderProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#a30abe39e6e336a7" class="i property">HeaderTemplate</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f0b4d815a3e99a82" href="../R/f0b4d815a3e99a82.html" target="n" data-glyph="42,1" class="i field">HeaderTemplateProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#28c81133f2c673fb" class="i method">Register</a>(<b>nameof</b>(<a href="#a30abe39e6e336a7" class="i property">HeaderTemplate</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>),
+                                          <b>typeof</b>(<a href="#79d4f279b47d366d" class="t t">Pivot</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the HeaderTemplate of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#79d4f279b47d366d" class="t t">Pivot</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>? <a id="a30abe39e6e336a7" href="../R/a30abe39e6e336a7.html" target="n" data-glyph="102,1" class="i property">HeaderTemplate</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>?)<a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f0b4d815a3e99a82" class="i field">HeaderTemplateProperty</a>);
+            <b>set</b> =&gt; <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f0b4d815a3e99a82" class="i field">HeaderTemplateProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#65ebb41e8800fd45" class="i property">SelectedIndex</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="30bb0087e8a78960" href="../R/30bb0087e8a78960.html" target="n" data-glyph="42,1" class="i field">SelectedIndexProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#65ebb41e8800fd45" class="i property">SelectedIndex</a>),
+                                          <b>typeof</b>(<b>int</b>),
+                                          <b>typeof</b>(<a href="#79d4f279b47d366d" class="t t">Pivot</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#cfed8906a2f8b7f6" class="t constructor">FrameworkPropertyMetadata</a>(0, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>, <a href="#2b7cb077763e645a" class="i method">OnSelectedIndexPropertyChanged</a>));
+
+        <b>private static void</b> <a id="2b7cb077763e645a" href="../R/2b7cb077763e645a.html" target="n" data-glyph="76,1" class="i method">OnSelectedIndexPropertyChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">dependencyObject</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <b>if</b> (<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a> != <span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a> &amp;&amp; <span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a> <b>is int</b> <span id="r2 rd" class="r2 r">newSelectedIndex</span>)
+            {
+                <a href="#79d4f279b47d366d" class="k">var</a> <span id="r3 rd" class="r3 r">pivot</span> = (<a href="#79d4f279b47d366d" class="t t">Pivot</a>)<span class="r0 r">dependencyObject</span>;
+                <b>if</b> (<span class="r3 r">pivot</span>.<a href="#ce93ce1540e89fbb" class="i field">internalIndex</a> != <span class="r3 r">pivot</span>.<a href="#65ebb41e8800fd45" class="i property">SelectedIndex</a> &amp;&amp; <span class="r2 r">newSelectedIndex</span> &gt;= 0 &amp;&amp; <span class="r2 r">newSelectedIndex</span> &lt; <span class="r3 r">pivot</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#4808b70b6149b33d" class="i property">Count</a>)
+                {
+                    <a href="PivotItem.cs.html#83218afec1a16d13" class="k">var</a> <span id="r4 rd" class="r4 r">pivotItem</span> = (<a href="PivotItem.cs.html#83218afec1a16d13" class="t t">PivotItem</a>)<span class="r3 r">pivot</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a><a href="@0@PresentationFramework/A.html#c49acbf9dec19aa0">[</a><span class="r2 r">newSelectedIndex</span>];
+                    <span class="c">// set headers selected item too</span>
+                    <b>if</b> (<span class="r3 r">pivot</span>.<a href="#64bb225751e46b21" class="i field">headers</a> <b>is not null</b>)
+                    {
+                        <span class="r3 r">pivot</span>.<a href="#64bb225751e46b21" class="i field">headers</a>.<a href="@0@PresentationFramework/A.html#f053c8f858b51411" class="i property">SelectedItem</a> = <span class="r4 r">pivotItem</span>;
+                    }
+
+                    <span class="r3 r">pivot</span>.<a href="#13b52baabda287e0" class="i method">GoToItem</a>(<span class="r4 r">pivotItem</span>);
+                }
+            }
+        }
+
+        <b>public int</b> <a id="65ebb41e8800fd45" href="../R/65ebb41e8800fd45.html" target="n" data-glyph="102,1" class="i property">SelectedIndex</a>
+
+        {
+            <b>get</b> =&gt; (<b>int</b>)<a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#30bb0087e8a78960" class="i field">SelectedIndexProperty</a>);
+            <b>set</b> =&gt; <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#30bb0087e8a78960" class="i field">SelectedIndexProperty</a>, <b>value</b>);
+        }
+
+        <b>public void</b> <a id="13b52baabda287e0" href="../R/13b52baabda287e0.html" target="n" data-glyph="72,1" class="i method">GoToItem</a>(<a href="PivotItem.cs.html#83218afec1a16d13" class="t t">PivotItem</a>? <span id="r5 rd" class="r5 r">item</span>)
+        {
+            <b>if</b> (<span class="r5 r">item</span> <b>is null</b> || <span class="r5 r">item</span> == <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#7b68a9d90f105865" class="i field">selectedItem</a>)
+            {
+                <b>return</b>;
+            }
+
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r6 rd" class="r6 r">widthToScroll</span> = 0.0;
+            <b>int</b> <span id="r7 rd" class="r7 r">index</span>;
+            <b>for</b> (<span class="r7 r">index</span> = 0; <span class="r7 r">index</span> &lt; <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#4808b70b6149b33d" class="i property">Count</a>; <span class="r7 r">index</span>++)
+            {
+                <b>if</b> (<a href="@0@mscorlib/A.html#4d607d6d56a93c7e" class="i method">ReferenceEquals</a>(<a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a><a href="@0@PresentationFramework/A.html#c49acbf9dec19aa0">[</a><span class="r7 r">index</span>], <span class="r5 r">item</span>))
+                {
+                    <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#ce93ce1540e89fbb" class="i field">internalIndex</a> = <span class="r7 r">index</span>;
+                    <b>break</b>;
+                }
+
+                <span class="r6 r">widthToScroll</span> += ((<a href="PivotItem.cs.html#83218afec1a16d13" class="t t">PivotItem</a>)<a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a><a href="@0@PresentationFramework/A.html#c49acbf9dec19aa0">[</a><span class="r7 r">index</span>]).<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>;
+            }
+
+            <b>if</b> (<a href="#79d4f279b47d366d" class="k">this</a>.<a href="#d56cfde0be2041a1" class="i field">mediator</a> <b>is not null</b>
+                &amp;&amp; <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#7fa71cce09b295cc" class="i field">scrollViewer</a> <b>is not null</b>)
+            {
+                <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#d56cfde0be2041a1" class="i field">mediator</a>.<a href="ScrollViewerOffsetMediator.cs.html#2ef4d283b794b685" class="i property">HorizontalOffset</a> = <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#7fa71cce09b295cc" class="i field">scrollViewer</a>.<a href="@0@PresentationFramework/A.html#4e0b447a5f0334f0" class="i property">HorizontalOffset</a>;
+                <a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="k">var</a> <span id="r8 rd" class="r8 r">sb</span> = <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#d56cfde0be2041a1" class="i field">mediator</a>.<a href="@0@PresentationFramework/A.html#49776fc24d2e2b0d" class="i property">Resources</a><a href="@0@PresentationFramework/A.html#fe23e03a125d22aa">[</a><span class="s">&quot;Storyboard1&quot;</span>] <b>as</b> <a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="t t">Storyboard</a>;
+                <a href="@0@PresentationCore/A.html#a94189580243978c" class="k">var</a> <span id="r9 rd" class="r9 r">frame</span> = (<a href="@0@PresentationCore/A.html#a94189580243978c" class="t t">EasingDoubleKeyFrame</a>)<a href="#79d4f279b47d366d" class="k">this</a>.<a href="#d56cfde0be2041a1" class="i field">mediator</a>.<a href="@0@PresentationFramework/A.html#601ea2e1bc15bf1c" class="i method">FindName</a>(<span class="s">&quot;edkf&quot;</span>);
+                <span class="r9 r">frame</span>.<a href="@0@PresentationCore/A.html#6a4a9c5697cd2019" class="i property">Value</a> = <span class="r6 r">widthToScroll</span>;
+
+                <b>if</b> (<span class="r8 r">sb</span> <b>is not null</b>)
+                {
+                    <span class="r8 r">sb</span>.<a href="@0@PresentationCore/A.html#3dc81828027c69bc" class="i">Completed</a> -= <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#6484106ed1985e0b" class="i method">OnStoryboardCompleted</a>;
+                    <span class="r8 r">sb</span>.<a href="@0@PresentationCore/A.html#3dc81828027c69bc" class="i">Completed</a> += <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#6484106ed1985e0b" class="i method">OnStoryboardCompleted</a>;
+                    <span class="r8 r">sb</span>.<a href="@0@PresentationFramework/A.html#934016b9f5ad8240" class="i method">Begin</a>();
+                }
+            }
+
+            <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<b>new</b> <a href="@0@PresentationCore/A.html#ee90c9b45d5a95f4" class="t constructor">RoutedEventArgs</a>(<a href="#152a2594e7d38766" class="i field">SelectionChangedEvent</a>));
+        }
+
+        <b>private void</b> <a id="6484106ed1985e0b" href="../R/6484106ed1985e0b.html" target="n" data-glyph="76,1" class="i method">OnStoryboardCompleted</a>(<b>object</b>? <span id="r10 rd" class="r10 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r11 rd" class="r11 r">e</span>)
+        {
+            <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#30bb0087e8a78960" class="i field">SelectedIndexProperty</a>, <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#ce93ce1540e89fbb" class="i field">internalIndex</a>);
+        }
+
+        <b>static</b> <a id="ecdd3cb747d8097a" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">Pivot</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6339cc8ec3e1311a" class="i field">DefaultStyleKeyProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#79d4f279b47d366d" class="t t">Pivot</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>typeof</b>(<a href="#79d4f279b47d366d" class="t t">Pivot</a>)));
+        }
+
+        <b>public override void</b> <a id="279a5d606850e59b" href="../R/279a5d606850e59b.html" target="n" data-glyph="72,1" class="i method">OnApplyTemplate</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#dee33c98c4dcf3f2" class="k">base</a>.<a href="@0@PresentationFramework/A.html#0c1b13beb625a4a2" class="i method">OnApplyTemplate</a>();
+            <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#7fa71cce09b295cc" class="i field">scrollViewer</a> = <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;PART_Scroll&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>;
+            <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#64bb225751e46b21" class="i field">headers</a> = <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;PART_Headers&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#40ea569cece57872" class="t t">ListView</a>;
+            <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#d56cfde0be2041a1" class="i field">mediator</a> = <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;PART_Mediator&quot;</span>) <b>as</b> <a href="ScrollViewerOffsetMediator.cs.html#35c16a6da368342e" class="t t">ScrollViewerOffsetMediator</a>;
+
+            <b>if</b> (<a href="#79d4f279b47d366d" class="k">this</a>.<a href="#7fa71cce09b295cc" class="i field">scrollViewer</a> != <b>null</b>)
+            {
+                <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#7fa71cce09b295cc" class="i field">scrollViewer</a>.<a href="@0@PresentationFramework/A.html#46795889bc55ea98" class="i">ScrollChanged</a> += <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#03ac80883846e0c5" class="i method">ScrollViewerScrollChanged</a>;
+                <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#7fa71cce09b295cc" class="i field">scrollViewer</a>.<a href="@0@PresentationCore/A.html#2a2fafaa96d9069e" class="i">PreviewMouseWheel</a> += <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#5ca48bd91adcd755" class="i method">ScrollViewerMouseWheel</a>;
+            }
+
+            <b>if</b> (<a href="#79d4f279b47d366d" class="k">this</a>.<a href="#64bb225751e46b21" class="i field">headers</a> != <b>null</b>)
+            {
+                <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#64bb225751e46b21" class="i field">headers</a>.<a href="@0@PresentationFramework/A.html#76f03b62b2915375" class="i">SelectionChanged</a> += <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#fdb02e94485545b7" class="i method">headers_SelectionChanged</a>;
+            }
+        }
+
+        <b>private void</b> <a id="5ca48bd91adcd755" href="../R/5ca48bd91adcd755.html" target="n" data-glyph="76,1" class="i method">ScrollViewerMouseWheel</a>(<b>object</b> <span id="r12 rd" class="r12 r">sender</span>, <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>.<a href="@0@PresentationCore/A.html#2907728f4bd9d8a3" class="t t">MouseWheelEventArgs</a> <span id="r13 rd" class="r13 r">e</span>)
+        {
+            <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#7fa71cce09b295cc" class="i field">scrollViewer</a>!.<a href="@0@PresentationFramework/A.html#4b1c163ff50a257d" class="i method">ScrollToHorizontalOffset</a>(<a href="#79d4f279b47d366d" class="k">this</a>.<a href="#7fa71cce09b295cc" class="i field">scrollViewer</a>.<a href="@0@PresentationFramework/A.html#4e0b447a5f0334f0" class="i property">HorizontalOffset</a> + -<span class="r13 r">e</span>.<a href="@0@PresentationCore/A.html#da89a6a0b369523a" class="i property">Delta</a>);
+        }
+
+        <b>private void</b> <a id="fdb02e94485545b7" href="../R/fdb02e94485545b7.html" target="n" data-glyph="76,1" class="i method">headers_SelectionChanged</a>(<b>object</b> <span id="r14 rd" class="r14 r">sender</span>, <a href="@0@PresentationFramework/A.html#c488465397cb1452" class="t t">SelectionChangedEventArgs</a> <span id="r15 rd" class="r15 r">e</span>)
+        {
+            <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#13b52baabda287e0" class="i method">GoToItem</a>((<a href="PivotItem.cs.html#83218afec1a16d13" class="t t">PivotItem</a>)<a href="#79d4f279b47d366d" class="k">this</a>.<a href="#64bb225751e46b21" class="i field">headers</a>!.<a href="@0@PresentationFramework/A.html#f053c8f858b51411" class="i property">SelectedItem</a>);
+        }
+
+        <b>private void</b> <a id="03ac80883846e0c5" href="../R/03ac80883846e0c5.html" target="n" data-glyph="76,1" class="i method">ScrollViewerScrollChanged</a>(<b>object</b> <span id="r16 rd" class="r16 r">sender</span>, <a href="@0@PresentationFramework/A.html#e2b36b41803b1a00" class="t t">ScrollChangedEventArgs</a> <span id="r17 rd" class="r17 r">e</span>)
+        {
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r18 rd" class="r18 r">position</span> = 0.0;
+            <b>for</b> (<a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r19 rd" class="r19 r">i</span> = 0; <span class="r19 r">i</span> &lt; <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#4808b70b6149b33d" class="i property">Count</a>; <span class="r19 r">i</span>++)
+            {
+                <a href="PivotItem.cs.html#83218afec1a16d13" class="k">var</a> <span id="r20 rd" class="r20 r">pivotItem</span> = ((<a href="PivotItem.cs.html#83218afec1a16d13" class="t t">PivotItem</a>)<a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a><a href="@0@PresentationFramework/A.html#c49acbf9dec19aa0">[</a><span class="r19 r">i</span>]);
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r21 rd" class="r21 r">widthOfItem</span> = <span class="r20 r">pivotItem</span>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>;
+                <b>if</b> (<span class="r17 r">e</span>.<a href="@0@PresentationFramework/A.html#f225a3246c6ef6ef" class="i property">HorizontalOffset</a> &lt;= (<span class="r18 r">position</span> + <span class="r21 r">widthOfItem</span> - 1))
+                {
+                    <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#7b68a9d90f105865" class="i field">selectedItem</a> = <span class="r20 r">pivotItem</span>;
+                    <b>if</b> (<a href="#79d4f279b47d366d" class="k">this</a>.<a href="#64bb225751e46b21" class="i field">headers</a> <b>is not null</b> &amp;&amp; <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#64bb225751e46b21" class="i field">headers</a>.<a href="@0@PresentationFramework/A.html#f053c8f858b51411" class="i property">SelectedItem</a> != <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#7b68a9d90f105865" class="i field">selectedItem</a>)
+                    {
+                        <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#64bb225751e46b21" class="i field">headers</a>.<a href="@0@PresentationFramework/A.html#f053c8f858b51411" class="i property">SelectedItem</a> = <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#7b68a9d90f105865" class="i field">selectedItem</a>;
+                        <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#ce93ce1540e89fbb" class="i field">internalIndex</a> = <span class="r19 r">i</span>;
+                        <a href="#79d4f279b47d366d" class="k">this</a>.<a href="#65ebb41e8800fd45" class="i property">SelectedIndex</a> = <span class="r19 r">i</span>;
+
+                        <a href="#79d4f279b47d366d" class="k">this</a>.<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<b>new</b> <a href="@0@PresentationCore/A.html#ee90c9b45d5a95f4" class="t constructor">RoutedEventArgs</a>(<a href="#152a2594e7d38766" class="i field">SelectionChangedEvent</a>));
+                    }
+
+                    <b>break</b>;
+                }
+
+                <span class="r18 r">position</span> += <span class="r21 r">widthOfItem</span>;
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

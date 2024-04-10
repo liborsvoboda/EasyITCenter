@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html><head><title>TODOServerInheritEngine.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(54);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasyITcenter-HELP/GenericDB/TODOServerInheritEngine.cs" target="_top">GenericDB\TODOServerInheritEngine.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasyITcenter-HELP" target="_top">HelpProjects\EasyITcenter-HELP\EasyITcenter-HELP.csproj</a> (EasyITcenter-HELP)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i">EntityFrameworkCore</span>.<span class="i">Metadata</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Data</span>;
+ 
+ 
+<b>namespace</b> <span class="i n">EasyITCenter</span>.<span class="i n">ServerCoreDBSettings</span> {
+ 
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> TODO  Inherit DB Context with </span>
+    <span class="c">///</span><span class="c"> Table Prefix</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <b>partial</b> <b>class</b> <a id="fc56480641da8e89" href="../R/fc56480641da8e89.html" target="n" data-glyph="0,0" class="t t">WorkFlowContext</a> : <span class="i">DbContext</span> {
+ 
+        <b>public</b> <a id="e7a032c0820fcfbe" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">WorkFlowContext</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">connectionString</span>) : <b>base</b>(<span class="i">SqlServerDbContextOptionsExtensions</span>.<span class="i">UseSqlServer</span>(<b>new</b> <span class="i">DbContextOptionsBuilder</span>(), <span class="r0 r">connectionString</span>).<span class="i">Options</span>) {
+ 
+        }
+ 
+        <b>public</b> <a id="187d0ca5e1edb47d" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">WorkFlowContext</a>(<span class="i">DbContextOptions</span>&lt;<span class="i">DbContext</span>&gt; <span id="r1 rd" class="r1 r">options</span>)
+            : <b>base</b>(<span class="r1 r">options</span>) {
+            <span class="i">ChangeTracker</span>.<span class="i">QueryTrackingBehavior</span> = <span class="i">QueryTrackingBehavior</span>.<span class="i">NoTracking</span>;
+        }
+ 
+        <b>protected override void</b> <a id="fecee16097302236" href="../R/../../0000000000.html" target="n" data-glyph="75,1" class="i method">OnModelCreating</a>(<span class="i">ModelBuilder</span> <span id="r2 rd" class="r2 r">modelBuilder</span>) {
+            <b>foreach</b> (<span class="i">IMutableEntityType</span> <span id="r3 rd" class="r3 r">entity</span> <b>in</b> <span class="r2 r">modelBuilder</span>.<span class="i">Model</span>.<span class="i">GetEntityTypes</span>()) {
+                <span class="r3 r">entity</span>.<span class="i">SetTableName</span>(<span class="s">&quot;Workflow&quot;</span> + <span class="r3 r">entity</span>.<span class="i">GetTableName</span>());
+            }
+        }
+    }
+ 
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Database Context Extensions for All Types Procedures For Retun Data in procedure can be</span>
+    <span class="c">///</span><span class="c"> Simple SELECT * XXX and you Create Same Class for returned DataSet</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public static class</b> <a id="99745e7cee76de7c" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">WorkflowContextExtensions</a> {
+ 
+        <b>public static</b> <span class="t t">List</span>&lt;<span class="r4 r t">T</span>&gt; <a id="6661a5aa41841d4d" href="../R/../../0000000000.html" target="n" data-glyph="220,1" class="i method">EasyITCenterCollectionFromSql</a>&lt;<span id="r4 rd t" class="r4 r t">T</span>&gt;(<b>this</b> <a href="#fc56480641da8e89" class="t t">WorkFlowContext</a> <span id="r5 rd" class="r5 r">dbContext</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r6 rd" class="r6 r">sql</span>) <b>where</b> <span class="r4 r t">T</span> : <b>class</b>, <b>new</b>() {
+            <b>using</b> <b>var</b> <span id="r7 rd" class="r7 r">cmd</span> = <span class="r5 r">dbContext</span>.<span class="i">Database</span>.<span class="i">GetDbConnection</span>().<span class="i">CreateCommand</span>();
+            <span class="r7 r">cmd</span>.<span class="i">CommandText</span> = <span class="r6 r">sql</span>;
+            <b>if</b> (<span class="r7 r">cmd</span>.<span class="i">Connection</span>.<span class="i">State</span> != <span class="t t">ConnectionState</span>.<span class="i field">Open</span>)
+                <span class="r7 r">cmd</span>.<span class="i">Connection</span>.<span class="i">Open</span>();
+            <b>try</b> {
+                <span class="t t">List</span>&lt;<span class="r4 r t">T</span>&gt; <span id="r8 rd" class="r8 r">results</span> = <b>null</b>;
+                <span class="t t">DataTable</span> <span id="r9 rd" class="r9 r">table</span> = <b>new</b> <span class="t constructor">DataTable</span>();
+                <span class="r9 r">table</span>.<span class="i property">Locale</span> = <span class="i n">System</span>.<span class="i n">Globalization</span>.<a href="@1@System.Runtime/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@1@System.Runtime/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>;
+                <span class="r9 r">table</span>.<span class="i">Load</span>(<span class="r7 r">cmd</span>.<span class="i">ExecuteReader</span>());
+                <span class="r8 r">results</span> = <span class="i">DbOperations</span>.<span class="i">BindList</span>&lt;<span class="r4 r t">T</span>&gt;(<span class="r9 r">table</span>).<span class="i">ToList</span>();
+ 
+                <b>return</b> <span class="r8 r">results</span>;
+            } <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r10 rd" class="r10 r">Ex</span>) { <span class="i">CoreOperations</span>.<span class="i">SendEmail</span>(<b>new</b> <span class="i">MailRequest</span>() { <span class="i">Content</span> = <span class="i">DataOperations</span>.<span class="i">GetSystemErrMessage</span>(<span class="r10 r">Ex</span>) }); } <b>finally</b> { <span class="r7 r">cmd</span>.<span class="i">Connection</span>.<span class="i">Close</span>(); }
+            <b>return</b> <b>new</b> <span class="t constructor">List</span>&lt;<span class="r4 r t">T</span>&gt;();
+        }
+    }
+}</pre></td></tr></table></div></body></html>

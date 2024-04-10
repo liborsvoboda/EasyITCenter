@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html><head><title>ThicknessFilterConverter.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(51);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Converters/ThicknessFilterConverter.cs" target="_top">Converters\ThicknessFilterConverter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Converters</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Filters a Thickness by the given Filter property. Result is a new Thickness with the filtered side.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@PresentationFramework/A.html#ddd8a157949fec4d" class="t constructor">ValueConversion</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a>), <b>typeof</b>(<a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a>), <a href="@0@PresentationFramework/A.html#971265abb4b824aa" class="i property">ParameterType</a> = <b>typeof</b>(<a href="ThicknessSideType.cs.html#a6d971199edf9da9" class="t t">ThicknessSideType</a>))]
+    <b>public class</b> <a id="fa8ff7f0739555cd" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="af63fd9bf451a778">ThicknessFilterConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <b>public</b> <a href="ThicknessSideType.cs.html#a6d971199edf9da9" class="t t">ThicknessSideType</a> <a id="a0dc54fc8f5064c7" href="../R/a0dc54fc8f5064c7.html" target="n" data-glyph="102,1" class="i property">Filter</a> { <b>get</b>; <b>set</b>; } = <a href="ThicknessSideType.cs.html#a6d971199edf9da9" class="t t">ThicknessSideType</a>.<a href="ThicknessSideType.cs.html#6871236147c1ca5d" class="i field">None</a>;
+
+        <b>public object</b>? <a id="463cb49bfe79339e" href="../R/463cb49bfe79339e.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>? <span id="r0 rd" class="r0 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r1 rd" class="r1 r">targetType</span>, <b>object</b>? <span id="r2 rd" class="r2 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r3 rd" class="r3 r">culture</span>)
+        {
+            <b>if</b> (<span class="r0 r">value</span> <b>is</b> <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a> <span id="r4 rd" class="r4 r">thickness</span>)
+            {
+                <a href="ThicknessSideType.cs.html#a6d971199edf9da9" class="k">var</a> <span id="r5 rd" class="r5 r">filter</span> = <a href="#fa8ff7f0739555cd" class="k">this</a>.<a href="#a0dc54fc8f5064c7" class="i property">Filter</a>;
+
+                <span class="c">// yes, we can override it with the parameter value</span>
+                <b>if</b> (<span class="r2 r">parameter</span> <b>is</b> <a href="ThicknessSideType.cs.html#a6d971199edf9da9" class="t t">ThicknessSideType</a> <span id="r6 rd" class="r6 r">sideType</span>)
+                {
+                    <span class="r5 r">filter</span> = <span class="r6 r">sideType</span>;
+                }
+
+                <b>return</b> <span class="r5 r">filter</span> <b>switch</b>
+                {
+                    <a href="ThicknessSideType.cs.html#a6d971199edf9da9" class="t t">ThicknessSideType</a>.<a href="ThicknessSideType.cs.html#e54e07fa878da7a9" class="i field">Left</a> =&gt; <b>new</b> <a href="@0@PresentationFramework/A.html#7d5226ec44f0e6f6" class="t constructor">Thickness</a>(<span class="r4 r">thickness</span>.<a href="@0@PresentationFramework/A.html#db037f9d297086b1" class="i property">Left</a>, 0, 0, 0),
+                    <a href="ThicknessSideType.cs.html#a6d971199edf9da9" class="t t">ThicknessSideType</a>.<a href="ThicknessSideType.cs.html#eaadb032b0ce10db" class="i field">Top</a> =&gt; <b>new</b> <a href="@0@PresentationFramework/A.html#7d5226ec44f0e6f6" class="t constructor">Thickness</a>(0, <span class="r4 r">thickness</span>.<a href="@0@PresentationFramework/A.html#418e667eaed60f22" class="i property">Top</a>, 0, 0),
+                    <a href="ThicknessSideType.cs.html#a6d971199edf9da9" class="t t">ThicknessSideType</a>.<a href="ThicknessSideType.cs.html#ea1853d62c2f1a98" class="i field">Right</a> =&gt; <b>new</b> <a href="@0@PresentationFramework/A.html#7d5226ec44f0e6f6" class="t constructor">Thickness</a>(0, 0, <span class="r4 r">thickness</span>.<a href="@0@PresentationFramework/A.html#ff5d952a7181fe7a" class="i property">Right</a>, 0),
+                    <a href="ThicknessSideType.cs.html#a6d971199edf9da9" class="t t">ThicknessSideType</a>.<a href="ThicknessSideType.cs.html#ea6ee2f73d33f1c9" class="i field">Bottom</a> =&gt; <b>new</b> <a href="@0@PresentationFramework/A.html#7d5226ec44f0e6f6" class="t constructor">Thickness</a>(0, 0, 0, <span class="r4 r">thickness</span>.<a href="@0@PresentationFramework/A.html#9b97a54a0ee0d6ac" class="i property">Bottom</a>),
+                    <b>_</b> =&gt; <span class="r4 r">thickness</span>
+                };
+            }
+
+            <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+        }
+
+        <b>public object</b>? <a id="46fed7a6d407e4bd" href="../R/46fed7a6d407e4bd.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r7 rd" class="r7 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r8 rd" class="r8 r">targetType</span>, <b>object</b>? <span id="r9 rd" class="r9 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r10 rd" class="r10 r">culture</span>)
+        {
+            <span class="c">// for now no back converting</span>
+            <b>return</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#ee7f3b3d5828e7ab" class="i field">UnsetValue</a>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

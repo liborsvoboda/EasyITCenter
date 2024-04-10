@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html><head><title>ColorAnimationUsingKeyFramesExample.xaml</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="ix(51);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#KeyFrameAnimation/ColorAnimationUsingKeyFramesExample.xaml" target="_top">ColorAnimationUsingKeyFramesExample.xaml</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#KeyFrameAnimation" target="_top">HelpProjects\WPF-MORE\Animation\KeyFrameAnimation\KeyFrameAnimation.csproj</a> (KeyFrameAnimation)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="xd">&lt;</span><span class="xn">Page  </span><span class="xan">xmlns</span><span class="xd">=</span>&quot;<span class="xav">http://schemas.microsoft.com/winfx/2006/xaml/presentation</span>&quot;<span class="xan">
+  xmlns:x</span><span class="xd">=</span>&quot;<span class="xav">http://schemas.microsoft.com/winfx/2006/xaml</span>&quot;<span class="xan">
+  WindowTitle</span><span class="xd">=</span>&quot;<span class="xav">ThicknessAnimationUsingKeyFrames Example</span>&quot;<span class="xd">&gt;</span><span class="xd">
+
+  &lt;</span><span class="xn">StackPanel </span><span class="xan">Orientation</span><span class="xd">=</span>&quot;<span class="xav">Vertical</span>&quot; <span class="xan">HorizontalAlignment</span><span class="xd">=</span>&quot;<span class="xav">Center</span>&quot;<span class="xd">&gt;</span><span class="xd">
+    &lt;</span><span class="xn">Border </span><span class="xan">Background</span><span class="xd">=</span>&quot;<span class="xav">#99FFFFFF</span>&quot;  <span class="xan">BorderThickness</span><span class="xd">=</span>&quot;<span class="xav">28</span>&quot;<span class="xan">
+    Margin</span><span class="xd">=</span>&quot;<span class="xav">0,60,0,20</span>&quot; <span class="xan">Padding</span><span class="xd">=</span>&quot;<span class="xav">20</span>&quot; <span class="xd">&gt;</span><span class="xd">
+      &lt;</span><span class="xn">Border.BorderBrush</span><span class="xd">&gt;</span><span class="xd">
+        &lt;</span><span class="xn">SolidColorBrush </span><span class="xan">x:Name</span><span class="xd">=</span>&quot;<span class="xav">MyAnimatedBrush</span>&quot; <span class="xan">Color</span><span class="xd">=</span>&quot;<span class="xav">Green</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+      &lt;/</span><span class="xn">Border.BorderBrush</span><span class="xd">&gt;</span><span class="xd">
+      &lt;</span><span class="xn">Border.Triggers</span><span class="xd">&gt;</span><span class="xd">
+        &lt;</span><span class="xn">EventTrigger </span><span class="xan">RoutedEvent</span><span class="xd">=</span>&quot;<span class="xav">Border.Loaded</span>&quot;<span class="xd">&gt;</span><span class="xd">
+          &lt;</span><span class="xn">BeginStoryboard</span><span class="xd">&gt;</span><span class="xd">
+            &lt;</span><span class="xn">Storyboard</span><span class="xd">&gt;</span><span class="xd">
+
+              &lt;!--</span><span class="c"> Animate from green to red using a linear key frame, from red to 
+              yellow using a discrete key frame, and from yellow back to green with
+              a spline key frame. This animation repeats forever. </span><span class="xd">--&gt;</span><span class="xd">
+              &lt;</span><span class="xn">ColorAnimationUsingKeyFrames</span><span class="xan">
+                Storyboard.TargetProperty</span><span class="xd">=</span>&quot;<span class="xav">(SolidColorBrush.Color)</span>&quot;<span class="xan">
+                Storyboard.TargetName</span><span class="xd">=</span>&quot;<span class="xav">MyAnimatedBrush</span>&quot;<span class="xan">
+                Duration</span><span class="xd">=</span>&quot;<span class="xav">0:0:6</span>&quot; <span class="xan">FillBehavior</span><span class="xd">=</span>&quot;<span class="xav">HoldEnd</span>&quot; <span class="xan">RepeatBehavior</span><span class="xd">=</span>&quot;<span class="xav">Forever</span>&quot;<span class="xd">&gt;</span><span class="xd">
+                &lt;</span><span class="xn">ColorAnimationUsingKeyFrames.KeyFrames</span><span class="xd">&gt;</span><span class="xd">
+
+                  &lt;!--</span><span class="c"> Go from green to red in the first 2 seconds. LinearColorKeyFrame creates
+                  a smooth, linear animation between values. </span><span class="xd">--&gt;</span><span class="xd">
+                  &lt;</span><span class="xn">LinearColorKeyFrame </span><span class="xan">Value</span><span class="xd">=</span>&quot;<span class="xav">Red</span>&quot; <span class="xan">KeyTime</span><span class="xd">=</span>&quot;<span class="xav">0:0:2</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+
+                  &lt;!--</span><span class="c"> In the next half second, go to yellow. DiscreteColorKeyFrame creates a 
+                  sudden jump between values. </span><span class="xd">--&gt;</span><span class="xd">
+                  &lt;</span><span class="xn">DiscreteColorKeyFrame </span><span class="xan">Value</span><span class="xd">=</span>&quot;<span class="xav">Yellow</span>&quot; <span class="xan">KeyTime</span><span class="xd">=</span>&quot;<span class="xav">0:0:2.5</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+
+                  &lt;!--</span><span class="c"> In the final 2 seconds of the animation, go from yellow back to green. SplineColorKeyFrame 
+                  creates a variable transition between values depending on the KeySpline property. In this example,
+                  the animation starts off slow but toward the end of the time segment, it speeds up exponentially.</span><span class="xd">--&gt;</span><span class="xd">
+                  &lt;</span><span class="xn">SplineColorKeyFrame </span><span class="xan">Value</span><span class="xd">=</span>&quot;<span class="xav">Green</span>&quot; <span class="xan">KeyTime</span><span class="xd">=</span>&quot;<span class="xav">0:0:4.5</span>&quot; <span class="xan">KeySpline</span><span class="xd">=</span>&quot;<span class="xav">0.6,0.0 0.9,0.00</span>&quot; <span class="xd">/&gt;</span><span class="xd">
+                &lt;/</span><span class="xn">ColorAnimationUsingKeyFrames.KeyFrames</span><span class="xd">&gt;</span><span class="xd">
+              &lt;/</span><span class="xn">ColorAnimationUsingKeyFrames</span><span class="xd">&gt;</span><span class="xd">
+            &lt;/</span><span class="xn">Storyboard</span><span class="xd">&gt;</span><span class="xd">
+          &lt;/</span><span class="xn">BeginStoryboard</span><span class="xd">&gt;</span><span class="xd">
+        &lt;/</span><span class="xn">EventTrigger</span><span class="xd">&gt;</span><span class="xd">
+      &lt;/</span><span class="xn">Border.Triggers</span><span class="xd">&gt;</span><span class="xd">
+
+      &lt;</span><span class="xn">TextBlock</span><span class="xd">&gt;</span>
+        This example shows how to use the ColorAnimationUsingKeyFrames to create
+        an animation on the BorderBrush property of a Border.
+      <span class="xd">&lt;/</span><span class="xn">TextBlock</span><span class="xd">&gt;</span><span class="xd">
+    &lt;/</span><span class="xn">Border</span><span class="xd">&gt;</span><span class="xd">
+
+  &lt;/</span><span class="xn">StackPanel</span><span class="xd">&gt;</span><span class="xd">
+&lt;/</span><span class="xn">Page</span><span class="xd">&gt;</span></pre></td></tr></table></div></body></html>

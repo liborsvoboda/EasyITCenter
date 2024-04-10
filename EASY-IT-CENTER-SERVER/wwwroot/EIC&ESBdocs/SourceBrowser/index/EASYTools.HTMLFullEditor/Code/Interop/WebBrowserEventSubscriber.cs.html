@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html><head><title>WebBrowserEventSubscriber.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(258);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.HTMLFullEditor/Code/Interop/WebBrowserEventSubscriber.cs" target="_top">Code\Interop\WebBrowserEventSubscriber.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.HTMLFullEditor" target="_top">..\..\..\EASY-TOOLS\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor.csproj</a> (EASYTools.HTMLFullEditor)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Runtime</span>.<span class="i n">InteropServices</span>.<span class="i n">ComTypes</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Threading</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Code</span>.<span class="i n">Interop</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Class for capturing internal web browser events.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>internal class</b> <a id="e803594e4eb7c835" href="../../R/e803594e4eb7c835.html" target="n" data-glyph="2,0" class="t t">WebBrowserEventsSubscriber</a> : <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>
+    {
+        <b>private readonly</b> <a href="@0@PresentationFramework/A.html#5c0f51a4876c602f" class="t t">WebBrowser</a> <a id="8b2c5deb8d002ea4" href="../../R/8b2c5deb8d002ea4.html" target="n" data-glyph="46,1" class="i field">_browser</a>;
+        <b>private readonly</b> <a href="@0@mscorlib/A.html#2bd3fc6e2796ad83" class="t t">IConnectionPoint</a> <a id="7bee1734015eff7b" href="../../R/7bee1734015eff7b.html" target="n" data-glyph="46,1" class="i field">_icp</a>;
+        <b>private readonly</b> <a href="@0@WindowsBase/A.html#85652fc45bd4a61e" class="t t">DispatcherTimer</a> <a id="dff1f38a026fe302" href="../../R/dff1f38a026fe302.html" target="n" data-glyph="46,1" class="i field">_fallbackTimer</a>;
+        <b>private int</b> <a id="90ed10a3bfd302e4" href="../../R/90ed10a3bfd302e4.html" target="n" data-glyph="46,1" class="i field">_cookie</a> = -1;
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> ctor + dtor
+ 
+        <b>private</b> <a id="c0409c63753cfd07" href="../../R/c0409c63753cfd07.html" target="n" data-glyph="76,1" class="t constructor">WebBrowserEventsSubscriber</a>(<a href="@0@PresentationFramework/A.html#5c0f51a4876c602f" class="t t">WebBrowser</a> <span id="r0 rd" class="r0 r">browser</span>, <b>object</b> <span id="r1 rd" class="r1 r">comWebBrowser</span>)
+        {
+            <a href="#8b2c5deb8d002ea4" class="i field">_browser</a> = <span class="r0 r">browser</span>;
+ 
+            <a href="@0@mscorlib/A.html#c7cca9cd9983ec12" class="k">var</a> <span id="r2 rd" class="r2 r">container</span> = (<a href="@0@mscorlib/A.html#c7cca9cd9983ec12" class="t t">IConnectionPointContainer</a>)<span class="r1 r">comWebBrowser</span>;
+ 
+            <a href="@0@mscorlib/A.html#b622ef5f6b76c10a" class="k">var</a> <span id="r3 rd" class="r3 r">webBrowserEvents</span> = <b>typeof</b>(<a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>).<a href="@0@mscorlib/A.html#5fd76396d28b8072" class="i property">GUID</a>;
+            <span class="r2 r">container</span>.<a href="@0@mscorlib/A.html#0fb605063f7989f6" class="i method">FindConnectionPoint</a>(<b>ref</b> <span class="r3 r">webBrowserEvents</span>, <b>out</b> <a href="#7bee1734015eff7b" class="i field">_icp</a>);
+            <a href="#7bee1734015eff7b" class="i field">_icp</a>.<a href="@0@mscorlib/A.html#2445b8a6ca043370" class="i method">Advise</a>(<a href="#e803594e4eb7c835" class="k">this</a>, <b>out</b> <a href="#90ed10a3bfd302e4" class="i field">_cookie</a>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Ctor for fallback solution with timer.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a id="188764c1265f2741" href="../../R/188764c1265f2741.html" target="n" data-glyph="76,1" class="t constructor">WebBrowserEventsSubscriber</a>(<a href="@0@PresentationFramework/A.html#5c0f51a4876c602f" class="t t">WebBrowser</a> <span id="r4 rd" class="r4 r">browser</span>)
+        {
+            <a href="#8b2c5deb8d002ea4" class="i field">_browser</a> = <span class="r4 r">browser</span>;
+ 
+            <a href="#dff1f38a026fe302" class="i field">_fallbackTimer</a> = <b>new</b> <a href="@0@WindowsBase/A.html#44f66f3c4d0fdf15" class="t constructor">DispatcherTimer</a>();
+            <a href="#dff1f38a026fe302" class="i field">_fallbackTimer</a>.<a href="@0@WindowsBase/A.html#b3c72778b0b80320" class="i property">Interval</a> = <a href="TimeConstants.cs.html#3d5ba8cab482514e" class="t t">TimeConstants</a>.<a href="TimeConstants.cs.html#ee9ffc6f327e94a7" class="i field">FallbackHtmlChangedInterval</a>;
+            <a href="#dff1f38a026fe302" class="i field">_fallbackTimer</a>.<a href="@0@WindowsBase/A.html#ef26184523c318d3" class="i">Tick</a> += <a href="#f0fbdb8e4d8333eb" class="i method">FallbackTimerTick</a>;
+            <span class="r4 r">browser</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += (<span id="r5 rd" class="r5 r">s</span>, <span id="r6 rd" class="r6 r">e</span>) =&gt; <a href="#dff1f38a026fe302" class="i field">_fallbackTimer</a>.<a href="@0@WindowsBase/A.html#a3450586a3e54079" class="i method">Start</a>();
+            <span class="r4 r">browser</span>.<a href="@0@PresentationFramework/A.html#139f238b2a895570" class="i">Unloaded</a> += (<span id="r7 rd" class="r7 r">s</span>, <span id="r8 rd" class="r8 r">e</span>) =&gt; <a href="#dff1f38a026fe302" class="i field">_fallbackTimer</a>.<a href="@0@WindowsBase/A.html#b0381f60d6038d6e" class="i method">Stop</a>();
+            <b>if</b> (<span class="r4 r">browser</span>.<a href="@0@PresentationFramework/A.html#b05bbe3100c43c82" class="i property">IsLoaded</a>)
+            {
+                <a href="#dff1f38a026fe302" class="i field">_fallbackTimer</a>.<a href="@0@WindowsBase/A.html#a3450586a3e54079" class="i method">Start</a>();
+            }
+        }
+ 
+        <b>private void</b> <a id="f0fbdb8e4d8333eb" href="../../R/f0fbdb8e4d8333eb.html" target="n" data-glyph="76,1" class="i method">FallbackTimerTick</a>(<b>object</b> <span id="r9 rd" class="r9 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r10 rd" class="r10 r">e</span>)
+        {
+            <b>if</b> (<a href="#8b2c5deb8d002ea4" class="i field">_browser</a>.<a href="@0@PresentationCore/A.html#90bc97a020426061" class="i property">IsVisible</a>)
+            {
+                <a href="#189194261e49f2b8" class="i">StatusTextChanged</a>?.<a href="@0@mscorlib/A.html#48225ee7c18a0e20" class="i method">Invoke</a>(<a href="#8b2c5deb8d002ea4" class="i field">_browser</a>, <b>new</b> <a href="#765aad37a7a1b7a8" class="t constructor">TextEventArgs</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>));
+            }
+        }
+ 
+        ~<a id="b7f31e5e79360a79" href="../../R/../../0000000000.html" target="n" data-glyph="75,1" class="t method">WebBrowserEventsSubscriber</a>()
+        {
+            <b>try</b>
+            {
+                <b>if</b> (<a href="#90ed10a3bfd302e4" class="i field">_cookie</a> != -1)
+                {
+                    <a href="#7bee1734015eff7b" class="i field">_icp</a>.<a href="@0@mscorlib/A.html#19531ccb7fc9dee9" class="i method">Unadvise</a>(<a href="#90ed10a3bfd302e4" class="i field">_cookie</a>);
+                }
+            }
+            <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a>)
+            {
+                <span class="c">// noop</span>
+            }
+            <a href="#90ed10a3bfd302e4" class="i field">_cookie</a> = -1;
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+ 
+        <b>public static</b> <a href="#e803594e4eb7c835" class="t t">WebBrowserEventsSubscriber</a> <a id="74a3c08b072f1a33" href="../../R/74a3c08b072f1a33.html" target="n" data-glyph="72,1" class="i method">Create</a>(<a href="@0@PresentationFramework/A.html#5c0f51a4876c602f" class="t t">WebBrowser</a> <span id="r11 rd" class="r11 r">browser</span>, <b>bool</b> <span id="r12 rd" class="r12 r">allowFallback</span> = <b>true</b>)
+        {
+            <b>if</b> (!<span class="r11 r">browser</span>.<a href="@0@PresentationFramework/A.html#b05bbe3100c43c82" class="i property">IsLoaded</a>)
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#265d72f49e915224" class="t constructor">InvalidOperationException</a>(<span class="s">&quot;Subscriber can be created only if WebBrowser is loaded. (Call preferable on \&quot;Loaded\&quot; event.)&quot;</span>);
+ 
+            <a href="#e803594e4eb7c835" class="t t">WebBrowserEventsSubscriber</a> <span id="r13 rd" class="r13 r">result</span>;
+ 
+            <b>if</b> (<a href="InteropHelper.cs.html#1c2b8ab14c3f65c2" class="t t">InteropHelper</a>.<a href="InteropHelper.cs.html#23823124e4ff5ecd" class="i method">TryGetInternalComWebBrowser</a>(<span class="r11 r">browser</span>, <b>out</b> <a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r14 rd" class="r14 r">comWebBrowser</span>))
+            {
+                <span class="r13 r">result</span> = <b>new</b> <a href="#c0409c63753cfd07" class="t constructor">WebBrowserEventsSubscriber</a>(<span class="r11 r">browser</span>, <span class="r14 r">comWebBrowser</span>);
+            }
+            <b>else</b> <b>if</b>(<span class="r12 r">allowFallback</span>)
+            {
+                <span class="c">// internal comWebBrowser was not found - fallback to timer</span>
+                <span class="r13 r">result</span> = <b>new</b> <a href="#188764c1265f2741" class="t constructor">WebBrowserEventsSubscriber</a>(<span class="r11 r">browser</span>);
+            }
+            <b>else</b>
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#265d72f49e915224" class="t constructor">InvalidOperationException</a>(<span class="s">&quot;Internal web browser COM object not found&quot;</span>);
+            }
+ 
+            <b>return</b> <span class="r13 r">result</span>;
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Events
+ 
+        <b>public event</b> <a href="@0@mscorlib/A.html#96ed969784b9d510" class="t t">EventHandler</a>&lt;<a href="#3ea882e1ccfe9b92" class="t t">TextEventArgs</a>&gt; <a id="189194261e49f2b8" href="../../R/189194261e49f2b8.html" target="n" data-glyph="30,1" class="i">StatusTextChanged</a>;
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> interface DWebBrowserEvents2
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#7e867d2065ff5e09" class="i method">StatusTextChange</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r15 rd" class="r15 r">text</span>)
+        {
+            <a href="#189194261e49f2b8" class="i">StatusTextChanged</a>?.<a href="@0@mscorlib/A.html#48225ee7c18a0e20" class="i method">Invoke</a>(<a href="#8b2c5deb8d002ea4" class="i field">_browser</a>, <b>new</b> <a href="#765aad37a7a1b7a8" class="t constructor">TextEventArgs</a>(<span class="r15 r">text</span>));
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#7e0a770827da1003" class="i method">ProgressChange</a>(<b>int</b> <span id="r16 rd" class="r16 r">progress</span>, <b>int</b> <span id="r17 rd" class="r17 r">progressMax</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#5cd9ad5269a4a8c3" class="i method">CommandStateChange</a>(<b>long</b> <span id="r18 rd" class="r18 r">command</span>, <b>bool</b> <span id="r19 rd" class="r19 r">enable</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#f23e0ea02d7b4020" class="i method">DownloadBegin</a>()
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#966cc1d50c7cc6d1" class="i method">DownloadComplete</a>()
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#65b48dc2676b05eb" class="i method">TitleChange</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r20 rd" class="r20 r">text</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#29fdcb7b84bfd4b8" class="i method">PropertyChange</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r21 rd" class="r21 r">szProperty</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#6780d31be460c6dd" class="i method">PrintTemplateInstantiation</a>(<b>object</b> <span id="r22 rd" class="r22 r">pDisp</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#e243dce14835f735" class="i method">PrintTemplateTeardown</a>(<b>object</b> <span id="r23 rd" class="r23 r">pDisp</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#c251d4775a6f2b1c" class="i method">UpdatePageStatus</a>(<b>object</b> <span id="r24 rd" class="r24 r">pDisp</span>, <b>ref object</b> <span id="r25 rd" class="r25 r">nPage</span>, <b>ref object</b> <span id="r26 rd" class="r26 r">fDone</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#1c7659edafd7ed71" class="i method">BeforeNavigate2</a>(<b>object</b> <span id="r27 rd" class="r27 r">pDisp</span>, <b>ref object</b> <span id="r28 rd" class="r28 r">URL</span>, <b>ref object</b> <span id="r29 rd" class="r29 r">flags</span>, <b>ref object</b> <span id="r30 rd" class="r30 r">targetFrameName</span>, <b>ref object</b> <span id="r31 rd" class="r31 r">postData</span>,
+            <b>ref object</b> <span id="r32 rd" class="r32 r">headers</span>, <b>ref bool</b> <span id="r33 rd" class="r33 r">cancel</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#c3f67b6abd649b43" class="i method">NewWindow2</a>(<b>ref object</b> <span id="r34 rd" class="r34 r">pDisp</span>, <b>ref bool</b> <span id="r35 rd" class="r35 r">cancel</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#b00c11ebdcca8cc3" class="i method">NavigateComplete2</a>(<b>object</b> <span id="r36 rd" class="r36 r">pDisp</span>, <b>ref object</b> <span id="r37 rd" class="r37 r">URL</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#246df8095a14c240" class="i method">DocumentComplete</a>(<b>object</b> <span id="r38 rd" class="r38 r">pDisp</span>, <b>ref object</b> <span id="r39 rd" class="r39 r">URL</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#5bbf3e17a3ea4bc1" class="i method">OnQuit</a>()
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#34d214aa1b3eef5e" class="i method">OnVisible</a>(<b>bool</b> <span id="r40 rd" class="r40 r">visible</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#11e03d8b5047c284" class="i method">OnToolBar</a>(<b>bool</b> <span id="r41 rd" class="r41 r">toolBar</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#c112bfced4453174" class="i method">OnMenuBar</a>(<b>bool</b> <span id="r42 rd" class="r42 r">menuBar</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#70fc4138c656f137" class="i method">OnStatusBar</a>(<b>bool</b> <span id="r43 rd" class="r43 r">statusBar</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#7442b3ad52d38f4d" class="i method">OnFullScreen</a>(<b>bool</b> <span id="r44 rd" class="r44 r">fullScreen</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#f3cb553c6a5ae28b" class="i method">OnTheaterMode</a>(<b>bool</b> <span id="r45 rd" class="r45 r">theaterMode</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#c6b10100ca98ee7f" class="i method">WindowSetResizable</a>(<b>bool</b> <span id="r46 rd" class="r46 r">resizable</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#5706dc425fa51be1" class="i method">WindowSetLeft</a>(<b>int</b> <span id="r47 rd" class="r47 r">left</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#184b054e3669faf9" class="i method">WindowSetTop</a>(<b>int</b> <span id="r48 rd" class="r48 r">top</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#997f584914af816e" class="i method">WindowSetWidth</a>(<b>int</b> <span id="r49 rd" class="r49 r">width</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#7654fa180dc9c787" class="i method">WindowSetHeight</a>(<b>int</b> <span id="r50 rd" class="r50 r">height</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#60c34ae0b1e93eb2" class="i method">WindowClosing</a>(<b>bool</b> <span id="r51 rd" class="r51 r">isChildWindow</span>, <b>ref bool</b> <span id="r52 rd" class="r52 r">cancel</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#c48dca899643c8ec" class="i method">ClientToHostWindow</a>(<b>ref long</b> <span id="r53 rd" class="r53 r">cx</span>, <b>ref long</b> <span id="r54 rd" class="r54 r">cy</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#e09f0a5c7a654226" class="i method">SetSecureLockIcon</a>(<b>int</b> <span id="r55 rd" class="r55 r">secureLockIcon</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#db00aa8e08c6e991" class="i method">FileDownload</a>(<b>ref bool</b> <span id="r56 rd" class="r56 r">ActiveDocument</span>, <b>ref bool</b> <span id="r57 rd" class="r57 r">cancel</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#af5da86be31f6537" class="i method">NavigateError</a>(<b>object</b> <span id="r58 rd" class="r58 r">pDisp</span>, <b>ref object</b> <span id="r59 rd" class="r59 r">URL</span>, <b>ref object</b> <span id="r60 rd" class="r60 r">frame</span>, <b>ref object</b> <span id="r61 rd" class="r61 r">statusCode</span>, <b>ref bool</b> <span id="r62 rd" class="r62 r">cancel</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#76883d8e10b4b35c" class="i method">PrivacyImpactedStateChange</a>(<b>bool</b> <span id="r63 rd" class="r63 r">bImpacted</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#c3bb6f3b0d0bcf85" class="i method">SetPhishingFilterStatus</a>(<b>uint</b> <span id="r64 rd" class="r64 r">phishingFilterStatus</span>)
+        {
+        }
+ 
+        <b>void</b> <a href="DWebBrowserEvents2.cs.html#383935ed9b89ed0b" class="t t">DWebBrowserEvents2</a>.<a href="DWebBrowserEvents2.cs.html#a9e3cb2cf5d98fea" class="i method">WindowStateChanged</a>(<b>uint</b> <span id="r65 rd" class="r65 r">dwFlags</span>, <b>uint</b> <span id="r66 rd" class="r66 r">dwValidFlagsMask</span>)
+        {
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+ 
+    <b>internal class</b> <a id="3ea882e1ccfe9b92" href="../../R/3ea882e1ccfe9b92.html" target="n" data-glyph="2,0" class="t t">TextEventArgs</a> : <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>
+    {
+        <b>public</b> <a id="765aad37a7a1b7a8" href="../../R/765aad37a7a1b7a8.html" target="n" data-glyph="72,1" class="t constructor">TextEventArgs</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r67 rd" class="r67 r">text</span>)
+        {
+            <a href="#278d73bed0b5c4c4" class="i property">Text</a> = <span class="r67 r">text</span>;
+        }
+ 
+        <b>public string</b> <a id="278d73bed0b5c4c4" href="../../R/278d73bed0b5c4c4.html" target="n" data-glyph="102,1" class="i property">Text</a> { <b>get</b>; }
+    }
+}
+</pre></td></tr></table></div></body></html>

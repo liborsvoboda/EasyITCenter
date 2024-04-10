@@ -1,0 +1,83 @@
+﻿@page "/DocPortal"
+@{ Layout = "/ServerCorePages/Shared/DocPortalLayout.cshtml"; }
+
+@addTagHelper *, WebOptimizer.Core
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Westwind.AspNetCore.Markdown
+@using Microsoft.AspNetCore.Html;
+@using EasyITCenter.ServerCoreStructure;
+@using Westwind.AspNetCore.Markdown;
+@model ServerCorePages.DocPortalModel
+@{ ViewBag.Title = "EIC-MDsolution"; }
+
+<div class="container" style="margin-top: 30px;">
+    <div id="Present" class="shadow" style="margin-bottom: 40px !important;">
+        <div class="presenter" data-role="presenter" data-height="220" data-easing="swing">
+            <div class="scene">
+                <div class="act bg-cobalt fg-white">
+                    <img src="~/logo.png" class="actor" data-position="10,10" style="height: 200px">
+                    <h1 class="actor" data-position="10,250">Easy IT center</h1>
+                    <p class="actor" data-position="70,250">To jsou Serverová řešení pro Vaši Firmu. Základní sestava obsahuje více než 20 typů serverů.</p>
+                    <p class="actor" data-position="120,250">Kompletní Management pomocí přiloženého Systému .<br /> Vývoj libovolných API a jejich služeb pouhým kopírováním šablon</p>
+                    <a class="actor button primary" data-position="170,250" href="javascript:ChangeSource('/EIC&ESBdocs/EIC-InfoWeb/')">Info Dokumentace EIC</a>
+                </div>
+                <div class="act bg-steel fg-white">
+                    <img src="~/logo.png" class="actor" data-position="10,10" style="height: 200px">
+                    <h1 class="actor" data-position="10,270">Easy SYSTEM builder</h1>
+                    <p class="actor" data-position="70,270">To jsou všechny typy systémů, které vás napadnou. Díky Perfekně zaimplemenotovaným moderním technologiím si můžete Sami či si pořídit Libobolný typ Systému již do 1 měsíce od Objednání.</p>
+                    <p class="actor" data-position="120,270">Neskutečně jednoduchý Vývoj pomocí Šablon, Editorů a již Brzy přímo z portálu je naprostou hračkou pro každé IT oddělení.</p>
+                    <a class="actor button primary" data-position="170,270" href="javascript:ChangeSource('/EIC&ESBdocs/ESB-InfoWeb/')">Info Dokumentace ESB</a>
+                </div>
+                <div class="act bg-darkCyan fg-white">
+                    <img src="~/logo.png" class="actor" data-position="10,10" style="height: 200px">
+                    <h1 class="actor" data-position="10,300">EIC & ESB = Servery + Systémy + Weby</h1>
+                    <p class="actor" data-position="70,300">Neotálejte a Vyzkoušejte 30denní Plnou Verzi ZDARMA v sekci ke STAŽENÍ.<br /> Začněte šetřit výdaje s Novým IT řešením už nyní</p>
+                    <a class="actor button success" data-position="130,300" href="javascript:ChangeSource('/Downloads')">MSSQLDB + Server + Systém v Sekci Ke Stažení</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="contentWindow" style="min-width: 1024px !important;width: 100vw !important;max-width: 1024px !important;">
+    <markdown sanitize-html=false >
+@{
+    //Standalone Load File From Url Request
+    string? requestedUrlPath = ""; HtmlString fileContent = new HtmlString(null); string mdfileContent;
+    try {
+        try { requestedUrlPath = ((string?)this.HttpContext.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
+        string? filePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
+        fileContent = Markdown.ParseHtmlString(System.IO.File.ReadAllText(filePath));
+    } catch {
+        try { requestedUrlPath = ((string?)HttpContext.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
+        string? filePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
+        mdfileContent = System.IO.File.ReadAllText(filePath);
+    }
+
+    if (DocPortalModel.result != null) {
+        @Html.Raw(DocPortalModel.result)
+    } else if (fileContent != null) {
+        @Html.Raw(fileContent)
+    }
+}
+    </markdown>
+    </div>
+
+</div>
+
+
+<!-- Syntax Highlighting code -->
+<link href="~/ServerCoreTools/markdown/highlightjs/styles/vs2015.css" rel="stylesheet" />
+<script type="text/javascript" src="~/ServerCoreTools/markdown/highlightjs/highlight.pack.js"></script>
+<script type="text/javascript" src="~/ServerCoreTools/markdown/highlightjs/highlightjs-badge.js"></script>
+
+<script>
+    var pres = document.querySelectorAll("pre>code"); pres = document.querySelectorAll("code");
+    for (var i = 0; i < pres.length; i++) { hljs.highlightBlock(pres[i]); }
+    window.highlightJsBadge();
+    $(document).ready(function () {
+        $("#docLoader").hide();
+        setTimeout(() => { googleTranslateElementInit(); }, 3000);
+    });
+    
+</script>
+
+

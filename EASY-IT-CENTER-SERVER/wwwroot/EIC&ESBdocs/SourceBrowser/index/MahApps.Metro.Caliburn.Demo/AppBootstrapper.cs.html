@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html><head><title>AppBootstrapper.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(81);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro.Caliburn.Demo/AppBootstrapper.cs" target="_top">AppBootstrapper.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro.Caliburn.Demo" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro.Samples\MahApps.Metro.Caliburn.Demo\MahApps.Metro.Caliburn.Demo.csproj</a> (MahApps.Metro.Caliburn.Demo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>.<span class="i n">Composition</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>.<span class="i n">Composition</span>.<span class="i n">Hosting</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>.<span class="i n">Composition</span>.<span class="i n">Primitives</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">Caliburn</span>.<span class="i n">Metro</span>.<span class="i n">Demo</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">Caliburn</span>.<span class="i n">Micro</span>;
+
+<b>namespace</b> <span class="i n">Caliburn</span>.<span class="i n">Metro</span>.<span class="i n">Demo</span>
+{
+    <b>public class</b> <a id="a58348692d0dd700" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">AppBootstrapper</a> : <span class="t t">BootstrapperBase</span>
+    {
+        <b>private</b> <a href="@0@System.ComponentModel.Composition/A.html#57af6cbae70de963" class="t t">CompositionContainer</a>? <a id="88f6ec5284229cbe" href="R/88f6ec5284229cbe.html" target="n" data-glyph="46,1" class="i field">container</a>;
+
+        <b>public</b> <a id="73c9766e0c98e879" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">AppBootstrapper</a>()
+        {
+            <a href="#a58348692d0dd700" class="k">this</a>.<span class="i method">Initialize</span>();
+        }
+
+        <b>protected override void</b> <a id="298df6753174872f" href="R/298df6753174872f.html" target="n" data-glyph="75,1" class="i method">BuildUp</a>(<b>object</b> <span id="r0 rd" class="r0 r">instance</span>)
+        {
+            <a href="#a58348692d0dd700" class="k">this</a>.<a href="#88f6ec5284229cbe" class="i field">container</a>?.<a href="@0@System.ComponentModel.Composition/A.html#833e2e8966b7a1fa" class="i method">SatisfyImportsOnce</a>(<span class="r0 r">instance</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     By default, we are configured to use MEF</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>protected override void</b> <a id="d4c174f8a18dfd16" href="R/d4c174f8a18dfd16.html" target="n" data-glyph="75,1" class="i method">Configure</a>()
+        {
+            <a href="@0@System.ComponentModel.Composition/A.html#39ac0612b8751b2b" class="k">var</a> <span id="r1 rd" class="r1 r">catalog</span> =
+                <b>new</b> <a href="@0@System.ComponentModel.Composition/A.html#f9d6645d543f3e9d" class="t constructor">AggregateCatalog</a>(
+                    <span class="t t">AssemblySource</span>.<span class="i field">Instance</span>.<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>(<span id="r2 rd" class="r2 r">x</span> =&gt; <b>new</b> <a href="@0@System.ComponentModel.Composition/A.html#07246272f4b7f66d" class="t constructor">AssemblyCatalog</a>(<span class="r2 r">x</span>)).<a href="@0@System.Core/A.html#4ba4a3f8a5530e33" class="i method">OfType</a>&lt;<a href="@0@System.ComponentModel.Composition/A.html#d81630b6b3344656" class="t t">ComposablePartCatalog</a>&gt;());
+
+            <a href="#a58348692d0dd700" class="k">this</a>.<a href="#88f6ec5284229cbe" class="i field">container</a> = <b>new</b> <a href="@0@System.ComponentModel.Composition/A.html#82d1e4f582491528" class="t constructor">CompositionContainer</a>(<span class="r1 r">catalog</span>);
+
+            <a href="@0@System.ComponentModel.Composition/A.html#ee3191d0bc9affca" class="k">var</a> <span id="r3 rd" class="r3 r">batch</span> = <b>new</b> <a href="@0@System.ComponentModel.Composition/A.html#95438b1bc7178eea" class="t constructor">CompositionBatch</a>();
+
+            <span class="r3 r">batch</span>.<a href="@0@System.ComponentModel.Composition/A.html#5881ed3f9d3be78b" class="i method">AddExportedValue</a>&lt;<span class="t t">IWindowManager</span>&gt;(<b>new</b> <span class="t constructor">WindowManager</span>());
+            <span class="r3 r">batch</span>.<a href="@0@System.ComponentModel.Composition/A.html#5881ed3f9d3be78b" class="i method">AddExportedValue</a>&lt;<span class="t t">IEventAggregator</span>&gt;(<b>new</b> <span class="t constructor">EventAggregator</span>());
+            <span class="r3 r">batch</span>.<a href="@0@System.ComponentModel.Composition/A.html#5881ed3f9d3be78b" class="i method">AddExportedValue</a>(<a href="#a58348692d0dd700" class="k">this</a>.<a href="#88f6ec5284229cbe" class="i field">container</a>);
+            <span class="r3 r">batch</span>.<a href="@0@System.ComponentModel.Composition/A.html#5881ed3f9d3be78b" class="i method">AddExportedValue</a>(<span class="r1 r">catalog</span>);
+
+            <a href="#a58348692d0dd700" class="k">this</a>.<a href="#88f6ec5284229cbe" class="i field">container</a>.<a href="@0@System.ComponentModel.Composition/A.html#d4d67a18ad45dae2" class="i method">Compose</a>(<span class="r3 r">batch</span>);
+        }
+
+        <b>protected override</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<b>object</b>&gt; <a id="896ff002de59f196" href="R/896ff002de59f196.html" target="n" data-glyph="75,1" class="i method">GetAllInstances</a>(<a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r4 rd" class="r4 r">serviceType</span>)
+        {
+            <b>return</b> <a href="#a58348692d0dd700" class="k">this</a>.<a href="#88f6ec5284229cbe" class="i field">container</a>?.<a href="@0@System.ComponentModel.Composition/A.html#1a2ae3a00dca3538" class="i method">GetExportedValues</a>&lt;<b>object</b>&gt;(<a href="@0@System.ComponentModel.Composition/A.html#010a7647819b88ae" class="t t">AttributedModelServices</a>.<a href="@0@System.ComponentModel.Composition/A.html#13c3fd8ced0dc977" class="i method">GetContractName</a>(<span class="r4 r">serviceType</span>)) ?? <a href="@0@System.Core/A.html#577032c8811e20d3" class="t t">Enumerable</a>.<a href="@0@System.Core/A.html#4d026772cf3399f5" class="i method">Empty</a>&lt;<b>object</b>&gt;();
+        }
+
+        <b>protected override object</b> <a id="65a29ea2791f9154" href="R/65a29ea2791f9154.html" target="n" data-glyph="75,1" class="i method">GetInstance</a>(<a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r5 rd" class="r5 r">serviceType</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r6 rd" class="r6 r">key</span>)
+        {
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r7 rd" class="r7 r">contract</span> = <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<span class="r6 r">key</span>) ? <a href="@0@System.ComponentModel.Composition/A.html#010a7647819b88ae" class="t t">AttributedModelServices</a>.<a href="@0@System.ComponentModel.Composition/A.html#13c3fd8ced0dc977" class="i method">GetContractName</a>(<span class="r5 r">serviceType</span>) : <span class="r6 r">key</span>;
+            <a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r8 rd" class="r8 r">export</span> = <a href="#a58348692d0dd700" class="k">this</a>.<a href="#88f6ec5284229cbe" class="i field">container</a>?.<a href="@0@System.ComponentModel.Composition/A.html#1a2ae3a00dca3538" class="i method">GetExportedValues</a>&lt;<b>object</b>&gt;(<span class="r7 r">contract</span>).<a href="@0@System.Core/A.html#8087366974af11d2" class="i method">FirstOrDefault</a>();
+
+            <b>if</b> (<span class="r8 r">export</span> <b>is not null</b>)
+            {
+                <b>return</b> <span class="r8 r">export</span>;
+            }
+
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#df2d82d91ca29e40" class="t constructor">Exception</a>(<span class="s">$&quot;</span><span class="s">Could not locate any instances of contract </span>{<span class="r7 r">contract</span>}<span class="s">.</span><span class="s">&quot;</span>);
+        }
+
+        <b>protected override async void</b> <a id="72eaa1dc41bbe5ef" href="R/72eaa1dc41bbe5ef.html" target="n" data-glyph="75,1" class="i method">OnStartup</a>(<b>object</b> <span id="r9 rd" class="r9 r">sender</span>, <a href="@0@PresentationFramework/A.html#062b94c15f90a8f0" class="t t">StartupEventArgs</a> <span id="r10 rd" class="r10 r">e</span>)
+        {
+            <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="k">var</a> <span id="r11 rd" class="r11 r">startupTasks</span> = <a href="#a58348692d0dd700" class="k">this</a>.<a href="#896ff002de59f196" class="i method">GetAllInstances</a>(<b>typeof</b>(<a href="Controls/StartupTasks.cs.html#9b808d2840070f4a" class="t t">StartupTask</a>))
+                                   .<a href="@0@System.Core/A.html#4ba4a3f8a5530e33" class="i method">OfType</a>&lt;<a href="@0@System.ComponentModel.Composition/A.html#ddf71fe95e2a57ad" class="t t">ExportedDelegate</a>&gt;()
+                                   .<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>(<span id="r12 rd" class="r12 r">exportedDelegate</span> =&gt; (<a href="Controls/StartupTasks.cs.html#9b808d2840070f4a" class="t t">StartupTask</a>)<span class="r12 r">exportedDelegate</span>.<a href="@0@System.ComponentModel.Composition/A.html#b0548339dd6fae51" class="i method">CreateDelegate</a>(<b>typeof</b>(<a href="Controls/StartupTasks.cs.html#9b808d2840070f4a" class="t t">StartupTask</a>))!);
+
+            <span class="r11 r">startupTasks</span>.<span class="i method">Apply</span>(<span id="r13 rd" class="r13 r">s</span> =&gt; <span class="r13 r">s</span>());
+
+            <b>await</b> <a href="#a58348692d0dd700" class="k">this</a>.<span class="i method">DisplayRootViewForAsync</span>&lt;<a href="IShell.cs.html#0d3474ea0d01b8cc" class="t t">IShell</a>&gt;();
+        }
+    }
+}</pre></td></tr></table></div></body></html>

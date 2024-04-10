@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html><head><title>CloseFlyoutAction.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(49);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Actions/CloseFlyoutAction.cs" target="_top">Actions\CloseFlyoutAction.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Actions</span>
+{
+    <b>public class</b> <a id="21f3e08f4c1ac097" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="9190d7bed6ec43bb">CloseFlyoutAction</span></a> : <a href="CommandTriggerAction.cs.html#0920e5ff43c4f930" class="t t">CommandTriggerAction</a>
+    {
+        <b>private</b> <a href="../Controls/Flyout.cs.html#eb512f8b339f4e5b" class="t t">Flyout</a>? <a id="4e6faed8635791ca" href="../R/4e6faed8635791ca.html" target="n" data-glyph="46,1" class="i field">associatedFlyout</a>;
+
+        <b>private</b> <a href="../Controls/Flyout.cs.html#eb512f8b339f4e5b" class="t t">Flyout</a>? <a id="b67182eb6833a536" href="../R/b67182eb6833a536.html" target="n" data-glyph="106,1" class="i property">AssociatedFlyout</a> =&gt; <a href="#21f3e08f4c1ac097" class="k">this</a>.<a href="#4e6faed8635791ca" class="i field">associatedFlyout</a> ??= <a href="#21f3e08f4c1ac097" class="k">this</a>.<span class="i property">AssociatedObject</span>.<a href="../Controls/TreeHelper.cs.html#cbbe3a66a5b55955" class="i method">TryFindParent</a>&lt;<a href="../Controls/Flyout.cs.html#eb512f8b339f4e5b" class="t t">Flyout</a>&gt;();
+
+        <b>protected override void</b> <a id="f7f6197fdf0a8e5b" href="../R/f7f6197fdf0a8e5b.html" target="n" data-glyph="75,1" class="i method">Invoke</a>(<b>object</b>? <span id="r0 rd" class="r0 r">parameter</span>)
+        {
+            <b>if</b> (<a href="#21f3e08f4c1ac097" class="k">this</a>.<span class="i property">AssociatedObject</span> <b>is null</b> || (<a href="#21f3e08f4c1ac097" class="k">this</a>.<span class="i property">AssociatedObject</span> != <b>null</b> &amp;&amp; !<a href="#21f3e08f4c1ac097" class="k">this</a>.<span class="i property">AssociatedObject</span>.<a href="@0@PresentationCore/A.html#166ae927a742c046" class="i property">IsEnabled</a>))
+            {
+                <b>return</b>;
+            }
+
+            <a href="@0@System/A.html#f0e0f4acfe262659" class="k">var</a> <span id="r1 rd" class="r1 r">command</span> = <a href="#21f3e08f4c1ac097" class="k">this</a>.<a href="CommandTriggerAction.cs.html#aa3175b35c936db9" class="i property">Command</a>;
+            <b>if</b> (<span class="r1 r">command</span> != <b>null</b>)
+            {
+                <a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r2 rd" class="r2 r">commandParameter</span> = <a href="#21f3e08f4c1ac097" class="k">this</a>.<a href="#3e39c0739a8e96b3" class="i method">GetCommandParameter</a>();
+                <b>if</b> (<span class="r1 r">command</span>.<a href="@0@System/A.html#c4fc2bcd5384bf98" class="i method">CanExecute</a>(<span class="r2 r">commandParameter</span>))
+                {
+                    <span class="r1 r">command</span>.<a href="@0@System/A.html#a7ce328d8207b8bf" class="i method">Execute</a>(<span class="r2 r">commandParameter</span>);
+                }
+            }
+            <b>else</b>
+            {
+                <a href="#21f3e08f4c1ac097" class="k">this</a>.<a href="#b67182eb6833a536" class="i property">AssociatedFlyout</a>?.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="../Controls/Flyout.cs.html#eb512f8b339f4e5b" class="t t">Flyout</a>.<a href="../Controls/Flyout.cs.html#a4d2f2f8efa79e6e" class="i field">IsOpenProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>);
+            }
+        }
+
+        <b>protected override object</b>? <a id="3e39c0739a8e96b3" href="../R/3e39c0739a8e96b3.html" target="n" data-glyph="75,1" class="i method">GetCommandParameter</a>()
+        {
+            <a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r3 rd" class="r3 r">parameter</span> = <a href="#21f3e08f4c1ac097" class="k">this</a>.<a href="CommandTriggerAction.cs.html#4a6b770fafc047b1" class="i property">CommandParameter</a>;
+            <b>if</b> (<span class="r3 r">parameter</span> <b>is null</b> &amp;&amp; <a href="#21f3e08f4c1ac097" class="k">this</a>.<a href="CommandTriggerAction.cs.html#1cf3fce20e722d73" class="i property">PassAssociatedObjectToCommand</a>)
+            {
+                <span class="r3 r">parameter</span> = <a href="#21f3e08f4c1ac097" class="k">this</a>.<a href="#b67182eb6833a536" class="i property">AssociatedFlyout</a>;
+            }
+
+            <b>return</b> <span class="r3 r">parameter</span>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

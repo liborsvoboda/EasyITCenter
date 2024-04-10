@@ -1,0 +1,343 @@
+﻿<!DOCTYPE html>
+<html><head><title>HeatSeries.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(334);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts.Wpf/HeatSeries.cs" target="_top">HeatSeries.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts.Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\WpfView\WpfView.csproj</a> (LiveCharts.Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Points</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Series</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Dtos</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Helpers</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">SeriesAlgorithms</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<span class="i n">Charts</span>.<span class="i n">Base</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<span class="i n">Points</span>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Use a HeatSeries in a cartesian chart to draw heat maps.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="f29f9fd1a3c771df" href="R/f29f9fd1a3c771df.html" target="n" data-glyph="0,0" class="t t">HeatSeries</a> : <a href="Series.cs.html#424fba5494c39d40" class="t t">Series</a>, <a href="/LiveCharts/A.html#aa6ae0c722739410" class="t t">IHeatSeriesView</a>
+    {
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructors
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of HeatSeries class</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a id="24769949c4406767" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">HeatSeries</a>()
+        {
+            <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a> = <b>new</b> <a href="/LiveCharts/A.html#2e382710ad9439de" class="t constructor">HeatAlgorithm</a>(<a href="#f29f9fd1a3c771df" class="k">this</a>);
+            <a href="#13cf8b3a32e82be6" class="i method">InitializeDefuaults</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of HeatSries class, using a given mapper</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">configuration</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public</b> <a id="edd84f67fe46d06a" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">HeatSeries</a>(<b>object</b> <span id="r0 rd" class="r0 r">configuration</span>)
+        {
+            <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a> = <b>new</b> <a href="/LiveCharts/A.html#2e382710ad9439de" class="t constructor">HeatAlgorithm</a>(<a href="#f29f9fd1a3c771df" class="k">this</a>);
+            <a href="Series.cs.html#ed9bc5ca9279eeb2" class="i property">Configuration</a> = <span class="r0 r">configuration</span>;
+            <a href="#13cf8b3a32e82be6" class="i method">InitializeDefuaults</a>();
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Properties
+
+        <b>private</b> <a href="P/0a1bc0196b920de1.html#0a1bc0196b920de1" class="t t">HeatColorRange</a> <a id="d476babf3fe15e7c" href="R/d476babf3fe15e7c.html" target="n" data-glyph="106,1" class="i property">ColorRangeControl</a> { <b>get</b>; <b>set</b>; }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Properties
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The draws heat range property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="dc269ecad1174969" href="R/dc269ecad1174969.html" target="n" data-glyph="42,1" class="i field">DrawsHeatRangeProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;DrawsHeatRange&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="#f29f9fd1a3c771df" class="t t">HeatSeries</a>),
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>bool</b>), <a href="Series.cs.html#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the series should draw the heat range control, it is the vertical frame to the right that displays the heat gradient.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="99607731d96eb097" href="R/99607731d96eb097.html" target="n" data-glyph="102,1" class="i property">DrawsHeatRange</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#dc269ecad1174969" class="i field">DrawsHeatRangeProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#dc269ecad1174969" class="i field">DrawsHeatRangeProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The gradient stop collection property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f4336df4778fc73d" href="R/f4336df4778fc73d.html" target="n" data-glyph="42,1" class="i field">GradientStopCollectionProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;GradientStopCollection&quot;</span>, <b>typeof</b>(<a href="@0@PresentationCore/A.html#b3b8a1db9c51e976" class="t t">GradientStopCollection</a>), <b>typeof</b>(<a href="#f29f9fd1a3c771df" class="t t">HeatSeries</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationCore/A.html#b3b8a1db9c51e976" class="t t">GradientStopCollection</a>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the gradient stop collection, use every gradient offset and color properties to define your gradient.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#b3b8a1db9c51e976" class="t t">GradientStopCollection</a> <a id="c67d689d7a138bf2" href="R/c67d689d7a138bf2.html" target="n" data-glyph="102,1" class="i property">GradientStopCollection</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#b3b8a1db9c51e976" class="t t">GradientStopCollection</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f4336df4778fc73d" class="i field">GradientStopCollectionProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f4336df4778fc73d" class="i field">GradientStopCollectionProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the gradient stops, this property is normally used internally to communicate with the core of the library.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#b19f71a84062554b" class="t t">IList</a>&lt;<a href="/LiveCharts/A.html#87cd4de961a8bc46" class="t t">CoreGradientStop</a>&gt; <a id="c5c7e7818d05b0ed" href="R/c5c7e7818d05b0ed.html" target="n" data-glyph="102,1" class="i property">Stops</a>
+        {
+            <b>get</b>
+            {
+                <b>return</b> <a href="#c67d689d7a138bf2" class="i property">GradientStopCollection</a>.<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>(<span id="r1 rd" class="r1 r">x</span> =&gt; <b>new</b> <a href="/LiveCharts/A.html#87cd4de961a8bc46" class="t constructor">CoreGradientStop</a>
+                {
+                    <a href="/LiveCharts/A.html#2f27938a63669168" class="i property">Offset</a> = <span class="r1 r">x</span>.<a href="@0@PresentationCore/A.html#b658e3afba67675f" class="i property">Offset</a>,
+                    <a href="/LiveCharts/A.html#80e9d6c414ed629e" class="i property">Color</a> = <b>new</b> <a href="/LiveCharts/A.html#defa1b27e2ffb06f" class="t constructor">CoreColor</a>(<span class="r1 r">x</span>.<a href="@0@PresentationCore/A.html#0f6428e97d42619c" class="i property">Color</a>.<a href="@0@PresentationCore/A.html#e05e060db7ea2081" class="i property">A</a>, <span class="r1 r">x</span>.<a href="@0@PresentationCore/A.html#0f6428e97d42619c" class="i property">Color</a>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>, <span class="r1 r">x</span>.<a href="@0@PresentationCore/A.html#0f6428e97d42619c" class="i property">Color</a>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>, <span class="r1 r">x</span>.<a href="@0@PresentationCore/A.html#0f6428e97d42619c" class="i property">Color</a>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>)
+                }).<a href="@0@System.Core/A.html#783a052330e7d48d" class="i method">ToArray</a>();
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Overridden Methods
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the view of a given point</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">point</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r3 r">label</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public override</b> <a href="/LiveCharts/A.html#6c110e29a0f85e1f" class="t t">IChartPointView</a> <a id="7b87eb3bc12b7567" href="R/7b87eb3bc12b7567.html" target="n" data-glyph="72,1" class="i method">GetPointView</a>(<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a> <span id="r2 rd" class="r2 r">point</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r3 rd" class="r3 r">label</span>)
+        {
+            <a href="Points/HeatPoint.cs.html#6447edbca791b2f9" class="k">var</a> <span id="r4 rd" class="r4 r">pbv</span> = (<a href="Points/HeatPoint.cs.html#6447edbca791b2f9" class="t t">HeatPoint</a>) <span class="r2 r">point</span>.<a href="/LiveCharts/A.html#47cca818cf851bef" class="i property">View</a>;
+
+            <b>if</b> (<span class="r4 r">pbv</span> == <b>null</b>)
+            {
+                <span class="r4 r">pbv</span> = <b>new</b> <a href="Points/HeatPoint.cs.html#6447edbca791b2f9" class="t constructor">HeatPoint</a>
+                {
+                    <a href="Points/PointView.cs.html#1be038d2f73e5249" class="i property">IsNew</a> = <b>true</b>,
+                    <a href="Points/HeatPoint.cs.html#ee2ed8ffc324510f" class="i property">Rectangle</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#2f367c6aaf93ace5" class="t constructor">Rectangle</a>()
+                };
+
+                <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#6f2e18aba4eb4b6e" class="i method">AddToDrawMargin</a>(<span class="r4 r">pbv</span>.<a href="Points/HeatPoint.cs.html#ee2ed8ffc324510f" class="i property">Rectangle</a>);
+            }
+            <b>else</b>
+            {
+                <span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#1be038d2f73e5249" class="i property">IsNew</a> = <b>false</b>;
+                <span class="r2 r">point</span>.<a href="/LiveCharts/A.html#c90f7635ddd134a4" class="i property">SeriesView</a>.<a href="/LiveCharts/A.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>
+                    .<a href="/LiveCharts/A.html#c4139086437826c3" class="i method">EnsureElementBelongsToCurrentDrawMargin</a>(<span class="r4 r">pbv</span>.<a href="Points/HeatPoint.cs.html#ee2ed8ffc324510f" class="i property">Rectangle</a>);
+                <span class="r2 r">point</span>.<a href="/LiveCharts/A.html#c90f7635ddd134a4" class="i property">SeriesView</a>.<a href="/LiveCharts/A.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>
+                    .<a href="/LiveCharts/A.html#c4139086437826c3" class="i method">EnsureElementBelongsToCurrentDrawMargin</a>(<span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>);
+                <span class="r2 r">point</span>.<a href="/LiveCharts/A.html#c90f7635ddd134a4" class="i property">SeriesView</a>.<a href="/LiveCharts/A.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>
+                    .<a href="/LiveCharts/A.html#c4139086437826c3" class="i method">EnsureElementBelongsToCurrentDrawMargin</a>(<span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>);
+            }
+
+            <span class="r4 r">pbv</span>.<a href="Points/HeatPoint.cs.html#ee2ed8ffc324510f" class="i property">Rectangle</a>.<a href="@0@PresentationFramework/A.html#d85a4c1753b567bd" class="i property">Stroke</a> = <a href="Series.cs.html#c6f433c3f4390a52" class="i property">Stroke</a>;
+            <span class="r4 r">pbv</span>.<a href="Points/HeatPoint.cs.html#ee2ed8ffc324510f" class="i property">Rectangle</a>.<a href="@0@PresentationFramework/A.html#d817035f3a94e272" class="i property">StrokeThickness</a> = <a href="Series.cs.html#8092434fd2c35445" class="i property">StrokeThickness</a>;
+            <span class="r4 r">pbv</span>.<a href="Points/HeatPoint.cs.html#ee2ed8ffc324510f" class="i property">Rectangle</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a>;
+            <span class="r4 r">pbv</span>.<a href="Points/HeatPoint.cs.html#ee2ed8ffc324510f" class="i property">Rectangle</a>.<a href="@0@PresentationFramework/A.html#f1e389b97df5de96" class="i property">StrokeDashArray</a> = <a href="Series.cs.html#6b5479cbfd67bae7" class="i property">StrokeDashArray</a>;
+            <a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a>.<a href="@0@PresentationFramework/A.html#2bc57b630c6082fd" class="i method">SetZIndex</a>(<span class="r4 r">pbv</span>.<a href="Points/HeatPoint.cs.html#ee2ed8ffc324510f" class="i property">Rectangle</a>, <a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a>.<a href="@0@PresentationFramework/A.html#9871035e9c68bed4" class="i method">GetZIndex</a>(<span class="r4 r">pbv</span>.<a href="Points/HeatPoint.cs.html#ee2ed8ffc324510f" class="i property">Rectangle</a>));
+
+            <b>if</b> (<a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#a3a29afbd3687ede" class="i property">RequiresHoverShape</a> &amp;&amp; <span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a> == <b>null</b>)
+            {
+                <span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#2f367c6aaf93ace5" class="t constructor">Rectangle</a>
+                {
+                    <a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a> = <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#8131d3ac109ee20d" class="i property">Transparent</a>,
+                    <a href="@0@PresentationFramework/A.html#d817035f3a94e272" class="i property">StrokeThickness</a> = 0
+                };
+
+                <a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a>.<a href="@0@PresentationFramework/A.html#2bc57b630c6082fd" class="i method">SetZIndex</a>(<span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>, <b>int</b>.<a href="@0@mscorlib/A.html#c45153c0501d7122" class="i field">MaxValue</a>);
+
+                <a href="Charts/Base/Chart.cs.html#8bbad405b4592476" class="k">var</a> <span id="r5 rd" class="r5 r">wpfChart</span> = (<a href="Charts/Base/Chart.cs.html#8bbad405b4592476" class="t t">Chart</a>)<a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>;
+                <span class="r5 r">wpfChart</span>.<a href="Charts/Base/Chart.cs.html#63fc3b716f586fb7" class="i method">AttachHoverableEventTo</a>(<span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>);
+
+                <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#6f2e18aba4eb4b6e" class="i method">AddToDrawMargin</a>(<span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>);
+            }
+
+            <b>if</b> (<span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a> != <b>null</b>) <span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a>;
+
+            <b>if</b> (<a href="Series.cs.html#55aa4a52af40d36c" class="i property">DataLabels</a>)
+            {
+                <span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a> = <a href="Series.cs.html#332a27a2aec725d6" class="i method">UpdateLabelContent</a>(<b>new</b> <a href="/LiveCharts/A.html#0fb329b411e4bbed" class="t constructor">DataLabelViewModel</a>
+                {
+                    <a href="/LiveCharts/A.html#116289d6910ddd64" class="i property">FormattedText</a> = <span class="r3 r">label</span>,
+                    <span class="i">Point</span> = <span class="r2 r">point</span>
+                }, <span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>);
+            }
+
+            <b>if</b> (!<a href="Series.cs.html#55aa4a52af40d36c" class="i property">DataLabels</a> &amp;&amp; <span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a> != <b>null</b>)
+            {
+                <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#22ce649969a42257" class="i method">RemoveFromDrawMargin</a>(<span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>);
+                <span class="r4 r">pbv</span>.<a href="Points/PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a> = <b>null</b>;
+            }
+
+            <b>return</b> <span class="r4 r">pbv</span>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Erases series</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r6 r">removeFromView</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="c6d67d3b5dff56a6" href="R/c6d67d3b5dff56a6.html" target="n" data-glyph="72,1" class="i method">Erase</a>(<b>bool</b> <span id="r6 rd" class="r6 r">removeFromView</span> = <b>true</b>)
+        {
+            <a href="Series.cs.html#ba565e37fd8fc84c" class="i property">Values</a>.<a href="/LiveCharts/A.html#46f3badf02da2a16" class="i method">GetPoints</a>(<a href="#f29f9fd1a3c771df" class="k">this</a>).<span class="i">ForEach</span>(<span id="r7 rd" class="r7 r">p</span> =&gt;
+            {
+                <b>if</b> (<span class="r7 r">p</span>.<span class="i">View</span> != <b>null</b>)
+                    <span class="r7 r">p</span>.<span class="i">View</span>.<span class="i">RemoveFromView</span>(<a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>);
+            });
+            <b>if</b> (<span class="r6 r">removeFromView</span>) <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#51b61b270e7f84b1" class="i method">RemoveFromView</a>(<a href="#f29f9fd1a3c771df" class="k">this</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Defines special elements to draw according to the series type</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="41b6081a2271e775" href="R/41b6081a2271e775.html" target="n" data-glyph="72,1" class="i method">DrawSpecializedElements</a>()
+        {
+            <b>if</b> (<a href="#99607731d96eb097" class="i property">DrawsHeatRange</a>)
+            {
+                <b>if</b> (<a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a> == <b>null</b>)
+                {
+                    <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a> = <b>new</b> <a href="HeatColorRange.xaml.cs.html#8b8ab207707b3856" class="t constructor">HeatColorRange</a>();
+                }
+
+                <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#b450a3a45d073bbb" class="i field">FontFamilyProperty</a>,
+                    <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a> {<a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#cf4296c7d69477b8" class="t constructor">PropertyPath</a>(<a href="Series.cs.html#2ec420526c5fc41c" class="i field">FontFamilyProperty</a>), <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#f29f9fd1a3c771df" class="k">this</a>});
+                <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#93ba7392b999a01c" class="i field">FontSizeProperty</a>,
+                    <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a> { <a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#cf4296c7d69477b8" class="t constructor">PropertyPath</a>(<a href="Series.cs.html#dbad0c9e2d9e3e7e" class="i field">FontSizeProperty</a>), <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#f29f9fd1a3c771df" class="k">this</a> });
+                <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#e27e4a42acf4b3ac" class="i field">FontStretchProperty</a>,
+                    <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a> { <a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#cf4296c7d69477b8" class="t constructor">PropertyPath</a>(<a href="Series.cs.html#b42c26714b43336e" class="i field">FontStretchProperty</a>), <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#f29f9fd1a3c771df" class="k">this</a> });
+                <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#13b9e0d0834b993c" class="i field">FontStyleProperty</a>,
+                    <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a> { <a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#cf4296c7d69477b8" class="t constructor">PropertyPath</a>(<a href="Series.cs.html#a56a99bdf9153e8c" class="i field">FontStyleProperty</a>), <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#f29f9fd1a3c771df" class="k">this</a> });
+                <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#88ee95b2cce46d27" class="i field">FontWeightProperty</a>,
+                    <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a> { <a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#cf4296c7d69477b8" class="t constructor">PropertyPath</a>(<a href="Series.cs.html#9362e3880916940c" class="i field">FontWeightProperty</a>), <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#f29f9fd1a3c771df" class="k">this</a> });
+                <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#ec06b91e90d46caf" class="i field">ForegroundProperty</a>,
+                    <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a> { <a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#cf4296c7d69477b8" class="t constructor">PropertyPath</a>(<a href="Series.cs.html#f9ab0fc34115d160" class="i field">ForegroundProperty</a>), <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#f29f9fd1a3c771df" class="k">this</a> });
+                <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationCore/A.html#01d4c3d0cf25d8f6" class="i field">VisibilityProperty</a>,
+                    <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a> { <a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#cf4296c7d69477b8" class="t constructor">PropertyPath</a>(<a href="@0@PresentationCore/A.html#01d4c3d0cf25d8f6" class="i field">VisibilityProperty</a>), <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#f29f9fd1a3c771df" class="k">this</a> });
+
+                <b>if</b> (<a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="@0@PresentationFramework/A.html#f649907cbc82d1a0" class="i property">Parent</a> == <b>null</b>)
+                {
+                    <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#23b9badceea25373" class="i method">AddToView</a>(<a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>);
+                }
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r8 rd" class="r8 r">max</span> = <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="HeatColorRange.xaml.cs.html#bcb449ea26dbe874" class="i method">SetMax</a>(<a href="Series.cs.html#2c5672f8336e8b9a" class="i property">ActualValues</a>.<a href="/LiveCharts/A.html#456057befaabca59" class="i method">GetTracker</a>(<a href="#f29f9fd1a3c771df" class="k">this</a>).<a href="/LiveCharts/A.html#09162f15fe8489bd" class="i property">WLimit</a>.<a href="/LiveCharts/A.html#fa94bcd0a8c38366" class="i property">Max</a>.<a href="@0@mscorlib/A.html#102b12e1c4385406" class="i method">ToString</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>));
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r9 rd" class="r9 r">min</span> = <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="HeatColorRange.xaml.cs.html#2bb9eabaa172cebe" class="i method">SetMin</a>(<a href="Series.cs.html#2c5672f8336e8b9a" class="i property">ActualValues</a>.<a href="/LiveCharts/A.html#456057befaabca59" class="i method">GetTracker</a>(<a href="#f29f9fd1a3c771df" class="k">this</a>).<a href="/LiveCharts/A.html#09162f15fe8489bd" class="i property">WLimit</a>.<a href="/LiveCharts/A.html#e043273af15e9b47" class="i property">Min</a>.<a href="@0@mscorlib/A.html#102b12e1c4385406" class="i method">ToString</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>));
+
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r10 rd" class="r10 r">m</span> = <span class="r8 r">max</span> &gt; <span class="r9 r">min</span> ? <span class="r8 r">max</span> : <span class="r9 r">min</span>;
+
+                <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <span class="r10 r">m</span>;
+
+                <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#d89cf534942aa187" class="i property">ControlSize</a> = <b>new</b> <a href="/LiveCharts/A.html#10aa7723068252b4" class="t constructor">CoreSize</a>(<a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#d89cf534942aa187" class="i property">ControlSize</a>.<a href="/LiveCharts/A.html#98c3c833fabb9abb" class="i property">Width</a> - <span class="r10 r">m</span> - 4,
+                    <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#d89cf534942aa187" class="i property">ControlSize</a>.<a href="/LiveCharts/A.html#c05dd99201d955de" class="i property">Height</a>);
+            }
+            <b>else</b>
+            {
+                <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#51b61b270e7f84b1" class="i method">RemoveFromView</a>(<a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>);
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Places specializes items</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="3f9e1734b0a339cc" href="R/3f9e1734b0a339cc.html" target="n" data-glyph="72,1" class="i method">PlaceSpecializedElements</a>()
+        {
+            <b>if</b> (!<a href="#99607731d96eb097" class="i property">DrawsHeatRange</a>) <b>return</b>;
+
+            <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="HeatColorRange.xaml.cs.html#d445dbda6fb1f83e" class="i method">UpdateFill</a>(<a href="#c67d689d7a138bf2" class="i property">GradientStopCollection</a>);
+
+            <a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>;
+
+            <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>, <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a>);
+            <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="#d476babf3fe15e7c" class="i property">ColorRangeControl</a>, <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a> + <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a> + 4);
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Methods
+
+        <b>private void</b> <a id="13cf8b3a32e82be6" href="R/13cf8b3a32e82be6.html" target="n" data-glyph="76,1" class="i method">InitializeDefuaults</a>()
+        {
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="Series.cs.html#c59484df87c33afa" class="i field">StrokeThicknessProperty</a>, 0d);
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="Series.cs.html#f9ab0fc34115d160" class="i field">ForegroundProperty</a>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#11eb50ba6c5ef1c6" class="i property">White</a>);
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="Series.cs.html#0727b76cb15d111b" class="i field">StrokeProperty</a>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#11eb50ba6c5ef1c6" class="i property">White</a>);
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#dc269ecad1174969" class="i field">DrawsHeatRangeProperty</a>, <b>true</b>);
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#f4336df4778fc73d" class="i field">GradientStopCollectionProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#da78b9c1109ee092" class="t constructor">GradientStopCollection</a>());
+
+            <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <span id="r11 rd" class="r11 r">defaultLabel</span> = <span id="r12 rd" class="r12 r">x</span> =&gt; <span class="r12 r">x</span>.<a href="/LiveCharts/A.html#4b5dd7e741cfa3cd" class="i property">Weight</a>.<a href="@0@mscorlib/A.html#102b12e1c4385406" class="i method">ToString</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>);
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="Series.cs.html#1c319daa21899823" class="i field">LabelPointProperty</a>, <span class="r11 r">defaultLabel</span>);
+
+            <a href="Series.cs.html#71a8d04613e4ecee" class="i property">DefaultFillOpacity</a> = 0.4;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes the series colors if they are not set</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="51e9a12802dec8c3" href="R/51e9a12802dec8c3.html" target="n" data-glyph="72,1" class="i method">InitializeColors</a>()
+        {
+            <a href="Charts/Base/Chart.cs.html#8bbad405b4592476" class="k">var</a> <span id="r13 rd" class="r13 r">wpfChart</span> = (<a href="Charts/Base/Chart.cs.html#8bbad405b4592476" class="t t">Chart</a>)<a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>;
+            <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="k">var</a> <span id="r14 rd" class="r14 r">nextColor</span> = <span class="r13 r">wpfChart</span>.<a href="Charts/Base/Chart.cs.html#dd9d4a3a63ab6368" class="i method">GetNextDefaultColor</a>();
+
+            <b>if</b> (<a href="Series.cs.html#c6f433c3f4390a52" class="i property">Stroke</a> == <b>null</b>)
+                <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="Series.cs.html#0727b76cb15d111b" class="i field">StrokeProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<span class="r14 r">nextColor</span>));
+            <b>if</b> (<a href="Series.cs.html#a6f44874beaa1a39" class="i property">Fill</a> == <b>null</b>)
+                <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="Series.cs.html#09626bcb1a91ad43" class="i field">FillProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<span class="r14 r">nextColor</span>));
+
+            <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="k">var</a> <span id="r15 rd" class="r15 r">defaultColdColor</span> = <b>new</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t constructor">Color</a>
+            {
+                <a href="@0@PresentationCore/A.html#e05e060db7ea2081" class="i property">A</a> = (<b>byte</b>)(<span class="r14 r">nextColor</span>.<a href="@0@PresentationCore/A.html#e05e060db7ea2081" class="i property">A</a> * (<a href="Series.cs.html#71a8d04613e4ecee" class="i property">DefaultFillOpacity</a> &gt; 1
+                    ? 1
+                    : (<a href="Series.cs.html#71a8d04613e4ecee" class="i property">DefaultFillOpacity</a> &lt; 0 ? 0 : <a href="Series.cs.html#71a8d04613e4ecee" class="i property">DefaultFillOpacity</a>))),
+                <a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a> = <span class="r14 r">nextColor</span>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>,
+                <a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a> = <span class="r14 r">nextColor</span>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>,
+                <a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a> = <span class="r14 r">nextColor</span>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>
+            };
+
+            <b>if</b> (!<a href="#c67d689d7a138bf2" class="i property">GradientStopCollection</a>.<a href="@0@System.Core/A.html#8788153112b7ffd0" class="i method">Any</a>())
+            {
+                <a href="#c67d689d7a138bf2" class="i property">GradientStopCollection</a>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationCore/A.html#43fb4c5e297e768a" class="t constructor">GradientStop</a>
+                {
+                    <a href="@0@PresentationCore/A.html#0f6428e97d42619c" class="i property">Color</a> = <span class="r15 r">defaultColdColor</span>,
+                    <a href="@0@PresentationCore/A.html#b658e3afba67675f" class="i property">Offset</a> = 0
+                });
+                <a href="#c67d689d7a138bf2" class="i property">GradientStopCollection</a>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationCore/A.html#43fb4c5e297e768a" class="t constructor">GradientStop</a>
+                {
+                    <a href="@0@PresentationCore/A.html#0f6428e97d42619c" class="i property">Color</a> = <span class="r14 r">nextColor</span>,
+                    <a href="@0@PresentationCore/A.html#b658e3afba67675f" class="i property">Offset</a> = 1
+                });
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}
+</pre></td></tr></table></div></body></html>

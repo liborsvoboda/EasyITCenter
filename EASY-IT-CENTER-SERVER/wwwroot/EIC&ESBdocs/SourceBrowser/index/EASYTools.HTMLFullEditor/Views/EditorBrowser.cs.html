@@ -1,0 +1,457 @@
+﻿<!DOCTYPE html>
+<html><head><title>EditorBrowser.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(448);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.HTMLFullEditor/Views/EditorBrowser.cs" target="_top">Views\EditorBrowser.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.HTMLFullEditor" target="_top">..\..\..\EASY-TOOLS\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor.csproj</a> (EASYTools.HTMLFullEditor)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Navigation</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Code</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Code</span>.<span class="i n">Interop</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Html</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Interfaces</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">ViewModels</span>;
+<b>using</b> <span class="i n">mshtml</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Views</span>
+{
+    <b>internal class</b> <a id="75469e512445f30a" href="../R/75469e512445f30a.html" target="n" data-glyph="2,0" class="t t">EditorBrowser</a> : <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a>, <a href="../Interfaces/IBrowserControl.cs.html#c6664bab75da7ecf" class="t t">IBrowserControl</a>
+    {
+        <b>private bool</b> <a id="cc44198a4621403a" href="../R/cc44198a4621403a.html" target="n" data-glyph="46,1" class="i field">_scriptErrorsHidden</a>;
+        <b>private bool</b> <a id="89e49ab29d85b664" href="../R/89e49ab29d85b664.html" target="n" data-glyph="46,1" class="i field">_firstDocumentOpened</a>;
+        <b>private</b> <a href="../Code/Internal/BrowserContextMenu.cs.html#c750f742ba5c6fe9" class="t t">BrowserContextMenu</a> <a id="c5b57c0db2ccd669" href="../R/c5b57c0db2ccd669.html" target="n" data-glyph="46,1" class="i field">_contextMenu</a>;
+        <b>private</b> <a href="../Code/Interop/WebBrowserEventSubscriber.cs.html#e803594e4eb7c835" class="t t">WebBrowserEventsSubscriber</a> <a id="d8cd58add06503c5" href="../R/d8cd58add06503c5.html" target="n" data-glyph="46,1" class="i field">_browserEvents</a>;
+        <b>private readonly</b> <a href="../Code/Throttler.cs.html#8477271ea48609e1" class="t t">Throttler</a> <a id="5973a99dc19f28ad" href="../R/5973a99dc19f28ad.html" target="n" data-glyph="46,1" class="i field">_htmlContentChangedEventThrottler</a> = <b>new</b> <a href="../Code/Throttler.cs.html#535fd42cc99d27c4" class="t constructor">Throttler</a>(<a href="../Code/Interop/TimeConstants.cs.html#3d5ba8cab482514e" class="t t">TimeConstants</a>.<a href="../Code/Interop/TimeConstants.cs.html#2e72df56984f0400" class="i field">MinHtmlChangedInterval</a>);
+ 
+        <b>public</b> <a id="f28e434108fae576" href="../R/f28e434108fae576.html" target="n" data-glyph="72,1" class="t constructor">EditorBrowser</a>()
+        {
+            <a href="#9ed7bc98e920a046" class="i method">InitInternalBrowser</a>();
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Event, fired when internal browser got focus.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="39e0188fcc3a346e" href="../R/39e0188fcc3a346e.html" target="n" data-glyph="30,1" class="i">InternalBrowserGotFocus</a>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Event, fired when internal browser lost focus.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="29b6ddd34137a737" href="../R/29b6ddd34137a737.html" target="n" data-glyph="30,1" class="i">InternalBrowserLostFocus</a>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets actually opened HTML document by </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#899043b72e7c04cd" class="i property">Browser</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <span class="t t">HTMLDocument</span> <a id="e4dd53c986ac42c4" href="../R/e4dd53c986ac42c4.html" target="n" data-glyph="102,1" class="i property">CurrentDocument</a> { <b>get</b>; <b>private set</b>; }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets actual WebBrowser component.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#5c0f51a4876c602f" class="t t">WebBrowser</a> <a id="899043b72e7c04cd" href="../R/899043b72e7c04cd.html" target="n" data-glyph="102,1" class="i property">Browser</a> { <b>get</b>; <b>set</b>; }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets html editor (typically hidden behind </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#899043b72e7c04cd" class="i property">Browser</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">).</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a> <a id="42329a92da970d52" href="../R/42329a92da970d52.html" target="n" data-glyph="106,1" class="i property">HtmlEditor</a> { <b>get</b>; <b>set</b>; }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Fires when html content of this editor changes.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="9a10db2caabca3f0" href="../R/9a10db2caabca3f0.html" target="n" data-glyph="32,1" class="i">HtmlContentChanged</a>;
+ 
+        <b>private void</b> <a id="80b9a16e37b9f6fc" href="../R/80b9a16e37b9f6fc.html" target="n" data-glyph="76,1" class="i method">FireHtmlContentChanged</a>()
+        {
+            <b>if</b> (!<a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<a href="../Code/Utils.cs.html#ce757b1da217c27a" class="i method">IsCompletelyLoaded</a>())
+                <b>return</b>;
+ 
+            <a href="#5973a99dc19f28ad" class="i field">_htmlContentChangedEventThrottler</a>.<a href="../Code/Throttler.cs.html#9d0c64743375bdc3" class="i method">Fire</a>(() =&gt;
+            {
+                <a href="#9a10db2caabca3f0" class="i">HtmlContentChanged</a>?.<a href="@0@mscorlib/A.html#aaedcaa3f05a32f9" class="i method">Invoke</a>(<a href="#75469e512445f30a" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+            });
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Browser init
+ 
+        <b>private void</b> <a id="9ed7bc98e920a046" href="../R/9ed7bc98e920a046.html" target="n" data-glyph="76,1" class="i method">InitInternalBrowser</a>()
+        {
+            <b>if</b> (<a href="#75469e512445f30a" class="k">this</a>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> != <b>null</b>)
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#265d72f49e915224" class="t constructor">InvalidOperationException</a>(<span class="s">&quot;Browser is already initialized!&quot;</span>);
+ 
+            <a href="#42329a92da970d52" class="i property">HtmlEditor</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#76e5101303fab08d" class="t constructor">TextBox</a>();
+            <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#8848dad3f7730600" class="i property">AcceptsReturn</a> = <b>true</b>;
+            <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#3adc5778168a471a" class="i property">AcceptsTab</a> = <b>true</b>;
+            <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#a78ad17d9e4ba898" class="i property">AutoWordSelection</a> = <b>true</b>;
+            <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#86c382122ed7f5d1" class="i property">VerticalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#0ac97049b1a1ea41" class="i field">Auto</a>;
+            <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#3f1347788defaf39" class="i property">TextWrapping</a> = <a href="@0@PresentationCore/A.html#06cbdc94c6ffe9f2" class="t t">TextWrapping</a>.<a href="@0@PresentationCore/A.html#0f519f2db63336a5" class="i field">Wrap</a>;
+            <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#0024ca32be32c247" class="i field">Hidden</a>;
+            <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#22cd61fb3203047e" class="i">TextChanged</a> += (<span id="r0 rd" class="r0 r">s</span>, <span id="r1 rd" class="r1 r">e</span>) =&gt; <a href="#80b9a16e37b9f6fc" class="i method">FireHtmlContentChanged</a>();
+ 
+            <a href="#75469e512445f30a" class="k">this</a>.<a href="@0@PresentationFramework/A.html#ec1a90b4f82457bf" class="i">SizeChanged</a> += (<span id="r2 rd" class="r2 r">s</span>, <span id="r3 rd" class="r3 r">e</span>) =&gt;
+            {
+                <span class="c">// Width has changed</span>
+                <b>if</b> (<span class="r3 r">e</span>.<a href="@0@PresentationFramework/A.html#0b6db807b2face8e" class="i property">WidthChanged</a>)
+                {
+                    <span class="c">// Limiting max width of source code editor (as it tends to grow when image is inside and has enough space)</span>
+                    <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#1941bc06ea9a414e" class="i property">MaxWidth</a> = <span class="r3 r">e</span>.<a href="@0@PresentationFramework/A.html#2917230091780edc" class="i property">NewSize</a>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>;
+                }
+                <span class="c">// Height has changed</span>
+                <b>if</b> (<span class="r3 r">e</span>.<a href="@0@PresentationFramework/A.html#5f8ac74a4799accf" class="i property">HeightChanged</a>)
+                {
+                    <span class="c">// Limit max height of source code editor (when resizing control)</span>
+                    <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r4 rd" class="r4 r">diff</span> = <span class="r3 r">e</span>.<a href="@0@PresentationFramework/A.html#0727023fdfaae7e2" class="i property">PreviousSize</a>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a> - <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#5a7c1405bd87b81d" class="i property">MaxHeight</a>;
+                    <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#5a7c1405bd87b81d" class="i property">MaxHeight</a> = <span class="r3 r">e</span>.<a href="@0@PresentationFramework/A.html#2917230091780edc" class="i property">NewSize</a>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a> - <span class="r4 r">diff</span>;
+                }
+            };
+ 
+            <a href="#899043b72e7c04cd" class="i property">Browser</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#6ebf3df3d3f5961d" class="t constructor">WebBrowser</a>();
+            <a href="#899043b72e7c04cd" class="i property">Browser</a>.<a href="@0@PresentationFramework/A.html#d3372cf43e27ada6" class="i">LoadCompleted</a> += <a href="#e0b4c4e91bec825a" class="i method">DocumentLoaded</a>;
+            <a href="#899043b72e7c04cd" class="i property">Browser</a>.<a href="@0@PresentationCore/A.html#58bfd79a7ef6a62d" class="i">PreviewKeyDown</a> += <a href="#88c7e05cd8fc4e46" class="i method">BrowserOnPreviewKeyDown</a>;
+ 
+            <span class="c">// custom menu</span>
+            <a href="#c5b57c0db2ccd669" class="i field">_contextMenu</a> = <b>new</b> <a href="../Code/Internal/BrowserContextMenu.cs.html#eae194b2f336c649" class="t constructor">BrowserContextMenu</a>(<a href="#75469e512445f30a" class="k">this</a>);
+ 
+            <span class="c">// control for both - Html and Browser control</span>
+            <a href="@0@PresentationFramework/A.html#f9ce1d6be154348a" class="k">var</a> <span id="r5 rd" class="r5 r">grid</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#8200223a7211c338" class="t constructor">Grid</a>();
+            <span class="r5 r">grid</span>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<a href="#42329a92da970d52" class="i property">HtmlEditor</a>);
+            <span class="r5 r">grid</span>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<a href="#899043b72e7c04cd" class="i property">Browser</a>);
+ 
+            <a href="#75469e512445f30a" class="k">this</a>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <span class="r5 r">grid</span>;
+ 
+            <span class="c">// Load default empty document</span>
+            <b>void</b> <a id="8d78b0a1a413d9c3" href="../R/8d78b0a1a413d9c3.html" target="n" data-glyph="76,2" class="i method">FirstLoad</a>(<b>object</b> <span id="r6 rd" class="r6 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r7 rd" class="r7 r">args</span>)
+            {
+                <b>if</b> (!<a href="#89e49ab29d85b664" class="i field">_firstDocumentOpened</a>)
+                {
+                    <a href="#992ef92adb91490e" class="i method">OpenDocument</a>();
+                }
+ 
+                <span class="c">// link to browser events</span>
+                <a href="#d8cd58add06503c5" class="i field">_browserEvents</a> = <a href="../Code/Interop/WebBrowserEventSubscriber.cs.html#e803594e4eb7c835" class="t t">WebBrowserEventsSubscriber</a>.<a href="../Code/Interop/WebBrowserEventSubscriber.cs.html#74a3c08b072f1a33" class="i method">Create</a>(<a href="#899043b72e7c04cd" class="i property">Browser</a>);
+                <a href="#d8cd58add06503c5" class="i field">_browserEvents</a>.<a href="../Code/Interop/WebBrowserEventSubscriber.cs.html#189194261e49f2b8" class="i">StatusTextChanged</a> += (<span id="r8 rd" class="r8 r">s</span>, <span id="r9 rd" class="r9 r">e</span>) =&gt; <a href="#80b9a16e37b9f6fc" class="i method">FireHtmlContentChanged</a>();
+ 
+                <a href="#899043b72e7c04cd" class="i property">Browser</a>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> -= <a href="#8d78b0a1a413d9c3" class="i method">FirstLoad</a>;
+            }
+            <a href="#899043b72e7c04cd" class="i property">Browser</a>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += <a href="#8d78b0a1a413d9c3" class="i method">FirstLoad</a>;
+        }
+ 
+        <b>private void</b> <a id="88c7e05cd8fc4e46" href="../R/88c7e05cd8fc4e46.html" target="n" data-glyph="76,1" class="i method">BrowserOnPreviewKeyDown</a>(<b>object</b> <span id="r10 rd" class="r10 r">sender</span>, <a href="@0@PresentationCore/A.html#0d2ce926f5cfc74b" class="t t">KeyEventArgs</a> <span id="r11 rd" class="r11 r">e</span>)
+        {
+            <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a> <span id="r12 rd" class="r12 r">key</span> = (<span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a> == <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#fb6b5b92594477c5" class="i field">System</a> ? <span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#a729b8f7ffa361b1" class="i property">SystemKey</a> : <span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a>);
+            <b>switch</b> (<span class="r12 r">key</span>)
+            {
+                <span class="c">// disable F5</span>
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#9459670f1ea00920" class="i field">F5</a>:
+                    <span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+                    <b>return</b>;
+                <span class="c">// disable Ctrl + O, Ctrl + N, Ctrl + L</span>
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#0633d6ea56d21a45" class="i field">O</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#9bb5ba822e650f13" class="i field">N</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#01d4076a88be1b02" class="i field">L</a>:
+                    <b>if</b> (<span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#68f38a64bc1a1f85" class="i property">KeyboardDevice</a>.<a href="@0@PresentationCore/A.html#78b165d537c03b91" class="i method">IsKeyDown</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#2b72caec22f1249d" class="i field">LeftCtrl</a>))
+                    {
+                        <span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+                    }
+                    <b>return</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#17a31c4b78ec2026" class="i field">P</a>: <span class="c">// Print dialog</span>
+                    <b>if</b> (<span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#68f38a64bc1a1f85" class="i property">KeyboardDevice</a>.<a href="@0@PresentationCore/A.html#78b165d537c03b91" class="i method">IsKeyDown</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#2b72caec22f1249d" class="i field">LeftCtrl</a>))
+                    {
+                        <span class="c">// is handled, when printing is disabled</span>
+                        <span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = !<a href="#2fd112550934987b" class="i property">EnablePrintHotKey</a>;
+                    }
+ 
+                    <b>return</b>;
+            }
+        }
+ 
+        <b>private void</b> <a id="e0b4c4e91bec825a" href="../R/e0b4c4e91bec825a.html" target="n" data-glyph="76,1" class="i method">DocumentLoaded</a>(<b>object</b> <span id="r13 rd" class="r13 r">sender</span>, <a href="@0@PresentationFramework/A.html#6280e2382c12f1c1" class="t t">NavigationEventArgs</a> <span id="r14 rd" class="r14 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#5c0f51a4876c602f" class="k">var</a> <span id="r15 rd" class="r15 r">browser</span> = (<a href="@0@PresentationFramework/A.html#5c0f51a4876c602f" class="t t">WebBrowser</a>)<span class="r13 r">sender</span>;
+ 
+            <b>if</b> (!(<span class="r15 r">browser</span>.<a href="@0@PresentationFramework/A.html#ee7612abf4242389" class="i property">Document</a> <b>is</b> <span class="t t">HTMLDocument</span> <span id="r16 rd" class="r16 r">document</span>))
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#3d3c2c03118be4f8" class="t constructor">NotSupportedException</a>(<span class="s">&quot;WebBrowser.Document is not instance of type HTMLDocument.&quot;</span>);
+ 
+            <a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a> = <span class="r16 r">document</span>;
+ 
+            <span class="c">//CurrentDocument.designMode = &quot;on&quot;; // will clear the entire document on x64 systems</span>
+ 
+            <span class="c">// create body, so i can turn on editable mode</span>
+            <b>if</b> (<a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<span class="i property">body</span> == <b>null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#265d72f49e915224" class="t constructor">InvalidOperationException</a>(<span class="s">&quot;Passed html element contains no body&quot;</span>);
+            }
+ 
+            ((<span class="t t">HTMLBody</span>)<a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<span class="i property">body</span>).<span class="i property">contentEditable</span> = <span class="s">&quot;true&quot;</span>;
+            <b>var</b> <span id="r17 rd" class="r17 r">documentEvents</span> = (<span class="t t">HTMLDocumentEvents2_Event</span>)<a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>;
+            <span class="r17 r">documentEvents</span>.<span class="i">onclick</span> += (<span id="r18 rd" class="r18 r">htmlEvent</span>) =&gt;
+            {
+                <span class="c">// click out of body tag will return focus back to body</span>
+                <b>if</b> (<span class="r18 r">htmlEvent</span>.<span class="i property">srcElement</span> <b>is</b> <span class="t t">HTMLHtmlElement</span> <span id="r19 rd" class="r19 r">htmlTag</span> &amp;&amp; <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#d47c1f57ad1e1e6e" class="i method">Equals</a>(<span class="r19 r">htmlTag</span>.<span class="i property">tagName</span>, <span class="s">&quot;HTML&quot;</span>, <a href="@0@mscorlib/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@0@mscorlib/A.html#eabf4db5f5c52b6a" class="i field">InvariantCultureIgnoreCase</a>))
+                {
+                    <a href="#80d2bea959420d9f" class="i method">TryFocusBody</a>();
+                }
+ 
+                <b>return</b> <b>true</b>;
+            };
+            <span class="c">// saving selected text, when control lost focus - so it can be back selected, for contextMenu</span>
+            <span class="r17 r">documentEvents</span>.<span class="i">onfocusout</span> += (<span id="r20 rd" class="r20 r">htmlEvent</span>) =&gt;
+            {
+                <a href="#b7a3b484c9c526a2" class="i field">_focusOutSelectedRange</a> = <a href="#b07c6ab4264ea0a4" class="i method">GetSelectedRange</a>();
+ 
+                <a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#968dc7ef71211110" class="i method">BeginInvoke</a>(<b>new</b> <span class="t">Action</span>(() =&gt;
+                {
+                    <a href="#29b6ddd34137a737" class="i">InternalBrowserLostFocus</a>?.<a href="@0@mscorlib/A.html#aaedcaa3f05a32f9" class="i method">Invoke</a>(<a href="#75469e512445f30a" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+                }));
+            };
+            <span class="r17 r">documentEvents</span>.<span class="i">oncontextmenu</span> += (<span id="r21 rd" class="r21 r">htmlEvent</span>) =&gt;
+            {
+                <span class="c">// open custom menu</span>
+                <a href="#c5b57c0db2ccd669" class="i field">_contextMenu</a>.<a href="../Code/Internal/BrowserContextMenu.cs.html#02d22ee5714abd5a" class="i property">IsOpen</a> = <b>true</b>;
+ 
+                <span class="c">// focusing back selected text, if is</span>
+                <a href="#80d2bea959420d9f" class="i method">TryFocusBody</a>(<b>true</b>);
+ 
+                <span class="c">// disable default context menu</span>
+                <b>return</b> <b>false</b>;
+            };
+            <span class="r17 r">documentEvents</span>.<span class="i">onfocusin</span> += (<span id="r22 rd" class="r22 r">htmlEvent</span>) =&gt;
+            {
+                <a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#968dc7ef71211110" class="i method">BeginInvoke</a>(<b>new</b> <span class="t">Action</span>(() =&gt;
+                {
+                    <a href="#39e0188fcc3a346e" class="i">InternalBrowserGotFocus</a>?.<a href="@0@mscorlib/A.html#aaedcaa3f05a32f9" class="i method">Invoke</a>(<a href="#75469e512445f30a" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+                }));
+            };
+ 
+            <span class="c">// document is loaded - internal browser should be loaded</span>
+            <a href="#f6142bd6d90730fd" class="i method">TryHideScriptErrors</a>(<span class="r15 r">browser</span>);
+        }
+ 
+        <b>private</b> <a href="../Html/SelectedRange.cs.html#3e7de8f2f0d9a441" class="t t">SelectedRange</a> <a id="b7a3b484c9c526a2" href="../R/b7a3b484c9c526a2.html" target="n" data-glyph="46,1" class="i field">_focusOutSelectedRange</a>;
+        <b>private void</b> <a id="80d2bea959420d9f" href="../R/80d2bea959420d9f.html" target="n" data-glyph="76,1" class="i method">TryFocusBody</a>(<b>bool</b> <span id="r23 rd" class="r23 r">useFocusOutRange</span> = <b>false</b>)
+        {
+            <b>if</b> (!<a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<a href="../Code/Utils.cs.html#ce757b1da217c27a" class="i method">IsCompletelyLoaded</a>())
+                <b>return</b>;
+ 
+            <a href="../Html/SelectedRange.cs.html#3e7de8f2f0d9a441" class="k">var</a> <span id="r24 rd" class="r24 r">selectedRange</span> = <a href="#b07c6ab4264ea0a4" class="i method">GetSelectedRange</a>();
+ 
+            <span class="c">// when set, will search for last selected range</span>
+            <b>if</b> (<span class="r23 r">useFocusOutRange</span> &amp;&amp; <span class="r24 r">selectedRange</span>.<a href="../Html/SelectedRange.cs.html#3caa81b8bb5cceb3" class="i property">IsEmpty</a> &amp;&amp; <a href="#b7a3b484c9c526a2" class="i field">_focusOutSelectedRange</a> != <b>null</b>)
+            {
+                <span class="r24 r">selectedRange</span> = <a href="#b7a3b484c9c526a2" class="i field">_focusOutSelectedRange</a>;
+            }
+ 
+            <span class="c">// empty range = no range</span>
+            <b>if</b> (<span class="r24 r">selectedRange</span>.<a href="../Html/SelectedRange.cs.html#3caa81b8bb5cceb3" class="i property">IsEmpty</a>)
+            {
+                <span class="r24 r">selectedRange</span> = <b>null</b>;
+            }
+ 
+            ((<span class="t t">HTMLBody</span>)<a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<span class="i property">body</span>)?.<span class="i method">focus</span>();
+ 
+            <span class="c">// select back the selected text</span>
+            <span class="r24 r">selectedRange</span>?.<a href="../Html/SelectedRange.cs.html#e7c353bac70e1a18" class="i method">Select</a>();
+ 
+            <span class="c">// clearing last selected range</span>
+            <b>if</b>(<span class="r23 r">useFocusOutRange</span>)
+                <a href="#b7a3b484c9c526a2" class="i field">_focusOutSelectedRange</a> = <b>null</b>;
+        }
+ 
+        <b>public void</b> <a id="f6142bd6d90730fd" href="../R/f6142bd6d90730fd.html" target="n" data-glyph="72,1" class="i method">TryHideScriptErrors</a>(<a href="@0@PresentationFramework/A.html#5c0f51a4876c602f" class="t t">WebBrowser</a> <span id="r25 rd" class="r25 r">webBrowser</span>)
+        {
+            <b>if</b> (<a href="#cc44198a4621403a" class="i field">_scriptErrorsHidden</a>)
+                <b>return</b>;
+ 
+            <a href="#cc44198a4621403a" class="i field">_scriptErrorsHidden</a> = <a href="../Code/Interop/InteropHelper.cs.html#1c2b8ab14c3f65c2" class="t t">InteropHelper</a>.<a href="../Code/Interop/InteropHelper.cs.html#70ed09bf2ae58490" class="i method">TryHideScriptErrors</a>(<span class="r25 r">webBrowser</span>);
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Public functions/interface implementation
+ 
+        <b>public bool</b> <a id="992ef92adb91490e" href="../R/992ef92adb91490e.html" target="n" data-glyph="72,1" class="i method">OpenDocument</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r26 rd" class="r26 r">fileContent</span> = <b>null</b>)
+        {
+            <b>if</b>(!<a href="#89e49ab29d85b664" class="i field">_firstDocumentOpened</a>)
+                <a href="#89e49ab29d85b664" class="i field">_firstDocumentOpened</a> = <b>true</b>;
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r27 rd" class="r27 r">content</span> = !<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<span class="r26 r">fileContent</span>)
+                                ? <span class="r26 r">fileContent</span>
+                                : <a href="../P/c50a698ffe4e53b1.html#c50a698ffe4e53b1" class="t t">ResourceHelper</a>.<a href="../Code/ResourceHelper.cs.html#b81963497cadb85a" class="i method">GetDefaultHtmlDocument</a>();
+ 
+            <span class="c">// no need to change if it&#39;s the same content</span>
+            <b>if</b> (<span class="r27 r">content</span> == <a href="#ecfb0f7e4d19cb7d" class="i method">GetCurrentHtml</a>())
+                <b>return</b> <b>false</b>;
+ 
+            <b>if</b> (<a href="#e5df7f2a3d365d99" class="i property">IsInSourceEditMode</a>)
+            {
+                <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a> = <span class="r27 r">content</span>;
+            }
+            <b>else</b>
+            {
+                <a href="#899043b72e7c04cd" class="i property">Browser</a>.<a href="@0@PresentationFramework/A.html#bf35ab06576ff3f2" class="i method">NavigateToString</a>(<span class="r27 r">content</span>);
+                <a href="#899043b72e7c04cd" class="i property">Browser</a>.<a href="@0@PresentationFramework/A.html#33ee1e8cb3c7df77" class="i property">ObjectForScripting</a> = <span class="s">&quot;&quot;</span>;
+            }
+ 
+            <b>return</b> <b>true</b>;
+        }
+ 
+        <b>public string</b> <a id="ecfb0f7e4d19cb7d" href="../R/ecfb0f7e4d19cb7d.html" target="n" data-glyph="72,1" class="i method">GetCurrentHtml</a>()
+        {
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r28 rd" class="r28 r">result</span>;
+ 
+            <b>if</b> (<a href="#e5df7f2a3d365d99" class="i property">IsInSourceEditMode</a>)
+            {
+                <span class="r28 r">result</span> = <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>;
+            }
+            <b>else</b>
+            {
+                <b>if</b> (!<a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<a href="../Code/Utils.cs.html#ce757b1da217c27a" class="i method">IsCompletelyLoaded</a>())
+                {
+                    <span class="r28 r">result</span> = <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+                }
+                <b>else</b>
+                {
+                    <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r29 rd" class="r29 r">doc</span> = <a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<span class="i property">documentElement</span>.<span class="i property">outerHTML</span>;
+                    <span class="r28 r">result</span> = <span class="r29 r">doc</span>.<a href="@0@mscorlib/A.html#69fc1d0aa6df8a90" class="i method">Replace</a>(<span class="s">&quot; contentEditable=true&quot;</span>, <span class="s">&quot;&quot;</span>);
+                }
+            }
+ 
+            <span class="c">// Cannot return empty string, because WebBrowser element would throw exception</span>
+            <span class="c">// Returning single space works thou</span>
+            <b>if</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<span class="r28 r">result</span>))
+            {
+                <b>return</b> <span class="s">&quot; &quot;</span>;
+            }
+ 
+            <b>return</b> <span class="r28 r">result</span>;
+        }
+ 
+        <b>public</b> <a href="../Html/SelectedRange.cs.html#3e7de8f2f0d9a441" class="t t">SelectedRange</a> <a id="b07c6ab4264ea0a4" href="../R/b07c6ab4264ea0a4.html" target="n" data-glyph="72,1" class="i method">GetSelectedRange</a>()
+        {
+            <a href="#570c02914a2eca94" class="i method">OnlyInBrowserMode</a>();
+ 
+            <b>if</b> (<a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<a href="../Code/Utils.cs.html#ce757b1da217c27a" class="i method">IsCompletelyLoaded</a>())
+            {
+                <b>var</b> <span id="r30 rd" class="r30 r">range</span> = <a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<span class="i property">selection</span>.<span class="i method">createRange</span>();
+                <b>if</b> (<span class="r30 r">range</span> <b>is</b> <span class="t t">IHTMLTxtRange</span> <span id="r31 rd" class="r31 r">typedRange</span>)
+                {
+                    <b>return</b> <b>new</b> <a href="../Html/SelectedRange.cs.html#a90850222381a87c" class="t constructor">SelectedRange</a>(<span class="r31 r">typedRange</span>);
+                }
+            }
+ 
+            <b>return</b> <a href="../Html/SelectedRange.cs.html#3e7de8f2f0d9a441" class="t t">SelectedRange</a>.<a href="../Html/SelectedRange.cs.html#1348f392a1894b3a" class="i property">Empty</a>;
+        }
+ 
+        <b>public void</b> <a id="8dd24350bc7fe6f7" href="../R/8dd24350bc7fe6f7.html" target="n" data-glyph="72,1" class="i method">ExecuteCommand</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r32 rd" class="r32 r">commandId</span>, <b>bool</b> <span id="r33 rd" class="r33 r">showUI</span> = <b>false</b>, <b>object</b> <span id="r34 rd" class="r34 r">value</span> = <b>null</b>)
+        {
+            <a href="#570c02914a2eca94" class="i method">OnlyInBrowserMode</a>();
+ 
+            <b>if</b> (!<a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<a href="../Code/Utils.cs.html#ce757b1da217c27a" class="i method">IsCompletelyLoaded</a>())
+                <b>return</b>;
+ 
+            <a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<span class="i method">execCommand</span>(<span class="r32 r">commandId</span>, <span class="r33 r">showUI</span>, <span class="r34 r">value</span>);
+        }
+ 
+        <b>public object</b> <a id="96e90d77465d5988" href="../R/96e90d77465d5988.html" target="n" data-glyph="72,1" class="i method">QueryCommandState</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r35 rd" class="r35 r">commandId</span>)
+        {
+            <b>if</b> (<a href="#e5df7f2a3d365d99" class="i property">IsInSourceEditMode</a>)
+                <b>return</b> <b>null</b>;
+ 
+            <b>if</b> (!<a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<a href="../Code/Utils.cs.html#ce757b1da217c27a" class="i method">IsCompletelyLoaded</a>())
+                <b>return</b> <b>null</b>;
+ 
+            <b>return</b> <a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<span class="i method">queryCommandState</span>(<span class="r35 r">commandId</span>);
+        }
+ 
+        <b>public bool</b> <a id="a8b795c19898381a" href="../R/a8b795c19898381a.html" target="n" data-glyph="72,1" class="i method">QueryCommandEnabled</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r36 rd" class="r36 r">commandId</span>)
+        {
+            <b>if</b> (<a href="#e5df7f2a3d365d99" class="i property">IsInSourceEditMode</a>)
+                <b>return</b> <b>false</b>;
+ 
+            <b>if</b> (!<a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<a href="../Code/Utils.cs.html#ce757b1da217c27a" class="i method">IsCompletelyLoaded</a>())
+                <b>return</b> <b>false</b>;
+ 
+            <b>return</b> <a href="#e4dd53c986ac42c4" class="i property">CurrentDocument</a>.<span class="i method">queryCommandEnabled</span>(<span class="r36 r">commandId</span>);
+        }
+ 
+        <b>public void</b> <a id="b7d0bc857ed495f9" href="../R/b7d0bc857ed495f9.html" target="n" data-glyph="72,1" class="i method">SetFont</a>(<a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a> <span id="r37 rd" class="r37 r">font</span>)
+        {
+            <a href="#8dd24350bc7fe6f7" class="i method">ExecuteCommand</a>(<span class="s">&quot;FontName&quot;</span>, <b>false</b>, <span class="r37 r">font</span>.<a href="@0@PresentationCore/A.html#1e0c0842b4276b6a" class="i method">ToString</a>());
+        }
+ 
+        <b>public void</b> <a id="2ae357bda655a12c" href="../R/2ae357bda655a12c.html" target="n" data-glyph="72,1" class="i method">SetFontSize</a>(<a href="../Html/FontSize.cs.html#98b06392db112c09" class="t t">FontSize</a> <span id="r38 rd" class="r38 r">fontSize</span>)
+        {
+            <a href="#8dd24350bc7fe6f7" class="i method">ExecuteCommand</a>(<span class="s">&quot;FontSize&quot;</span>, <b>false</b>, <span class="r38 r">fontSize</span>.<a href="../Html/FontSize.cs.html#e8a58a88f5cc9f54" class="i property">Key</a>);
+        }
+ 
+        <b>void</b> <a href="../Interfaces/IBrowserControl.cs.html#c6664bab75da7ecf" class="t t">IBrowserControl</a>.<a href="../Interfaces/IBrowserControl.cs.html#243eacb7a23b7275" class="i method">Focus</a>()
+        {
+            <b>if</b> (<a href="#e5df7f2a3d365d99" class="i property">IsInSourceEditMode</a>)
+            {
+                <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationCore/A.html#0e11f7ae56f1c30f" class="i method">Focus</a>();
+            }
+            <b>else</b>
+            {
+                <a href="#80d2bea959420d9f" class="i method">TryFocusBody</a>();
+            }
+        }
+ 
+        <b>public bool</b> <a id="e5df7f2a3d365d99" href="../R/e5df7f2a3d365d99.html" target="n" data-glyph="102,1" class="i property">IsInSourceEditMode</a> { <b>get</b>; <b>private set</b>; }
+ 
+        <b>public bool</b> <a id="2fd112550934987b" href="../R/2fd112550934987b.html" target="n" data-glyph="102,1" class="i property">EnablePrintHotKey</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>public void</b> <a id="2c2119d56b01ca16" href="../R/2c2119d56b01ca16.html" target="n" data-glyph="72,1" class="i method">ToggleSourceEditor</a>(<a href="../ViewModels/ToolbarViewModel.cs.html#9e968c4319c4503a" class="t t">ToolbarViewModel</a> <span id="r39 rd" class="r39 r">model</span>, <b>bool</b> <span id="r40 rd" class="r40 r">enableSourceEditor</span>)
+        {
+            <b>if</b> (<span class="r39 r">model</span> == <b>null</b>)
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r39 r">model</span>));
+ 
+            <span class="c">// mode already set</span>
+            <b>if</b> (<span class="r40 r">enableSourceEditor</span> == <a href="#e5df7f2a3d365d99" class="i property">IsInSourceEditMode</a>)
+                <b>return</b>;
+ 
+            <b>if</b> (<span class="r40 r">enableSourceEditor</span>)
+            {
+                <span class="c">// insert latest html code to editor</span>
+                <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a> = <a href="#ecfb0f7e4d19cb7d" class="i method">GetCurrentHtml</a>();
+ 
+                <span class="c">// limit size of html code editor to current browser size</span>
+                <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#5a7c1405bd87b81d" class="i property">MaxHeight</a> = <a href="#899043b72e7c04cd" class="i property">Browser</a>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>;
+                <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationFramework/A.html#1941bc06ea9a414e" class="i property">MaxWidth</a> = <a href="#899043b72e7c04cd" class="i property">Browser</a>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>;
+ 
+                <span class="c">// switch visibility</span>
+                <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a>;
+                <a href="#899043b72e7c04cd" class="i property">Browser</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#0024ca32be32c247" class="i field">Hidden</a>;
+                <a href="#e5df7f2a3d365d99" class="i property">IsInSourceEditMode</a> = <b>true</b>;
+            }
+            <b>else</b>
+            {
+                <span class="c">// load edited html code back to browser</span>
+                <a href="#899043b72e7c04cd" class="i property">Browser</a>.<a href="@0@PresentationFramework/A.html#bf35ab06576ff3f2" class="i method">NavigateToString</a>(<a href="#ecfb0f7e4d19cb7d" class="i method">GetCurrentHtml</a>());
+ 
+                <span class="c">// switch visibility</span>
+                <a href="#42329a92da970d52" class="i property">HtmlEditor</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#0024ca32be32c247" class="i field">Hidden</a>;
+                <a href="#899043b72e7c04cd" class="i property">Browser</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a>;
+                <a href="#e5df7f2a3d365d99" class="i property">IsInSourceEditMode</a> = <b>false</b>;
+            }
+ 
+            <span class="c">// switch toolbar</span>
+            <span class="r39 r">model</span>.<a href="../ViewModels/ToolbarViewModel.cs.html#a3525789b7f53438" class="i method">SetSourceMode</a>(<span class="r40 r">enableSourceEditor</span>);
+ 
+            ((<a href="../Interfaces/IBrowserControl.cs.html#c6664bab75da7ecf" class="t t">IBrowserControl</a>) <a href="#75469e512445f30a" class="k">this</a>).<a href="../Interfaces/IBrowserControl.cs.html#243eacb7a23b7275" class="i method">Focus</a>();
+        }
+ 
+        <b>private void</b> <a id="570c02914a2eca94" href="../R/570c02914a2eca94.html" target="n" data-glyph="76,1" class="i method">OnlyInBrowserMode</a>()
+        {
+            <b>if</b> (<a href="#e5df7f2a3d365d99" class="i property">IsInSourceEditMode</a>)
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#265d72f49e915224" class="t constructor">InvalidOperationException</a>(<span class="s">&quot;This operation can be used only in browser edit mode.&quot;</span>);
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}
+</pre></td></tr></table></div></body></html>

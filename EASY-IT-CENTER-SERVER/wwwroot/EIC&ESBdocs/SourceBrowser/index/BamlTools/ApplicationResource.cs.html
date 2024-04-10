@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html><head><title>ApplicationResource.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(67);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#BamlTools/ApplicationResource.cs" target="_top">ApplicationResource.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#BamlTools" target="_top">HelpProjects\WPF-MORE\Tools\BamlReflector\BamlTools\BamlTools.csproj</a> (BamlTools)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">ObjectModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Reflection</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Resources</span>;
+
+<b>namespace</b> <span class="i n">BamlTools</span>
+{
+    <b>public class</b> <a id="a7a0fdedd007d75d" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">ApplicationResource</a>
+    {
+        <b>private readonly string</b> <a id="73430a7b786711ed" href="R/73430a7b786711ed.html" target="n" data-glyph="46,1" class="i field">_resourceName</a>;
+        <b>private readonly</b> <a href="@1@System.Runtime/A.html#73b5be5e9c2474b2" class="t t">Assembly</a> <a id="0cb59f7e2237bc0f" href="R/0cb59f7e2237bc0f.html" target="n" data-glyph="46,1" class="i field">_assembly</a>;
+        <b>private readonly</b> <span class="t t">ObservableCollection</span>&lt;<a href="BamlResource.cs.html#8000db1d00abe8bf" class="t t">BamlResource</a>&gt; <a id="b2f978d7e0f567ff" href="R/b2f978d7e0f567ff.html" target="n" data-glyph="46,1" class="i field">_bamlResources</a> = <b>new</b> <span class="t constructor">ObservableCollection</span>&lt;<a href="BamlResource.cs.html#8000db1d00abe8bf" class="t t">BamlResource</a>&gt;();
+
+        <b>public</b> <a id="5173577c171b8fa9" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ApplicationResource</a>(<a href="@1@System.Runtime/A.html#73b5be5e9c2474b2" class="t t">Assembly</a> <span id="r0 rd" class="r0 r">assembly</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r1 rd" class="r1 r">resourceName</span>)
+        {
+            <a href="#0cb59f7e2237bc0f" class="i field">_assembly</a> = <span class="r0 r">assembly</span>;
+            <a href="#73430a7b786711ed" class="i field">_resourceName</a> = <span class="r1 r">resourceName</span>;
+            <a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r2 rd" class="r2 r">resourceStream</span> = <span class="r0 r">assembly</span>.<a href="@1@System.Runtime/A.html#9c90fad516060e0d" class="i method">GetManifestResourceStream</a>(<span class="r1 r">resourceName</span>);
+
+            <b>using</b> <span class="t t">ResourceReader</span> <span id="r3 rd" class="r3 r">reader</span> = <b>new</b> <span class="t constructor">ResourceReader</span>(<span class="r2 r">resourceStream</span>);
+            <span class="t t">List</span>&lt;<a href="BamlResource.cs.html#8000db1d00abe8bf" class="t t">BamlResource</a>&gt; <span id="r4 rd" class="r4 r">bamlResourceList</span> = <b>new</b> <span class="t constructor">List</span>&lt;<a href="BamlResource.cs.html#8000db1d00abe8bf" class="t t">BamlResource</a>&gt;();
+
+            <b>if</b> (<span class="r3 r">reader</span> != <b>null</b>)
+            {
+                <b>foreach</b> (<a href="@1@System.Runtime/A.html#bc17973c0d3568e6" class="t t">DictionaryEntry</a> <span id="r5 rd" class="r5 r">entry</span> <b>in</b> <span class="r3 r">reader</span>)
+                {
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r6 rd" class="r6 r">keyName</span> = <span class="r5 r">entry</span>.<a href="@1@System.Runtime/A.html#e1f68d163a367e29" class="i property">Key</a> <b>as string</b>;
+                    <b>if</b> (<span class="r6 r">keyName</span>.<a href="@1@System.Runtime/A.html#41a31e4feec3ef41" class="i method">EndsWith</a>(<span class="s">&quot;.baml&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#eabf4db5f5c52b6a" class="i field">InvariantCultureIgnoreCase</a>)
+                        || <span class="r6 r">keyName</span>.<a href="@1@System.Runtime/A.html#41a31e4feec3ef41" class="i method">EndsWith</a>(<span class="s">&quot;.xaml&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#eabf4db5f5c52b6a" class="i field">InvariantCultureIgnoreCase</a>))
+                    {
+                        <a href="@1@System.Runtime/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r7 rd" class="r7 r">valuesType</span> = <span class="r5 r">entry</span>.<a href="@1@System.Runtime/A.html#63e5445c29844588" class="i property">Value</a>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>();
+                        <b>if</b> (<b>typeof</b>(<a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a>).<a href="@1@System.Runtime/A.html#ba0cffea035fe210" class="i method">IsAssignableFrom</a>(<span class="r7 r">valuesType</span>))
+                        {
+                            <a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r8 rd" class="r8 r">source</span> = <span class="r5 r">entry</span>.<a href="@1@System.Runtime/A.html#63e5445c29844588" class="i property">Value</a> <b>as</b> <a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a>;
+                            <span class="r4 r">bamlResourceList</span>.<span class="i method">Add</span>(<b>new</b> <a href="BamlResource.cs.html#a80fe7fd1cbe4638" class="t constructor">BamlResource</a>(<span class="r6 r">keyName</span>, <span class="r8 r">source</span>, <span class="r0 r">assembly</span>));
+                        }
+                    }
+                }
+            }
+            <span class="r4 r">bamlResourceList</span>.<span class="i method">Sort</span>(<a href="BamlResource.cs.html#8000db1d00abe8bf" class="t t">BamlResource</a>.<a href="BamlResource.cs.html#5402e9e4920d3aca" class="i method">SortCompare</a>);
+            <b>foreach</b> (<a href="BamlResource.cs.html#8000db1d00abe8bf" class="t t">BamlResource</a> <span id="r9 rd" class="r9 r">br</span> <b>in</b> <span class="r4 r">bamlResourceList</span>)
+            {
+                <a href="#fea0b3afe1f14b50" class="i property">BamlResources</a>.<a href="@1@System.Runtime/A.html#5c61cc24de82f7e7" class="i method">Add</a>(<span class="r9 r">br</span>);
+            }
+        }
+
+        <b>public string</b> <a id="23d868c168d01d92" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">ResourceName</a> { <b>get</b> { <b>return</b> <a href="#73430a7b786711ed" class="i field">_resourceName</a>; } }
+
+        <b>public</b> <span class="t t">ObservableCollection</span>&lt;<a href="BamlResource.cs.html#8000db1d00abe8bf" class="t t">BamlResource</a>&gt; <a id="fea0b3afe1f14b50" href="R/fea0b3afe1f14b50.html" target="n" data-glyph="102,1" class="i property">BamlResources</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#b2f978d7e0f567ff" class="i field">_bamlResources</a>; }
+        }
+
+        <b>public</b> <a href="@1@System.Runtime/A.html#73b5be5e9c2474b2" class="t t">Assembly</a> <a id="0060a15dec19a2aa" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Assembly</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#0cb59f7e2237bc0f" class="i field">_assembly</a>; }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

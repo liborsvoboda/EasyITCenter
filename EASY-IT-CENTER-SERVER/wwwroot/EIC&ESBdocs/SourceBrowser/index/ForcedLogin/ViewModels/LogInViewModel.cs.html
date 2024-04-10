@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html><head><title>LogInViewModel.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(70);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#ForcedLogin/ViewModels/LogInViewModel.cs" target="_top">ViewModels\LogInViewModel.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#ForcedLogin" target="_top">HelpProjects\WPF-MAIN\WPFprism\ForcedLogin\ForcedLogin\ForcedLogin.csproj</a> (ForcedLogin)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+
+<b>using</b> <span class="i n">ForcedLogin</span>.<span class="i n">Core</span>.<span class="i n">Contracts</span>.<span class="i n">Services</span>;
+<b>using</b> <span class="i n">ForcedLogin</span>.<span class="i n">Core</span>.<span class="i n">Helpers</span>;
+<b>using</b> <span class="i n">ForcedLogin</span>.<span class="i n">Strings</span>;
+
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Commands</span>;
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Mvvm</span>;
+
+<b>namespace</b> <span class="i n">ForcedLogin</span>.<span class="i n">ViewModels</span>
+{
+    <b>public class</b> <a id="cf81bb507c12d9d7" href="../R/cf81bb507c12d9d7.html" target="n" data-glyph="0,0" class="t t">LogInViewModel</a> : <span class="t t">BindableBase</span>
+    {
+        <b>private readonly</b> <a href="/ForcedLogin.Core/A.html#d2ae96b758d6d0bf" class="t t">IIdentityService</a> <a id="f92d6548acbfbaf0" href="../R/f92d6548acbfbaf0.html" target="n" data-glyph="46,1" class="i field">_identityService</a>;
+        <b>private string</b> <a id="ad0940f6dd1f7f42" href="../R/ad0940f6dd1f7f42.html" target="n" data-glyph="46,1" class="i field">_statusMessage</a>;
+        <b>private bool</b> <a id="4935627777902207" href="../R/4935627777902207.html" target="n" data-glyph="46,1" class="i field">_isBusy</a>;
+        <b>private</b> <span class="t t">DelegateCommand</span> <a id="b0b540cf95f42869" href="../R/b0b540cf95f42869.html" target="n" data-glyph="46,1" class="i field">_loginCommand</a>;
+
+        <b>public string</b> <a id="46ded20f8fcfabc6" href="../R/46ded20f8fcfabc6.html" target="n" data-glyph="102,1" class="i property">StatusMessage</a>
+        {
+            <b>get</b> =&gt; <a href="#ad0940f6dd1f7f42" class="i field">_statusMessage</a>;
+            <b>set</b> =&gt; <span class="i method">SetProperty</span>(<b>ref</b> <a href="#ad0940f6dd1f7f42" class="i field">_statusMessage</a>, <b>value</b>);
+        }
+
+        <b>public bool</b> <a id="8f0b315b4c788004" href="../R/8f0b315b4c788004.html" target="n" data-glyph="102,1" class="i property">IsBusy</a>
+        {
+            <b>get</b> =&gt; <a href="#4935627777902207" class="i field">_isBusy</a>;
+            <b>set</b>
+            {
+                <span class="i method">SetProperty</span>(<b>ref</b> <a href="#4935627777902207" class="i field">_isBusy</a>, <b>value</b>);
+                <a href="#1e5da74ad9a15db4" class="i property">LoginCommand</a>.<span class="i method">RaiseCanExecuteChanged</span>();
+            }
+        }
+
+        <b>public</b> <span class="t t">DelegateCommand</span> <a id="1e5da74ad9a15db4" href="../R/1e5da74ad9a15db4.html" target="n" data-glyph="102,1" class="i property">LoginCommand</a> =&gt; <a href="#b0b540cf95f42869" class="i field">_loginCommand</a> ?? (<a href="#b0b540cf95f42869" class="i field">_loginCommand</a> = <b>new</b> <span class="t constructor">DelegateCommand</span>(<a href="#c158e7e12598114a" class="i method">OnLogin</a>, () =&gt; !<a href="#8f0b315b4c788004" class="i property">IsBusy</a>));
+
+        <b>public</b> <a id="5cead82cb09c187b" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">LogInViewModel</a>(<a href="/ForcedLogin.Core/A.html#d2ae96b758d6d0bf" class="t t">IIdentityService</a> <span id="r0 rd" class="r0 r">identityService</span>)
+        {
+            <a href="#f92d6548acbfbaf0" class="i field">_identityService</a> = <span class="r0 r">identityService</span>;
+        }
+
+        <b>private async void</b> <a id="c158e7e12598114a" href="../R/c158e7e12598114a.html" target="n" data-glyph="76,1" class="i method">OnLogin</a>()
+        {
+            <a href="#8f0b315b4c788004" class="i property">IsBusy</a> = <b>true</b>;
+            <a href="#46ded20f8fcfabc6" class="i property">StatusMessage</a> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+            <a href="/ForcedLogin.Core/A.html#3eeb696e2f6cd870" class="k">var</a> <span id="r1 rd" class="r1 r">loginResult</span> = <b>await</b> <a href="#f92d6548acbfbaf0" class="i field">_identityService</a>.<a href="/ForcedLogin.Core/A.html#6f172ddb2afd336e" class="i method">LoginAsync</a>();
+            <a href="#46ded20f8fcfabc6" class="i property">StatusMessage</a> = <a href="#44828c4d55e98428" class="i method">GetStatusMessage</a>(<span class="r1 r">loginResult</span>);
+            <a href="#8f0b315b4c788004" class="i property">IsBusy</a> = <b>false</b>;
+        }
+
+        <b>private string</b> <a id="44828c4d55e98428" href="../R/44828c4d55e98428.html" target="n" data-glyph="76,1" class="i method">GetStatusMessage</a>(<a href="/ForcedLogin.Core/A.html#3eeb696e2f6cd870" class="t t">LoginResultType</a> <span id="r2 rd" class="r2 r">loginResult</span>)
+        {
+            <b>switch</b> (<span class="r2 r">loginResult</span>)
+            {
+                <b>case</b> <a href="/ForcedLogin.Core/A.html#3eeb696e2f6cd870" class="t t">LoginResultType</a>.<a href="/ForcedLogin.Core/A.html#d6298782694722c3" class="i field">Unauthorized</a>:
+                    <b>return</b> <a href="../Strings/Resources.Designer.cs.html#1e0058c926a24df7" class="t t">Resources</a>.<a href="../Strings/Resources.Designer.cs.html#d1051afb70d7f496" class="i property">StatusUnauthorized</a>;
+                <b>case</b> <a href="/ForcedLogin.Core/A.html#3eeb696e2f6cd870" class="t t">LoginResultType</a>.<a href="/ForcedLogin.Core/A.html#86f9e2021b664bfe" class="i field">NoNetworkAvailable</a>:
+                    <b>return</b> <a href="../Strings/Resources.Designer.cs.html#1e0058c926a24df7" class="t t">Resources</a>.<a href="../Strings/Resources.Designer.cs.html#3f0b963ab7f88306" class="i property">StatusNoNetworkAvailable</a>;
+                <b>case</b> <a href="/ForcedLogin.Core/A.html#3eeb696e2f6cd870" class="t t">LoginResultType</a>.<a href="/ForcedLogin.Core/A.html#493c37c9ba789f94" class="i field">UnknownError</a>:
+                    <b>return</b> <a href="../Strings/Resources.Designer.cs.html#1e0058c926a24df7" class="t t">Resources</a>.<a href="../Strings/Resources.Designer.cs.html#3edf9ce57da7ad9c" class="i property">StatusLoginFails</a>;
+                <b>case</b> <a href="/ForcedLogin.Core/A.html#3eeb696e2f6cd870" class="t t">LoginResultType</a>.<a href="/ForcedLogin.Core/A.html#6dbc36345373d5c0" class="i field">Success</a>:
+                <b>case</b> <a href="/ForcedLogin.Core/A.html#3eeb696e2f6cd870" class="t t">LoginResultType</a>.<a href="/ForcedLogin.Core/A.html#48a4c8148a7fbb0e" class="i field">CancelledByUser</a>:
+                    <b>return</b> <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+                <b>default</b>:
+                    <b>return</b> <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+            }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

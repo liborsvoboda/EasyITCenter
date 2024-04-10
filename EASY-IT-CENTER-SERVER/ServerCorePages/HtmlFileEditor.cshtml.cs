@@ -25,14 +25,14 @@ namespace ServerCorePages {
                 string? filePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
                 var fileContent = System.IO.File.ReadAllText(filePath);
                 this.Content(fileContent);
-                MarkDownModel.result = Markdown.ParseHtmlString(fileContent)?.Value.ToString();
+                HtmlFileEditorModel.result = Markdown.ParseHtmlString(fileContent)?.Value.ToString();
             } catch {
                 string? requestedUrlPath = "";
                 try { requestedUrlPath = ((string?)HttpContext.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
                 string? filePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
                 var fileContent = System.IO.File.ReadAllText(filePath);
                 this.Content(fileContent);
-                MarkDownModel.result = fileContent.ToString();
+                HtmlFileEditorModel.result = fileContent.ToString();
             }
 
             //Standalone Check Token

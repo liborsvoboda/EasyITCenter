@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html><head><title>StackedAreaSeries.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(177);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts.Wpf/StackedAreaSeries.cs" target="_top">StackedAreaSeries.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts.Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\WpfView\WpfView.csproj</a> (LiveCharts.Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Series</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">SeriesAlgorithms</span>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> The stacked area compares trends and percentage, add this series to a cartesian chart</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<a href="LineSeries.cs.html#7372b54bf5bee11b" class="t t">LineSeries</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Series</span>.<a href="/LiveCharts/A.html#82bcffe6b855cf42" class="t t">IStackedAreaSeriesView</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <b>public class</b> <a id="63c829aa4bb2212f" href="R/63c829aa4bb2212f.html" target="n" data-glyph="0,0" class="t t">StackedAreaSeries</a> : <a href="LineSeries.cs.html#7372b54bf5bee11b" class="t t">LineSeries</a>, <a href="/LiveCharts/A.html#82bcffe6b855cf42" class="t t">IStackedAreaSeriesView</a>
+    {
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructors
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of StackedAreaSeries class</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a id="a4a10d69b3b14f61" href="R/a4a10d69b3b14f61.html" target="n" data-glyph="72,1" class="t constructor">StackedAreaSeries</a>()
+        {
+            <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a> = <b>new</b> <a href="/LiveCharts/A.html#6f924d1f8532db40" class="t constructor">StackedAreaAlgorithm</a>(<a href="#63c829aa4bb2212f" class="k">this</a>);
+            <a href="#3a6b7cce18a5eef0" class="i method">InitializeDefuaults</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of StackedAreaSeries class, with a given mapper</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a id="0a8fb4fb76e71395" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">StackedAreaSeries</a>(<b>object</b> <span id="r0 rd" class="r0 r">configuration</span>)
+        {
+            <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a> = <b>new</b> <a href="/LiveCharts/A.html#6f924d1f8532db40" class="t constructor">StackedAreaAlgorithm</a>(<a href="#63c829aa4bb2212f" class="k">this</a>);
+            <a href="Series.cs.html#ed9bc5ca9279eeb2" class="i property">Configuration</a> = <span class="r0 r">configuration</span>;
+            <a href="#3a6b7cce18a5eef0" class="i method">InitializeDefuaults</a>();
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Properties
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Properties
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The stack mode property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="3a1fd6f4469af35c" href="R/3a1fd6f4469af35c.html" target="n" data-glyph="42,1" class="i field">StackModeProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;StackMode&quot;</span>, <b>typeof</b>(<a href="/LiveCharts/A.html#fe95d2a281f9bb2b" class="t t">StackMode</a>), <b>typeof</b>(<a href="#63c829aa4bb2212f" class="t t">StackedAreaSeries</a>),
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="/LiveCharts/A.html#fe95d2a281f9bb2b" class="t t">StackMode</a>), <a href="Series.cs.html#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the series stacked mode, values or percentage</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="/LiveCharts/A.html#fe95d2a281f9bb2b" class="t t">StackMode</a> <a id="cde64218af6455c2" href="R/cde64218af6455c2.html" target="n" data-glyph="102,1" class="i property">StackMode</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="/LiveCharts/A.html#fe95d2a281f9bb2b" class="t t">StackMode</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#3a1fd6f4469af35c" class="i field">StackModeProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#3a1fd6f4469af35c" class="i field">StackModeProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Overridden Methods
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This method runs when the update starts</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="c4cc7388c86d147b" href="R/c4cc7388c86d147b.html" target="n" data-glyph="72,1" class="i method">OnSeriesUpdateStart</a>()
+        {
+            <a href="LineSeries.cs.html#2c2da28322503ddc" class="i property">ActiveSplitters</a> = 0;
+
+            <b>if</b> (<a href="LineSeries.cs.html#e5cafb14f7bd8a0e" class="i property">SplittersCollector</a> == <b>int</b>.<a href="@0@mscorlib/A.html#c45153c0501d7122" class="i field">MaxValue</a> - 1)
+            {
+                <span class="c">//just in case!</span>
+                <a href="LineSeries.cs.html#29329a7e1024d5ac" class="i property">Splitters</a>.<a href="@0@mscorlib/A.html#0e5a9cf0a310b9e5" class="i method">ForEach</a>(<span id="r1 rd" class="r1 r">s</span> =&gt; <span class="r1 r">s</span>.<a href="LineSegmentSplitter.cs.html#07b268c2786676b3" class="i property">SplitterCollectorIndex</a> = 0);
+                <a href="LineSeries.cs.html#e5cafb14f7bd8a0e" class="i property">SplittersCollector</a> = 0;
+            }
+
+            <a href="LineSeries.cs.html#e5cafb14f7bd8a0e" class="i property">SplittersCollector</a>++;
+
+            <b>if</b> (<a href="LineSeries.cs.html#2bf193452fc836d8" class="i property">Figure</a> != <b>null</b> &amp;&amp; <a href="Series.cs.html#ba565e37fd8fc84c" class="i property">Values</a> != <b>null</b>)
+            {
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r2 rd" class="r2 r">xIni</span> = <a href="/LiveCharts/A.html#93b00e47b186a947" class="t t">ChartFunctions</a>.<a href="/LiveCharts/A.html#35a3ec9d4a8b65c5" class="i method">ToDrawMargin</a>(<a href="Series.cs.html#ba565e37fd8fc84c" class="i property">Values</a>.<a href="/LiveCharts/A.html#456057befaabca59" class="i method">GetTracker</a>(<a href="#63c829aa4bb2212f" class="k">this</a>).<a href="/LiveCharts/A.html#b959b02593b0b7c4" class="i property">XLimit</a>.<a href="/LiveCharts/A.html#e043273af15e9b47" class="i property">Min</a>, <a href="/LiveCharts/A.html#294f3d11a155a9e1" class="t t">AxisOrientation</a>.<a href="/LiveCharts/A.html#bd744e223a4b16a1" class="i field">X</a>, <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>, <a href="Series.cs.html#8f1b9e5d7a600228" class="i property">ScalesXAt</a>);
+
+                <b>if</b> (<a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#32010e32a1924a4e" class="i property">DisableAnimations</a>)
+                    <a href="LineSeries.cs.html#2bf193452fc836d8" class="i property">Figure</a>.<a href="@0@PresentationCore/A.html#c50a66c036416629" class="i property">StartPoint</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r2 r">xIni</span>, <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>);
+                <b>else</b>
+                    <a href="LineSeries.cs.html#2bf193452fc836d8" class="i property">Figure</a>.<a href="@0@PresentationCore/A.html#bc99d0afb4cfa763" class="i method">BeginAnimation</a>(<a href="@0@PresentationCore/A.html#7c0c953410385da4" class="t t">PathFigure</a>.<a href="@0@PresentationCore/A.html#c0ab6703f56924dc" class="i field">StartPointProperty</a>,
+                        <b>new</b> <a href="@0@PresentationCore/A.html#ab35e069db49fe9e" class="t constructor">PointAnimation</a>(<b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r2 r">xIni</span>, <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>),
+                            <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+            }
+
+            <b>if</b> (<a href="LineSeries.cs.html#1bb5852bdfd3b0ac" class="i property">IsPathInitialized</a>)
+            {
+                <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#c4139086437826c3" class="i method">EnsureElementBelongsToCurrentDrawMargin</a>(<a href="LineSeries.cs.html#92f10cd9e1f58653" class="i property">Path</a>);
+                <a href="LineSeries.cs.html#92f10cd9e1f58653" class="i property">Path</a>.<a href="@0@PresentationFramework/A.html#d85a4c1753b567bd" class="i property">Stroke</a> = <a href="Series.cs.html#c6f433c3f4390a52" class="i property">Stroke</a>;
+                <a href="LineSeries.cs.html#92f10cd9e1f58653" class="i property">Path</a>.<a href="@0@PresentationFramework/A.html#d817035f3a94e272" class="i property">StrokeThickness</a> = <a href="Series.cs.html#8092434fd2c35445" class="i property">StrokeThickness</a>;
+                <a href="LineSeries.cs.html#92f10cd9e1f58653" class="i property">Path</a>.<a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a> = <a href="Series.cs.html#a6f44874beaa1a39" class="i property">Fill</a>;
+                <a href="LineSeries.cs.html#92f10cd9e1f58653" class="i property">Path</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a>;
+                <a href="LineSeries.cs.html#92f10cd9e1f58653" class="i property">Path</a>.<a href="@0@PresentationFramework/A.html#f1e389b97df5de96" class="i property">StrokeDashArray</a> = <a href="Series.cs.html#6b5479cbfd67bae7" class="i property">StrokeDashArray</a>;
+                <b>return</b>;
+            }
+
+            <a href="LineSeries.cs.html#1bb5852bdfd3b0ac" class="i property">IsPathInitialized</a> = <b>true</b>;
+
+            <a href="LineSeries.cs.html#92f10cd9e1f58653" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#f74614a0400b0f04" class="t constructor">Path</a>
+            {
+                <a href="@0@PresentationFramework/A.html#d85a4c1753b567bd" class="i property">Stroke</a> = <a href="Series.cs.html#c6f433c3f4390a52" class="i property">Stroke</a>,
+                <a href="@0@PresentationFramework/A.html#d817035f3a94e272" class="i property">StrokeThickness</a> = <a href="Series.cs.html#8092434fd2c35445" class="i property">StrokeThickness</a>,
+                <a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a> = <a href="Series.cs.html#a6f44874beaa1a39" class="i property">Fill</a>,
+                <a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a>,
+                <a href="@0@PresentationFramework/A.html#f1e389b97df5de96" class="i property">StrokeDashArray</a> = <a href="Series.cs.html#6b5479cbfd67bae7" class="i property">StrokeDashArray</a>
+            };
+
+            <a href="@0@PresentationCore/A.html#e4d72d28528823ae" class="k">var</a> <span id="r3 rd" class="r3 r">geometry</span> = <b>new</b> <a href="@0@PresentationCore/A.html#3d7e42fd182d880d" class="t constructor">PathGeometry</a>();
+            <a href="LineSeries.cs.html#2bf193452fc836d8" class="i property">Figure</a> = <b>new</b> <a href="@0@PresentationCore/A.html#ca70358b05bba43a" class="t constructor">PathFigure</a>();
+            <span class="r3 r">geometry</span>.<a href="@0@PresentationCore/A.html#1ae4a7e325e4a881" class="i property">Figures</a>.<a href="@0@PresentationCore/A.html#4f502771ac7d1026" class="i method">Add</a>(<a href="LineSeries.cs.html#2bf193452fc836d8" class="i property">Figure</a>);
+            <a href="LineSeries.cs.html#92f10cd9e1f58653" class="i property">Path</a>.<a href="@0@PresentationFramework/A.html#3f47244595d8fa3d" class="i property">Data</a> = <span class="r3 r">geometry</span>;
+            <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#6f2e18aba4eb4b6e" class="i method">AddToDrawMargin</a>(<a href="LineSeries.cs.html#92f10cd9e1f58653" class="i property">Path</a>);
+
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r4 rd" class="r4 r">x</span> = <a href="/LiveCharts/A.html#93b00e47b186a947" class="t t">ChartFunctions</a>.<a href="/LiveCharts/A.html#35a3ec9d4a8b65c5" class="i method">ToDrawMargin</a>(<a href="Series.cs.html#2c5672f8336e8b9a" class="i property">ActualValues</a>.<a href="/LiveCharts/A.html#456057befaabca59" class="i method">GetTracker</a>(<a href="#63c829aa4bb2212f" class="k">this</a>).<a href="/LiveCharts/A.html#b959b02593b0b7c4" class="i property">XLimit</a>.<a href="/LiveCharts/A.html#e043273af15e9b47" class="i property">Min</a>, <a href="/LiveCharts/A.html#294f3d11a155a9e1" class="t t">AxisOrientation</a>.<a href="/LiveCharts/A.html#bd744e223a4b16a1" class="i field">X</a>, <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>, <a href="Series.cs.html#8f1b9e5d7a600228" class="i property">ScalesXAt</a>);
+            <a href="LineSeries.cs.html#2bf193452fc836d8" class="i property">Figure</a>.<a href="@0@PresentationCore/A.html#c50a66c036416629" class="i property">StartPoint</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r4 r">x</span>, <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>);
+
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r5 rd" class="r5 r">i</span> = <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#b59a4bcaa523a18c" class="i property">Series</a>.<a href="/LiveCharts/A.html#cb372d6b5085f916" class="i method">IndexOf</a>(<a href="#63c829aa4bb2212f" class="k">this</a>);
+            <a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a>.<a href="@0@PresentationFramework/A.html#2bc57b630c6082fd" class="i method">SetZIndex</a>(<a href="LineSeries.cs.html#92f10cd9e1f58653" class="i property">Path</a>, <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#b59a4bcaa523a18c" class="i property">Series</a>.<a href="/LiveCharts/A.html#140992be59e192e0" class="i property">Count</a> - <span class="r5 r">i</span>);
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Public Methods 
+
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Methods
+
+        <b>private void</b> <a id="3a6b7cce18a5eef0" href="R/3a6b7cce18a5eef0.html" target="n" data-glyph="76,1" class="i method">InitializeDefuaults</a>()
+        {
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="LineSeries.cs.html#28abce8936fe2f4b" class="i field">LineSmoothnessProperty</a>, .7d);
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="LineSeries.cs.html#6db717039b52edf5" class="i field">PointGeometrySizeProperty</a>, 0d);
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="LineSeries.cs.html#38ad9908ac9e273f" class="i field">PointForegroundProperty</a>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#11eb50ba6c5ef1c6" class="i property">White</a>);
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="Series.cs.html#f9ab0fc34115d160" class="i field">ForegroundProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(229, 229, 229)));
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="Series.cs.html#c59484df87c33afa" class="i field">StrokeThicknessProperty</a>, 0d);
+            <a href="Series.cs.html#71a8d04613e4ecee" class="i property">DefaultFillOpacity</a> = 1;
+
+            <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <span id="r6 rd" class="r6 r">defaultLabel</span> = <span id="r7 rd" class="r7 r">x</span> =&gt; <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#4508d1feaed73766" class="i property">CurrentYAxis</a>.<a href="/LiveCharts/A.html#36c576d4ea7a4fb0" class="i method">GetFormatter</a>()(<span class="r7 r">x</span>.<a href="/LiveCharts/A.html#2647768eb1eb41f6" class="i property">Y</a>);
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="Series.cs.html#1c319daa21899823" class="i field">LabelPointProperty</a>, <span class="r6 r">defaultLabel</span>);
+
+            <a href="LineSeries.cs.html#29329a7e1024d5ac" class="i property">Splitters</a> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<a href="LineSegmentSplitter.cs.html#7e3447a9acfbf48b" class="t t">LineSegmentSplitter</a>&gt;();
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}
+</pre></td></tr></table></div></body></html>

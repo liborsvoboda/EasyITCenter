@@ -1,4 +1,6 @@
-﻿
+﻿[Zpět](../../../index)   
+
+
 ```csharp   
 
 namespace EasyITCenter.ServerCoreStructure {

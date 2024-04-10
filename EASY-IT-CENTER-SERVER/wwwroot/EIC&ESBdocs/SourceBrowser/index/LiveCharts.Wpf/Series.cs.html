@@ -1,0 +1,617 @@
+﻿<!DOCTYPE html>
+<html><head><title>Series.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(608);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts.Wpf/Series.cs" target="_top">Series.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts.Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\WpfView\WpfView.csproj</a> (LiveCharts.Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Defaults</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Points</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Series</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Helpers</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<span class="i n">Charts</span>.<span class="i n">Base</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<span class="i n">Components</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<span class="i n">Converters</span>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Base WPF and WinForms series, this class is abstract</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public abstract class</b> <a id="424fba5494c39d40" href="R/424fba5494c39d40.html" target="n" data-glyph="0,0" class="t t">Series</a> : <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>, <a href="/LiveCharts/A.html#44463e44050cefb2" class="t t">ISeriesView</a>
+    {
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructors
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new Instance of Series</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>protected</b> <a id="1537b97d2d3d19af" href="R/../../0000000000.html" target="n" data-glyph="75,1" class="t constructor">Series</a>()
+        {
+            <a href="#71a8d04613e4ecee" class="i property">DefaultFillOpacity</a> = 0.35;
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#5dcc92c738ca845f" class="i field">TitleProperty</a>, <span class="s">&quot;Series&quot;</span>);
+            <a href="@0@PresentationCore/A.html#798084dd6c266279" class="i">IsVisibleChanged</a> += <a href="#96db61bb775324cc" class="i method">OnIsVisibleChanged</a>;
+            <a href="#d5a2f0993bf8a304" class="i property">IsFirstDraw</a> = <b>true</b>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new Instance of series, with a given configuration</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">configuration</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>protected</b> <a id="97d62fca44627cd4" href="R/../../0000000000.html" target="n" data-glyph="75,1" class="t constructor">Series</a>(<b>object</b> <span id="r0 rd" class="r0 r">configuration</span>)
+        {
+            <a href="#ed9bc5ca9279eeb2" class="i property">Configuration</a> = <span class="r0 r">configuration</span>;
+            <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#5dcc92c738ca845f" class="i field">TitleProperty</a>, <span class="s">&quot;Series&quot;</span>);
+            <a href="@0@PresentationCore/A.html#798084dd6c266279" class="i">IsVisibleChanged</a> += <a href="#96db61bb775324cc" class="i method">OnIsVisibleChanged</a>;
+            <a href="#d5a2f0993bf8a304" class="i property">IsFirstDraw</a> = <b>true</b>;
+        }
+
+        <b>static</b> <a id="e11834b0ed646137" href="R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">Series</a>()
+        {
+            <a href="@0@PresentationCore/A.html#01d4c3d0cf25d8f6" class="i field">VisibilityProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#424fba5494c39d40" class="t t">Series</a>), <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a>, <a href="#96db61bb775324cc" class="i method">OnIsVisibleChanged</a>));
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Properties
+
+        <b>private</b> <a href="/LiveCharts/A.html#813aac032d764236" class="t t">IChartValues</a> <a id="723fc5324ecb67ea" href="R/723fc5324ecb67ea.html" target="n" data-glyph="106,1" class="i property">LastKnownValues</a> { <b>get</b>; <b>set</b>; }
+        <b>internal double</b> <a id="71a8d04613e4ecee" href="R/71a8d04613e4ecee.html" target="n" data-glyph="104,1" class="i property">DefaultFillOpacity</a> { <b>get</b>; <b>set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets a value indicating whether this instance is first draw.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">true</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> if this instance is first draw; otherwise, </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">false</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="d5a2f0993bf8a304" href="R/d5a2f0993bf8a304.html" target="n" data-glyph="102,1" class="i property">IsFirstDraw</a> { <b>get</b>; <b>internal set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> THe Model is set by every series type, it is the motor of the series, it is the communication with the core of the library</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="/LiveCharts/A.html#b0e5e2af002a60c6" class="t t">SeriesAlgorithm</a> <a id="abb1aa0d36b7e0f2" href="R/abb1aa0d36b7e0f2.html" target="n" data-glyph="102,1" class="i property">Model</a> { <b>get</b>; <b>set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the Actual values in the series, active or visible series only</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="/LiveCharts/A.html#813aac032d764236" class="t t">IChartValues</a> <a id="2c5672f8336e8b9a" href="R/2c5672f8336e8b9a.html" target="n" data-glyph="102,1" class="i property">ActualValues</a>
+        {
+            <b>get</b>
+            {
+                <b>if</b> (<a href="@0@PresentationFramework/A.html#75f95eee6bd69fa9" class="t t">DesignerProperties</a>.<a href="@0@PresentationFramework/A.html#940ce1b313016b20" class="i method">GetIsInDesignMode</a>(<a href="#424fba5494c39d40" class="k">this</a>) &amp;&amp; (<a href="#ba565e37fd8fc84c" class="i property">Values</a> == <b>null</b> || <a href="#ba565e37fd8fc84c" class="i property">Values</a>.<a href="@0@mscorlib/A.html#e961aba0053db107" class="i property">Count</a> == 0))
+                    <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#4b182ea13275c225" class="i field">ValuesProperty</a>, <a href="#bfea726dfbc1df8e" class="i method">GetValuesForDesigner</a>());
+
+                <b>return</b> <a href="#ba565e37fd8fc84c" class="i property">Values</a> ?? <b>new</b> <a href="/LiveCharts/A.html#9dc8c197acdf6c12" class="t constructor">ChartValues</a>&lt;<b>double</b>&gt;();
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets whether the series is visible</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="3c4b72eb34ba3a26" href="R/3c4b72eb34ba3a26.html" target="n" data-glyph="102,1" class="i property">IsSeriesVisible</a>
+        {
+            <b>get</b> { <b>return</b> <a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> == <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a>; }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the current chart points in the series</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a>&gt; <a id="21e0c748bfd7fd13" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">ChartPoints</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#2c5672f8336e8b9a" class="i property">ActualValues</a>.<a href="/LiveCharts/A.html#46f3badf02da2a16" class="i method">GetPoints</a>(<a href="#424fba5494c39d40" class="k">this</a>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The values property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="4b182ea13275c225" href="R/4b182ea13275c225.html" target="n" data-glyph="42,1" class="i field">ValuesProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;Values&quot;</span>, <b>typeof</b> (<a href="/LiveCharts/A.html#813aac032d764236" class="t t">IChartValues</a>), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>),
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="/LiveCharts/A.html#813aac032d764236" class="t t">IChartValues</a>), <a href="#4b2050a17a91c1d9" class="i method">OnValuesInstanceChanged</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets chart values.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#dec4fae83a284722" class="t constructor">TypeConverter</a>(<b>typeof</b>(<a href="Converters/TypeConverters.cs.html#8386541237750680" class="t t">NumericChartValuesConverter</a>))]
+        <b>public</b> <a href="/LiveCharts/A.html#813aac032d764236" class="t t">IChartValues</a> <a id="ba565e37fd8fc84c" href="R/ba565e37fd8fc84c.html" target="n" data-glyph="102,1" class="i property">Values</a>
+        {
+            <b>get</b> { <b>return</b> <a href="Components/ThreadAccess.cs.html#4301276f742610e6" class="t t">ThreadAccess</a>.<a href="Components/ThreadAccess.cs.html#e1a90e596128a498" class="i method">Resolve</a>&lt;<a href="/LiveCharts/A.html#813aac032d764236" class="t t">IChartValues</a>&gt;(<a href="#424fba5494c39d40" class="k">this</a>, <a href="#4b182ea13275c225" class="i field">ValuesProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#4b182ea13275c225" class="i field">ValuesProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The title property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="5dcc92c738ca845f" href="R/5dcc92c738ca845f.html" target="n" data-glyph="42,1" class="i field">TitleProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;Title&quot;</span>, <b>typeof</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>),
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>), <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets series title</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="17d624e96dd007c8" href="R/17d624e96dd007c8.html" target="n" data-glyph="102,1" class="i property">Title</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#5dcc92c738ca845f" class="i field">TitleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#5dcc92c738ca845f" class="i field">TitleProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The stroke property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="0727b76cb15d111b" href="R/0727b76cb15d111b.html" target="n" data-glyph="42,1" class="i field">StrokeProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;Stroke&quot;</span>, <b>typeof</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), 
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>), <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets series stroke, if this property is null then a SolidColorBrush will be assigned according to series position in collection and Chart.Colors property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a> <a id="c6f433c3f4390a52" href="R/c6f433c3f4390a52.html" target="n" data-glyph="102,1" class="i property">Stroke</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#0727b76cb15d111b" class="i field">StrokeProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#0727b76cb15d111b" class="i field">StrokeProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The stroke thickness property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="c59484df87c33afa" href="R/c59484df87c33afa.html" target="n" data-glyph="42,1" class="i field">StrokeThicknessProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;StrokeThickness&quot;</span>, <b>typeof</b> (<b>double</b>), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), 
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>double</b>), <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the series stroke thickness.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="8092434fd2c35445" href="R/8092434fd2c35445.html" target="n" data-glyph="102,1" class="i property">StrokeThickness</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#c59484df87c33afa" class="i field">StrokeThicknessProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#c59484df87c33afa" class="i field">StrokeThicknessProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The fill property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="09626bcb1a91ad43" href="R/09626bcb1a91ad43.html" target="n" data-glyph="42,1" class="i field">FillProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;Fill&quot;</span>, <b>typeof</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), 
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>), <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets series fill color, if this property is null then a SolidColorBrush will be assigned according to series position in collection and Chart.Colors property, also Fill property has a default opacity according to chart type.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a> <a id="a6f44874beaa1a39" href="R/a6f44874beaa1a39.html" target="n" data-glyph="102,1" class="i property">Fill</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#09626bcb1a91ad43" class="i field">FillProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#09626bcb1a91ad43" class="i field">FillProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The data labels property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="2c2421193b4e4328" href="R/2c2421193b4e4328.html" target="n" data-glyph="42,1" class="i field">DataLabelsProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;DataLabels&quot;</span>, <b>typeof</b> (<b>bool</b>), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), 
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>bool</b>), <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets if series should include a label over each data point.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="55aa4a52af40d36c" href="R/55aa4a52af40d36c.html" target="n" data-glyph="102,1" class="i property">DataLabels</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#2c2421193b4e4328" class="i field">DataLabelsProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#2c2421193b4e4328" class="i field">DataLabelsProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The labels template property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="125831b663cdeaad" href="R/125831b663cdeaad.html" target="n" data-glyph="42,1" class="i field">DataLabelsTemplateProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;DataLabelsTemplate&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>), <b>typeof</b>(<a href="#424fba5494c39d40" class="t t">Series</a>),
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<a href="Components/DefaultXamlReader.cs.html#a94c1cc7c6a5d993" class="t t">DefaultXamlReader</a>.<a href="Components/DefaultXamlReader.cs.html#eb3a64c3aa24a084" class="i method">DataLabelTemplate</a>(), <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the labels template.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The labels template.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a> <a id="e8d2d524f78a23dc" href="R/e8d2d524f78a23dc.html" target="n" data-glyph="102,1" class="i property">DataLabelsTemplate</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#125831b663cdeaad" class="i field">DataLabelsTemplateProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#125831b663cdeaad" class="i field">DataLabelsTemplateProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The font family property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="2ec420526c5fc41c" href="R/2ec420526c5fc41c.html" target="n" data-glyph="42,1" class="i field">FontFamilyProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;FontFamily&quot;</span>, <b>typeof</b> (<a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a>), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), 
+            <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>new</b> <a href="@0@PresentationCore/A.html#a689959282d4aced" class="t constructor">FontFamily</a>(<span class="s">&quot;Segoe UI&quot;</span>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets labels font family</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a> <a id="cb9bff4666858a76" href="R/cb9bff4666858a76.html" target="n" data-glyph="102,1" class="i property">FontFamily</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#2ec420526c5fc41c" class="i field">FontFamilyProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#2ec420526c5fc41c" class="i field">FontFamilyProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The font size property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="dbad0c9e2d9e3e7e" href="R/dbad0c9e2d9e3e7e.html" target="n" data-glyph="42,1" class="i field">FontSizeProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;FontSize&quot;</span>, <b>typeof</b> (<b>double</b>),
+            <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(10d, <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets labels font size</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="09d2bcf071a14b04" href="R/09d2bcf071a14b04.html" target="n" data-glyph="102,1" class="i property">FontSize</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#dbad0c9e2d9e3e7e" class="i field">FontSizeProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#dbad0c9e2d9e3e7e" class="i field">FontSizeProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The font weight property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="9362e3880916940c" href="R/9362e3880916940c.html" target="n" data-glyph="42,1" class="i field">FontWeightProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;FontWeight&quot;</span>, <b>typeof</b> (<a href="@0@PresentationCore/A.html#752e5f2538a21812" class="t t">FontWeight</a>), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>),
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<a href="@0@PresentationCore/A.html#c05354a296740eb4" class="t t">FontWeights</a>.<a href="@0@PresentationCore/A.html#87fcda93e4c56b5e" class="i property">Bold</a>, <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets labels font weight</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#752e5f2538a21812" class="t t">FontWeight</a> <a id="32d7eabeb52d12eb" href="R/32d7eabeb52d12eb.html" target="n" data-glyph="102,1" class="i property">FontWeight</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#752e5f2538a21812" class="t t">FontWeight</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#9362e3880916940c" class="i field">FontWeightProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#9362e3880916940c" class="i field">FontWeightProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The font style property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="a56a99bdf9153e8c" href="R/a56a99bdf9153e8c.html" target="n" data-glyph="42,1" class="i field">FontStyleProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;FontStyle&quot;</span>, <b>typeof</b> (<a href="@0@PresentationCore/A.html#2ab2b9e33c0199f4" class="t t">FontStyle</a>),
+            <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<a href="@0@PresentationCore/A.html#804113b45b995ba5" class="t t">FontStyles</a>.<a href="@0@PresentationCore/A.html#7b5db0eb103372a3" class="i property">Normal</a>, <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets labels font style</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public</b> <a href="@0@PresentationCore/A.html#2ab2b9e33c0199f4" class="t t">FontStyle</a> <a id="5f48760e3cad3407" href="R/5f48760e3cad3407.html" target="n" data-glyph="102,1" class="i property">FontStyle</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#2ab2b9e33c0199f4" class="t t">FontStyle</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#a56a99bdf9153e8c" class="i field">FontStyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#a56a99bdf9153e8c" class="i field">FontStyleProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The font stretch property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b42c26714b43336e" href="R/b42c26714b43336e.html" target="n" data-glyph="42,1" class="i field">FontStretchProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;FontStretch&quot;</span>, <b>typeof</b> (<a href="@0@PresentationCore/A.html#e8a8d09321989f64" class="t t">FontStretch</a>),
+            <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<a href="@0@PresentationCore/A.html#2511b4948c817aac" class="t t">FontStretches</a>.<a href="@0@PresentationCore/A.html#e498778682a18c7e" class="i property">Normal</a>, <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets labels font stretch</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public</b> <a href="@0@PresentationCore/A.html#e8a8d09321989f64" class="t t">FontStretch</a> <a id="a35cd0db73b713f0" href="R/a35cd0db73b713f0.html" target="n" data-glyph="102,1" class="i property">FontStretch</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#e8a8d09321989f64" class="t t">FontStretch</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b42c26714b43336e" class="i field">FontStretchProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b42c26714b43336e" class="i field">FontStretchProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The foreground property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f9ab0fc34115d160" href="R/f9ab0fc34115d160.html" target="n" data-glyph="42,1" class="i field">ForegroundProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;Foreground&quot;</span>, <b>typeof</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>),
+            <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(55, 71, 79))));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets labels text color.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a> <a id="ec3931051c99b6ee" href="R/ec3931051c99b6ee.html" target="n" data-glyph="102,1" class="i property">Foreground</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f9ab0fc34115d160" class="i field">ForegroundProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f9ab0fc34115d160" class="i field">ForegroundProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The stroke dash array property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="358f64679fbce936" href="R/358f64679fbce936.html" target="n" data-glyph="42,1" class="i field">StrokeDashArrayProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;StrokeDashArray&quot;</span>, <b>typeof</b>(<a href="@0@PresentationCore/A.html#3732e2d5b2fca925" class="t t">DoubleCollection</a>), <b>typeof</b>(<a href="#424fba5494c39d40" class="t t">Series</a>), 
+            <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationCore/A.html#3732e2d5b2fca925" class="t t">DoubleCollection</a>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the stroke dash array of a series, sue this property to draw dashed strokes</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#3732e2d5b2fca925" class="t t">DoubleCollection</a> <a id="6b5479cbfd67bae7" href="R/6b5479cbfd67bae7.html" target="n" data-glyph="102,1" class="i property">StrokeDashArray</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#3732e2d5b2fca925" class="t t">DoubleCollection</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#358f64679fbce936" class="i field">StrokeDashArrayProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#358f64679fbce936" class="i field">StrokeDashArrayProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The point geometry property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b266831c55ea7e72" href="R/b266831c55ea7e72.html" target="n" data-glyph="42,1" class="i field">PointGeometryProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;PointGeometry&quot;</span>, <b>typeof</b> (<a href="@0@PresentationCore/A.html#22ca37af0d997a39" class="t t">Geometry</a>), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<a href="DefaultGeometry.cs.html#a62ce8f2fe0e1241" class="t t">DefaultGeometries</a>.<a href="DefaultGeometry.cs.html#729c8e71544a494d" class="i property">Circle</a>, <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the point geometry, this shape will be drawn in the Tooltip, Legend, and if line series in every point also.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#22ca37af0d997a39" class="t t">Geometry</a> <a id="ba7b994794c4b297" href="R/ba7b994794c4b297.html" target="n" data-glyph="102,1" class="i property">PointGeometry</a>
+        {
+            <b>get</b> { <b>return</b> ((<a href="@0@PresentationCore/A.html#22ca37af0d997a39" class="t t">Geometry</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b266831c55ea7e72" class="i field">PointGeometryProperty</a>)); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b266831c55ea7e72" class="i field">PointGeometryProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The scales x at property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="61770e07aecb2621" href="R/61770e07aecb2621.html" target="n" data-glyph="42,1" class="i field">ScalesXAtProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;ScalesXAt&quot;</span>, <b>typeof</b> (<b>int</b>), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>int</b>), <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the axis where series is scaled at, the axis must exist in the collection</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public int</b> <a id="8f1b9e5d7a600228" href="R/8f1b9e5d7a600228.html" target="n" data-glyph="102,1" class="i property">ScalesXAt</a>
+        {
+            <b>get</b> { <b>return</b> (<b>int</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#61770e07aecb2621" class="i field">ScalesXAtProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#61770e07aecb2621" class="i field">ScalesXAtProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The scales y at property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b4e9223cfa2d8259" href="R/b4e9223cfa2d8259.html" target="n" data-glyph="42,1" class="i field">ScalesYAtProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;ScalesYAt&quot;</span>, <b>typeof</b> (<b>int</b>), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>int</b>), <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the axis where series is scaled at, the axis must exist in the collection</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public int</b> <a id="2477c6ffeeac862d" href="R/2477c6ffeeac862d.html" target="n" data-glyph="102,1" class="i property">ScalesYAt</a>
+        {
+            <b>get</b> { <b>return</b> (<b>int</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b4e9223cfa2d8259" class="i field">ScalesYAtProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b4e9223cfa2d8259" class="i field">ScalesYAtProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The label point property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="1c319daa21899823" href="R/1c319daa21899823.html" target="n" data-glyph="42,1" class="i field">LabelPointProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;LabelPoint&quot;</span>, <b>typeof</b> (<a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt;), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt;)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the label formatter for the data label and tooltip, this property is set by default according to the series</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="be2e8d78e21c1d2b" href="R/be2e8d78e21c1d2b.html" target="n" data-glyph="102,1" class="i property">LabelPoint</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt;) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#1c319daa21899823" class="i field">LabelPointProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#1c319daa21899823" class="i field">LabelPointProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The configuration property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="d93b0dd82fb5d4bd" href="R/d93b0dd82fb5d4bd.html" target="n" data-glyph="42,1" class="i field">ConfigurationProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;Configuration&quot;</span>, <b>typeof</b> (<b>object</b>), <b>typeof</b> (<a href="#424fba5494c39d40" class="t t">Series</a>), 
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>object</b>), <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets series mapper, if this property is set then the library will ignore the SeriesCollection mapper and global mappers.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="ed9bc5ca9279eeb2" href="R/ed9bc5ca9279eeb2.html" target="n" data-glyph="102,1" class="i property">Configuration</a>
+        {
+            <b>get</b> { <b>return</b> <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#d93b0dd82fb5d4bd" class="i field">ConfigurationProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#d93b0dd82fb5d4bd" class="i field">ConfigurationProperty</a>, <b>value</b>); }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Internal Helpers
+
+        <b>internal</b> <a href="@0@PresentationFramework/A.html#f8ee23c685054e71" class="t t">ContentControl</a> <a id="332a27a2aec725d6" href="R/332a27a2aec725d6.html" target="n" data-glyph="74,1" class="i method">UpdateLabelContent</a>(<a href="/LiveCharts/A.html#0fb329b411e4bbed" class="t t">DataLabelViewModel</a> <span id="r1 rd" class="r1 r">content</span>, <a href="@0@PresentationFramework/A.html#f8ee23c685054e71" class="t t">ContentControl</a> <span id="r2 rd" class="r2 r">currentControl</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#f8ee23c685054e71" class="t t">ContentControl</a> <span id="r3 rd" class="r3 r">control</span>;
+
+            <b>if</b> (<span class="r2 r">currentControl</span> == <b>null</b>)
+            {
+                <span class="r3 r">control</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#95a2fb4089a665d1" class="t constructor">ContentControl</a>();
+                <span class="r3 r">control</span>.<a href="@0@PresentationFramework/A.html#4242be780b056320" class="i method">SetBinding</a>(<a href="@0@PresentationCore/A.html#01d4c3d0cf25d8f6" class="i field">VisibilityProperty</a>,
+                    <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a> {<a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#cf4296c7d69477b8" class="t constructor">PropertyPath</a>(<a href="@0@PresentationCore/A.html#01d4c3d0cf25d8f6" class="i field">VisibilityProperty</a>), <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <a href="#424fba5494c39d40" class="k">this</a>});
+                <a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a>.<a href="@0@PresentationFramework/A.html#2bc57b630c6082fd" class="i method">SetZIndex</a>(<span class="r3 r">control</span>, <b>int</b>.<a href="@0@mscorlib/A.html#c45153c0501d7122" class="i field">MaxValue</a> - 1);
+
+                <a href="#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#6f2e18aba4eb4b6e" class="i method">AddToDrawMargin</a>(<span class="r3 r">control</span>);
+            }
+            <b>else</b>
+            {
+                <span class="r3 r">control</span> = <span class="r2 r">currentControl</span>;
+            }
+
+            <span class="r3 r">control</span>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <span class="r1 r">content</span>;
+            <span class="r3 r">control</span>.<a href="@0@PresentationFramework/A.html#b6be90a405e1fc99" class="i property">ContentTemplate</a> = <a href="#e8d2d524f78a23dc" class="i property">DataLabelsTemplate</a>;
+            <span class="r3 r">control</span>.<a href="@0@PresentationFramework/A.html#9de10c4240af355e" class="i property">FontFamily</a> = <a href="#cb9bff4666858a76" class="i property">FontFamily</a>;
+            <span class="r3 r">control</span>.<a href="@0@PresentationFramework/A.html#06c25cfb99769839" class="i property">FontSize</a> = <a href="#09d2bcf071a14b04" class="i property">FontSize</a>;
+            <span class="r3 r">control</span>.<a href="@0@PresentationFramework/A.html#afc6052df2fbc888" class="i property">FontStretch</a> = <a href="#a35cd0db73b713f0" class="i property">FontStretch</a>;
+            <span class="r3 r">control</span>.<a href="@0@PresentationFramework/A.html#7ff112e7fd3d2a6c" class="i property">FontStyle</a> = <a href="#5f48760e3cad3407" class="i property">FontStyle</a>;
+            <span class="r3 r">control</span>.<a href="@0@PresentationFramework/A.html#9010668f3342fa65" class="i property">FontWeight</a> = <a href="#32d7eabeb52d12eb" class="i property">FontWeight</a>;
+            <span class="r3 r">control</span>.<a href="@0@PresentationFramework/A.html#21b5be493ba2b86f" class="i property">Foreground</a> = <a href="#ec3931051c99b6ee" class="i property">Foreground</a>;
+
+            <b>return</b> <span class="r3 r">control</span>;
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Publics
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the view of a given point</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r4 r">point</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r5 r">label</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public virtual</b> <a href="/LiveCharts/A.html#6c110e29a0f85e1f" class="t t">IChartPointView</a> <a id="3cad778cb8731256" href="R/3cad778cb8731256.html" target="n" data-glyph="72,1" class="i method">GetPointView</a>(<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a> <span id="r4 rd" class="r4 r">point</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r5 rd" class="r5 r">label</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This method runs when the update starts</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public virtual void</b> <a id="803c4a03c6a3f891" href="R/803c4a03c6a3f891.html" target="n" data-glyph="72,1" class="i method">OnSeriesUpdateStart</a>()
+        {
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Erases series</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public virtual void</b> <a id="ca274a4883106e24" href="R/ca274a4883106e24.html" target="n" data-glyph="72,1" class="i method">Erase</a>(<b>bool</b> <span id="r6 rd" class="r6 r">removeFromView</span> = <b>true</b>)
+        {
+            <a href="#ba565e37fd8fc84c" class="i property">Values</a>.<a href="/LiveCharts/A.html#46f3badf02da2a16" class="i method">GetPoints</a>(<a href="#424fba5494c39d40" class="k">this</a>).<span class="i">ForEach</span>(<span id="r7 rd" class="r7 r">p</span> =&gt;
+            {
+                <b>if</b> (<span class="r7 r">p</span>.<span class="i">View</span> != <b>null</b>)
+                    <span class="r7 r">p</span>.<span class="i">View</span>.<span class="i">RemoveFromView</span>(<a href="#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>);
+            });
+            <b>if</b> (<span class="r6 r">removeFromView</span>) <a href="#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#51b61b270e7f84b1" class="i method">RemoveFromView</a>(<a href="#424fba5494c39d40" class="k">this</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This method runs when the update finishes</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public virtual void</b> <a id="52644c6688cb3ace" href="R/52644c6688cb3ace.html" target="n" data-glyph="72,1" class="i method">OnSeriesUpdatedFinish</a>()
+        {
+            <a href="#d5a2f0993bf8a304" class="i property">IsFirstDraw</a> = <b>false</b>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes the series colors if they are not set</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public virtual void</b> <a id="8ff21d5fa8ccf31d" href="R/8ff21d5fa8ccf31d.html" target="n" data-glyph="72,1" class="i method">InitializeColors</a>()
+        {
+            <a href="Charts/Base/Chart.cs.html#8bbad405b4592476" class="k">var</a> <span id="r8 rd" class="r8 r">wpfChart</span> = (<a href="Charts/Base/Chart.cs.html#8bbad405b4592476" class="t t">Chart</a>) <a href="#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>;
+
+            <b>if</b> (<a href="#c6f433c3f4390a52" class="i property">Stroke</a> != <b>null</b> &amp;&amp; <a href="#a6f44874beaa1a39" class="i property">Fill</a> != <b>null</b>) <b>return</b>;
+
+            <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="k">var</a> <span id="r9 rd" class="r9 r">nextColor</span> = <span class="r8 r">wpfChart</span>.<a href="Charts/Base/Chart.cs.html#dd9d4a3a63ab6368" class="i method">GetNextDefaultColor</a>();
+
+            <b>if</b> (<a href="#c6f433c3f4390a52" class="i property">Stroke</a> == <b>null</b>)
+            {
+                <a href="@0@PresentationCore/A.html#2bdb4a721050df52" class="k">var</a> <span id="r10 rd" class="r10 r">strokeBrush</span> = <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<span class="r9 r">nextColor</span>);
+                <span class="r10 r">strokeBrush</span>.<a href="@0@WindowsBase/A.html#75947ff41474f34b" class="i method">Freeze</a>();
+                <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#0727b76cb15d111b" class="i field">StrokeProperty</a>, <span class="r10 r">strokeBrush</span>);
+            }
+
+            <b>if</b> (<a href="#a6f44874beaa1a39" class="i property">Fill</a> == <b>null</b>)
+            {
+                <a href="@0@PresentationCore/A.html#2bdb4a721050df52" class="k">var</a> <span id="r11 rd" class="r11 r">fillBursh</span> = <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<span class="r9 r">nextColor</span>) {<a href="@0@PresentationCore/A.html#81e61501e93cd582" class="i property">Opacity</a> = <a href="#71a8d04613e4ecee" class="i property">DefaultFillOpacity</a>};
+                <span class="r11 r">fillBursh</span>.<a href="@0@WindowsBase/A.html#75947ff41474f34b" class="i method">Freeze</a>();
+                <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#09626bcb1a91ad43" class="i field">FillProperty</a>, <span class="r11 r">fillBursh</span>);
+            }
+
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Defines special elements to draw according to the series type</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public virtual void</b> <a id="62ccd38ece3ac02b" href="R/62ccd38ece3ac02b.html" target="n" data-glyph="72,1" class="i method">DrawSpecializedElements</a>()
+        {
+
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Places specializes items</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public virtual void</b> <a id="a9346eb7fc864290" href="R/a9346eb7fc864290.html" target="n" data-glyph="72,1" class="i method">PlaceSpecializedElements</a>()
+        {
+
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the label point formatter.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="2a80b08d1b7538ad" href="R/2a80b08d1b7538ad.html" target="n" data-glyph="72,1" class="i method">GetLabelPointFormatter</a>()
+        {
+            <b>if</b> (<a href="@0@PresentationFramework/A.html#75f95eee6bd69fa9" class="t t">DesignerProperties</a>.<a href="@0@PresentationFramework/A.html#940ce1b313016b20" class="i method">GetIsInDesignMode</a>(<a href="#424fba5494c39d40" class="k">this</a>))
+                <b>return</b> <span id="r12 rd" class="r12 r">x</span> =&gt; <span class="s">&quot;Label&quot;</span>;
+
+            <b>return</b> <a href="#be2e8d78e21c1d2b" class="i property">LabelPoint</a>;
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <b>private static void</b> <a id="4b2050a17a91c1d9" href="R/4b2050a17a91c1d9.html" target="n" data-glyph="76,1" class="i method">OnValuesInstanceChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r13 rd" class="r13 r">dependencyObject</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r14 rd" class="r14 r">dependencyPropertyChangedEventArgs</span>)
+        {
+            <a href="#424fba5494c39d40" class="k">var</a> <span id="r15 rd" class="r15 r">series</span> = (<a href="#424fba5494c39d40" class="t t">Series</a>) <span class="r13 r">dependencyObject</span>;
+
+            <b>if</b> (<span class="r15 r">series</span>.<a href="#ba565e37fd8fc84c" class="i property">Values</a> != <span class="r15 r">series</span>.<a href="#723fc5324ecb67ea" class="i property">LastKnownValues</a> &amp;&amp; <span class="r15 r">series</span>.<a href="#723fc5324ecb67ea" class="i property">LastKnownValues</a> != <b>null</b>)
+            {
+                <span class="r15 r">series</span>.<a href="#723fc5324ecb67ea" class="i property">LastKnownValues</a>.<a href="/LiveCharts/A.html#46f3badf02da2a16" class="i method">GetPoints</a>(<span class="r15 r">series</span>).<span class="i">ForEach</span>(
+                    <span id="r16 rd" class="r16 r">x</span> =&gt; { <b>if</b> (<span class="r16 r">x</span>.<span class="i">View</span> != <b>null</b>) <span class="r16 r">x</span>.<span class="i">View</span>.<span class="i">RemoveFromView</span>(<span class="r15 r">series</span>.<a href="#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>); });
+            }
+
+            <a href="#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()(<span class="r13 r">dependencyObject</span>, <span class="r14 r">dependencyPropertyChangedEventArgs</span>);
+            <span class="r15 r">series</span>.<a href="#723fc5324ecb67ea" class="i property">LastKnownValues</a> = <span class="r15 r">series</span>.<a href="#ba565e37fd8fc84c" class="i property">Values</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Calls the chart updater.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r17 r">animate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">if set to </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">true</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> [animate].</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>protected static</b> <a href="@0@WindowsBase/A.html#572279a09f5c17ed" class="t t">PropertyChangedCallback</a> <a id="bb9c80111791aeeb" href="R/bb9c80111791aeeb.html" target="n" data-glyph="75,1" class="i method">CallChartUpdater</a>(<b>bool</b> <span id="r17 rd" class="r17 r">animate</span> = <b>false</b>)
+        {
+            <b>return</b> (<span id="r18 rd" class="r18 r">o</span>, <span id="r19 rd" class="r19 r">args</span>) =&gt;
+            {
+                <a href="#424fba5494c39d40" class="k">var</a> <span id="r20 rd" class="r20 r">wpfSeries</span> = <span class="r18 r">o</span> <b>as</b> <a href="#424fba5494c39d40" class="t t">Series</a>;
+
+                <b>if</b> (<span class="r20 r">wpfSeries</span> == <b>null</b>) <b>return</b>;
+                <b>if</b> (<span class="r20 r">wpfSeries</span>.<a href="#abb1aa0d36b7e0f2" class="i property">Model</a> == <b>null</b>) <b>return</b>;
+
+                <b>if</b> (<span class="r20 r">wpfSeries</span>.<a href="#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a> != <b>null</b>) <span class="r20 r">wpfSeries</span>.<a href="#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#ec8a47f0b55838b2" class="i property">Updater</a>.<a href="/LiveCharts/A.html#f3b3be98ec3d955d" class="i method">Run</a>(<span class="r17 r">animate</span>);
+            };
+        }
+        
+        <b>private static void</b> <a id="96db61bb775324cc" href="R/96db61bb775324cc.html" target="n" data-glyph="76,1" class="i method">OnIsVisibleChanged</a>(<b>object</b> <span id="r21 rd" class="r21 r">sender</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r22 rd" class="r22 r">e</span>)
+        {
+             <a href="#424fba5494c39d40" class="k">var</a> <span id="r23 rd" class="r23 r">series</span> = (<a href="#424fba5494c39d40" class="t t">Series</a>) <span class="r21 r">sender</span>;
+
+            <b>if</b> (<span class="r23 r">series</span>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> == <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a> || <span class="r23 r">series</span>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> == <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#0024ca32be32c247" class="i field">Hidden</a>)
+                <span class="r23 r">series</span>.<a href="#ca274a4883106e24" class="i method">Erase</a>(<b>false</b>);
+
+            <b>if</b> (<span class="r23 r">series</span>.<a href="#abb1aa0d36b7e0f2" class="i property">Model</a> == <b>null</b>) <b>return</b>;
+            <span class="r23 r">series</span>.<a href="#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#ec8a47f0b55838b2" class="i property">Updater</a>.<a href="/LiveCharts/A.html#f3b3be98ec3d955d" class="i method">Run</a>();
+        }
+
+        <b>private static</b> <a href="/LiveCharts/A.html#813aac032d764236" class="t t">IChartValues</a> <a id="bfea726dfbc1df8e" href="R/bfea726dfbc1df8e.html" target="n" data-glyph="76,1" class="i method">GetValuesForDesigner</a>()
+        {
+            <a href="@0@mscorlib/A.html#bb77e610694e64ca" class="k">var</a> <span id="r24 rd" class="r24 r">r</span> = <b>new</b> <a href="@0@mscorlib/A.html#5d22f8880fc9f8d9" class="t constructor">Random</a>();
+
+            <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="k">var</a> <span id="r25 rd" class="r25 r">gvt</span> = <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>.<a href="@0@mscorlib/A.html#ba8d29b0ddf9aaa0" class="i method">GetType</a>(<span class="s">&quot;LiveCharts.Geared.GearedValues`1, LiveCharts.Geared&quot;</span>);
+            <b>if</b> (<span class="r25 r">gvt</span> != <b>null</b>) <span class="r25 r">gvt</span> = <span class="r25 r">gvt</span>.<a href="@0@mscorlib/A.html#3e82dbae123f91fc" class="i method">MakeGenericType</a>(<b>typeof</b>(<a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a>));
+
+            <a href="/LiveCharts/A.html#813aac032d764236" class="k">var</a> <span id="r26 rd" class="r26 r">obj</span> = <span class="r25 r">gvt</span> != <b>null</b>
+                ? (<a href="/LiveCharts/A.html#813aac032d764236" class="t t">IChartValues</a>) <a href="@0@mscorlib/A.html#955a7437554c8efc" class="t t">Activator</a>.<a href="@0@mscorlib/A.html#4c7b92371a93f246" class="i method">CreateInstance</a>(<span class="r25 r">gvt</span>)
+                : <b>new</b> <a href="/LiveCharts/A.html#9dc8c197acdf6c12" class="t constructor">ChartValues</a>&lt;<a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a>&gt;();
+
+            <span class="r26 r">obj</span>.<a href="@0@mscorlib/A.html#bded9f03433a53d4" class="i method">Add</a>(<b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(<span class="r24 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100)));
+            <span class="r26 r">obj</span>.<a href="@0@mscorlib/A.html#bded9f03433a53d4" class="i method">Add</a>(<b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(<span class="r24 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100)));
+            <span class="r26 r">obj</span>.<a href="@0@mscorlib/A.html#bded9f03433a53d4" class="i method">Add</a>(<b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(<span class="r24 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100)));
+            <span class="r26 r">obj</span>.<a href="@0@mscorlib/A.html#bded9f03433a53d4" class="i method">Add</a>(<b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(<span class="r24 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100)));
+            <span class="r26 r">obj</span>.<a href="@0@mscorlib/A.html#bded9f03433a53d4" class="i method">Add</a>(<b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(<span class="r24 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100)));
+
+            <b>return</b> <span class="r26 r">obj</span>;
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Obsoletes
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}
+</pre></td></tr></table></div></body></html>

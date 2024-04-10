@@ -1,4 +1,4 @@
-﻿### Nový Dokument Portal a příprava k Vývoji Online z Web Editorů
+﻿#### Nový Dokument Portal k Vývoji Online z Web Editorů a Systému
 **Podívejte se čerstvě Vydaný Dokumentační Portal komlpet v Češtině.**
 
 Díky implementovanému AUTO překladači se už nestane že něčemu neporozumíte.   
@@ -9,12 +9,16 @@ Psát Dokumentaci je totiž horší než vývoj.
 
 2. [MS System Builder Online na Webu](https://KlikneteZde.Cz:8000 "MS System Builder Online")  
 
-3. [Web Portal tvořený již nyní Editorem v Systému](https://KlikneteZde.Cz:8000/Portal "Web Portal tvořený již nyní Editorem v Systému")  
+3. [Web Portal tvořený již nyní Editorem v Systému](https://KlikneteZde.Cz/Portal "Web Portal tvořený již nyní Editorem v Systému")  
 
 Věřím, že budete mít zajímavou podívanou co se dá nachystat ve volném čase v
 1 Měsíci.
 
-### Poznámky, Které Vznikly při Nasazení Doc.Portálu
+
+
+----
+
+### Poznámky z implementace Doc.Portálu
 
 # First TODO v Pořadí
 * Routingem muzu treba image nebo html file nebo cokoliv poslat do takoveho layoutu ktery v sobe bude mit editor a nacte si dany soubor sam

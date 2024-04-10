@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html><head><title>ShellViewModel.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(43);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RibbonApp/ViewModels/ShellViewModel.cs" target="_top">ViewModels\ShellViewModel.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RibbonApp" target="_top">HelpProjects\WPF-MAIN\WPFprism\RibbonApp\RibbonApp\RibbonApp.csproj</a> (RibbonApp)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Commands</span>;
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Mvvm</span>;
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Regions</span>;
+
+<b>using</b> <span class="i n">RibbonApp</span>.<span class="i n">Constants</span>;
+<b>using</b> <span class="i n">RibbonApp</span>.<span class="i n">Contracts</span>.<span class="i n">Services</span>;
+
+<b>namespace</b> <span class="i n">RibbonApp</span>.<span class="i n">ViewModels</span>
+{
+    <b>public class</b> <a id="50d29670c9fa6634" href="../R/50d29670c9fa6634.html" target="n" data-glyph="0,0" class="t t">ShellViewModel</a> : <span class="t t">BindableBase</span>
+    {
+        <b>private readonly</b> <span class="t t">IRegionManager</span> <a id="67d1f6425bf1ab0d" href="../R/67d1f6425bf1ab0d.html" target="n" data-glyph="46,1" class="i field">_regionManager</a>;
+        <b>private readonly</b> <a href="../Contracts/Services/IRightPaneService.cs.html#5aa189ac770375f1" class="t t">IRightPaneService</a> <a id="ac5faca15cfee0cd" href="../R/ac5faca15cfee0cd.html" target="n" data-glyph="46,1" class="i field">_rightPaneService</a>;
+        <b>private</b> <span class="t t">IRegionNavigationService</span> <a id="d95140ff6e4d26c0" href="../R/d95140ff6e4d26c0.html" target="n" data-glyph="46,1" class="i field">_navigationService</a>;
+        <b>private</b> <span class="t t">ICommand</span> <a id="7f252438efeb11ba" href="../R/7f252438efeb11ba.html" target="n" data-glyph="46,1" class="i field">_loadedCommand</a>;
+        <b>private</b> <span class="t t">ICommand</span> <a id="018e84557b588d33" href="../R/018e84557b588d33.html" target="n" data-glyph="46,1" class="i field">_unloadedCommand</a>;
+
+        <b>public</b> <span class="t t">ICommand</span> <a id="9a1fcf58b941e9fa" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">LoadedCommand</a> =&gt; <a href="#7f252438efeb11ba" class="i field">_loadedCommand</a> ?? (<a href="#7f252438efeb11ba" class="i field">_loadedCommand</a> = <b>new</b> <span class="t constructor">DelegateCommand</span>(<a href="#f134e44e1eaead26" class="i method">OnLoaded</a>));
+
+        <b>public</b> <span class="t t">ICommand</span> <a id="6ef93f1f2aac355c" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">UnloadedCommand</a> =&gt; <a href="#018e84557b588d33" class="i field">_unloadedCommand</a> ?? (<a href="#018e84557b588d33" class="i field">_unloadedCommand</a> = <b>new</b> <span class="t constructor">DelegateCommand</span>(<a href="#bc6d27a84646e938" class="i method">OnUnloaded</a>));
+
+        <b>public</b> <a id="09724008ddaf4df2" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ShellViewModel</a>(<span class="t t">IRegionManager</span> <span id="r0 rd" class="r0 r">regionManager</span>, <a href="../Contracts/Services/IRightPaneService.cs.html#5aa189ac770375f1" class="t t">IRightPaneService</a> <span id="r1 rd" class="r1 r">rightPaneService</span>)
+        {
+            <a href="#67d1f6425bf1ab0d" class="i field">_regionManager</a> = <span class="r0 r">regionManager</span>;
+            <a href="#ac5faca15cfee0cd" class="i field">_rightPaneService</a> = <span class="r1 r">rightPaneService</span>;
+        }
+
+        <b>private void</b> <a id="f134e44e1eaead26" href="../R/f134e44e1eaead26.html" target="n" data-glyph="76,1" class="i method">OnLoaded</a>()
+        {
+            <a href="#d95140ff6e4d26c0" class="i field">_navigationService</a> = <a href="#67d1f6425bf1ab0d" class="i field">_regionManager</a>.<span class="i property">Regions</span>[<a href="../Constants/Regions.cs.html#9c9d622458c01406" class="t t">Regions</a>.<a href="../Constants/Regions.cs.html#3c1e78c92892ba50" class="i field">Main</a>].<span class="i property">NavigationService</span>;
+            <a href="#d95140ff6e4d26c0" class="i field">_navigationService</a>.<span class="i method">RequestNavigate</span>(<a href="../Constants/PageKeys.cs.html#cc0a3cadb8286d00" class="t t">PageKeys</a>.<a href="../Constants/PageKeys.cs.html#6780eb6faab6c06d" class="i field">Main</a>);
+        }
+
+        <b>private void</b> <a id="bc6d27a84646e938" href="../R/bc6d27a84646e938.html" target="n" data-glyph="76,1" class="i method">OnUnloaded</a>()
+        {
+            <a href="#67d1f6425bf1ab0d" class="i field">_regionManager</a>.<span class="i property">Regions</span>.<span class="i method">Remove</span>(<a href="../Constants/Regions.cs.html#9c9d622458c01406" class="t t">Regions</a>.<a href="../Constants/Regions.cs.html#3c1e78c92892ba50" class="i field">Main</a>);
+            <a href="#ac5faca15cfee0cd" class="i field">_rightPaneService</a>.<a href="../Contracts/Services/IRightPaneService.cs.html#799a7287763bb81b" class="i method">CleanUp</a>();
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

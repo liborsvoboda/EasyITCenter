@@ -72,11 +72,13 @@ namespace EasyITCenter.ServerCoreStructure {
                 }
 
                 //Check Portal Id Or MenuName //Here check Menu Items
-                int webMenuId = 0; webMenuId = int.TryParse(routePath.Substring(1).Split("-")[0], out int checkInt) ? checkInt : 0;
-                if (validPath == null && (
-                    /*Portal started*/ (routePath == "/portal" || routePath == "/") ||
-                    /*Portal run*/ (context.Response.StatusCode != StatusCodes.Status200OK && new EasyITCenterContext().WebMenuLists.Where(a => a.Id == webMenuId || a.Name.ToLower() == routePath.Substring(1)).Any())
-                )) { routeLayout = RouteLayout.PortalLayout; validPath = ServerConfigSettings.RedirectPath; routingResult = RoutingResult.Next; }
+                try {
+                    int webMenuId = 0; webMenuId = int.TryParse(routePath.Split("/").Last().Split("-")[0], out int checkInt) ? checkInt : 0;
+                    if (validPath == null && (
+                        /*Portal started*/ (routePath == "/portal" || routePath == "/") ||
+                        /*Portal run*/ (context.Response.StatusCode != StatusCodes.Status200OK && new EasyITCenterContext().WebMenuLists.Where(a => a.Id == webMenuId || a.Name.ToLower() == routePath.Substring(1)).Any())
+                    )) { routeLayout = RouteLayout.PortalLayout; validPath = ServerConfigSettings.RedirectPath; routingResult = RoutingResult.Next; }
+                } catch { }
                 #endregion
 
                 //Check Server Tools
@@ -85,24 +87,22 @@ namespace EasyITCenter.ServerCoreStructure {
                 if (validPath == null && routePath.StartsWith("/easydata", StringComparison.OrdinalIgnoreCase)) { routeLayout = RouteLayout.MetroLayout; validPath = routePath; routingResult = RoutingResult.Return; }
 
 
-
-                //Check MarkDown Type EveryTime
+                //Check DocPortal index.md Type EveryTime
                 if (ServerConfigSettings.EnableAutoShowMdAsHtml) {
-                    if (routePath.EndsWith(".md") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath))) {
-                        routeLayout = RouteLayout.MarkDownLayout; validPath = routePath; routingResult = RoutingResult.Next;
-                    }
-
-                    if ((!routePath.EndsWith("/") && !context.Request.Path.ToString().Split("/").Last().Contains(".") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + ".md"))
-                        || (routePath.EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + "index.md"))
+                    if ((routePath.EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + "index.md"))
                         || (!routePath.EndsWith("/") && !context.Request.Path.ToString().Split("/").Last().Contains(".") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + Path.DirectorySeparatorChar + "index.md"))
                         ) {
-                        if (!routePath.ToLower().EndsWith(".md")) {
-                            validPath = !routePath.ToLower().EndsWith(".md") && !routePath.ToLower().EndsWith("index") && !routePath.EndsWith('/')
-                            ? routePath + "/index.md" : routePath.ToLower().EndsWith("index") ? routePath + ".md" : routePath + "index.md";
-                            routeLayout = RouteLayout.MarkDownLayout; routingResult = RoutingResult.Next;
-                        }
+                        validPath = File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + "index.md") ? routePath + "index.md" : routePath + "/index.md";
+                        routeLayout = RouteLayout.DocPortalLayout; routingResult = RoutingResult.Next;
                     }
                 }
+
+                //Check MarkDown Type missing .md for Show in Markdown Layout
+                if (ServerConfigSettings.EnableAutoShowMdAsHtml) {
+                    if (!routePath.EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + ".md")) 
+                    { validPath = routePath + ".md"; routeLayout = RouteLayout.MarkDownFileLayout; routingResult = RoutingResult.Next; }
+                }
+
 
                 //Check Html file
                 if (validPath == null) {

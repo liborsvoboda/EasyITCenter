@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html><head><title>ColorEyeDropper.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(178);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/ColorPicker/ColorEyeDropper.cs" target="_top">Controls\ColorPicker\ColorEyeDropper.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Threading</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <b>public class</b> <a id="ad215b920c6442a2" href="../../R/ad215b920c6442a2.html" target="n" data-glyph="0,0" class="t t"><span id="273cce142ec31f4e">ColorEyeDropper</span></a> : <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>
+    {
+        <b>private</b> <a href="@0@WindowsBase/A.html#652e738f32b5f58c" class="t t">DispatcherOperation</a>? <a id="62ded4f62e17797e" href="../../R/62ded4f62e17797e.html" target="n" data-glyph="46,1" class="i field">currentTask</a>;
+        <b>internal</b> <a href="ColorEyePreviewData.cs.html#32bfe4755e7f449b" class="t t">ColorEyePreviewData</a> <a id="3cf5249bc5a1b34f" href="../../R/3cf5249bc5a1b34f.html" target="n" data-glyph="44,1" class="i field">previewData</a> = <b>new</b> <a href="ColorEyePreviewData.cs.html#32bfe4755e7f449b" class="t constructor">ColorEyePreviewData</a>();
+        <b>private</b> <a href="@0@PresentationFramework/A.html#3b75d3030dfed404" class="t t">ToolTip</a>? <a id="94d35a7baa28d3cf" href="../../R/94d35a7baa28d3cf.html" target="n" data-glyph="46,1" class="i field">previewToolTip</a>;
+
+        <b>static</b> <a id="5fb7b6cd28eb50ba" href="../../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">ColorEyeDropper</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6339cc8ec3e1311a" class="i field">DefaultStyleKeyProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#ad215b920c6442a2" class="t t">ColorEyeDropper</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>typeof</b>(<a href="#ad215b920c6442a2" class="t t">ColorEyeDropper</a>)));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#aaec1317c9ab9473" class="i property">SelectedColor</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="73c190a9ed5cccbb" href="../../R/73c190a9ed5cccbb.html" target="n" data-glyph="42,1" class="i field">SelectedColorProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#aaec1317c9ab9473" class="i property">SelectedColor</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?),
+                                          <b>typeof</b>(<a href="#ad215b920c6442a2" class="t t">ColorEyeDropper</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#cfed8906a2f8b7f6" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>, <a href="#d5fa95e9a5711a86" class="i method">OnSelectedColorPropertyChanged</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the selected </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>? <a id="aaec1317c9ab9473" href="../../R/aaec1317c9ab9473.html" target="n" data-glyph="102,1" class="i property">SelectedColor</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?)<a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#73c190a9ed5cccbb" class="i field">SelectedColorProperty</a>);
+            <b>set</b> =&gt; <a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#73c190a9ed5cccbb" class="i field">SelectedColorProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#530fa4ed51cbc2d8" class="i property">PreviewImageOuterPixelCount</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f72d55aa958c82da" href="../../R/f72d55aa958c82da.html" target="n" data-glyph="42,1" class="i field">PreviewImageOuterPixelCountProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#530fa4ed51cbc2d8" class="i property">PreviewImageOuterPixelCount</a>),
+                                          <b>typeof</b>(<b>int</b>),
+                                          <b>typeof</b>(<a href="#ad215b920c6442a2" class="t t">ColorEyeDropper</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(2));
+
+        <b>private static void</b> <a id="d5fa95e9a5711a86" href="../../R/d5fa95e9a5711a86.html" target="n" data-glyph="76,1" class="i method">OnSelectedColorPropertyChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">dependencyObject</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <b>if</b> (<span class="r0 r">dependencyObject</span> <b>is</b> <a href="#ad215b920c6442a2" class="t t">ColorEyeDropper</a> <span id="r2 rd" class="r2 r">eyeDropper</span>)
+            {
+                <span class="r2 r">eyeDropper</span>.<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#7202de3595cf1de3" class="t constructor">RoutedPropertyChangedEventArgs</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?&gt;((<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?)<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a>, (<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?)<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>, <a href="#aa5b1b40c671d5eb" class="i field">SelectedColorChangedEvent</a>));
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the number of additional pixel in the preview image.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public int</b> <a id="530fa4ed51cbc2d8" href="../../R/530fa4ed51cbc2d8.html" target="n" data-glyph="102,1" class="i property">PreviewImageOuterPixelCount</a>
+        {
+            <b>get</b> =&gt; (<b>int</b>)<a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f72d55aa958c82da" class="i field">PreviewImageOuterPixelCountProperty</a>);
+            <b>set</b> =&gt; <a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f72d55aa958c82da" class="i field">PreviewImageOuterPixelCountProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#53ac0be7447bb622" class="i property">EyeDropperCursor</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="c469f68094a8168a" href="../../R/c469f68094a8168a.html" target="n" data-glyph="42,1" class="i field">EyeDropperCursorProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#53ac0be7447bb622" class="i property">EyeDropperCursor</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationCore/A.html#5b9a694442f6e209" class="t t">Cursor</a>),
+                                          <b>typeof</b>(<a href="#ad215b920c6442a2" class="t t">ColorEyeDropper</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Cursor for Selecting Color Mode</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#5b9a694442f6e209" class="t t">Cursor</a>? <a id="53ac0be7447bb622" href="../../R/53ac0be7447bb622.html" target="n" data-glyph="102,1" class="i property">EyeDropperCursor</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationCore/A.html#5b9a694442f6e209" class="t t">Cursor</a>?)<a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#c469f68094a8168a" class="i field">EyeDropperCursorProperty</a>);
+            <b>set</b> =&gt; <a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#c469f68094a8168a" class="i field">EyeDropperCursorProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#d96908e193c77fe3" class="i property">PreviewContentTemplate</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="dab5c638af44c086" href="../../R/dab5c638af44c086.html" target="n" data-glyph="42,1" class="i field">PreviewContentTemplateProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#d96908e193c77fe3" class="i property">PreviewContentTemplate</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>),
+                                          <b>typeof</b>(<a href="#ad215b920c6442a2" class="t t">ColorEyeDropper</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>)));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the ContentControl.ContentTemplate for the preview.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>? <a id="d96908e193c77fe3" href="../../R/d96908e193c77fe3.html" target="n" data-glyph="102,1" class="i property">PreviewContentTemplate</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>?)<a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#dab5c638af44c086" class="i field">PreviewContentTemplateProperty</a>);
+            <b>set</b> =&gt; <a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#dab5c638af44c086" class="i field">PreviewContentTemplateProperty</a>, <b>value</b>);
+        }
+
+        <b>private void</b> <a id="d982213dd3acd9cf" href="../../R/d982213dd3acd9cf.html" target="n" data-glyph="76,1" class="i method">SetPreview</a>(<a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <span id="r3 rd" class="r3 r">mousePos</span>)
+        {
+            <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#94d35a7baa28d3cf" class="i field">previewToolTip</a>?.<a href="ColorEyePreview.cs.html#8cda170b248a6d45" class="i method">Move</a>(<span class="r3 r">mousePos</span>, <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(16, 16));
+
+            <b>if</b> (<a href="#ad215b920c6442a2" class="k">this</a>.<a href="#62ded4f62e17797e" class="i field">currentTask</a>?.<a href="@0@WindowsBase/A.html#3a7d313c01a381f9" class="i property">Status</a> == <a href="@0@WindowsBase/A.html#309409051624d980" class="t t">DispatcherOperationStatus</a>.<a href="@0@WindowsBase/A.html#1be50daddb0d87fd" class="i field">Executing</a> || <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#62ded4f62e17797e" class="i field">currentTask</a>?.<a href="@0@WindowsBase/A.html#3a7d313c01a381f9" class="i property">Status</a> == <a href="@0@WindowsBase/A.html#309409051624d980" class="t t">DispatcherOperationStatus</a>.<a href="@0@WindowsBase/A.html#8913a2c558d62a51" class="i field">Pending</a>)
+            {
+                <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#62ded4f62e17797e" class="i field">currentTask</a>.<a href="@0@WindowsBase/A.html#0ebe0458cb5b1c41" class="i method">Abort</a>();
+            }
+
+            <a href="@0@mscorlib/A.html#9147ae6f76643aae" class="k">var</a> <span id="r4 rd" class="r4 r">action</span> = <b>new</b> <span class="t">Action</span>(() =&gt;
+                {
+                    <span class="r3 r">mousePos</span> = <a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@PresentationCore/A.html#dd3ac0e288343e52" class="i method">PointToScreen</a>(<span class="r3 r">mousePos</span>);
+                    <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r5 rd" class="r5 r">outerPixelCount</span> = <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#530fa4ed51cbc2d8" class="i property">PreviewImageOuterPixelCount</a>;
+                    <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r6 rd" class="r6 r">posX</span> = (<b>int</b>)<a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r3 r">mousePos</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> - <span class="r5 r">outerPixelCount</span>);
+                    <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r7 rd" class="r7 r">posY</span> = (<b>int</b>)<a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r3 r">mousePos</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <span class="r5 r">outerPixelCount</span>);
+                    <a href="@0@WindowsBase/A.html#d0ea1899725188a8" class="k">var</a> <span id="r8 rd" class="r8 r">region</span> = <b>new</b> <a href="@0@WindowsBase/A.html#c7ba7e87ea0d094a" class="t constructor">Int32Rect</a>(<span class="r6 r">posX</span>, <span class="r7 r">posY</span>, 2 * <span class="r5 r">outerPixelCount</span> + 1, 2 * <span class="r5 r">outerPixelCount</span> + 1);
+                    <a href="@0@PresentationCore/A.html#0423ed363f952960" class="k">var</a> <span id="r9 rd" class="r9 r">previewImage</span> = <a href="EyeDropperHelper.cs.html#e99e9a9d1882485a" class="t t">EyeDropperHelper</a>.<a href="EyeDropperHelper.cs.html#cdcce2c7bad436f6" class="i method">CaptureRegion</a>(<span class="r8 r">region</span>);
+                    <a href="@0@PresentationCore/A.html#2bdb4a721050df52" class="k">var</a> <span id="r10 rd" class="r10 r">previewBrush</span> = <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<a href="EyeDropperHelper.cs.html#e99e9a9d1882485a" class="t t">EyeDropperHelper</a>.<a href="EyeDropperHelper.cs.html#73c8739698c0c469" class="i method">GetPixelColor</a>(<span class="r3 r">mousePos</span>));
+                    <span class="r10 r">previewBrush</span>.<a href="@0@WindowsBase/A.html#75947ff41474f34b" class="i method">Freeze</a>();
+
+                    <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#3cf5249bc5a1b34f" class="i field">previewData</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="ColorEyePreviewData.cs.html#32bfe4755e7f449b" class="t t">ColorEyePreviewData</a>.<a href="ColorEyePreviewData.cs.html#019814f47c9e83b6" class="i field">PreviewImagePropertyKey</a>, <span class="r9 r">previewImage</span>);
+                    <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#3cf5249bc5a1b34f" class="i field">previewData</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="ColorEyePreviewData.cs.html#32bfe4755e7f449b" class="t t">ColorEyePreviewData</a>.<a href="ColorEyePreviewData.cs.html#b42113fa3863a87b" class="i field">PreviewBrushPropertyKey</a>, <span class="r10 r">previewBrush</span>);
+                });
+
+            <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#62ded4f62e17797e" class="i field">currentTask</a> = <a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#bcbefade88f12503" class="i method">BeginInvoke</a>(<a href="@0@WindowsBase/A.html#af2d44a802e4535c" class="t t">DispatcherPriority</a>.<a href="@0@WindowsBase/A.html#805d62bb1042f893" class="i field">Background</a>, <span class="r4 r">action</span>);
+        }
+
+        <b>protected override void</b> <a id="2caf2a5c3933fe71" href="../../R/2caf2a5c3933fe71.html" target="n" data-glyph="75,1" class="i method">OnPreviewMouseLeftButtonDown</a>(<a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r11 rd" class="r11 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="k">base</a>.<a href="@0@PresentationCore/A.html#4a05c1eb4fdbccc2" class="i method">OnPreviewMouseLeftButtonDown</a>(<span class="r11 r">e</span>);
+
+            <a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#22f90a54e95dcc06" class="i method">Capture</a>(<a href="#ad215b920c6442a2" class="k">this</a>);
+
+            <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#94d35a7baa28d3cf" class="i field">previewToolTip</a> ??= <a href="ColorEyePreview.cs.html#633ba79a746e76ef" class="t t">ColorEyePreview</a>.<a href="ColorEyePreview.cs.html#93b39bfa648e455c" class="i method">GetPreviewToolTip</a>(<a href="#ad215b920c6442a2" class="k">this</a>);
+
+            <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#94d35a7baa28d3cf" class="i field">previewToolTip</a>.<a href="ColorEyePreview.cs.html#f1927344f027f66c" class="i method">Show</a>();
+
+            <a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@PresentationFramework/A.html#63634408e3c1872a" class="i property">Cursor</a> = <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#53ac0be7447bb622" class="i property">EyeDropperCursor</a>;
+
+            <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#d982213dd3acd9cf" class="i method">SetPreview</a>(<span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="#ad215b920c6442a2" class="k">this</a>));
+        }
+
+        <b>protected override void</b> <a id="c279f908aa50e108" href="../../R/c279f908aa50e108.html" target="n" data-glyph="75,1" class="i method">OnPreviewMouseLeftButtonUp</a>(<a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r12 rd" class="r12 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="k">base</a>.<a href="@0@PresentationCore/A.html#c59726470ef1f63e" class="i method">OnPreviewMouseLeftButtonUp</a>(<span class="r12 r">e</span>);
+
+            <a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#22f90a54e95dcc06" class="i method">Capture</a>(<b>null</b>);
+
+            <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#94d35a7baa28d3cf" class="i field">previewToolTip</a>?.<a href="ColorEyePreview.cs.html#9e96e5cdde4dd012" class="i method">Hide</a>();
+
+            <a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@PresentationFramework/A.html#63634408e3c1872a" class="i property">Cursor</a> = <a href="@0@PresentationCore/A.html#09092748875d5e78" class="t t">Cursors</a>.<a href="@0@PresentationCore/A.html#0682898066dd921a" class="i property">Arrow</a>;
+
+            <a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#73c190a9ed5cccbb" class="i field">SelectedColorProperty</a>, <a href="EyeDropperHelper.cs.html#e99e9a9d1882485a" class="t t">EyeDropperHelper</a>.<a href="EyeDropperHelper.cs.html#73c8739698c0c469" class="i method">GetPixelColor</a>(<a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@PresentationCore/A.html#dd3ac0e288343e52" class="i method">PointToScreen</a>(<span class="r12 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="#ad215b920c6442a2" class="k">this</a>))));
+        }
+
+        <b>protected override void</b> <a id="18495b33a784ec03" href="../../R/18495b33a784ec03.html" target="n" data-glyph="75,1" class="i method">OnMouseMove</a>(<a href="@0@PresentationCore/A.html#2bd9049c90bfe71a" class="t t">MouseEventArgs</a> <span id="r13 rd" class="r13 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="k">base</a>.<a href="@0@PresentationFramework/A.html#74d525860a9720c4" class="i method">OnMouseMove</a>(<span class="r13 r">e</span>);
+
+            <b>if</b> (<span class="r13 r">e</span>.<a href="@0@PresentationCore/A.html#325207ca856ea87d" class="i property">LeftButton</a> == <a href="@0@PresentationCore/A.html#c49fee26f1f7a30c" class="t t">MouseButtonState</a>.<a href="@0@PresentationCore/A.html#84ab65d095fc0025" class="i field">Pressed</a>)
+            {
+                <a href="#ad215b920c6442a2" class="k">this</a>.<a href="#d982213dd3acd9cf" class="i method">SetPreview</a>(<span class="r13 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="#ad215b920c6442a2" class="k">this</a>));
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#5a852c35b34795e8" class="i">SelectedColorChanged</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> routed event.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@PresentationCore/A.html#1494cfe9a0c5ee74" class="t t">RoutedEvent</a> <a id="aa5b1b40c671d5eb" href="../../R/aa5b1b40c671d5eb.html" target="n" data-glyph="42,1" class="i field">SelectedColorChangedEvent</a> = <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#a5460796900a6473" class="i method">RegisterRoutedEvent</a>(
+            <b>nameof</b>(<a href="#5a852c35b34795e8" class="i">SelectedColorChanged</a>),
+            <a href="@0@PresentationCore/A.html#2144a30d9ece7dfe" class="t t">RoutingStrategy</a>.<a href="@0@PresentationCore/A.html#43b9d70d58d66c4c" class="i field">Bubble</a>,
+            <b>typeof</b>(<a href="@0@PresentationFramework/A.html#e61bd13757853714" class="t t">RoutedPropertyChangedEventHandler</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?&gt;),
+            <b>typeof</b>(<a href="#ad215b920c6442a2" class="t t">ColorEyeDropper</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Occurs when the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#aaec1317c9ab9473" class="i property">SelectedColor</a><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> property is changed.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@PresentationFramework/A.html#e61bd13757853714" class="t t">RoutedPropertyChangedEventHandler</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?&gt; <a id="5a852c35b34795e8" href="../../R/5a852c35b34795e8.html" target="n" data-glyph="30,1" class="i">SelectedColorChanged</a>
+        {
+            <b>add</b> =&gt; <a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@PresentationCore/A.html#18cd7adc001fa956" class="i method">AddHandler</a>(<a href="#aa5b1b40c671d5eb" class="i field">SelectedColorChangedEvent</a>, <b>value</b>);
+            <b>remove</b> =&gt; <a href="#ad215b920c6442a2" class="k">this</a>.<a href="@0@PresentationCore/A.html#221a746a1b193eb1" class="i method">RemoveHandler</a>(<a href="#aa5b1b40c671d5eb" class="i field">SelectedColorChangedEvent</a>, <b>value</b>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

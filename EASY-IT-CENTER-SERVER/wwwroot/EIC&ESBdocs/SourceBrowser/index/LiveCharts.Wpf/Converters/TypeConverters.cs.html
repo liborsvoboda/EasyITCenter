@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html><head><title>TypeConverters.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(113);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts.Wpf/Converters/TypeConverters.cs" target="_top">Converters\TypeConverters.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts.Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\WpfView\WpfView.csproj</a> (LiveCharts.Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//copyright(c) 2016 Greg Dennis &amp; Alberto Rodríguez</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Helpers</span>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<span class="i n">Converters</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<span class="i n">ComponentModel</span>.<a href="@0@System/A.html#5ffdbf35aab9cd1c" class="t t">TypeConverter</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <b>public class</b> <a id="5eac755c66d5a251" href="../R/5eac755c66d5a251.html" target="n" data-glyph="0,0" class="t t"><span id="f2840bb3799e0b31">StringCollectionConverter</span></a> : <a href="@0@System/A.html#5ffdbf35aab9cd1c" class="t t">TypeConverter</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Returns whether this converter can convert an object of the given type to the type of this converter, using the specified context.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">context</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">An </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.ComponentModel.ITypeDescriptorContext</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> that provides a format context.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">sourceType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">A </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Type</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> that represents the type you want to convert from.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> true if this converter can perform the conversion; otherwise, false.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public override bool</b> <a id="07c34844419329b5" href="../R/07c34844419329b5.html" target="n" data-glyph="72,1" class="i method">CanConvertFrom</a>(<a href="@0@System/A.html#fda1ab2f01452170" class="t t">ITypeDescriptorContext</a> <span id="r0 rd" class="r0 r">context</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r1 rd" class="r1 r">sourceType</span>)
+        {
+            <b>return</b> <span class="r1 r">sourceType</span> == <b>typeof</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>) || <a href="@0@System/A.html#5ffdbf35aab9cd1c" class="k">base</a>.<a href="@0@System/A.html#1d06b5c5757182e6" class="i method">CanConvertFrom</a>(<span class="r0 r">context</span>, <span class="r1 r">sourceType</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts the given object to the type of this converter, using the specified context and culture information.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">context</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">An </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.ComponentModel.ITypeDescriptorContext</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> that provides a format context.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r3 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Globalization.CultureInfo</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> to use as the current culture.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r4 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Object</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> to convert.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> An </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Object</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> that represents the converted value.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public override object</b> <a id="36c3748bb0c59421" href="../R/36c3748bb0c59421.html" target="n" data-glyph="72,1" class="i method">ConvertFrom</a>(<a href="@0@System/A.html#fda1ab2f01452170" class="t t">ITypeDescriptorContext</a> <span id="r2 rd" class="r2 r">context</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r3 rd" class="r3 r">culture</span>, <b>object</b> <span id="r4 rd" class="r4 r">value</span>)
+        {
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r5 rd" class="r5 r">valueString</span> = <span class="r4 r">value</span> <b>as string</b>;
+            <b>if</b> (<span class="r5 r">valueString</span> != <b>null</b>)
+            {
+                <b>return</b> <span class="r5 r">valueString</span>.<a href="@0@mscorlib/A.html#1ff97959e1d46a53" class="i method">Split</a>(<b>new</b>[] {<span class="s">&#39;,&#39;</span>}, <a href="@0@mscorlib/A.html#a948431c3f385783" class="t t">StringSplitOptions</a>.<a href="@0@mscorlib/A.html#249c323b50d44651" class="i field">RemoveEmptyEntries</a>)
+                    .<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>(<span id="r6 rd" class="r6 r">x</span> =&gt; <span class="r6 r">x</span>.<a href="@0@mscorlib/A.html#06a5f7c688e69307" class="i method">Trim</a>())
+                    .<a href="@0@System.Core/A.html#783a052330e7d48d" class="i method">ToArray</a>();
+            }
+            <b>return</b> <a href="@0@System/A.html#5ffdbf35aab9cd1c" class="k">base</a>.<a href="@0@System/A.html#cf21f78dde3a5e40" class="i method">ConvertFrom</a>(<span class="r2 r">context</span>, <span class="r3 r">culture</span>, <span class="r4 r">value</span>);
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<span class="i n">ComponentModel</span>.<a href="@0@System/A.html#5ffdbf35aab9cd1c" class="t t">TypeConverter</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <b>public class</b> <a id="8386541237750680" href="../R/8386541237750680.html" target="n" data-glyph="0,0" class="t t"><span id="eb982dac46d9bfe4">NumericChartValuesConverter</span></a> : <a href="@0@System/A.html#5ffdbf35aab9cd1c" class="t t">TypeConverter</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Returns whether this converter can convert an object of the given type to the type of this converter, using the specified context.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">context</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">An </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.ComponentModel.ITypeDescriptorContext</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> that provides a format context.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">sourceType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">A </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Type</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> that represents the type you want to convert from.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> true if this converter can perform the conversion; otherwise, false.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public override bool</b> <a id="4d1782aea953c355" href="../R/4d1782aea953c355.html" target="n" data-glyph="72,1" class="i method">CanConvertFrom</a>(<a href="@0@System/A.html#fda1ab2f01452170" class="t t">ITypeDescriptorContext</a> <span id="r7 rd" class="r7 r">context</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r8 rd" class="r8 r">sourceType</span>)
+        {
+            <b>return</b> <span class="r8 r">sourceType</span> == <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>) || <a href="@0@System/A.html#5ffdbf35aab9cd1c" class="k">base</a>.<a href="@0@System/A.html#1d06b5c5757182e6" class="i method">CanConvertFrom</a>(<span class="r7 r">context</span>, <span class="r8 r">sourceType</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts the given object to the type of this converter, using the specified context and culture information.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">context</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">An </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.ComponentModel.ITypeDescriptorContext</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> that provides a format context.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r10 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Globalization.CultureInfo</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> to use as the current culture.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r11 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Object</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> to convert.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> An </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Object</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> that represents the converted value.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public override object</b> <a id="262ece5d76680c05" href="../R/262ece5d76680c05.html" target="n" data-glyph="72,1" class="i method">ConvertFrom</a>(<a href="@0@System/A.html#fda1ab2f01452170" class="t t">ITypeDescriptorContext</a> <span id="r9 rd" class="r9 r">context</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r10 rd" class="r10 r">culture</span>, <b>object</b> <span id="r11 rd" class="r11 r">value</span>)
+        {
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r12 rd" class="r12 r">valueString</span> = <span class="r11 r">value</span> <b>as string</b>;
+
+            <b>if</b> (<span class="r12 r">valueString</span> != <b>null</b>)
+            {
+                <b>return</b> <span class="r12 r">valueString</span>.<a href="@0@mscorlib/A.html#1ff97959e1d46a53" class="i method">Split</a>(<b>new</b>[] {<span class="s">&#39;,&#39;</span>}, <a href="@0@mscorlib/A.html#a948431c3f385783" class="t t">StringSplitOptions</a>.<a href="@0@mscorlib/A.html#249c323b50d44651" class="i field">RemoveEmptyEntries</a>)
+                    .<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>(<span id="r13 rd" class="r13 r">d</span> =&gt; <b>double</b>.<a href="@0@mscorlib/A.html#73cc31e0b47fd637" class="i method">Parse</a>(<span class="r13 r">d</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>))
+                    .<a href="/LiveCharts/A.html#28330bcb1ed936ef" class="i method">AsChartValues</a>();
+            }
+            <b>return</b> <a href="@0@System/A.html#5ffdbf35aab9cd1c" class="k">base</a>.<a href="@0@System/A.html#cf21f78dde3a5e40" class="i method">ConvertFrom</a>(<span class="r9 r">context</span>, <span class="r10 r">culture</span>, <span class="r11 r">value</span>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html><head><title>MetroThumbContentControl.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(259);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/MetroThumbContentControl.cs" target="_top">Controls\MetroThumbContentControl.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<span class="i n">Primitives</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Automation</span>.<span class="i n">Peers</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Automation</span>.<span class="i n">Peers</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> The MetroThumbContentControl control can be used for titles or something else and enables basic drag movement functionality.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="2ed0d29d569621ff" href="../R/2ed0d29d569621ff.html" target="n" data-glyph="0,0" class="t t"><span id="dff3e444dd40967a">MetroThumbContentControl</span></a> : <a href="ContentControlEx.cs.html#ee50e0221c9bbb4e" class="t t">ContentControlEx</a>, <a href="IMetroThumb.cs.html#38e9bbc32885bfc0" class="t t">IMetroThumb</a>
+    {
+        <b>private</b> <a href="@0@PresentationCore/A.html#d65c6f7bcbe6468a" class="t t">TouchDevice</a>? <a id="3e4153986e3cb00a" href="../R/3e4153986e3cb00a.html" target="n" data-glyph="46,1" class="i field">currentDevice</a> = <b>null</b>;
+        <b>private</b> <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <a id="ccf9d99afce07f22" href="../R/ccf9d99afce07f22.html" target="n" data-glyph="46,1" class="i field">startDragPoint</a>;
+        <b>private</b> <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <a id="d01e3ec1045aad5f" href="../R/d01e3ec1045aad5f.html" target="n" data-glyph="46,1" class="i field">startDragScreenPoint</a>;
+        <b>private</b> <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <a id="268252a8eabd7aa5" href="../R/268252a8eabd7aa5.html" target="n" data-glyph="46,1" class="i field">oldDragScreenPoint</a>;
+
+        <b>static</b> <a id="e3fcf2d6db459e8b" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">MetroThumbContentControl</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6339cc8ec3e1311a" class="i field">DefaultStyleKeyProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#2ed0d29d569621ff" class="t t">MetroThumbContentControl</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>typeof</b>(<a href="#2ed0d29d569621ff" class="t t">MetroThumbContentControl</a>)));
+            <a href="@0@PresentationCore/A.html#620e1d3207f53cdf" class="i field">FocusableProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#2ed0d29d569621ff" class="t t">MetroThumbContentControl</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>default</b>(<b>bool</b>)));
+            <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#66f724375990e1b8" class="i method">RegisterClassHandler</a>(<b>typeof</b>(<a href="#2ed0d29d569621ff" class="t t">MetroThumbContentControl</a>), <a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#90f77f1652102648" class="i field">LostMouseCaptureEvent</a>, <b>new</b> <span class="t">MouseEventHandler</span>(<a href="#7c3c2db9ce29426d" class="i method">OnLostMouseCapture</a>));
+        }
+
+        <b>public static readonly</b> <a href="@0@PresentationCore/A.html#1494cfe9a0c5ee74" class="t t">RoutedEvent</a> <a id="9ee156ab4d0d368c" href="../R/9ee156ab4d0d368c.html" target="n" data-glyph="42,1" class="i field">DragStartedEvent</a>
+            = <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#a5460796900a6473" class="i method">RegisterRoutedEvent</a>(<b>nameof</b>(<a href="#902f90c4a010eb8b" class="i">DragStarted</a>),
+                                               <a href="@0@PresentationCore/A.html#2144a30d9ece7dfe" class="t t">RoutingStrategy</a>.<a href="@0@PresentationCore/A.html#43b9d70d58d66c4c" class="i field">Bubble</a>,
+                                               <b>typeof</b>(<a href="@0@PresentationFramework/A.html#df6e685c5ef60b23" class="t t">DragStartedEventHandler</a>),
+                                               <b>typeof</b>(<a href="#2ed0d29d569621ff" class="t t">MetroThumbContentControl</a>));
+
+        <b>public static readonly</b> <a href="@0@PresentationCore/A.html#1494cfe9a0c5ee74" class="t t">RoutedEvent</a> <a id="abdd7d1b39cf11e3" href="../R/abdd7d1b39cf11e3.html" target="n" data-glyph="42,1" class="i field">DragDeltaEvent</a>
+            = <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#a5460796900a6473" class="i method">RegisterRoutedEvent</a>(<b>nameof</b>(<a href="#5b686b3a8a1f8871" class="i">DragDelta</a>),
+                                               <a href="@0@PresentationCore/A.html#2144a30d9ece7dfe" class="t t">RoutingStrategy</a>.<a href="@0@PresentationCore/A.html#43b9d70d58d66c4c" class="i field">Bubble</a>,
+                                               <b>typeof</b>(<a href="@0@PresentationFramework/A.html#d2a9f34fed62e246" class="t t">DragDeltaEventHandler</a>),
+                                               <b>typeof</b>(<a href="#2ed0d29d569621ff" class="t t">MetroThumbContentControl</a>));
+
+        <b>public static readonly</b> <a href="@0@PresentationCore/A.html#1494cfe9a0c5ee74" class="t t">RoutedEvent</a> <a id="f53ac976c01060a5" href="../R/f53ac976c01060a5.html" target="n" data-glyph="42,1" class="i field">DragCompletedEvent</a>
+            = <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#a5460796900a6473" class="i method">RegisterRoutedEvent</a>(<b>nameof</b>(<a href="#87d69751f7e2300c" class="i">DragCompleted</a>),
+                                               <a href="@0@PresentationCore/A.html#2144a30d9ece7dfe" class="t t">RoutingStrategy</a>.<a href="@0@PresentationCore/A.html#43b9d70d58d66c4c" class="i field">Bubble</a>,
+                                               <b>typeof</b>(<a href="@0@PresentationFramework/A.html#625b97517907639d" class="t t">DragCompletedEventHandler</a>),
+                                               <b>typeof</b>(<a href="#2ed0d29d569621ff" class="t t">MetroThumbContentControl</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Adds or remove a DragStartedEvent handler</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@PresentationFramework/A.html#df6e685c5ef60b23" class="t t">DragStartedEventHandler</a> <a id="902f90c4a010eb8b" href="../R/902f90c4a010eb8b.html" target="n" data-glyph="30,1" class="i">DragStarted</a>
+        {
+            <b>add</b> =&gt; <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#18cd7adc001fa956" class="i method">AddHandler</a>(<a href="#9ee156ab4d0d368c" class="i field">DragStartedEvent</a>, <b>value</b>);
+            <b>remove</b> =&gt; <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#221a746a1b193eb1" class="i method">RemoveHandler</a>(<a href="#9ee156ab4d0d368c" class="i field">DragStartedEvent</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Adds or remove a DragDeltaEvent handler</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@PresentationFramework/A.html#d2a9f34fed62e246" class="t t">DragDeltaEventHandler</a> <a id="5b686b3a8a1f8871" href="../R/5b686b3a8a1f8871.html" target="n" data-glyph="30,1" class="i">DragDelta</a>
+        {
+            <b>add</b> =&gt; <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#18cd7adc001fa956" class="i method">AddHandler</a>(<a href="#abdd7d1b39cf11e3" class="i field">DragDeltaEvent</a>, <b>value</b>);
+            <b>remove</b> =&gt; <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#221a746a1b193eb1" class="i method">RemoveHandler</a>(<a href="#abdd7d1b39cf11e3" class="i field">DragDeltaEvent</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Adds or remove a DragCompletedEvent handler</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@PresentationFramework/A.html#625b97517907639d" class="t t">DragCompletedEventHandler</a> <a id="87d69751f7e2300c" href="../R/87d69751f7e2300c.html" target="n" data-glyph="30,1" class="i">DragCompleted</a>
+        {
+            <b>add</b> =&gt; <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#18cd7adc001fa956" class="i method">AddHandler</a>(<a href="#f53ac976c01060a5" class="i field">DragCompletedEvent</a>, <b>value</b>);
+            <b>remove</b> =&gt; <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#221a746a1b193eb1" class="i method">RemoveHandler</a>(<a href="#f53ac976c01060a5" class="i field">DragCompletedEvent</a>, <b>value</b>);
+        }
+
+        <b>private static readonly</b> <a href="@0@WindowsBase/A.html#380f95e0ba8ab2a0" class="t t">DependencyPropertyKey</a> <a id="3f4e8b342b619a2f" href="../R/3f4e8b342b619a2f.html" target="n" data-glyph="46,1" class="i field">IsDraggingPropertyKey</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#25c0b2e1e0148e79" class="i method">RegisterReadOnly</a>(<b>nameof</b>(<a href="#2fa7fd066f53d56f" class="i property">IsDragging</a>),
+                                                  <b>typeof</b>(<b>bool</b>),
+                                                  <b>typeof</b>(<a href="#2ed0d29d569621ff" class="t t">MetroThumbContentControl</a>),
+                                                  <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> DependencyProperty for the IsDragging property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="8aee8e864d74aade" href="../R/8aee8e864d74aade.html" target="n" data-glyph="42,1" class="i field">IsDraggingProperty</a> = <a href="#3f4e8b342b619a2f" class="i field">IsDraggingPropertyKey</a>.<a href="@0@WindowsBase/A.html#d39196af37a6f1cf" class="i property">DependencyProperty</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Indicates that the left mouse button is pressed and is over the MetroThumbContentControl.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="2fa7fd066f53d56f" href="../R/2fa7fd066f53d56f.html" target="n" data-glyph="102,1" class="i property">IsDragging</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#8aee8e864d74aade" class="i field">IsDraggingProperty</a>);
+            <b>protected set</b> =&gt; <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#3f4e8b342b619a2f" class="i field">IsDraggingPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <b>public void</b> <a id="2859bbf0cf888aeb" href="../R/2859bbf0cf888aeb.html" target="n" data-glyph="72,1" class="i method">CancelDragAction</a>()
+        {
+            <b>if</b> (!<a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#2fa7fd066f53d56f" class="i property">IsDragging</a>)
+            {
+                <b>return</b>;
+            }
+
+            <b>if</b> (<a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#c34fe3db969c2270" class="i property">IsMouseCaptured</a>)
+            {
+                <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#d6873c5315db5dbb" class="i method">ReleaseMouseCapture</a>();
+            }
+
+            <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@WindowsBase/A.html#319a17c8181d521b" class="i method">ClearValue</a>(<a href="#3f4e8b342b619a2f" class="i field">IsDraggingPropertyKey</a>);
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r0 rd" class="r0 r">horizontalChange</span> = <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#268252a8eabd7aa5" class="i field">oldDragScreenPoint</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> - <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#d01e3ec1045aad5f" class="i field">startDragScreenPoint</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>;
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r1 rd" class="r1 r">verticalChange</span> = <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#268252a8eabd7aa5" class="i field">oldDragScreenPoint</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#d01e3ec1045aad5f" class="i field">startDragScreenPoint</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+            <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<b>new</b> <a href="MetroThumbContentControlDragCompletedEventArgs.cs.html#f7d6d2f5c88de8c1" class="t constructor">MetroThumbContentControlDragCompletedEventArgs</a>(<span class="r0 r">horizontalChange</span>, <span class="r1 r">verticalChange</span>, <b>true</b>));
+        }
+
+        <b>protected override void</b> <a id="ea59d1c3492db9f2" href="../R/ea59d1c3492db9f2.html" target="n" data-glyph="75,1" class="i method">OnMouseLeftButtonDown</a>(<a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r2 rd" class="r2 r">e</span>)
+        {
+            <b>if</b> (!<a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#2fa7fd066f53d56f" class="i property">IsDragging</a>)
+            {
+                <span class="r2 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+                <b>try</b>
+                {
+                    <span class="c">// focus me</span>
+                    <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#0e11f7ae56f1c30f" class="i method">Focus</a>();
+                    <span class="c">// now capture the mouse for the drag action</span>
+                    <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#466850becfc3b224" class="i method">CaptureMouse</a>();
+                    <span class="c">// so now we are in dragging mode</span>
+                    <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#3f4e8b342b619a2f" class="i field">IsDraggingPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>);
+                    <span class="c">// get the mouse points</span>
+                    <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#ccf9d99afce07f22" class="i field">startDragPoint</a> = <span class="r2 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="#2ed0d29d569621ff" class="k">this</a>);
+                    <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#268252a8eabd7aa5" class="i field">oldDragScreenPoint</a> = <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#d01e3ec1045aad5f" class="i field">startDragScreenPoint</a> = <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#dd3ac0e288343e52" class="i method">PointToScreen</a>(<a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#ccf9d99afce07f22" class="i field">startDragPoint</a>);
+
+                    <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<b>new</b> <a href="MetroThumbContentControlDragStartedEventArgs.cs.html#ff872ce853a62ea9" class="t constructor">MetroThumbContentControlDragStartedEventArgs</a>(<a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#ccf9d99afce07f22" class="i field">startDragPoint</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>, <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#ccf9d99afce07f22" class="i field">startDragPoint</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>));
+                }
+                <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r3 rd" class="r3 r">exception</span>)
+                {
+                    <a href="@0@System/A.html#c63a0f19b2d4db69" class="t t">Trace</a>.<a href="@0@System/A.html#3e7f2b0454b49e5c" class="i method">TraceError</a>(<span class="s">$&quot;</span>{<a href="#2ed0d29d569621ff" class="k">this</a>}<span class="s">: Something went wrong here: </span>{<span class="r3 r">exception</span>}<span class="s"> </span>{<a href="@0@mscorlib/A.html#7d2f1469d916fc63" class="t t">Environment</a>.<a href="@0@mscorlib/A.html#63a04833d43dd9d3" class="i property">NewLine</a>}<span class="s"> </span>{<span class="r3 r">exception</span>.<a href="@0@mscorlib/A.html#950d763693dd32d3" class="i property">StackTrace</a>}<span class="s">&quot;</span>);
+                    <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#2859bbf0cf888aeb" class="i method">CancelDragAction</a>();
+                }
+            }
+
+            <a href="ContentControlEx.cs.html#ee50e0221c9bbb4e" class="k">base</a>.<a href="@0@PresentationCore/A.html#3b0af3cef3bebb5a" class="i method">OnMouseLeftButtonDown</a>(<span class="r2 r">e</span>);
+        }
+
+        <b>protected override void</b> <a id="123ddddb98ab446d" href="../R/123ddddb98ab446d.html" target="n" data-glyph="75,1" class="i method">OnMouseLeftButtonUp</a>(<a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r4 rd" class="r4 r">e</span>)
+        {
+            <b>if</b> (<a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#c34fe3db969c2270" class="i property">IsMouseCaptured</a> &amp;&amp; <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#2fa7fd066f53d56f" class="i property">IsDragging</a>)
+            {
+                <span class="r4 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+                <span class="c">// now we are in normal mode</span>
+                <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@WindowsBase/A.html#319a17c8181d521b" class="i method">ClearValue</a>(<a href="#3f4e8b342b619a2f" class="i field">IsDraggingPropertyKey</a>);
+                <span class="c">// release the captured mouse</span>
+                <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#d6873c5315db5dbb" class="i method">ReleaseMouseCapture</a>();
+                <span class="c">// get the current mouse position and call the completed event with the horizontal/vertical change</span>
+                <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <span id="r5 rd" class="r5 r">currentMouseScreenPoint</span> = <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#dd3ac0e288343e52" class="i method">PointToScreen</a>(<span class="r4 r">e</span>.<a href="@0@PresentationCore/A.html#87fc95c0858a401e" class="i property">MouseDevice</a>.<a href="@0@PresentationCore/A.html#8047e35651c6cdc2" class="i method">GetPosition</a>(<a href="#2ed0d29d569621ff" class="k">this</a>));
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r6 rd" class="r6 r">horizontalChange</span> = <span class="r5 r">currentMouseScreenPoint</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> - <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#d01e3ec1045aad5f" class="i field">startDragScreenPoint</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>;
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r7 rd" class="r7 r">verticalChange</span> = <span class="r5 r">currentMouseScreenPoint</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#d01e3ec1045aad5f" class="i field">startDragScreenPoint</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+                <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<b>new</b> <a href="MetroThumbContentControlDragCompletedEventArgs.cs.html#f7d6d2f5c88de8c1" class="t constructor">MetroThumbContentControlDragCompletedEventArgs</a>(<span class="r6 r">horizontalChange</span>, <span class="r7 r">verticalChange</span>, <b>false</b>));
+            }
+
+            <a href="ContentControlEx.cs.html#ee50e0221c9bbb4e" class="k">base</a>.<a href="@0@PresentationCore/A.html#7f09d33f4c265511" class="i method">OnMouseLeftButtonUp</a>(<span class="r4 r">e</span>);
+        }
+
+        <b>private static void</b> <a id="7c3c2db9ce29426d" href="../R/7c3c2db9ce29426d.html" target="n" data-glyph="76,1" class="i method">OnLostMouseCapture</a>(<b>object</b> <span id="r8 rd" class="r8 r">sender</span>, <a href="@0@PresentationCore/A.html#2bd9049c90bfe71a" class="t t">MouseEventArgs</a> <span id="r9 rd" class="r9 r">e</span>)
+        {
+            <span class="c">// Cancel the drag action if we lost capture</span>
+            <a href="#2ed0d29d569621ff" class="t t">MetroThumbContentControl</a> <span id="r10 rd" class="r10 r">thumb</span> = (<a href="#2ed0d29d569621ff" class="t t">MetroThumbContentControl</a>)<span class="r8 r">sender</span>;
+            <b>if</b> (!<a href="@0@mscorlib/A.html#4d607d6d56a93c7e" class="i method">ReferenceEquals</a>(<a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#a22e4ec3b63b1c78" class="i property">Captured</a>, <span class="r10 r">thumb</span>))
+            {
+                <span class="r10 r">thumb</span>.<a href="#2859bbf0cf888aeb" class="i method">CancelDragAction</a>();
+            }
+        }
+
+        <b>protected override void</b> <a id="91df9902ff15b302" href="../R/91df9902ff15b302.html" target="n" data-glyph="75,1" class="i method">OnMouseMove</a>(<a href="@0@PresentationCore/A.html#2bd9049c90bfe71a" class="t t">MouseEventArgs</a> <span id="r11 rd" class="r11 r">e</span>)
+        {
+            <a href="ContentControlEx.cs.html#ee50e0221c9bbb4e" class="k">base</a>.<a href="@0@PresentationCore/A.html#b6d4179ad80feb3c" class="i method">OnMouseMove</a>(<span class="r11 r">e</span>);
+
+            <b>if</b> (!<a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#2fa7fd066f53d56f" class="i property">IsDragging</a>)
+            {
+                <b>return</b>;
+            }
+
+            <b>if</b> (<span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#87fc95c0858a401e" class="i property">MouseDevice</a>.<a href="@0@PresentationCore/A.html#3fe015544f42a92c" class="i property">LeftButton</a> == <a href="@0@PresentationCore/A.html#c49fee26f1f7a30c" class="t t">MouseButtonState</a>.<a href="@0@PresentationCore/A.html#84ab65d095fc0025" class="i field">Pressed</a>)
+            {
+                <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <span id="r12 rd" class="r12 r">currentDragPoint</span> = <span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="#2ed0d29d569621ff" class="k">this</a>);
+                <span class="c">// Get client point and convert it to screen point</span>
+                <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <span id="r13 rd" class="r13 r">currentDragScreenPoint</span> = <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#dd3ac0e288343e52" class="i method">PointToScreen</a>(<span class="r12 r">currentDragPoint</span>);
+                <b>if</b> (<span class="r13 r">currentDragScreenPoint</span> != <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#268252a8eabd7aa5" class="i field">oldDragScreenPoint</a>)
+                {
+                    <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#268252a8eabd7aa5" class="i field">oldDragScreenPoint</a> = <span class="r13 r">currentDragScreenPoint</span>;
+                    <span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+                    <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r14 rd" class="r14 r">horizontalChange</span> = <span class="r12 r">currentDragPoint</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> - <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#ccf9d99afce07f22" class="i field">startDragPoint</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>;
+                    <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r15 rd" class="r15 r">verticalChange</span> = <span class="r12 r">currentDragPoint</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#ccf9d99afce07f22" class="i field">startDragPoint</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+                    <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#bc6361604d591c20" class="t constructor">DragDeltaEventArgs</a>(<span class="r14 r">horizontalChange</span>, <span class="r15 r">verticalChange</span>) { <a href="@0@PresentationCore/A.html#31c68d1651808fc1" class="i property">RoutedEvent</a> = <a href="#2ed0d29d569621ff" class="t t">MetroThumbContentControl</a>.<a href="#abdd7d1b39cf11e3" class="i field">DragDeltaEvent</a> });
+                }
+            }
+            <b>else</b>
+            {
+                <span class="c">// clear some saved stuff</span>
+                <b>if</b> (<a href="@0@mscorlib/A.html#4d607d6d56a93c7e" class="i method">ReferenceEquals</a>(<span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#87fc95c0858a401e" class="i property">MouseDevice</a>.<a href="@0@PresentationCore/A.html#2c55441bcdfdd352" class="i property">Captured</a>, <a href="#2ed0d29d569621ff" class="k">this</a>))
+                {
+                    <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#d6873c5315db5dbb" class="i method">ReleaseMouseCapture</a>();
+                }
+
+                <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@WindowsBase/A.html#319a17c8181d521b" class="i method">ClearValue</a>(<a href="#3f4e8b342b619a2f" class="i field">IsDraggingPropertyKey</a>);
+                <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#ccf9d99afce07f22" class="i field">startDragPoint</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> = 0;
+                <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#ccf9d99afce07f22" class="i field">startDragPoint</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> = 0;
+            }
+        }
+
+        <b>protected override void</b> <a id="c9b75dca58a469e8" href="../R/c9b75dca58a469e8.html" target="n" data-glyph="75,1" class="i method">OnPreviewTouchDown</a>(<a href="@0@PresentationCore/A.html#76c6614c37e1600c" class="t t">TouchEventArgs</a> <span id="r16 rd" class="r16 r">e</span>)
+        {
+            <span class="c">// Release any previous capture</span>
+            <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#427805a7fe917469" class="i method">ReleaseCurrentDevice</a>();
+            <span class="c">// Capture the new touch</span>
+            <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#5ca93c11a7f118f6" class="i method">CaptureCurrentDevice</a>(<span class="r16 r">e</span>);
+        }
+
+        <b>protected override void</b> <a id="339a885790b36c7b" href="../R/339a885790b36c7b.html" target="n" data-glyph="75,1" class="i method">OnPreviewTouchUp</a>(<a href="@0@PresentationCore/A.html#76c6614c37e1600c" class="t t">TouchEventArgs</a> <span id="r17 rd" class="r17 r">e</span>)
+        {
+            <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#427805a7fe917469" class="i method">ReleaseCurrentDevice</a>();
+        }
+
+        <b>protected override void</b> <a id="b110ef6ede2e60b6" href="../R/b110ef6ede2e60b6.html" target="n" data-glyph="75,1" class="i method">OnLostTouchCapture</a>(<a href="@0@PresentationCore/A.html#76c6614c37e1600c" class="t t">TouchEventArgs</a> <span id="r18 rd" class="r18 r">e</span>)
+        {
+            <span class="c">// Only re-capture if the reference is not null</span>
+            <span class="c">// This way we avoid re-capturing after calling ReleaseCurrentDevice()</span>
+            <b>if</b> (<a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#3e4153986e3cb00a" class="i field">currentDevice</a> != <b>null</b>)
+            {
+                <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#5ca93c11a7f118f6" class="i method">CaptureCurrentDevice</a>(<span class="r18 r">e</span>);
+            }
+        }
+
+        <b>private void</b> <a id="427805a7fe917469" href="../R/427805a7fe917469.html" target="n" data-glyph="76,1" class="i method">ReleaseCurrentDevice</a>()
+        {
+            <b>if</b> (<a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#3e4153986e3cb00a" class="i field">currentDevice</a> != <b>null</b>)
+            {
+                <span class="c">// Set the reference to null so that we don&#39;t re-capture in the OnLostTouchCapture() method</span>
+                <a href="@0@PresentationCore/A.html#d65c6f7bcbe6468a" class="k">var</a> <span id="r19 rd" class="r19 r">temp</span> = <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#3e4153986e3cb00a" class="i field">currentDevice</a>;
+                <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#3e4153986e3cb00a" class="i field">currentDevice</a> = <b>null</b>;
+                <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#a0911d363699c24b" class="i method">ReleaseTouchCapture</a>(<span class="r19 r">temp</span>);
+            }
+        }
+
+        <b>private void</b> <a id="5ca93c11a7f118f6" href="../R/5ca93c11a7f118f6.html" target="n" data-glyph="76,1" class="i method">CaptureCurrentDevice</a>(<a href="@0@PresentationCore/A.html#76c6614c37e1600c" class="t t">TouchEventArgs</a> <span id="r20 rd" class="r20 r">e</span>)
+        {
+            <b>bool</b> <span id="r21 rd" class="r21 r">gotTouch</span> = <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="@0@PresentationCore/A.html#75a2e4883dc22d84" class="i method">CaptureTouch</a>(<span class="r20 r">e</span>.<a href="@0@PresentationCore/A.html#44bfa68616932cdc" class="i property">TouchDevice</a>);
+            <b>if</b> (<span class="r21 r">gotTouch</span>)
+            {
+                <a href="#2ed0d29d569621ff" class="k">this</a>.<a href="#3e4153986e3cb00a" class="i field">currentDevice</a> = <span class="r20 r">e</span>.<a href="@0@PresentationCore/A.html#44bfa68616932cdc" class="i property">TouchDevice</a>;
+            }
+        }
+
+        <b>protected override</b> <a href="@0@PresentationCore/A.html#a5e7d19a3e41ef98" class="t t">AutomationPeer</a> <a id="3e09f870bd1fca6d" href="../R/3e09f870bd1fca6d.html" target="n" data-glyph="75,1" class="i method">OnCreateAutomationPeer</a>()
+        {
+            <b>return</b> <b>new</b> <a href="../Automation/Peers/MetroThumbContentControlAutomationPeer.cs.html#e8216bfffbbee08f" class="t constructor">MetroThumbContentControlAutomationPeer</a>(<a href="#2ed0d29d569621ff" class="k">this</a>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

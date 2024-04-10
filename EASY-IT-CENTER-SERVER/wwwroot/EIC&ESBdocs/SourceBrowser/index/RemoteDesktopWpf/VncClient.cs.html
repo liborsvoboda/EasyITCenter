@@ -1,0 +1,657 @@
+﻿<!DOCTYPE html>
+<html><head><title>VncClient.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(648);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RemoteDesktopWpf/VncClient.cs" target="_top">VncClient.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RemoteDesktopWpf" target="_top">..\..\..\EASY-TOOLS\EASYTools.VNCLib\EASYTools.VNCLib.csproj</a> (RemoteDesktopWpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// RemoteDesktopWpf - .NET VNC Client for WPF Library</span>
+<span class="c">// Copyright (C) 2008 David Humphrey</span>
+<span class="c">//</span>
+<span class="c">// This program is free software; you can redistribute it and/or modify</span>
+<span class="c">// it under the terms of the GNU General Public License as published by</span>
+<span class="c">// the Free Software Foundation; either version 2 of the License, or</span>
+<span class="c">// (at your option) any later version.</span>
+<span class="c">//</span>
+<span class="c">// This program is distributed in the hope that it will be useful,</span>
+<span class="c">// but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c">// GNU General Public License for more details.</span>
+<span class="c">//</span>
+<span class="c">// You should have received a copy of the GNU General Public License</span>
+<span class="c">// along with this program; if not, write to the Free Software</span>
+<span class="c">// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</span>
+ 
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Security</span>.<span class="i n">Cryptography</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Forms</span>;
+ 
+<b>using</b> <span class="i n">RemoteDesktopWpf</span>.<span class="i n">Encodings</span>;
+ 
+<b>namespace</b> <span class="i n">RemoteDesktopWpf</span>
+{
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+	<span class="c">///</span><span class="c"> Delegate definition of an Event Handler used to indicate a Framebuffer Update has been received.</span>
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+	<b>public delegate void</b> <a id="acd82401e9b674be" href="R/acd82401e9b674be.html" target="n" data-glyph="12,0" class="t t"><span id="1321288f44ce0840">VncUpdateHandler</span></a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="VncEventArgs.cs.html#12f0c134730bd20f" class="t t">VncEventArgs</a> <span id="r1 rd" class="r1 r">e</span>);
+	
+    <b>public delegate void</b> <a id="c26650d54e19a1e2" href="R/c26650d54e19a1e2.html" target="n" data-glyph="12,0" class="t t"><span id="1c99378d9bbb335e">VncConnectedFromServerHandler</span></a>(<b>object</b> <span id="r2 rd" class="r2 r">sender</span>, <b>bool</b> <span id="r3 rd" class="r3 r">authentication</span>);
+ 
+	<b>public class</b> <a id="b2bec9018c731cd1" href="R/b2bec9018c731cd1.html" target="n" data-glyph="0,0" class="t t">VncClient</a>
+	{
+		<a href="RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a> <a id="fb43221b27e365b7" href="R/fb43221b27e365b7.html" target="n" data-glyph="46,1" class="i field">rfb</a>;			<span class="c">// The protocol object handling all communication with server.</span>
+		<a href="Framebuffer.cs.html#271f2ef1d4bba1cb" class="t t">Framebuffer</a> <a id="137cf9a0076f516f" href="R/137cf9a0076f516f.html" target="n" data-glyph="46,1" class="i field">buffer</a>;			<span class="c">// The geometry and properties of the remote framebuffer</span>
+		<b>byte</b> <a id="2e6912c43d320fce" href="R/2e6912c43d320fce.html" target="n" data-glyph="46,1" class="i field">securityType</a>;			<span class="c">// The type of Security agreed upon by client/server</span>
+		<a href="EncodedRectangleFactory.cs.html#08793ae2d49a80cb" class="t t">EncodedRectangleFactory</a> <a id="8f397fb06bd3d703" href="R/8f397fb06bd3d703.html" target="n" data-glyph="46,1" class="i field">factory</a>;
+		<a href="@0@mscorlib/A.html#3980e012bae82e96" class="t t">Thread</a> <a id="bb298ca3e8b7cfee" href="R/bb298ca3e8b7cfee.html" target="n" data-glyph="46,1" class="i field">worker</a>;				<span class="c">// To request and read in-coming updates from server</span>
+		<a href="@0@mscorlib/A.html#797f9a2c1f6fe76f" class="t t">ManualResetEvent</a> <a id="e706c5d277d22825" href="R/e706c5d277d22825.html" target="n" data-glyph="46,1" class="i field">done</a>;		<span class="c">// Used to tell the worker thread to die cleanly</span>
+		<a href="IVncInputPolicy.cs.html#0142566818bdb77d" class="t t">IVncInputPolicy</a> <a id="7f2b8913f00ea7cb" href="R/7f2b8913f00ea7cb.html" target="n" data-glyph="46,1" class="i field">inputPolicy</a>;<span class="c">// A mouse/keyboard input strategy</span>
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Raised when the connection to the remote host is lost.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="bcbfc9a402fb1a8c" href="R/bcbfc9a402fb1a8c.html" target="n" data-glyph="30,1" class="i">ConnectionLost</a>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Raised when the server caused the local clipboard to be filled.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="aab1f2752ffb449a" href="R/aab1f2752ffb449a.html" target="n" data-glyph="30,1" class="i">ServerCutText</a>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Raised when connected from VNC Server.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="#c26650d54e19a1e2" class="t t">VncConnectedFromServerHandler</a> <a id="9752b4550cd3fd8d" href="R/9752b4550cd3fd8d.html" target="n" data-glyph="30,1" class="i">ConnectedFromServer</a>;
+ 
+    	<b>public</b> <a id="df859ec90076f24f" href="R/df859ec90076f24f.html" target="n" data-glyph="72,1" class="t constructor">VncClient</a>()
+		{
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Gets the Framebuffer representing the remote server&#39;s desktop geometry.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public</b> <a href="Framebuffer.cs.html#271f2ef1d4bba1cb" class="t t">Framebuffer</a> <a id="5e86a677baea5539" href="R/5e86a677baea5539.html" target="n" data-glyph="102,1" class="i property">Framebuffer</a> {
+			<b>get</b> { 
+				<b>return</b> <a href="#137cf9a0076f516f" class="i field">buffer</a>; 
+			}
+		}
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the hostname of the remote desktop</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="dda60ed92e9c9aa3" href="R/dda60ed92e9c9aa3.html" target="n" data-glyph="102,1" class="i property">HostName</a> {
+            <b>get</b> {
+                <b>return</b> <a href="#137cf9a0076f516f" class="i field">buffer</a>.<a href="Framebuffer.cs.html#a2686b321fa26c2e" class="i property">DesktopName</a>;
+            }
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Returns True if the VncClient object is View-Only, meaning no mouse/keyboard events are being sent.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public bool</b> <a id="e612397f394c0a72" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">IsViewOnly</a> {
+			<b>get</b> {
+				<b>return</b> <a href="#7f2b8913f00ea7cb" class="i field">inputPolicy</a> != <b>null</b> &amp;&amp; <a href="#7f2b8913f00ea7cb" class="i field">inputPolicy</a> <b>is</b> <a href="VncViewInputPolicy.cs.html#fd006ae908093225" class="t t">VncViewInputPolicy</a>;
+			}
+		}
+ 
+		<span class="c">// Just for API compat, since I&#39;ve added viewOnly</span>
+		<b>public bool</b> <a id="440575064b6de85a" href="R/440575064b6de85a.html" target="n" data-glyph="72,1" class="i method">Connect</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r4 rd" class="r4 r">host</span>, <b>int</b> <span id="r5 rd" class="r5 r">display</span>, <b>int</b> <span id="r6 rd" class="r6 r">port</span>)
+		{
+			<b>return</b> <a href="#0fb273150bacd07d" class="i method">Connect</a>(<span class="r4 r">host</span>, <span class="r5 r">display</span>, <span class="r6 r">port</span>, <b>false</b>);
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Connect to a VNC Host and determine which type of Authentication it uses. If the host uses Password Authentication, a call to Authenticate() will be required.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The IP Address or Host Name of the VNC Host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">display</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The Display number (used on Unix hosts).</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">port</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The Port number used by the Host, usually 5900.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r10 r">viewOnly</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">True if mouse/keyboard events are to be ignored.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns True if the VNC Host requires a Password to be sent after Connect() is called, otherwise False.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public bool</b> <a id="0fb273150bacd07d" href="R/0fb273150bacd07d.html" target="n" data-glyph="72,1" class="i method">Connect</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r7 rd" class="r7 r">host</span>, <b>int</b> <span id="r8 rd" class="r8 r">display</span>, <b>int</b> <span id="r9 rd" class="r9 r">port</span>, <b>bool</b> <span id="r10 rd" class="r10 r">viewOnly</span>)
+		{
+            <b>return</b> <a href="#8207f6b7183cae89" class="i method">ConnectCore</a>(<span class="r7 r">host</span>, <span class="r8 r">display</span>, <b>ref</b> <span class="r9 r">port</span>, <span class="r10 r">viewOnly</span>, <b>true</b>);			
+		}
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Main Function for Connect Process.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r11 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r12 r">display</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r13 r">port</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r14 r">viewOnly</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r15 r">connectFromClient</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Set true if connect from client to server. Set false if wait for a connection from server.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private bool</b> <a id="8207f6b7183cae89" href="R/8207f6b7183cae89.html" target="n" data-glyph="76,1" class="i method">ConnectCore</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r11 rd" class="r11 r">host</span>, <b>int</b> <span id="r12 rd" class="r12 r">display</span>, <b>ref int</b> <span id="r13 rd" class="r13 r">port</span>, <b>bool</b> <span id="r14 rd" class="r14 r">viewOnly</span>, <b>bool</b> <span id="r15 rd" class="r15 r">connectFromClient</span>)
+        {
+            <b>if</b> (<span class="r11 r">host</span> == <b>null</b>) <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<span class="s">&quot;host&quot;</span>);
+ 
+            <span class="c">// If a diplay number is specified (used to connectFromClient to Unix servers)</span>
+            <span class="c">// it must be 0 or greater.  This gets added to the default port number</span>
+            <span class="c">// in order to determine where the server will be listening for connections.</span>
+            <b>if</b> (<span class="r12 r">display</span> &lt; 0) <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#c524af42f1a5665e" class="t constructor">ArgumentOutOfRangeException</a>(<span class="s">&quot;display&quot;</span>, <span class="r12 r">display</span>, <span class="s">&quot;Display number must be non-negative.&quot;</span>);
+            <span class="r13 r">port</span> += <span class="r12 r">display</span>;
+ 
+            <a href="#fb43221b27e365b7" class="i field">rfb</a> = <b>new</b> <a href="RfbProtocol.cs.html#de7fed8bf04cd1f3" class="t constructor">RfbProtocol</a>();
+ 
+            <b>if</b> (<span class="r14 r">viewOnly</span>)
+            {
+                <a href="#7f2b8913f00ea7cb" class="i field">inputPolicy</a> = <b>new</b> <a href="VncViewInputPolicy.cs.html#1bb3d19756b21a80" class="t constructor">VncViewInputPolicy</a>(<a href="#fb43221b27e365b7" class="i field">rfb</a>);
+            }
+            <b>else</b>
+            {
+                <a href="#7f2b8913f00ea7cb" class="i field">inputPolicy</a> = <b>new</b> <a href="VncDefaultInputPolicy.cs.html#3fd666b23527e4a1" class="t constructor">VncDefaultInputPolicy</a>(<a href="#fb43221b27e365b7" class="i field">rfb</a>);
+            }
+ 
+            <span class="c">// Connect and determine version of server, and set client protocol version to match			</span>
+            <b>try</b>
+            {
+                <b>if</b> (<span class="r15 r">connectFromClient</span>)
+                {
+                    <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#262f20515d361868" class="i method">Connect</a>(<span class="r11 r">host</span>, <span class="r13 r">port</span>);
+                    <b>return</b> <a href="#9f29f02f784b7a97" class="i method">DoHandShake</a>();
+                }
+                <b>else</b>
+                {
+                    <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#a7e5655598867083" class="i method">Listen</a>(<span class="r11 r">host</span>, <span class="r13 r">port</span>);
+                    <b>return</b> <b>true</b>;
+                }                
+            }
+            <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r16 rd" class="r16 r">e</span>)
+            {
+                <b>throw</b> <b>new</b> <a href="VncProtocolException.cs.html#f3b440806b5e0483" class="t constructor">VncProtocolException</a>(<span class="s">&quot;Unable to connect to the server. Error was: &quot;</span> + <span class="r16 r">e</span>.<a href="@0@mscorlib/A.html#5fba0e16215b42a3" class="i property">Message</a>, <span class="r16 r">e</span>);
+            }
+        }
+ 
+        <b>private bool</b> <a id="9f29f02f784b7a97" href="R/9f29f02f784b7a97.html" target="n" data-glyph="76,1" class="i method">DoHandShake</a>()
+        {
+            <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#aa6174a58a4ec3f5" class="i method">ReadProtocolVersion</a>();
+            <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#6cf8cc079a07aa24" class="i method">WriteProtocolVersion</a>();
+ 
+            <span class="c">// Figure out which type of authentication the server uses</span>
+            <b>byte</b>[] <span id="r17 rd" class="r17 r">types</span> = <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#b9be7983a6cf6976" class="i method">ReadSecurityTypes</a>();
+ 
+            <span class="c">// Based on what the server sends back in the way of supported Security Types, one of</span>
+            <span class="c">// two things will need to be done: either the server will reject the connection (i.e., type = 0),</span>
+            <span class="c">// or a list of supported types will be sent, of which we need to choose and use one.</span>
+            <b>if</b> (<span class="r17 r">types</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a> &gt; 0)
+            {
+                <b>if</b> (<span class="r17 r">types</span>[0] == 0)
+                {
+                    <span class="c">// The server is not able (or willing) to accept the connection.</span>
+                    <span class="c">// A message follows indicating why the connection was dropped.</span>
+                    <b>throw</b> <b>new</b> <a href="VncProtocolException.cs.html#48f2a8d477deb31e" class="t constructor">VncProtocolException</a>(<span class="s">&quot;Connection Failed. The server rejected the connection for the following reason: &quot;</span> + <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#04f2eb71d0dceda1" class="i method">ReadSecurityFailureReason</a>());
+                }
+                <b>else</b>
+                {
+                    <a href="#2e6912c43d320fce" class="i field">securityType</a> = <a href="#fa3230031fa3b301" class="i method">GetSupportedSecurityType</a>(<span class="r17 r">types</span>);
+                    <a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#d82afdab0c302da5" class="i method">Assert</a>(<a href="#2e6912c43d320fce" class="i field">securityType</a> &gt; 0, <span class="s">&quot;Unknown Security Type(s)&quot;</span>, <span class="s">&quot;The server sent one or more unknown Security Types.&quot;</span>);
+ 
+                    <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#c69d4b4923192c43" class="i method">WriteSecurityType</a>(<a href="#2e6912c43d320fce" class="i field">securityType</a>);
+ 
+                    <span class="c">// Protocol 3.8 states that a SecurityResult is still sent when using NONE (see 6.2.1)</span>
+                    <b>if</b> (<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#7a473e998eaed376" class="i property">ServerVersion</a> == 3.8f &amp;&amp; <a href="#2e6912c43d320fce" class="i field">securityType</a> == 1)
+                    {
+                        <b>if</b> (<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#7179d9862b4e215e" class="i method">ReadSecurityResult</a>() &gt; 0)
+                        {
+                            <span class="c">// For some reason, the server is not accepting the connection.  Get the</span>
+                            <span class="c">// reason and throw an exception</span>
+                            <b>throw</b> <b>new</b> <a href="VncProtocolException.cs.html#48f2a8d477deb31e" class="t constructor">VncProtocolException</a>(<span class="s">&quot;Unable to Connecto to the Server. The Server rejected the connection for the following reason: &quot;</span> + <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#04f2eb71d0dceda1" class="i method">ReadSecurityFailureReason</a>());
+                        }
+                    }
+ 
+                    <b>return</b> (<a href="#2e6912c43d320fce" class="i field">securityType</a> &gt; 1) ? <b>true</b> : <b>false</b>;
+                }
+            }
+            <b>else</b>
+            {
+                <span class="c">// Something is wrong, since we should have gotten at least 1 Security Type</span>
+                <b>throw</b> <b>new</b> <a href="VncProtocolException.cs.html#48f2a8d477deb31e" class="t constructor">VncProtocolException</a>(<span class="s">&quot;Protocol Error Connecting to Server. The Server didn&#39;t send any Security Types during the initial handshake.&quot;</span>);
+            }
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Connect to a VNC Host and determine which type of Authentication it uses. If the host uses Password Authentication, a call to Authenticate() will be required. Default Display and Port numbers are used.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r18 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The IP Address or Host Name of the VNC Host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns True if the VNC Host requires a Password to be sent after Connect() is called, otherwise False.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public bool</b> <a id="8e1849b1622b19dc" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Connect</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r18 rd" class="r18 r">host</span>)
+		{
+			<b>return</b> <a href="#440575064b6de85a" class="i method">Connect</a>(<span class="r18 r">host</span>, 0, 5900);
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Connect to a VNC Host and determine which type of Authentication it uses. If the host uses Password Authentication, a call to Authenticate() will be required. The Port number is calculated based on the Display.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r19 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The IP Address or Host Name of the VNC Host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r20 r">display</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The Display number (used on Unix hosts).</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns True if the VNC Host requires a Password to be sent after Connect() is called, otherwise False.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public bool</b> <a id="fdb6ba33fe2fcb93" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Connect</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r19 rd" class="r19 r">host</span>, <b>int</b> <span id="r20 rd" class="r20 r">display</span>)
+		{
+			<b>return</b> <a href="#440575064b6de85a" class="i method">Connect</a>(<span class="r19 r">host</span>, <span class="r20 r">display</span>, 5900);
+		}
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Wait for a connection from VNC Server.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r21 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r22 r">port</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r23 r">viewOnly</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="b2173f16eb751777" href="R/b2173f16eb751777.html" target="n" data-glyph="72,1" class="i method">Listen</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r21 rd" class="r21 r">host</span>, <b>int</b> <span id="r22 rd" class="r22 r">port</span>, <b>bool</b> <span id="r23 rd" class="r23 r">viewOnly</span>)
+        {
+            <b>if</b> (<span class="r21 r">host</span> == <b>null</b>) <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<span class="s">&quot;host&quot;</span>);
+ 
+			<a href="#fb43221b27e365b7" class="i field">rfb</a> = <b>new</b> <a href="RfbProtocol.cs.html#de7fed8bf04cd1f3" class="t constructor">RfbProtocol</a>();
+ 
+			<b>if</b> (<span class="r23 r">viewOnly</span>) {
+				<a href="#7f2b8913f00ea7cb" class="i field">inputPolicy</a> = <b>new</b> <a href="VncViewInputPolicy.cs.html#1bb3d19756b21a80" class="t constructor">VncViewInputPolicy</a>(<a href="#fb43221b27e365b7" class="i field">rfb</a>);
+			} <b>else</b> {
+				<a href="#7f2b8913f00ea7cb" class="i field">inputPolicy</a> = <b>new</b> <a href="VncDefaultInputPolicy.cs.html#3fd666b23527e4a1" class="t constructor">VncDefaultInputPolicy</a>(<a href="#fb43221b27e365b7" class="i field">rfb</a>);
+			}
+			
+			<span class="c">// Connect and determine version of server, and set client protocol version to match			</span>
+            <b>try</b>
+            {
+                <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#8c0c96f7d9dae989" class="i">RfbConnectedFromServer</a> += <b>new</b> <span class="t">EventHandler</span>(<a href="#69b746f6e5a50b77" class="i method">ConnectedFromServerEventHandler</a>);
+                <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#9f10c909b367fddb" class="i field">FailedToListen</a> += <b>new</b> <span class="t">EventHandler</span>(<a href="#32aaf40b2b0febec" class="i method">FailedToListenHandler</a>);
+                <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#a7e5655598867083" class="i method">Listen</a>(<span class="r21 r">host</span>, <span class="r22 r">port</span>);
+            } 
+            <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a>)
+            {
+                <b>if</b> (<a href="#bcbfc9a402fb1a8c" class="i">ConnectionLost</a> != <b>null</b>)
+                {
+                    <a href="#bcbfc9a402fb1a8c" class="i">ConnectionLost</a>(<a href="#b2bec9018c731cd1" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+                }
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> EventHandler for event &quot;ConnectedFromServer&quot;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r24 r">sender</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r25 r">e</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="69b746f6e5a50b77" href="R/69b746f6e5a50b77.html" target="n" data-glyph="76,1" class="i method">ConnectedFromServerEventHandler</a>(<b>object</b> <span id="r24 rd" class="r24 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r25 rd" class="r25 r">e</span>)
+        {
+            <b>try</b>
+            {
+                <b>bool</b> <span id="r26 rd" class="r26 r">auth</span> = <a href="#9f29f02f784b7a97" class="i method">DoHandShake</a>();
+ 
+                <b>if</b> (<a href="#9752b4550cd3fd8d" class="i">ConnectedFromServer</a> != <b>null</b>)
+                {
+                    <a href="#9752b4550cd3fd8d" class="i">ConnectedFromServer</a>(<a href="#b2bec9018c731cd1" class="k">this</a>, <span class="r26 r">auth</span>);
+                }
+ 
+            }
+            <b>catch</b>
+            {
+                <b>if</b> (<a href="#bcbfc9a402fb1a8c" class="i">ConnectionLost</a> != <b>null</b>)
+                {
+                    <a href="#bcbfc9a402fb1a8c" class="i">ConnectionLost</a>(<a href="#b2bec9018c731cd1" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+                }
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> EventHandler for event &quot;FailedToListen&quot;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r27 r">sender</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r28 r">e</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="32aaf40b2b0febec" href="R/32aaf40b2b0febec.html" target="n" data-glyph="76,1" class="i method">FailedToListenHandler</a>(<b>object</b> <span id="r27 rd" class="r27 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r28 rd" class="r28 r">e</span>)
+        {
+            <b>if</b> (<a href="#bcbfc9a402fb1a8c" class="i">ConnectionLost</a> != <b>null</b>)
+            {
+                <a href="#bcbfc9a402fb1a8c" class="i">ConnectionLost</a>(<a href="#b2bec9018c731cd1" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+            }
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Examines a list of Security Types supported by a VNC Server and chooses one that the Client supports.  See 6.1.2 of the RFB Protocol document v. 3.8.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r29 r">types</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">An array of bytes representing the Security Types supported by the VNC Server.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">A byte that represents the Security Type to be used by the Client.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>protected byte</b> <a id="fa3230031fa3b301" href="R/fa3230031fa3b301.html" target="n" data-glyph="75,1" class="i method">GetSupportedSecurityType</a>(<b>byte</b>[] <span id="r29 rd" class="r29 r">types</span>)
+		{
+			<span class="c">// Pick the first match in the list of given types.  If you want to add support for new</span>
+			<span class="c">// security types, do it here:</span>
+			<b>for</b> (<b>int</b> <span id="r30 rd" class="r30 r">i</span> = 0; <span class="r30 r">i</span> &lt; <span class="r29 r">types</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>; ++<span class="r30 r">i</span>) {
+				<b>if</b> (   <span class="r29 r">types</span>[<span class="r30 r">i</span>] == 1  	<span class="c">// None</span>
+					|| <span class="r29 r">types</span>[<span class="r30 r">i</span>] == 2	<span class="c">// VNC Authentication</span>
+<span class="c">// TODO: None of the following are currently supported -------------------</span>
+<span class="c">//					|| types[i] == 5	// RA2</span>
+<span class="c">//					|| types[i] == 6    // RA2ne</span>
+<span class="c">//					|| types[i] == 16   // Tight</span>
+<span class="c">//					|| types[i] == 17 	// Ultra</span>
+<span class="c">//					|| types[i] == 18 	// TLS</span>
+				   ) <b>return</b> <span class="r29 r">types</span>[<span class="r30 r">i</span>];
+			}
+			<b>return</b> 0;
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Use a password to authenticate with a VNC Host. NOTE: This is only necessary if Connect() returns TRUE.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r31 r">password</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The password to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns True if Authentication worked, otherwise False.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public bool</b> <a id="3315a8bda07db1e3" href="R/3315a8bda07db1e3.html" target="n" data-glyph="72,1" class="i method">Authenticate</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r31 rd" class="r31 r">password</span>)
+		{
+			<b>if</b> (<span class="r31 r">password</span> == <b>null</b>) <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<span class="s">&quot;password&quot;</span>);
+			
+			<span class="c">// If new Security Types are supported in future, add the code here.  For now, only </span>
+			<span class="c">// VNC Authentication is supported.</span>
+			<b>if</b> (<a href="#2e6912c43d320fce" class="i field">securityType</a> == 2) {
+				<a href="#81cfa91dce4626fa" class="i method">PerformVncAuthentication</a>(<span class="r31 r">password</span>);
+			} <b>else</b> {
+				<b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#3d3c2c03118be4f8" class="t constructor">NotSupportedException</a>(<span class="s">&quot;Unable to Authenticate with Server. The Server uses an Authentication scheme unknown to the client.&quot;</span>);
+			}
+			
+			<b>if</b> (<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#7179d9862b4e215e" class="i method">ReadSecurityResult</a>() == 0) {
+				<b>return</b> <b>true</b>;
+			} <b>else</b> {
+				<span class="c">// Authentication failed, and if the server is using Protocol version 3.8, a </span>
+				<span class="c">// plain text message follows indicating why the error happend.  I&#39;m not </span>
+				<span class="c">// currently using this message, but it is read here to clean out the stream.</span>
+				<span class="c">// In earlier versions of the protocol, the server will just drop the connection.</span>
+				<b>if</b> (<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#7a473e998eaed376" class="i property">ServerVersion</a> == 3.8) <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#04f2eb71d0dceda1" class="i method">ReadSecurityFailureReason</a>();
+				<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#d1b7970178ae1036" class="i method">Close</a>();	<span class="c">// TODO: Is this the right place for this???</span>
+				<b>return</b> <b>false</b>;
+			}
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Performs VNC Authentication using VNC DES encryption.  See the RFB Protocol doc 6.2.2.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r32 r">password</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">A string containing the user&#39;s password in clear text format.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>protected void</b> <a id="81cfa91dce4626fa" href="R/81cfa91dce4626fa.html" target="n" data-glyph="75,1" class="i method">PerformVncAuthentication</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r32 rd" class="r32 r">password</span>)
+		{
+			<b>byte</b>[] <span id="r33 rd" class="r33 r">challenge</span> = <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#63496e0d45bb5e03" class="i method">ReadSecurityChallenge</a>();
+			<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#91cc7c138638017c" class="i method">WriteSecurityResponse</a>(<a href="#d04a8d0a58d3a9e4" class="i method">EncryptChallenge</a>(<span class="r32 r">password</span>, <span class="r33 r">challenge</span>));
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Encrypts a challenge using the specified password. See RFB Protocol Document v. 3.8 section 6.2.2.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r34 r">password</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The user&#39;s password.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r35 r">challenge</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The challenge sent by the server.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns the encrypted challenge.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>protected byte</b>[] <a id="d04a8d0a58d3a9e4" href="R/d04a8d0a58d3a9e4.html" target="n" data-glyph="75,1" class="i method">EncryptChallenge</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r34 rd" class="r34 r">password</span>, <b>byte</b>[] <span id="r35 rd" class="r35 r">challenge</span>)
+		{
+			<b>byte</b>[] <span id="r36 rd" class="r36 r">key</span> = <b>new</b> <b>byte</b>[8];
+ 
+			<span class="c">// Key limited to 8 bytes max.</span>
+			<b>if</b> (<span class="r34 r">password</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a> &gt;= 8) {
+				<span class="i n">System</span>.<span class="i n">Text</span>.<a href="@0@mscorlib/A.html#3b6090c501893c25" class="t t">Encoding</a>.<a href="@0@mscorlib/A.html#65768102b7ace585" class="i property">ASCII</a>.<a href="@0@mscorlib/A.html#1a000b82fac3a5b2" class="i method">GetBytes</a>(<span class="r34 r">password</span>, 0, 8, <span class="r36 r">key</span>, 0);
+			} <b>else</b> {
+				<span class="i n">System</span>.<span class="i n">Text</span>.<a href="@0@mscorlib/A.html#3b6090c501893c25" class="t t">Encoding</a>.<a href="@0@mscorlib/A.html#65768102b7ace585" class="i property">ASCII</a>.<a href="@0@mscorlib/A.html#1a000b82fac3a5b2" class="i method">GetBytes</a>(<span class="r34 r">password</span>, 0, <span class="r34 r">password</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a>, <span class="r36 r">key</span>, 0);
+			}			
+ 
+			<span class="c">// VNC uses reverse byte order in key</span>
+            <b>for</b> (<b>int</b> <span id="r37 rd" class="r37 r">i</span> = 0; <span class="r37 r">i</span> &lt; 8; <span class="r37 r">i</span>++)
+                <span class="r36 r">key</span>[<span class="r37 r">i</span>] = (<b>byte</b>)( ((<span class="r36 r">key</span>[<span class="r37 r">i</span>] &amp; 0x01) &lt;&lt; 7) |
+                                 ((<span class="r36 r">key</span>[<span class="r37 r">i</span>] &amp; 0x02) &lt;&lt; 5) |
+                                 ((<span class="r36 r">key</span>[<span class="r37 r">i</span>] &amp; 0x04) &lt;&lt; 3) |
+                                 ((<span class="r36 r">key</span>[<span class="r37 r">i</span>] &amp; 0x08) &lt;&lt; 1) |
+                                 ((<span class="r36 r">key</span>[<span class="r37 r">i</span>] &amp; 0x10) &gt;&gt; 1) |
+                                 ((<span class="r36 r">key</span>[<span class="r37 r">i</span>] &amp; 0x20) &gt;&gt; 3) |
+                                 ((<span class="r36 r">key</span>[<span class="r37 r">i</span>] &amp; 0x40) &gt;&gt; 5) |
+                                 ((<span class="r36 r">key</span>[<span class="r37 r">i</span>] &amp; 0x80) &gt;&gt; 7)  );
+ 
+			<span class="c">// VNC uses DES, not 3DES as written in some documentation</span>
+			<a href="@0@mscorlib/A.html#999dece350f59701" class="t t">DES</a> <span id="r38 rd" class="r38 r">des</span> = <b>new</b> <a href="@0@mscorlib/A.html#861dd455b165724a" class="t constructor">DESCryptoServiceProvider</a>();
+			<span class="r38 r">des</span>.<a href="@0@mscorlib/A.html#5ed32cf1d4686f68" class="i property">Padding</a> = <a href="@0@mscorlib/A.html#78e6983a4b4595dc" class="t t">PaddingMode</a>.<a href="@0@mscorlib/A.html#fc70985b2abe8ddf" class="i field">None</a>;
+			<span class="r38 r">des</span>.<a href="@0@mscorlib/A.html#32a109b1873cd140" class="i property">Mode</a> = <a href="@0@mscorlib/A.html#39e49c67cc43c846" class="t t">CipherMode</a>.<a href="@0@mscorlib/A.html#07e67bed5fcc275a" class="i field">ECB</a>;
+ 
+			<a href="@0@mscorlib/A.html#1580d78b8a5ac0c8" class="t t">ICryptoTransform</a> <span id="r39 rd" class="r39 r">enc</span> = <span class="r38 r">des</span>.<a href="@0@mscorlib/A.html#d5c2fa8416a94d73" class="i method">CreateEncryptor</a>(<span class="r36 r">key</span>, <b>null</b>); 
+ 
+			<b>byte</b>[] <span id="r40 rd" class="r40 r">response</span> = <b>new</b> <b>byte</b>[16];
+			<span class="r39 r">enc</span>.<a href="@0@mscorlib/A.html#56281a9018425d8b" class="i method">TransformBlock</a>(<span class="r35 r">challenge</span>, 0, <span class="r35 r">challenge</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>, <span class="r40 r">response</span>, 0);
+			
+			<b>return</b> <span class="r40 r">response</span>;
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Finish setting-up protocol with VNC Host.  Should be called after Connect and Authenticate (if password required).</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="d535b0aa47840c2f" href="R/d535b0aa47840c2f.html" target="n" data-glyph="72,1" class="i method">Initialize</a>()
+		{
+			<span class="c">// Finish initializing protocol with host</span>
+			<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#79446f1b7dd28809" class="i method">WriteClientInitialisation</a>(<b>false</b>);
+			<a href="#137cf9a0076f516f" class="i field">buffer</a> = <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#67081327bfd238f9" class="i method">ReadServerInit</a>();
+			<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#c3c7881fac067030" class="i method">WriteSetPixelFormat</a>(<a href="#137cf9a0076f516f" class="i field">buffer</a>);	<span class="c">// just use the server&#39;s framebuffer format</span>
+ 
+			<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#68dbf7b487f7cc3f" class="i method">WriteSetEncodings</a>(<b>new</b> <b>uint</b>[] {	<a href="RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a>.<a href="RfbProtocol.cs.html#b6b0ed7c7971608e" class="i field">ZRLE_ENCODING</a>,
+			                                    <a href="RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a>.<a href="RfbProtocol.cs.html#839dcd92250c6f9d" class="i field">HEXTILE_ENCODING</a>, 
+											<span class="c">//	RfbProtocol.CORRE_ENCODING, // CoRRE is buggy in some hosts, so don&#39;t bother using</span>
+												<a href="RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a>.<a href="RfbProtocol.cs.html#0d52122a1ab379bd" class="i field">RRE_ENCODING</a>,
+												<a href="RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a>.<a href="RfbProtocol.cs.html#45a52513f497118e" class="i field">COPYRECT_ENCODING</a>,
+												<a href="RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a>.<a href="RfbProtocol.cs.html#58ba0bdd3798b703" class="i field">RAW_ENCODING</a> });
+			
+			<span class="c">// Create an EncodedRectangleFactory so that EncodedRectangles can be built according to set pixel layout</span>
+			<a href="#8f397fb06bd3d703" class="i field">factory</a> = <b>new</b> <a href="EncodedRectangleFactory.cs.html#3aab007766a025ca" class="t constructor">EncodedRectangleFactory</a>(<a href="#fb43221b27e365b7" class="i field">rfb</a>, <a href="#137cf9a0076f516f" class="i field">buffer</a>);
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Begin getting updates from the VNC Server.  This will continue until StopUpdates() is called.  NOTE: this must be called after Connect().</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="99bb143da780e807" href="R/99bb143da780e807.html" target="n" data-glyph="72,1" class="i method">StartUpdates</a>()
+		{
+			<span class="c">// Start getting updates on background thread.</span>
+			<a href="#bb298ca3e8b7cfee" class="i field">worker</a> = <b>new</b> <a href="@0@mscorlib/A.html#76f340c84df6da8d" class="t constructor">Thread</a>(<b>new</b> <span class="t">ThreadStart</span>(<a href="#b2bec9018c731cd1" class="k">this</a>.<a href="#5e0002754b1bb556" class="i method">GetRfbUpdates</a>));
+            <span class="c">// Bug Fix (Grégoire Pailler) for clipboard and threading</span>
+            <a href="#bb298ca3e8b7cfee" class="i field">worker</a>.<a href="@0@mscorlib/A.html#39921d6c8fe69c40" class="i method">SetApartmentState</a>(<a href="@0@mscorlib/A.html#0ef6964041ada0a3" class="t t">ApartmentState</a>.<a href="@0@mscorlib/A.html#3b2f34c02518c1c7" class="i field">STA</a>);
+            <a href="#bb298ca3e8b7cfee" class="i field">worker</a>.<a href="@0@mscorlib/A.html#babbe0201454caa0" class="i property">IsBackground</a> = <b>true</b>;
+			<a href="#e706c5d277d22825" class="i field">done</a> = <b>new</b> <a href="@0@mscorlib/A.html#3f1e8fec681dd775" class="t constructor">ManualResetEvent</a>(<b>false</b>);
+			<a href="#bb298ca3e8b7cfee" class="i field">worker</a>.<a href="@0@mscorlib/A.html#cd2144b8dd6f4373" class="i method">Start</a>();
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Stops sending requests for updates and disconnects from the remote host.  You must call Connect() again if you wish to re-establish a connection.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="d7176403eb3ebe3e" href="R/d7176403eb3ebe3e.html" target="n" data-glyph="72,1" class="i method">Disconnect</a>()
+		{
+			<span class="c">// Stop the worker thread.</span>
+			<a href="#e706c5d277d22825" class="i field">done</a>.<a href="@0@mscorlib/A.html#63f3d76fa45ccc3d" class="i method">Set</a>();
+ 
+			<span class="c">// BUG FIX: Simon.Phillips@warwick.ac.uk for UltraVNC disconnect issue</span>
+			<span class="c">// Request a tiny screen update to flush the blocking read</span>
+			<b>try</b> {
+				<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#95d90c249c2507a5" class="i method">WriteFramebufferUpdateRequest</a>(0, 0, 1, 1, <b>false</b>);
+			} <b>catch</b> {
+				<span class="c">// this may not work, as Disconnect can get called in response to the</span>
+				<span class="c">// VncClient raising a ConnectionLost event (e.g., the remote host died).</span>
+			}
+ 
+			<a href="#bb298ca3e8b7cfee" class="i field">worker</a>.<a href="@0@mscorlib/A.html#b0d4c2a9b8250c35" class="i method">Join</a>(2000);	<span class="c">// this number is arbitrary, just so that it doesn&#39;t block forever....</span>
+ 
+			<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#d1b7970178ae1036" class="i method">Close</a>();	
+			<a href="#fb43221b27e365b7" class="i field">rfb</a> = <b>null</b>;
+		}
+ 
+        <b>public void</b> <a id="892843da80a0cf24" href="R/892843da80a0cf24.html" target="n" data-glyph="72,1" class="i method">StopListen</a>()
+        {
+            <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#f2227a9d9171a4cd" class="i method">StopListen</a>();
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> An event that occurs whenever the server sends a Framebuffer Update.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public event</b> <a href="#acd82401e9b674be" class="t t">VncUpdateHandler</a> <a id="35d691bfef48b955" href="R/35d691bfef48b955.html" target="n" data-glyph="30,1" class="i">VncUpdate</a>;
+		
+		<b>private bool</b> <a id="37c5f96167c5ec83" href="R/37c5f96167c5ec83.html" target="n" data-glyph="76,1" class="i method">CheckIfThreadDone</a>()
+		{
+			<b>return</b> <a href="#e706c5d277d22825" class="i field">done</a>.<a href="@0@mscorlib/A.html#c0fa64fdb1c591e3" class="i method">WaitOne</a>(0, <b>false</b>);
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Worker thread lives here and processes protocol messages infinitely, triggering events or other actions as necessary.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>private void</b> <a id="5e0002754b1bb556" href="R/5e0002754b1bb556.html" target="n" data-glyph="76,1" class="i method">GetRfbUpdates</a>()
+		{
+			<b>int</b> <span id="r41 rd" class="r41 r">rectangles</span>;
+			<b>int</b> <span id="r42 rd" class="r42 r">enc</span>;
+ 
+			<span class="c">// Get the initial destkop from the host</span>
+			<a href="#8d1e3b67c0a305da" class="i method">RequestScreenUpdate</a>(<b>true</b>);
+ 
+			<b>while</b> (<b>true</b>) {
+				<b>if</b> (<a href="#37c5f96167c5ec83" class="i method">CheckIfThreadDone</a>())
+					<b>break</b>;
+ 
+                <b>try</b> {
+                    <b>switch</b> (<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#0b42a0c62972a9b3" class="i method">ReadServerMessageType</a>()) {
+                        <b>case</b> <a href="RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a>.<a href="RfbProtocol.cs.html#6e55a07e7a5cc5da" class="i field">FRAMEBUFFER_UPDATE</a>:
+                            <span class="r41 r">rectangles</span> = <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#48e129bfa45946eb" class="i method">ReadFramebufferUpdate</a>();
+ 
+                            <b>if</b> (<a href="#37c5f96167c5ec83" class="i method">CheckIfThreadDone</a>())
+                                <b>break</b>;
+ 
+                            <span class="c">// TODO: consider gathering all update rectangles in a batch and *then* posting the event back to the main thread.</span>
+                            <b>for</b> (<b>int</b> <span id="r43 rd" class="r43 r">i</span> = 0; <span class="r43 r">i</span> &lt; <span class="r41 r">rectangles</span>; ++<span class="r43 r">i</span>) {
+                                <span class="c">// Get the update rectangle&#39;s info</span>
+                                <a href="@0@System.Drawing/A.html#17559e21008f381d" class="t t">Rectangle</a> <span id="r44 rd" class="r44 r">rectangle</span>;
+                                <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#7d5084bccca26c9d" class="i method">ReadFramebufferUpdateRectHeader</a>(<b>out</b> <span class="r44 r">rectangle</span>, <b>out</b> <span class="r42 r">enc</span>);
+ 
+                                <span class="c">// Build a derived EncodedRectangle type and pull-down all the pixel info</span>
+                                <a href="Encodings/EncodedRectangle.cs.html#6366ecabf8671d89" class="t t">EncodedRectangle</a> <span id="r45 rd" class="r45 r">er</span> = <a href="#8f397fb06bd3d703" class="i field">factory</a>.<a href="EncodedRectangleFactory.cs.html#c02a2f10701b4e1c" class="i method">Build</a>(<span class="r44 r">rectangle</span>, <span class="r42 r">enc</span>);
+                                <span class="r45 r">er</span>.<a href="Encodings/EncodedRectangle.cs.html#b9dae2caf7d3f20f" class="i method">Decode</a>();
+ 
+                                <span class="c">// Let the UI know that an updated rectangle is available, but check</span>
+                                <span class="c">// to see if the user closed things down first.</span>
+                                <b>if</b> (!<a href="#37c5f96167c5ec83" class="i method">CheckIfThreadDone</a>() &amp;&amp; <a href="#35d691bfef48b955" class="i">VncUpdate</a> != <b>null</b>) {
+                                    <a href="VncEventArgs.cs.html#12f0c134730bd20f" class="t t">VncEventArgs</a> <span id="r46 rd" class="r46 r">e</span> = <b>new</b> <a href="VncEventArgs.cs.html#97304cdaf78b80ec" class="t constructor">VncEventArgs</a>(<span class="r45 r">er</span>);
+ 
+                                    <span class="c">// In order to play nicely with WinForms controls, we do a check here to </span>
+                                    <span class="c">// see if it is necessary to synchronize this event with the UI thread.</span>
+                                    <b>if</b> (<a href="#35d691bfef48b955" class="i">VncUpdate</a>.<a href="@0@mscorlib/A.html#a03a8a39d8a851d9" class="i property">Target</a> <b>is</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Forms</span>.<a href="@0@System.Windows.Forms/A.html#9884211b7ff61817" class="t t">Control</a>) {
+                                        <a href="@0@System.Windows.Forms/A.html#9884211b7ff61817" class="t t">Control</a> <span id="r47 rd" class="r47 r">target</span> = <a href="#35d691bfef48b955" class="i">VncUpdate</a>.<a href="@0@mscorlib/A.html#a03a8a39d8a851d9" class="i property">Target</a> <b>as</b> <a href="@0@System.Windows.Forms/A.html#9884211b7ff61817" class="t t">Control</a>;
+                                        <b>if</b> (<span class="r47 r">target</span> != <b>null</b>)
+                                            <span class="r47 r">target</span>.<a href="@0@System.Windows.Forms/A.html#02002871dd4f84b0" class="i method">Invoke</a>(<a href="#35d691bfef48b955" class="i">VncUpdate</a>, <b>new</b> <b>object</b>[] { <a href="#b2bec9018c731cd1" class="k">this</a>, <span class="r46 r">e</span> });
+                                    } <b>else</b> {
+                                        <span class="c">// Target is not a WinForms control, so do it on this thread...</span>
+                                        <a href="#35d691bfef48b955" class="i">VncUpdate</a>(<a href="#b2bec9018c731cd1" class="k">this</a>, <b>new</b> <a href="VncEventArgs.cs.html#97304cdaf78b80ec" class="t constructor">VncEventArgs</a>(<span class="r45 r">er</span>));
+                                    }
+                                }
+                            }
+                            <b>break</b>;
+                        <b>case</b> <a href="RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a>.<a href="RfbProtocol.cs.html#57823ff055a0970d" class="i field">BELL</a>:
+                            <a href="#2355c27e359372bd" class="i method">Beep</a>(500, 300);  <span class="c">// TODO: are there better values than these?</span>
+                            <b>break</b>;
+                        <b>case</b> <a href="RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a>.<a href="RfbProtocol.cs.html#a7efd4384bec9874" class="i field">SERVER_CUT_TEXT</a>:
+                            <b>if</b> (<a href="#37c5f96167c5ec83" class="i method">CheckIfThreadDone</a>())
+                                <b>break</b>;
+                            <span class="c">// TODO: This is invasive, should there be a bool property allowing this message to be ignored?</span>
+                            <a href="@0@System.Windows.Forms/A.html#4f77555bdf0239c8" class="t t">Clipboard</a>.<a href="@0@System.Windows.Forms/A.html#c6184ddc7e88f288" class="i method">SetDataObject</a>(<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#2325e3e3b27e44df" class="i method">ReadServerCutText</a>().<a href="@0@mscorlib/A.html#69fc1d0aa6df8a90" class="i method">Replace</a>(<span class="s">&quot;\n&quot;</span>, <a href="@0@mscorlib/A.html#7d2f1469d916fc63" class="t t">Environment</a>.<a href="@0@mscorlib/A.html#63a04833d43dd9d3" class="i property">NewLine</a>), <b>true</b>);
+                            <a href="#192fb32f1e5714ad" class="i method">OnServerCutText</a>();
+                            <b>break</b>;
+                        <b>case</b> <a href="RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a>.<a href="RfbProtocol.cs.html#104e369d63128904" class="i field">SET_COLOUR_MAP_ENTRIES</a>:
+							<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#15983d4ac67567ed" class="i method">ReadColourMapEntry</a>();
+                            <b>break</b>;
+                    }
+                } <b>catch</b> {
+                    <a href="#e5122d80fbbf00aa" class="i method">OnConnectionLost</a>();
+                }
+			}
+		}
+ 
+		<b>protected void</b> <a id="e5122d80fbbf00aa" href="R/e5122d80fbbf00aa.html" target="n" data-glyph="75,1" class="i method">OnConnectionLost</a>()
+		{
+			<span class="c">// In order to play nicely with WinForms controls, we do a check here to </span>
+			<span class="c">// see if it is necessary to synchronize this event with the UI thread.</span>
+			<b>if</b> (<a href="#bcbfc9a402fb1a8c" class="i">ConnectionLost</a> != <b>null</b>) 
+            {
+					<a href="#bcbfc9a402fb1a8c" class="i">ConnectionLost</a>(<a href="#b2bec9018c731cd1" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+			}
+		}
+ 
+	    <b>protected void</b> <a id="192fb32f1e5714ad" href="R/192fb32f1e5714ad.html" target="n" data-glyph="75,1" class="i method">OnServerCutText</a>()
+        {
+            <span class="c">// In order to play nicely with WinForms controls, we do a check here to </span>
+            <span class="c">// see if it is necessary to synchronize this event with the UI thread.</span>
+            <b>if</b> (<a href="#aab1f2752ffb449a" class="i">ServerCutText</a> != <b>null</b> &amp;&amp;
+                <a href="#aab1f2752ffb449a" class="i">ServerCutText</a>.<a href="@0@mscorlib/A.html#a03a8a39d8a851d9" class="i property">Target</a> <b>is</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Forms</span>.<a href="@0@System.Windows.Forms/A.html#9884211b7ff61817" class="t t">Control</a>) {
+                <a href="@0@System.Windows.Forms/A.html#9884211b7ff61817" class="t t">Control</a> <span id="r48 rd" class="r48 r">target</span> = <a href="#aab1f2752ffb449a" class="i">ServerCutText</a>.<a href="@0@mscorlib/A.html#a03a8a39d8a851d9" class="i property">Target</a> <b>as</b> <a href="@0@System.Windows.Forms/A.html#9884211b7ff61817" class="t t">Control</a>;
+ 
+                <b>if</b> (<span class="r48 r">target</span> != <b>null</b>)
+                    <span class="r48 r">target</span>.<a href="@0@System.Windows.Forms/A.html#02002871dd4f84b0" class="i method">Invoke</a>(<a href="#aab1f2752ffb449a" class="i">ServerCutText</a>, <b>new</b> <b>object</b>[] { <a href="#b2bec9018c731cd1" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a> });
+                <b>else</b>
+                    <a href="#aab1f2752ffb449a" class="i">ServerCutText</a>(<a href="#b2bec9018c731cd1" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+            }
+        }
+ 
+<span class="c">// There is no managed way to get a system beep (until Framework v.2.0). So depending on the platform, something external has to be called.</span>
+<span class="k preprocess">#</span><span class="k preprocess">if</span> <span class="i">Win32</span>
+<span class="e">		[System.Runtime.InteropServices.DllImport(&quot;kernel32.dll&quot;)]
+		private static extern bool Beep(int freq, int duration);
+</span><span class="k preprocess">#</span><span class="k preprocess">else</span>
+		<b>private bool</b> <a id="2355c27e359372bd" href="R/2355c27e359372bd.html" target="n" data-glyph="76,1" class="i method">Beep</a>(<b>int</b> <span id="r49 rd" class="r49 r">freq</span>, <b>int</b> <span id="r50 rd" class="r50 r">duration</span>)	<span class="c">// bool just so it matches the Win32 API signature</span>
+		{
+			<span class="c">// TODO: How to do this under Unix?</span>
+			<span class="i n">System</span>.<a href="@0@mscorlib/A.html#f907d79481da6ba4" class="t t">Console</a>.<a href="@0@mscorlib/A.html#7f651102bd2b5927" class="i method">Write</a>(<span class="s">&quot;Beep!&quot;</span>);
+			<b>return</b> <b>true</b>;
+		}
+<span class="k preprocess">#</span><span class="k preprocess">endif</span>
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Changes the input mode to view-only or interactive.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r51 r">viewOnly</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">True if view-only mode is desired (no mouse/keyboard events will be sent).</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="1fa090c5564033ee" href="R/1fa090c5564033ee.html" target="n" data-glyph="72,1" class="i method">SetInputMode</a>(<b>bool</b> <span id="r51 rd" class="r51 r">viewOnly</span>)
+		{
+			<b>if</b> (<span class="r51 r">viewOnly</span>)
+				<a href="#7f2b8913f00ea7cb" class="i field">inputPolicy</a> = <b>new</b> <a href="VncViewInputPolicy.cs.html#1bb3d19756b21a80" class="t constructor">VncViewInputPolicy</a>(<a href="#fb43221b27e365b7" class="i field">rfb</a>);
+			<b>else</b>
+				<a href="#7f2b8913f00ea7cb" class="i field">inputPolicy</a> = <b>new</b> <a href="VncDefaultInputPolicy.cs.html#3fd666b23527e4a1" class="t constructor">VncDefaultInputPolicy</a>(<a href="#fb43221b27e365b7" class="i field">rfb</a>);
+		}
+ 
+        <b>public virtual void</b> <a id="4fee9e503b465b8e" href="R/4fee9e503b465b8e.html" target="n" data-glyph="72,1" class="i method">WriteClientCutText</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r52 rd" class="r52 r">text</span>)
+        {
+            <b>try</b> {
+                <a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#06c9cfbfd7949998" class="i method">WriteClientCutText</a>(<span class="r52 r">text</span>);
+            } <b>catch</b> {
+                <a href="#e5122d80fbbf00aa" class="i method">OnConnectionLost</a>();
+            }
+        }
+ 
+		<span class="c">// TODO: This needs to be pushed into the protocol rather than expecting keysym from the caller.</span>
+		<b>public virtual void</b> <a id="52b418700645bb7c" href="R/52b418700645bb7c.html" target="n" data-glyph="72,1" class="i method">WriteKeyboardEvent</a>(<b>uint</b> <span id="r53 rd" class="r53 r">keysym</span>, <b>bool</b> <span id="r54 rd" class="r54 r">pressed</span>)
+		{
+			<b>try</b> {
+				<a href="#7f2b8913f00ea7cb" class="i field">inputPolicy</a>.<a href="IVncInputPolicy.cs.html#be914da7d3f09b81" class="i method">WriteKeyboardEvent</a>(<span class="r53 r">keysym</span>, <span class="r54 r">pressed</span>);
+			} <b>catch</b> {
+				<a href="#e5122d80fbbf00aa" class="i method">OnConnectionLost</a>();
+			}
+		}
+ 
+		<span class="c">// TODO: This needs to be pushed into the protocol rather than expecting the caller to create the mask.</span>
+		<b>public virtual void</b> <a id="afaf4371c6d6a890" href="R/afaf4371c6d6a890.html" target="n" data-glyph="72,1" class="i method">WritePointerEvent</a>(<b>byte</b> <span id="r55 rd" class="r55 r">buttonMask</span>, <a href="@0@System.Drawing/A.html#a041be61667d4c9a" class="t t">Point</a> <span id="r56 rd" class="r56 r">point</span>)
+		{
+			<b>try</b> {
+				<a href="#7f2b8913f00ea7cb" class="i field">inputPolicy</a>.<a href="IVncInputPolicy.cs.html#af6f0232d80f3ce1" class="i method">WritePointerEvent</a>(<span class="r55 r">buttonMask</span>, <span class="r56 r">point</span>);
+			} <b>catch</b> {
+    			<a href="#e5122d80fbbf00aa" class="i method">OnConnectionLost</a>();
+			}
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Requests that the remote host send a screen update.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r57 r">refreshFullScreen</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">TRUE if the entire screen should be refreshed, FALSE if only a partial region needs updating.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span><span class="c">RequestScreenUpdate needs to be called whenever the client screen needs to be updated to reflect the state of the remote </span>
+		<span class="c">///</span><span class="c">	desktop.  Typically you only need to have a particular region of the screen updated and can still use the rest of the </span>
+		<span class="c">///</span><span class="c"> pixels on the client-side (i.e., when moving the mouse pointer, only the area around the pointer changes).  Therefore, you should</span>
+		<span class="c">///</span><span class="c"> almost always set refreshFullScreen to FALSE.  If the client-side image becomes corrupted, call RequestScreenUpdate with</span>
+		<span class="c">///</span><span class="c"> refreshFullScreen set to TRUE to get the complete image sent again.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="8d1e3b67c0a305da" href="R/8d1e3b67c0a305da.html" target="n" data-glyph="72,1" class="i method">RequestScreenUpdate</a>(<b>bool</b> <span id="r57 rd" class="r57 r">refreshFullScreen</span>)
+		{
+			<b>try</b> {
+				<a href="#fb43221b27e365b7" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#95d90c249c2507a5" class="i method">WriteFramebufferUpdateRequest</a>(0, 0, (<b>ushort</b>) <a href="#137cf9a0076f516f" class="i field">buffer</a>.<a href="Framebuffer.cs.html#bdb7a09c14a81c20" class="i property">Width</a>, (<b>ushort</b>) <a href="#137cf9a0076f516f" class="i field">buffer</a>.<a href="Framebuffer.cs.html#17f24f78fa8f4196" class="i property">Height</a>, !<span class="r57 r">refreshFullScreen</span>);
+			} <b>catch</b> {
+				<a href="#e5122d80fbbf00aa" class="i method">OnConnectionLost</a>();
+			}
+		}
+	}
+}</pre></td></tr></table></div></body></html>

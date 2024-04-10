@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html><head><title>HexDumper.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(123);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#BamlTools/HexDumper.cs" target="_top">HexDumper.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#BamlTools" target="_top">HelpProjects\WPF-MORE\Tools\BamlReflector\BamlTools\BamlTools.csproj</a> (BamlTools)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+
+<b>namespace</b> <span class="i n">BamlTools</span>
+{
+    <b>public class</b> <a id="9ecc296816abdbbd" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">HexDumper</a>
+    {
+        <b>static string</b> <a id="24a8a47ab65753a2" href="R/24a8a47ab65753a2.html" target="n" data-glyph="46,1" class="i field">Symbols</a> = <span class="s">&quot;0123456789ABCDEF&quot;</span>;
+
+        <a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <a id="d48d2ae39fd0cc2d" href="R/d48d2ae39fd0cc2d.html" target="n" data-glyph="46,1" class="i field">_reader</a>;
+        <b>bool</b> <a id="8d8649a571e12842" href="R/8d8649a571e12842.html" target="n" data-glyph="46,1" class="i field">_showAddresses</a>;
+        <b>bool</b> <a id="53fa9f3459d23bac" href="R/53fa9f3459d23bac.html" target="n" data-glyph="46,1" class="i field">_showText</a>;
+
+        <b>public</b> <a id="b5f59ea30959d540" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">HexDumper</a>(<a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r0 rd" class="r0 r">stream</span>)
+        {
+            <a href="#d48d2ae39fd0cc2d" class="i field">_reader</a> = <span class="r0 r">stream</span>;
+            <a href="#53fa9f3459d23bac" class="i field">_showText</a> = <b>true</b>;
+        }
+
+        <b>public string</b> <a id="5f9768498e90cbd0" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">DumpOneBigString</a>()
+        {
+            <a href="@1@System.Runtime/A.html#adf60ee46ebd299f" class="t t">StringBuilder</a> <span id="r1 rd" class="r1 r">sb</span> = <b>new</b> <a href="@1@System.Runtime/A.html#6e631639c1e2746b" class="t constructor">StringBuilder</a>();
+
+            <b>try</b>
+            {
+                <b>foreach</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r2 rd" class="r2 r">line</span> <b>in</b> <a href="#40261ecdad5be3f3" class="i method">GetLines</a>())
+                {
+                    <span class="r1 r">sb</span>.<a href="@1@System.Runtime/A.html#73bc75596acbac77" class="i method">AppendLine</a>(<span class="r2 r">line</span>);
+                }
+            }
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r3 rd" class="r3 r">ex</span>)
+            {
+                <span class="r1 r">sb</span>.<a href="@1@System.Runtime/A.html#73bc75596acbac77" class="i method">AppendLine</a>(<span class="r3 r">ex</span>.<a href="@1@System.Runtime/A.html#e2e19f4ed8da81aa" class="i method">ToString</a>());
+            }
+
+            <b>return</b> <span class="r1 r">sb</span>.<a href="@1@System.Runtime/A.html#5a97da49a158a3c9" class="i method">ToString</a>();
+        }
+
+        <b>public</b> <a href="@1@System.Runtime/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a>&gt; <a id="40261ecdad5be3f3" href="R/40261ecdad5be3f3.html" target="n" data-glyph="72,1" class="i method">GetLines</a>()
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r4 rd" class="r4 r">hexString</span>;
+            <b>byte</b>[] <span id="r5 rd" class="r5 r">inputBuffer</span> = <b>new</b> <b>byte</b>[<a href="#988f604cd403d6c1" class="i field">FullHexByteLength</a>];
+
+            <b>while</b> (<a href="#d48d2ae39fd0cc2d" class="i field">_reader</a>.<a href="@1@System.Runtime/A.html#35112b2a53fb536a" class="i property">Position</a> &lt; <a href="#d48d2ae39fd0cc2d" class="i field">_reader</a>.<a href="@1@System.Runtime/A.html#48b7e39cfd844dc5" class="i property">Length</a>)
+            {
+                <b>int</b> <span id="r6 rd" class="r6 r">count</span> = <a href="#d48d2ae39fd0cc2d" class="i field">_reader</a>.<a href="@1@System.Runtime/A.html#6fb9c001d7524ba2" class="i method">Read</a>(<span class="r5 r">inputBuffer</span>, 0, <span class="r5 r">inputBuffer</span>.<a href="@1@System.Runtime/A.html#42e9b7616956cf94" class="i property">Length</a>);
+                <span class="r4 r">hexString</span> = <a href="#e33aa01c6d6da2ea" class="i method">HexStringConvert</a>(<span class="r5 r">inputBuffer</span>, <span class="r6 r">count</span>);
+                <b>if</b> (<a href="#a2dd202773d8e997" class="i property">ShowText</a>)
+                {
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r7 rd" class="r7 r">textString</span> = <a href="#90fe4cb2d2003f45" class="i method">TextConvert</a>(<span class="r5 r">inputBuffer</span>, <span class="r6 r">count</span>);
+                    <span class="r4 r">hexString</span> = <a href="#f5ba560336e94bfa" class="i method">Pad</a>(<span class="r4 r">hexString</span>, <a href="#292610d6b26595bb" class="i property">FullHexStringLength</a>, <span class="s">&#39; &#39;</span>);
+                    <span class="r4 r">hexString</span> += <span class="s">&quot;  &quot;</span> + <span class="r7 r">textString</span>;
+                }
+
+                <b>if</b> (<a href="#57d98fae04bb5066" class="i property">ShowAddresses</a>)
+                {
+                    <span class="r4 r">hexString</span> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a>.<a href="@1@System.Runtime/A.html#7432dab173fae5fc" class="i method">Format</a>(<span class="s">&quot;{0:x5}: {1}&quot;</span>, <a href="#d48d2ae39fd0cc2d" class="i field">_reader</a>.<a href="@1@System.Runtime/A.html#35112b2a53fb536a" class="i property">Position</a>, <span class="r4 r">hexString</span>);
+                }
+                <b>yield</b> <b>return</b> <span class="r4 r">hexString</span>;
+            }
+        }
+
+        <b>public bool</b> <a id="57d98fae04bb5066" href="R/57d98fae04bb5066.html" target="n" data-glyph="102,1" class="i property">ShowAddresses</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#8d8649a571e12842" class="i field">_showAddresses</a>; }
+            <b>set</b> { <a href="#8d8649a571e12842" class="i field">_showAddresses</a> = <b>value</b>; }
+        }
+
+        <b>public bool</b> <a id="a2dd202773d8e997" href="R/a2dd202773d8e997.html" target="n" data-glyph="102,1" class="i property">ShowText</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#53fa9f3459d23bac" class="i field">_showText</a>; }
+            <b>set</b> { <a href="#53fa9f3459d23bac" class="i field">_showText</a> = <b>value</b>; }
+        }
+
+        <b>private const int</b> <a id="988f604cd403d6c1" href="R/988f604cd403d6c1.html" target="n" data-glyph="10,1" class="i field">FullHexByteLength</a> = 16;
+
+        <b>private int</b> <a id="292610d6b26595bb" href="R/292610d6b26595bb.html" target="n" data-glyph="106,1" class="i property">FullHexStringLength</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#988f604cd403d6c1" class="i field">FullHexByteLength</a> * 3; }
+        }
+
+        <b>private string</b> <a id="e33aa01c6d6da2ea" href="R/e33aa01c6d6da2ea.html" target="n" data-glyph="76,1" class="i method">HexStringConvert</a>(<b>byte</b>[] <span id="r8 rd" class="r8 r">input</span>, <b>int</b> <span id="r9 rd" class="r9 r">count</span>)
+        {
+            <a href="@1@System.Runtime/A.html#adf60ee46ebd299f" class="t t">StringBuilder</a> <span id="r10 rd" class="r10 r">sb</span> = <b>new</b> <a href="@1@System.Runtime/A.html#6e631639c1e2746b" class="t constructor">StringBuilder</a>();
+
+            <b>for</b> (<b>int</b> <span id="r11 rd" class="r11 r">i</span> = 0; <span class="r11 r">i</span> &lt; <span class="r9 r">count</span>; <span class="r11 r">i</span>++)
+            {
+                <b>int</b> <span id="r12 rd" class="r12 r">high</span> = (<span class="r8 r">input</span>[<span class="r11 r">i</span>] &gt;&gt; 4) &amp; 0xF;
+                <b>int</b> <span id="r13 rd" class="r13 r">low</span> = <span class="r8 r">input</span>[<span class="r11 r">i</span>] &amp; 0xF;
+                <span class="r10 r">sb</span>.<a href="@1@System.Runtime/A.html#48e3f30ad3b0dfe5" class="i method">AppendFormat</a>(<span class="s">&quot;{0}{1} &quot;</span>, <a href="#24a8a47ab65753a2" class="i field">Symbols</a><a href="@1@System.Runtime/A.html#8307d03426b56fe1">[</a><span class="r12 r">high</span>], <a href="#24a8a47ab65753a2" class="i field">Symbols</a><a href="@1@System.Runtime/A.html#8307d03426b56fe1">[</a><span class="r13 r">low</span>]);
+            }
+            <b>return</b> <span class="r10 r">sb</span>.<a href="@1@System.Runtime/A.html#5a97da49a158a3c9" class="i method">ToString</a>();
+        }
+
+        <b>private string</b> <a id="90fe4cb2d2003f45" href="R/90fe4cb2d2003f45.html" target="n" data-glyph="76,1" class="i method">TextConvert</a>(<b>byte</b>[] <span id="r14 rd" class="r14 r">input</span>, <b>int</b> <span id="r15 rd" class="r15 r">count</span>)
+        {
+            <a href="@1@System.Runtime/A.html#adf60ee46ebd299f" class="t t">StringBuilder</a> <span id="r16 rd" class="r16 r">sb</span> = <b>new</b> <a href="@1@System.Runtime/A.html#6e631639c1e2746b" class="t constructor">StringBuilder</a>();
+
+            <b>for</b> (<b>int</b> <span id="r17 rd" class="r17 r">i</span> = 0; <span class="r17 r">i</span> &lt; <span class="r15 r">count</span>; <span class="r17 r">i</span>++)
+            {
+                <span class="r16 r">sb</span>.<a href="@1@System.Runtime/A.html#a2e7c78d85807da5" class="i method">Append</a>((<span class="r14 r">input</span>[<span class="r17 r">i</span>] &lt; <span class="s">&#39; &#39;</span> || (<b>int</b>)<span class="r14 r">input</span>[<span class="r17 r">i</span>] &gt; 127) ? <span class="s">&#39;.&#39;</span> : (<b>char</b>)<span class="r14 r">input</span>[<span class="r17 r">i</span>]);
+            }
+            <b>return</b> <span class="r16 r">sb</span>.<a href="@1@System.Runtime/A.html#5a97da49a158a3c9" class="i method">ToString</a>();
+        }
+
+        <b>private string</b> <a id="f5ba560336e94bfa" href="R/f5ba560336e94bfa.html" target="n" data-glyph="76,1" class="i method">Pad</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r18 rd" class="r18 r">str</span>, <b>int</b> <span id="r19 rd" class="r19 r">length</span>, <b>char</b> <span id="r20 rd" class="r20 r">fill</span>)
+        {
+            <span class="c">// this is somewhat inefficent, but it is only called once.</span>
+            <b>for</b> (<b>int</b> <span id="r21 rd" class="r21 r">i</span> = <span class="r18 r">str</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>; <span class="r21 r">i</span> &lt; <span class="r19 r">length</span>; <span class="r21 r">i</span>++)
+            {
+                <span class="r18 r">str</span> += <span class="r20 r">fill</span>;
+            }
+            <b>return</b> <span class="r18 r">str</span>;
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

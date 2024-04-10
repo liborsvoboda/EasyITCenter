@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html><head><title>InteropDemo.xaml.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(52);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro.Demo/ExampleWindows/InteropDemo.xaml.cs" target="_top">ExampleWindows\InteropDemo.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro.Demo" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro.Samples\MahApps.Metro.Demo\MahApps.Metro.Demo.csproj</a> (MahApps.Metro.Demo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Web</span>.<span class="i n">WebView2</span>.<span class="i n">Core</span>;
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Web</span>.<span class="i n">WebView2</span>.<span class="i n">Wpf</span>;
+
+<b>namespace</b> <span class="i n">MetroDemo</span>.<span class="i n">ExampleWindows</span>
+{
+    <b>public</b> <b>partial</b> <b>class</b> <a id="49876086b9a80efc" href="../R/49876086b9a80efc.html" target="n" data-glyph="0,0" class="t t">InteropDemo</a> : <a href="/MahApps.Metro/A.html#5a37f9897ea7f8e0" class="t t">MetroWindow</a>
+    {
+        <b>public</b> <a id="81d112d195d3e3b3" href="../R/81d112d195d3e3b3.html" target="n" data-glyph="72,1" class="t constructor">InteropDemo</a>()
+        {
+            <a href="#49876086b9a80efc" class="k">this</a>.<span class="i">InitializeComponent</span>();
+            <a href="#49876086b9a80efc" class="k">this</a>.<a href="@0@PresentationFramework/A.html#0601bfd40088ccf9" class="i">ContentRendered</a> += (<b>_</b>, <b>_</b>) =&gt; <a href="#49876086b9a80efc" class="k">this</a>.<a href="#26905e467df5771f" class="i method">InitializeAsync</a>();
+        }
+
+        <b>private async void</b> <a id="26905e467df5771f" href="../R/26905e467df5771f.html" target="n" data-glyph="76,1" class="i method">InitializeAsync</a>()
+        {
+            <b>var</b> <span id="r0 rd" class="r0 r">webView</span> = <b>new</b> <span class="t constructor">WebView2</span>();
+            <span class="r0 r">webView</span>.<span class="i property">DefaultBackgroundColor</span> = <a href="@0@System.Drawing/A.html#9103fd761ca562ae" class="t t">Color</a>.<a href="@0@System.Drawing/A.html#4b5ca2fd796c43d5" class="i property">Transparent</a>;
+            <span class="r0 r">webView</span>.<a href="@0@PresentationFramework/A.html#af1a9620ef03c2dd" class="i property">HorizontalAlignment</a> = <a href="@0@PresentationFramework/A.html#4adb839fdbe93e93" class="t t">HorizontalAlignment</a>.<a href="@0@PresentationFramework/A.html#6a7c22ea6114ef4d" class="i field">Stretch</a>;
+            <span class="r0 r">webView</span>.<a href="@0@PresentationFramework/A.html#c6fdbbe63a3a42b3" class="i property">VerticalAlignment</a> = <a href="@0@PresentationFramework/A.html#8b1564c617a0b2f5" class="t t">VerticalAlignment</a>.<a href="@0@PresentationFramework/A.html#0a8625ffa5ba03a9" class="i field">Stretch</a>;
+            <span class="r0 r">webView</span>.<span class="i property">CreationProperties</span> = <b>new</b> <span class="t constructor">CoreWebView2CreationProperties</span>();
+
+            <span class="r0 r">webView</span>.<span class="i">NavigationStarting</span> += <a href="#49876086b9a80efc" class="k">this</a>.<a href="#fbc006c29e94e3a8" class="i method">EnsureHttps</a>;
+
+            <a href="#49876086b9a80efc" class="k">this</a>.<span class="i">webViewContainer</span>.<span class="i">Children</span>.<span class="i">Add</span>(<span class="r0 r">webView</span>);
+
+            <b>await</b> <span class="r0 r">webView</span>.<span class="i method">EnsureCoreWebView2Async</span>(<b>null</b>);
+
+            <span class="r0 r">webView</span>.<span class="i property">Source</span> = <b>new</b> <a href="@0@System/A.html#d9fc45d783ee73ff" class="t constructor">Uri</a>(<span class="s">&quot;https://mahapps.com&quot;</span>, <a href="@0@System/A.html#ac43655101ad74be" class="t t">UriKind</a>.<a href="@0@System/A.html#2a5de88dbfa86f1b" class="i field">RelativeOrAbsolute</a>);
+        }
+
+        <b>private void</b> <a id="fbc006c29e94e3a8" href="../R/fbc006c29e94e3a8.html" target="n" data-glyph="76,1" class="i method">EnsureHttps</a>(<b>object</b>? <span id="r1 rd" class="r1 r">sender</span>, <span class="t t">CoreWebView2NavigationStartingEventArgs</span> <span id="r2 rd" class="r2 r">args</span>)
+        {
+            <b>if</b> (<span class="r1 r">sender</span> <b>is</b> <span class="t t">WebView2</span> <span id="r3 rd" class="r3 r">webView</span>)
+            {
+                <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r4 rd" class="r4 r">uri</span> = <span class="r2 r">args</span>.<span class="i property">Uri</span>;
+                <b>if</b> (!<span class="r4 r">uri</span>.<a href="@0@mscorlib/A.html#23804789ea4c9c0e" class="i method">StartsWith</a>(<span class="s">&quot;https://&quot;</span>))
+                {
+                    <span class="r3 r">webView</span>.<span class="i property">CoreWebView2</span>.<span class="i method">ExecuteScriptAsync</span>(<span class="s">$&quot;</span><span class="s">alert(&#39;</span>{<span class="r4 r">uri</span>}<span class="s"> is not safe, try an https link&#39;)</span><span class="s">&quot;</span>);
+                    <span class="r2 r">args</span>.<span class="i property">Cancel</span> = <b>true</b>;
+                }
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html><head><title>SpecialFeaturesConverter.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(31);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#DataBindingDemo/SpecialFeaturesConverter.cs" target="_top">SpecialFeaturesConverter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#DataBindingDemo" target="_top">HelpProjects\WPF-MORE\Sample Applications\DataBindingDemo\DataBindingDemo.csproj</a> (DataBindingDemo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+
+<b>namespace</b> <span class="i n">DataBindingDemo</span>
+{
+    <b>internal class</b> <a id="6628f066b699af2c" href="R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="6be3862a425ddb75">SpecialFeaturesConverter</span></a> : <a href="@0@PresentationFramework/A.html#60c26f3054102ef4" class="t t">IMultiValueConverter</a>
+    {
+        <b>public object</b> <a id="52032f288a3bd5b5" href="R/52032f288a3bd5b5.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>[] <span id="r0 rd" class="r0 r">values</span>, <a href="@1@System.Runtime/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r1 rd" class="r1 r">targetType</span>, <b>object</b> <span id="r2 rd" class="r2 r">parameter</span>, <a href="@1@System.Runtime/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r3 rd" class="r3 r">culture</span>)
+        {
+            <b>if</b> (<span class="r0 r">values</span> == <b>null</b> || <span class="r0 r">values</span>.<a href="@1@System.Runtime/A.html#42e9b7616956cf94" class="i property">Length</a> &lt; 2) <b>return</b> <b>false</b>;
+            <b>if</b> (<span class="r0 r">values</span>[0] == <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#ee7f3b3d5828e7ab" class="i field">UnsetValue</a>) <b>return</b> <b>false</b>;
+            <b>if</b> (<span class="r0 r">values</span>[1] == <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#ee7f3b3d5828e7ab" class="i field">UnsetValue</a>) <b>return</b> <b>false</b>;
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r4 rd" class="r4 r">rating</span> = (<b>int</b>) <span class="r0 r">values</span>[0];
+            <a href="@1@System.Runtime/A.html#df6b1eba7461813b" class="k">var</a> <span id="r5 rd" class="r5 r">date</span> = (<a href="@1@System.Runtime/A.html#df6b1eba7461813b" class="t t">DateTime</a>) <span class="r0 r">values</span>[1];
+
+            <span class="c">// if the user has a good rating (10+) and has been a member for more than a year, special features are available</span>
+            <b>if</b> ((<span class="r4 r">rating</span> &gt;= 10) &amp;&amp; (<span class="r5 r">date</span>.<a href="@1@System.Runtime/A.html#92aa9b2917a74e91" class="i property">Date</a> &lt; (<a href="@1@System.Runtime/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@1@System.Runtime/A.html#1cd5dd408a32124f" class="i property">Now</a>.<a href="@1@System.Runtime/A.html#92aa9b2917a74e91" class="i property">Date</a> - <b>new</b> <a href="@1@System.Runtime/A.html#cc47d2ab23466909" class="t constructor">TimeSpan</a>(365, 0, 0, 0))))
+            {
+                <b>return</b> <b>true</b>;
+            }
+            <b>return</b> <b>false</b>;
+        }
+
+        <b>public object</b>[] <a id="cb62345fce80269f" href="R/cb62345fce80269f.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r6 rd" class="r6 r">value</span>, <a href="@1@System.Runtime/A.html#3d00eeab9feb80f3" class="t t">Type</a>[] <span id="r7 rd" class="r7 r">targetTypes</span>, <b>object</b> <span id="r8 rd" class="r8 r">parameter</span>, <a href="@1@System.Runtime/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r9 rd" class="r9 r">culture</span>) =&gt; <b>new</b>[] { <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>, <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a> };
+    }
+}</pre></td></tr></table></div></body></html>

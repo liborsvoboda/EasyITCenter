@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html><head><title>WebViewViewModel.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(147);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MenuBar/ViewModels/WebViewViewModel.cs" target="_top">ViewModels\WebViewViewModel.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MenuBar" target="_top">HelpProjects\WPF-MAIN\WPFprism\MenuBar\MenuBar\MenuBar.csproj</a> (MenuBar)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>;
+
+<b>using</b> <span class="i n">MenuBar</span>.<span class="i n">Contracts</span>.<span class="i n">Services</span>;
+
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Toolkit</span>.<span class="i n">Win32</span>.<span class="i n">UI</span>.<span class="i n">Controls</span>.<span class="i n">Interop</span>.<span class="i n">WinRT</span>;
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Toolkit</span>.<span class="i n">Wpf</span>.<span class="i n">UI</span>.<span class="i n">Controls</span>;
+
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Commands</span>;
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Mvvm</span>;
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Regions</span>;
+
+<b>namespace</b> <span class="i n">MenuBar</span>.<span class="i n">ViewModels</span>
+{
+    <b>public class</b> <a id="9186ac919cd75f6a" href="../R/9186ac919cd75f6a.html" target="n" data-glyph="0,0" class="t t">WebViewViewModel</a> : <span class="t t">BindableBase</span>, <span class="t t">INavigationAware</span>
+    {
+        <span class="c">// TODO WTS: Set the URI of the page to show by default</span>
+        <b>private const string</b> <a id="407aee363aec87f8" href="../R/407aee363aec87f8.html" target="n" data-glyph="10,1" class="i field">DefaultUrl</a> = <span class="s">&quot;https://docs.microsoft.com/windows/apps/&quot;</span>;
+        <b>private readonly</b> <a href="../Contracts/Services/IRightPaneService.cs.html#3c710b85eba866b0" class="t t">IRightPaneService</a> <a id="74127be67208dae3" href="../R/74127be67208dae3.html" target="n" data-glyph="46,1" class="i field">_rightPaneService</a>;
+
+        <b>private readonly</b> <a href="../Contracts/Services/ISystemService.cs.html#11add69f227c67a8" class="t t">ISystemService</a> <a id="174c8378f47844da" href="../R/174c8378f47844da.html" target="n" data-glyph="46,1" class="i field">_systemService</a>;
+
+        <b>private string</b> <a id="ac04bbe8e309a40b" href="../R/ac04bbe8e309a40b.html" target="n" data-glyph="46,1" class="i field">_source</a>;
+        <b>private bool</b> <a id="dd0d26646244e3e7" href="../R/dd0d26646244e3e7.html" target="n" data-glyph="46,1" class="i field">_isLoading</a> = <b>true</b>;
+        <b>private bool</b> <a id="323ab6944ed3392d" href="../R/323ab6944ed3392d.html" target="n" data-glyph="46,1" class="i field">_isShowingFailedMessage</a> = <b>false</b>;
+        <b>private</b> <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a> <a id="11117d6b821c1fc7" href="../R/11117d6b821c1fc7.html" target="n" data-glyph="46,1" class="i field">_isLoadingVisibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a>;
+        <b>private</b> <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a> <a id="b6583e9b1a13604a" href="../R/b6583e9b1a13604a.html" target="n" data-glyph="46,1" class="i field">_failedMesageVisibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a>;
+        <b>private</b> <span class="t t">ICommand</span> <a id="9eb2ff27be4fac49" href="../R/9eb2ff27be4fac49.html" target="n" data-glyph="46,1" class="i field">_refreshCommand</a>;
+        <b>private</b> <span class="t t">DelegateCommand</span> <a id="3457b3b7316fd09a" href="../R/3457b3b7316fd09a.html" target="n" data-glyph="46,1" class="i field">_browserBackCommand</a>;
+        <b>private</b> <span class="t t">DelegateCommand</span> <a id="e0d601cb544953f4" href="../R/e0d601cb544953f4.html" target="n" data-glyph="46,1" class="i field">_browserForwardCommand</a>;
+        <b>private</b> <span class="t t">ICommand</span> <a id="fb6f69dbd3a5084a" href="../R/fb6f69dbd3a5084a.html" target="n" data-glyph="46,1" class="i field">_openInBrowserCommand</a>;
+        <b>private</b> <span class="t t">WebView</span> <a id="22487968e1a80389" href="../R/22487968e1a80389.html" target="n" data-glyph="46,1" class="i field">_webView</a>;
+
+        <b>public string</b> <a id="b226e18b5be0d5b2" href="../R/b226e18b5be0d5b2.html" target="n" data-glyph="102,1" class="i property">Source</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#ac04bbe8e309a40b" class="i field">_source</a>; }
+            <b>set</b> { <span class="i method">SetProperty</span>(<b>ref</b> <a href="#ac04bbe8e309a40b" class="i field">_source</a>, <b>value</b>); }
+        }
+
+        <b>public bool</b> <a id="6466e6646e2ff27e" href="../R/6466e6646e2ff27e.html" target="n" data-glyph="102,1" class="i property">IsLoading</a>
+        {
+            <b>get</b> =&gt; <a href="#dd0d26646244e3e7" class="i field">_isLoading</a>;
+            <b>set</b>
+            {
+                <span class="i method">SetProperty</span>(<b>ref</b> <a href="#dd0d26646244e3e7" class="i field">_isLoading</a>, <b>value</b>);
+                <a href="#2d43f1639c95c48a" class="i property">IsLoadingVisibility</a> = <b>value</b> ? <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a> : <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a>;
+            }
+        }
+
+        <b>public bool</b> <a id="4848d2780be30270" href="../R/4848d2780be30270.html" target="n" data-glyph="102,1" class="i property">IsShowingFailedMessage</a>
+        {
+            <b>get</b> =&gt; <a href="#323ab6944ed3392d" class="i field">_isShowingFailedMessage</a>;
+            <b>set</b>
+            {
+                <span class="i method">SetProperty</span>(<b>ref</b> <a href="#323ab6944ed3392d" class="i field">_isShowingFailedMessage</a>, <b>value</b>);
+                <a href="#b25df7fafcca9151" class="i property">FailedMesageVisibility</a> = <b>value</b> ? <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a> : <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a>;
+            }
+        }
+
+        <b>public</b> <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a> <a id="2d43f1639c95c48a" href="../R/2d43f1639c95c48a.html" target="n" data-glyph="102,1" class="i property">IsLoadingVisibility</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#11117d6b821c1fc7" class="i field">_isLoadingVisibility</a>; }
+            <b>set</b> { <span class="i method">SetProperty</span>(<b>ref</b> <a href="#11117d6b821c1fc7" class="i field">_isLoadingVisibility</a>, <b>value</b>); }
+        }
+
+        <b>public</b> <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a> <a id="b25df7fafcca9151" href="../R/b25df7fafcca9151.html" target="n" data-glyph="102,1" class="i property">FailedMesageVisibility</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#b6583e9b1a13604a" class="i field">_failedMesageVisibility</a>; }
+            <b>set</b> { <span class="i method">SetProperty</span>(<b>ref</b> <a href="#b6583e9b1a13604a" class="i field">_failedMesageVisibility</a>, <b>value</b>); }
+        }
+
+        <b>public</b> <span class="t t">ICommand</span> <a id="35b37ef25f075ff9" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">RefreshCommand</a> =&gt; <a href="#9eb2ff27be4fac49" class="i field">_refreshCommand</a> ?? (<a href="#9eb2ff27be4fac49" class="i field">_refreshCommand</a> = <b>new</b> <span class="t constructor">DelegateCommand</span>(<a href="#7ca7f9d75bd93bbe" class="i method">OnRefresh</a>));
+
+        <b>public</b> <span class="t t">DelegateCommand</span> <a id="279c5e56e2a8b5c9" href="../R/279c5e56e2a8b5c9.html" target="n" data-glyph="102,1" class="i property">BrowserBackCommand</a> =&gt; <a href="#3457b3b7316fd09a" class="i field">_browserBackCommand</a> ?? (<a href="#3457b3b7316fd09a" class="i field">_browserBackCommand</a> = <b>new</b> <span class="t constructor">DelegateCommand</span>(() =&gt; <a href="#22487968e1a80389" class="i field">_webView</a>?.<span class="i method">GoBack</span>(), () =&gt; <a href="#22487968e1a80389" class="i field">_webView</a>?.<span class="i property">CanGoBack</span> ?? <b>false</b>));
+
+        <b>public</b> <span class="t t">DelegateCommand</span> <a id="195dc589ae750aa9" href="../R/195dc589ae750aa9.html" target="n" data-glyph="102,1" class="i property">BrowserForwardCommand</a> =&gt; <a href="#e0d601cb544953f4" class="i field">_browserForwardCommand</a> ?? (<a href="#e0d601cb544953f4" class="i field">_browserForwardCommand</a> = <b>new</b> <span class="t constructor">DelegateCommand</span>(() =&gt; <a href="#22487968e1a80389" class="i field">_webView</a>?.<span class="i method">GoForward</span>(), () =&gt; <a href="#22487968e1a80389" class="i field">_webView</a>?.<span class="i property">CanGoForward</span> ?? <b>false</b>));
+
+        <b>public</b> <span class="t t">ICommand</span> <a id="8456f3ca2b43beea" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">OpenInBrowserCommand</a> =&gt; <a href="#fb6f69dbd3a5084a" class="i field">_openInBrowserCommand</a> ?? (<a href="#fb6f69dbd3a5084a" class="i field">_openInBrowserCommand</a> = <b>new</b> <span class="t constructor">DelegateCommand</span>(<a href="#4261442a1a928ac3" class="i method">OnOpenInBrowser</a>));
+
+        <b>public</b> <a id="093862667b0ee644" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">WebViewViewModel</a>(<a href="../Contracts/Services/ISystemService.cs.html#11add69f227c67a8" class="t t">ISystemService</a> <span id="r0 rd" class="r0 r">systemService</span>, <a href="../Contracts/Services/IRightPaneService.cs.html#3c710b85eba866b0" class="t t">IRightPaneService</a> <span id="r1 rd" class="r1 r">rightPaneService</span>)
+        {
+            <a href="#174c8378f47844da" class="i field">_systemService</a> = <span class="r0 r">systemService</span>;
+            <a href="#b226e18b5be0d5b2" class="i property">Source</a> = <a href="#407aee363aec87f8" class="i field">DefaultUrl</a>;
+            <a href="#279c5e56e2a8b5c9" class="i property">BrowserBackCommand</a>.<span class="i method">ObservesProperty</span>(() =&gt; <a href="#b226e18b5be0d5b2" class="i property">Source</a>);
+            <a href="#195dc589ae750aa9" class="i property">BrowserForwardCommand</a>.<span class="i method">ObservesProperty</span>(() =&gt; <a href="#b226e18b5be0d5b2" class="i property">Source</a>);
+            <a href="#74127be67208dae3" class="i field">_rightPaneService</a> = <span class="r1 r">rightPaneService</span>;
+        }
+
+        <b>public void</b> <a id="d5bfaf091d934b5a" href="../R/d5bfaf091d934b5a.html" target="n" data-glyph="72,1" class="i method">Initialize</a>(<span class="t t">WebView</span> <span id="r2 rd" class="r2 r">webView</span>)
+        {
+            <a href="#22487968e1a80389" class="i field">_webView</a> = <span class="r2 r">webView</span>;
+        }
+
+        <b>public void</b> <a id="bf4f30cf3d251fa0" href="../R/bf4f30cf3d251fa0.html" target="n" data-glyph="72,1" class="i method">OnNavigationCompleted</a>(<span class="t t">WebViewControlNavigationCompletedEventArgs</span> <span id="r3 rd" class="r3 r">e</span>)
+        {
+            <a href="#6466e6646e2ff27e" class="i property">IsLoading</a> = <b>false</b>;
+            <b>if</b> (<span class="r3 r">e</span> != <b>null</b> &amp;&amp; !<span class="r3 r">e</span>.<span class="i property">IsSuccess</span>)
+            {
+                <span class="c">// Use `args.WebErrorStatus` to vary the displayed message based on the error reason</span>
+                <a href="#4848d2780be30270" class="i property">IsShowingFailedMessage</a> = <b>true</b>;
+            }
+        }
+
+        <b>private void</b> <a id="7ca7f9d75bd93bbe" href="../R/7ca7f9d75bd93bbe.html" target="n" data-glyph="76,1" class="i method">OnRefresh</a>()
+        {
+            <a href="#4848d2780be30270" class="i property">IsShowingFailedMessage</a> = <b>false</b>;
+            <a href="#6466e6646e2ff27e" class="i property">IsLoading</a> = <b>true</b>;
+            <a href="#22487968e1a80389" class="i field">_webView</a>?.<span class="i method">Refresh</span>();
+        }
+
+        <b>private void</b> <a id="4261442a1a928ac3" href="../R/4261442a1a928ac3.html" target="n" data-glyph="76,1" class="i method">OnOpenInBrowser</a>()
+            =&gt; <a href="#174c8378f47844da" class="i field">_systemService</a>.<a href="../Contracts/Services/ISystemService.cs.html#3310c13c0b83d8f5" class="i method">OpenInWebBrowser</a>(<a href="#b226e18b5be0d5b2" class="i property">Source</a>);
+
+        <b>public void</b> <a id="ff017ee3b756bb1d" href="../R/ff017ee3b756bb1d.html" target="n" data-glyph="72,1" class="i method">OnNavigatedTo</a>(<span class="t t">NavigationContext</span> <span id="r4 rd" class="r4 r">navigationContext</span>)
+        {
+            <a href="#74127be67208dae3" class="i field">_rightPaneService</a>.<a href="../Contracts/Services/IRightPaneService.cs.html#25b0b834fc7c8c04" class="i">PaneOpened</a> += <a href="#5b9e9a00eeb0d8db" class="i method">OnRightPaneOpened</a>;
+            <a href="#74127be67208dae3" class="i field">_rightPaneService</a>.<a href="../Contracts/Services/IRightPaneService.cs.html#5af358637d5ee78d" class="i">PaneClosed</a> += <a href="#ea183063207e33a1" class="i method">OnRightPaneClosed</a>;
+        }
+
+        <b>public void</b> <a id="6856e4972e8376c9" href="../R/6856e4972e8376c9.html" target="n" data-glyph="72,1" class="i method">OnNavigatedFrom</a>(<span class="t t">NavigationContext</span> <span id="r5 rd" class="r5 r">navigationContext</span>)
+        {
+            <a href="#74127be67208dae3" class="i field">_rightPaneService</a>.<a href="../Contracts/Services/IRightPaneService.cs.html#25b0b834fc7c8c04" class="i">PaneOpened</a> -= <a href="#5b9e9a00eeb0d8db" class="i method">OnRightPaneOpened</a>;
+            <a href="#74127be67208dae3" class="i field">_rightPaneService</a>.<a href="../Contracts/Services/IRightPaneService.cs.html#5af358637d5ee78d" class="i">PaneClosed</a> -= <a href="#ea183063207e33a1" class="i method">OnRightPaneClosed</a>;
+        }
+
+        <b>public bool</b> <a id="594a6fd3d1af331a" href="../R/594a6fd3d1af331a.html" target="n" data-glyph="72,1" class="i method">IsNavigationTarget</a>(<span class="t t">NavigationContext</span> <span id="r6 rd" class="r6 r">navigationContext</span>)
+        {
+            <b>return</b> <b>true</b>;
+        }
+
+        <b>private void</b> <a id="5b9e9a00eeb0d8db" href="../R/5b9e9a00eeb0d8db.html" target="n" data-glyph="76,1" class="i method">OnRightPaneOpened</a>(<b>object</b> <span id="r7 rd" class="r7 r">sender</span>, <span class="i n">System</span>.<a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r8 rd" class="r8 r">e</span>)
+        {
+            <span class="c">// WebView control is always rendered on top</span>
+            <span class="c">// We need to adapt the WebView to be able to show the right pane</span>
+            <b>if</b> (<span class="r7 r">sender</span> <b>is</b> <a href="/MahApps.Metro/A.html#11f06b768f4a5f0a" class="t t">SplitView</a> <span id="r9 rd" class="r9 r">splitView</span>)
+            {
+                <a href="#22487968e1a80389" class="i field">_webView</a>.<a href="@0@PresentationFramework/A.html#8aedc94268115177" class="i property">Margin</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#7d5226ec44f0e6f6" class="t constructor">Thickness</a>(0, 0, <span class="r9 r">splitView</span>.<a href="/MahApps.Metro/A.html#9f457e177313eaad" class="i property">OpenPaneLength</a>, 0);
+            }
+        }
+
+        <b>private void</b> <a id="ea183063207e33a1" href="../R/ea183063207e33a1.html" target="n" data-glyph="76,1" class="i method">OnRightPaneClosed</a>(<b>object</b> <span id="r10 rd" class="r10 r">sender</span>, <span class="i n">System</span>.<a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r11 rd" class="r11 r">e</span>)
+         =&gt; <a href="#22487968e1a80389" class="i field">_webView</a>.<a href="@0@PresentationFramework/A.html#8aedc94268115177" class="i property">Margin</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#f24f92e6dee837d3" class="t constructor">Thickness</a>(0);
+    }
+}
+</pre></td></tr></table></div></body></html>

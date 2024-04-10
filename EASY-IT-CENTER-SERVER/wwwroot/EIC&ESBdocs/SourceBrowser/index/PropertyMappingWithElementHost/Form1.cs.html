@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html><head><title>Form1.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(154);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#PropertyMappingWithElementHost/Form1.cs" target="_top">Form1.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#PropertyMappingWithElementHost" target="_top">HelpProjects\WPF-MORE\Migration and Interoperability\PropertyMappingWithElementHost\PropertyMappingWithElementHost.csproj</a> (PropertyMappingWithElementHost)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Forms</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Forms</span>.<span class="i n">Integration</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+<b>using</b> <span class="t">Button</span> = <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>;
+<b>using</b> <span class="t">Color</span> = <span class="i n">System</span>.<span class="i n">Drawing</span>.<span class="t t">Color</span>;
+
+<b>namespace</b> <span class="i n">PropertyMappingWithElementHost</span>
+{
+    <b>public</b> <a href="P/112a7871785b13db.html" target="s" class="k">partial</a> <b>class</b> <a id="112a7871785b13db" href="R/112a7871785b13db.html" target="n" data-glyph="0,0" class="t t">Form1</a> : <a href="@0@System.Windows.Forms/A.html#71d66965280a3f7b" class="t t">Form</a>
+    {
+        <b>private</b> <a href="@0@WindowsFormsIntegration/A.html#d877d3ca5be91415" class="t t">ElementHost</a> <a id="9baa32b1ef570669" href="R/9baa32b1ef570669.html" target="n" data-glyph="46,1" class="i field">_elemHost</a>;
+
+        <b>public</b> <a id="1ad2cf44e025ad9a" href="R/1ad2cf44e025ad9a.html" target="n" data-glyph="72,1" class="t constructor">Form1</a>()
+        {
+            <a href="Form1.designer.cs.html#f7aa70a84fb65767" class="i method">InitializeComponent</a>();
+        }
+
+        <b>private void</b> <a id="08f85787d0173cd6" href="R/08f85787d0173cd6.html" target="n" data-glyph="76,1" class="i method">Form1_Load</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <span class="c">// Create the ElementHost control.</span>
+            <a href="#9baa32b1ef570669" class="i field">_elemHost</a> = <b>new</b> <a href="@0@WindowsFormsIntegration/A.html#687874c4d1f13ad5" class="t constructor">ElementHost</a> {<a href="@0@System.Windows.Forms/A.html#889590b3806a8f9e" class="i property">Dock</a> = <a href="@0@System.Windows.Forms/A.html#92f33295f248c80d" class="t t">DockStyle</a>.<a href="@0@System.Windows.Forms/A.html#7dd5b6f88a4fb191" class="i field">Fill</a>};
+            <a href="@0@System.Windows.Forms/A.html#7c654bc4a957be35" class="i property">Controls</a>.<a href="@0@System.Windows.Forms/A.html#a984fc45e2486e83" class="i method">Add</a>(<a href="#9baa32b1ef570669" class="i field">_elemHost</a>);
+
+            <span class="c">// Create a Windows Presentation Foundation Button element </span>
+            <span class="c">// and assign it as the ElementHost control&#39;s child. </span>
+            <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="k">var</a> <span id="r2 rd" class="r2 r">wpfButton</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#9b9343f1fa48f518" class="t constructor">Button</a> {<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <span class="s">&quot;Windows Presentation Foundation Button&quot;</span>};
+            <a href="#9baa32b1ef570669" class="i field">_elemHost</a>.<a href="@0@WindowsFormsIntegration/A.html#acdb0aee2f23a3ec" class="i property">Child</a> = <span class="r2 r">wpfButton</span>;
+
+            <span class="c">// Map the Margin property.</span>
+            <a href="#7277be798c058813" class="i method">AddMarginMapping</a>();
+
+            <span class="c">// Remove the mapping for the Cursor property.</span>
+            <a href="#21e1461b15393005" class="i method">RemoveCursorMapping</a>();
+
+            <span class="c">// Add a mapping for the Region property.</span>
+            <a href="#d5392d1262195825" class="i method">AddRegionMapping</a>();
+
+            <span class="c">// Add another mapping for the BackColor property.</span>
+            <a href="#7b48a8fbea609cc0" class="i method">ExtendBackColorMapping</a>();
+
+            <span class="c">// Cause the OnMarginChange delegate to be called.</span>
+            <a href="#9baa32b1ef570669" class="i field">_elemHost</a>.<a href="@0@System.Windows.Forms/A.html#52103f03b3f0ee75" class="i property">Margin</a> = <b>new</b> <a href="@0@System.Windows.Forms/A.html#da5589f847a86c22" class="t constructor">Padding</a>(23, 23, 23, 23);
+
+            <span class="c">// Cause the OnRegionChange delegate to be called.</span>
+            <a href="#9baa32b1ef570669" class="i field">_elemHost</a>.<a href="@0@System.Windows.Forms/A.html#a8da7d0e5925c37e" class="i property">Region</a> = <b>new</b> <span class="t constructor">Region</span>();
+
+            <span class="c">// Cause the OnBackColorChange delegate to be called.</span>
+            <a href="#9baa32b1ef570669" class="i field">_elemHost</a>.<a href="@0@System.Windows.Forms/A.html#5f9aebc2dd03f413" class="i property">BackColor</a> = <span class="t t">Color</span>.<span class="i property">AliceBlue</span>;
+        }
+
+        <span class="c">// The AddMarginMapping method adds a new property mapping</span>
+        <span class="c">// for the Margin property.</span>
+        <b>private void</b> <a id="7277be798c058813" href="R/7277be798c058813.html" target="n" data-glyph="76,1" class="i method">AddMarginMapping</a>()
+        {
+            <a href="#9baa32b1ef570669" class="i field">_elemHost</a>.<a href="@0@WindowsFormsIntegration/A.html#1d7a698fcf76de71" class="i property">PropertyMap</a>.<a href="@0@WindowsFormsIntegration/A.html#d8ab028d54f565b7" class="i method">Add</a>(
+                <span class="s">&quot;Margin&quot;</span>,
+                <a href="#3a278f09c9002e80" class="i method">OnMarginChange</a>);
+        }
+
+        <span class="c">// The OnMarginChange method implements the mapping </span>
+        <span class="c">// from the Windows Forms Margin property to the</span>
+        <span class="c">// Windows Presentation Foundation Margin property.</span>
+        <span class="c">//</span>
+        <span class="c">// The provided Padding value is used to construct </span>
+        <span class="c">// a Thickness value for the hosted element&#39;s Margin</span>
+        <span class="c">// property.</span>
+        <b>private void</b> <a id="3a278f09c9002e80" href="R/3a278f09c9002e80.html" target="n" data-glyph="76,1" class="i method">OnMarginChange</a>(<b>object</b> <span id="r3 rd" class="r3 r">h</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r4 rd" class="r4 r">propertyName</span>, <b>object</b> <span id="r5 rd" class="r5 r">value</span>)
+        {
+            <a href="@0@WindowsFormsIntegration/A.html#d877d3ca5be91415" class="k">var</a> <span id="r6 rd" class="r6 r">host</span> = <span class="r3 r">h</span> <b>as</b> <a href="@0@WindowsFormsIntegration/A.html#d877d3ca5be91415" class="t t">ElementHost</a>;
+            <a href="@0@System.Windows.Forms/A.html#6c9dc153b2c496ae" class="k">var</a> <span id="r7 rd" class="r7 r">p</span> = (<a href="@0@System.Windows.Forms/A.html#6c9dc153b2c496ae" class="t t">Padding</a>) <span class="r5 r">value</span>;
+            <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="k">var</a> <span id="r8 rd" class="r8 r">wpfButton</span> =
+                <span class="r6 r">host</span>.<a href="@0@WindowsFormsIntegration/A.html#acdb0aee2f23a3ec" class="i property">Child</a> <b>as</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>;
+
+            <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="k">var</a> <span id="r9 rd" class="r9 r">t</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#7d5226ec44f0e6f6" class="t constructor">Thickness</a>(<span class="r7 r">p</span>.<a href="@0@System.Windows.Forms/A.html#0b30d5246aa06446" class="i property">Left</a>, <span class="r7 r">p</span>.<a href="@0@System.Windows.Forms/A.html#057659f069e3cb6d" class="i property">Top</a>, <span class="r7 r">p</span>.<a href="@0@System.Windows.Forms/A.html#664347fd0a6cef15" class="i property">Right</a>, <span class="r7 r">p</span>.<a href="@0@System.Windows.Forms/A.html#9adf23176184fc20" class="i property">Bottom</a>);
+
+            <span class="r8 r">wpfButton</span>.<a href="@0@PresentationFramework/A.html#8aedc94268115177" class="i property">Margin</a> = <span class="r9 r">t</span>;
+        }
+
+        <span class="c">// The RemoveCursorMapping method deletes the default</span>
+        <span class="c">// mapping for the Cursor property.</span>
+        <b>private void</b> <a id="21e1461b15393005" href="R/21e1461b15393005.html" target="n" data-glyph="76,1" class="i method">RemoveCursorMapping</a>()
+        {
+            <a href="#9baa32b1ef570669" class="i field">_elemHost</a>.<a href="@0@WindowsFormsIntegration/A.html#1d7a698fcf76de71" class="i property">PropertyMap</a>.<a href="@0@WindowsFormsIntegration/A.html#b4d833c1f8013385" class="i method">Remove</a>(<span class="s">&quot;Cursor&quot;</span>);
+        }
+
+        <span class="c">// The AddRegionMapping method assigns a custom </span>
+        <span class="c">// mapping for the Region property.</span>
+        <b>private void</b> <a id="d5392d1262195825" href="R/d5392d1262195825.html" target="n" data-glyph="76,1" class="i method">AddRegionMapping</a>()
+        {
+            <a href="#9baa32b1ef570669" class="i field">_elemHost</a>.<a href="@0@WindowsFormsIntegration/A.html#1d7a698fcf76de71" class="i property">PropertyMap</a>.<a href="@0@WindowsFormsIntegration/A.html#d8ab028d54f565b7" class="i method">Add</a>(
+                <span class="s">&quot;Region&quot;</span>,
+                <a href="#9ee0ef2eb56e2898" class="i method">OnRegionChange</a>);
+        }
+
+        <span class="c">// The OnRegionChange method assigns an EllipseGeometry to</span>
+        <span class="c">// the hosted element&#39;s Clip property.</span>
+        <b>private void</b> <a id="9ee0ef2eb56e2898" href="R/9ee0ef2eb56e2898.html" target="n" data-glyph="76,1" class="i method">OnRegionChange</a>(
+            <b>object</b> <span id="r10 rd" class="r10 r">h</span>,
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r11 rd" class="r11 r">propertyName</span>,
+            <b>object</b> <span id="r12 rd" class="r12 r">value</span>)
+        {
+            <a href="@0@WindowsFormsIntegration/A.html#d877d3ca5be91415" class="k">var</a> <span id="r13 rd" class="r13 r">host</span> = <span class="r10 r">h</span> <b>as</b> <a href="@0@WindowsFormsIntegration/A.html#d877d3ca5be91415" class="t t">ElementHost</a>;
+            <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="k">var</a> <span id="r14 rd" class="r14 r">wpfButton</span> =
+                <span class="r13 r">host</span>.<a href="@0@WindowsFormsIntegration/A.html#acdb0aee2f23a3ec" class="i property">Child</a> <b>as</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>;
+
+            <span class="r14 r">wpfButton</span>.<a href="@0@PresentationCore/A.html#3904383ef1cd7b75" class="i property">Clip</a> = <b>new</b> <a href="@0@PresentationCore/A.html#f94d66e799632a0c" class="t constructor">EllipseGeometry</a>(<b>new</b> <a href="@0@WindowsBase/A.html#299a3fd614724168" class="t constructor">Rect</a>(
+                0,
+                0,
+                <span class="r14 r">wpfButton</span>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>,
+                <span class="r14 r">wpfButton</span>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>));
+        }
+
+        <span class="c">// The Form1_Resize method handles the form&#39;s Resize event.</span>
+        <span class="c">// It calls the OnRegionChange method explicitly to </span>
+        <span class="c">// assign a new clipping geometry to the hosted element.</span>
+        <b>private void</b> <a id="a5adc65f8103398c" href="R/a5adc65f8103398c.html" target="n" data-glyph="76,1" class="i method">Form1_Resize</a>(<b>object</b> <span id="r15 rd" class="r15 r">sender</span>, <a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r16 rd" class="r16 r">e</span>)
+        {
+            <a href="#9ee0ef2eb56e2898" class="i method">OnRegionChange</a>(<a href="#9baa32b1ef570669" class="i field">_elemHost</a>, <span class="s">&quot;Region&quot;</span>, <b>null</b>);
+        }
+
+        <span class="c">// The ExtendBackColorMapping method adds a property</span>
+        <span class="c">// translator if a mapping already exists.</span>
+        <b>private void</b> <a id="7b48a8fbea609cc0" href="R/7b48a8fbea609cc0.html" target="n" data-glyph="76,1" class="i method">ExtendBackColorMapping</a>()
+        {
+            <b>if</b> (<a href="#9baa32b1ef570669" class="i field">_elemHost</a>.<a href="@0@WindowsFormsIntegration/A.html#1d7a698fcf76de71" class="i property">PropertyMap</a><a href="@0@WindowsFormsIntegration/A.html#d92246858becf14e">[</a><span class="s">&quot;BackColor&quot;</span>] != <b>null</b>)
+            {
+                <a href="#9baa32b1ef570669" class="i field">_elemHost</a>.<a href="@0@WindowsFormsIntegration/A.html#1d7a698fcf76de71" class="i property">PropertyMap</a><a href="@0@WindowsFormsIntegration/A.html#d92246858becf14e">[</a><span class="s">&quot;BackColor&quot;</span>] +=
+                    <a href="#a2bc6a67965e5a7c" class="i method">OnBackColorChange</a>;
+            }
+        }
+
+        <span class="c">// The OnBackColorChange method assigns a specific image </span>
+        <span class="c">// to the hosted element&#39;s Background property.</span>
+        <b>private void</b> <a id="a2bc6a67965e5a7c" href="R/a2bc6a67965e5a7c.html" target="n" data-glyph="76,1" class="i method">OnBackColorChange</a>(<b>object</b> <span id="r17 rd" class="r17 r">h</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r18 rd" class="r18 r">propertyName</span>, <b>object</b> <span id="r19 rd" class="r19 r">value</span>)
+        {
+            <a href="@0@WindowsFormsIntegration/A.html#d877d3ca5be91415" class="k">var</a> <span id="r20 rd" class="r20 r">host</span> = <span class="r17 r">h</span> <b>as</b> <a href="@0@WindowsFormsIntegration/A.html#d877d3ca5be91415" class="t t">ElementHost</a>;
+            <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="k">var</a> <span id="r21 rd" class="r21 r">wpfButton</span> =
+                <span class="r20 r">host</span>.<a href="@0@WindowsFormsIntegration/A.html#acdb0aee2f23a3ec" class="i property">Child</a> <b>as</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>;
+
+            <a href="@0@PresentationCore/A.html#fcbdc6923f8ad08d" class="k">var</a> <span id="r22 rd" class="r22 r">b</span> = <b>new</b> <a href="@0@PresentationCore/A.html#798373f0b48a2c9a" class="t constructor">ImageBrush</a>(<b>new</b> <a href="@0@PresentationCore/A.html#4eaf27072e4be9ed" class="t constructor">BitmapImage</a>(
+                <b>new</b> <a href="@1@System.Runtime/A.html#9e1bb2fef0d1159b" class="t constructor">Uri</a>(<span class="s">@&quot;file:///C:\WINDOWS\Santa Fe Stucco.bmp&quot;</span>)));
+            <span class="r21 r">wpfButton</span>.<a href="@0@PresentationFramework/A.html#4e6ce8c1fbfefae7" class="i property">Background</a> = <span class="r22 r">b</span>;
+        }
+    }
+}
+
+<span class="c">// &lt;/snippet1&gt;</span></pre></td></tr></table></div></body></html>

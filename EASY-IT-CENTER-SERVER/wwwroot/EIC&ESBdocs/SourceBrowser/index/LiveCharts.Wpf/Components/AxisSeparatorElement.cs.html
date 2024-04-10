@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html><head><title>AxisSeparatorElement.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(259);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts.Wpf/Components/AxisSeparatorElement.cs" target="_top">Components\AxisSeparatorElement.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts.Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\WpfView\WpfView.csproj</a> (LiveCharts.Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Charts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Charts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Dtos</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<span class="i n">Charts</span>.<span class="i n">Base</span>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<span class="i n">Components</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Charts</span>.<a href="/LiveCharts/A.html#bac08b0312e00176" class="t t">ISeparatorElementView</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <b>public class</b> <a id="311d39ce4ed77818" href="../R/311d39ce4ed77818.html" target="n" data-glyph="0,0" class="t t">AxisSeparatorElement</a> : <a href="/LiveCharts/A.html#bac08b0312e00176" class="t t">ISeparatorElementView</a>
+    {
+        <b>private readonly</b> <a href="/LiveCharts/A.html#e167ed644677f32c" class="t t">SeparatorElementCore</a> <a id="ff1e5cec6b0d5379" href="../R/ff1e5cec6b0d5379.html" target="n" data-glyph="46,1" class="i field">_model</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#311d39ce4ed77818" class="t t">AxisSeparatorElement</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> class.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">model</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The model.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public</b> <a id="95d18cc41ae5e02e" href="../R/95d18cc41ae5e02e.html" target="n" data-glyph="72,1" class="t constructor">AxisSeparatorElement</a>(<a href="/LiveCharts/A.html#e167ed644677f32c" class="t t">SeparatorElementCore</a> <span id="r0 rd" class="r0 r">model</span>)
+        {
+            <a href="#ff1e5cec6b0d5379" class="i field">_model</a> = <span class="r0 r">model</span>;
+        }
+
+        <b>internal</b> <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a> <a id="c98e6c42e53b1023" href="../R/c98e6c42e53b1023.html" target="n" data-glyph="104,1" class="i property">TextBlock</a> { <b>get</b>; <b>set</b>; }
+        <b>internal</b> <a href="@0@PresentationFramework/A.html#3c857158cd448b5a" class="t t">Line</a> <a id="0eaa75ea9c644d67" href="../R/0eaa75ea9c644d67.html" target="n" data-glyph="104,1" class="i property">Line</a> { <b>get</b>; <b>set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the label model.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The label model.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public</b> <a href="/LiveCharts/A.html#fa263aeddc9fa192" class="t t">LabelEvaluation</a> <a id="18f9d896ad3de278" href="../R/18f9d896ad3de278.html" target="n" data-glyph="102,1" class="i property">LabelModel</a> { <b>get</b>; <b>private set</b>; }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the model.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The model.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public</b> <a href="/LiveCharts/A.html#e167ed644677f32c" class="t t">SeparatorElementCore</a> <a id="0ef3d694909688d9" href="../R/0ef3d694909688d9.html" target="n" data-glyph="102,1" class="i property">Model</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#ff1e5cec6b0d5379" class="i field">_model</a>; }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Updates the label.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">text</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The text.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">axis</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The axis.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r3 r">source</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The source.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="/LiveCharts/A.html#fa263aeddc9fa192" class="t t">LabelEvaluation</a> <a id="3381bee60edcdb62" href="../R/3381bee60edcdb62.html" target="n" data-glyph="72,1" class="i method">UpdateLabel</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r1 rd" class="r1 r">text</span>, <a href="/LiveCharts/A.html#cbae04475ce2fa76" class="t t">AxisCore</a> <span id="r2 rd" class="r2 r">axis</span>, <a href="/LiveCharts/A.html#294f3d11a155a9e1" class="t t">AxisOrientation</a> <span id="r3 rd" class="r3 r">source</span>)
+        {
+            <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationFramework/A.html#e77c881b0d6f7e9e" class="i property">Text</a> = <span class="r1 r">text</span>;
+
+            <a href="@0@PresentationCore/A.html#6e6924d547946932" class="k">var</a> <span id="r4 rd" class="r4 r">formattedText</span> = <b>new</b> <a href="@0@PresentationCore/A.html#48aeb46bad901d4c" class="t constructor">FormattedText</a>(
+                  <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationFramework/A.html#e77c881b0d6f7e9e" class="i property">Text</a>,
+                  <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#ff8fd0bdccb4794e" class="i property">CurrentUICulture</a>,
+                  <a href="@0@PresentationCore/A.html#3f1d3dfbcfcc8977" class="t t">FlowDirection</a>.<a href="@0@PresentationCore/A.html#47c46056d47e6cd5" class="i field">LeftToRight</a>,
+                  <b>new</b> <a href="@0@PresentationCore/A.html#1683bc48bb73b417" class="t constructor">Typeface</a>(<a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationFramework/A.html#195ade7e7f16a62e" class="i property">FontFamily</a>, <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationFramework/A.html#9aa358b0955a1e76" class="i property">FontStyle</a>, <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationFramework/A.html#a6ac992b843eb331" class="i property">FontWeight</a>, <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationFramework/A.html#0a99f6ca3f88c8f6" class="i property">FontStretch</a>),
+                  <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationFramework/A.html#606ef85043a0cffb" class="i property">FontSize</a>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#4c63c441ae36a080" class="i property">Black</a>);
+
+            <a href="/LiveCharts/A.html#fa263aeddc9fa192" class="k">var</a> <span id="r5 rd" class="r5 r">transform</span> = <b>new</b> <a href="/LiveCharts/A.html#1c74740d95cdd92b" class="t constructor">LabelEvaluation</a>(<span class="r2 r">axis</span>.<a href="/LiveCharts/A.html#46d6d919d1a17160" class="i property">View</a>.<a href="/LiveCharts/A.html#4d1af05d0890c7bc" class="i property">LabelsRotation</a>,
+                <span class="r4 r">formattedText</span>.<a href="@0@PresentationCore/A.html#a693c997d8cf2999" class="i property">Width</a>, <span class="r4 r">formattedText</span>.<a href="@0@PresentationCore/A.html#36bb27badeb1c8bd" class="i property">Height</a>, <span class="r2 r">axis</span>, <span class="r3 r">source</span>);
+
+            <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationCore/A.html#291370cc1b2ddda6" class="i property">RenderTransform</a> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#36d8f3b3bd14bad6" class="i method">Abs</a>(<span class="r5 r">transform</span>.<a href="/LiveCharts/A.html#8413d7d588ab1ec4" class="i property">LabelAngle</a>) &gt; 1
+                ? <b>new</b> <a href="@0@PresentationCore/A.html#88c1ebb3eb7f41fb" class="t constructor">RotateTransform</a>(<span class="r5 r">transform</span>.<a href="/LiveCharts/A.html#8413d7d588ab1ec4" class="i property">LabelAngle</a>)
+                : <b>null</b>;
+
+            <a href="#18f9d896ad3de278" class="i property">LabelModel</a> = <span class="r5 r">transform</span>;
+
+            <b>return</b> <span class="r5 r">transform</span>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Clears the specified chart.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r6 r">chart</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The chart.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="8daefff807186ff8" href="../R/8daefff807186ff8.html" target="n" data-glyph="72,1" class="i method">Clear</a>(<a href="/LiveCharts/A.html#b35c1761a68712fe" class="t t">IChartView</a> <span id="r6 rd" class="r6 r">chart</span>)
+        {
+            <span class="r6 r">chart</span>.<a href="/LiveCharts/A.html#51b61b270e7f84b1" class="i method">RemoveFromView</a>(<a href="#c98e6c42e53b1023" class="i property">TextBlock</a>);
+            <span class="r6 r">chart</span>.<a href="/LiveCharts/A.html#51b61b270e7f84b1" class="i method">RemoveFromView</a>(<a href="#0eaa75ea9c644d67" class="i property">Line</a>);
+            <a href="#c98e6c42e53b1023" class="i property">TextBlock</a> = <b>null</b>;
+            <a href="#0eaa75ea9c644d67" class="i property">Line</a> = <b>null</b>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Places the specified chart.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">chart</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The chart.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">axis</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The axis.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">direction</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The direction.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r10 r">axisIndex</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Index of the axis.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r11 r">toLabel</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">To label.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r12 r">toLine</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">To line.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r13 r">tab</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The tab.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="34f460ed7ecf7668" href="../R/34f460ed7ecf7668.html" target="n" data-glyph="72,1" class="i method">Place</a>(<a href="/LiveCharts/A.html#2c3f1a2f79f08d10" class="t t">ChartCore</a> <span id="r7 rd" class="r7 r">chart</span>, <a href="/LiveCharts/A.html#cbae04475ce2fa76" class="t t">AxisCore</a> <span id="r8 rd" class="r8 r">axis</span>, <a href="/LiveCharts/A.html#294f3d11a155a9e1" class="t t">AxisOrientation</a> <span id="r9 rd" class="r9 r">direction</span>, <b>int</b> <span id="r10 rd" class="r10 r">axisIndex</span>, 
+            <b>double</b> <span id="r11 rd" class="r11 r">toLabel</span>, <b>double</b> <span id="r12 rd" class="r12 r">toLine</span>, <b>double</b> <span id="r13 rd" class="r13 r">tab</span>)
+        {
+            <b>if</b> (<span class="r9 r">direction</span> == <a href="/LiveCharts/A.html#294f3d11a155a9e1" class="t t">AxisOrientation</a>.<a href="/LiveCharts/A.html#2677ed589f02cb28" class="i field">Y</a>)
+            {
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationFramework/A.html#dad9180ff5a79ae8" class="i property">X1</a> = <span class="r7 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a>;
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationFramework/A.html#bebb6d599c6db0f4" class="i property">X2</a> = <span class="r7 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a> + <span class="r7 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a>;
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationFramework/A.html#17da3fc2cd35e82c" class="i property">Y1</a> = <span class="r12 r">toLine</span>;
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationFramework/A.html#f71f27921c637fb2" class="i property">Y2</a> = <span class="r12 r">toLine</span>;
+
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="#c98e6c42e53b1023" class="i property">TextBlock</a>, <span class="r13 r">tab</span>);
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="#c98e6c42e53b1023" class="i property">TextBlock</a>, <span class="r11 r">toLabel</span>);
+            }
+            <b>else</b>
+            {
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationFramework/A.html#dad9180ff5a79ae8" class="i property">X1</a> = <span class="r12 r">toLine</span>;
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationFramework/A.html#bebb6d599c6db0f4" class="i property">X2</a> = <span class="r12 r">toLine</span>;
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationFramework/A.html#17da3fc2cd35e82c" class="i property">Y1</a> = <span class="r7 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a>;
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationFramework/A.html#f71f27921c637fb2" class="i property">Y2</a> = <span class="r7 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a> + <span class="r7 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>;
+
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="#c98e6c42e53b1023" class="i property">TextBlock</a>, <span class="r11 r">toLabel</span>);
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="#c98e6c42e53b1023" class="i property">TextBlock</a>, <span class="r13 r">tab</span>);
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Removes the specified chart.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r14 r">chart</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The chart.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="8d744fb5183e2091" href="../R/8d744fb5183e2091.html" target="n" data-glyph="72,1" class="i method">Remove</a>(<a href="/LiveCharts/A.html#2c3f1a2f79f08d10" class="t t">ChartCore</a> <span id="r14 rd" class="r14 r">chart</span>)
+        {
+            <span class="r14 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#51b61b270e7f84b1" class="i method">RemoveFromView</a>(<a href="#c98e6c42e53b1023" class="i property">TextBlock</a>);
+            <span class="r14 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#51b61b270e7f84b1" class="i method">RemoveFromView</a>(<a href="#0eaa75ea9c644d67" class="i property">Line</a>);
+            <a href="#c98e6c42e53b1023" class="i property">TextBlock</a> = <b>null</b>;
+            <a href="#0eaa75ea9c644d67" class="i property">Line</a> = <b>null</b>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Moves the specified chart.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r15 r">chart</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The chart.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r16 r">axis</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The axis.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r17 r">direction</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The direction.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r18 r">axisIndex</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Index of the axis.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r19 r">toLabel</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">To label.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r20 r">toLine</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">To line.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r21 r">tab</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The tab.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="7afe8948c0aedad2" href="../R/7afe8948c0aedad2.html" target="n" data-glyph="72,1" class="i method">Move</a>(<a href="/LiveCharts/A.html#2c3f1a2f79f08d10" class="t t">ChartCore</a> <span id="r15 rd" class="r15 r">chart</span>, <a href="/LiveCharts/A.html#cbae04475ce2fa76" class="t t">AxisCore</a> <span id="r16 rd" class="r16 r">axis</span>, <a href="/LiveCharts/A.html#294f3d11a155a9e1" class="t t">AxisOrientation</a> <span id="r17 rd" class="r17 r">direction</span>, <b>int</b> <span id="r18 rd" class="r18 r">axisIndex</span>, <b>double</b> <span id="r19 rd" class="r19 r">toLabel</span>, <b>double</b> <span id="r20 rd" class="r20 r">toLine</span>, <b>double</b> <span id="r21 rd" class="r21 r">tab</span>)
+        {
+            <b>if</b> (<span class="r17 r">direction</span> == <a href="/LiveCharts/A.html#294f3d11a155a9e1" class="t t">AxisOrientation</a>.<a href="/LiveCharts/A.html#2677ed589f02cb28" class="i field">Y</a>)
+            {
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#3c857158cd448b5a" class="t t">Line</a>.<a href="@0@PresentationFramework/A.html#0fe0557d478164be" class="i field">X1Property</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a>, <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#3c857158cd448b5a" class="t t">Line</a>.<a href="@0@PresentationFramework/A.html#e7a5f70c65d037c1" class="i field">X2Property</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a> + <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a>, <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#3c857158cd448b5a" class="t t">Line</a>.<a href="@0@PresentationFramework/A.html#97e62957d06c82f5" class="i field">Y1Property</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r20 r">toLine</span>, <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#3c857158cd448b5a" class="t t">Line</a>.<a href="@0@PresentationFramework/A.html#eaf5a3e0d29f49af" class="i field">Y2Property</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r20 r">toLine</span>, <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+
+                <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#a76de5a09fc0753e" class="i field">TopProperty</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r19 r">toLabel</span>, <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+                <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#eb349db243881914" class="i field">LeftProperty</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r21 r">tab</span>, <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+            }
+            <b>else</b>
+            {
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#3c857158cd448b5a" class="t t">Line</a>.<a href="@0@PresentationFramework/A.html#0fe0557d478164be" class="i field">X1Property</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r20 r">toLine</span>, <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#3c857158cd448b5a" class="t t">Line</a>.<a href="@0@PresentationFramework/A.html#e7a5f70c65d037c1" class="i field">X2Property</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r20 r">toLine</span>, <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#3c857158cd448b5a" class="t t">Line</a>.<a href="@0@PresentationFramework/A.html#97e62957d06c82f5" class="i field">Y1Property</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a>, <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#3c857158cd448b5a" class="t t">Line</a>.<a href="@0@PresentationFramework/A.html#eaf5a3e0d29f49af" class="i field">Y2Property</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a> + <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>, <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+
+                <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#eb349db243881914" class="i field">LeftProperty</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r19 r">toLabel</span>, <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+                <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#a76de5a09fc0753e" class="i field">TopProperty</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r21 r">tab</span>, <span class="r15 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+            }
+
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Fades the in.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r22 r">axis</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The axis.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r23 r">chart</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The chart.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="aa31ec95ba481415" href="../R/aa31ec95ba481415.html" target="n" data-glyph="72,1" class="i method">FadeIn</a>(<a href="/LiveCharts/A.html#cbae04475ce2fa76" class="t t">AxisCore</a> <span id="r22 rd" class="r22 r">axis</span>, <a href="/LiveCharts/A.html#2c3f1a2f79f08d10" class="t t">ChartCore</a> <span id="r23 rd" class="r23 r">chart</span>)
+        {
+            <b>if</b> (<a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> != <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a>)
+                <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>.<a href="@0@PresentationCore/A.html#74e0cb58df4cb643" class="i field">OpacityProperty</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#569e40fa072d54cc" class="t constructor">DoubleAnimation</a>(0, 1, <span class="r23 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+
+            <b>if</b> (<a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> != <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a>)
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>.<a href="@0@PresentationCore/A.html#74e0cb58df4cb643" class="i field">OpacityProperty</a>,
+                    <b>new</b> <a href="@0@PresentationCore/A.html#569e40fa072d54cc" class="t constructor">DoubleAnimation</a>(0, 1, <span class="r23 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Fades the out and remove.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r24 r">chart</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The chart.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="c535d8d61809c016" href="../R/c535d8d61809c016.html" target="n" data-glyph="72,1" class="i method">FadeOutAndRemove</a>(<a href="/LiveCharts/A.html#2c3f1a2f79f08d10" class="t t">ChartCore</a> <span id="r24 rd" class="r24 r">chart</span>)
+        {
+            <b>if</b> (<a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> == <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a> &amp;&amp;
+                <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> == <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a>) <b>return</b>;
+
+            <a href="@0@PresentationCore/A.html#a17bc32ef694a3ac" class="k">var</a> <span id="r25 rd" class="r25 r">anim</span> = <b>new</b> <a href="@0@PresentationCore/A.html#22053e96b78c403a" class="t constructor">DoubleAnimation</a>
+            {
+                <a href="@0@PresentationCore/A.html#488b69a83fcd2b30" class="i property">From</a> = 1,
+                <a href="@0@PresentationCore/A.html#f6c06d8f76b8628a" class="i property">To</a> = 0,
+                <a href="@0@PresentationCore/A.html#aa3a36b776218bff" class="i property">Duration</a> = <span class="r24 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>
+            };
+
+            <a href="@0@WindowsBase/A.html#078d6b27d9837a35" class="k">var</a> <span id="r26 rd" class="r26 r">dispatcher</span> = ((<a href="../Charts/Base/Chart.cs.html#8bbad405b4592476" class="t t">Chart</a>) <span class="r24 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>).<a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>;
+            <span class="r25 r">anim</span>.<a href="@0@PresentationCore/A.html#3dc81828027c69bc" class="i">Completed</a> += (<span id="r27 rd" class="r27 r">sender</span>, <span id="r28 rd" class="r28 r">args</span>) =&gt;
+            {
+                <span class="r26 r">dispatcher</span>.<a href="@0@WindowsBase/A.html#73e16fb1fb6d2b98" class="i method">Invoke</a>(<b>new</b> <span class="t">Action</span>(() =&gt;
+                {
+                    <span class="r24 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#51b61b270e7f84b1" class="i method">RemoveFromView</a>(<a href="#c98e6c42e53b1023" class="i property">TextBlock</a>);
+                    <span class="r24 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#51b61b270e7f84b1" class="i method">RemoveFromView</a>(<a href="#0eaa75ea9c644d67" class="i property">Line</a>);
+                }));
+            };
+
+            <a href="#c98e6c42e53b1023" class="i property">TextBlock</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>.<a href="@0@PresentationCore/A.html#74e0cb58df4cb643" class="i field">OpacityProperty</a>, <span class="r25 r">anim</span>);
+            <a href="#0eaa75ea9c644d67" class="i property">Line</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>.<a href="@0@PresentationCore/A.html#74e0cb58df4cb643" class="i field">OpacityProperty</a>,
+                <b>new</b> <a href="@0@PresentationCore/A.html#569e40fa072d54cc" class="t constructor">DoubleAnimation</a>(1, 0, <span class="r24 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>));
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

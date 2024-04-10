@@ -1,0 +1,384 @@
+﻿<!DOCTYPE html>
+<html><head><title>ChartValues.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(375);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts/ChartValues.cs" target="_top">ChartValues.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Core\Core.csproj</a> (LiveCharts)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Charts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Configurations</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Series</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Dtos</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Helpers</span>;
+<span class="k preprocess">#</span><span class="k preprocess">if</span> <span class="i">NET45</span>
+<b>using</b> <span class="i n">System</span>.<span class="i n">Reflection</span>;
+<span class="k preprocess">#</span><span class="k preprocess">endif</span>
+
+<b>namespace</b> <span class="i n">LiveCharts</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Creates a collection of chart values</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">typeparam</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r t">T</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Type to plot, notice you could need to configure the type.</span><span class="c">&lt;/</span><span class="c">typeparam</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="0a44fd13939b5dc3" href="R/0a44fd13939b5dc3.html" target="n" data-glyph="0,0" class="t t">ChartValues</a>&lt;<span id="r0 rd t" class="r0 r t">T</span>&gt; : <a href="Helpers/NoisyCollection.cs.html#c8bcb69ac2652ce1" class="t t">NoisyCollection</a>&lt;<span class="r0 r t">T</span>&gt;, <a href="IChartValues.cs.html#813aac032d764236" class="t t">IChartValues</a>
+    {
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructors
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of chart values</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a id="9dc8c197acdf6c12" href="R/9dc8c197acdf6c12.html" target="n" data-glyph="72,1" class="t constructor">ChartValues</a>()
+        {
+            <a href="#2679c3855ed35cce" class="i property">Trackers</a> = <b>new</b> <span class="t constructor">Dictionary</span>&lt;<a href="Definitions/Series/ISeriesView.cs.html#44463e44050cefb2" class="t t">ISeriesView</a>, <a href="PointTracker.cs.html#650c9e7f39adb08b" class="t t">PointTracker</a>&gt;();
+            <a href="Helpers/NoisyCollection.cs.html#e33cb298060c45d8" class="i">NoisyCollectionChanged</a> += <a href="#2e6763888de6ff3d" class="i method">OnChanged</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of chart values, with a given collection</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a id="d9f20219e81f5273" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ChartValues</a>(<a href="@1@System.Runtime/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<span class="r0 r t">T</span>&gt; <span id="r1 rd" class="r1 r">collection</span>) : <a href="Helpers/NoisyCollection.cs.html#94f2c332d003c6fb" class="k">base</a>(<span class="r1 r">collection</span>)
+        {
+            <a href="#2679c3855ed35cce" class="i property">Trackers</a> = <b>new</b> <span class="t constructor">Dictionary</span>&lt;<a href="Definitions/Series/ISeriesView.cs.html#44463e44050cefb2" class="t t">ISeriesView</a>, <a href="PointTracker.cs.html#650c9e7f39adb08b" class="t t">PointTracker</a>&gt;();
+            <a href="Helpers/NoisyCollection.cs.html#e33cb298060c45d8" class="i">NoisyCollectionChanged</a> += <a href="#2e6763888de6ff3d" class="i method">OnChanged</a>;
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Properties
+        <b>private</b> <a href="Configurations/IPointEvaluator.cs.html#2efe8c33c581a5e7" class="t t">IPointEvaluator</a>&lt;<span class="r0 r t">T</span>&gt; <a id="731d60aad414be78" href="R/731d60aad414be78.html" target="n" data-glyph="106,1" class="i property">DefaultConfiguration</a> { <b>get</b>; <b>set</b>; }
+        <b>private</b> <span class="t t">Dictionary</span>&lt;<a href="Definitions/Series/ISeriesView.cs.html#44463e44050cefb2" class="t t">ISeriesView</a>, <a href="PointTracker.cs.html#650c9e7f39adb08b" class="t t">PointTracker</a>&gt; <a id="2679c3855ed35cce" href="R/2679c3855ed35cce.html" target="n" data-glyph="106,1" class="i property">Trackers</a> { <b>get</b>; <b>set</b>; }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Public Methods
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Evaluates the limits in the chart values</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="53f7794ec3d4d96f" href="R/53f7794ec3d4d96f.html" target="n" data-glyph="72,1" class="i method">Initialize</a>(<a href="Definitions/Series/ISeriesView.cs.html#44463e44050cefb2" class="t t">ISeriesView</a> <span id="r2 rd" class="r2 r">seriesView</span>)
+        {
+            <a href="Configurations/IPointEvaluator.cs.html#2efe8c33c581a5e7" class="k">var</a> <span id="r3 rd" class="r3 r">config</span> = <a href="#005a80650a9c47d9" class="i method">GetConfig</a>(<span class="r2 r">seriesView</span>);
+            <b>if</b> (<span class="r3 r">config</span> == <b>null</b>) <b>return</b>;
+
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r4 rd" class="r4 r">xMin</span> = <b>double</b>.<a href="@1@System.Runtime/A.html#704210f8dd6afaed" class="i field">PositiveInfinity</a>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r5 rd" class="r5 r">xMax</span> = <b>double</b>.<a href="@1@System.Runtime/A.html#d1da7e7a7eca349a" class="i field">NegativeInfinity</a>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r6 rd" class="r6 r">yMin</span> = <b>double</b>.<a href="@1@System.Runtime/A.html#704210f8dd6afaed" class="i field">PositiveInfinity</a>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r7 rd" class="r7 r">yMax</span> = <b>double</b>.<a href="@1@System.Runtime/A.html#d1da7e7a7eca349a" class="i field">NegativeInfinity</a>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r8 rd" class="r8 r">wMin</span> = <b>double</b>.<a href="@1@System.Runtime/A.html#704210f8dd6afaed" class="i field">PositiveInfinity</a>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r9 rd" class="r9 r">wMax</span> = <b>double</b>.<a href="@1@System.Runtime/A.html#d1da7e7a7eca349a" class="i field">NegativeInfinity</a>;
+
+            <a href="PointTracker.cs.html#650c9e7f39adb08b" class="k">var</a> <span id="r10 rd" class="r10 r">tracker</span> = <a href="#e1415b57cef407b7" class="i method">GetTracker</a>(<span class="r2 r">seriesView</span>);
+
+            <a href="ChartPoint.cs.html#a7b99b1eebb29334" class="k">var</a> <span id="r11 rd" class="r11 r">cp</span> = <b>new</b> <a href="ChartPoint.cs.html#a7b99b1eebb29334" class="t constructor">ChartPoint</a>();
+
+            <a href="AxisCore.cs.html#cbae04475ce2fa76" class="k">var</a> <span id="r12 rd" class="r12 r">ax</span> = <span class="r2 r">seriesView</span>.<a href="Definitions/Series/ISeriesView.cs.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>.<a href="Charts/ChartCore.cs.html#7ade6ca950d9d9c6" class="i property">AxisX</a>[<span class="r2 r">seriesView</span>.<a href="Definitions/Series/ISeriesView.cs.html#d22de8bdf0e37222" class="i property">ScalesXAt</a>];
+            <a href="AxisCore.cs.html#cbae04475ce2fa76" class="k">var</a> <span id="r13 rd" class="r13 r">ay</span> = <span class="r2 r">seriesView</span>.<a href="Definitions/Series/ISeriesView.cs.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>.<a href="Charts/ChartCore.cs.html#33dac4d89507c615" class="i property">AxisY</a>[<span class="r2 r">seriesView</span>.<a href="Definitions/Series/ISeriesView.cs.html#589b71410f1f3c80" class="i property">ScalesYAt</a>];
+            <b>double</b> <span id="r14 rd" class="r14 r">fx</span> = <b>double</b>.<a href="@1@System.Runtime/A.html#b3843db5f359a0fd" class="i method">IsNaN</a>(<span class="r12 r">ax</span>.<a href="AxisCore.cs.html#a4f53f0bc0ffdf40" class="i property">MinValue</a>) ? <b>double</b>.<a href="@1@System.Runtime/A.html#d1da7e7a7eca349a" class="i field">NegativeInfinity</a> : <span class="r12 r">ax</span>.<a href="AxisCore.cs.html#a4f53f0bc0ffdf40" class="i property">MinValue</a>,
+                <span id="r15 rd" class="r15 r">tx</span> = <b>double</b>.<a href="@1@System.Runtime/A.html#b3843db5f359a0fd" class="i method">IsNaN</a>(<span class="r12 r">ax</span>.<a href="AxisCore.cs.html#785f697214411b55" class="i property">MaxValue</a>) ? <b>double</b>.<a href="@1@System.Runtime/A.html#704210f8dd6afaed" class="i field">PositiveInfinity</a> : <span class="r12 r">ax</span>.<a href="AxisCore.cs.html#785f697214411b55" class="i property">MaxValue</a>,
+                <span id="r16 rd" class="r16 r">fy</span> = <b>double</b>.<a href="@1@System.Runtime/A.html#b3843db5f359a0fd" class="i method">IsNaN</a>(<span class="r13 r">ay</span>.<a href="AxisCore.cs.html#a4f53f0bc0ffdf40" class="i property">MinValue</a>) ? <b>double</b>.<a href="@1@System.Runtime/A.html#d1da7e7a7eca349a" class="i field">NegativeInfinity</a> : <span class="r13 r">ay</span>.<a href="AxisCore.cs.html#a4f53f0bc0ffdf40" class="i property">MinValue</a>,
+                <span id="r17 rd" class="r17 r">ty</span> = <b>double</b>.<a href="@1@System.Runtime/A.html#b3843db5f359a0fd" class="i method">IsNaN</a>(<span class="r13 r">ay</span>.<a href="AxisCore.cs.html#785f697214411b55" class="i property">MaxValue</a>) ? <b>double</b>.<a href="@1@System.Runtime/A.html#704210f8dd6afaed" class="i field">PositiveInfinity</a> : <span class="r13 r">ay</span>.<a href="AxisCore.cs.html#785f697214411b55" class="i property">MaxValue</a>;
+
+            <a href="@1@System.Runtime/A.html#f1b135ff6c380b37" class="k">var</a> <span id="r18 rd" class="r18 r">isHorizontal</span> = <span class="r2 r">seriesView</span>.<a href="Definitions/Series/ISeriesView.cs.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="Seriesalgorithm.cs.html#5525028f61e0ae41" class="i property">SeriesOrientation</a> == <a href="SeriesOrientation.cs.html#e2666a055c5ce655" class="t t">SeriesOrientation</a>.<a href="SeriesOrientation.cs.html#583ce3bc3ddad827" class="i field">Horizontal</a>;
+
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r19 rd" class="r19 r">index</span> = 0;
+            <b>foreach</b>(<span class="r0 r t">var</span> <span id="r20 rd" class="r20 r">item</span> <b>in</b> <a href="#0a44fd13939b5dc3" class="k">this</a>)
+            {
+                <span class="r3 r">config</span>.<a href="Configurations/IPointEvaluator.cs.html#6b824ad14b4201e9" class="i method">Evaluate</a>(<span class="r19 r">index</span>, <span class="r20 r">item</span>, <span class="r11 r">cp</span>);
+                <span class="r19 r">index</span>++;
+
+                <b>if</b> (<span class="r18 r">isHorizontal</span>)
+                {
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a> &lt; <span class="r14 r">fx</span> || <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a> &gt; <span class="r15 r">tx</span>) <b>continue</b>;
+                }
+                <b>else</b>
+                {
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#2647768eb1eb41f6" class="i property">Y</a> &lt; <span class="r16 r">fy</span> || <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#2647768eb1eb41f6" class="i property">Y</a> &gt; <span class="r17 r">ty</span>) <b>continue</b>;
+                }
+
+                <b>if</b> (<span class="r2 r">seriesView</span> <b>is</b> <a href="Definitions/Series/IFinancialSeriesView.cs.html#671362991d30ddf6" class="t t">IFinancialSeriesView</a>)
+                {
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a> &lt; <span class="r4 r">xMin</span>) <span class="r4 r">xMin</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a>;
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a> &gt; <span class="r5 r">xMax</span>) <span class="r5 r">xMax</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a>;
+
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#8b8cb2cc49304c4c" class="i property">Low</a> &lt; <span class="r6 r">yMin</span>) <span class="r6 r">yMin</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#8b8cb2cc49304c4c" class="i property">Low</a>;
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#53b46486e8abaceb" class="i property">High</a> &gt; <span class="r7 r">yMax</span>) <span class="r7 r">yMax</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#53b46486e8abaceb" class="i property">High</a>;
+
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#4b5dd7e741cfa3cd" class="i property">Weight</a> &lt; <span class="r8 r">wMin</span>) <span class="r8 r">wMin</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#4b5dd7e741cfa3cd" class="i property">Weight</a>;
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#4b5dd7e741cfa3cd" class="i property">Weight</a> &gt; <span class="r9 r">wMax</span>) <span class="r9 r">wMax</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#4b5dd7e741cfa3cd" class="i property">Weight</a>;
+
+                }
+                <b>else</b> <b>if</b> (<span class="r2 r">seriesView</span> <b>is</b> <a href="Definitions/Series/IScatterSeriesView.cs.html#bdd3fc9872734689" class="t t">IScatterSeriesView</a> || <span class="r2 r">seriesView</span> <b>is</b> <a href="Definitions/Series/IHeatSeriesView.cs.html#aa6ae0c722739410" class="t t">IHeatSeriesView</a>)
+                {
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a> &lt; <span class="r4 r">xMin</span>) <span class="r4 r">xMin</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a>;
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a> &gt; <span class="r5 r">xMax</span>) <span class="r5 r">xMax</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a>;
+
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#2647768eb1eb41f6" class="i property">Y</a> &lt; <span class="r6 r">yMin</span>) <span class="r6 r">yMin</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#2647768eb1eb41f6" class="i property">Y</a>;
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#2647768eb1eb41f6" class="i property">Y</a> &gt; <span class="r7 r">yMax</span>) <span class="r7 r">yMax</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#2647768eb1eb41f6" class="i property">Y</a>;
+
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#4b5dd7e741cfa3cd" class="i property">Weight</a> &lt; <span class="r8 r">wMin</span>) <span class="r8 r">wMin</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#4b5dd7e741cfa3cd" class="i property">Weight</a>;
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#4b5dd7e741cfa3cd" class="i property">Weight</a> &gt; <span class="r9 r">wMax</span>) <span class="r9 r">wMax</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#4b5dd7e741cfa3cd" class="i property">Weight</a>;
+                }
+                <b>else</b>
+                {
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a> &lt; <span class="r4 r">xMin</span>) <span class="r4 r">xMin</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a>;
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a> &gt; <span class="r5 r">xMax</span>) <span class="r5 r">xMax</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a>;
+
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#2647768eb1eb41f6" class="i property">Y</a> &lt; <span class="r6 r">yMin</span>) <span class="r6 r">yMin</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#2647768eb1eb41f6" class="i property">Y</a>;
+                    <b>if</b> (<span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#2647768eb1eb41f6" class="i property">Y</a> &gt; <span class="r7 r">yMax</span>) <span class="r7 r">yMax</span> = <span class="r11 r">cp</span>.<a href="ChartPoint.cs.html#2647768eb1eb41f6" class="i property">Y</a>;
+                }
+            }
+
+            <span class="r10 r">tracker</span>.<a href="PointTracker.cs.html#b959b02593b0b7c4" class="i property">XLimit</a> = <b>new</b> <a href="Dtos/CoreLimit.cs.html#d1823ea036e43a1c" class="t constructor">CoreLimit</a>(<b>double</b>.<a href="@1@System.Runtime/A.html#db0603318ee4c493" class="i method">IsInfinity</a>(<span class="r4 r">xMin</span>)
+                ? 0
+                : <span class="r4 r">xMin</span>, <b>double</b>.<a href="@1@System.Runtime/A.html#db0603318ee4c493" class="i method">IsInfinity</a>(<span class="r6 r">yMin</span>) ? 1 : <span class="r5 r">xMax</span>);
+            <span class="r10 r">tracker</span>.<a href="PointTracker.cs.html#45997e25d84acc78" class="i property">YLimit</a> = <b>new</b> <a href="Dtos/CoreLimit.cs.html#d1823ea036e43a1c" class="t constructor">CoreLimit</a>(<b>double</b>.<a href="@1@System.Runtime/A.html#db0603318ee4c493" class="i method">IsInfinity</a>(<span class="r6 r">yMin</span>)
+                ? 0
+                : <span class="r6 r">yMin</span>, <b>double</b>.<a href="@1@System.Runtime/A.html#db0603318ee4c493" class="i method">IsInfinity</a>(<span class="r7 r">yMax</span>) ? 1 : <span class="r7 r">yMax</span>);
+            <span class="r10 r">tracker</span>.<a href="PointTracker.cs.html#09162f15fe8489bd" class="i property">WLimit</a> = <b>new</b> <a href="Dtos/CoreLimit.cs.html#d1823ea036e43a1c" class="t constructor">CoreLimit</a>(<b>double</b>.<a href="@1@System.Runtime/A.html#db0603318ee4c493" class="i method">IsInfinity</a>(<span class="r8 r">wMin</span>)
+                ? 0
+                : <span class="r8 r">wMin</span>, <b>double</b>.<a href="@1@System.Runtime/A.html#db0603318ee4c493" class="i method">IsInfinity</a>(<span class="r9 r">wMax</span>) ? 1 : <span class="r9 r">wMax</span>);
+
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the current chart points in the view, the view is required as an argument, because an instance of IChartValues could hold many ISeriesView instances.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r21 r">seriesView</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The series view</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@1@System.Runtime/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="ChartPoint.cs.html#a7b99b1eebb29334" class="t t">ChartPoint</a>&gt; <a id="39e703b3e24ba057" href="R/39e703b3e24ba057.html" target="n" data-glyph="72,1" class="i method">GetPoints</a>(<a href="Definitions/Series/ISeriesView.cs.html#44463e44050cefb2" class="t t">ISeriesView</a> <span id="r21 rd" class="r21 r">seriesView</span>)
+        {
+            <b>if</b> (<span class="r21 r">seriesView</span> == <b>null</b>) <b>yield</b> <b>break</b>;
+
+            <a href="Configurations/IPointEvaluator.cs.html#2efe8c33c581a5e7" class="k">var</a> <span id="r22 rd" class="r22 r">config</span> = <a href="#005a80650a9c47d9" class="i method">GetConfig</a>(<span class="r21 r">seriesView</span>);
+
+<span class="k preprocess">#</span><span class="k preprocess">if</span> <span class="i">NET40</span>
+<span class="e">            var isClass = typeof(T).IsClass;
+            var isObservable = isClass &amp;&amp; typeof(IObservableChartPoint).IsAssignableFrom(typeof(T));
+            var notifies = isClass &amp;&amp; typeof(INotifyPropertyChanged).IsAssignableFrom(typeof(T));
+
+</span><span class="k preprocess">#</span><span class="k preprocess">endif</span>
+<span class="k preprocess">#</span><span class="k preprocess">if</span> <span class="i">NET45</span>
+            <a href="@1@System.Runtime/A.html#f1b135ff6c380b37" class="k">var</a> <span id="r23 rd" class="r23 r">isClass</span> = <b>typeof</b>(<span class="r0 r t">T</span>).<span class="i method">GetTypeInfo</span>().<span class="i property">IsClass</span>;
+            <a href="@1@System.Runtime/A.html#f1b135ff6c380b37" class="k">var</a> <span id="r24 rd" class="r24 r">isObservable</span> = <span class="r23 r">isClass</span> &amp;&amp;
+                               <b>typeof</b>(<a href="IObservableChartPoint.cs.html#54e1dd59ceea5f78" class="t t">IObservableChartPoint</a>).<span class="i method">GetTypeInfo</span>().<span class="i method">IsAssignableFrom</span>(<b>typeof</b>(<span class="r0 r t">T</span>).<span class="i method">GetTypeInfo</span>());
+            <a href="@1@System.Runtime/A.html#f1b135ff6c380b37" class="k">var</a> <span id="r25 rd" class="r25 r">notifies</span> = <span class="r23 r">isClass</span> &amp;&amp; <b>typeof</b>(<span class="t t">INotifyPropertyChanged</span>).<span class="i method">GetTypeInfo</span>()
+                               .<span class="i method">IsAssignableFrom</span>(<b>typeof</b>(<span class="r0 r t">T</span>).<span class="i method">GetTypeInfo</span>());
+<span class="k preprocess">#</span><span class="k preprocess">endif</span>
+
+            <a href="PointTracker.cs.html#650c9e7f39adb08b" class="k">var</a> <span id="r26 rd" class="r26 r">tracker</span> = <a href="#e1415b57cef407b7" class="i method">GetTracker</a>(<span class="r21 r">seriesView</span>);
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r27 rd" class="r27 r">gci</span> = <span class="r26 r">tracker</span>.<a href="PointTracker.cs.html#1d929d6b59839712" class="i property">Gci</a>;
+
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r28 rd" class="r28 r">index</span> = 0;
+            <b>foreach</b> (<span class="r0 r t">var</span> <span id="r29 rd" class="r29 r">value</span> <b>in</b> <a href="#0a44fd13939b5dc3" class="k">this</a>)
+            {
+                <b>if</b> (<span class="r24 r">isObservable</span>)
+                {
+                    <a href="IObservableChartPoint.cs.html#54e1dd59ceea5f78" class="k">var</a> <span id="r30 rd" class="r30 r">observable</span> = (<a href="IObservableChartPoint.cs.html#54e1dd59ceea5f78" class="t t">IObservableChartPoint</a>) <span class="r29 r">value</span>;
+                    <b>if</b> (<span class="r30 r">observable</span> != <b>null</b>)
+                    {
+                        <span class="r30 r">observable</span>.<a href="IObservableChartPoint.cs.html#816e7c72a0d31f9e" class="i">PointChanged</a> -= <a href="#a61c3b4147fba9cd" class="i method">ObservableOnPointChanged</a>;
+                        <span class="r30 r">observable</span>.<a href="IObservableChartPoint.cs.html#816e7c72a0d31f9e" class="i">PointChanged</a> += <a href="#a61c3b4147fba9cd" class="i method">ObservableOnPointChanged</a>;
+                    }
+                }
+
+                <b>if</b> (<span class="r25 r">notifies</span>)
+                {
+                    <b>var</b> <span id="r31 rd" class="r31 r">notify</span> = (<span class="t t">INotifyPropertyChanged</span>) <span class="r29 r">value</span>;
+                    <b>if</b> (<span class="r31 r">notify</span> != <b>null</b>)
+                    {
+                        <span class="r31 r">notify</span>.<span class="i">PropertyChanged</span> -= <a href="#221a4c3167e3c4c6" class="i method">NotifyOnPropertyChanged</a>;
+                        <span class="r31 r">notify</span>.<span class="i">PropertyChanged</span> += <a href="#221a4c3167e3c4c6" class="i method">NotifyOnPropertyChanged</a>;
+                    }
+                }
+
+                <a href="ChartPoint.cs.html#a7b99b1eebb29334" class="k">var</a> <span id="r32 rd" class="r32 r">cp</span> = <a href="#01324e9094e5e96a" class="i method">GetChartPoint</a>(<span class="r23 r">isClass</span>, <span class="r26 r">tracker</span>, <span class="r28 r">index</span>, <span class="r29 r">value</span>);
+
+                <span class="r32 r">cp</span>.<a href="ChartPoint.cs.html#24b040bef6679b83" class="i property">Gci</a> = <span class="r27 r">gci</span>;
+                <span class="r32 r">cp</span>.<a href="ChartPoint.cs.html#2bdb65eb75b43aee" class="i property">Instance</a> = <span class="r29 r">value</span>;
+                <span class="r32 r">cp</span>.<a href="ChartPoint.cs.html#2e34218f26f642e4" class="i property">Key</a> = <span class="r28 r">index</span>;
+                <span class="r32 r">cp</span>.<a href="ChartPoint.cs.html#c90f7635ddd134a4" class="i property">SeriesView</a> = <span class="r21 r">seriesView</span>;
+
+                <span class="r22 r">config</span>.<a href="Configurations/IPointEvaluator.cs.html#6b824ad14b4201e9" class="i method">Evaluate</a>(<span class="r28 r">index</span>, <span class="r29 r">value</span>, <span class="r32 r">cp</span>);
+                <span class="r28 r">index</span>++;
+
+                <b>yield</b> <b>return</b> <span class="r32 r">cp</span>;
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes the garbage collector</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="9b1d58571665a698" href="R/9b1d58571665a698.html" target="n" data-glyph="72,1" class="i method">InitializeStep</a>(<a href="Definitions/Series/ISeriesView.cs.html#44463e44050cefb2" class="t t">ISeriesView</a> <span id="r33 rd" class="r33 r">series</span>)
+        {
+            <a href="#024fbd18a77a01e3" class="i method">ValidateGarbageCollector</a>(<span class="r33 r">series</span>);
+            <a href="#e1415b57cef407b7" class="i method">GetTracker</a>(<span class="r33 r">series</span>).<a href="PointTracker.cs.html#1d929d6b59839712" class="i property">Gci</a>++;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Collects the unnecessary values </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="cad1f492b522166d" href="R/cad1f492b522166d.html" target="n" data-glyph="72,1" class="i method">CollectGarbage</a>(<a href="Definitions/Series/ISeriesView.cs.html#44463e44050cefb2" class="t t">ISeriesView</a> <span id="r34 rd" class="r34 r">seriesView</span>)
+        {
+<span class="k preprocess">#</span><span class="k preprocess">if</span> <span class="i">NET40</span>
+<span class="e">            var isclass = typeof(T).IsClass;
+</span><span class="k preprocess">#</span><span class="k preprocess">endif</span>
+<span class="k preprocess">#</span><span class="k preprocess">if</span> <span class="i">NET45</span>
+            <a href="@1@System.Runtime/A.html#f1b135ff6c380b37" class="k">var</a> <span id="r35 rd" class="r35 r">isclass</span> = <b>typeof</b>(<span class="r0 r t">T</span>).<span class="i method">GetTypeInfo</span>().<span class="i property">IsClass</span>;
+<span class="k preprocess">#</span><span class="k preprocess">endif</span>
+
+            <a href="PointTracker.cs.html#650c9e7f39adb08b" class="k">var</a> <span id="r36 rd" class="r36 r">tracker</span> = <a href="#e1415b57cef407b7" class="i method">GetTracker</a>(<span class="r34 r">seriesView</span>);
+
+            <b>foreach</b> (<a href="ChartPoint.cs.html#a7b99b1eebb29334" class="k">var</a> <span id="r37 rd" class="r37 r">garbage</span> <b>in</b> <a href="#75d56f5711cf697a" class="i method">GetGarbagePoints</a>(<span class="r34 r">seriesView</span>).<span class="i method">ToList</span>())
+            {
+                <b>if</b> (<span class="r37 r">garbage</span>.<a href="ChartPoint.cs.html#47cca818cf851bef" class="i property">View</a> != <b>null</b>) <span class="c">//yes null, double.Nan Values, will generate null views.</span>
+                    <span class="r37 r">garbage</span>.<a href="ChartPoint.cs.html#47cca818cf851bef" class="i property">View</a>.<a href="Definitions/Points/IChartPointView.cs.html#bd6b98f040789247" class="i method">RemoveFromView</a>(<span class="r34 r">seriesView</span>.<a href="Definitions/Series/ISeriesView.cs.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>);
+
+                <b>if</b> (!<span class="r35 r">isclass</span>)
+                {
+                    <span class="r36 r">tracker</span>.<a href="PointTracker.cs.html#6a61ad9e6431326d" class="i property">Indexed</a>.<span class="i method">Remove</span>(<span class="r37 r">garbage</span>.<a href="ChartPoint.cs.html#2e34218f26f642e4" class="i property">Key</a>);
+                }
+                <b>else</b>
+                {
+                    <span class="r36 r">tracker</span>.<a href="PointTracker.cs.html#94ec839eb35a4046" class="i property">Referenced</a>.<span class="i method">Remove</span>(<span class="r37 r">garbage</span>.<a href="ChartPoint.cs.html#2bdb65eb75b43aee" class="i property">Instance</a>);
+                }
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets series that owns the values</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r38 r">view</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="PointTracker.cs.html#650c9e7f39adb08b" class="t t">PointTracker</a> <a id="e1415b57cef407b7" href="R/e1415b57cef407b7.html" target="n" data-glyph="72,1" class="i method">GetTracker</a>(<a href="Definitions/Series/ISeriesView.cs.html#44463e44050cefb2" class="t t">ISeriesView</a> <span id="r38 rd" class="r38 r">view</span>)
+        {
+            <a href="PointTracker.cs.html#650c9e7f39adb08b" class="t t">PointTracker</a> <span id="r39 rd" class="r39 r">tracker</span>;
+
+            <b>if</b> (<a href="#2679c3855ed35cce" class="i property">Trackers</a>.<span class="i method">TryGetValue</span>(<span class="r38 r">view</span>, <b>out</b> <span class="r39 r">tracker</span>)) <b>return</b> <span class="r39 r">tracker</span>;
+
+            <span class="r39 r">tracker</span> = <b>new</b> <a href="PointTracker.cs.html#8807d8788db77087" class="t constructor">PointTracker</a>();
+            <a href="#2679c3855ed35cce" class="i property">Trackers</a>[<span class="r38 r">view</span>] = <span class="r39 r">tracker</span>;
+
+            <b>return</b> <span class="r39 r">tracker</span>;
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Privates
+
+        <b>private</b> <a href="Configurations/IPointEvaluator.cs.html#2efe8c33c581a5e7" class="t t">IPointEvaluator</a>&lt;<span class="r0 r t">T</span>&gt; <a id="005a80650a9c47d9" href="R/005a80650a9c47d9.html" target="n" data-glyph="76,1" class="i method">GetConfig</a>(<a href="Definitions/Series/ISeriesView.cs.html#44463e44050cefb2" class="t t">ISeriesView</a> <span id="r40 rd" class="r40 r">view</span>)
+        {
+            <span class="c">//Trying to get the user defined configuration...</span>
+
+            <span class="c">//series == null means that chart values are null, and LiveCharts</span>
+            <span class="c">//could not set the Series Instance tho the current chart values...</span>
+            <b>if</b> (<span class="r40 r">view</span> == <b>null</b> || <span class="r40 r">view</span>.<a href="Definitions/Series/ISeriesView.cs.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="Seriesalgorithm.cs.html#f3a53e30487ac259" class="i property">SeriesCollection</a> == <b>null</b>) <b>return</b> <b>null</b>;
+
+            <a href="Configurations/IPointEvaluator.cs.html#2efe8c33c581a5e7" class="k">var</a> <span id="r41 rd" class="r41 r">config</span> =
+                (<span class="r40 r">view</span>.<a href="Definitions/Series/ISeriesView.cs.html#3826a17efc851a23" class="i property">Configuration</a> ?? <span class="r40 r">view</span>.<a href="Definitions/Series/ISeriesView.cs.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="Seriesalgorithm.cs.html#f3a53e30487ac259" class="i property">SeriesCollection</a>.<a href="SeriesCollection.cs.html#2bbac60471ac74b5" class="i property">Configuration</a>) <b>as</b> <a href="Configurations/IPointEvaluator.cs.html#2efe8c33c581a5e7" class="t t">IPointEvaluator</a>&lt;<span class="r0 r t">T</span>&gt;;
+
+            <b>if</b> (<span class="r41 r">config</span> != <b>null</b>) <b>return</b> <span class="r41 r">config</span>;
+
+            <b>return</b> <a href="#731d60aad414be78" class="i property">DefaultConfiguration</a> ??
+                   (<a href="#731d60aad414be78" class="i property">DefaultConfiguration</a> =
+                       <a href="Charts/ChartCore.cs.html#2c3f1a2f79f08d10" class="t t">ChartCore</a>.<a href="Charts/ChartCore.cs.html#4caf9e37b1e2a44f" class="i property">Configurations</a>.<a href="Charting.cs.html#ce088dce9df06ac8" class="i method">GetConfig</a>&lt;<span class="r0 r t">T</span>&gt;(<span class="r40 r">view</span>.<a href="Definitions/Series/ISeriesView.cs.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="Seriesalgorithm.cs.html#5525028f61e0ae41" class="i property">SeriesOrientation</a>) <b>as</b> <a href="Configurations/IPointEvaluator.cs.html#2efe8c33c581a5e7" class="t t">IPointEvaluator</a>&lt;<span class="r0 r t">T</span>&gt;);
+        }
+
+        <b>private static</b> <a href="ChartPoint.cs.html#a7b99b1eebb29334" class="t t">ChartPoint</a> <a id="01324e9094e5e96a" href="R/01324e9094e5e96a.html" target="n" data-glyph="76,1" class="i method">GetChartPoint</a>(<b>bool</b> <span id="r42 rd" class="r42 r">isClass</span>, <a href="PointTracker.cs.html#650c9e7f39adb08b" class="t t">PointTracker</a> <span id="r43 rd" class="r43 r">tracker</span>, <b>int</b> <span id="r44 rd" class="r44 r">index</span>, <span class="r0 r t">T</span> <span id="r45 rd" class="r45 r">value</span>)
+        {
+            <a href="ChartPoint.cs.html#a7b99b1eebb29334" class="t t">ChartPoint</a> <span id="r46 rd" class="r46 r">cp</span>;
+
+            <b>if</b> (!<span class="r42 r">isClass</span>)
+            {
+                <b>if</b> (<span class="r43 r">tracker</span>.<a href="PointTracker.cs.html#6a61ad9e6431326d" class="i property">Indexed</a>.<span class="i method">TryGetValue</span>(<span class="r44 r">index</span>, <b>out</b> <span class="r46 r">cp</span>)) <b>return</b> <span class="r46 r">cp</span>;
+                <span class="r46 r">cp</span> = <b>new</b> <a href="ChartPoint.cs.html#a7b99b1eebb29334" class="t constructor">ChartPoint</a>
+                {
+                    <a href="ChartPoint.cs.html#2bdb65eb75b43aee" class="i property">Instance</a> = <span class="r45 r">value</span>,
+                    <a href="ChartPoint.cs.html#2e34218f26f642e4" class="i property">Key</a> = <span class="r44 r">index</span>
+                };
+                <span class="r43 r">tracker</span>.<a href="PointTracker.cs.html#6a61ad9e6431326d" class="i property">Indexed</a>[<span class="r44 r">index</span>] = <span class="r46 r">cp</span>;
+            }
+            <b>else</b>
+            {
+                <b>if</b> (<span class="r43 r">tracker</span>.<a href="PointTracker.cs.html#94ec839eb35a4046" class="i property">Referenced</a>.<span class="i method">TryGetValue</span>(<span class="r45 r">value</span>, <b>out</b> <span class="r46 r">cp</span>)) <b>return</b> <span class="r46 r">cp</span>;
+                <span class="r46 r">cp</span> = <b>new</b> <a href="ChartPoint.cs.html#a7b99b1eebb29334" class="t constructor">ChartPoint</a>
+                {
+                    <a href="ChartPoint.cs.html#2bdb65eb75b43aee" class="i property">Instance</a> = <span class="r45 r">value</span>,
+                    <a href="ChartPoint.cs.html#2e34218f26f642e4" class="i property">Key</a> = <span class="r44 r">index</span>
+                };
+                <span class="r43 r">tracker</span>.<a href="PointTracker.cs.html#94ec839eb35a4046" class="i property">Referenced</a>[<span class="r45 r">value</span>] = <span class="r46 r">cp</span>;
+            }
+            <b>return</b> <span class="r46 r">cp</span>;
+        }
+
+        <b>private void</b> <a id="a61c3b4147fba9cd" href="R/a61c3b4147fba9cd.html" target="n" data-glyph="76,1" class="i method">ObservableOnPointChanged</a>()
+        {
+            <a href="#2679c3855ed35cce" class="i property">Trackers</a>.<span class="i property">Keys</span>.<a href="Helpers/Extentions.cs.html#a20acbe062229ad5" class="i method">ForEach</a>(<span id="r47 rd" class="r47 r">x</span> =&gt; <span class="r47 r">x</span>.<a href="Definitions/Series/ISeriesView.cs.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>.<a href="Charts/ChartCore.cs.html#ec8a47f0b55838b2" class="i property">Updater</a>.<a href="ChartUpdater.cs.html#f3b3be98ec3d955d" class="i method">Run</a>());
+        }
+
+        <b>private void</b> <a id="221a4c3167e3c4c6" href="R/221a4c3167e3c4c6.html" target="n" data-glyph="76,1" class="i method">NotifyOnPropertyChanged</a>(<b>object</b> <span id="r48 rd" class="r48 r">sender</span>, <span class="t t">PropertyChangedEventArgs</span> <span id="r49 rd" class="r49 r">propertyChangedEventArgs</span>)
+        {
+            <a href="#2679c3855ed35cce" class="i property">Trackers</a>.<span class="i property">Keys</span>.<a href="Helpers/Extentions.cs.html#a20acbe062229ad5" class="i method">ForEach</a>(<span id="r50 rd" class="r50 r">x</span> =&gt; <span class="r50 r">x</span>.<a href="Definitions/Series/ISeriesView.cs.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>.<a href="Charts/ChartCore.cs.html#ec8a47f0b55838b2" class="i property">Updater</a>.<a href="ChartUpdater.cs.html#f3b3be98ec3d955d" class="i method">Run</a>());
+        }
+
+        <b>private</b> <a href="@1@System.Runtime/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="ChartPoint.cs.html#a7b99b1eebb29334" class="t t">ChartPoint</a>&gt; <a id="75d56f5711cf697a" href="R/75d56f5711cf697a.html" target="n" data-glyph="76,1" class="i method">GetGarbagePoints</a>(<a href="Definitions/Series/ISeriesView.cs.html#44463e44050cefb2" class="t t">ISeriesView</a> <span id="r51 rd" class="r51 r">view</span>)
+        {
+            <a href="PointTracker.cs.html#650c9e7f39adb08b" class="k">var</a> <span id="r52 rd" class="r52 r">tracker</span> = <a href="#e1415b57cef407b7" class="i method">GetTracker</a>(<span class="r51 r">view</span>);
+
+            <b>return</b> <span class="r52 r">tracker</span>.<a href="PointTracker.cs.html#6a61ad9e6431326d" class="i property">Indexed</a>.<span class="i property">Values</span>.<span class="i method">Where</span>(<span id="r53 rd" class="r53 r">x</span> =&gt; <a href="#9a853d8dbbb2850d" class="i method">IsGarbage</a>(<span class="r53 r">x</span>, <span class="r52 r">tracker</span>)).<span class="i method">Concat</span>(
+                <span class="r52 r">tracker</span>.<a href="PointTracker.cs.html#94ec839eb35a4046" class="i property">Referenced</a>.<span class="i property">Values</span>.<span class="i method">Where</span>(<span id="r54 rd" class="r54 r">x</span> =&gt; <a href="#9a853d8dbbb2850d" class="i method">IsGarbage</a>(<span class="r54 r">x</span>, <span class="r52 r">tracker</span>)));
+        }
+
+        <b>private void</b> <a id="024fbd18a77a01e3" href="R/024fbd18a77a01e3.html" target="n" data-glyph="76,1" class="i method">ValidateGarbageCollector</a>(<a href="Definitions/Series/ISeriesView.cs.html#44463e44050cefb2" class="t t">ISeriesView</a> <span id="r55 rd" class="r55 r">view</span>)
+        {
+            <a href="PointTracker.cs.html#650c9e7f39adb08b" class="k">var</a> <span id="r56 rd" class="r56 r">tracker</span> = <a href="#e1415b57cef407b7" class="i method">GetTracker</a>(<span class="r55 r">view</span>);
+
+            <b>if</b> (<span class="r56 r">tracker</span>.<a href="PointTracker.cs.html#1d929d6b59839712" class="i property">Gci</a> != <b>int</b>.<a href="@1@System.Runtime/A.html#c45153c0501d7122" class="i field">MaxValue</a>) <b>return</b>;
+
+            <span class="r56 r">tracker</span>.<a href="PointTracker.cs.html#1d929d6b59839712" class="i property">Gci</a> = 0;
+
+            <b>foreach</b> (<a href="ChartPoint.cs.html#a7b99b1eebb29334" class="k">var</a> <span id="r57 rd" class="r57 r">point</span> <b>in</b> <span class="r56 r">tracker</span>.<a href="PointTracker.cs.html#6a61ad9e6431326d" class="i property">Indexed</a>.<span class="i property">Values</span>.<span class="i method">Concat</span>(<span class="r56 r">tracker</span>.<a href="PointTracker.cs.html#94ec839eb35a4046" class="i property">Referenced</a>.<span class="i property">Values</span>))
+                <span class="r57 r">point</span>.<a href="ChartPoint.cs.html#24b040bef6679b83" class="i property">Gci</a> = 0;
+        }
+
+        <b>private static bool</b> <a id="9a853d8dbbb2850d" href="R/9a853d8dbbb2850d.html" target="n" data-glyph="76,1" class="i method">IsGarbage</a>(<a href="ChartPoint.cs.html#a7b99b1eebb29334" class="t t">ChartPoint</a> <span id="r58 rd" class="r58 r">point</span>, <a href="PointTracker.cs.html#650c9e7f39adb08b" class="t t">PointTracker</a> <span id="r59 rd" class="r59 r">tracker</span>)
+        {
+            <b>return</b> <span class="r58 r">point</span>.<a href="ChartPoint.cs.html#24b040bef6679b83" class="i property">Gci</a> &lt; <span class="r59 r">tracker</span>.<a href="PointTracker.cs.html#1d929d6b59839712" class="i property">Gci</a>
+                   || <b>double</b>.<a href="@1@System.Runtime/A.html#b3843db5f359a0fd" class="i method">IsNaN</a>(<span class="r58 r">point</span>.<a href="ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a>) || <b>double</b>.<a href="@1@System.Runtime/A.html#b3843db5f359a0fd" class="i method">IsNaN</a>(<span class="r58 r">point</span>.<a href="ChartPoint.cs.html#2647768eb1eb41f6" class="i property">Y</a>);
+        }
+
+        <b>private void</b> <a id="2e6763888de6ff3d" href="R/2e6763888de6ff3d.html" target="n" data-glyph="76,1" class="i method">OnChanged</a>(<a href="@1@System.Runtime/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<span class="r0 r t">T</span>&gt; <span id="r60 rd" class="r60 r">oldItems</span>, <a href="@1@System.Runtime/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<span class="r0 r t">T</span>&gt; <span id="r61 rd" class="r61 r">newItems</span>)
+        {
+            <b>if</b> (<a href="#2679c3855ed35cce" class="i property">Trackers</a>.<span class="i property">Keys</span>.<span class="i method">All</span>(<span id="r62 rd" class="r62 r">x</span> =&gt; <span class="r62 r">x</span> != <b>null</b> &amp;&amp; <span class="r62 r">x</span>.<a href="Definitions/Series/ISeriesView.cs.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a> != <b>null</b>))
+                <a href="#2679c3855ed35cce" class="i property">Trackers</a>.<span class="i property">Keys</span>.<a href="Helpers/Extentions.cs.html#a20acbe062229ad5" class="i method">ForEach</a>(<span id="r63 rd" class="r63 r">x</span> =&gt; <span class="r63 r">x</span>.<a href="Definitions/Series/ISeriesView.cs.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="Seriesalgorithm.cs.html#515df27c35ed593e" class="i property">Chart</a>.<a href="Charts/ChartCore.cs.html#ec8a47f0b55838b2" class="i property">Updater</a>.<a href="ChartUpdater.cs.html#f3b3be98ec3d955d" class="i method">Run</a>());
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}</pre></td></tr></table></div></body></html>

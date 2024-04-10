@@ -1,4 +1,7 @@
-﻿using EasyITSystemCenter.Classes;
+﻿[Zpět](../../index)   
+
+```cshtml   
+using EasyITSystemCenter.Classes;
 using System.Collections.ObjectModel;
 
 namespace EasyITSystemCenter.GlobalClasses {

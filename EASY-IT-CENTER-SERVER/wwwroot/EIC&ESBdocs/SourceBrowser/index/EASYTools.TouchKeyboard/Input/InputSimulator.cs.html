@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html><head><title>InputSimulator.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(193);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.TouchKeyboard/Input/InputSimulator.cs" target="_top">Input\InputSimulator.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.TouchKeyboard" target="_top">..\..\..\EASY-TOOLS\EASYTools.TouchKeyboard\EASYTools.TouchKeyboard.csproj</a> (EASYTools.TouchKeyboard)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Runtime</span>.<span class="i n">InteropServices</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">Input</span>.<span class="i n">Native</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">Input</span>
+{
+    <b>public static class</b> <a id="c0379545594653bc" href="../R/c0379545594653bc.html" target="n" data-glyph="0,0" class="t t">InputSimulator</a>
+    {
+        [<a href="@0@mscorlib/A.html#19ddb78edbb90890" class="t constructor">DllImport</a>(<span class="s">&quot;user32.dll&quot;</span>, <a href="@0@mscorlib/A.html#e0fee96b37c60a97" class="i field">SetLastError</a> = <b>true</b>)]
+        <b>private static extern uint</b> <a id="ebbb280e6caad353" href="../R/ebbb280e6caad353.html" target="n" data-glyph="76,1" class="i method">SendInput</a>(<b>uint</b> <span id="r0 rd" class="r0 r">numberOfInputs</span>, <a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>[] <span id="r1 rd" class="r1 r">inputs</span>, <b>int</b> <span id="r2 rd" class="r2 r">sizeOfInputStructure</span>);
+ 
+        [<a href="@0@mscorlib/A.html#19ddb78edbb90890" class="t constructor">DllImport</a>(<span class="s">&quot;user32.dll&quot;</span>, <a href="@0@mscorlib/A.html#e0fee96b37c60a97" class="i field">SetLastError</a> = <b>true</b>)]
+        <b>private static extern short</b> <a id="0888b79d23b20f40" href="../R/0888b79d23b20f40.html" target="n" data-glyph="76,1" class="i method">GetAsyncKeyState</a>(<b>ushort</b> <span id="r3 rd" class="r3 r">virtualKeyCode</span>);
+ 
+        [<a href="@0@mscorlib/A.html#19ddb78edbb90890" class="t constructor">DllImport</a>(<span class="s">&quot;user32.dll&quot;</span>, <a href="@0@mscorlib/A.html#e0fee96b37c60a97" class="i field">SetLastError</a> = <b>true</b>)]
+        <b>private static extern short</b> <a id="892532da32fc7daa" href="../R/892532da32fc7daa.html" target="n" data-glyph="76,1" class="i method">GetKeyState</a>(<b>ushort</b> <span id="r4 rd" class="r4 r">virtualKeyCode</span>);
+ 
+        [<a href="@0@mscorlib/A.html#19ddb78edbb90890" class="t constructor">DllImport</a>(<span class="s">&quot;user32.dll&quot;</span>)]
+        <b>private static extern</b> <a href="@0@mscorlib/A.html#d99bf6ad49979009" class="t t">IntPtr</a> <a id="0b4193ac4f308bf6" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">GetMessageExtraInfo</a>();
+ 
+        <b>public static bool</b> <a id="e5204e0f3a109bf2" href="../R/e5204e0f3a109bf2.html" target="n" data-glyph="72,1" class="i method">IsKeyDownAsync</a>(<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a> <span id="r5 rd" class="r5 r">keyCode</span>)
+        {
+            <b>short</b> <span id="r6 rd" class="r6 r">result</span> = <a href="#0888b79d23b20f40" class="i method">GetAsyncKeyState</a>((<b>ushort</b>)<span class="r5 r">keyCode</span>);
+            <b>return</b> <span class="r6 r">result</span> &lt; 0;
+        }
+ 
+        <b>public static bool</b> <a id="5ae9ac0dd93ddf9d" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">IsKeyDown</a>(<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a> <span id="r7 rd" class="r7 r">keyCode</span>)
+        {
+            <b>short</b> <span id="r8 rd" class="r8 r">result</span> = <a href="#892532da32fc7daa" class="i method">GetKeyState</a>((<b>ushort</b>)<span class="r7 r">keyCode</span>);
+            <b>return</b> <span class="r8 r">result</span> &lt; 0;
+        }
+ 
+        <b>public static bool</b> <a id="a9b16b1c5879b42b" href="../R/a9b16b1c5879b42b.html" target="n" data-glyph="72,1" class="i method">IsTogglingKeyInEffect</a>(<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a> <span id="r9 rd" class="r9 r">keyCode</span>)
+        {
+            <b>short</b> <span id="r10 rd" class="r10 r">result</span> = <a href="#892532da32fc7daa" class="i method">GetKeyState</a>((<b>ushort</b>)<span class="r9 r">keyCode</span>);
+            <b>return</b> (<span class="r10 r">result</span> &amp; 1) == 1;
+        }
+ 
+        <b>public static void</b> <a id="9a3fce71424c52e5" href="../R/9a3fce71424c52e5.html" target="n" data-glyph="72,1" class="i method">SimulateKeyDown</a>(<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a> <span id="r11 rd" class="r11 r">keyCode</span>)
+        {
+            <a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a> <span id="r12 rd" class="r12 r">down</span> = <b>default</b>(<a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>);
+            <span class="r12 r">down</span>.<a href="Native/INPUT.cs.html#de80ef3c720e0f21" class="i field">Type</a> = <a href="Native/INPUT.cs.html#1ef005b451e0474d" class="t t">InputType</a>.<a href="Native/INPUT.cs.html#ef810053b59449d0" class="i field">KEYBOARD</a>;
+            <span class="r12 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a> = <b>default</b>(<a href="Native/KEYBDINPUT.cs.html#f717c8c856393092" class="t t">KEYBDINPUT</a>);
+            <span class="r12 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#185120cb61eeb13b" class="i field">Vk</a> = <span class="r11 r">keyCode</span>;
+            <span class="r12 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#7f5ebd5ac473217e" class="i field">Scan</a> = 0;
+            <span class="r12 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#b58d50fe26aab06a" class="i field">Flags</a> = 0u;
+            <span class="r12 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#c4dbb35eb65156cc" class="i field">Time</a> = 0u;
+            <span class="r12 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#7e4d1afc62028f27" class="i field">ExtraInfo</a> = <a href="@0@mscorlib/A.html#f8f01749ea279a65" class="t t">UIntPtr</a>.<a href="@0@mscorlib/A.html#98c1215cbbfbe949" class="i field">Zero</a>;
+            <b>uint</b> <span id="r13 rd" class="r13 r">numberOfSuccessfulSimulatedInputs</span> = <a href="#ebbb280e6caad353" class="i method">SendInput</a>(1u, <b>new</b> <a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>[]
+            {
+                <span class="r12 r">down</span>
+            }, <a href="@0@mscorlib/A.html#489a61c84168b119" class="t t">Marshal</a>.<a href="@0@mscorlib/A.html#a06bff36339af567" class="i method">SizeOf</a>(<b>typeof</b>(<a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>)));
+            <b>if</b> (<span class="r13 r">numberOfSuccessfulSimulatedInputs</span> == 0u)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#df2d82d91ca29e40" class="t constructor">Exception</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9d5604d4425b216f" class="i method">Format</a>(<span class="s">&quot;The key down simulation for {0} was not successful.&quot;</span>, <span class="r11 r">keyCode</span>));
+            }
+        }
+ 
+        <b>public static void</b> <a id="f5c78baf688ce1ad" href="../R/f5c78baf688ce1ad.html" target="n" data-glyph="72,1" class="i method">SimulateKeyUp</a>(<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a> <span id="r14 rd" class="r14 r">keyCode</span>)
+        {
+            <a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a> <span id="r15 rd" class="r15 r">up</span> = <b>default</b>(<a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>);
+            <span class="r15 r">up</span>.<a href="Native/INPUT.cs.html#de80ef3c720e0f21" class="i field">Type</a> = <a href="Native/INPUT.cs.html#1ef005b451e0474d" class="t t">InputType</a>.<a href="Native/INPUT.cs.html#ef810053b59449d0" class="i field">KEYBOARD</a>;
+            <span class="r15 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a> = <b>default</b>(<a href="Native/KEYBDINPUT.cs.html#f717c8c856393092" class="t t">KEYBDINPUT</a>);
+            <span class="r15 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#185120cb61eeb13b" class="i field">Vk</a> = <span class="r14 r">keyCode</span>;
+            <span class="r15 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#7f5ebd5ac473217e" class="i field">Scan</a> = 0;
+            <span class="r15 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#b58d50fe26aab06a" class="i field">Flags</a> = <a href="Native/KEYBDINPUT.cs.html#bc32a42b8eba2cc1" class="t t">KEYEVENTF</a>.<a href="Native/KEYBDINPUT.cs.html#3523dde627966fe1" class="i field">KEYUP</a>;
+            <span class="r15 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#c4dbb35eb65156cc" class="i field">Time</a> = 0u;
+            <span class="r15 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#7e4d1afc62028f27" class="i field">ExtraInfo</a> = <a href="@0@mscorlib/A.html#f8f01749ea279a65" class="t t">UIntPtr</a>.<a href="@0@mscorlib/A.html#98c1215cbbfbe949" class="i field">Zero</a>;
+            <b>uint</b> <span id="r16 rd" class="r16 r">numberOfSuccessfulSimulatedInputs</span> = <a href="#ebbb280e6caad353" class="i method">SendInput</a>(1u, <b>new</b> <a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>[]
+            {
+                <span class="r15 r">up</span>
+            }, <a href="@0@mscorlib/A.html#489a61c84168b119" class="t t">Marshal</a>.<a href="@0@mscorlib/A.html#a06bff36339af567" class="i method">SizeOf</a>(<b>typeof</b>(<a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>)));
+            <b>if</b> (<span class="r16 r">numberOfSuccessfulSimulatedInputs</span> == 0u)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#df2d82d91ca29e40" class="t constructor">Exception</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9d5604d4425b216f" class="i method">Format</a>(<span class="s">&quot;The key up simulation for {0} was not successful.&quot;</span>, <span class="r14 r">keyCode</span>));
+            }
+        }
+ 
+        <b>public static void</b> <a id="b58326c29e7b1d2f" href="../R/b58326c29e7b1d2f.html" target="n" data-glyph="72,1" class="i method">SimulateKeyPress</a>(<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a> <span id="r17 rd" class="r17 r">keyCode</span>)
+        {
+            <a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a> <span id="r18 rd" class="r18 r">down</span> = <b>default</b>(<a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>);
+            <span class="r18 r">down</span>.<a href="Native/INPUT.cs.html#de80ef3c720e0f21" class="i field">Type</a> = <a href="Native/INPUT.cs.html#1ef005b451e0474d" class="t t">InputType</a>.<a href="Native/INPUT.cs.html#ef810053b59449d0" class="i field">KEYBOARD</a>;
+            <span class="r18 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a> = <b>default</b>(<a href="Native/KEYBDINPUT.cs.html#f717c8c856393092" class="t t">KEYBDINPUT</a>);
+            <span class="r18 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#185120cb61eeb13b" class="i field">Vk</a> = <span class="r17 r">keyCode</span>;
+            <span class="r18 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#7f5ebd5ac473217e" class="i field">Scan</a> = 0;
+            <span class="r18 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#b58d50fe26aab06a" class="i field">Flags</a> = 0u;
+            <span class="r18 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#c4dbb35eb65156cc" class="i field">Time</a> = 0u;
+            <span class="r18 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#7e4d1afc62028f27" class="i field">ExtraInfo</a> = <a href="@0@mscorlib/A.html#f8f01749ea279a65" class="t t">UIntPtr</a>.<a href="@0@mscorlib/A.html#98c1215cbbfbe949" class="i field">Zero</a>;
+ 
+            <a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a> <span id="r19 rd" class="r19 r">up</span> = <b>default</b>(<a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>);
+            <span class="r19 r">up</span>.<a href="Native/INPUT.cs.html#de80ef3c720e0f21" class="i field">Type</a> = <a href="Native/INPUT.cs.html#1ef005b451e0474d" class="t t">InputType</a>.<a href="Native/INPUT.cs.html#ef810053b59449d0" class="i field">KEYBOARD</a>;
+            <span class="r19 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a> = <b>default</b>(<a href="Native/KEYBDINPUT.cs.html#f717c8c856393092" class="t t">KEYBDINPUT</a>);
+            <span class="r19 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#185120cb61eeb13b" class="i field">Vk</a> = <span class="r17 r">keyCode</span>;
+            <span class="r19 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#7f5ebd5ac473217e" class="i field">Scan</a> = 0;
+            <span class="r19 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#b58d50fe26aab06a" class="i field">Flags</a> = <a href="Native/KEYBDINPUT.cs.html#bc32a42b8eba2cc1" class="t t">KEYEVENTF</a>.<a href="Native/KEYBDINPUT.cs.html#3523dde627966fe1" class="i field">KEYUP</a>;
+            <span class="r19 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#c4dbb35eb65156cc" class="i field">Time</a> = 0u;
+            <span class="r19 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#7e4d1afc62028f27" class="i field">ExtraInfo</a> = <a href="@0@mscorlib/A.html#f8f01749ea279a65" class="t t">UIntPtr</a>.<a href="@0@mscorlib/A.html#98c1215cbbfbe949" class="i field">Zero</a>;
+            <b>uint</b> <span id="r20 rd" class="r20 r">numberOfSuccessfulSimulatedInputs</span> = <a href="#ebbb280e6caad353" class="i method">SendInput</a>(2u, <b>new</b> <a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>[]
+            {
+                <span class="r18 r">down</span>,
+                <span class="r19 r">up</span>
+            }, <a href="@0@mscorlib/A.html#489a61c84168b119" class="t t">Marshal</a>.<a href="@0@mscorlib/A.html#a06bff36339af567" class="i method">SizeOf</a>(<b>typeof</b>(<a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>)));
+            <b>if</b> (<span class="r20 r">numberOfSuccessfulSimulatedInputs</span> == 0u)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#df2d82d91ca29e40" class="t constructor">Exception</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9d5604d4425b216f" class="i method">Format</a>(<span class="s">&quot;The key press simulation for {0} was not successful.&quot;</span>, <span class="r17 r">keyCode</span>));
+            }
+        }
+ 
+        <b>public static void</b> <a id="b3361a7317817ff4" href="../R/b3361a7317817ff4.html" target="n" data-glyph="72,1" class="i method">SimulateTextEntry</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r21 rd" class="r21 r">text</span>)
+        {
+            <b>if</b> ((<b>uint</b>) <span class="r21 r">text</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a> &gt; <b>int</b>.<a href="@0@mscorlib/A.html#c45153c0501d7122" class="i field">MaxValue</a>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#4b20cd3790b6426a" class="t constructor">ArgumentException</a>(
+                    <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9d5604d4425b216f" class="i method">Format</a>(<span class="s">&quot;The text parameter is too long. It must be less than {0} characters.&quot;</span>, 2147483647u), <span class="s">&quot;text&quot;</span>);
+            }
+ 
+            <b>byte</b>[] <span id="r22 rd" class="r22 r">chars</span> = <a href="@0@mscorlib/A.html#3b6090c501893c25" class="t t">Encoding</a>.<a href="@0@mscorlib/A.html#65768102b7ace585" class="i property">ASCII</a>.<a href="@0@mscorlib/A.html#83f2d2c6f22db1a9" class="i method">GetBytes</a>(<span class="r21 r">text</span>);
+            <b>int</b> <span id="r23 rd" class="r23 r">len</span> = <span class="r22 r">chars</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>;
+            <a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>[] <span id="r24 rd" class="r24 r">inputList</span> = <b>new</b> <a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>[<span class="r23 r">len</span> * 2];
+            <b>for</b> (<b>int</b> <span id="r25 rd" class="r25 r">x</span> = 0; <span class="r25 r">x</span> &lt; <span class="r23 r">len</span>; <span class="r25 r">x</span>++)
+            {
+                <b>ushort</b> <span id="r26 rd" class="r26 r">scanCode</span> = (<b>ushort</b>)<span class="r22 r">chars</span>[<span class="r25 r">x</span>];
+                <a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a> <span id="r27 rd" class="r27 r">down</span> = <b>default</b>(<a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>);
+                <span class="r27 r">down</span>.<a href="Native/INPUT.cs.html#de80ef3c720e0f21" class="i field">Type</a> = <a href="Native/INPUT.cs.html#1ef005b451e0474d" class="t t">InputType</a>.<a href="Native/INPUT.cs.html#ef810053b59449d0" class="i field">KEYBOARD</a>;
+                <span class="r27 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a> = <b>default</b>(<a href="Native/KEYBDINPUT.cs.html#f717c8c856393092" class="t t">KEYBDINPUT</a>);
+                <span class="r27 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#185120cb61eeb13b" class="i field">Vk</a> = 0;
+                <span class="r27 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#7f5ebd5ac473217e" class="i field">Scan</a> = <span class="r26 r">scanCode</span>;
+                <span class="r27 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#b58d50fe26aab06a" class="i field">Flags</a> = <a href="Native/KEYBDINPUT.cs.html#bc32a42b8eba2cc1" class="t t">KEYEVENTF</a>.<a href="Native/KEYBDINPUT.cs.html#5840b2cf33cb22e2" class="i field">UNICODE</a>;
+                <span class="r27 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#c4dbb35eb65156cc" class="i field">Time</a> = 0u;
+                <span class="r27 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#7e4d1afc62028f27" class="i field">ExtraInfo</a> = <a href="@0@mscorlib/A.html#f8f01749ea279a65" class="t t">UIntPtr</a>.<a href="@0@mscorlib/A.html#98c1215cbbfbe949" class="i field">Zero</a>;
+ 
+                <a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a> <span id="r28 rd" class="r28 r">up</span> = <b>default</b>(<a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>);
+                <span class="r28 r">up</span>.<a href="Native/INPUT.cs.html#de80ef3c720e0f21" class="i field">Type</a> = <a href="Native/INPUT.cs.html#1ef005b451e0474d" class="t t">InputType</a>.<a href="Native/INPUT.cs.html#ef810053b59449d0" class="i field">KEYBOARD</a>;
+                <span class="r28 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a> = <b>default</b>(<a href="Native/KEYBDINPUT.cs.html#f717c8c856393092" class="t t">KEYBDINPUT</a>);
+                <span class="r28 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#185120cb61eeb13b" class="i field">Vk</a> = 0;
+                <span class="r28 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#7f5ebd5ac473217e" class="i field">Scan</a> = <span class="r26 r">scanCode</span>;
+                <span class="r28 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#b58d50fe26aab06a" class="i field">Flags</a> = <a href="Native/KEYBDINPUT.cs.html#bc32a42b8eba2cc1" class="t t">KEYEVENTF</a>.<a href="Native/KEYBDINPUT.cs.html#5840b2cf33cb22e2" class="i field">UNICODE</a> | <a href="Native/KEYBDINPUT.cs.html#bc32a42b8eba2cc1" class="t t">KEYEVENTF</a>.<a href="Native/KEYBDINPUT.cs.html#3523dde627966fe1" class="i field">KEYUP</a>;
+                <span class="r28 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#c4dbb35eb65156cc" class="i field">Time</a> = 0u;
+                <span class="r28 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#7e4d1afc62028f27" class="i field">ExtraInfo</a> = <a href="@0@mscorlib/A.html#f8f01749ea279a65" class="t t">UIntPtr</a>.<a href="@0@mscorlib/A.html#98c1215cbbfbe949" class="i field">Zero</a>;
+                <b>if</b> ((<span class="r26 r">scanCode</span> &amp; 65280) == 57344)
+                {
+                    <span class="r27 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#b58d50fe26aab06a" class="i field">Flags</a> = (<span class="r27 r">down</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#b58d50fe26aab06a" class="i field">Flags</a> | <a href="Native/KEYBDINPUT.cs.html#bc32a42b8eba2cc1" class="t t">KEYEVENTF</a>.<a href="Native/KEYBDINPUT.cs.html#369d0f818d4dd606" class="i field">EXTENDEDKEY</a>);
+                    <span class="r28 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#b58d50fe26aab06a" class="i field">Flags</a> = (<span class="r28 r">up</span>.<a href="Native/INPUT.cs.html#fd1de5002226c505" class="i field">Data</a>.<a href="Native/MOUSEKEYBDHARDWAREINPUT.cs.html#dfdd954f47e8911f" class="i field">Keyboard</a>.<a href="Native/KEYBDINPUT.cs.html#b58d50fe26aab06a" class="i field">Flags</a> | <a href="Native/KEYBDINPUT.cs.html#bc32a42b8eba2cc1" class="t t">KEYEVENTF</a>.<a href="Native/KEYBDINPUT.cs.html#369d0f818d4dd606" class="i field">EXTENDEDKEY</a>);
+                }
+                <span class="r24 r">inputList</span>[2 * <span class="r25 r">x</span>] = <span class="r27 r">down</span>;
+                <span class="r24 r">inputList</span>[2 * <span class="r25 r">x</span> + 1] = <span class="r28 r">up</span>;
+            }
+            <b>uint</b> <span id="r29 rd" class="r29 r">numberOfSuccessfulSimulatedInputs</span> = <a href="#c0379545594653bc" class="t t">InputSimulator</a>.<a href="#ebbb280e6caad353" class="i method">SendInput</a>((<b>uint</b>)(<span class="r23 r">len</span> * 2), <span class="r24 r">inputList</span>,
+                <a href="@0@mscorlib/A.html#489a61c84168b119" class="t t">Marshal</a>.<a href="@0@mscorlib/A.html#a06bff36339af567" class="i method">SizeOf</a>(<b>typeof</b>(<a href="Native/INPUT.cs.html#941ca577c1370f2b" class="t t">INPUT</a>)));
+        }
+ 
+        <b>public static void</b> <a id="3d491e813c32abfc" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SimulateModifiedKeyStroke</a>(<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a> <span id="r30 rd" class="r30 r">modifierKeyCode</span>, <a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a> <span id="r31 rd" class="r31 r">keyCode</span>)
+        {
+            <a href="#9a3fce71424c52e5" class="i method">SimulateKeyDown</a>(<span class="r30 r">modifierKeyCode</span>);
+            <a href="#b58326c29e7b1d2f" class="i method">SimulateKeyPress</a>(<span class="r31 r">keyCode</span>);
+            <a href="#f5c78baf688ce1ad" class="i method">SimulateKeyUp</a>(<span class="r30 r">modifierKeyCode</span>);
+        }
+ 
+        <b>public static void</b> <a id="3b1854f796e9748a" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SimulateModifiedKeyStroke</a>(<a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a>&gt; <span id="r32 rd" class="r32 r">modifierKeyCodes</span>,
+            <a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a> <span id="r33 rd" class="r33 r">keyCode</span>)
+        {
+            <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a>&gt; <span id="r34 rd" class="r34 r">modifierKeyCodesList</span> = <span class="r32 r">modifierKeyCodes</span>?.<a href="@0@System.Core/A.html#e276d6892241255b" class="i method">ToList</a>();
+            <span class="r34 r">modifierKeyCodesList</span>?.<a href="@0@mscorlib/A.html#0e5a9cf0a310b9e5" class="i method">ForEach</a>(<a href="#9a3fce71424c52e5" class="i method">SimulateKeyDown</a>);
+            <a href="#b58326c29e7b1d2f" class="i method">SimulateKeyPress</a>(<span class="r33 r">keyCode</span>);
+            <span class="r34 r">modifierKeyCodesList</span>?.<a href="@0@System.Core/A.html#3af306c560f8c669" class="i method">Reverse</a>&lt;<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a>&gt;().<a href="@0@System.Core/A.html#e276d6892241255b" class="i method">ToList</a>().<a href="@0@mscorlib/A.html#0e5a9cf0a310b9e5" class="i method">ForEach</a>(<a href="#f5c78baf688ce1ad" class="i method">SimulateKeyUp</a>);
+        }
+ 
+ 
+        <b>public static void</b> <a id="d010a5d072380641" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SimulateModifiedKeyStroke</a>(<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a> <span id="r35 rd" class="r35 r">modifierKey</span>, <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a>&gt; <span id="r36 rd" class="r36 r">keyCodes</span>)
+        {
+            <a href="#9a3fce71424c52e5" class="i method">SimulateKeyDown</a>(<span class="r35 r">modifierKey</span>);
+            <span class="r36 r">keyCodes</span>?.<a href="@0@System.Core/A.html#e276d6892241255b" class="i method">ToList</a>().<a href="@0@mscorlib/A.html#0e5a9cf0a310b9e5" class="i method">ForEach</a>(<a href="#b58326c29e7b1d2f" class="i method">SimulateKeyPress</a>);
+            <a href="#f5c78baf688ce1ad" class="i method">SimulateKeyUp</a>(<span class="r35 r">modifierKey</span>);
+        }
+ 
+        <b>public static void</b> <a id="847b0e53d6055df5" href="../R/847b0e53d6055df5.html" target="n" data-glyph="72,1" class="i method">SimulateModifiedKeyStroke</a>(<a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a>&gt; <span id="r37 rd" class="r37 r">modifierKeyCodes</span>,
+            <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a>&gt; <span id="r38 rd" class="r38 r">keyCodes</span>)
+        {
+            <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a>&gt; <span id="r39 rd" class="r39 r">modifierKeyCodesList</span> = <span class="r37 r">modifierKeyCodes</span>?.<a href="@0@System.Core/A.html#e276d6892241255b" class="i method">ToList</a>();
+ 
+            <span class="r39 r">modifierKeyCodesList</span>?.<a href="@0@mscorlib/A.html#0e5a9cf0a310b9e5" class="i method">ForEach</a>(<a href="#9a3fce71424c52e5" class="i method">SimulateKeyDown</a>);
+ 
+            <span class="r38 r">keyCodes</span>?.<a href="@0@System.Core/A.html#e276d6892241255b" class="i method">ToList</a>().<a href="@0@mscorlib/A.html#0e5a9cf0a310b9e5" class="i method">ForEach</a>(<a href="#b58326c29e7b1d2f" class="i method">SimulateKeyPress</a>);
+ 
+            <span class="r39 r">modifierKeyCodesList</span>?.<a href="@0@System.Core/A.html#3af306c560f8c669" class="i method">Reverse</a>&lt;<a href="VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a>&gt;().<a href="@0@System.Core/A.html#e276d6892241255b" class="i method">ToList</a>().<a href="@0@mscorlib/A.html#0e5a9cf0a310b9e5" class="i method">ForEach</a>(<a href="#f5c78baf688ce1ad" class="i method">SimulateKeyUp</a>);
+ 
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

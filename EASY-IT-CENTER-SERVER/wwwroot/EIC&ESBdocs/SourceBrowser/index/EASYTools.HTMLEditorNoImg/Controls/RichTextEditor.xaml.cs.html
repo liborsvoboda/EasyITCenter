@@ -1,0 +1,195 @@
+﻿<!DOCTYPE html>
+<html><head><title>RichTextEditor.xaml.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(186);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.HTMLEditorNoImg/Controls/RichTextEditor.xaml.cs" target="_top">Controls\RichTextEditor.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.HTMLEditorNoImg" target="_top">..\..\..\EASY-TOOLS\EASYTools.HTMLEditorNoImg\EASYTools.HTMLEditorNoImg.csproj</a> (EASYTools.HTMLEditorNoImg)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">ObjectModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Navigation</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLEditorNoImg</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Interaction logic for BindableRichTextbox.xaml</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <a href="../P/29fb3260b8c85ac3.html" target="s" class="k">partial</a> <b>class</b> <a id="29fb3260b8c85ac3" href="../R/29fb3260b8c85ac3.html" target="n" data-glyph="0,0" class="t t">RichTextEditor</a> : <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a>
+    {
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="56cb66a1f3f42fb3" href="../R/56cb66a1f3f42fb3.html" target="n" data-glyph="42,1" class="i field">TextProperty</a> =
+		  <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;Text&quot;</span>, <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>), <b>typeof</b>(<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="t t">RichTextEditor</a>),
+		  <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>));
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="a11bdcc07d95dd9b" href="../R/a11bdcc07d95dd9b.html" target="n" data-glyph="42,1" class="i field">IsToolBarVisibleProperty</a> =
+		  <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;IsToolBarVisible&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="t t">RichTextEditor</a>),
+		  <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>true</b>));
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="4864f4dc54c5c364" href="../R/4864f4dc54c5c364.html" target="n" data-glyph="42,1" class="i field">IsContextMenuEnabledProperty</a> =
+		  <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;IsContextMenuEnabled&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="t t">RichTextEditor</a>),
+		  <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>true</b>));
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b0922550e7838cba" href="../R/b0922550e7838cba.html" target="n" data-glyph="42,1" class="i field">IsReadOnlyProperty</a> =
+		  <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;IsReadOnly&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="t t">RichTextEditor</a>),
+		  <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>false</b>));
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b3e3ff6bbc7b03ff" href="../R/b3e3ff6bbc7b03ff.html" target="n" data-glyph="42,1" class="i field">AvailableFontsProperty</a> =
+		  <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;AvailableFonts&quot;</span>, <b>typeof</b>(<a href="@0@mscorlib/A.html#281923b8611114ec" class="t t">Collection</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="t t">String</a>&gt;), <b>typeof</b>(<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="t t">RichTextEditor</a>),
+		  <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>new</b> <a href="@0@mscorlib/A.html#f89eec626d3cfff1" class="t constructor">Collection</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="t t">String</a>&gt;(
+			  <b>new</b> <a href="@0@mscorlib/A.html#b65c1a07c4e5b13a" class="t constructor">List</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="t t">String</a>&gt;(4) 
+			  {
+				  <span class="s">&quot;Arial&quot;</span>,
+				  <span class="s">&quot;Courier New&quot;</span>,
+				  <span class="s">&quot;Tahoma&quot;</span>,
+				  <span class="s">&quot;Times New Roman&quot;</span>
+			  }
+		)));
+ 
+ 
+		<b>private</b> <a href="@0@PresentationFramework/A.html#6c113c5cdd5b9976" class="t t">TextRange</a> <a id="f1be7820901e48b7" href="../R/f1be7820901e48b7.html" target="n" data-glyph="46,1" class="i field">textRange</a> = <b>null</b>;
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public</b> <a id="22e0dd2f04aedcc2" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">RichTextEditor</a>()
+        {
+            <a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#e5163d66164e0d39" class="i method">InitializeComponent</a>();
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public string</b> <a id="bc4e391c9aa3a0cf" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Text</a>
+		{
+			<b>get</b> { <b>return</b> <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#56cb66a1f3f42fb3" class="i field">TextProperty</a>) <b>as string</b>; }
+			<b>set</b>
+			{
+				<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#56cb66a1f3f42fb3" class="i field">TextProperty</a>, <b>value</b>);
+			}
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public bool</b> <a id="4ce864caf71681ca" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">IsToolBarVisible</a>
+		{
+			<b>get</b> { <b>return</b> (<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#a11bdcc07d95dd9b" class="i field">IsToolBarVisibleProperty</a>) <b>as bool</b>? == <b>true</b>); }
+			<b>set</b>
+			{
+				<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#a11bdcc07d95dd9b" class="i field">IsToolBarVisibleProperty</a>, <b>value</b>);
+				<span class="c">//this.mainToolBar.Visibility = (value == true) ? Visibility.Visible : Visibility.Collapsed;</span>
+			}
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public bool</b> <a id="761f5a7db4e9b503" href="../R/761f5a7db4e9b503.html" target="n" data-glyph="102,1" class="i property">IsContextMenuEnabled</a>
+		{
+			<b>get</b> 
+			{ 
+				<b>return</b> (<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#4864f4dc54c5c364" class="i field">IsContextMenuEnabledProperty</a>) <b>as bool</b>? == <b>true</b>);
+			}
+			<b>set</b>
+			{
+				<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#4864f4dc54c5c364" class="i field">IsContextMenuEnabledProperty</a>, <b>value</b>);
+			}
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public bool</b> <a id="b1e7a17109727548" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">IsReadOnly</a>
+		{
+			<b>get</b> { <b>return</b> (<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b0922550e7838cba" class="i field">IsReadOnlyProperty</a>) <b>as bool</b>? == <b>true</b>); }
+			<b>set</b>
+			{
+				<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b0922550e7838cba" class="i field">IsReadOnlyProperty</a>, <b>value</b>);
+				<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#a11bdcc07d95dd9b" class="i field">IsToolBarVisibleProperty</a>, !<b>value</b>);
+				<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#4864f4dc54c5c364" class="i field">IsContextMenuEnabledProperty</a>, !<b>value</b>);
+			}
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public</b> <a href="@0@mscorlib/A.html#281923b8611114ec" class="t t">Collection</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="t t">String</a>&gt; <a id="d3eeadb467e8e9f8" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">AvailableFonts</a>
+		{
+			<b>get</b> { <b>return</b> <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b3e3ff6bbc7b03ff" class="i field">AvailableFontsProperty</a>) <b>as</b> <a href="@0@mscorlib/A.html#281923b8611114ec" class="t t">Collection</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="t t">String</a>&gt;; }
+			<b>set</b>
+			{
+				<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b3e3ff6bbc7b03ff" class="i field">AvailableFontsProperty</a>, <b>value</b>);
+			}
+		}
+ 
+		<b>private void</b> <a id="dde19ca776d737fa" href="../R/dde19ca776d737fa.html" target="n" data-glyph="76,1" class="i method">FontColorPicker_SelectedColorChanged</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@PresentationFramework/A.html#a5422d54686003ed" class="t t">RoutedPropertyChangedEventArgs</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?&gt; <span id="r1 rd" class="r1 r">e</span>)
+		{
+			<b>if</b> (<span class="r1 r">e</span>.<a href="@0@PresentationFramework/A.html#feaccc5df6b37552" class="i property">NewValue</a> != <b>null</b>) {
+				<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#780080f9d2b100bc" class="i field">mainRTB</a>.<a href="@0@PresentationFramework/A.html#7673072cce32d35a" class="i property">Selection</a>.<a href="@0@PresentationFramework/A.html#2c62d7d8cd8820c2" class="i method">ApplyPropertyValue</a>(<a href="@0@PresentationFramework/A.html#be72c436b94f4eba" class="i field">ForegroundProperty</a>, <span class="r1 r">e</span>.<a href="@0@PresentationFramework/A.html#feaccc5df6b37552" class="i property">NewValue</a>?.<a href="@0@PresentationCore/A.html#c4ad1c6ffbd3476f" class="i method">ToString</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>));
+			}
+		}
+ 
+		<b>private void</b> <a id="ff7dbc5d3dcf4716" href="../R/ff7dbc5d3dcf4716.html" target="n" data-glyph="76,1" class="i method">ComboBox_SelectionChanged</a>(<b>object</b> <span id="r2 rd" class="r2 r">sender</span>, <a href="@0@PresentationFramework/A.html#c488465397cb1452" class="t t">SelectionChangedEventArgs</a> <span id="r3 rd" class="r3 r">e</span>)
+		{
+			<b>if</b> (<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#780080f9d2b100bc" class="i field">mainRTB</a> != <b>null</b> &amp;&amp; <a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#780080f9d2b100bc" class="i field">mainRTB</a>.<a href="@0@PresentationFramework/A.html#7673072cce32d35a" class="i property">Selection</a> != <b>null</b>)
+				<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#780080f9d2b100bc" class="i field">mainRTB</a>.<a href="@0@PresentationFramework/A.html#7673072cce32d35a" class="i property">Selection</a>.<a href="@0@PresentationFramework/A.html#2c62d7d8cd8820c2" class="i method">ApplyPropertyValue</a>(<a href="@0@PresentationFramework/A.html#864f8c717160e654" class="i field">FontFamilyProperty</a>, <span class="r3 r">e</span>.<a href="@0@PresentationFramework/A.html#c18179aafc009668" class="i property">AddedItems</a>[0]);
+		}
+ 
+		<b>private void</b> <a id="a6456f36fe7bcd85" href="../R/a6456f36fe7bcd85.html" target="n" data-glyph="76,1" class="i method">insertLink_Click</a>(<b>object</b> <span id="r4 rd" class="r4 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r5 rd" class="r5 r">e</span>)
+		{
+			<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="#f1be7820901e48b7" class="i field">textRange</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#89b123297a8cd9e8" class="t constructor">TextRange</a>(<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#780080f9d2b100bc" class="i field">mainRTB</a>.<a href="@0@PresentationFramework/A.html#7673072cce32d35a" class="i property">Selection</a>.<a href="@0@PresentationFramework/A.html#571d0f214569e65b" class="i property">Start</a>, <a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#780080f9d2b100bc" class="i field">mainRTB</a>.<a href="@0@PresentationFramework/A.html#7673072cce32d35a" class="i property">Selection</a>.<a href="@0@PresentationFramework/A.html#3baa8a6cd4b699b8" class="i property">End</a>);
+			<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#b0343f18545b06e5" class="i field">uriInputPopup</a>.<a href="@0@PresentationFramework/A.html#a7b9610dce8cc3e0" class="i property">IsOpen</a> = <b>true</b>;
+		}
+ 
+		<b>private void</b> <a id="afaf9400d57b6189" href="../R/afaf9400d57b6189.html" target="n" data-glyph="76,1" class="i method">uriCancelClick</a>(<b>object</b> <span id="r6 rd" class="r6 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r7 rd" class="r7 r">e</span>)
+		{
+			<span class="r7 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+			<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#b0343f18545b06e5" class="i field">uriInputPopup</a>.<a href="@0@PresentationFramework/A.html#a7b9610dce8cc3e0" class="i property">IsOpen</a> = <b>false</b>;
+			<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#e318a0aa64f95a73" class="i field">uriInput</a>.<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a> = <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+		}
+ 
+		<b>private void</b> <a id="dba2c9f53ade56fe" href="../R/dba2c9f53ade56fe.html" target="n" data-glyph="76,1" class="i method">uriSubmitClick</a>(<b>object</b> <span id="r8 rd" class="r8 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r9 rd" class="r9 r">e</span>)
+		{
+			<span class="r9 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+			<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#b0343f18545b06e5" class="i field">uriInputPopup</a>.<a href="@0@PresentationFramework/A.html#a7b9610dce8cc3e0" class="i property">IsOpen</a> = <b>false</b>;
+			<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#780080f9d2b100bc" class="i field">mainRTB</a>.<a href="@0@PresentationFramework/A.html#7673072cce32d35a" class="i property">Selection</a>.<a href="@0@PresentationFramework/A.html#62982fa83ee02439" class="i method">Select</a>(<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="#f1be7820901e48b7" class="i field">textRange</a>.<a href="@0@PresentationFramework/A.html#571d0f214569e65b" class="i property">Start</a>, <a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="#f1be7820901e48b7" class="i field">textRange</a>.<a href="@0@PresentationFramework/A.html#3baa8a6cd4b699b8" class="i property">End</a>);
+			<b>if</b> (!<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#e318a0aa64f95a73" class="i field">uriInput</a>.<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>))
+			{
+				<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="#f1be7820901e48b7" class="i field">textRange</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#89b123297a8cd9e8" class="t constructor">TextRange</a>(<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#780080f9d2b100bc" class="i field">mainRTB</a>.<a href="@0@PresentationFramework/A.html#7673072cce32d35a" class="i property">Selection</a>.<a href="@0@PresentationFramework/A.html#571d0f214569e65b" class="i property">Start</a>, <a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#780080f9d2b100bc" class="i field">mainRTB</a>.<a href="@0@PresentationFramework/A.html#7673072cce32d35a" class="i property">Selection</a>.<a href="@0@PresentationFramework/A.html#3baa8a6cd4b699b8" class="i property">End</a>);
+				<a href="@0@PresentationFramework/A.html#2c1c85ab1e41c25a" class="t t">Hyperlink</a> <span id="r10 rd" class="r10 r">hlink</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#e0bf3a5dc557b1d6" class="t constructor">Hyperlink</a>(<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="#f1be7820901e48b7" class="i field">textRange</a>.<a href="@0@PresentationFramework/A.html#571d0f214569e65b" class="i property">Start</a>, <a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="#f1be7820901e48b7" class="i field">textRange</a>.<a href="@0@PresentationFramework/A.html#3baa8a6cd4b699b8" class="i property">End</a>);
+				<span class="r10 r">hlink</span>.<a href="@0@PresentationFramework/A.html#2d26969d721db995" class="i property">NavigateUri</a> = <b>new</b> <a href="@0@System/A.html#d9fc45d783ee73ff" class="t constructor">Uri</a>(<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#e318a0aa64f95a73" class="i field">uriInput</a>.<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>, <a href="@0@System/A.html#ac43655101ad74be" class="t t">UriKind</a>.<a href="@0@System/A.html#2a5de88dbfa86f1b" class="i field">RelativeOrAbsolute</a>);
+				<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#e318a0aa64f95a73" class="i field">uriInput</a>.<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a> = <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+			}
+			<b>else</b>
+				<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="../obj/Debug/Controls/RichTextEditor.g.cs.html#780080f9d2b100bc" class="i field">mainRTB</a>.<a href="@0@PresentationFramework/A.html#7673072cce32d35a" class="i property">Selection</a>.<a href="@0@PresentationFramework/A.html#4b70a0565d1f9f00" class="i method">ClearAllProperties</a>();			
+		}
+ 
+		<b>private void</b> <a id="391c7ff514d8c422" href="../R/391c7ff514d8c422.html" target="n" data-glyph="76,1" class="i method">uriInput_KeyPressed</a>(<b>object</b> <span id="r11 rd" class="r11 r">sender</span>, <a href="@0@PresentationCore/A.html#0d2ce926f5cfc74b" class="t t">KeyEventArgs</a> <span id="r12 rd" class="r12 r">e</span>)
+		{
+			<b>switch</b> (<span class="r12 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a>)
+			{
+				<b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#38a06ab0ee7279d0" class="i field">Enter</a>:
+					<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="#dba2c9f53ade56fe" class="i method">uriSubmitClick</a>(<span class="r11 r">sender</span>, <span class="r12 r">e</span>);
+					<b>break</b>;
+				<b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#51a26d8f82f371eb" class="i field">Escape</a>:
+					<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="#afaf9400d57b6189" class="i method">uriCancelClick</a>(<span class="r11 r">sender</span>, <span class="r12 r">e</span>);
+					<b>break</b>;
+				<b>default</b>:
+					<b>break</b>;
+			}
+		}
+ 
+		<b>private void</b> <a id="efd436cf89692cc1" href="../R/efd436cf89692cc1.html" target="n" data-glyph="76,1" class="i method">ContextMenu_ContextMenuOpening</a>(<b>object</b> <span id="r13 rd" class="r13 r">sender</span>, <a href="@0@PresentationFramework/A.html#590e80a3f8d90e70" class="t t">ContextMenuEventArgs</a> <span id="r14 rd" class="r14 r">e</span>)
+		{
+			<b>if</b> (!<a href="../P/29fb3260b8c85ac3.html#29fb3260b8c85ac3" class="k">this</a>.<a href="#761f5a7db4e9b503" class="i property">IsContextMenuEnabled</a> == <b>true</b>)
+				<span class="r14 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+		}
+    }
+}
+</pre></td></tr></table></div></body></html>

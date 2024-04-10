@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html><head><title>BindingProxy.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(39);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro.Demo/Core/BindingProxy.cs" target="_top">Core\BindingProxy.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro.Demo" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro.Samples\MahApps.Metro.Demo\MahApps.Metro.Demo.csproj</a> (MahApps.Metro.Demo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+
+<b>namespace</b> <span class="i n">MetroDemo</span>.<span class="i n">Core</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> The BindingProxy can be used to avoid the following error:</span>
+    <span class="c">///</span>
+    <span class="c">///</span><span class="c">     System.Windows.Data Error: 2 : Cannot find governing FrameworkElement or FrameworkContentElement for target element. BindingExpression: Path= ...</span>
+    <span class="c">///</span>
+    <span class="c">///</span><span class="c"> WPF doesn&#39;t know which FrameworkElement to use to get the DataContext,</span>
+    <span class="c">///</span><span class="c"> because this Control doesn&#39;t belong to the visual or logical tree.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="b8ae6b5764a653b5" href="../R/b8ae6b5764a653b5.html" target="n" data-glyph="0,0" class="t t"><span id="4270175ceacccef5">BindingProxy</span></a> : <a href="@0@WindowsBase/A.html#066003ffe0442caa" class="t t">Freezable</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#c977aa4076a26f0c" class="i property">Data</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="e6217f85a7150cae" href="../R/e6217f85a7150cae.html" target="n" data-glyph="42,1" class="i field">DataProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#28c81133f2c673fb" class="i method">Register</a>(<b>nameof</b>(<a href="#c977aa4076a26f0c" class="i property">Data</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#b8ae6b5764a653b5" class="t t">BindingProxy</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the real data which should be bind.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b>? <a id="c977aa4076a26f0c" href="../R/c977aa4076a26f0c.html" target="n" data-glyph="102,1" class="i property">Data</a>
+        {
+            <b>get</b> =&gt; <a href="#b8ae6b5764a653b5" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#e6217f85a7150cae" class="i field">DataProperty</a>);
+            <b>set</b> =&gt; <a href="#b8ae6b5764a653b5" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#e6217f85a7150cae" class="i field">DataProperty</a>, <b>value</b>);
+        }
+
+        <b>protected override</b> <a href="@0@WindowsBase/A.html#066003ffe0442caa" class="t t">Freezable</a> <a id="98a9ed15466560e2" href="../R/98a9ed15466560e2.html" target="n" data-glyph="75,1" class="i method">CreateInstanceCore</a>()
+        {
+            <b>return</b> <b>new</b> <a href="#b8ae6b5764a653b5" class="t constructor">BindingProxy</a>();
+        }
+    }
+}</pre></td></tr></table></div></body></html>

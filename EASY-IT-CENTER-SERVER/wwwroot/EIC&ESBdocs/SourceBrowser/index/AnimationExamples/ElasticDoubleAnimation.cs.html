@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html><head><title>ElasticDoubleAnimation.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(155);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#AnimationExamples/ElasticDoubleAnimation.cs" target="_top">ElasticDoubleAnimation.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#AnimationExamples" target="_top">HelpProjects\WPF-MORE\Animation\AnimationExamples\AnimationExamples.csproj</a> (AnimationExamples)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+
+<b>namespace</b> <span class="i n">AnimationExamples</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     ElasticDoubleAnimation - like something attached to a rubber band</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="afe1632b1bbb86ff" href="R/afe1632b1bbb86ff.html" target="n" data-glyph="0,0" class="t t"><span id="ab2c96a99fb68f47">ElasticDoubleAnimation</span></a> : <a href="@0@PresentationCore/A.html#927191f9c491cb33" class="t t">DoubleAnimationBase</a>
+    {
+        <b>public enum</b> <a id="09b5f166675091fd" href="R/09b5f166675091fd.html" target="n" data-glyph="18,1" class="t t"><span id="484bb9f200b2e4cd">EdgeBehaviorEnum</span></a>
+        {
+            <a id="0993bb9312d06671" href="R/0993bb9312d06671.html" target="n" data-glyph="24,2" class="i field">EaseIn</a>,
+            <a id="722fe5648841725e" href="R/722fe5648841725e.html" target="n" data-glyph="24,2" class="i field">EaseOut</a>,
+            <a id="45a83dbd73a41cf8" href="R/../../0000000000.html" target="n" data-glyph="24,2" class="i field">EaseInOut</a>
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b4dff7957c6e94b7" href="R/b4dff7957c6e94b7.html" target="n" data-glyph="42,1" class="i field">EdgeBehaviorProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;EdgeBehavior&quot;</span>, <b>typeof</b> (<a href="#09b5f166675091fd" class="t t">EdgeBehaviorEnum</a>), <b>typeof</b> (<a href="#afe1632b1bbb86ff" class="t t">ElasticDoubleAnimation</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="#09b5f166675091fd" class="t t">EdgeBehaviorEnum</a>.<a href="#0993bb9312d06671" class="i field">EaseIn</a>));
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="890e31cbfc2afe0f" href="R/890e31cbfc2afe0f.html" target="n" data-glyph="42,1" class="i field">SpringinessProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;Springiness&quot;</span>, <b>typeof</b> (<b>double</b>), <b>typeof</b> (<a href="#afe1632b1bbb86ff" class="t t">ElasticDoubleAnimation</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(3.0));
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="c147436caf7105c0" href="R/c147436caf7105c0.html" target="n" data-glyph="42,1" class="i field">OscillationsProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;Oscillations&quot;</span>, <b>typeof</b> (<b>double</b>), <b>typeof</b> (<a href="#afe1632b1bbb86ff" class="t t">ElasticDoubleAnimation</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(10.0));
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="26ad87393622cd6b" href="R/26ad87393622cd6b.html" target="n" data-glyph="42,1" class="i field">FromProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;From&quot;</span>,
+                <b>typeof</b> (<b>double</b>?),
+                <b>typeof</b> (<a href="#afe1632b1bbb86ff" class="t t">ElasticDoubleAnimation</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="2993675b57d8f522" href="R/2993675b57d8f522.html" target="n" data-glyph="42,1" class="i field">ToProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;To&quot;</span>,
+                <b>typeof</b> (<b>double</b>?),
+                <b>typeof</b> (<a href="#afe1632b1bbb86ff" class="t t">ElasticDoubleAnimation</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     which side gets the effect</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#09b5f166675091fd" class="t t">EdgeBehaviorEnum</a> <a id="81333a9c74281776" href="R/81333a9c74281776.html" target="n" data-glyph="102,1" class="i property">EdgeBehavior</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="#09b5f166675091fd" class="t t">EdgeBehaviorEnum</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b4dff7957c6e94b7" class="i field">EdgeBehaviorProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b4dff7957c6e94b7" class="i field">EdgeBehaviorProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     how much springiness is there in the effect</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="ea69f0caad5e0084" href="R/ea69f0caad5e0084.html" target="n" data-glyph="102,1" class="i property">Springiness</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#890e31cbfc2afe0f" class="i field">SpringinessProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#890e31cbfc2afe0f" class="i field">SpringinessProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     number of oscillations in the effect</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="c86fa9017d2d3978" href="R/c86fa9017d2d3978.html" target="n" data-glyph="102,1" class="i property">Oscillations</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#c147436caf7105c0" class="i field">OscillationsProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#c147436caf7105c0" class="i field">OscillationsProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Specifies the starting value of the animation.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b>? <a id="fa3d243e7bd77109" href="R/fa3d243e7bd77109.html" target="n" data-glyph="102,1" class="i property">From</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>?) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#26ad87393622cd6b" class="i field">FromProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#26ad87393622cd6b" class="i field">FromProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Specifies the ending value of the animation.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b>? <a id="2b4dc598c8eb4328" href="R/2b4dc598c8eb4328.html" target="n" data-glyph="102,1" class="i property">To</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>?) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#2993675b57d8f522" class="i field">ToProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#2993675b57d8f522" class="i field">ToProperty</a>, <b>value</b>); }
+        }
+
+        <b>protected override double</b> <a id="227fbc1024389482" href="R/227fbc1024389482.html" target="n" data-glyph="75,1" class="i method">GetCurrentValueCore</a>(<b>double</b> <span id="r0 rd" class="r0 r">defaultOriginValue</span>, <b>double</b> <span id="r1 rd" class="r1 r">defaultDestinationValue</span>,
+            <a href="@0@PresentationCore/A.html#f99966d8ba714770" class="t t">AnimationClock</a> <span id="r2 rd" class="r2 r">clock</span>)
+        {
+            <b>double</b> <span id="r3 rd" class="r3 r">returnValue</span>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r4 rd" class="r4 r">start</span> = <a href="#fa3d243e7bd77109" class="i property">From</a> ?? <span class="r0 r">defaultOriginValue</span>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r5 rd" class="r5 r">delta</span> = <a href="#2b4dc598c8eb4328" class="i property">To</a> - <span class="r4 r">start</span> ?? <span class="r0 r">defaultOriginValue</span> - <span class="r4 r">start</span>;
+            <b>switch</b> (<a href="#81333a9c74281776" class="i property">EdgeBehavior</a>)
+            {
+                <b>case</b> <a href="#09b5f166675091fd" class="t t">EdgeBehaviorEnum</a>.<a href="#0993bb9312d06671" class="i field">EaseIn</a>:
+                    <span class="r3 r">returnValue</span> = <a href="#41c0dbcd8e6c3d57" class="i method">EaseIn</a>(<span class="r2 r">clock</span>.<a href="@0@PresentationCore/A.html#1de4092dfea8fec6" class="i property">CurrentProgress</a>.<a href="@1@System.Runtime/A.html#7b38d1fa76071c95" class="i property">Value</a>, <span class="r4 r">start</span>, <span class="r5 r">delta</span>, <a href="#ea69f0caad5e0084" class="i property">Springiness</a>, <a href="#c86fa9017d2d3978" class="i property">Oscillations</a>);
+                    <b>break</b>;
+                <b>case</b> <a href="#09b5f166675091fd" class="t t">EdgeBehaviorEnum</a>.<a href="#722fe5648841725e" class="i field">EaseOut</a>:
+                    <span class="r3 r">returnValue</span> = <a href="#a9a18a22bf1e9c46" class="i method">EaseOut</a>(<span class="r2 r">clock</span>.<a href="@0@PresentationCore/A.html#1de4092dfea8fec6" class="i property">CurrentProgress</a>.<a href="@1@System.Runtime/A.html#7b38d1fa76071c95" class="i property">Value</a>, <span class="r4 r">start</span>, <span class="r5 r">delta</span>, <a href="#ea69f0caad5e0084" class="i property">Springiness</a>, <a href="#c86fa9017d2d3978" class="i property">Oscillations</a>);
+                    <b>break</b>;
+                <b>default</b>:
+                    <span class="r3 r">returnValue</span> = <a href="#f85aaf7994955f22" class="i method">EaseInOut</a>(<span class="r2 r">clock</span>.<a href="@0@PresentationCore/A.html#1de4092dfea8fec6" class="i property">CurrentProgress</a>.<a href="@1@System.Runtime/A.html#7b38d1fa76071c95" class="i property">Value</a>, <span class="r4 r">start</span>, <span class="r5 r">delta</span>, <a href="#ea69f0caad5e0084" class="i property">Springiness</a>, <a href="#c86fa9017d2d3978" class="i property">Oscillations</a>);
+                    <b>break</b>;
+            }
+            <b>return</b> <span class="r3 r">returnValue</span>;
+        }
+
+        <b>protected override</b> <a href="@0@WindowsBase/A.html#066003ffe0442caa" class="t t">Freezable</a> <a id="295a8c16ec01156c" href="R/295a8c16ec01156c.html" target="n" data-glyph="75,1" class="i method">CreateInstanceCore</a>() =&gt; <b>new</b> <a href="#afe1632b1bbb86ff" class="t constructor">ElasticDoubleAnimation</a>();
+
+        <b>private static double</b> <a id="a9a18a22bf1e9c46" href="R/a9a18a22bf1e9c46.html" target="n" data-glyph="76,1" class="i method">EaseOut</a>(<b>double</b> <span id="r6 rd" class="r6 r">timeFraction</span>, <b>double</b> <span id="r7 rd" class="r7 r">start</span>, <b>double</b> <span id="r8 rd" class="r8 r">delta</span>, <b>double</b> <span id="r9 rd" class="r9 r">springiness</span>,
+            <b>double</b> <span id="r10 rd" class="r10 r">oscillations</span>)
+        {
+            <span class="c">// math magic: The cosine gives us the right wave, the timeFraction * the # of oscillations is the </span>
+            <span class="c">// frequency of the wave, and the amplitude (the exponent) makes the wave get smaller at the end</span>
+            <span class="c">// by the &quot;springiness&quot; factor. This is extremely similar to the bounce equation.</span>
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r11 rd" class="r11 r">returnValue</span> = <span class="t t">Math</span>.<span class="i method">Pow</span>((1 - <span class="r6 r">timeFraction</span>), <span class="r9 r">springiness</span>)
+                              *<span class="t t">Math</span>.<span class="i method">Cos</span>(2*<span class="t t">Math</span>.<span class="i field">PI</span>*<span class="r6 r">timeFraction</span>*<span class="r10 r">oscillations</span>);
+            <span class="r11 r">returnValue</span> = <span class="r8 r">delta</span> - (<span class="r11 r">returnValue</span>*<span class="r8 r">delta</span>);
+            <span class="r11 r">returnValue</span> += <span class="r7 r">start</span>;
+            <b>return</b> <span class="r11 r">returnValue</span>;
+        }
+
+        <b>private static double</b> <a id="41c0dbcd8e6c3d57" href="R/41c0dbcd8e6c3d57.html" target="n" data-glyph="76,1" class="i method">EaseIn</a>(<b>double</b> <span id="r12 rd" class="r12 r">timeFraction</span>, <b>double</b> <span id="r13 rd" class="r13 r">start</span>, <b>double</b> <span id="r14 rd" class="r14 r">delta</span>, <b>double</b> <span id="r15 rd" class="r15 r">springiness</span>,
+            <b>double</b> <span id="r16 rd" class="r16 r">oscillations</span>)
+        {
+            <span class="c">// math magic: The cosine gives us the right wave, the timeFraction * the # of oscillations is the </span>
+            <span class="c">// frequency of the wave, and the amplitude (the exponent) makes the wave get smaller at the beginning</span>
+            <span class="c">// by the &quot;springiness&quot; factor. This is extremely similar to the bounce equation. </span>
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r17 rd" class="r17 r">returnValue</span> = <span class="t t">Math</span>.<span class="i method">Pow</span>((<span class="r12 r">timeFraction</span>), <span class="r15 r">springiness</span>)
+                              *<span class="t t">Math</span>.<span class="i method">Cos</span>(2*<span class="t t">Math</span>.<span class="i field">PI</span>*<span class="r12 r">timeFraction</span>*<span class="r16 r">oscillations</span>);
+            <span class="r17 r">returnValue</span> = <span class="r17 r">returnValue</span>*<span class="r14 r">delta</span>;
+            <span class="r17 r">returnValue</span> += <span class="r13 r">start</span>;
+            <b>return</b> <span class="r17 r">returnValue</span>;
+        }
+
+        <b>private static double</b> <a id="f85aaf7994955f22" href="R/f85aaf7994955f22.html" target="n" data-glyph="76,1" class="i method">EaseInOut</a>(<b>double</b> <span id="r18 rd" class="r18 r">timeFraction</span>, <b>double</b> <span id="r19 rd" class="r19 r">start</span>, <b>double</b> <span id="r20 rd" class="r20 r">delta</span>, <b>double</b> <span id="r21 rd" class="r21 r">springiness</span>,
+            <b>double</b> <span id="r22 rd" class="r22 r">oscillations</span>)
+        {
+            <b>double</b> <span id="r23 rd" class="r23 r">returnValue</span>;
+
+            <span class="c">// we cut each effect in half by multiplying the time fraction by two and halving the distance.</span>
+            <b>if</b> (<span class="r18 r">timeFraction</span> &lt;= 0.5)
+            {
+                <b>return</b> <a href="#41c0dbcd8e6c3d57" class="i method">EaseIn</a>(<span class="r18 r">timeFraction</span>*2, <span class="r19 r">start</span>, <span class="r20 r">delta</span>/2, <span class="r21 r">springiness</span>, <span class="r22 r">oscillations</span>);
+            }
+            <span class="r23 r">returnValue</span> = <a href="#a9a18a22bf1e9c46" class="i method">EaseOut</a>((<span class="r18 r">timeFraction</span> - 0.5)*2, <span class="r19 r">start</span>, <span class="r20 r">delta</span>/2, <span class="r21 r">springiness</span>, <span class="r22 r">oscillations</span>);
+            <span class="r23 r">returnValue</span> += (<span class="r20 r">delta</span>/2);
+            <b>return</b> <span class="r23 r">returnValue</span>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

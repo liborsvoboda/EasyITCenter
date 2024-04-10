@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<html><head><title>ColorHelper.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(198);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/ColorPicker/ColorHelper.cs" target="_top">Controls\ColorPicker\ColorHelper.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Lang</span>;
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Reflection</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Resources</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> A Helper class for the Color-Struct</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="34ad30a0c46f0fac" href="../../R/34ad30a0c46f0fac.html" target="n" data-glyph="0,0" class="t t">ColorHelper</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets a static default instance of </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#34ad30a0c46f0fac" class="t t">ColorHelper</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="#34ad30a0c46f0fac" class="t t">ColorHelper</a> <a id="0686cf3b13928c36" href="../../R/0686cf3b13928c36.html" target="n" data-glyph="42,1" class="i field">DefaultInstance</a> = <a href="#cfdb7a6b8f052047" class="k">new</a>();
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets a static default instance of </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#34ad30a0c46f0fac" class="t t">ColorHelper</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> with the original WPF color names.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="#34ad30a0c46f0fac" class="t t">ColorHelper</a> <a id="090d8fa68f8b2ba4" href="../../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">DefaultInstanceInvariant</a> = <a href="#6554538211d47884" class="k">new</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>);
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Creates a new Instance of the ColorHelper with the default translations.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a id="cfdb7a6b8f052047" href="../../R/cfdb7a6b8f052047.html" target="n" data-glyph="72,1" class="t constructor">ColorHelper</a>()
+            : <a href="#41a5e7bf0f61b675" class="k">this</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#ff8fd0bdccb4794e" class="i property">CurrentUICulture</a>, <b>typeof</b>(<a href="../../Lang/ColorNames.Designer.cs.html#ed49f056b6fb6753" class="t t">ColorNames</a>))
+        {
+            <span class="c">// Empty</span>
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Creates a new Instance of the ColorHelper</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> used to get the local color names</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public</b> <a id="6554538211d47884" href="../../R/6554538211d47884.html" target="n" data-glyph="72,1" class="t constructor">ColorHelper</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>? <span id="r0 rd" class="r0 r">culture</span>)
+            : <a href="#41a5e7bf0f61b675" class="k">this</a>(<span class="r0 r">culture</span>, <b>typeof</b>(<a href="../../Lang/ColorNames.Designer.cs.html#ed49f056b6fb6753" class="t t">ColorNames</a>))
+        {
+            <span class="c">// Empty</span>
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Creates a new Instance of the ColorHelper</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> used to get the local color names</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">resourceDictionaryType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">A type from which the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@mscorlib/A.html#eaded93a1686cd27" class="t t">ResourceManager</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> derives all information for finding .resources files.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public</b> <a id="41a5e7bf0f61b675" href="../../R/41a5e7bf0f61b675.html" target="n" data-glyph="72,1" class="t constructor">ColorHelper</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>? <span id="r1 rd" class="r1 r">culture</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>? <span id="r2 rd" class="r2 r">resourceDictionaryType</span>)
+        {
+            <a href="#34ad30a0c46f0fac" class="k">this</a>.<a href="#c00a2b34c9bc5cf0" class="i property">ColorNamesDictionary</a> = <b>new</b> <a href="@0@mscorlib/A.html#bf6849e410b43c4c" class="t constructor">Dictionary</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt;();
+
+            <b>if</b> (<span class="r1 r">culture</span> <b>is null</b> || <span class="r2 r">resourceDictionaryType</span> <b>is null</b>)
+            {
+                <b>foreach</b> (<a href="@0@mscorlib/A.html#f3f0ea5f89a8f162" class="k">var</a> <span id="r3 rd" class="r3 r">propertyInfo</span> <b>in</b> <b>typeof</b>(<a href="@0@PresentationCore/A.html#0584e1e7d7fb612c" class="t t">Colors</a>).<a href="@0@mscorlib/A.html#bc75fdb60d33fb57" class="i method">GetProperties</a>(<a href="@0@mscorlib/A.html#4795caf3b483702d" class="t t">BindingFlags</a>.<a href="@0@mscorlib/A.html#d1fa47f9abe3c16a" class="i field">Static</a> | <a href="@0@mscorlib/A.html#4795caf3b483702d" class="t t">BindingFlags</a>.<a href="@0@mscorlib/A.html#ef2ef39bdfa059df" class="i field">Public</a>))
+                {
+                    <b>try</b>
+                    {
+                        <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="k">var</a> <span id="r4 rd" class="r4 r">color</span> = (<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>)(<span class="r3 r">propertyInfo</span>.<a href="@0@mscorlib/A.html#7f41c0c1ebadcc33" class="i method">GetValue</a>(<b>null</b>) ?? <b>default</b>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>));
+                        <b>if</b> (!<a href="#34ad30a0c46f0fac" class="k">this</a>.<a href="#c00a2b34c9bc5cf0" class="i property">ColorNamesDictionary</a>.<a href="@0@mscorlib/A.html#22fd7cd7408aed6e" class="i method">ContainsKey</a>(<span class="r4 r">color</span>))
+                        {
+                            <a href="#34ad30a0c46f0fac" class="k">this</a>.<a href="#c00a2b34c9bc5cf0" class="i property">ColorNamesDictionary</a>.<a href="@0@mscorlib/A.html#a7861da7aaa500fe" class="i method">Add</a>(<span class="r4 r">color</span>, <span class="r3 r">propertyInfo</span>.<a href="@0@mscorlib/A.html#aa4f112f79364b6e" class="i property">Name</a>);
+                        }
+                    }
+                    <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a>)
+                    {
+                        <a href="@0@System/A.html#c63a0f19b2d4db69" class="t t">Trace</a>.<a href="@0@System/A.html#3e7f2b0454b49e5c" class="i method">TraceError</a>(<span class="s">$&quot;</span><span class="s">Color from </span>{<span class="r3 r">propertyInfo</span>.<a href="@0@mscorlib/A.html#aa4f112f79364b6e" class="i property">Name</a>}<span class="s"> could not be added to dictionary!</span><span class="s">&quot;</span>);
+                    }
+                }
+            }
+            <b>else</b>
+            {
+                <a href="@0@mscorlib/A.html#eaded93a1686cd27" class="k">var</a> <span id="r5 rd" class="r5 r">rm</span> = <b>new</b> <a href="@0@mscorlib/A.html#e83061fea69cfea0" class="t constructor">ResourceManager</a>(<span class="r2 r">resourceDictionaryType</span>);
+                <a href="@0@mscorlib/A.html#32fdf47af3cebbd1" class="k">var</a> <span id="r6 rd" class="r6 r">resourceSet</span> = <span class="r5 r">rm</span>.<a href="@0@mscorlib/A.html#c28a4400d3f8ead8" class="i method">GetResourceSet</a>(<span class="r1 r">culture</span>, <b>true</b>, <b>true</b>);
+
+                <b>if</b> (<span class="r6 r">resourceSet</span> <b>is not null</b>)
+                {
+                    <b>foreach</b> (<a href="@0@mscorlib/A.html#bc17973c0d3568e6" class="k">var</a> <span id="r7 rd" class="r7 r">entry</span> <b>in</b> <span class="r6 r">resourceSet</span>.<a href="@0@System.Core/A.html#4ba4a3f8a5530e33" class="i method">OfType</a>&lt;<a href="@0@mscorlib/A.html#bc17973c0d3568e6" class="t t">DictionaryEntry</a>&gt;())
+                    {
+                        <b>try</b>
+                        {
+                            <b>if</b> (<a href="@0@PresentationCore/A.html#a5d358896c429793" class="t t">ColorConverter</a>.<a href="@0@PresentationCore/A.html#712b07b6ae41093f" class="i method">ConvertFromString</a>(<span class="r7 r">entry</span>.<a href="@0@mscorlib/A.html#e1f68d163a367e29" class="i property">Key</a>.<a href="@0@mscorlib/A.html#ff31a6bf27c58f89" class="i method">ToString</a>()) <b>is</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a> <span id="r8 rd" class="r8 r">color</span>)
+                            {
+                                <a href="#34ad30a0c46f0fac" class="k">this</a>.<a href="#c00a2b34c9bc5cf0" class="i property">ColorNamesDictionary</a>.<a href="@0@mscorlib/A.html#a7861da7aaa500fe" class="i method">Add</a>(<span class="r8 r">color</span>, <span class="r7 r">entry</span>.<a href="@0@mscorlib/A.html#63e5445c29844588" class="i property">Value</a>!.<a href="@0@mscorlib/A.html#ff31a6bf27c58f89" class="i method">ToString</a>()!);
+                            }
+                        }
+                        <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a>)
+                        {
+                            <a href="@0@System/A.html#c63a0f19b2d4db69" class="t t">Trace</a>.<a href="@0@System/A.html#3e7f2b0454b49e5c" class="i method">TraceError</a>(<span class="s">$&quot;</span>{<span class="r7 r">entry</span>.<a href="@0@mscorlib/A.html#e1f68d163a367e29" class="i property">Key</a>}<span class="s"> is not a valid color key!</span><span class="s">&quot;</span>);
+                        }
+                    }
+                }
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This function tries to convert a given string into a Color in the following order:</span>
+        <span class="c">///</span><span class="c">    1. If the string starts with &#39;#&#39; the function tries to get the color from the hex-code</span>
+        <span class="c">///</span><span class="c">    2. else the function tries to find the color in the color names Dictionary</span>
+        <span class="c">///</span><span class="c">    3. If 1. + 2. were not successful the function adds a &#39;#&#39; sign and tries 1. + 2. again</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">colorName</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The localized name of the color, the hex-code of the color or the internal color name</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r10 r">colorNamesDictionary</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Optional: The dictionary where the ColorName should be looked up</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">the Color if successful, else null</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public virtual</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>? <a id="60ee0f3c6907c24d" href="../../R/60ee0f3c6907c24d.html" target="n" data-glyph="72,1" class="i method">ColorFromString</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>? <span id="r9 rd" class="r9 r">colorName</span>, <a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt;? <span id="r10 rd" class="r10 r">colorNamesDictionary</span>)
+        {
+            <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>? <span id="r11 rd" class="r11 r">result</span> = <b>null</b>;
+
+            <b>try</b>
+            {
+                <span class="c">// if we don&#39;t have a string, we cannot have any Color</span>
+                <b>if</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r9 r">colorName</span>))
+                {
+                    <b>return</b> <b>null</b>;
+                }
+
+                <span class="r10 r">colorNamesDictionary</span> ??= <a href="#34ad30a0c46f0fac" class="k">this</a>.<a href="#c00a2b34c9bc5cf0" class="i property">ColorNamesDictionary</a>;
+
+                <b>if</b> (!<span class="r9 r">colorName</span>!.<a href="@0@mscorlib/A.html#23804789ea4c9c0e" class="i method">StartsWith</a>(<span class="s">&quot;#&quot;</span>))
+                {
+                    <span class="c">// We need to check with any first as the key is of type Color, which is a struct.</span>
+                    <b>if</b> (<span class="r10 r">colorNamesDictionary</span>.<a href="@0@System.Core/A.html#6a1af7c3d17845e3" class="i method">Any</a>(<span id="r12 rd" class="r12 r">x</span> =&gt; <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#d47c1f57ad1e1e6e" class="i method">Equals</a>(<span class="r12 r">x</span>.<a href="@0@mscorlib/A.html#38c0e86cc4b30170" class="i property">Value</a>, <span class="r9 r">colorName</span>, <a href="@0@mscorlib/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@0@mscorlib/A.html#6c3139b940557bf9" class="i field">OrdinalIgnoreCase</a>)) == <b>true</b>)
+                    {
+                        <span class="r11 r">result</span> = <span class="r10 r">colorNamesDictionary</span>.<a href="@0@System.Core/A.html#b7e5965cab68b1cf" class="i method">FirstOrDefault</a>(<span id="r13 rd" class="r13 r">x</span> =&gt; <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#d47c1f57ad1e1e6e" class="i method">Equals</a>(<span class="r13 r">x</span>.<a href="@0@mscorlib/A.html#38c0e86cc4b30170" class="i property">Value</a>, <span class="r9 r">colorName</span>, <a href="@0@mscorlib/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@0@mscorlib/A.html#6c3139b940557bf9" class="i field">OrdinalIgnoreCase</a>)).<a href="@0@mscorlib/A.html#f9d1c04feb1af032" class="i property">Key</a>;
+                    }
+                }
+
+                <span class="r11 r">result</span> ??= <a href="@0@PresentationCore/A.html#a5d358896c429793" class="t t">ColorConverter</a>.<a href="@0@PresentationCore/A.html#712b07b6ae41093f" class="i method">ConvertFromString</a>(<span class="r9 r">colorName</span>) <b>as</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?;
+            }
+            <b>catch</b> (<a href="@0@mscorlib/A.html#80a470d64a9b80ef" class="t t">FormatException</a>)
+            {
+                <b>if</b> (<span class="r9 r">colorName</span> != <b>null</b> &amp;&amp; !<span class="r11 r">result</span>.<a href="@0@mscorlib/A.html#7bbe60e33e857298" class="i property">HasValue</a> &amp;&amp; !<span class="r9 r">colorName</span>.<a href="@0@mscorlib/A.html#23804789ea4c9c0e" class="i method">StartsWith</a>(<span class="s">&quot;#&quot;</span>))
+                {
+                    <span class="r11 r">result</span> = <a href="#34ad30a0c46f0fac" class="k">this</a>.<a href="#67daa8ce8cc8e4ff" class="i method">ColorFromString</a>(<span class="s">&quot;#&quot;</span> + <span class="r9 r">colorName</span>);
+                }
+            }
+
+            <b>return</b> <span class="r11 r">result</span>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This function tries to convert a given string into a Color in the following order:</span>
+        <span class="c">///</span><span class="c">    1. If the string starts with &#39;#&#39; the function tries to get the color from the hex-code</span>
+        <span class="c">///</span><span class="c">    2. else the function tries to find the color in the default </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#c00a2b34c9bc5cf0" class="i property">ColorNamesDictionary</a><span class="c">&quot;</span><span class="c">/&gt;</span>
+        <span class="c">///</span><span class="c">    3. If 1. + 2. were not successful the function adds a &#39;#&#39; sign and tries 1. + 2. again</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r14 r">colorName</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The localized name of the color, the hex-code of the color or the internal color name</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">the Color if successful, else null</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>? <a id="67daa8ce8cc8e4ff" href="../../R/67daa8ce8cc8e4ff.html" target="n" data-glyph="72,1" class="i method">ColorFromString</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r14 rd" class="r14 r">colorName</span>)
+        {
+            <b>return</b> <a href="#34ad30a0c46f0fac" class="k">this</a>.<a href="#60ee0f3c6907c24d" class="i method">ColorFromString</a>(<span class="r14 r">colorName</span>, <b>null</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A Dictionary with localized Color Names</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="c00a2b34c9bc5cf0" href="../../R/c00a2b34c9bc5cf0.html" target="n" data-glyph="102,1" class="i property">ColorNamesDictionary</a> { <b>get</b>; }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Searches for the localized name of a given </span><span class="c">&lt;</span><span class="c">paramref</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r15 r">color</span><span class="c">&quot;</span><span class="c">/&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r15 r">color</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">color</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r16 r">colorNamesDictionary</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Optional: The dictionary where the ColorName should be looked up</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r17 r">useAlphaChannel</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Set this value to </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">langword</span><span class="c">=</span><span class="c">&quot;</span><span class="c">false</span><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> if the alpha-channel should be omitted</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">the local color name or null if the given color doesn&#39;t have a name</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public virtual string</b>? <a id="19dd9aea9b0f1051" href="../../R/19dd9aea9b0f1051.html" target="n" data-glyph="72,1" class="i method">GetColorName</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>? <span id="r15 rd" class="r15 r">color</span>, <a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt;? <span id="r16 rd" class="r16 r">colorNamesDictionary</span>, <b>bool</b> <span id="r17 rd" class="r17 r">useAlphaChannel</span>)
+        {
+            <b>if</b> (<span class="r15 r">color</span> <b>is null</b>)
+            {
+                <b>return</b> <b>null</b>;
+            }
+
+            <span class="r16 r">colorNamesDictionary</span> ??= <a href="#34ad30a0c46f0fac" class="k">this</a>.<a href="#c00a2b34c9bc5cf0" class="i property">ColorNamesDictionary</a>;
+
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r18 rd" class="r18 r">colorHex</span> = <span class="r17 r">useAlphaChannel</span> ? <span class="r15 r">color</span>.<a href="@0@mscorlib/A.html#d83d2db767b43db7" class="i method">ToString</a>() : <span class="s">$&quot;</span><span class="s">#</span>{<span class="r15 r">color</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>:<span class="s">X2</span>}{<span class="r15 r">color</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>:<span class="s">X2</span>}{<span class="r15 r">color</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>:<span class="s">X2</span>}<span class="s">&quot;</span>;
+
+            <b>return</b> <span class="r16 r">colorNamesDictionary</span>.<a href="@0@mscorlib/A.html#2e5bc6d8c0f21e67" class="i method">TryGetValue</a>(<span class="r15 r">color</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>, <b>out</b> <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r19 rd" class="r19 r">name</span>) ? <span class="s">$&quot;</span>{<span class="r19 r">name</span>}<span class="s"> (</span>{<span class="r18 r">colorHex</span>}<span class="s">)</span><span class="s">&quot;</span> : <span class="s">$&quot;</span>{<span class="r18 r">colorHex</span>}<span class="s">&quot;</span>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Searches for the localized name of a given </span><span class="c">&lt;</span><span class="c">paramref</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r20 r">color</span><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> by using the default </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#c00a2b34c9bc5cf0" class="i property">ColorNamesDictionary</a><span class="c">&quot;</span><span class="c">/&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r20 r">color</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">color</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">the local color name or null if the given color doesn&#39;t have a name</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public string</b>? <a id="46f79d1cf113bf36" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetColorName</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>? <span id="r20 rd" class="r20 r">color</span>)
+        {
+            <b>return</b> <a href="#34ad30a0c46f0fac" class="k">this</a>.<a href="#19dd9aea9b0f1051" class="i method">GetColorName</a>(<span class="r20 r">color</span>, <b>null</b>, <b>true</b>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

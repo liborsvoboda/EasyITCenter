@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html><head><title>HslImage.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(89);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.ImageEffectLibrary/HslImage.cs" target="_top">HslImage.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.ImageEffectLibrary" target="_top">..\..\..\EASY-TOOLS\EASYTools.ImageEffectLibrary\EASYTools.ImageEffectLibrary.csproj</a> (EASYTools.ImageEffectLibrary)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">ImageEffectLibrary</span>
+{
+    <b>public class</b> <a id="36f1ed19d0c76ce6" href="R/36f1ed19d0c76ce6.html" target="n" data-glyph="0,0" class="t t">HslImage</a> : <a href="Image.cs.html#ae7b6f60d70a2351" class="t t">Image</a>&lt;<a href="Pixels.cs.html#e817a0bc15fc0d0f" class="t t">HslPixel</a>&gt;, <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a>
+    {
+        <b>public</b> <a id="eaed559d119859bd" href="R/eaed559d119859bd.html" target="n" data-glyph="72,1" class="t constructor">HslImage</a>(<b>int</b> <span id="r0 rd" class="r0 r">pixelWidth</span>, <b>int</b> <span id="r1 rd" class="r1 r">pixelHeight</span>) : <a href="Image.cs.html#6f7b6d48e70d4091" class="k">base</a>(<span class="r0 r">pixelWidth</span>, <span class="r1 r">pixelHeight</span>)
+        {
+        }
+ 
+        <b>public</b> <a id="f75487fba1de77f9" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">HslImage</a>(<a href="Pixels.cs.html#e817a0bc15fc0d0f" class="t t">HslPixel</a>[,] <span id="r2 rd" class="r2 r">pixels</span>) : <a href="Image.cs.html#31a77774dc323871" class="k">base</a>(<span class="r2 r">pixels</span>)
+        {
+        }
+ 
+        <b>public</b> <a href="#36f1ed19d0c76ce6" class="t t">HslImage</a> <a id="bad4610164f9f5bb" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Map</a>(<a href="Image.cs.html#2d90157ac923278a" class="t t">PixelPositionPipelineDelegate</a> <span id="r3 rd" class="r3 r">process</span>)
+        {
+            <a href="#36f1ed19d0c76ce6" class="k">var</a> <span id="r4 rd" class="r4 r">res</span> = <b>new</b> <a href="#eaed559d119859bd" class="t constructor">HslImage</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>);
+            <a href="Image.cs.html#26eab92f4647f857" class="i method">ForEach</a>((<span id="r5 rd" class="r5 r">pixel</span>, <span id="r6 rd" class="r6 r">position</span>) =&gt; <span class="r4 r">res</span><a href="Image.cs.html#49934ec4274bca7d">[</a><span class="r6 r">position</span>] = <span class="r3 r">process</span>(<span class="r5 r">pixel</span>, <span class="r6 r">position</span>));
+            <b>return</b> <span class="r4 r">res</span>;
+        }
+ 
+        <b>public</b> <a href="#36f1ed19d0c76ce6" class="t t">HslImage</a> <a id="364a780dbbc8102c" href="R/364a780dbbc8102c.html" target="n" data-glyph="72,1" class="i method">ParallelMap</a>(<a href="Image.cs.html#2d90157ac923278a" class="t t">PixelPositionPipelineDelegate</a> <span id="r7 rd" class="r7 r">process</span>)
+        {
+            <a href="#36f1ed19d0c76ce6" class="k">var</a> <span id="r8 rd" class="r8 r">res</span> = <b>new</b> <a href="#eaed559d119859bd" class="t constructor">HslImage</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>);
+            <a href="Image.cs.html#ad6cfd45f71fd573" class="i method">ParallelForEach</a>((<span id="r9 rd" class="r9 r">pixel</span>, <span id="r10 rd" class="r10 r">position</span>) =&gt; <span class="r8 r">res</span><a href="Image.cs.html#49934ec4274bca7d">[</a><span class="r10 r">position</span>] = <span class="r7 r">process</span>(<span class="r9 r">pixel</span>, <span class="r10 r">position</span>));
+            <b>return</b> <span class="r8 r">res</span>;
+        }
+ 
+        <b>public</b> <a href="RgbImage.cs.html#2f253f640af01fc1" class="t t">RgbImage</a> <a id="da9ce856a5d82ca5" href="R/da9ce856a5d82ca5.html" target="n" data-glyph="72,1" class="i method">ToRgbImage</a>()
+        {
+            <a href="RgbImage.cs.html#2f253f640af01fc1" class="k">var</a> <span id="r11 rd" class="r11 r">res</span> = <b>new</b> <a href="RgbImage.cs.html#6831ce3880ee1090" class="t constructor">RgbImage</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>);
+            <a href="Image.cs.html#26eab92f4647f857" class="i method">ForEach</a>((<span id="r12 rd" class="r12 r">pixel</span>, <span id="r13 rd" class="r13 r">position</span>) =&gt; <span class="r11 r">res</span><a href="Image.cs.html#49934ec4274bca7d">[</a><span class="r13 r">position</span>] = <span class="r12 r">pixel</span>.<a href="Pixels.cs.html#a9b0563c689b7321" class="i method">ToRgb</a>());
+            <b>return</b> <span class="r11 r">res</span>;
+        }
+ 
+        <b>public</b> <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="148b852d20cbfb27" href="R/148b852d20cbfb27.html" target="n" data-glyph="72,1" class="i method">Filter</a>(<a href="Filtering.cs.html#f9b842dedcd23fa6" class="t t">Filter</a> <span id="r14 rd" class="r14 r">filter</span>)
+        {
+            <b>return</b> <a href="#364a780dbbc8102c" class="i method">ParallelMap</a>((<span id="r15 rd" class="r15 r">pixel</span>, <span id="r16 rd" class="r16 r">position</span>) =&gt;
+            {
+                <b>double</b> <span id="r17 rd" class="r17 r">res</span> = 0;
+                <b>for</b> (<b>int</b> <span id="r18 rd" class="r18 r">x</span> = 0; <span class="r18 r">x</span> &lt; <span class="r14 r">filter</span>.<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>; <span class="r18 r">x</span>++)
+                {
+                    <b>for</b> (<b>int</b> <span id="r19 rd" class="r19 r">y</span> = 0; <span class="r19 r">y</span> &lt; <span class="r14 r">filter</span>.<a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>; <span class="r19 r">y</span>++)
+                    {
+                        <a href="Utils.cs.html#f3050fa26e1403a8" class="k">var</a> <span id="r20 rd" class="r20 r">targetPos</span> = <span class="r16 r">position</span> - <span class="r14 r">filter</span>.<a href="Filtering.cs.html#e1639df15b2cb2d9" class="i property">Origin</a> + <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(<span class="r18 r">x</span>, <span class="r19 r">y</span>);
+                        <span class="r20 r">targetPos</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a> = <span class="r20 r">targetPos</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a>.<a href="Utils.cs.html#b521acf8bcaaeab7" class="i method">LimitTo</a>(0, <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> - 1);
+                        <span class="r20 r">targetPos</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a> = <span class="r20 r">targetPos</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a>.<a href="Utils.cs.html#b521acf8bcaaeab7" class="i method">LimitTo</a>(0, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> - 1);
+                        <span class="r17 r">res</span> += <span class="r14 r">filter</span><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r18 r">x</span>, <span class="r19 r">y</span>] * <a href="#36f1ed19d0c76ce6" class="k">this</a><a href="Image.cs.html#49934ec4274bca7d">[</a><span class="r20 r">targetPos</span>].<a href="Pixels.cs.html#e3a2d6418e9c86d7" class="i property">L</a>;
+                    }
+                }
+ 
+                <b>return</b> <b>new</b> <a href="Pixels.cs.html#8bab4ff4c15968f0" class="t constructor">HslPixel</a>(<span class="r15 r">pixel</span>.<a href="Pixels.cs.html#dcd41ae4e464389f" class="i property">H</a>, <span class="r15 r">pixel</span>.<a href="Pixels.cs.html#499d88bd7d098056" class="i property">S</a>, <a href="@0@mscorlib/A.html#fc990bd1275d43d6" class="t t">Convert</a>.<a href="@0@mscorlib/A.html#6703790b38af05ce" class="i method">ToSingle</a>(<span class="r17 r">res</span>).<a href="Utils.cs.html#ccfcc5548b29900e" class="i method">LimitTo</a>(0, 1), <span class="r15 r">pixel</span>.<a href="Pixels.cs.html#f9caf2e23dc2f68f" class="i property">A</a>);
+            });
+        }
+ 
+        <b>public</b> <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="c37251d330ac9c4b" href="R/c37251d330ac9c4b.html" target="n" data-glyph="72,1" class="i method">MeanFilter</a>(<b>int</b> <span id="r21 rd" class="r21 r">size</span>) =&gt; <a href="#148b852d20cbfb27" class="i method">Filter</a>(<a href="Filtering.cs.html#96681fcf33d11ce9" class="t t">Filters</a>.<a href="Filtering.cs.html#e14220af6370571b" class="i method">Mean</a>(<span class="r21 r">size</span>));
+ 
+        <b>public</b> <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="c360b17baad38a4e" href="R/c360b17baad38a4e.html" target="n" data-glyph="72,1" class="i method">LaplacianFilter</a>() =&gt; <a href="#148b852d20cbfb27" class="i method">Filter</a>(<a href="Filtering.cs.html#96681fcf33d11ce9" class="t t">Filters</a>.<a href="Filtering.cs.html#77666bfe21029f43" class="i property">Laplacian</a>);
+ 
+        <b>public</b> <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="e9ba1eee636f62d6" href="R/e9ba1eee636f62d6.html" target="n" data-glyph="72,1" class="i method">ExtendedLaplacianFilter</a>() =&gt; <a href="#148b852d20cbfb27" class="i method">Filter</a>(<a href="Filtering.cs.html#96681fcf33d11ce9" class="t t">Filters</a>.<a href="Filtering.cs.html#59447110b736bd65" class="i property">ExtendedLaplacian</a>);
+ 
+        <b>public</b> <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="3772ec88dc006bee" href="R/3772ec88dc006bee.html" target="n" data-glyph="72,1" class="i method">BilateralFilter</a>(<b>int</b> <span id="r22 rd" class="r22 r">size</span>, <b>double</b> <span id="r23 rd" class="r23 r">sigmaD</span>, <b>double</b> <span id="r24 rd" class="r24 r">sigmaR</span>)
+        {
+            <a href="Utils.cs.html#f3050fa26e1403a8" class="k">var</a> <span id="r25 rd" class="r25 r">origin</span> = <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(<span class="r22 r">size</span> / 2, <span class="r22 r">size</span> / 2);
+            <b>return</b> <a href="#364a780dbbc8102c" class="i method">ParallelMap</a>((<span id="r26 rd" class="r26 r">pixel</span>, <span id="r27 rd" class="r27 r">position</span>) =&gt;
+            {
+                <b>double</b> <span id="r28 rd" class="r28 r">weight</span> = 0, <span id="r29 rd" class="r29 r">l</span> = 0;
+                <b>for</b> (<b>int</b> <span id="r30 rd" class="r30 r">x</span> = 0; <span class="r30 r">x</span> &lt; <span class="r22 r">size</span>; <span class="r30 r">x</span>++)
+                {
+                    <b>for</b> (<b>int</b> <span id="r31 rd" class="r31 r">y</span> = 0; <span class="r31 r">y</span> &lt; <span class="r22 r">size</span>; <span class="r31 r">y</span>++)
+                    {
+                        <a href="Utils.cs.html#f3050fa26e1403a8" class="k">var</a> <span id="r32 rd" class="r32 r">neighborPos</span> = <span class="r27 r">position</span> - <span class="r25 r">origin</span> + <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(<span class="r30 r">x</span>, <span class="r31 r">y</span>);
+                        <span class="r32 r">neighborPos</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a> = <span class="r32 r">neighborPos</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a>.<a href="Utils.cs.html#b521acf8bcaaeab7" class="i method">LimitTo</a>(0, <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> - 1);
+                        <span class="r32 r">neighborPos</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a> = <span class="r32 r">neighborPos</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a>.<a href="Utils.cs.html#b521acf8bcaaeab7" class="i method">LimitTo</a>(0, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> - 1);
+                        <b>float</b> <span id="r33 rd" class="r33 r">neighborL</span> = <a href="#36f1ed19d0c76ce6" class="k">this</a><a href="Image.cs.html#49934ec4274bca7d">[</a><span class="r32 r">neighborPos</span>].<a href="Pixels.cs.html#e3a2d6418e9c86d7" class="i property">L</a>;
+                        <b>double</b> <span id="r34 rd" class="r34 r">w</span> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#c8aee4c4f9b1c95a" class="i method">Exp</a>(-<span class="r27 r">position</span>.<a href="Utils.cs.html#f0d7ec017ff2c4b4" class="i method">GetSquaredDistance</a>(<span class="r32 r">neighborPos</span>) / (2 * <span class="r23 r">sigmaD</span>) -
+                                            (<span class="r26 r">pixel</span>.<a href="Pixels.cs.html#e3a2d6418e9c86d7" class="i property">L</a> - <span class="r33 r">neighborL</span>).<a href="Utils.cs.html#981153b9d26a3bb7" class="i method">Squared</a>() / (2 * <span class="r24 r">sigmaR</span>));
+                        <span class="r28 r">weight</span> += <span class="r34 r">w</span>;
+                        <span class="r29 r">l</span> += <span class="r34 r">w</span> * <span class="r33 r">neighborL</span>;
+                    }
+                }
+ 
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r35 rd" class="r35 r">res</span> = <span class="r29 r">l</span> / <span class="r28 r">weight</span>;
+                <b>return</b> <b>new</b> <a href="Pixels.cs.html#8bab4ff4c15968f0" class="t constructor">HslPixel</a>(<span class="r26 r">pixel</span>.<a href="Pixels.cs.html#dcd41ae4e464389f" class="i property">H</a>, <span class="r26 r">pixel</span>.<a href="Pixels.cs.html#499d88bd7d098056" class="i property">S</a>, <a href="@0@mscorlib/A.html#fc990bd1275d43d6" class="t t">Convert</a>.<a href="@0@mscorlib/A.html#6703790b38af05ce" class="i method">ToSingle</a>(<span class="r35 r">res</span>.<a href="Utils.cs.html#70a1cda323202aef" class="i method">LimitTo</a>(0,1)), <span class="r26 r">pixel</span>.<a href="Pixels.cs.html#f9caf2e23dc2f68f" class="i property">A</a>);
+            });
+        }
+    }
+}</pre></td></tr></table></div></body></html>

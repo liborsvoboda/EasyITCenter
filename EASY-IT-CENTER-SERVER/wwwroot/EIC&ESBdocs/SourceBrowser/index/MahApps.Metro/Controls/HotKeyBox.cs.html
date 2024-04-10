@@ -1,0 +1,254 @@
+﻿<!DOCTYPE html>
+<html><head><title>HotKeyBox.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(245);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/HotKeyBox.cs" target="_top">Controls\HotKeyBox.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Interop</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">Windows</span>.<span class="i n">Win32</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <a href="#546e8072cf71db69" class="i field">PART_TextBox</a>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a>))]
+    <b>public class</b> <a id="82fddb00b13244fd" href="../R/82fddb00b13244fd.html" target="n" data-glyph="0,0" class="t t"><span id="4a096e43097e3830">HotKeyBox</span></a> : <a href="@0@PresentationFramework/A.html#6750b721a2294fc5" class="t t">Control</a>
+    {
+        <b>private const string</b> <a id="546e8072cf71db69" href="../R/546e8072cf71db69.html" target="n" data-glyph="10,1" class="i field">PART_TextBox</a> = <span class="s">&quot;PART_TextBox&quot;</span>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#718761635a007085" class="i property">HotKey</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="dbba63dba1b4f2e0" href="../R/dbba63dba1b4f2e0.html" target="n" data-glyph="42,1" class="i field">HotKeyProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#718761635a007085" class="i property">HotKey</a>),
+                                          <b>typeof</b>(<a href="HotKey.cs.html#d631086c02d0d32d" class="t t">HotKey</a>),
+                                          <b>typeof</b>(<a href="#82fddb00b13244fd" class="t t">HotKeyBox</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#cfed8906a2f8b7f6" class="t constructor">FrameworkPropertyMetadata</a>(<b>default</b>(<a href="HotKey.cs.html#d631086c02d0d32d" class="t t">HotKey</a>?), <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>, <a href="#b6d915a3dd9eb5e0" class="i method">OnHotKeyPropertyChanged</a>));
+
+        <b>private static void</b> <a id="b6d915a3dd9eb5e0" href="../R/b6d915a3dd9eb5e0.html" target="n" data-glyph="76,1" class="i method">OnHotKeyPropertyChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <b>if</b> (<span class="r0 r">d</span> <b>is</b> <a href="#82fddb00b13244fd" class="t t">HotKeyBox</a> <span id="r2 rd" class="r2 r">hotKeyBox</span>)
+            {
+                <b>if</b> (<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a> != <span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>)
+                {
+                    <span class="r2 r">hotKeyBox</span>.<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#7202de3595cf1de3" class="t constructor">RoutedPropertyChangedEventArgs</a>&lt;<a href="HotKey.cs.html#d631086c02d0d32d" class="t t">HotKey</a>?&gt;(<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a> <b>as</b> <a href="HotKey.cs.html#d631086c02d0d32d" class="t t">HotKey</a>, <span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a> <b>as</b> <a href="HotKey.cs.html#d631086c02d0d32d" class="t t">HotKey</a>, <a href="#a245f68ce0a8e139" class="i field">HotKeyChangedEvent</a>));
+                }
+
+                <span class="r2 r">hotKeyBox</span>.<a href="#4e7356e986e2eedd" class="i method">UpdateText</a>();
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#718761635a007085" class="i property">HotKey</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> for this </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#82fddb00b13244fd" class="t t">HotKeyBox</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="HotKey.cs.html#d631086c02d0d32d" class="t t">HotKey</a>? <a id="718761635a007085" href="../R/718761635a007085.html" target="n" data-glyph="102,1" class="i property">HotKey</a>
+        {
+            <b>get</b> =&gt; (<a href="HotKey.cs.html#d631086c02d0d32d" class="t t">HotKey</a>?)<a href="#82fddb00b13244fd" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#dbba63dba1b4f2e0" class="i field">HotKeyProperty</a>);
+            <b>set</b> =&gt; <a href="#82fddb00b13244fd" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#dbba63dba1b4f2e0" class="i field">HotKeyProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#fec28a8e0752c628" class="i property">AreModifierKeysRequired</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="9833abe4fa14f46e" href="../R/9833abe4fa14f46e.html" target="n" data-glyph="42,1" class="i field">AreModifierKeysRequiredProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#fec28a8e0752c628" class="i property">AreModifierKeysRequired</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#82fddb00b13244fd" class="t t">HotKeyBox</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets if the modifier keys are required.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="fec28a8e0752c628" href="../R/fec28a8e0752c628.html" target="n" data-glyph="102,1" class="i property">AreModifierKeysRequired</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#82fddb00b13244fd" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#9833abe4fa14f46e" class="i field">AreModifierKeysRequiredProperty</a>);
+            <b>set</b> =&gt; <a href="#82fddb00b13244fd" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#9833abe4fa14f46e" class="i field">AreModifierKeysRequiredProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <b>private static readonly</b> <a href="@0@WindowsBase/A.html#380f95e0ba8ab2a0" class="t t">DependencyPropertyKey</a> <a id="8a6cf25413ef0d9b" href="../R/8a6cf25413ef0d9b.html" target="n" data-glyph="46,1" class="i field">TextPropertyKey</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#25c0b2e1e0148e79" class="i method">RegisterReadOnly</a>(<b>nameof</b>(<a href="#15307abea7b3d792" class="i property">Text</a>),
+                                                  <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>),
+                                                  <b>typeof</b>(<a href="#82fddb00b13244fd" class="t t">HotKeyBox</a>),
+                                                  <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>)));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#15307abea7b3d792" class="i property">Text</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f90c210113b4954d" href="../R/f90c210113b4954d.html" target="n" data-glyph="42,1" class="i field">TextProperty</a> = <a href="#8a6cf25413ef0d9b" class="i field">TextPropertyKey</a>.<a href="@0@WindowsBase/A.html#d39196af37a6f1cf" class="i property">DependencyProperty</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the text of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#718761635a007085" class="i property">HotKey</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b>? <a id="15307abea7b3d792" href="../R/15307abea7b3d792.html" target="n" data-glyph="102,1" class="i property">Text</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>?)<a href="#82fddb00b13244fd" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f90c210113b4954d" class="i field">TextProperty</a>);
+            <b>protected set</b> =&gt; <a href="#82fddb00b13244fd" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#8a6cf25413ef0d9b" class="i field">TextPropertyKey</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#11326d4d1937e51d" class="i">HotKeyChanged</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> routed event.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@PresentationCore/A.html#1494cfe9a0c5ee74" class="t t">RoutedEvent</a> <a id="a245f68ce0a8e139" href="../R/a245f68ce0a8e139.html" target="n" data-glyph="42,1" class="i field">HotKeyChangedEvent</a>
+            = <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#a5460796900a6473" class="i method">RegisterRoutedEvent</a>(<b>nameof</b>(<a href="#11326d4d1937e51d" class="i">HotKeyChanged</a>),
+                                               <a href="@0@PresentationCore/A.html#2144a30d9ece7dfe" class="t t">RoutingStrategy</a>.<a href="@0@PresentationCore/A.html#43b9d70d58d66c4c" class="i field">Bubble</a>,
+                                               <b>typeof</b>(<a href="@0@PresentationFramework/A.html#e61bd13757853714" class="t t">RoutedPropertyChangedEventHandler</a>&lt;<a href="HotKey.cs.html#d631086c02d0d32d" class="t t">HotKey</a>?&gt;),
+                                               <b>typeof</b>(<a href="#82fddb00b13244fd" class="t t">HotKeyBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Add / Remove HotKeyChangedEvent handler</span>
+        <span class="c">///</span><span class="c"> Event which will be fired from this HotKeyBox when its value has been changed.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@PresentationFramework/A.html#e61bd13757853714" class="t t">RoutedPropertyChangedEventHandler</a>&lt;<a href="HotKey.cs.html#d631086c02d0d32d" class="t t">HotKey</a>?&gt; <a id="11326d4d1937e51d" href="../R/11326d4d1937e51d.html" target="n" data-glyph="30,1" class="i">HotKeyChanged</a>
+        {
+            <b>add</b> =&gt; <a href="#82fddb00b13244fd" class="k">this</a>.<a href="@0@PresentationCore/A.html#18cd7adc001fa956" class="i method">AddHandler</a>(<a href="#a245f68ce0a8e139" class="i field">HotKeyChangedEvent</a>, <b>value</b>);
+            <b>remove</b> =&gt; <a href="#82fddb00b13244fd" class="k">this</a>.<a href="@0@PresentationCore/A.html#221a746a1b193eb1" class="i method">RemoveHandler</a>(<a href="#a245f68ce0a8e139" class="i field">HotKeyChangedEvent</a>, <b>value</b>);
+        }
+
+        <b>private</b> <a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a>? <a id="967e44a9c181a612" href="../R/967e44a9c181a612.html" target="n" data-glyph="46,1" class="i field">_textBox</a>;
+
+        <b>static</b> <a id="5a132a63ba463bf1" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">HotKeyBox</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6339cc8ec3e1311a" class="i field">DefaultStyleKeyProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#82fddb00b13244fd" class="t t">HotKeyBox</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>typeof</b>(<a href="#82fddb00b13244fd" class="t t">HotKeyBox</a>)));
+            <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#66f724375990e1b8" class="i method">RegisterClassHandler</a>(<b>typeof</b>(<a href="#82fddb00b13244fd" class="t t">HotKeyBox</a>), <a href="@0@PresentationCore/A.html#cbf1ec8a4d6cd310" class="i field">GotFocusEvent</a>, <b>new</b> <span class="t">RoutedEventHandler</span>(<a href="#90f163740eeb70cd" class="i method">OnGotFocus</a>));
+        }
+
+        <b>private static void</b> <a id="90f163740eeb70cd" href="../R/90f163740eeb70cd.html" target="n" data-glyph="76,1" class="i method">OnGotFocus</a>(<b>object</b> <span id="r3 rd" class="r3 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r4 rd" class="r4 r">e</span>)
+        {
+            <span class="c">// If we&#39;re an editable HotKeyBox, forward focus to the TextBox or previous element</span>
+            <b>if</b> (!<span class="r4 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a>)
+            {
+                <a href="#82fddb00b13244fd" class="t t">HotKeyBox</a> <span id="r5 rd" class="r5 r">hotKeyBox</span> = (<a href="#82fddb00b13244fd" class="t t">HotKeyBox</a>)<span class="r3 r">sender</span>;
+                <b>if</b> (<span class="r5 r">hotKeyBox</span>.<a href="@0@PresentationCore/A.html#8a06bc7205f956cc" class="i property">Focusable</a> &amp;&amp; <span class="r4 r">e</span>.<a href="@0@PresentationCore/A.html#5025c62265587eca" class="i property">OriginalSource</a> == <span class="r5 r">hotKeyBox</span>)
+                {
+                    <span class="c">// MoveFocus takes a TraversalRequest as its argument.</span>
+                    <a href="@0@WindowsBase/A.html#58f52e304af5e91d" class="k">var</a> <span id="r6 rd" class="r6 r">request</span> = <b>new</b> <a href="@0@WindowsBase/A.html#5ba24fcf9a647b04" class="t constructor">TraversalRequest</a>((<a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#559261cd22ef6741" class="i property">Modifiers</a> &amp; <a href="@0@WindowsBase/A.html#81f37ca96e12a565" class="t t">ModifierKeys</a>.<a href="@0@WindowsBase/A.html#9e4d218396a930d8" class="i field">Shift</a>) == <a href="@0@WindowsBase/A.html#81f37ca96e12a565" class="t t">ModifierKeys</a>.<a href="@0@WindowsBase/A.html#9e4d218396a930d8" class="i field">Shift</a> ? <a href="@0@WindowsBase/A.html#487028c6b36f5066" class="t t">FocusNavigationDirection</a>.<a href="@0@WindowsBase/A.html#39d5ebef4b2b7135" class="i field">Previous</a> : <a href="@0@WindowsBase/A.html#487028c6b36f5066" class="t t">FocusNavigationDirection</a>.<a href="@0@WindowsBase/A.html#1ab052f982a24dce" class="i field">Next</a>);
+                    <span class="c">// Gets the element with keyboard focus.</span>
+                    <span class="c">// Change keyboard focus.</span>
+                    <b>if</b> (<a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#ebedddce76b0bb54" class="i property">FocusedElement</a> <b>is</b> <a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r7 rd" class="r7 r">elementWithFocus</span>)
+                    {
+                        <span class="r7 r">elementWithFocus</span>.<a href="@0@PresentationCore/A.html#03ef260441998314" class="i method">MoveFocus</a>(<span class="r6 r">request</span>);
+                    }
+                    <b>else</b>
+                    {
+                        <span class="r5 r">hotKeyBox</span>.<a href="@0@PresentationCore/A.html#0e11f7ae56f1c30f" class="i method">Focus</a>();
+                    }
+
+                    <span class="r4 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+                }
+            }
+        }
+
+        <b>public override void</b> <a id="b549fb8a544304ce" href="../R/b549fb8a544304ce.html" target="n" data-glyph="72,1" class="i method">OnApplyTemplate</a>()
+        {
+            <b>if</b> (<a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a> != <b>null</b>)
+            {
+                <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a>.<a href="@0@PresentationCore/A.html#58bfd79a7ef6a62d" class="i">PreviewKeyDown</a> -= <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#92f20e438f211369" class="i method">TextBoxOnPreviewKeyDown2</a>;
+                <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a>.<a href="@0@PresentationCore/A.html#8d953a1d7fb18c62" class="i">GotFocus</a> -= <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#82d39219b2d3f063" class="i method">TextBoxOnGotFocus</a>;
+                <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a>.<a href="@0@PresentationCore/A.html#251395f35bbcd55f" class="i">LostFocus</a> -= <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#eba6f287434020fa" class="i method">TextBoxOnLostFocus</a>;
+                <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a>.<a href="@0@PresentationFramework/A.html#22cd61fb3203047e" class="i">TextChanged</a> -= <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#93bbd3d715c6fa2c" class="i method">TextBoxOnTextChanged</a>;
+            }
+
+            <a href="@0@PresentationFramework/A.html#6750b721a2294fc5" class="k">base</a>.<a href="@0@PresentationFramework/A.html#0c1b13beb625a4a2" class="i method">OnApplyTemplate</a>();
+
+            <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a> = <a href="#82fddb00b13244fd" class="k">this</a>.<a href="@0@PresentationFramework/A.html#daecaeeeebb2beb9" class="i property">Template</a>.<a href="@0@PresentationFramework/A.html#e5c8679caf5f914f" class="i method">FindName</a>(<a href="#546e8072cf71db69" class="i field">PART_TextBox</a>, <a href="#82fddb00b13244fd" class="k">this</a>) <b>as</b> <a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a>;
+            <b>if</b> (<a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a> != <b>null</b>)
+            {
+                <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a>.<a href="@0@PresentationCore/A.html#58bfd79a7ef6a62d" class="i">PreviewKeyDown</a> += <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#92f20e438f211369" class="i method">TextBoxOnPreviewKeyDown2</a>;
+                <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a>.<a href="@0@PresentationCore/A.html#8d953a1d7fb18c62" class="i">GotFocus</a> += <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#82d39219b2d3f063" class="i method">TextBoxOnGotFocus</a>;
+                <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a>.<a href="@0@PresentationCore/A.html#251395f35bbcd55f" class="i">LostFocus</a> += <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#eba6f287434020fa" class="i method">TextBoxOnLostFocus</a>;
+                <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a>.<a href="@0@PresentationFramework/A.html#22cd61fb3203047e" class="i">TextChanged</a> += <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#93bbd3d715c6fa2c" class="i method">TextBoxOnTextChanged</a>;
+            }
+
+            <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#4e7356e986e2eedd" class="i method">UpdateText</a>();
+        }
+
+        <b>private void</b> <a id="93bbd3d715c6fa2c" href="../R/93bbd3d715c6fa2c.html" target="n" data-glyph="76,1" class="i method">TextBoxOnTextChanged</a>(<b>object</b> <span id="r8 rd" class="r8 r">sender</span>, <a href="@0@PresentationFramework/A.html#b619f7b054bda67d" class="t t">TextChangedEventArgs</a> <span id="r9 rd" class="r9 r">args</span>)
+        {
+            <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a>!.<a href="@0@PresentationFramework/A.html#d9f34ddf29e7d509" class="i property">SelectionStart</a> = <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#967e44a9c181a612" class="i field">_textBox</a>.<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a>;
+        }
+
+        <b>private void</b> <a id="82d39219b2d3f063" href="../R/82d39219b2d3f063.html" target="n" data-glyph="76,1" class="i method">TextBoxOnGotFocus</a>(<b>object</b> <span id="r10 rd" class="r10 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r11 rd" class="r11 r">routedEventArgs</span>)
+        {
+            <a href="@0@WindowsBase/A.html#3149d167e4aac6ec" class="t t">ComponentDispatcher</a>.<a href="@0@WindowsBase/A.html#e3b78b322fc188b6" class="i">ThreadPreprocessMessage</a> += <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#afa9ccf3478e178b" class="i method">ComponentDispatcherOnThreadPreprocessMessage</a>;
+        }
+
+        <b>private void</b> <a id="afa9ccf3478e178b" href="../R/afa9ccf3478e178b.html" target="n" data-glyph="76,1" class="i method">ComponentDispatcherOnThreadPreprocessMessage</a>(<b>ref</b> <a href="@0@WindowsBase/A.html#8a0b462145bdb8d8" class="t t">MSG</a> <span id="r12 rd" class="r12 r">msg</span>, <b>ref bool</b> <span id="r13 rd" class="r13 r">handled</span>)
+        {
+            <b>if</b> (<span class="r12 r">msg</span>.<a href="@0@WindowsBase/A.html#2487073abfca4cb1" class="i property">message</a> == <span class="t">PInvoke</span>.<span class="i">WM_HOTKEY</span>)
+            {
+                <span class="c">// swallow all hotkeys, so our control can catch the key strokes</span>
+                <span class="r13 r">handled</span> = <b>true</b>;
+            }
+        }
+
+        <b>private void</b> <a id="eba6f287434020fa" href="../R/eba6f287434020fa.html" target="n" data-glyph="76,1" class="i method">TextBoxOnLostFocus</a>(<b>object</b> <span id="r14 rd" class="r14 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r15 rd" class="r15 r">routedEventArgs</span>)
+        {
+            <a href="@0@WindowsBase/A.html#3149d167e4aac6ec" class="t t">ComponentDispatcher</a>.<a href="@0@WindowsBase/A.html#e3b78b322fc188b6" class="i">ThreadPreprocessMessage</a> -= <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#afa9ccf3478e178b" class="i method">ComponentDispatcherOnThreadPreprocessMessage</a>;
+        }
+
+        <b>private void</b> <a id="92f20e438f211369" href="../R/92f20e438f211369.html" target="n" data-glyph="76,1" class="i method">TextBoxOnPreviewKeyDown2</a>(<b>object</b> <span id="r16 rd" class="r16 r">sender</span>, <a href="@0@PresentationCore/A.html#0d2ce926f5cfc74b" class="t t">KeyEventArgs</a> <span id="r17 rd" class="r17 r">e</span>)
+        {
+            <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="k">var</a> <span id="r18 rd" class="r18 r">key</span> = <span class="r17 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a> == <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#fb6b5b92594477c5" class="i field">System</a> ? <span class="r17 r">e</span>.<a href="@0@PresentationCore/A.html#a729b8f7ffa361b1" class="i property">SystemKey</a> : <span class="r17 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a>;
+            <b>switch</b> (<span class="r18 r">key</span>)
+            {
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#92551d8fd6698fd9" class="i field">Tab</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#d063f622025ee52a" class="i field">LeftShift</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#b4e6e7b9707e42b0" class="i field">RightShift</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#2b72caec22f1249d" class="i field">LeftCtrl</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#e89a228c9dc1bd2c" class="i field">RightCtrl</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#cbfa35444248c3b8" class="i field">LeftAlt</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#0a717a0f835a8f84" class="i field">RightAlt</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#6ff68c6a6aa106b6" class="i field">RWin</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#a9ca4a858a10f340" class="i field">LWin</a>:
+                    <b>return</b>;
+            }
+
+            <span class="r17 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+
+            <a href="@0@WindowsBase/A.html#81f37ca96e12a565" class="k">var</a> <span id="r19 rd" class="r19 r">currentModifierKeys</span> = <a href="#fb46199cd9402063" class="i method">GetCurrentModifierKeys</a>();
+            <b>if</b> (<span class="r19 r">currentModifierKeys</span> == <a href="@0@WindowsBase/A.html#81f37ca96e12a565" class="t t">ModifierKeys</a>.<a href="@0@WindowsBase/A.html#c08b8325aa6941a5" class="i field">None</a> &amp;&amp; <span class="r18 r">key</span> == <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#76c643914b0940f7" class="i field">Back</a>)
+            {
+                <a href="#82fddb00b13244fd" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#dbba63dba1b4f2e0" class="i field">HotKeyProperty</a>, <b>null</b>);
+            }
+            <b>else</b> <b>if</b> (<span class="r19 r">currentModifierKeys</span> != <a href="@0@WindowsBase/A.html#81f37ca96e12a565" class="t t">ModifierKeys</a>.<a href="@0@WindowsBase/A.html#c08b8325aa6941a5" class="i field">None</a> || !<a href="#82fddb00b13244fd" class="k">this</a>.<a href="#fec28a8e0752c628" class="i property">AreModifierKeysRequired</a>)
+            {
+                <a href="#82fddb00b13244fd" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#dbba63dba1b4f2e0" class="i field">HotKeyProperty</a>, <b>new</b> <a href="HotKey.cs.html#e90b617725fd86df" class="t constructor">HotKey</a>(<span class="r18 r">key</span>, <span class="r19 r">currentModifierKeys</span>));
+            }
+
+            <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#4e7356e986e2eedd" class="i method">UpdateText</a>();
+        }
+
+        <b>private static</b> <a href="@0@WindowsBase/A.html#81f37ca96e12a565" class="t t">ModifierKeys</a> <a id="fb46199cd9402063" href="../R/fb46199cd9402063.html" target="n" data-glyph="76,1" class="i method">GetCurrentModifierKeys</a>()
+        {
+            <a href="@0@WindowsBase/A.html#81f37ca96e12a565" class="k">var</a> <span id="r20 rd" class="r20 r">modifier</span> = <a href="@0@WindowsBase/A.html#81f37ca96e12a565" class="t t">ModifierKeys</a>.<a href="@0@WindowsBase/A.html#c08b8325aa6941a5" class="i field">None</a>;
+            <b>if</b> (<a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#4e532ab033c068e5" class="i method">IsKeyDown</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#2b72caec22f1249d" class="i field">LeftCtrl</a>) || <a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#4e532ab033c068e5" class="i method">IsKeyDown</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#e89a228c9dc1bd2c" class="i field">RightCtrl</a>))
+            {
+                <span class="r20 r">modifier</span> |= <a href="@0@WindowsBase/A.html#81f37ca96e12a565" class="t t">ModifierKeys</a>.<a href="@0@WindowsBase/A.html#a83eb77844eeecf0" class="i field">Control</a>;
+            }
+
+            <b>if</b> (<a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#4e532ab033c068e5" class="i method">IsKeyDown</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#cbfa35444248c3b8" class="i field">LeftAlt</a>) || <a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#4e532ab033c068e5" class="i method">IsKeyDown</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#0a717a0f835a8f84" class="i field">RightAlt</a>))
+            {
+                <span class="r20 r">modifier</span> |= <a href="@0@WindowsBase/A.html#81f37ca96e12a565" class="t t">ModifierKeys</a>.<a href="@0@WindowsBase/A.html#8d53518ec75db73c" class="i field">Alt</a>;
+            }
+
+            <b>if</b> (<a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#4e532ab033c068e5" class="i method">IsKeyDown</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#d063f622025ee52a" class="i field">LeftShift</a>) || <a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#4e532ab033c068e5" class="i method">IsKeyDown</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#b4e6e7b9707e42b0" class="i field">RightShift</a>))
+            {
+                <span class="r20 r">modifier</span> |= <a href="@0@WindowsBase/A.html#81f37ca96e12a565" class="t t">ModifierKeys</a>.<a href="@0@WindowsBase/A.html#9e4d218396a930d8" class="i field">Shift</a>;
+            }
+
+            <b>if</b> (<a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#4e532ab033c068e5" class="i method">IsKeyDown</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#a9ca4a858a10f340" class="i field">LWin</a>) || <a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#4e532ab033c068e5" class="i method">IsKeyDown</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#6ff68c6a6aa106b6" class="i field">RWin</a>))
+            {
+                <span class="r20 r">modifier</span> |= <a href="@0@WindowsBase/A.html#81f37ca96e12a565" class="t t">ModifierKeys</a>.<a href="@0@WindowsBase/A.html#d76399c61efb8b1a" class="i field">Windows</a>;
+            }
+
+            <b>return</b> <span class="r20 r">modifier</span>;
+        }
+
+        <b>private void</b> <a id="4e7356e986e2eedd" href="../R/4e7356e986e2eedd.html" target="n" data-glyph="76,1" class="i method">UpdateText</a>()
+        {
+            <a href="HotKey.cs.html#d631086c02d0d32d" class="k">var</a> <span id="r21 rd" class="r21 r">hotKey</span> = <a href="#82fddb00b13244fd" class="k">this</a>.<a href="#718761635a007085" class="i property">HotKey</a>;
+            <a href="#82fddb00b13244fd" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#82fddb00b13244fd" class="t t">HotKeyBox</a>.<a href="#8a6cf25413ef0d9b" class="i field">TextPropertyKey</a>, <span class="r21 r">hotKey</span> <b>is null</b> || <span class="r21 r">hotKey</span>.<a href="HotKey.cs.html#142a22c1d01cf7ab" class="i property">Key</a> == <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#a44c7223c7c4b08f" class="i field">None</a> ? <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a> : <span class="r21 r">hotKey</span>.<a href="HotKey.cs.html#630038100ed89679" class="i method">ToString</a>());
+        }
+    }
+}</pre></td></tr></table></div></body></html>

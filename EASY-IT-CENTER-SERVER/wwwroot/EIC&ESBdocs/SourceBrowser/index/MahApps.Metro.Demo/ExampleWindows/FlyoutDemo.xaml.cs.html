@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html><head><title>FlyoutDemo.xaml.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(100);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro.Demo/ExampleWindows/FlyoutDemo.xaml.cs" target="_top">ExampleWindows\FlyoutDemo.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro.Demo" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro.Samples\MahApps.Metro.Demo\MahApps.Metro.Demo.csproj</a> (MahApps.Metro.Demo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>.<span class="i n">Dialogs</span>;
+
+<b>namespace</b> <span class="i n">MetroDemo</span>.<span class="i n">ExampleWindows</span>
+{
+    <b>public</b> <b>partial</b> <b>class</b> <a id="2ccff87d053dc9de" href="../R/2ccff87d053dc9de.html" target="n" data-glyph="0,0" class="t t">FlyoutDemo</a> : <a href="@0@mscorlib/A.html#1f55292c3174123d" class="t t">IDisposable</a>
+    {
+        <b>private bool</b> <a id="d3c1bd3778664212" href="../R/d3c1bd3778664212.html" target="n" data-glyph="46,1" class="i field">_disposed</a>;
+        <b>private bool</b> <a id="59b4df7a199418fa" href="../R/59b4df7a199418fa.html" target="n" data-glyph="46,1" class="i field">_hideOnClose</a> = <b>true</b>;
+
+        <b>public</b> <a id="85095630a083fc18" href="../R/85095630a083fc18.html" target="n" data-glyph="72,1" class="t constructor">FlyoutDemo</a>()
+        {
+            <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">DataContext</span> = <b>new</b> <a href="../MainWindowViewModel.cs.html#849715bd2d9005b0" class="t constructor">MainWindowViewModel</a>(<a href="/MahApps.Metro/A.html#1492e3fa4ee5fe70" class="t t">DialogCoordinator</a>.<a href="/MahApps.Metro/A.html#0aaec214c2544199" class="i field">Instance</a>);
+
+            <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">InitializeComponent</span>();
+
+            <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">Closing</span> += (<span id="r0 rd" class="r0 r">s</span>, <span id="r1 rd" class="r1 r">e</span>) =&gt;
+                {
+                    <b>if</b> (<a href="#2ccff87d053dc9de" class="k">this</a>.<a href="#59b4df7a199418fa" class="i field">_hideOnClose</a>)
+                    {
+                        <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">Hide</span>();
+                        <span class="r1 r">e</span>.<span class="i">Cancel</span> = <b>true</b>;
+                    }
+                };
+
+            <b>var</b> <span id="r2 rd" class="r2 r">windowPlacementSettings</span> = <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">GetWindowPlacementSettings</span>();
+            <b>if</b> (<span class="r2 r">windowPlacementSettings</span> <b>is not null</b> &amp;&amp; <span class="r2 r">windowPlacementSettings</span>.<span class="i">UpgradeSettings</span>)
+            {
+                <span class="r2 r">windowPlacementSettings</span>.<span class="i">Upgrade</span>();
+                <span class="r2 r">windowPlacementSettings</span>.<span class="i">UpgradeSettings</span> = <b>false</b>;
+                <span class="r2 r">windowPlacementSettings</span>.<span class="i">Save</span>();
+            }
+        }
+
+        <b>public void</b> <a id="f7e1f5a854252795" href="../R/f7e1f5a854252795.html" target="n" data-glyph="72,1" class="i method">Launch</a>()
+        {
+            <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">Owner</span> = <a href="@0@PresentationFramework/A.html#cf9c51e402f97b05" class="t t">Application</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>.<a href="@0@PresentationFramework/A.html#bb23dbf789cc9d9f" class="i property">MainWindow</a>;
+            <span class="c">// only for this window, because we allow minimizing</span>
+            <b>if</b> (<a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">WindowState</span> == <a href="@0@PresentationFramework/A.html#27ce608a1c9bb620" class="t t">WindowState</a>.<a href="@0@PresentationFramework/A.html#2c66992bf048806c" class="i field">Minimized</a>)
+            {
+                <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">WindowState</span> = <a href="@0@PresentationFramework/A.html#27ce608a1c9bb620" class="t t">WindowState</a>.<a href="@0@PresentationFramework/A.html#762fbb4fc66fac1b" class="i field">Normal</a>;
+            }
+
+            <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">Show</span>();
+        }
+
+        <b>public void</b> <a id="93bde36c2928bfd5" href="../R/93bde36c2928bfd5.html" target="n" data-glyph="72,1" class="i method">Dispose</a>()
+        {
+            <a href="#2ccff87d053dc9de" class="k">this</a>.<a href="#3d8a92ff360a6950" class="i method">Dispose</a>(<b>true</b>);
+            <a href="@0@mscorlib/A.html#25d9c1e022317a99" class="t t">GC</a>.<a href="@0@mscorlib/A.html#2673f5220a565bf2" class="i method">SuppressFinalize</a>(<a href="#2ccff87d053dc9de" class="k">this</a>);
+        }
+
+        <b>private void</b> <a id="3d8a92ff360a6950" href="../R/3d8a92ff360a6950.html" target="n" data-glyph="76,1" class="i method">Dispose</a>(<b>bool</b> <span id="r3 rd" class="r3 r">disposing</span>)
+        {
+            <b>if</b> (!<a href="#2ccff87d053dc9de" class="k">this</a>.<a href="#d3c1bd3778664212" class="i field">_disposed</a> &amp;&amp; <span class="r3 r">disposing</span>)
+            {
+                <a href="#2ccff87d053dc9de" class="k">this</a>.<a href="#d3c1bd3778664212" class="i field">_disposed</a> = <b>true</b>;
+                <a href="#2ccff87d053dc9de" class="k">this</a>.<a href="#59b4df7a199418fa" class="i field">_hideOnClose</a> = <b>false</b>;
+                <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">Close</span>();
+            }
+        }
+
+        <b>private void</b> <a id="ae66b0f8c76d288a" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">CloseMe</a>(<b>object</b> <span id="r4 rd" class="r4 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r5 rd" class="r5 r">e</span>)
+        {
+            <a href="#2ccff87d053dc9de" class="k">this</a>.<a href="#59b4df7a199418fa" class="i field">_hideOnClose</a> = <b>false</b>;
+            <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">Close</span>();
+        }
+
+        <b>private void</b> <a id="52d46a96d04495bf" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">ShowDynamicFlyout</a>(<b>object</b> <span id="r6 rd" class="r6 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r7 rd" class="r7 r">e</span>)
+        {
+            <a href="DynamicFlyout.xaml.cs.html#3894fe9af76dd6c8" class="k">var</a> <span id="r8 rd" class="r8 r">flyout</span> = <b>new</b> <a href="DynamicFlyout.xaml.cs.html#97efa74aebde77f1" class="t constructor">DynamicFlyout</a>
+                         {
+                             <span class="i">Header</span> = <span class="s">&quot;Dynamic flyout&quot;</span>
+                         };
+
+            <span class="c">// when the flyout is closed, remove it from the hosting FlyoutsControl</span>
+            <b>void</b> <a id="564534b3124fe12a" href="../R/../../0000000000.html" target="n" data-glyph="76,2" class="i method">ClosingFinishedHandler</a>(<b>object</b> <span id="r9 rd" class="r9 r">o</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r10 rd" class="r10 r">args</span>)
+            {
+                <span class="r8 r">flyout</span>.<span class="i">ClosingFinished</span> -= <span class="i">ClosingFinishedHandler</span>;
+                <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">flyoutsControl</span>.<span class="i">Items</span>.<span class="i">Remove</span>(<span class="r8 r">flyout</span>);
+            }
+
+            <span class="r8 r">flyout</span>.<span class="i">ClosingFinished</span> += <span class="i">ClosingFinishedHandler</span>;
+
+            <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">flyoutsControl</span>.<span class="i">Items</span>.<span class="i">Add</span>(<span class="r8 r">flyout</span>);
+
+            <span class="r8 r">flyout</span>.<span class="i">IsOpen</span> = <b>true</b>;
+        }
+
+        <b>private async void</b> <a id="a8fa858e0bda2414" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">ClickMeOnClick</a>(<b>object</b> <span id="r11 rd" class="r11 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r12 rd" class="r12 r">e</span>)
+        {
+            <b>await</b> <a href="#2ccff87d053dc9de" class="k">this</a>.<span class="i">ShowMessageAsync</span>(<span class="s">&quot;Title Template Test&quot;</span>, <span class="s">&quot;Thx for using MahApps.Metro!!!&quot;</span>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html><head><title>DbOperations.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(142);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasyITcenter-HELP/ServerCore/Operations/DbOperations.cs" target="_top">ServerCore\Operations\DbOperations.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasyITcenter-HELP" target="_top">HelpProjects\EasyITcenter-HELP\EasyITcenter-HELP.csproj</a> (EasyITcenter-HELP)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Transactions</span>;
+ 
+<b>namespace</b> <span class="i n">EasyITCenter</span>.<span class="i n">ServerCoreStructure</span> {
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> All Server Definitions of Database Operation method</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>internal class</b> <a id="5e321d86347562f3" href="../../R/5e321d86347562f3.html" target="n" data-glyph="2,0" class="t t"><span id="7f11c99fda23845b">DbOperations</span></a> {
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Definition for Startup And Reload Tables
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Method for All Server Defined Table for Local Using As Off line AutoUpdated Tables</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">onlyThis</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public static void</b> <a id="7252e8b172f2bc06" href="../../R/7252e8b172f2bc06.html" target="n" data-glyph="72,1" class="i method">LoadOrRefreshStaticDbDials</a>(<a href="../Classes/ServerCoreClassesDefinitions.cs.html#6771286557edceb2" class="t t">ServerLocalDbDials</a>? <span id="r0 rd" class="r0 r">onlyThis</span> = <b>null</b>) {
+            <b>if</b> (<a href="../Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../Classes/ServerConfigurationDefinitions.cs.html#fee4455063aca83a" class="i property">ServiceUseDbLocalAutoupdatedDials</a>) {
+                <b>using</b> (<b>new</b> <span class="t constructor">TransactionScope</span>(<span class="t t">TransactionScopeOption</span>.<span class="i field">Required</span>, <b>new</b> <span class="t constructor">TransactionOptions</span> { <span class="i property">IsolationLevel</span> = <span class="i n">System</span>.<span class="i n">Transactions</span>.<span class="t t">IsolationLevel</span>.<span class="i field">ReadUncommitted</span> })) {
+                    <b>foreach</b> (<a href="../Classes/ServerCoreClassesDefinitions.cs.html#6771286557edceb2" class="t t">ServerLocalDbDials</a> <span id="r1 rd" class="r1 r">dbTable</span> <b>in</b> (<a href="../Classes/ServerCoreClassesDefinitions.cs.html#6771286557edceb2" class="t t">ServerLocalDbDials</a>[])<a href="@1@System.Runtime/A.html#36729210e317a805" class="t t">Enum</a>.<a href="@1@System.Runtime/A.html#20fa909ef3233d20" class="i method">GetValues</a>(<b>typeof</b>(<a href="../Classes/ServerCoreClassesDefinitions.cs.html#6771286557edceb2" class="t t">ServerLocalDbDials</a>))) {
+                        <b>switch</b> (<span class="r0 r">onlyThis</span> != <b>null</b> ? <span class="r0 r">onlyThis</span>.<a href="@1@System.Runtime/A.html#d83d2db767b43db7" class="i method">ToString</a>() : <span class="r1 r">dbTable</span>.<a href="@1@System.Runtime/A.html#1365cfeffd45409d" class="i method">ToString</a>()) {
+                            <b>case</b> <span class="s">&quot;SystemTranslationList&quot;</span>:
+                                <span class="t t">List</span>&lt;<span class="i">SystemTranslationList</span>&gt;? <span id="r2 rd" class="r2 r">dataLL</span> = <b>new</b> <span class="i">EasyITCenterContext</span>().<span class="i">SystemTranslationLists</span>.<span class="i">ToList</span>();
+                                <b>int</b> <span id="r3 rd" class="r3 r">indexLL</span> = <a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#b22b05b0ecb479ff" class="t t">ServerRuntimeData</a>.<a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#7dd494539734d30a" class="i field">LocalDBTableList</a>.<span class="i method">FindIndex</span>(<span id="r4 rd" class="r4 r">a</span> =&gt; <span class="r4 r">a</span>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>() == <span class="r2 r">dataLL</span>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>());
+                                <b>if</b> (<span class="r3 r">indexLL</span> &gt;= 0) <a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#b22b05b0ecb479ff" class="t t">ServerRuntimeData</a>.<a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#7dd494539734d30a" class="i field">LocalDBTableList</a>[<span class="r3 r">indexLL</span>] = <span class="r2 r">dataLL</span>; <b>else</b> <a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#b22b05b0ecb479ff" class="t t">ServerRuntimeData</a>.<a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#7dd494539734d30a" class="i field">LocalDBTableList</a>.<span class="i method">Add</span>(<span class="r2 r">dataLL</span>);
+                                <b>break</b>;
+ 
+                            <b>default</b>: <b>break</b>;
+                        }
+                        <b>if</b> (<span class="r0 r">onlyThis</span> != <b>null</b>) <b>break</b>;
+                    }
+                }
+            }
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Definition for Startup And Reload Tables
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Public definitions for standard using
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Default Operation for Call Translation</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r5 r">word</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">    </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r6 r">language</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public static string</b> <a id="e9a50c31c113e4e8" href="../../R/e9a50c31c113e4e8.html" target="n" data-glyph="72,1" class="i method">DBTranslate</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r5 rd" class="r5 r">word</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r6 rd" class="r6 r">language</span> = <span class="s">&quot;cz&quot;</span>) {
+            <b>return</b> <a href="../Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../Classes/ServerConfigurationDefinitions.cs.html#fee4455063aca83a" class="i property">ServiceUseDbLocalAutoupdatedDials</a> ? <a href="#39700776b3f8d4a6" class="i method">DBTranslateOffline</a>(<span class="r5 r">word</span>, <span class="r6 r">language</span>) : <a href="#4d2d6ff05e5e0310" class="i method">DBTranslateOnline</a>(<span class="r5 r">word</span>, <span class="r6 r">language</span>);
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Public definitions for standard using
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private or On-line/Off-line Definitions
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Database LanuageList for Off-line Using Definitions</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">word</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">    </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">language</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private static string</b> <a id="39700776b3f8d4a6" href="../../R/39700776b3f8d4a6.html" target="n" data-glyph="76,1" class="i method">DBTranslateOffline</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r7 rd" class="r7 r">word</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r8 rd" class="r8 r">language</span> = <span class="s">&quot;cz&quot;</span>) {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r9 rd" class="r9 r">result</span>;
+            <b>int</b> <span id="r10 rd" class="r10 r">index</span> = <a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#b22b05b0ecb479ff" class="t t">ServerRuntimeData</a>.<a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#7dd494539734d30a" class="i field">LocalDBTableList</a>.<span class="i">FindIndex</span>(<span id="r11 rd" class="r11 r">a</span> =&gt; <span class="r11 r">a</span>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>() == <b>new</b> <span class="t constructor">List</span>&lt;<span class="i">SystemTranslationList</span>&gt;().<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>());
+ 
+            <span class="c">//Check Exist AND Insert New</span>
+            <b>try</b> {
+                <b>if</b> (!((<span class="t t">List</span>&lt;<span class="i">SystemTranslationList</span>&gt;)<a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#b22b05b0ecb479ff" class="t t">ServerRuntimeData</a>.<a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#7dd494539734d30a" class="i field">LocalDBTableList</a>[<span class="r10 r">index</span>]).<span class="i method">Where</span>(<span id="r12 rd" class="r12 r">a</span> =&gt; <span class="r12 r">a</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>() == <span class="r7 r">word</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>()).<span class="i method">Any</span>()) {
+                    <span class="r9 r">result</span> = <span class="r7 r">word</span>;
+                    <span class="c">//SystemTranslationList newWord = new() { SystemName = word, DescriptionCz = &quot;&quot;, DescriptionEn = &quot;&quot;, UserId = 1 };</span>
+                    <span class="c">//new EasyITCenterContext().SystemTranslationLists.Add(newWord).Context.SaveChanges();</span>
+                    <a href="#7252e8b172f2bc06" class="i method">LoadOrRefreshStaticDbDials</a>(<a href="../Classes/ServerCoreClassesDefinitions.cs.html#6771286557edceb2" class="t t">ServerLocalDbDials</a>.<a href="../Classes/ServerCoreClassesDefinitions.cs.html#1527ca955380bd30" class="i field">SystemTranslationList</a>);
+                    <b>return</b> <span class="r9 r">result</span>;
+                }
+            } <b>catch</b> { }
+ 
+            <span class="c">//Return From List</span>
+            <b>if</b> (<span class="r8 r">language</span> == <span class="s">&quot;cz&quot;</span>) <span class="r9 r">result</span> = ((<span class="t t">List</span>&lt;<span class="i">SystemTranslationList</span>&gt;)<a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#b22b05b0ecb479ff" class="t t">ServerRuntimeData</a>.<a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#7dd494539734d30a" class="i field">LocalDBTableList</a>[<span class="r10 r">index</span>]).<span class="i method">Where</span>(<span id="r13 rd" class="r13 r">a</span> =&gt; <span class="r13 r">a</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>() == <span class="r7 r">word</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>()).<span class="i method">Select</span>(<span id="r14 rd" class="r14 r">a</span> =&gt; <span class="r14 r">a</span>.<span class="i">DescriptionCz</span>).<span class="i method">FirstOrDefault</span>();
+            <b>else</b> <span class="r9 r">result</span> = ((<span class="t t">List</span>&lt;<span class="i">SystemTranslationList</span>&gt;)<a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#b22b05b0ecb479ff" class="t t">ServerRuntimeData</a>.<a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#7dd494539734d30a" class="i field">LocalDBTableList</a>[<span class="r10 r">index</span>]).<span class="i method">Where</span>(<span id="r15 rd" class="r15 r">a</span> =&gt; <span class="r15 r">a</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>() == <span class="r7 r">word</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>()).<span class="i method">Select</span>(<span id="r16 rd" class="r16 r">a</span> =&gt; <span class="r16 r">a</span>.<span class="i">DescriptionEn</span>).<span class="i method">FirstOrDefault</span>();
+ 
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r9 r">result</span>)) { <span class="r9 r">result</span> = <span class="r7 r">word</span>; }
+            <b>return</b> <span class="r9 r">result</span>;
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Database LanuageList for On-line Using Definitions</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r17 r">word</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">    </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r18 r">language</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private static string</b> <a id="4d2d6ff05e5e0310" href="../../R/4d2d6ff05e5e0310.html" target="n" data-glyph="76,1" class="i method">DBTranslateOnline</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r17 rd" class="r17 r">word</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r18 rd" class="r18 r">language</span> = <span class="s">&quot;cz&quot;</span>) {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r19 rd" class="r19 r">result</span>;
+ 
+            <span class="c">//Check Exist AND Insert New</span>
+            <b>try</b> {
+                <b>if</b> (!<b>new</b> <span class="i">EasyITCenterContext</span>().<span class="i">SystemTranslationLists</span>.<span class="i">Where</span>(<span id="r20 rd" class="r20 r">a</span> =&gt; <span class="r20 r">a</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>() == <span class="r17 r">word</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>()).<span class="i">Any</span>()) {
+                    <span class="r19 r">result</span> = <span class="r17 r">word</span>;
+                    <span class="i">SystemTranslationList</span> <span id="r21 rd" class="r21 r">newWord</span> = <b>new</b>() { <span class="i">SystemName</span> = <span class="r17 r">word</span>, <span class="i">DescriptionCz</span> = <span class="s">&quot;&quot;</span>, <span class="i">DescriptionEn</span> = <span class="s">&quot;&quot;</span>, <span class="i">UserId</span> = 1 };
+                    <b>new</b> <span class="i">EasyITCenterContext</span>().<span class="i">SystemTranslationLists</span>.<span class="i">Add</span>(<span class="r21 r">newWord</span>).<span class="i">Context</span>.<span class="i">SaveChanges</span>();
+                    <b>return</b> <span class="r19 r">result</span>;
+                }
+            } <b>catch</b> { }
+ 
+            <span class="c">//Return From List</span>
+            <b>if</b> (<span class="r18 r">language</span> == <span class="s">&quot;cz&quot;</span>) <span class="r19 r">result</span> = <b>new</b> <span class="i">EasyITCenterContext</span>().<span class="i">SystemTranslationLists</span>.<span class="i">Where</span>(<span id="r22 rd" class="r22 r">a</span> =&gt; <span class="r22 r">a</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>() == <span class="r17 r">word</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>()).<span class="i">Select</span>(<span id="r23 rd" class="r23 r">a</span> =&gt; <span class="r23 r">a</span>.<span class="i">DescriptionCz</span>).<span class="i">FirstOrDefault</span>();
+            <b>else</b> <span class="r19 r">result</span> = <b>new</b> <span class="i">EasyITCenterContext</span>().<span class="i">SystemTranslationLists</span>.<span class="i">Where</span>(<span id="r24 rd" class="r24 r">a</span> =&gt; <span class="r24 r">a</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>() == <span class="r17 r">word</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>()).<span class="i">Select</span>(<span id="r25 rd" class="r25 r">a</span> =&gt; <span class="r25 r">a</span>.<span class="i">DescriptionEn</span>).<span class="i">FirstOrDefault</span>();
+ 
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r19 r">result</span>)) { <span class="r19 r">result</span> = <span class="r17 r">word</span>; }
+            <b>return</b> <span class="r19 r">result</span>;
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Private or On-line/Off-line Definitions
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Databases Helper
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Extension For Using Custom Defined Tables from Database Procedures Its used as Database</span>
+        <span class="c">///</span><span class="c"> Context Extension as &#39;CollectionFromSql&#39; Method in Database Context</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">typeparam</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r26 r t">T</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">typeparam</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r27 r">dt</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The dt.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public static</b> <span class="t t">List</span>&lt;<span class="r26 r t">T</span>&gt; <a id="b1b33ac9d958df12" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">BindList</a>&lt;<span id="r26 rd t" class="r26 r t">T</span>&gt;(<span class="t t">DataTable</span> <span id="r27 rd" class="r27 r">dt</span>) {
+            <b>var</b> <span id="r28 rd" class="r28 r">fields</span> = <b>typeof</b>(<span class="r26 r t">T</span>).<a href="@1@System.Runtime/A.html#78a95677853e46de" class="i method">GetProperties</a>();
+            <span class="t t">List</span>&lt;<span class="r26 r t">T</span>&gt; <span id="r29 rd" class="r29 r">lst</span> = <b>new</b> <span class="t constructor">List</span>&lt;<span class="r26 r t">T</span>&gt;();
+            <b>foreach</b> (<span class="t t">DataRow</span> <span id="r30 rd" class="r30 r">dr</span> <b>in</b> <span class="r27 r">dt</span>.<span class="i property">Rows</span>) {
+                <span class="r26 r t">var</span> <span id="r31 rd" class="r31 r">ob</span> = <a href="@1@System.Runtime/A.html#955a7437554c8efc" class="t t">Activator</a>.<a href="@1@System.Runtime/A.html#168fafb64ad2a01e" class="i method">CreateInstance</a>&lt;<span class="r26 r t">T</span>&gt;();
+                <b>foreach</b> (<a href="@1@System.Runtime/A.html#f3f0ea5f89a8f162" class="k">var</a> <span id="r32 rd" class="r32 r">fieldInfo</span> <b>in</b> <span class="r28 r">fields</span>) {
+                    <b>foreach</b> (<span class="t t">DataColumn</span> <span id="r33 rd" class="r33 r">dc</span> <b>in</b> <span class="r27 r">dt</span>.<span class="i property">Columns</span>) {
+                        <b>if</b> (<span class="r32 r">fieldInfo</span>.<a href="@1@System.Runtime/A.html#aa4f112f79364b6e" class="i property">Name</a> == <span class="r33 r">dc</span>.<span class="i property">ColumnName</span>) {
+                            <b>object</b> <span id="r34 rd" class="r34 r">value</span> = <span class="r30 r">dr</span>[<span class="r33 r">dc</span>.<span class="i property">ColumnName</span>];
+                            <span class="r32 r">fieldInfo</span>.<a href="@1@System.Runtime/A.html#4e43ac7a41b37349" class="i method">SetValue</a>(<span class="r31 r">ob</span>, <span class="r34 r">value</span>);
+                            <b>break</b>;
+                        }
+                    }
+                }
+                <span class="r29 r">lst</span>.<span class="i method">Add</span>(<span class="r31 r">ob</span>);
+            }
+            <b>return</b> <span class="r29 r">lst</span>;
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Databases Helper
+    }
+}</pre></td></tr></table></div></body></html>

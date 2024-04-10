@@ -26,12 +26,13 @@
     /// </summary>
     public enum RouteLayout {
         CentralLayout,
+        DocPortalLayout,
         EasyDataLayout,
         EmptyLayout,
         GitHubLayout,
         GlobalLayout,
         HtmlFileEditorLayout,
-        MarkDownLayout,
+        MarkDownFileLayout,
         MetroLayout,
         MultiLangLayout,
         PortalLayout,

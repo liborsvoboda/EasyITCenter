@@ -1,19 +1,26 @@
 ﻿using DocumentFormat.OpenXml.Office2013.Excel;
 using EasyITCenter.ServerCoreStructure;
+using EasyITCenter.ServerCoreWebPages;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.FileProviders.Physical;
 using NPOI.OpenXmlFormats.Dml;
 using NuGet.Protocol.Plugins;
 using ServerCorePages;
+using ServiceStack.Host;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using Westwind.AspNetCore.LiveReload;
 using Westwind.AspNetCore.Markdown;
 using static Quartz.Logging.OperationName;
+using SourceBrowserIndex = Microsoft.SourceBrowser.SourceIndexServer.Models.Index;
+
 
 namespace EasyITCenter {
 
@@ -70,7 +77,7 @@ namespace EasyITCenter {
             ServerConfigurationServices.ConfigureRSSfeed(ref services);
 
             #endregion Server Core & Security Web
-
+   
             #region Server Modules
 
             ServerModules.ConfigureScheduler(ref services);
@@ -82,6 +89,10 @@ namespace EasyITCenter {
             ServerModules.ConfigureGitServer(ref services);
             ServerModules.ConfigureMarkdownAsHtmlFiles(ref services);
 
+            var subfolder = Path.Combine(ServerRuntimeData.WebRoot_path, "EIC&ESBdocs", "SourceBrowser", "index");
+            if (File.Exists(subfolder)) { services.AddSingleton(new SourceBrowserIndex(subfolder));}
+
+            
             #endregion Server Modules
 
             ServerConfigurationServices.ConfigureTransient(ref services);
@@ -116,18 +127,18 @@ namespace EasyITCenter {
                 app.UseCertificateForwarding();
             }
 
+            //Aplied new Working Style For Files Makdow, Html, Editor, Images,
+            //etc Its Need Nes Style For Exclude Folders from this Control
             //Root Server Page To Default Path, Other Is Taken From Static Files
-            app.Use(async (HttpContext context, Func<Task> next) => { await next(); string requestPath = context.Request.Path.ToString().ToLower();
+            app.Use(async (HttpContext context, Func<Task> next) => { await next(); string requestPath = context.Request.Path.ToString().ToLower();bool redirected =false;
 
-                //TODO Block Future Restricted Area from Static Pages
-                // Allow all static files 
-                if (context.Response.StatusCode == StatusCodes.Status200OK &&
-                (!requestPath.Contains("/webuiframeworks") && !requestPath.StartsWith("/servermodules") && !requestPath.EndsWith(".md")))
-                { return; }
+                //Excluded Urls For Server Browsing From Page Settings TODO move to Local Dials + New Agenda
+                if (requestPath.StartsWith("/downloads") || requestPath.StartsWith("/server-web") || requestPath.StartsWith("/server-doc") || requestPath.StartsWith("/metro")) { return; }
+
 
                 //Redirect on Start Before Docs Module
-                if (context.Request.Path.ToString() == "/" && ServerConfigSettings.RedirectOnPageNotFound) { context.Response.Redirect(ServerConfigSettings.RedirectPath); context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-                else { await next(); }
+                //if (context.Request.Path.ToString() == "/" && ServerConfigSettings.RedirectOnPageNotFound) { context.Response.Redirect(ServerConfigSettings.RedirectPath); context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                //else { await next(); }
 
 
                 //Verify Request For Detect Layout, Redirection, Module, Correct File Path, WebMenu Selection
@@ -138,20 +149,25 @@ namespace EasyITCenter {
                 try { fileValidUrl = ((string)context.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
 
 
-                //MarkDown File Type Set To Parent Path For Show In MarkDown Template
-                if (routeLayout == RouteLayout.MarkDownLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) {
-                    context.Request.Path = "/MarkDown";
-                    context.Response.StatusCode = StatusCodes.Status200OK; await next();
-                    //return;
-                }
+                //Start DocPortal by Link Without index.md
+                if (routeLayout == RouteLayout.DocPortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                { redirected = true; context.Request.Path = "/DocPortal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
-                //Portal Urls / Static / Tools
+                //Show MarkDownFile in Layout by missing .md extension
+                else if (routeLayout == RouteLayout.MarkDownFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                { redirected = true; context.Request.Path = "/MarkDownFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+
+                //Show Portal in Layout by missing .md extension
+                else if (routeLayout == RouteLayout.PortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                { redirected = true; context.Request.Path = "/Portal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+
+                //Others Type Detected
                 else if (context.Request.Path.ToString().ToLower() != fileValidUrl)
-                { context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; }
+                { redirected = true; context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; }
 
 
                 if (commandType == RoutingResult.Return) { return; }
-                else if (commandType == RoutingResult.Next && context.Request.Path.ToString().ToLower() != fileValidUrl) {
+                else if (!redirected && commandType == RoutingResult.Next && context.Request.Path.ToString().ToLower() != fileValidUrl) {
                     context.Request.Path = fileValidUrl;
                     context.Response.StatusCode = StatusCodes.Status200OK;
                     await next(); 
@@ -191,9 +207,16 @@ namespace EasyITCenter {
                     RequestPath = "/" + website.WebsiteName + ".",
                     HttpsCompression = HttpsCompressionMode.Compress,
                     DefaultContentType = "text/html",
-                    ContentTypeProvider = staticFilesProvider,
+                    ContentTypeProvider = staticFilesProvider
                 });
             });
+
+            //TODO staticbrowser
+            app.UseStaticFiles(new StaticFileOptions {
+                RequestPath = "/EIC&ESBdocs/SourceBrowser/index",
+                FileProvider = new PhysicalFileProvider(Path.Combine(ServerRuntimeData.WebRoot_path, "EIC&ESBdocs", "SourceBrowser", "index"), ExclusionFilters.Sensitive & ~ExclusionFilters.DotPrefixed),});
+
+            app.UseStaticFiles();
 
             app.UseCookiePolicy();
             app.UseSession();
@@ -233,8 +256,7 @@ namespace EasyITCenter {
             try {
                 app.UsePathBase(ServerConfigSettings.RedirectPath);
             } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
-
-
+            
             if (ServerConfigSettings.BrowserLinkEnabled) { app.UseBrowserLink(); }
             if (ServerConfigSettings.ModuleWebDataManagerEnabled) { app.UseEasyData(); }
         }

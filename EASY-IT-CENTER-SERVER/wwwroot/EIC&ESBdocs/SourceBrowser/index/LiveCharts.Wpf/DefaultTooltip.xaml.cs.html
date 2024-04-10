@@ -1,0 +1,456 @@
+﻿<!DOCTYPE html>
+<html><head><title>DefaultTooltip.xaml.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(447);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts.Wpf/DefaultTooltip.xaml.cs" target="_top">DefaultTooltip.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts.Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\WpfView\WpfView.csproj</a> (LiveCharts.Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Effects</span>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> The Default Tooltip control, by default any chart that requires a tooltip will create a new instance of this class.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <a href="P/4b8341dac731310b.html" target="s" class="k">partial</a> <b>class</b> <a id="4b8341dac731310b" href="R/4b8341dac731310b.html" target="n" data-glyph="0,0" class="t t">DefaultTooltip</a> : <a href="IChartTooltip.cs.html#7d6be9bc1c37e729" class="t t">IChartTooltip</a>
+    {
+        <b>private</b> <a href="#48cf9268d8dcc2a1" class="t t">TooltipData</a> <a id="cdb5de080acfbbd8" href="R/cdb5de080acfbbd8.html" target="n" data-glyph="46,1" class="i field">_data</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of DefaultTooltip class</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a id="85089f9f0d5742d8" href="R/85089f9f0d5742d8.html" target="n" data-glyph="72,1" class="t constructor">DefaultTooltip</a>()
+        {
+            <a href="obj/Debug/DefaultTooltip.g.cs.html#d8e59e365e1e5d6c" class="i method">InitializeComponent</a>();
+            
+            <a href="@0@PresentationFramework/A.html#e4aaca7514916173" class="i property">DataContext</a> = <a href="P/4b8341dac731310b.html#4b8341dac731310b" class="k">this</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="P/4b8341dac731310b.html#4b8341dac731310b" class="t t">DefaultTooltip</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> class.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>static</b> <a id="8a9cab658590d04a" href="R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">DefaultTooltip</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#a79e672f6084659d" class="i field">BackgroundProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(
+                <b>typeof</b>(<a href="P/4b8341dac731310b.html#4b8341dac731310b" class="t t">DefaultTooltip</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#9289c34fb9030bfd" class="i method">FromArgb</a>(140, 255, 255, 255))));
+            <a href="@0@PresentationFramework/A.html#68ffd3c2b0f55627" class="i field">PaddingProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(
+                <b>typeof</b>(<a href="P/4b8341dac731310b.html#4b8341dac731310b" class="t t">DefaultTooltip</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#7d5226ec44f0e6f6" class="t constructor">Thickness</a>(10, 5, 10, 5)));
+            <a href="@0@PresentationCore/A.html#a49c6110adfc02b0" class="i field">EffectProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(
+                <b>typeof</b>(<a href="P/4b8341dac731310b.html#4b8341dac731310b" class="t t">DefaultTooltip</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>new</b> <a href="@0@PresentationCore/A.html#cb27c3aafa0ae8e5" class="t constructor">DropShadowEffect</a> {<a href="@0@PresentationCore/A.html#0c4c516a8e67b968" class="i property">BlurRadius</a> = 3, <a href="@0@PresentationCore/A.html#076dd82a05e7b78e" class="i property">Color</a> = <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(50,50,50), <a href="@0@PresentationCore/A.html#5dfd49860de39afe" class="i property">Opacity</a> = .2}));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The show title property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="ec767ebd20f599a6" href="R/ec767ebd20f599a6.html" target="n" data-glyph="42,1" class="i field">ShowTitleProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;ShowTitle&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="P/4b8341dac731310b.html#4b8341dac731310b" class="t t">DefaultTooltip</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>true</b>));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a value indicating whether the tooltip should show the shared coordinate value in the current tooltip data.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">true</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> if [show title]; otherwise, </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">false</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="28f48779188c9dc2" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">ShowTitle</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#ec767ebd20f599a6" class="i field">ShowTitleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#ec767ebd20f599a6" class="i field">ShowTitleProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The show series property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="fc0663ba72f6331e" href="R/fc0663ba72f6331e.html" target="n" data-glyph="42,1" class="i field">ShowSeriesProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;ShowSeries&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="P/4b8341dac731310b.html#4b8341dac731310b" class="t t">DefaultTooltip</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>true</b>));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a value indicating whether should show series name and color.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">true</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> if [show series]; otherwise, </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">false</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="63e5eaaa5b2c2236" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">ShowSeries</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#fc0663ba72f6331e" class="i field">ShowSeriesProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#fc0663ba72f6331e" class="i field">ShowSeriesProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The corner radius property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="37753ef9a0b623a5" href="R/37753ef9a0b623a5.html" target="n" data-glyph="42,1" class="i field">CornerRadiusProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;CornerRadius&quot;</span>, <b>typeof</b> (<a href="@0@PresentationFramework/A.html#9fd36772b228e5d0" class="t t">CornerRadius</a>), <b>typeof</b> (<a href="P/4b8341dac731310b.html#4b8341dac731310b" class="t t">DefaultTooltip</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#fd02a775b7286abc" class="t constructor">CornerRadius</a>(4)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the corner radius of the tooltip</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#9fd36772b228e5d0" class="t t">CornerRadius</a> <a id="d0be9889263e4fdb" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">CornerRadius</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#9fd36772b228e5d0" class="t t">CornerRadius</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#37753ef9a0b623a5" class="i field">CornerRadiusProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#37753ef9a0b623a5" class="i field">CornerRadiusProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The selection mode property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="a5c9c1831a6855f2" href="R/a5c9c1831a6855f2.html" target="n" data-glyph="42,1" class="i field">SelectionModeProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;SelectionMode&quot;</span>, <b>typeof</b> (<a href="/LiveCharts/A.html#4eeb795ac9de2c4d" class="t t">TooltipSelectionMode</a>?), <b>typeof</b> (<a href="P/4b8341dac731310b.html#4b8341dac731310b" class="t t">DefaultTooltip</a>),
+            <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the tooltip selection mode, default is null, if this property is null LiveCharts will decide the selection mode based on the series (that fired the tooltip) preferred section mode</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="/LiveCharts/A.html#4eeb795ac9de2c4d" class="t t">TooltipSelectionMode</a>? <a id="555f96603e896e62" href="R/555f96603e896e62.html" target="n" data-glyph="102,1" class="i property">SelectionMode</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="/LiveCharts/A.html#4eeb795ac9de2c4d" class="t t">TooltipSelectionMode</a>?) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#a5c9c1831a6855f2" class="i field">SelectionModeProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#a5c9c1831a6855f2" class="i field">SelectionModeProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The bullet size property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="7e2d4686ac3d38d0" href="R/7e2d4686ac3d38d0.html" target="n" data-glyph="42,1" class="i field">BulletSizeProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;BulletSize&quot;</span>, <b>typeof</b> (<b>double</b>), <b>typeof</b> (<a href="P/4b8341dac731310b.html#4b8341dac731310b" class="t t">DefaultTooltip</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(15d));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the bullet size, the bullet size modifies the drawn shape size.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="e15e12ea06587e81" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">BulletSize</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#7e2d4686ac3d38d0" class="i field">BulletSizeProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#7e2d4686ac3d38d0" class="i field">BulletSizeProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The is wrapped property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="0b21ffe32b7d1075" href="R/0b21ffe32b7d1075.html" target="n" data-glyph="42,1" class="i field">IsWrappedProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;IsWrapped&quot;</span>, <b>typeof</b> (<b>bool</b>), <b>typeof</b> (<a href="P/4b8341dac731310b.html#4b8341dac731310b" class="t t">DefaultTooltip</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>bool</b>)));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the tooltip is shared in the current view, this property is useful to control</span>
+        <span class="c">///</span><span class="c"> the z index of a tooltip according to a set of controls in a container.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="15175bb6e5b06275" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">IsWrapped</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#0b21ffe32b7d1075" class="i field">IsWrappedProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#0b21ffe32b7d1075" class="i field">IsWrappedProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the data.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The data.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#48cf9268d8dcc2a1" class="t t">TooltipData</a> <a id="b3127952bfe94140" href="R/b3127952bfe94140.html" target="n" data-glyph="102,1" class="i property">Data</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#cdb5de080acfbbd8" class="i field">_data</a>; }
+            <b>set</b>
+            {
+                <a href="#cdb5de080acfbbd8" class="i field">_data</a> = <b>value</b>;
+                <a href="#d36f117374c448b9" class="i method">OnPropertyChanged</a>(<span class="s">&quot;Data&quot;</span>);
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Occurs when [property changed].</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@System/A.html#670754815f6804ff" class="t t">PropertyChangedEventHandler</a> <a id="a41eae8eeb5fbbe7" href="R/a41eae8eeb5fbbe7.html" target="n" data-glyph="30,1" class="i">PropertyChanged</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Called when [property changed].</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">propertyName</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Name of the property.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>protected virtual void</b> <a id="d36f117374c448b9" href="R/d36f117374c448b9.html" target="n" data-glyph="75,1" class="i method">OnPropertyChanged</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">propertyName</span> = <b>null</b>)
+        {
+            <b>if</b> (<a href="#a41eae8eeb5fbbe7" class="i">PropertyChanged</a> != <b>null</b>)
+                <a href="#a41eae8eeb5fbbe7" class="i">PropertyChanged</a>.<a href="@0@System/A.html#c66222f7abfe2e28" class="i method">Invoke</a>(<a href="P/4b8341dac731310b.html#4b8341dac731310b" class="k">this</a>, <b>new</b> <a href="@0@System/A.html#76958b0a96ed2a2e" class="t constructor">PropertyChangedEventArgs</a>(<span class="r0 r">propertyName</span>));
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>.<a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <b>public class</b> <a id="ca92597d515e3eb1" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="bb8f403ebfcf98ed">SharedConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts a value.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The value produced by the binding source.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">targetType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The type of the binding target property.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r3 r">parameter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The converter parameter to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r4 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The culture to use in the converter.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A converted value. If the method returns null, the valid null value is used.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="cc3f3d913a1b7097" href="R/cc3f3d913a1b7097.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b> <span id="r1 rd" class="r1 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r2 rd" class="r2 r">targetType</span>, <b>object</b> <span id="r3 rd" class="r3 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r4 rd" class="r4 r">culture</span>)
+        {
+            <a href="#48cf9268d8dcc2a1" class="k">var</a> <span id="r5 rd" class="r5 r">v</span> = <span class="r1 r">value</span> <b>as</b> <a href="#48cf9268d8dcc2a1" class="t t">TooltipData</a>;
+
+            <b>if</b> (<span class="r5 r">v</span> == <b>null</b>) <b>return</b> <b>null</b>;
+
+            <b>if</b> (<span class="r5 r">v</span>.<a href="#70f026954866d9c4" class="i property">SelectionMode</a> == <a href="/LiveCharts/A.html#4eeb795ac9de2c4d" class="t t">TooltipSelectionMode</a>.<a href="/LiveCharts/A.html#48cfbfe026ec4b90" class="i field">OnlySender</a>) <b>return</b> <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+
+            <b>return</b> <span class="r5 r">v</span>.<a href="#70f026954866d9c4" class="i property">SelectionMode</a> == <a href="/LiveCharts/A.html#4eeb795ac9de2c4d" class="t t">TooltipSelectionMode</a>.<a href="/LiveCharts/A.html#2bb41e7cf55836b6" class="i field">SharedXValues</a>
+                ? <span class="r5 r">v</span>.<a href="#a972eff12f19f7dc" class="i property">XFormatter</a>(<span class="r5 r">v</span>.<a href="#4c13d90575d798bf" class="i property">SharedValue</a> ?? 0)
+                : <span class="r5 r">v</span>.<a href="#cae715b364e0ed87" class="i property">YFormatter</a>(<span class="r5 r">v</span>.<a href="#4c13d90575d798bf" class="i property">SharedValue</a> ?? 0);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts a value.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r6 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The value that is produced by the binding target.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">targetType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The type to convert to.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">parameter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The converter parameter to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The culture to use in the converter.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A converted value. If the method returns null, the valid null value is used.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#a46efa455da3688d" class="t t">NotImplementedException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="c92b6898a96dc35e" href="R/c92b6898a96dc35e.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r6 rd" class="r6 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r7 rd" class="r7 r">targetType</span>, <b>object</b> <span id="r8 rd" class="r8 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r9 rd" class="r9 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>.<a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <b>public class</b> <a id="164c2deec1fda3aa" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="9f2c971aff8967ac">ChartPointLabelConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts a value.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r10 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The value produced by the binding source.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r11 r">targetType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The type of the binding target property.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r12 r">parameter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The converter parameter to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r13 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The culture to use in the converter.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A converted value. If the method returns null, the valid null value is used.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="7663e2da602a42ff" href="R/7663e2da602a42ff.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b> <span id="r10 rd" class="r10 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r11 rd" class="r11 r">targetType</span>, <b>object</b> <span id="r12 rd" class="r12 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r13 rd" class="r13 r">culture</span>)
+        {
+            <a href="/LiveCharts/A.html#a7b99b1eebb29334" class="k">var</a> <span id="r14 rd" class="r14 r">chartPoint</span> = <span class="r10 r">value</span> <b>as</b> <a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a>;
+
+            <b>if</b> (<span class="r14 r">chartPoint</span> == <b>null</b>) <b>return</b> <b>null</b>;
+
+            <b>return</b> <span class="r14 r">chartPoint</span>.<a href="/LiveCharts/A.html#c90f7635ddd134a4" class="i property">SeriesView</a>.<a href="/LiveCharts/A.html#21d82a3036aec729" class="i property">LabelPoint</a>(<span class="r14 r">chartPoint</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts a value.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r15 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The value that is produced by the binding target.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r16 r">targetType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The type to convert to.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r17 r">parameter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The converter parameter to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r18 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The culture to use in the converter.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A converted value. If the method returns null, the valid null value is used.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#a46efa455da3688d" class="t t">NotImplementedException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="3fa541234aa51dc2" href="R/3fa541234aa51dc2.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r15 rd" class="r15 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r16 rd" class="r16 r">targetType</span>, <b>object</b> <span id="r17 rd" class="r17 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r18 rd" class="r18 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>.<a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <b>public class</b> <a id="9985782c3365bd4f" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="dbb998a4df857bbb">ParticipationVisibilityConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts a value.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r19 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The value produced by the binding source.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r20 r">targetType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The type of the binding target property.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r21 r">parameter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The converter parameter to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r22 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The culture to use in the converter.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A converted value. If the method returns null, the valid null value is used.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="f433527252e3a28d" href="R/f433527252e3a28d.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b> <span id="r19 rd" class="r19 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r20 rd" class="r20 r">targetType</span>, <b>object</b> <span id="r21 rd" class="r21 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r22 rd" class="r22 r">culture</span>)
+        {
+            <a href="#48cf9268d8dcc2a1" class="k">var</a> <span id="r23 rd" class="r23 r">v</span> = <span class="r19 r">value</span> <b>as</b> <a href="#48cf9268d8dcc2a1" class="t t">TooltipData</a>;
+            <b>if</b> (<span class="r23 r">v</span> == <b>null</b>) <b>return</b> <b>null</b>;
+
+            <b>return</b> <span class="r23 r">v</span>.<a href="#18b5867bbab2cde1" class="i property">Points</a>.<a href="@0@System.Core/A.html#6a1af7c3d17845e3" class="i method">Any</a>(<span id="r24 rd" class="r24 r">x</span> =&gt; <span class="r24 r">x</span>.<a href="#c1b8b3e6a7143913" class="i property">ChartPoint</a>.<a href="/LiveCharts/A.html#b494c9356918081f" class="i property">Participation</a> &gt; 0) ? <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a> : <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts a value.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r25 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The value that is produced by the binding target.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r26 r">targetType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The type to convert to.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r27 r">parameter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The converter parameter to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r28 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The culture to use in the converter.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A converted value. If the method returns null, the valid null value is used.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#a46efa455da3688d" class="t t">NotImplementedException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="675f439cc8f16a1e" href="R/675f439cc8f16a1e.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r25 rd" class="r25 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r26 rd" class="r26 r">targetType</span>, <b>object</b> <span id="r27 rd" class="r27 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r28 rd" class="r28 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>.<a href="@0@PresentationFramework/A.html#60c26f3054102ef4" class="t t">IMultiValueConverter</a><span class="c">&quot;</span> <span class="c">/&gt;</span>
+    <b>public class</b> <a id="5fd23e8a3c037a2d" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="457d869802ae0ebe">SharedVisibilityConverter</span></a> : <a href="@0@PresentationFramework/A.html#60c26f3054102ef4" class="t t">IMultiValueConverter</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts source values to a value for the binding target. The data binding engine calls this method when it propagates the values from source bindings to the binding target.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r29 r">values</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The array of values that the source bindings in the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Windows.Data.MultiBinding</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> produces. The value </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">F:System.Windows.DependencyProperty.UnsetValue</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> indicates that the source binding has no value to provide for conversion.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r30 r">targetType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The type of the binding target property.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r31 r">parameter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The converter parameter to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r32 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The culture to use in the converter.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A converted value.If the method returns null, the valid null value is used.A return value of </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Windows.DependencyProperty</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">F:System.Windows.DependencyProperty.UnsetValue</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> indicates that the converter did not produce a value, and that the binding will use the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">P:System.Windows.Data.BindingBase.FallbackValue</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> if it is available, or else will use the default value.A return value of </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Windows.Data.Binding</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">F:System.Windows.Data.Binding.DoNothing</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> indicates that the binding does not transfer the value or use the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">P:System.Windows.Data.BindingBase.FallbackValue</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> or the default value.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="d2db0b0503e4ff61" href="R/d2db0b0503e4ff61.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>[] <span id="r29 rd" class="r29 r">values</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r30 rd" class="r30 r">targetType</span>, <b>object</b> <span id="r31 rd" class="r31 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r32 rd" class="r32 r">culture</span>)
+        {
+            <a href="#48cf9268d8dcc2a1" class="k">var</a> <span id="r33 rd" class="r33 r">v</span> = <span class="r29 r">values</span>[0] <b>as</b> <a href="#48cf9268d8dcc2a1" class="t t">TooltipData</a>;
+            <a href="@0@mscorlib/A.html#ffebe438fd9cbf0e" class="k">var</a> <span id="r34 rd" class="r34 r">show</span> = <span class="r29 r">values</span>[1] <b>as bool</b>?;
+
+            <b>if</b> (<span class="r33 r">v</span> == <b>null</b> || <span class="r34 r">show</span> == <b>null</b>) <b>return</b> <b>null</b>;
+
+            <b>if</b> (<span class="r34 r">show</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a> == <b>false</b>)
+                <b>return</b> <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a>;
+
+            <b>if</b> (<span class="r33 r">v</span>.<a href="#70f026954866d9c4" class="i property">SelectionMode</a> == <a href="/LiveCharts/A.html#4eeb795ac9de2c4d" class="t t">TooltipSelectionMode</a>.<a href="/LiveCharts/A.html#48cfbfe026ec4b90" class="i field">OnlySender</a>)
+                <b>return</b> <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a>;
+
+            <b>return</b> <span class="r33 r">v</span>.<a href="#4c13d90575d798bf" class="i property">SharedValue</a> == <b>null</b>
+                ? <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a>
+                : <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts a binding target value to the source binding values.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r35 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The value that the binding target produces.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r36 r">targetTypes</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The array of types to convert to. The array length indicates the number and types of values that are suggested for the method to return.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r37 r">parameter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The converter parameter to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r38 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The culture to use in the converter.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> An array of values that have been converted from the target value back to the source values.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#a46efa455da3688d" class="t t">NotImplementedException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public object</b>[] <a id="e183477af4472d5e" href="R/e183477af4472d5e.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r35 rd" class="r35 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>[] <span id="r36 rd" class="r36 r">targetTypes</span>, <b>object</b> <span id="r37 rd" class="r37 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r38 rd" class="r38 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Contains information about data in a tooltip</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="48cf9268d8dcc2a1" href="R/48cf9268d8dcc2a1.html" target="n" data-glyph="0,0" class="t t"><span id="6cd3b121cbeeb50d">TooltipData</span></a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The current X formatter</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<b>double</b>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="a972eff12f19f7dc" href="R/a972eff12f19f7dc.html" target="n" data-glyph="102,1" class="i property">XFormatter</a> { <b>get</b>; <b>internal set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The current Y formatter</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<b>double</b>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="cae715b364e0ed87" href="R/cae715b364e0ed87.html" target="n" data-glyph="102,1" class="i property">YFormatter</a> { <b>get</b>; <b>internal set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Shared coordinate value between points</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b>? <a id="4c13d90575d798bf" href="R/4c13d90575d798bf.html" target="n" data-glyph="102,1" class="i property">SharedValue</a> { <b>get</b>; <b>internal set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the series that fired the tooltip.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The sender series.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public</b> <a href="Series.cs.html#424fba5494c39d40" class="t t">Series</a> <a id="8b9dd757472579ec" href="R/8b9dd757472579ec.html" target="n" data-glyph="102,1" class="i property">SenderSeries</a> { <b>get</b>; <b>internal set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Current selection mode</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="/LiveCharts/A.html#4eeb795ac9de2c4d" class="t t">TooltipSelectionMode</a> <a id="70f026954866d9c4" href="R/70f026954866d9c4.html" target="n" data-glyph="102,1" class="i property">SelectionMode</a> { <b>get</b>; <b>internal set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> collection of points</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="#972f37061b6cb2fa" class="t t">DataPointViewModel</a>&gt; <a id="18b5867bbab2cde1" href="R/18b5867bbab2cde1.html" target="n" data-glyph="102,1" class="i property">Points</a> { <b>get</b>; <b>internal set</b>; }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Point Data</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="972f37061b6cb2fa" href="R/972f37061b6cb2fa.html" target="n" data-glyph="0,0" class="t t"><span id="4e61afd4d9413536">DataPointViewModel</span></a> 
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets info about the series that owns the point, like stroke and stroke thickness</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#2860474aafedd492" class="t t">SeriesViewModel</a> <a id="d886b272a26550df" href="R/d886b272a26550df.html" target="n" data-glyph="102,1" class="i property">Series</a> { <b>get</b>; <b>set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the ChartPoint instance</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a> <a id="c1b8b3e6a7143913" href="R/c1b8b3e6a7143913.html" target="n" data-glyph="102,1" class="i property">ChartPoint</a> { <b>get</b>; <b>set</b>; }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Series Data</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="2860474aafedd492" href="R/2860474aafedd492.html" target="n" data-glyph="0,0" class="t t"><span id="337d91d1bdd1843a">SeriesViewModel</span></a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Series Title</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="4df5fe0d7cdac116" href="R/4df5fe0d7cdac116.html" target="n" data-glyph="102,1" class="i property">Title</a> { <b>get</b>; <b>set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Series stroke</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a> <a id="d6427c4657d9b903" href="R/d6427c4657d9b903.html" target="n" data-glyph="102,1" class="i property">Stroke</a> { <b>get</b>; <b>set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Series Stroke thickness</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="b09b1287a4d212ab" href="R/b09b1287a4d212ab.html" target="n" data-glyph="102,1" class="i property">StrokeThickness</a> { <b>get</b>; <b>set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Series Fill</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a> <a id="648cbadab48e3719" href="R/648cbadab48e3719.html" target="n" data-glyph="102,1" class="i property">Fill</a> { <b>get</b>; <b>set</b>; }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Series point Geometry</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#22ca37af0d997a39" class="t t">Geometry</a> <a id="57f7e3f686c37e7e" href="R/57f7e3f686c37e7e.html" target="n" data-glyph="102,1" class="i property">PointGeometry</a> { <b>get</b>; <b>set</b>; }
+    }
+
+}
+</pre></td></tr></table></div></body></html>

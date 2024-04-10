@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html><head><title>ImageButton.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(150);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.HTMLFullEditor/Code/Internal/ImageButton.cs" target="_top">Code\Internal\ImageButton.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.HTMLFullEditor" target="_top">..\..\..\EASY-TOOLS\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor.csproj</a> (EASYTools.HTMLFullEditor)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>.<span class="i n">Drawing2D</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>.<span class="i n">Imaging</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Dialogs</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Interfaces</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Localization</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Views</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Code</span>
+{
+    <b>internal class</b> <a id="22f4487a91eb64b7" href="../../R/22f4487a91eb64b7.html" target="n" data-glyph="2,0" class="t t">ImageButton</a> : <a href="../ToolbarButton.cs.html#1e28ebb05a6838d6" class="t t">ToolbarButton</a>
+    {
+        <b>public</b> <a id="f74c2bdbc09c1c2c" href="../../R/f74c2bdbc09c1c2c.html" target="n" data-glyph="72,1" class="t constructor">ImageButton</a>() : <a href="../ToolbarButton.cs.html#d79df1b21af8d304" class="k">base</a>(<b>nameof</b>(<a href="../StandardToolbarElement.cs.html#6f41b6076ee33159" class="t t">StandardToolbarElement</a>.<a href="../StandardToolbarElement.cs.html#9d7d183e48dae829" class="i field">Image</a>), <a href="../../P/00a5e5d95784141b.html#00a5e5d95784141b" class="t t">ResourceManager</a>.<a href="../../Localization/ResourceManager.Texts.cs.html#708f8b24bd4911c8" class="i property">Text_Image</a>, <a href="../../P/c50a698ffe4e53b1.html#c50a698ffe4e53b1" class="t t">ResourceHelper</a>.<a href="../ResourceHelper.cs.html#9cb7e81f5b0a15cd" class="i method">GetIcon</a>(<span class="s">&quot;Icon_Image&quot;</span>), <b>null</b>)
+        {
+        }
+ 
+        <b>public override void</b> <a id="f68cce361212dbd5" href="../../R/f68cce361212dbd5.html" target="n" data-glyph="72,1" class="i method">Clicked</a>(<a href="../../Interfaces/IBrowserControl.cs.html#c6664bab75da7ecf" class="t t">IBrowserControl</a> <span id="r0 rd" class="r0 r">browserControl</span>)
+        {
+            <a href="../../P/c487daa01a7b0a0e.html#c487daa01a7b0a0e" class="k">var</a> <span id="r1 rd" class="r1 r">imageDialog</span> = <b>new</b> <a href="../../Dialogs/ImageDialog.xaml.cs.html#c2182587f693a373" class="t constructor">ImageDialog</a>();
+            <span class="r1 r">imageDialog</span>.<a href="@0@PresentationFramework/A.html#d93ba8f45d327825" class="i property">Owner</a> = <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>.<a href="@0@PresentationFramework/A.html#d82ac67277fcffc1" class="i method">GetWindow</a>((<a href="../../Views/EditorBrowser.cs.html#75469e512445f30a" class="t t">EditorBrowser</a>)<span class="r0 r">browserControl</span>);
+            <b>if</b> (<span class="r1 r">imageDialog</span>.<a href="@0@PresentationFramework/A.html#61d39b218b53dbbe" class="i method">ShowDialog</a>() == <b>true</b> &amp;&amp; <span class="r1 r">imageDialog</span>.<a href="../../Dialogs/ImageDialog.xaml.cs.html#cf68b554c943a9cd" class="i property">IsSuccess</a>)
+            {
+                <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r2 rd" class="r2 r">imgTag</span> = <a href="#be39d2d1ee413496" class="i method">CreateImageHtml</a>(<span class="r1 r">imageDialog</span>);
+                <span class="r0 r">browserControl</span>.<a href="../../Interfaces/IBrowserControl.cs.html#25b47df059d7f04b" class="i method">GetSelectedRange</a>().<a href="../../Html/SelectedRange.cs.html#190eccd73f576bee" class="i method">PasteHtml</a>(<span class="r2 r">imgTag</span>);
+            }
+        }
+ 
+        <b>private static string</b> <a id="be39d2d1ee413496" href="../../R/be39d2d1ee413496.html" target="n" data-glyph="76,1" class="i method">CreateImageHtml</a>(<a href="../../P/c487daa01a7b0a0e.html#c487daa01a7b0a0e" class="t t">ImageDialog</a> <span id="r3 rd" class="r3 r">dialog</span>)
+        {
+            <b>if</b> (<a href="#5e593865805dc710" class="i method">TryGetBase64Data</a>(<span class="r3 r">dialog</span>, <b>out</b> <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r4 rd" class="r4 r">pngBase64Data</span>))
+            {
+                <a href="@0@mscorlib/A.html#f1b135ff6c380b37" class="k">var</a> <span id="r5 rd" class="r5 r">hasTitle</span> = !<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r3 r">dialog</span>.<a href="../../Dialogs/ImageDialog.xaml.cs.html#502673d3a0164210" class="i property">ImageTitle</a>);
+                <span class="c">// escaping quotes, so the attribute will not be broken by text with quotes</span>
+                <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r6 rd" class="r6 r">escapedTitle</span> = (<span class="r5 r">hasTitle</span> ? <span class="r3 r">dialog</span>.<a href="../../Dialogs/ImageDialog.xaml.cs.html#502673d3a0164210" class="i property">ImageTitle</a> : <a href="../../P/00a5e5d95784141b.html#00a5e5d95784141b" class="t t">ResourceManager</a>.<a href="../../Localization/ResourceManager.Texts.cs.html#54b12d1eb37d0812" class="i property">ImageForm_DefaultAltText</a>).<a href="@0@mscorlib/A.html#69fc1d0aa6df8a90" class="i method">Replace</a>(<span class="s">&quot;\&quot;&quot;</span>, <span class="s">&quot;&amp;quot;&quot;</span>);
+ 
+                <a href="@0@mscorlib/A.html#adf60ee46ebd299f" class="k">var</a> <span id="r7 rd" class="r7 r">imgTag</span> = <b>new</b> <a href="@0@mscorlib/A.html#57b9d3a70c2aba34" class="t constructor">StringBuilder</a>(<span class="s">&quot;&lt;img &quot;</span>);
+                <span class="r7 r">imgTag</span>.<a href="@0@mscorlib/A.html#ad46fb2c09cab59a" class="i method">AppendFormat</a>(<span class="s">&quot;src=\&quot;data:image/png;base64,{0}\&quot; &quot;</span>, <span class="r4 r">pngBase64Data</span>);
+                <span class="r7 r">imgTag</span>.<a href="@0@mscorlib/A.html#ad46fb2c09cab59a" class="i method">AppendFormat</a>(<span class="s">&quot;alt=\&quot;{0}\&quot; &quot;</span>, <span class="r5 r">hasTitle</span> ? <span class="r6 r">escapedTitle</span> : <a href="../../P/00a5e5d95784141b.html#00a5e5d95784141b" class="t t">ResourceManager</a>.<a href="../../Localization/ResourceManager.Texts.cs.html#54b12d1eb37d0812" class="i property">ImageForm_DefaultAltText</a>);
+                <b>if</b> (<span class="r5 r">hasTitle</span>)
+                {
+                    <span class="r7 r">imgTag</span>.<a href="@0@mscorlib/A.html#ad46fb2c09cab59a" class="i method">AppendFormat</a>(<span class="s">&quot;title=\&quot;{0}\&quot; &quot;</span>, <span class="r6 r">escapedTitle</span>);
+                }
+                <span class="c">// specify size, so the page doesn&#39;t &quot;jump&quot; when loading</span>
+                <span class="r7 r">imgTag</span>.<a href="@0@mscorlib/A.html#ad46fb2c09cab59a" class="i method">AppendFormat</a>(<span class="s">&quot;width=\&quot;{0}\&quot; &quot;</span>, <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r3 r">dialog</span>.<a href="../../Dialogs/ImageDialog.xaml.cs.html#db0b406c1a42532d" class="i property">ImageWidth</a>).<a href="@0@mscorlib/A.html#102b12e1c4385406" class="i method">ToString</a>(<a href="@0@mscorlib/A.html#a5002cb4e584a151" class="t t">NumberFormatInfo</a>.<a href="@0@mscorlib/A.html#cf7e50019ddcbfc6" class="i property">InvariantInfo</a>));
+                <span class="r7 r">imgTag</span>.<a href="@0@mscorlib/A.html#ad46fb2c09cab59a" class="i method">AppendFormat</a>(<span class="s">&quot;height=\&quot;{0}\&quot; &quot;</span>, <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r3 r">dialog</span>.<a href="../../Dialogs/ImageDialog.xaml.cs.html#f19d84a23d30ad51" class="i property">ImageHeight</a>).<a href="@0@mscorlib/A.html#102b12e1c4385406" class="i method">ToString</a>(<a href="@0@mscorlib/A.html#a5002cb4e584a151" class="t t">NumberFormatInfo</a>.<a href="@0@mscorlib/A.html#cf7e50019ddcbfc6" class="i property">InvariantInfo</a>));
+                <span class="r7 r">imgTag</span>.<a href="@0@mscorlib/A.html#e8eaef3c361184bc" class="i method">Append</a>(<span class="s">&quot;/&gt;&quot;</span>);
+ 
+                <b>return</b> <span class="r7 r">imgTag</span>.<a href="@0@mscorlib/A.html#5a97da49a158a3c9" class="i method">ToString</a>();
+            }
+            <b>else</b>
+            {
+                <span class="c">// Inserting Error message</span>
+                <b>return</b> <span class="s">&quot;[&quot;</span> + <span class="r4 r">pngBase64Data</span> + <span class="s">&quot;]&quot;</span>;
+            }
+        }
+ 
+        <b>private static bool</b> <a id="5e593865805dc710" href="../../R/5e593865805dc710.html" target="n" data-glyph="76,1" class="i method">TryGetBase64Data</a>(<a href="../../P/c487daa01a7b0a0e.html#c487daa01a7b0a0e" class="t t">ImageDialog</a> <span id="r8 rd" class="r8 r">dialog</span>, <b>out string</b> <span id="r9 rd" class="r9 r">pngBase64Data</span>)
+        {
+            <b>try</b>
+            {
+                <b>using</b> (<a href="@0@System.Drawing/A.html#3ac4e4b806474215" class="k">var</a> <span id="r10 rd" class="r10 r">image</span> = <a href="@0@System.Drawing/A.html#3ac4e4b806474215" class="t t">Image</a>.<a href="@0@System.Drawing/A.html#cd75f3ae060b69f3" class="i method">FromFile</a>(<span class="r8 r">dialog</span>.<a href="../../Dialogs/ImageDialog.xaml.cs.html#6af47216a517a5a7" class="i property">ImagePath</a>))
+                {
+                    <a href="@0@System.Drawing/A.html#3ac4e4b806474215" class="t t">Image</a> <span id="r11 rd" class="r11 r">smallerImage</span> = <b>null</b>;
+                    <b>try</b>
+                    {
+                        <span class="c">// physically reducing image size</span>
+                        <b>if</b> (<span class="r8 r">dialog</span>.<a href="../../Dialogs/ImageDialog.xaml.cs.html#6e4c89a1a9949623" class="i property">ReduceCoefficient</a> &lt; 100 &amp;&amp; <span class="r8 r">dialog</span>.<a href="../../Dialogs/ImageDialog.xaml.cs.html#67bd9c41a03c2c15" class="i property">DoPhysicalResize</a>)
+                        {
+                            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r12 rd" class="r12 r">w</span> = (<b>int</b>)<a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r8 r">dialog</span>.<a href="../../Dialogs/ImageDialog.xaml.cs.html#db0b406c1a42532d" class="i property">ImageWidth</a>);
+                            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r13 rd" class="r13 r">h</span> = (<b>int</b>)<a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r8 r">dialog</span>.<a href="../../Dialogs/ImageDialog.xaml.cs.html#f19d84a23d30ad51" class="i property">ImageHeight</a>);
+ 
+                            <span class="r11 r">smallerImage</span> = <a href="#ebdd68fa3ba518de" class="i method">ResizeImage</a>(<span class="r10 r">image</span>, <span class="r12 r">w</span>, <span class="r13 r">h</span>);
+                        }
+ 
+                        <b>using</b> (<a href="@0@mscorlib/A.html#1a4dcb744a23ba6f" class="k">var</a> <span id="r14 rd" class="r14 r">stream</span> = <b>new</b> <a href="@0@mscorlib/A.html#d308091cc690e78d" class="t constructor">MemoryStream</a>())
+                        {
+                            <span class="c">// using smaller image, if it exists</span>
+                            <b>if</b> (<span class="r11 r">smallerImage</span> != <b>null</b>)
+                            {
+                                <span class="r11 r">smallerImage</span>.<a href="@0@System.Drawing/A.html#7c94190491dbb079" class="i method">Save</a>(<span class="r14 r">stream</span>, <a href="@0@System.Drawing/A.html#96dae44da4d0a9a8" class="t t">ImageFormat</a>.<a href="@0@System.Drawing/A.html#f54bc0008d4aa133" class="i property">Png</a>);
+                            }
+                            <b>else</b>
+                            {
+                                <span class="r10 r">image</span>.<a href="@0@System.Drawing/A.html#7c94190491dbb079" class="i method">Save</a>(<span class="r14 r">stream</span>, <a href="@0@System.Drawing/A.html#96dae44da4d0a9a8" class="t t">ImageFormat</a>.<a href="@0@System.Drawing/A.html#f54bc0008d4aa133" class="i property">Png</a>);
+                            }
+ 
+                            <span class="c">// read</span>
+                            <b>byte</b>[] <span id="r15 rd" class="r15 r">data</span> = <b>new</b> <b>byte</b>[<span class="r14 r">stream</span>.<a href="@0@mscorlib/A.html#af4720ccd5d86f14" class="i property">Length</a>];
+                            <span class="r14 r">stream</span>.<a href="@0@mscorlib/A.html#ad08f8ca81a5a763" class="i property">Position</a> = 0;
+                            <span class="r14 r">stream</span>.<a href="@0@mscorlib/A.html#10127f6d11ca5576" class="i method">Read</a>(<span class="r15 r">data</span>, 0, <span class="r15 r">data</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>);
+ 
+                            <span class="r9 r">pngBase64Data</span> = <a href="@0@mscorlib/A.html#fc990bd1275d43d6" class="t t">Convert</a>.<a href="@0@mscorlib/A.html#f9e5bd7b69c5f334" class="i method">ToBase64String</a>(<span class="r15 r">data</span>);
+                        }
+                    }
+                    <b>finally</b>
+                    {
+                        <span class="c">// maybe disposing smaller image</span>
+                        <span class="r11 r">smallerImage</span>?.<a href="@0@System.Drawing/A.html#5f4dd2af374d1f3c" class="i method">Dispose</a>();
+                    }
+                }
+ 
+                <b>return</b> <b>true</b>;
+            }
+            <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r16 rd" class="r16 r">e</span>)
+            {
+                <span class="c">// noop</span>
+                <span class="r9 r">pngBase64Data</span> = <span class="r16 r">e</span>.<a href="@0@mscorlib/A.html#5fba0e16215b42a3" class="i property">Message</a>;
+                <b>return</b> <b>false</b>;
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Resize the image to the specified width and height.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r17 r">image</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The image to resize.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r18 r">width</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The width to resize to.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r19 r">height</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The height to resize to.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">The resized image.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private static</b> <a href="@0@System.Drawing/A.html#e1ba6ce9c451889d" class="t t">Bitmap</a> <a id="ebdd68fa3ba518de" href="../../R/ebdd68fa3ba518de.html" target="n" data-glyph="76,1" class="i method">ResizeImage</a>(<a href="@0@System.Drawing/A.html#3ac4e4b806474215" class="t t">Image</a> <span id="r17 rd" class="r17 r">image</span>, <b>int</b> <span id="r18 rd" class="r18 r">width</span>, <b>int</b> <span id="r19 rd" class="r19 r">height</span>)
+        {
+            <a href="@0@System.Drawing/A.html#17559e21008f381d" class="k">var</a> <span id="r20 rd" class="r20 r">destRect</span> = <b>new</b> <a href="@0@System.Drawing/A.html#3915ba377b43f9bf" class="t constructor">Rectangle</a>(0, 0, <span class="r18 r">width</span>, <span class="r19 r">height</span>);
+            <a href="@0@System.Drawing/A.html#e1ba6ce9c451889d" class="k">var</a> <span id="r21 rd" class="r21 r">destImage</span> = <b>new</b> <a href="@0@System.Drawing/A.html#1ef674e04aee7a22" class="t constructor">Bitmap</a>(<span class="r18 r">width</span>, <span class="r19 r">height</span>);
+ 
+            <span class="r21 r">destImage</span>.<a href="@0@System.Drawing/A.html#e75cbe4aa238c914" class="i method">SetResolution</a>(<span class="r17 r">image</span>.<a href="@0@System.Drawing/A.html#4a23030390bd8493" class="i property">HorizontalResolution</a>, <span class="r17 r">image</span>.<a href="@0@System.Drawing/A.html#6cd9d543db833ae3" class="i property">VerticalResolution</a>);
+ 
+            <b>using</b> (<a href="@0@System.Drawing/A.html#9aa931b146439086" class="k">var</a> <span id="r22 rd" class="r22 r">graphics</span> = <a href="@0@System.Drawing/A.html#9aa931b146439086" class="t t">Graphics</a>.<a href="@0@System.Drawing/A.html#f79ca9f14bf8f9e6" class="i method">FromImage</a>(<span class="r21 r">destImage</span>))
+            {
+                <span class="r22 r">graphics</span>.<a href="@0@System.Drawing/A.html#210b7e87e44a828c" class="i property">CompositingMode</a> = <a href="@0@System.Drawing/A.html#81ebf673be4d780c" class="t t">CompositingMode</a>.<a href="@0@System.Drawing/A.html#8796b544f5eae408" class="i field">SourceCopy</a>;
+                <span class="r22 r">graphics</span>.<a href="@0@System.Drawing/A.html#63e544c335ef0496" class="i property">CompositingQuality</a> = <a href="@0@System.Drawing/A.html#b29a5f18a0564e65" class="t t">CompositingQuality</a>.<a href="@0@System.Drawing/A.html#2af49c6ca43e95ec" class="i field">HighQuality</a>;
+                <span class="r22 r">graphics</span>.<a href="@0@System.Drawing/A.html#b6cbca4ad23b21e5" class="i property">InterpolationMode</a> = <a href="@0@System.Drawing/A.html#5f1cc4f9928aeee6" class="t t">InterpolationMode</a>.<a href="@0@System.Drawing/A.html#b4c4cc9f4765d357" class="i field">HighQualityBicubic</a>;
+                <span class="r22 r">graphics</span>.<a href="@0@System.Drawing/A.html#59d931a2cc8664e6" class="i property">SmoothingMode</a> = <a href="@0@System.Drawing/A.html#72a692b6507210c1" class="t t">SmoothingMode</a>.<a href="@0@System.Drawing/A.html#93658192a9ff5e93" class="i field">HighQuality</a>;
+                <span class="r22 r">graphics</span>.<a href="@0@System.Drawing/A.html#8c80be13fcb98f9a" class="i property">PixelOffsetMode</a> = <a href="@0@System.Drawing/A.html#2a8075968e055912" class="t t">PixelOffsetMode</a>.<a href="@0@System.Drawing/A.html#7b17f5c1d1802a35" class="i field">HighQuality</a>;
+ 
+                <b>using</b> (<a href="@0@System.Drawing/A.html#e33609d89626965e" class="k">var</a> <span id="r23 rd" class="r23 r">wrapMode</span> = <b>new</b> <a href="@0@System.Drawing/A.html#9757e88e052fd044" class="t constructor">ImageAttributes</a>())
+                {
+                    <span class="r23 r">wrapMode</span>.<a href="@0@System.Drawing/A.html#299437c601c7a565" class="i method">SetWrapMode</a>(<a href="@0@System.Drawing/A.html#9e9abba8d91f6b87" class="t t">WrapMode</a>.<a href="@0@System.Drawing/A.html#47917db3cc76ba78" class="i field">TileFlipXY</a>);
+                    <span class="r22 r">graphics</span>.<a href="@0@System.Drawing/A.html#6291c98e9739a667" class="i method">DrawImage</a>(<span class="r17 r">image</span>, <span class="r20 r">destRect</span>, 0, 0, <span class="r17 r">image</span>.<a href="@0@System.Drawing/A.html#9284bc31cef9a24b" class="i property">Width</a>,<span class="r17 r">image</span>.<a href="@0@System.Drawing/A.html#e35c6ae51f9afab6" class="i property">Height</a>, <a href="@0@System.Drawing/A.html#ddb40521c3cb3a5f" class="t t">GraphicsUnit</a>.<a href="@0@System.Drawing/A.html#a989cc120ca2dac9" class="i field">Pixel</a>, <span class="r23 r">wrapMode</span>);
+                }
+            }
+ 
+            <b>return</b> <span class="r21 r">destImage</span>;
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

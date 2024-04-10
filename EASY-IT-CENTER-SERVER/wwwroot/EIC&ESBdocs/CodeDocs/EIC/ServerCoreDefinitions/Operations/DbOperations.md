@@ -1,4 +1,6 @@
-﻿
+﻿[Zpět](../../../index)   
+
+
 ```csharp   
 
 using ColorCode.Compilation.Languages;

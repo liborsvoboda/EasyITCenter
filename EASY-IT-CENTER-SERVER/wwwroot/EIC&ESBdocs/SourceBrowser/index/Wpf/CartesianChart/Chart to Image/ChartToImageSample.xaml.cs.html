@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html><head><title>ChartToImageSample.xaml.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(64);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#Wpf/CartesianChart/Chart to Image/ChartToImageSample.xaml.cs" target="_top">CartesianChart\Chart to Image\ChartToImageSample.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Examples\Wpf\Wpf.csproj</a> (Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+<b>using</b> <span class="i n">LiveCharts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>;
+
+<b>namespace</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Chart_to_Image</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Interaction logic for ChartToImageSample.xaml</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <a href="../../P/3add082111b0bdfd.html" target="s" class="k">partial</a> <b>class</b> <a id="3add082111b0bdfd" href="../../R/3add082111b0bdfd.html" target="n" data-glyph="0,0" class="t t">ChartToImageSample</a> : <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a>
+    {
+        <b>public</b> <a id="4c65a2fe612a4051" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ChartToImageSample</a>()
+        {
+            <a href="../../obj/Debug/CartesianChart/Chart to Image/ChartToImageSample.g.cs.html#87120d28109b6aed" class="i method">InitializeComponent</a>();
+        }
+
+        <b>private void</b> <a id="0c7399e6366f3cc8" href="../../R/0c7399e6366f3cc8.html" target="n" data-glyph="76,1" class="i method">BuildPngOnClick</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <a href="/LiveCharts.Wpf/A.html#a04511d8391a6cd4" class="k">var</a> <span id="r2 rd" class="r2 r">myChart</span> = <b>new</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<a href="/LiveCharts.Wpf/A.html#11913206d30ce776" class="t constructor">CartesianChart</a>
+            {
+                <a href="/LiveCharts.Wpf/A.html#bf8b6d19f5d4549d" class="i property">DisableAnimations</a> = <b>true</b>,
+                <a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = 600,
+                <a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = 200,
+                <a href="/LiveCharts.Wpf/A.html#8fbf2d0f60cd97e3" class="i property">Series</a> = <b>new</b> <a href="/LiveCharts/A.html#e05f0ac3c5ac3613" class="t constructor">SeriesCollection</a>
+                {
+                    <b>new</b> <a href="/LiveCharts.Wpf/A.html#c8aa0c4dad3d2e0b" class="t constructor">LineSeries</a>
+                    {
+                        <a href="/LiveCharts.Wpf/A.html#ba565e37fd8fc84c" class="i property">Values</a> = <b>new</b> <a href="/LiveCharts/A.html#9dc8c197acdf6c12" class="t constructor">ChartValues</a>&lt;<b>double</b>&gt; {1, 6, 7, 2, 9, 3, 6, 5}
+                    }
+                }
+            };
+
+            <a href="@0@PresentationFramework/A.html#22e476b746489c42" class="k">var</a> <span id="r3 rd" class="r3 r">viewbox</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#b9c37212c32d085b" class="t constructor">Viewbox</a>();
+            <span class="r3 r">viewbox</span>.<a href="@0@PresentationFramework/A.html#2942056e9b67b564" class="i property">Child</a> = <span class="r2 r">myChart</span>;
+            <span class="r3 r">viewbox</span>.<a href="@0@PresentationCore/A.html#0e6c09a4266b5db0" class="i method">Measure</a>(<span class="r2 r">myChart</span>.<a href="@0@PresentationCore/A.html#630885025f47613b" class="i property">RenderSize</a>);
+            <span class="r3 r">viewbox</span>.<a href="@0@PresentationCore/A.html#db317f34429aad8f" class="i method">Arrange</a>(<b>new</b> <a href="@0@WindowsBase/A.html#ef3f15bc2f9537c0" class="t constructor">Rect</a>(<b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, 0), <span class="r2 r">myChart</span>.<a href="@0@PresentationCore/A.html#630885025f47613b" class="i property">RenderSize</a>));
+            <span class="r2 r">myChart</span>.<a href="/LiveCharts.Wpf/A.html#79839527ee1f2634" class="i method">Update</a>(<b>true</b>, <b>true</b>); <span class="c">//force chart redraw</span>
+            <span class="r3 r">viewbox</span>.<a href="@0@PresentationCore/A.html#b985370236fdd604" class="i method">UpdateLayout</a>();
+
+            <a href="#a389fd90999e79d0" class="i method">SaveToPng</a>(<span class="r2 r">myChart</span>, <span class="s">&quot;chart.png&quot;</span>);
+            <span class="c">//png file was created at the root directory.</span>
+        }
+
+        <b>private void</b> <a id="a389fd90999e79d0" href="../../R/a389fd90999e79d0.html" target="n" data-glyph="76,1" class="i method">SaveToPng</a>(<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r4 rd" class="r4 r">visual</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r5 rd" class="r5 r">fileName</span>)
+        {
+            <a href="@0@PresentationCore/A.html#8d69dc322c047a71" class="k">var</a> <span id="r6 rd" class="r6 r">encoder</span> = <b>new</b> <a href="@0@PresentationCore/A.html#d83082bf870487dc" class="t constructor">PngBitmapEncoder</a>();
+            <a href="#a335117082eb2e15" class="i method">EncodeVisual</a>(<span class="r4 r">visual</span>, <span class="r5 r">fileName</span>, <span class="r6 r">encoder</span>);
+        }
+
+        <b>private static void</b> <a id="a335117082eb2e15" href="../../R/a335117082eb2e15.html" target="n" data-glyph="76,1" class="i method">EncodeVisual</a>(<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r7 rd" class="r7 r">visual</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r8 rd" class="r8 r">fileName</span>, <a href="@0@PresentationCore/A.html#1f71d406a8dc808b" class="t t">BitmapEncoder</a> <span id="r9 rd" class="r9 r">encoder</span>)
+        {
+            <a href="@0@PresentationCore/A.html#d6086316e5884862" class="k">var</a> <span id="r10 rd" class="r10 r">bitmap</span> = <b>new</b> <a href="@0@PresentationCore/A.html#2dba660cc337f682" class="t constructor">RenderTargetBitmap</a>((<b>int</b>)<span class="r7 r">visual</span>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>, (<b>int</b>)<span class="r7 r">visual</span>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>, 96, 96, <a href="@0@PresentationCore/A.html#8f8a28423b24bd8e" class="t t">PixelFormats</a>.<a href="@0@PresentationCore/A.html#5c3c2dbdef6c1b4d" class="i property">Pbgra32</a>);
+            <span class="r10 r">bitmap</span>.<a href="@0@PresentationCore/A.html#68a5d530e98147e4" class="i method">Render</a>(<span class="r7 r">visual</span>);
+            <a href="@0@PresentationCore/A.html#bad013e46489de54" class="k">var</a> <span id="r11 rd" class="r11 r">frame</span> = <a href="@0@PresentationCore/A.html#bad013e46489de54" class="t t">BitmapFrame</a>.<a href="@0@PresentationCore/A.html#249d5611eba74aa4" class="i method">Create</a>(<span class="r10 r">bitmap</span>);
+            <span class="r9 r">encoder</span>.<a href="@0@PresentationCore/A.html#73a8e458f99154a3" class="i property">Frames</a>.<a href="@0@mscorlib/A.html#a9319db8c62ae453" class="i method">Add</a>(<span class="r11 r">frame</span>);
+            <b>using</b> (<a href="@0@mscorlib/A.html#e23a38af5d11ddd3" class="k">var</a> <span id="r12 rd" class="r12 r">stream</span> = <a href="@0@mscorlib/A.html#1c7421e464f67b7e" class="t t">File</a>.<a href="@0@mscorlib/A.html#5a3fc3377e185fea" class="i method">Create</a>(<span class="r8 r">fileName</span>)) <span class="r9 r">encoder</span>.<a href="@0@PresentationCore/A.html#6886df05238e625c" class="i method">Save</a>(<span class="r12 r">stream</span>);
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

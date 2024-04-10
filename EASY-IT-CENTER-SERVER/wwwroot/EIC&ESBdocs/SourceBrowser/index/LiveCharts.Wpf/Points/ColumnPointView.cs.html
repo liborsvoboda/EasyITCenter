@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html>
+<html><head><title>ColumnPointView.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(206);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts.Wpf/Points/ColumnPointView.cs" target="_top">Points\ColumnPointView.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts.Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\WpfView\WpfView.csproj</a> (LiveCharts.Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Charts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Points</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Dtos</span>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<span class="i n">Points</span>
+{
+    <b>internal class</b> <a id="d91b4360ef4c6e9f" href="../R/d91b4360ef4c6e9f.html" target="n" data-glyph="2,0" class="t t"><span id="8bb87e57043f0182">ColumnPointView</span></a> : <a href="PointView.cs.html#a9236f5a246cc418" class="t t">PointView</a>, <a href="/LiveCharts/A.html#403b4e5babe15521" class="t t">IRectanglePointView</a>
+    {
+        <b>public</b> <a href="@0@PresentationFramework/A.html#11beea5bbde25b1a" class="t t">Rectangle</a> <a id="ca1c490d18573066" href="../R/ca1c490d18573066.html" target="n" data-glyph="102,1" class="i property">Rectangle</a> { <b>get</b>; <b>set</b>; }
+        <b>public</b> <a href="/LiveCharts/A.html#e544bb7760d6cf1d" class="t t">CoreRectangle</a> <a id="d7bbfe25f8ce63da" href="../R/d7bbfe25f8ce63da.html" target="n" data-glyph="102,1" class="i property">Data</a> { <b>get</b>; <b>set</b>; }
+        <b>public double</b> <a id="e8e104f69bc00578" href="../R/e8e104f69bc00578.html" target="n" data-glyph="102,1" class="i property">ZeroReference</a>  { <b>get</b>; <b>set</b>; }
+        <b>public</b> <a href="/LiveCharts/A.html#2625901efa79450d" class="t t">BarLabelPosition</a> <a id="61e42e96bf4e8b2b" href="../R/61e42e96bf4e8b2b.html" target="n" data-glyph="102,1" class="i property">LabelPosition</a> { <b>get</b>; <b>set</b>; }
+        <b>private</b> <a href="@0@PresentationCore/A.html#823075529000c4d5" class="t t">RotateTransform</a> <a id="91fe1f7eaa858b15" href="../R/91fe1f7eaa858b15.html" target="n" data-glyph="106,1" class="i property">Transform</a> { <b>get</b>; <b>set</b>; }
+
+        <b>public override void</b> <a id="1d7490ff363c56ad" href="../R/1d7490ff363c56ad.html" target="n" data-glyph="72,1" class="i method">DrawOrMove</a>(<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a> <span id="r0 rd" class="r0 r">previousDrawn</span>, <a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a> <span id="r1 rd" class="r1 r">current</span>, <b>int</b> <span id="r2 rd" class="r2 r">index</span>, <a href="/LiveCharts/A.html#2c3f1a2f79f08d10" class="t t">ChartCore</a> <span id="r3 rd" class="r3 r">chart</span>)
+        {
+            <b>if</b> (<a href="PointView.cs.html#1be038d2f73e5249" class="i property">IsNew</a>)
+            {
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="#ca1c490d18573066" class="i property">Rectangle</a>, <a href="#e8e104f69bc00578" class="i property">ZeroReference</a>);
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="#ca1c490d18573066" class="i property">Rectangle</a>, <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a>);
+
+                <a href="#ca1c490d18573066" class="i property">Rectangle</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a>;
+                <a href="#ca1c490d18573066" class="i property">Rectangle</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = 0;
+            }
+
+            <b>if</b> (<a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a> != <b>null</b> &amp;&amp; <b>double</b>.<a href="@0@mscorlib/A.html#b3843db5f359a0fd" class="i method">IsNaN</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#c65916be9b322dda" class="i method">GetLeft</a>(<a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>)))
+            {
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>, <a href="#e8e104f69bc00578" class="i property">ZeroReference</a>);
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>, <span class="r1 r">current</span>.<a href="/LiveCharts/A.html#d2be8291e6060c20" class="i property">ChartLocation</a>.<a href="/LiveCharts/A.html#5a78e1cb4eede4c5" class="i property">X</a>);
+            }
+          
+            <a href="@0@mscorlib/A.html#87d60abb7092d5a4" class="t t">Func</a>&lt;<b>double</b>&gt; <span id="r4 rd" class="r4 r">getY</span> = () =&gt;
+            {
+                <b>double</b> <span id="r5 rd" class="r5 r">y</span>;
+
+<span class="k preprocess">#</span><span class="k preprocess">pragma</span> <span class="k preprocess">warning</span> <span class="k preprocess">disable</span> 618
+                <b>if</b> (<a href="#61e42e96bf4e8b2b" class="i property">LabelPosition</a> == <a href="/LiveCharts/A.html#2625901efa79450d" class="t t">BarLabelPosition</a>.<a href="/LiveCharts/A.html#c6f57d3e8d89520f" class="i field">Parallel</a> || <a href="#61e42e96bf4e8b2b" class="i property">LabelPosition</a> == <a href="/LiveCharts/A.html#2625901efa79450d" class="t t">BarLabelPosition</a>.<a href="/LiveCharts/A.html#57f961ece9f9327b" class="i field">Merged</a>)
+<span class="k preprocess">#</span><span class="k preprocess">pragma</span> <span class="k preprocess">warning</span> <span class="k preprocess">restore</span> 618
+                {
+                    <b>if</b> (<a href="#91fe1f7eaa858b15" class="i property">Transform</a> == <b>null</b>)
+                        <a href="#91fe1f7eaa858b15" class="i property">Transform</a> = <b>new</b> <a href="@0@PresentationCore/A.html#88c1ebb3eb7f41fb" class="t constructor">RotateTransform</a>(270);
+
+                    <span class="r5 r">y</span> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a> + <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>/2 + <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>*.5;
+                    <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationCore/A.html#291370cc1b2ddda6" class="i property">RenderTransform</a> = <a href="#91fe1f7eaa858b15" class="i property">Transform</a>;
+                }
+                <b>else</b> <b>if</b> (<a href="#61e42e96bf4e8b2b" class="i property">LabelPosition</a> == <a href="/LiveCharts/A.html#2625901efa79450d" class="t t">BarLabelPosition</a>.<a href="/LiveCharts/A.html#10a94b1f1425352a" class="i field">Perpendicular</a>)
+                {
+                    <span class="r5 r">y</span> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a> + <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>/2 - <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a> * .5;
+                }
+                <b>else</b>
+                {
+                    <b>if</b> (<a href="#e8e104f69bc00578" class="i property">ZeroReference</a> &gt; <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a>)
+                    {
+                        <span class="r5 r">y</span> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a> - <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>;
+                        <b>if</b> (<span class="r5 r">y</span> &lt; 0) <span class="r5 r">y</span> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a>;
+                    }
+                    <b>else</b>
+                    {
+                        <span class="r5 r">y</span> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a> + <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>;
+                        <b>if</b> (<span class="r5 r">y</span> + <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a> &gt; <span class="r3 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>) <span class="r5 r">y</span> -= <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>;
+                    }
+                }
+
+                <b>return</b> <span class="r5 r">y</span>;
+            };
+
+            <a href="@0@mscorlib/A.html#87d60abb7092d5a4" class="t t">Func</a>&lt;<b>double</b>&gt; <span id="r6 rd" class="r6 r">getX</span> = () =&gt;
+            {
+                <b>double</b> <span id="r7 rd" class="r7 r">x</span>;
+
+<span class="k preprocess">#</span><span class="k preprocess">pragma</span> <span class="k preprocess">warning</span> <span class="k preprocess">disable</span> 618
+                <b>if</b> (<a href="#61e42e96bf4e8b2b" class="i property">LabelPosition</a> == <a href="/LiveCharts/A.html#2625901efa79450d" class="t t">BarLabelPosition</a>.<a href="/LiveCharts/A.html#c6f57d3e8d89520f" class="i field">Parallel</a> || <a href="#61e42e96bf4e8b2b" class="i property">LabelPosition</a> == <a href="/LiveCharts/A.html#2625901efa79450d" class="t t">BarLabelPosition</a>.<a href="/LiveCharts/A.html#57f961ece9f9327b" class="i field">Merged</a>)
+<span class="k preprocess">#</span><span class="k preprocess">pragma</span> <span class="k preprocess">warning</span> <span class="k preprocess">restore</span> 618
+                {
+                    <span class="r7 r">x</span> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a> + <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a>/2 - <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>/2;
+                }
+                <b>else</b> <b>if</b> (<a href="#61e42e96bf4e8b2b" class="i property">LabelPosition</a> == <a href="/LiveCharts/A.html#2625901efa79450d" class="t t">BarLabelPosition</a>.<a href="/LiveCharts/A.html#10a94b1f1425352a" class="i field">Perpendicular</a>)
+                {
+                    <span class="r7 r">x</span> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a> + <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a>/2 - <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>/2;
+                }
+                <b>else</b>
+                {
+                    <span class="r7 r">x</span> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a> + <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a> / 2 - <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a> / 2;
+                    <b>if</b> (<span class="r7 r">x</span> &lt; 0)
+                        <span class="r7 r">x</span> = 2;
+                    <b>if</b> (<span class="r7 r">x</span> + <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a> &gt; <span class="r3 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a>)
+                        <span class="r7 r">x</span> -= <span class="r7 r">x</span> + <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a> - <span class="r3 r">chart</span>.<a href="/LiveCharts/A.html#c72fe06fbce06ed4" class="i property">DrawMargin</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a> + 2;
+                }
+
+                <b>return</b> <span class="r7 r">x</span>;
+            };
+
+            <b>if</b> (<span class="r3 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#32010e32a1924a4e" class="i property">DisableAnimations</a>)
+            {
+                <a href="#ca1c490d18573066" class="i property">Rectangle</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a>;
+                <a href="#ca1c490d18573066" class="i property">Rectangle</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>;
+
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="#ca1c490d18573066" class="i property">Rectangle</a>, <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a>);
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="#ca1c490d18573066" class="i property">Rectangle</a>, <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a>);
+
+                <b>if</b> (<a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a> != <b>null</b>)
+                {
+                    <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationCore/A.html#b985370236fdd604" class="i method">UpdateLayout</a>();
+
+                    <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>, <span class="r4 r">getY</span>());
+                    <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>, <span class="r6 r">getX</span>());
+                }
+
+                <b>if</b> (<a href="PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a> != <b>null</b>)
+                {
+                    <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>, <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a>);
+                    <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>, <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a>);
+                    <a href="PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>;
+                    <a href="PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a>;
+                }
+
+                <b>return</b>;
+            }
+
+            <a href="@0@mscorlib/A.html#865ef7b89f41b632" class="k">var</a> <span id="r8 rd" class="r8 r">animSpeed</span> = <span class="r3 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#0f669c31759b24e6" class="i property">AnimationsSpeed</a>;
+
+            <b>if</b> (<a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a> != <b>null</b>)
+            {
+                <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationCore/A.html#b985370236fdd604" class="i method">UpdateLayout</a>();
+
+                <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#eb349db243881914" class="i field">LeftProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r6 r">getX</span>(), <span class="r8 r">animSpeed</span>));
+                <a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#a76de5a09fc0753e" class="i field">TopProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<span class="r4 r">getY</span>(), <span class="r8 r">animSpeed</span>));
+            }
+
+            <a href="#ca1c490d18573066" class="i property">Rectangle</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#eb349db243881914" class="i field">LeftProperty</a>, 
+                <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a>, <span class="r8 r">animSpeed</span>));
+            <a href="#ca1c490d18573066" class="i property">Rectangle</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#a76de5a09fc0753e" class="i field">TopProperty</a>,
+                <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a>, <span class="r8 r">animSpeed</span>));
+
+            <a href="#ca1c490d18573066" class="i property">Rectangle</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>.<a href="@0@PresentationFramework/A.html#eab43ecf1e67f8ba" class="i field">WidthProperty</a>,
+                <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a>, <span class="r8 r">animSpeed</span>));
+            <a href="#ca1c490d18573066" class="i property">Rectangle</a>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>.<a href="@0@PresentationFramework/A.html#2d42566e5f9dbe0e" class="i field">HeightProperty</a>,
+                <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>, <span class="r8 r">animSpeed</span>));
+
+            <b>if</b> (<a href="PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a> != <b>null</b>)
+            {
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#8d0e3c40eb8a4922" class="i method">SetTop</a>(<a href="PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>, <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2909af1b3919eff0" class="i property">Top</a>);
+                <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#f338cad381926fb5" class="i method">SetLeft</a>(<a href="PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>, <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#2e8606edbb798cad" class="i property">Left</a>);
+                <a href="PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#9e61384d81520099" class="i property">Height</a>;
+                <a href="PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="#d7bbfe25f8ce63da" class="i property">Data</a>.<a href="/LiveCharts/A.html#e788b76518ec3a6a" class="i property">Width</a>;
+            }
+        }
+
+        <b>public override void</b> <a id="9f53a6bfedd7f990" href="../R/9f53a6bfedd7f990.html" target="n" data-glyph="72,1" class="i method">RemoveFromView</a>(<a href="/LiveCharts/A.html#2c3f1a2f79f08d10" class="t t">ChartCore</a> <span id="r9 rd" class="r9 r">chart</span>)
+        {
+            <span class="r9 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#22ce649969a42257" class="i method">RemoveFromDrawMargin</a>(<a href="PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>);
+            <span class="r9 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#22ce649969a42257" class="i method">RemoveFromDrawMargin</a>(<a href="#ca1c490d18573066" class="i property">Rectangle</a>);
+            <span class="r9 r">chart</span>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#22ce649969a42257" class="i method">RemoveFromDrawMargin</a>(<a href="PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>);
+        }
+
+        <b>public override void</b> <a id="75aa010f5a737d98" href="../R/75aa010f5a737d98.html" target="n" data-glyph="72,1" class="i method">OnHover</a>(<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a> <span id="r10 rd" class="r10 r">point</span>)
+        {
+            <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="k">var</a> <span id="r11 rd" class="r11 r">copy</span> = <a href="#ca1c490d18573066" class="i property">Rectangle</a>.<a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a>.<a href="@0@PresentationCore/A.html#03746e4703dfe9b4" class="i method">Clone</a>();
+            <span class="r11 r">copy</span>.<a href="@0@PresentationCore/A.html#81e61501e93cd582" class="i property">Opacity</a> -= .15;
+            <a href="#ca1c490d18573066" class="i property">Rectangle</a>.<a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a> = <span class="r11 r">copy</span>;
+        }
+
+        <b>public override void</b> <a id="3ef4606aceedc6be" href="../R/3ef4606aceedc6be.html" target="n" data-glyph="72,1" class="i method">OnHoverLeave</a>(<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a> <span id="r12 rd" class="r12 r">point</span>)
+        {
+            <b>if</b> (<a href="#ca1c490d18573066" class="i property">Rectangle</a> == <b>null</b>) <b>return</b>;
+
+            <b>if</b> (<span class="r12 r">point</span>.<a href="/LiveCharts/A.html#dbf598f81e51de2d" class="i property">Fill</a> != <b>null</b>)
+            {
+                <a href="#ca1c490d18573066" class="i property">Rectangle</a>.<a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a> = (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>) <span class="r12 r">point</span>.<a href="/LiveCharts/A.html#dbf598f81e51de2d" class="i property">Fill</a>;
+            }
+            <b>else</b>
+            {
+                <a href="#ca1c490d18573066" class="i property">Rectangle</a>.<a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a> = ((<a href="../Series.cs.html#424fba5494c39d40" class="t t">Series</a>) <span class="r12 r">point</span>.<a href="/LiveCharts/A.html#c90f7635ddd134a4" class="i property">SeriesView</a>).<a href="../Series.cs.html#a6f44874beaa1a39" class="i property">Fill</a>;
+            }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

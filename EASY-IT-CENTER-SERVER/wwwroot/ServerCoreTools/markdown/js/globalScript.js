@@ -21,6 +21,30 @@ function showPageLoading() {
     pageLoader = Metro.activity.open({ type: 'atom', style: 'dark', overlayClickClose: true, /*overlayColor: '#fff', overlayAlpha: 1*/ });
 }
 
+//<a href="javascript:void(window.open('view-source:file:///'))">
+//    use view-source to traverse and peruse Splashtop system files</a>
+
+function showSource() {
+    var source = "<html>";
+    source += document.getElementsByTagName('html')[0].innerHTML;
+    source += "</html>";
+    source = source.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    source = "<pre>" + source + "</pre>";
+    sourceWindow = window.open('', 'Source of page', 'height=800,width=800,scrollbars=1,resizable=1');
+    sourceWindow.document.write(source);
+    sourceWindow.document.close();
+    if (window.focus) sourceWindow.focus();
+}
+
+
+(function () {
+    "use strict";
+
+    var d = document.createElement("div");
+    d.style.cssText = "max-width:500px; max-height:200px; background-color:rgba(223,223,223,.7); border:3px solid rgba(0,0,0,.5); padding:5px; margin:10px; overflow-x:hidden; overflow-y:auto; word-break:break-word; font-family:'Courier New',Consolas,Lucida Console,monospace,sans-serif; text-shadow:.3px .3px rgba(0,0,0,.2),-0.3px -0.3px rgba(0,0,0,.2); border-radius:5px; box-shadow:1px 1px 5px rgba(0,0,0,.3),-1px -1px 5px rgba(0,0,0,.3)";
+    d.appendChild(document.createTextNode(document.querySelector('html').innerHTML));
+    document.querySelector('body').appendChild(d);
+}());
 
 function UserChangeTranslateSetting() {
     Metro.storage.setItem('UserAutomaticTranslate', $("#UserAutomaticTranslate").val('checked')[0].checked);
@@ -199,6 +223,7 @@ function CreateLinkWindow(title, url) {
 
 function ChangeSource(url) {
     $("#contentWindow").html('<iframe type="text/html" src="' + url + '" style="width:1024px;min-width:1024px !important;max-width:1024px !important; min-height:100vh;"  frameborder="0" style="height:100%;" height="100%"></iframe>');
+    ScrollToTop();
 }
 
 //Control Translation Panel

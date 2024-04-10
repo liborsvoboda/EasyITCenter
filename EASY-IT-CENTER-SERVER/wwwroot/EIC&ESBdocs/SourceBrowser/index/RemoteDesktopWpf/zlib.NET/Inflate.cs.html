@@ -1,0 +1,459 @@
+﻿<!DOCTYPE html>
+<html><head><title>Inflate.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(450);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RemoteDesktopWpf/zlib.NET/Inflate.cs" target="_top">zlib.NET\Inflate.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RemoteDesktopWpf" target="_top">..\..\..\EASY-TOOLS\EASYTools.VNCLib\EASYTools.VNCLib.csproj</a> (RemoteDesktopWpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Copyright (c) 2006, ComponentAce</span>
+<span class="c">// http://www.componentace.com</span>
+<span class="c">// All rights reserved.</span>
+ 
+<span class="c">// Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</span>
+ 
+<span class="c">// Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. </span>
+<span class="c">// Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. </span>
+<span class="c">// Neither the name of ComponentAce nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. </span>
+<span class="c">// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+ 
+<span class="c">/*
+Copyright (c) 2000,2001,2002,2003 ymnk, JCraft,Inc. All rights reserved.
+ 
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+ 
+1. Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
+ 
+2. Redistributions in binary form must reproduce the above copyright 
+notice, this list of conditions and the following disclaimer in 
+the documentation and/or other materials provided with the distribution.
+ 
+3. The names of the authors may not be used to endorse or promote products
+derived from this software without specific prior written permission.
+ 
+THIS SOFTWARE IS PROVIDED ``AS IS&#39;&#39; AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JCRAFT,
+INC. OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/</span>
+<span class="c">/*
+* This program is based on zlib-1.1.3, so all credit should go authors
+* Jean-loup Gailly(jloup@gzip.org) and Mark Adler(madler@alumni.caltech.edu)
+* and contributors of zlib.
+*/</span>
+<b>using</b> <span class="i n">System</span>;
+<b>namespace</b> <span class="i n">ComponentAce</span>.<span class="i n">Compression</span>.<span class="i n">Libs</span>.<span class="i n">zlib</span>
+{
+	
+	<b>sealed class</b> <a id="0c8a45e538909c15" href="../R/0c8a45e538909c15.html" target="n" data-glyph="2,0" class="t t"><span id="dd3b209f73082982">Inflate</span></a>
+	{
+		
+		<b>private const int</b> <a id="c12346782922c0df" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">MAX_WBITS</a> = 15; <span class="c">// 32K LZ77 window</span>
+		
+		<span class="c">// preset dictionary flag in zlib header</span>
+		<b>private const int</b> <a id="e4038e94a2d5d6ee" href="../R/e4038e94a2d5d6ee.html" target="n" data-glyph="10,1" class="i field">PRESET_DICT</a> = 0x20;
+		
+		<b>internal const int</b> <a id="9831e428a7b78e3d" href="../R/../../0000000000.html" target="n" data-glyph="8,1" class="i field">Z_NO_FLUSH</a> = 0;
+		<b>internal const int</b> <a id="dbf0a6021d4eb289" href="../R/../../0000000000.html" target="n" data-glyph="8,1" class="i field">Z_PARTIAL_FLUSH</a> = 1;
+		<b>internal const int</b> <a id="9382493d103b4c16" href="../R/../../0000000000.html" target="n" data-glyph="8,1" class="i field">Z_SYNC_FLUSH</a> = 2;
+		<b>internal const int</b> <a id="91b98436ee743e7f" href="../R/../../0000000000.html" target="n" data-glyph="8,1" class="i field">Z_FULL_FLUSH</a> = 3;
+		<b>internal const int</b> <a id="9ee38ce0111c7207" href="../R/9ee38ce0111c7207.html" target="n" data-glyph="8,1" class="i field">Z_FINISH</a> = 4;
+		
+		<b>private const int</b> <a id="20da7a16213ca146" href="../R/20da7a16213ca146.html" target="n" data-glyph="10,1" class="i field">Z_DEFLATED</a> = 8;
+		
+		<b>private const int</b> <a id="c9e18a6007061876" href="../R/c9e18a6007061876.html" target="n" data-glyph="10,1" class="i field">Z_OK</a> = 0;
+		<b>private const int</b> <a id="9950c8b56e3eb366" href="../R/9950c8b56e3eb366.html" target="n" data-glyph="10,1" class="i field">Z_STREAM_END</a> = 1;
+		<b>private const int</b> <a id="3d33945bd8fa61d7" href="../R/3d33945bd8fa61d7.html" target="n" data-glyph="10,1" class="i field">Z_NEED_DICT</a> = 2;
+		<b>private const int</b> <a id="d6afdbdf6a847fb7" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_ERRNO</a> = - 1;
+		<b>private const int</b> <a id="726316169bb5403c" href="../R/726316169bb5403c.html" target="n" data-glyph="10,1" class="i field">Z_STREAM_ERROR</a> = - 2;
+		<b>private const int</b> <a id="d62aed54292bc58f" href="../R/d62aed54292bc58f.html" target="n" data-glyph="10,1" class="i field">Z_DATA_ERROR</a> = - 3;
+		<b>private const int</b> <a id="f61a33ce603667c1" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_MEM_ERROR</a> = - 4;
+		<b>private const int</b> <a id="9cd4e69f0fe35b92" href="../R/9cd4e69f0fe35b92.html" target="n" data-glyph="10,1" class="i field">Z_BUF_ERROR</a> = - 5;
+		<b>private const int</b> <a id="d18c382f6a155755" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_VERSION_ERROR</a> = - 6;
+		
+		<b>private const int</b> <a id="aa5e494b382798b3" href="../R/aa5e494b382798b3.html" target="n" data-glyph="10,1" class="i field">METHOD</a> = 0; <span class="c">// waiting for method byte</span>
+		<b>private const int</b> <a id="09e3a5ad1ddd08bb" href="../R/09e3a5ad1ddd08bb.html" target="n" data-glyph="10,1" class="i field">FLAG</a> = 1; <span class="c">// waiting for flag byte</span>
+		<b>private const int</b> <a id="f2469bff549e6a9b" href="../R/f2469bff549e6a9b.html" target="n" data-glyph="10,1" class="i field">DICT4</a> = 2; <span class="c">// four dictionary check bytes to go</span>
+		<b>private const int</b> <a id="564adb341e327485" href="../R/564adb341e327485.html" target="n" data-glyph="10,1" class="i field">DICT3</a> = 3; <span class="c">// three dictionary check bytes to go</span>
+		<b>private const int</b> <a id="1d8fa398bce47a49" href="../R/1d8fa398bce47a49.html" target="n" data-glyph="10,1" class="i field">DICT2</a> = 4; <span class="c">// two dictionary check bytes to go</span>
+		<b>private const int</b> <a id="045799af069a2ded" href="../R/045799af069a2ded.html" target="n" data-glyph="10,1" class="i field">DICT1</a> = 5; <span class="c">// one dictionary check byte to go</span>
+		<b>private const int</b> <a id="a2d8c660f5950e19" href="../R/a2d8c660f5950e19.html" target="n" data-glyph="10,1" class="i field">DICT0</a> = 6; <span class="c">// waiting for inflateSetDictionary</span>
+		<b>private const int</b> <a id="8278f21baa2bcc90" href="../R/8278f21baa2bcc90.html" target="n" data-glyph="10,1" class="i field">BLOCKS</a> = 7; <span class="c">// decompressing blocks</span>
+		<b>private const int</b> <a id="2acc56637c66a1e9" href="../R/2acc56637c66a1e9.html" target="n" data-glyph="10,1" class="i field">CHECK4</a> = 8; <span class="c">// four check bytes to go</span>
+		<b>private const int</b> <a id="4cf6a176555c2886" href="../R/4cf6a176555c2886.html" target="n" data-glyph="10,1" class="i field">CHECK3</a> = 9; <span class="c">// three check bytes to go</span>
+		<b>private const int</b> <a id="d310c6000ce0fad7" href="../R/d310c6000ce0fad7.html" target="n" data-glyph="10,1" class="i field">CHECK2</a> = 10; <span class="c">// two check bytes to go</span>
+		<b>private const int</b> <a id="71ba425753567bc1" href="../R/71ba425753567bc1.html" target="n" data-glyph="10,1" class="i field">CHECK1</a> = 11; <span class="c">// one check byte to go</span>
+		<b>private const int</b> <a id="fb60588c17857730" href="../R/fb60588c17857730.html" target="n" data-glyph="10,1" class="i field">DONE</a> = 12; <span class="c">// finished check, done</span>
+		<b>private const int</b> <a id="e8b68f2d53e9650e" href="../R/e8b68f2d53e9650e.html" target="n" data-glyph="10,1" class="i field">BAD</a> = 13; <span class="c">// got an error--stay here</span>
+		
+		<b>internal int</b> <a id="623dd57fe9bd01c6" href="../R/623dd57fe9bd01c6.html" target="n" data-glyph="44,1" class="i field">mode</a>; <span class="c">// current inflate mode</span>
+		
+		<span class="c">// mode dependent information</span>
+		<b>internal int</b> <a id="8ff7cf7c0bf87dd0" href="../R/8ff7cf7c0bf87dd0.html" target="n" data-glyph="44,1" class="i field">method</a>; <span class="c">// if FLAGS, method byte</span>
+		
+		<span class="c">// if CHECK, check values to compare</span>
+		<b>internal long</b>[] <a id="5d7fec2bb1a04067" href="../R/5d7fec2bb1a04067.html" target="n" data-glyph="44,1" class="i field">was</a> = <b>new</b> <b>long</b>[1]; <span class="c">// computed check value</span>
+		<b>internal long</b> <a id="48ad4537fd4840ae" href="../R/48ad4537fd4840ae.html" target="n" data-glyph="44,1" class="i field">need</a>; <span class="c">// stream check value</span>
+		
+		<span class="c">// if BAD, inflateSync&#39;s marker bytes count</span>
+		<b>internal int</b> <a id="f60220d9fde02e32" href="../R/f60220d9fde02e32.html" target="n" data-glyph="44,1" class="i field">marker</a>;
+		
+		<span class="c">// mode independent information</span>
+		<b>internal int</b> <a id="249da0a0daa4ed45" href="../R/249da0a0daa4ed45.html" target="n" data-glyph="44,1" class="i field">nowrap</a>; <span class="c">// flag for no wrapper</span>
+		<b>internal int</b> <a id="4b067e5556c23b83" href="../R/4b067e5556c23b83.html" target="n" data-glyph="44,1" class="i field">wbits</a>; <span class="c">// log2(window size)  (8..15, defaults to 15)</span>
+		
+		<b>internal</b> <a href="InfBlocks.cs.html#502251477a375329" class="t t">InfBlocks</a> <a id="9df275a216ba2070" href="../R/9df275a216ba2070.html" target="n" data-glyph="44,1" class="i field">blocks</a>; <span class="c">// current inflate_blocks state</span>
+		
+		<b>internal int</b> <a id="46812ae46a759f4e" href="../R/46812ae46a759f4e.html" target="n" data-glyph="74,1" class="i method">inflateReset</a>(<a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <span id="r0 rd" class="r0 r">z</span>)
+		{
+			<b>if</b> (<span class="r0 r">z</span> == <b>null</b> || <span class="r0 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a> == <b>null</b>)
+				<b>return</b> <a href="#726316169bb5403c" class="i field">Z_STREAM_ERROR</a>;
+			
+			<span class="r0 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> = <span class="r0 r">z</span>.<a href="ZStream.cs.html#cbbe8a5a89555d7d" class="i field">total_out</a> = 0;
+			<span class="r0 r">z</span>.<a href="ZStream.cs.html#5fca80ad93aac623" class="i field">msg</a> = <b>null</b>;
+			<span class="r0 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <span class="r0 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#249da0a0daa4ed45" class="i field">nowrap</a> != 0?<a href="#8278f21baa2bcc90" class="i field">BLOCKS</a>:<a href="#aa5e494b382798b3" class="i field">METHOD</a>;
+			<span class="r0 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#9df275a216ba2070" class="i field">blocks</a>.<a href="InfBlocks.cs.html#044181185caea346" class="i method">reset</a>(<span class="r0 r">z</span>, <b>null</b>);
+			<b>return</b> <a href="#c9e18a6007061876" class="i field">Z_OK</a>;
+		}
+		
+		<b>internal int</b> <a id="d4b8ee5cab985ba4" href="../R/d4b8ee5cab985ba4.html" target="n" data-glyph="74,1" class="i method">inflateEnd</a>(<a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <span id="r1 rd" class="r1 r">z</span>)
+		{
+			<b>if</b> (<a href="#9df275a216ba2070" class="i field">blocks</a> != <b>null</b>)
+				<a href="#9df275a216ba2070" class="i field">blocks</a>.<a href="InfBlocks.cs.html#7e0c811819a36ff0" class="i method">free</a>(<span class="r1 r">z</span>);
+			<a href="#9df275a216ba2070" class="i field">blocks</a> = <b>null</b>;
+			<span class="c">//    ZFREE(z, z-&gt;state);</span>
+			<b>return</b> <a href="#c9e18a6007061876" class="i field">Z_OK</a>;
+		}
+		
+		<b>internal int</b> <a id="71dd3e716995c2f0" href="../R/71dd3e716995c2f0.html" target="n" data-glyph="74,1" class="i method">inflateInit</a>(<a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <span id="r2 rd" class="r2 r">z</span>, <b>int</b> <span id="r3 rd" class="r3 r">w</span>)
+		{
+			<span class="r2 r">z</span>.<a href="ZStream.cs.html#5fca80ad93aac623" class="i field">msg</a> = <b>null</b>;
+			<a href="#9df275a216ba2070" class="i field">blocks</a> = <b>null</b>;
+			
+			<span class="c">// handle undocumented nowrap option (no zlib header or check)</span>
+			<a href="#249da0a0daa4ed45" class="i field">nowrap</a> = 0;
+			<b>if</b> (<span class="r3 r">w</span> &lt; 0)
+			{
+				<span class="r3 r">w</span> = - <span class="r3 r">w</span>;
+				<a href="#249da0a0daa4ed45" class="i field">nowrap</a> = 1;
+			}
+			
+			<span class="c">// set window size</span>
+			<b>if</b> (<span class="r3 r">w</span> &lt; 8 || <span class="r3 r">w</span> &gt; 15)
+			{
+				<a href="#d4b8ee5cab985ba4" class="i method">inflateEnd</a>(<span class="r2 r">z</span>);
+				<b>return</b> <a href="#726316169bb5403c" class="i field">Z_STREAM_ERROR</a>;
+			}
+			<a href="#4b067e5556c23b83" class="i field">wbits</a> = <span class="r3 r">w</span>;
+			
+			<span class="r2 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#9df275a216ba2070" class="i field">blocks</a> = <b>new</b> <a href="InfBlocks.cs.html#403040b7062ef69a" class="t constructor">InfBlocks</a>(<span class="r2 r">z</span>, <span class="r2 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#249da0a0daa4ed45" class="i field">nowrap</a> != 0?<b>null</b>:<a href="#0c8a45e538909c15" class="k">this</a>, 1 &lt;&lt; <span class="r3 r">w</span>);
+			
+			<span class="c">// reset state</span>
+			<a href="#46812ae46a759f4e" class="i method">inflateReset</a>(<span class="r2 r">z</span>);
+			<b>return</b> <a href="#c9e18a6007061876" class="i field">Z_OK</a>;
+		}
+		
+		<b>internal int</b> <a id="8208de3823a4e450" href="../R/8208de3823a4e450.html" target="n" data-glyph="74,1" class="i method">inflate</a>(<a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <span id="r4 rd" class="r4 r">z</span>, <b>int</b> <span id="r5 rd" class="r5 r">f</span>)
+		{
+			<b>int</b> <span id="r6 rd" class="r6 r">r</span>;
+			<b>int</b> <span id="r7 rd" class="r7 r">b</span>;
+			
+			<b>if</b> (<span class="r4 r">z</span> == <b>null</b> || <span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a> == <b>null</b> || <span class="r4 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a> == <b>null</b>)
+				<b>return</b> <a href="#726316169bb5403c" class="i field">Z_STREAM_ERROR</a>;
+			<span class="r5 r">f</span> = <span class="r5 r">f</span> == <a href="#9ee38ce0111c7207" class="i field">Z_FINISH</a>?<a href="#9cd4e69f0fe35b92" class="i field">Z_BUF_ERROR</a>:<a href="#c9e18a6007061876" class="i field">Z_OK</a>;
+			<span class="r6 r">r</span> = <a href="#9cd4e69f0fe35b92" class="i field">Z_BUF_ERROR</a>;
+			<b>while</b> (<b>true</b>)
+			{
+				<span class="c">//System.out.println(&quot;mode: &quot;+z.istate.mode);</span>
+				<b>switch</b> (<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a>)
+				{
+					
+					<b>case</b> <a href="#aa5e494b382798b3" class="i field">METHOD</a>: 
+						
+						<b>if</b> (<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> == 0)
+							<b>return</b> <span class="r6 r">r</span>; <span class="r6 r">r</span> = <span class="r5 r">f</span>;
+						
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>--; <span class="r4 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a>++;
+						<b>if</b> (((<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#8ff7cf7c0bf87dd0" class="i field">method</a> = <span class="r4 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r4 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>++]) &amp; 0xf) != <a href="#20da7a16213ca146" class="i field">Z_DEFLATED</a>)
+						{
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#e8b68f2d53e9650e" class="i field">BAD</a>;
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#5fca80ad93aac623" class="i field">msg</a> = <span class="s">&quot;unknown compression method&quot;</span>;
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#f60220d9fde02e32" class="i field">marker</a> = 5; <span class="c">// can&#39;t try inflateSync</span>
+							<b>break</b>;
+						}
+						<b>if</b> ((<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#8ff7cf7c0bf87dd0" class="i field">method</a> &gt;&gt; 4) + 8 &gt; <span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#4b067e5556c23b83" class="i field">wbits</a>)
+						{
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#e8b68f2d53e9650e" class="i field">BAD</a>;
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#5fca80ad93aac623" class="i field">msg</a> = <span class="s">&quot;invalid window size&quot;</span>;
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#f60220d9fde02e32" class="i field">marker</a> = 5; <span class="c">// can&#39;t try inflateSync</span>
+							<b>break</b>;
+						}
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#09e3a5ad1ddd08bb" class="i field">FLAG</a>;
+						<b>goto</b> <b>case</b> <a href="#09e3a5ad1ddd08bb" class="i field">FLAG</a>;
+					
+					<b>case</b> <a href="#09e3a5ad1ddd08bb" class="i field">FLAG</a>: 
+						
+						<b>if</b> (<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> == 0)
+							<b>return</b> <span class="r6 r">r</span>; <span class="r6 r">r</span> = <span class="r5 r">f</span>;
+						
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>--; <span class="r4 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a>++;
+						<span class="r7 r">b</span> = (<span class="r4 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r4 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>++]) &amp; 0xff;
+						
+						<b>if</b> ((((<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#8ff7cf7c0bf87dd0" class="i field">method</a> &lt;&lt; 8) + <span class="r7 r">b</span>) % 31) != 0)
+						{
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#e8b68f2d53e9650e" class="i field">BAD</a>;
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#5fca80ad93aac623" class="i field">msg</a> = <span class="s">&quot;incorrect header check&quot;</span>;
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#f60220d9fde02e32" class="i field">marker</a> = 5; <span class="c">// can&#39;t try inflateSync</span>
+							<b>break</b>;
+						}
+						
+						<b>if</b> ((<span class="r7 r">b</span> &amp; <a href="#e4038e94a2d5d6ee" class="i field">PRESET_DICT</a>) == 0)
+						{
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#8278f21baa2bcc90" class="i field">BLOCKS</a>;
+							<b>break</b>;
+						}
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#f2469bff549e6a9b" class="i field">DICT4</a>;
+						<b>goto</b> <b>case</b> <a href="#f2469bff549e6a9b" class="i field">DICT4</a>;
+					
+					<b>case</b> <a href="#f2469bff549e6a9b" class="i field">DICT4</a>: 
+						
+						<b>if</b> (<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> == 0)
+							<b>return</b> <span class="r6 r">r</span>; <span class="r6 r">r</span> = <span class="r5 r">f</span>;
+						
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>--; <span class="r4 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a>++;
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#48ad4537fd4840ae" class="i field">need</a> = ((<span class="r4 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r4 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>++] &amp; 0xff) &lt;&lt; 24) &amp; <b>unchecked</b>((<b>int</b>) 0xff000000L);
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#564adb341e327485" class="i field">DICT3</a>;
+						<b>goto</b> <b>case</b> <a href="#564adb341e327485" class="i field">DICT3</a>;
+					
+					<b>case</b> <a href="#564adb341e327485" class="i field">DICT3</a>: 
+						
+						<b>if</b> (<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> == 0)
+							<b>return</b> <span class="r6 r">r</span>; <span class="r6 r">r</span> = <span class="r5 r">f</span>;
+						
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>--; <span class="r4 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a>++;
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#48ad4537fd4840ae" class="i field">need</a> += (((<span class="r4 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r4 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>++] &amp; 0xff) &lt;&lt; 16) &amp; 0xff0000L);
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#1d8fa398bce47a49" class="i field">DICT2</a>;
+						<b>goto</b> <b>case</b> <a href="#1d8fa398bce47a49" class="i field">DICT2</a>;
+					
+					<b>case</b> <a href="#1d8fa398bce47a49" class="i field">DICT2</a>: 
+						
+						<b>if</b> (<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> == 0)
+							<b>return</b> <span class="r6 r">r</span>; <span class="r6 r">r</span> = <span class="r5 r">f</span>;
+						
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>--; <span class="r4 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a>++;
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#48ad4537fd4840ae" class="i field">need</a> += (((<span class="r4 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r4 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>++] &amp; 0xff) &lt;&lt; 8) &amp; 0xff00L);
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#045799af069a2ded" class="i field">DICT1</a>;
+						<b>goto</b> <b>case</b> <a href="#045799af069a2ded" class="i field">DICT1</a>;
+					
+					<b>case</b> <a href="#045799af069a2ded" class="i field">DICT1</a>: 
+						
+						<b>if</b> (<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> == 0)
+							<b>return</b> <span class="r6 r">r</span>; <span class="r6 r">r</span> = <span class="r5 r">f</span>;
+						
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>--; <span class="r4 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a>++;
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#48ad4537fd4840ae" class="i field">need</a> += (<span class="r4 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r4 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>++] &amp; 0xffL);
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#1063ffa41b0fb599" class="i field">adler</a> = <span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#48ad4537fd4840ae" class="i field">need</a>;
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#a2d8c660f5950e19" class="i field">DICT0</a>;
+						<b>return</b> <a href="#3d33945bd8fa61d7" class="i field">Z_NEED_DICT</a>;
+					
+					<b>case</b> <a href="#a2d8c660f5950e19" class="i field">DICT0</a>: 
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#e8b68f2d53e9650e" class="i field">BAD</a>;
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#5fca80ad93aac623" class="i field">msg</a> = <span class="s">&quot;need dictionary&quot;</span>;
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#f60220d9fde02e32" class="i field">marker</a> = 0; <span class="c">// can try inflateSync</span>
+						<b>return</b> <a href="#726316169bb5403c" class="i field">Z_STREAM_ERROR</a>;
+					
+					<b>case</b> <a href="#8278f21baa2bcc90" class="i field">BLOCKS</a>: 
+						
+						<span class="r6 r">r</span> = <span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#9df275a216ba2070" class="i field">blocks</a>.<a href="InfBlocks.cs.html#614c5d941b93fa6a" class="i method">proc</a>(<span class="r4 r">z</span>, <span class="r6 r">r</span>);
+						<b>if</b> (<span class="r6 r">r</span> == <a href="#d62aed54292bc58f" class="i field">Z_DATA_ERROR</a>)
+						{
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#e8b68f2d53e9650e" class="i field">BAD</a>;
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#f60220d9fde02e32" class="i field">marker</a> = 0; <span class="c">// can try inflateSync</span>
+							<b>break</b>;
+						}
+						<b>if</b> (<span class="r6 r">r</span> == <a href="#c9e18a6007061876" class="i field">Z_OK</a>)
+						{
+							<span class="r6 r">r</span> = <span class="r5 r">f</span>;
+						}
+						<b>if</b> (<span class="r6 r">r</span> != <a href="#9950c8b56e3eb366" class="i field">Z_STREAM_END</a>)
+						{
+							<b>return</b> <span class="r6 r">r</span>;
+						}
+						<span class="r6 r">r</span> = <span class="r5 r">f</span>;
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#9df275a216ba2070" class="i field">blocks</a>.<a href="InfBlocks.cs.html#044181185caea346" class="i method">reset</a>(<span class="r4 r">z</span>, <span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#5d7fec2bb1a04067" class="i field">was</a>);
+						<b>if</b> (<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#249da0a0daa4ed45" class="i field">nowrap</a> != 0)
+						{
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#fb60588c17857730" class="i field">DONE</a>;
+							<b>break</b>;
+						}
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#2acc56637c66a1e9" class="i field">CHECK4</a>;
+						<b>goto</b> <b>case</b> <a href="#2acc56637c66a1e9" class="i field">CHECK4</a>;
+					
+					<b>case</b> <a href="#2acc56637c66a1e9" class="i field">CHECK4</a>: 
+						
+						<b>if</b> (<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> == 0)
+							<b>return</b> <span class="r6 r">r</span>; <span class="r6 r">r</span> = <span class="r5 r">f</span>;
+						
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>--; <span class="r4 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a>++;
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#48ad4537fd4840ae" class="i field">need</a> = ((<span class="r4 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r4 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>++] &amp; 0xff) &lt;&lt; 24) &amp; <b>unchecked</b>((<b>int</b>) 0xff000000L);
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#4cf6a176555c2886" class="i field">CHECK3</a>;
+						<b>goto</b> <b>case</b> <a href="#4cf6a176555c2886" class="i field">CHECK3</a>;
+					
+					<b>case</b> <a href="#4cf6a176555c2886" class="i field">CHECK3</a>: 
+						
+						<b>if</b> (<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> == 0)
+							<b>return</b> <span class="r6 r">r</span>; <span class="r6 r">r</span> = <span class="r5 r">f</span>;
+						
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>--; <span class="r4 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a>++;
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#48ad4537fd4840ae" class="i field">need</a> += (((<span class="r4 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r4 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>++] &amp; 0xff) &lt;&lt; 16) &amp; 0xff0000L);
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#d310c6000ce0fad7" class="i field">CHECK2</a>;
+						<b>goto</b> <b>case</b> <a href="#d310c6000ce0fad7" class="i field">CHECK2</a>;
+					
+					<b>case</b> <a href="#d310c6000ce0fad7" class="i field">CHECK2</a>: 
+						
+						<b>if</b> (<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> == 0)
+							<b>return</b> <span class="r6 r">r</span>; <span class="r6 r">r</span> = <span class="r5 r">f</span>;
+						
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>--; <span class="r4 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a>++;
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#48ad4537fd4840ae" class="i field">need</a> += (((<span class="r4 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r4 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>++] &amp; 0xff) &lt;&lt; 8) &amp; 0xff00L);
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#71ba425753567bc1" class="i field">CHECK1</a>;
+						<b>goto</b> <b>case</b> <a href="#71ba425753567bc1" class="i field">CHECK1</a>;
+					
+					<b>case</b> <a href="#71ba425753567bc1" class="i field">CHECK1</a>: 
+						
+						<b>if</b> (<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> == 0)
+							<b>return</b> <span class="r6 r">r</span>; <span class="r6 r">r</span> = <span class="r5 r">f</span>;
+						
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>--; <span class="r4 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a>++;
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#48ad4537fd4840ae" class="i field">need</a> += (<span class="r4 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r4 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>++] &amp; 0xffL);
+						
+						<b>if</b> (((<b>int</b>) (<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#5d7fec2bb1a04067" class="i field">was</a>[0])) != ((<b>int</b>) (<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#48ad4537fd4840ae" class="i field">need</a>)))
+						{
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#e8b68f2d53e9650e" class="i field">BAD</a>;
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#5fca80ad93aac623" class="i field">msg</a> = <span class="s">&quot;incorrect data check&quot;</span>;
+							<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#f60220d9fde02e32" class="i field">marker</a> = 5; <span class="c">// can&#39;t try inflateSync</span>
+							<b>break</b>;
+						}
+						
+						<span class="r4 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#fb60588c17857730" class="i field">DONE</a>;
+						<b>goto</b> <b>case</b> <a href="#fb60588c17857730" class="i field">DONE</a>;
+					
+					<b>case</b> <a href="#fb60588c17857730" class="i field">DONE</a>: 
+						<b>return</b> <a href="#9950c8b56e3eb366" class="i field">Z_STREAM_END</a>;
+					
+					<b>case</b> <a href="#e8b68f2d53e9650e" class="i field">BAD</a>: 
+						<b>return</b> <a href="#d62aed54292bc58f" class="i field">Z_DATA_ERROR</a>;
+					
+					<b>default</b>: 
+						<b>return</b> <a href="#726316169bb5403c" class="i field">Z_STREAM_ERROR</a>;
+					
+				}
+			}
+		}
+		
+		
+		<b>internal int</b> <a id="6201484c170561a6" href="../R/6201484c170561a6.html" target="n" data-glyph="74,1" class="i method">inflateSetDictionary</a>(<a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <span id="r8 rd" class="r8 r">z</span>, <b>byte</b>[] <span id="r9 rd" class="r9 r">dictionary</span>, <b>int</b> <span id="r10 rd" class="r10 r">dictLength</span>)
+		{
+			<b>int</b> <span id="r11 rd" class="r11 r">index</span> = 0;
+			<b>int</b> <span id="r12 rd" class="r12 r">length</span> = <span class="r10 r">dictLength</span>;
+			<b>if</b> (<span class="r8 r">z</span> == <b>null</b> || <span class="r8 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a> == <b>null</b> || <span class="r8 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> != <a href="#a2d8c660f5950e19" class="i field">DICT0</a>)
+				<b>return</b> <a href="#726316169bb5403c" class="i field">Z_STREAM_ERROR</a>;
+			
+			<b>if</b> (<span class="r8 r">z</span>.<a href="ZStream.cs.html#8cde0a3999744a52" class="i field">_adler</a>.<a href="Adler32.cs.html#d5495b7b6d17d765" class="i method">adler32</a>(1L, <span class="r9 r">dictionary</span>, 0, <span class="r10 r">dictLength</span>) != <span class="r8 r">z</span>.<a href="ZStream.cs.html#1063ffa41b0fb599" class="i field">adler</a>)
+			{
+				<b>return</b> <a href="#d62aed54292bc58f" class="i field">Z_DATA_ERROR</a>;
+			}
+			
+			<span class="r8 r">z</span>.<a href="ZStream.cs.html#1063ffa41b0fb599" class="i field">adler</a> = <span class="r8 r">z</span>.<a href="ZStream.cs.html#8cde0a3999744a52" class="i field">_adler</a>.<a href="Adler32.cs.html#d5495b7b6d17d765" class="i method">adler32</a>(0, <b>null</b>, 0, 0);
+			
+			<b>if</b> (<span class="r12 r">length</span> &gt;= (1 &lt;&lt; <span class="r8 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#4b067e5556c23b83" class="i field">wbits</a>))
+			{
+				<span class="r12 r">length</span> = (1 &lt;&lt; <span class="r8 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#4b067e5556c23b83" class="i field">wbits</a>) - 1;
+				<span class="r11 r">index</span> = <span class="r10 r">dictLength</span> - <span class="r12 r">length</span>;
+			}
+			<span class="r8 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#9df275a216ba2070" class="i field">blocks</a>.<a href="InfBlocks.cs.html#f356da4f60d32349" class="i method">set_dictionary</a>(<span class="r9 r">dictionary</span>, <span class="r11 r">index</span>, <span class="r12 r">length</span>);
+			<span class="r8 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#8278f21baa2bcc90" class="i field">BLOCKS</a>;
+			<b>return</b> <a href="#c9e18a6007061876" class="i field">Z_OK</a>;
+		}
+		
+		<b>private static byte</b>[] <a id="dcdf6e14c076b24f" href="../R/dcdf6e14c076b24f.html" target="n" data-glyph="46,1" class="i field">mark</a> = <b>new</b> <b>byte</b>[]{(<b>byte</b>) 0, (<b>byte</b>) 0, (<b>byte</b>) <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#85ae48d6e36510bf" class="i method">Identity</a>(0xff), (<b>byte</b>) <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#85ae48d6e36510bf" class="i method">Identity</a>(0xff)};
+		
+		<b>internal int</b> <a id="c7f1ded14b7c97ec" href="../R/c7f1ded14b7c97ec.html" target="n" data-glyph="74,1" class="i method">inflateSync</a>(<a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <span id="r13 rd" class="r13 r">z</span>)
+		{
+			<b>int</b> <span id="r14 rd" class="r14 r">n</span>; <span class="c">// number of bytes to look at</span>
+			<b>int</b> <span id="r15 rd" class="r15 r">p</span>; <span class="c">// pointer to bytes</span>
+			<b>int</b> <span id="r16 rd" class="r16 r">m</span>; <span class="c">// number of marker bytes found in a row</span>
+			<b>long</b> <span id="r17 rd" class="r17 r">r</span>, <span id="r18 rd" class="r18 r">w</span>; <span class="c">// temporaries to save total_in and total_out</span>
+			
+			<span class="c">// set up</span>
+			<b>if</b> (<span class="r13 r">z</span> == <b>null</b> || <span class="r13 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a> == <b>null</b>)
+				<b>return</b> <a href="#726316169bb5403c" class="i field">Z_STREAM_ERROR</a>;
+			<b>if</b> (<span class="r13 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> != <a href="#e8b68f2d53e9650e" class="i field">BAD</a>)
+			{
+				<span class="r13 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#e8b68f2d53e9650e" class="i field">BAD</a>;
+				<span class="r13 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#f60220d9fde02e32" class="i field">marker</a> = 0;
+			}
+			<b>if</b> ((<span class="r14 r">n</span> = <span class="r13 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>) == 0)
+				<b>return</b> <a href="#9cd4e69f0fe35b92" class="i field">Z_BUF_ERROR</a>;
+			<span class="r15 r">p</span> = <span class="r13 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>;
+			<span class="r16 r">m</span> = <span class="r13 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#f60220d9fde02e32" class="i field">marker</a>;
+			
+			<span class="c">// search</span>
+			<b>while</b> (<span class="r14 r">n</span> != 0 &amp;&amp; <span class="r16 r">m</span> &lt; 4)
+			{
+				<b>if</b> (<span class="r13 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r15 r">p</span>] == <a href="#dcdf6e14c076b24f" class="i field">mark</a>[<span class="r16 r">m</span>])
+				{
+					<span class="r16 r">m</span>++;
+				}
+				<b>else</b> <b>if</b> (<span class="r13 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r15 r">p</span>] != 0)
+				{
+					<span class="r16 r">m</span> = 0;
+				}
+				<b>else</b>
+				{
+					<span class="r16 r">m</span> = 4 - <span class="r16 r">m</span>;
+				}
+				<span class="r15 r">p</span>++; <span class="r14 r">n</span>--;
+			}
+			
+			<span class="c">// restore</span>
+			<span class="r13 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r15 r">p</span> - <span class="r13 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>;
+			<span class="r13 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r15 r">p</span>;
+			<span class="r13 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r14 r">n</span>;
+			<span class="r13 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#f60220d9fde02e32" class="i field">marker</a> = <span class="r16 r">m</span>;
+			
+			<span class="c">// return no joy or set up to restart on a new block</span>
+			<b>if</b> (<span class="r16 r">m</span> != 4)
+			{
+				<b>return</b> <a href="#d62aed54292bc58f" class="i field">Z_DATA_ERROR</a>;
+			}
+			<span class="r17 r">r</span> = <span class="r13 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a>; <span class="r18 r">w</span> = <span class="r13 r">z</span>.<a href="ZStream.cs.html#cbbe8a5a89555d7d" class="i field">total_out</a>;
+			<a href="#46812ae46a759f4e" class="i method">inflateReset</a>(<span class="r13 r">z</span>);
+			<span class="r13 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> = <span class="r17 r">r</span>; <span class="r13 r">z</span>.<a href="ZStream.cs.html#cbbe8a5a89555d7d" class="i field">total_out</a> = <span class="r18 r">w</span>;
+			<span class="r13 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#623dd57fe9bd01c6" class="i field">mode</a> = <a href="#8278f21baa2bcc90" class="i field">BLOCKS</a>;
+			<b>return</b> <a href="#c9e18a6007061876" class="i field">Z_OK</a>;
+		}
+		
+		<span class="c">// Returns true if inflate is currently at the end of a block generated</span>
+		<span class="c">// by Z_SYNC_FLUSH or Z_FULL_FLUSH. This function is used by one PPP</span>
+		<span class="c">// implementation to provide an additional safety check. PPP uses Z_SYNC_FLUSH</span>
+		<span class="c">// but removes the length bytes of the resulting empty stored block. When</span>
+		<span class="c">// decompressing, PPP checks that at the end of input packet, inflate is</span>
+		<span class="c">// waiting for these length bytes.</span>
+		<b>internal int</b> <a id="d1d9ca9e4a98e833" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">inflateSyncPoint</a>(<a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <span id="r19 rd" class="r19 r">z</span>)
+		{
+			<b>if</b> (<span class="r19 r">z</span> == <b>null</b> || <span class="r19 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a> == <b>null</b> || <span class="r19 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#9df275a216ba2070" class="i field">blocks</a> == <b>null</b>)
+				<b>return</b> <a href="#726316169bb5403c" class="i field">Z_STREAM_ERROR</a>;
+			<b>return</b> <span class="r19 r">z</span>.<a href="ZStream.cs.html#f49f9215d125b94c" class="i field">istate</a>.<a href="#9df275a216ba2070" class="i field">blocks</a>.<a href="InfBlocks.cs.html#2d9e3e4d502cfe31" class="i method">sync_point</a>();
+		}
+	}
+}</pre></td></tr></table></div></body></html>

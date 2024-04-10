@@ -1,4 +1,7 @@
-﻿```csharp   
+﻿[Zpět](../../../index)   
+
+
+```csharp   
 namespace EasyITCenter.ServerCoreStructure {
 
     /// <summary>

@@ -1,0 +1,729 @@
+﻿<!DOCTYPE html>
+<html><head><title>InfBlocks.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(720);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RemoteDesktopWpf/zlib.NET/InfBlocks.cs" target="_top">zlib.NET\InfBlocks.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RemoteDesktopWpf" target="_top">..\..\..\EASY-TOOLS\EASYTools.VNCLib\EASYTools.VNCLib.csproj</a> (RemoteDesktopWpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Copyright (c) 2006, ComponentAce</span>
+<span class="c">// http://www.componentace.com</span>
+<span class="c">// All rights reserved.</span>
+ 
+<span class="c">// Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</span>
+ 
+<span class="c">// Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. </span>
+<span class="c">// Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. </span>
+<span class="c">// Neither the name of ComponentAce nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. </span>
+<span class="c">// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+ 
+<span class="c">/*
+Copyright (c) 2000,2001,2002,2003 ymnk, JCraft,Inc. All rights reserved.
+ 
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+ 
+1. Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
+ 
+2. Redistributions in binary form must reproduce the above copyright 
+notice, this list of conditions and the following disclaimer in 
+the documentation and/or other materials provided with the distribution.
+ 
+3. The names of the authors may not be used to endorse or promote products
+derived from this software without specific prior written permission.
+ 
+THIS SOFTWARE IS PROVIDED ``AS IS&#39;&#39; AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JCRAFT,
+INC. OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/</span>
+<span class="c">/*
+* This program is based on zlib-1.1.3, so all credit should go authors
+* Jean-loup Gailly(jloup@gzip.org) and Mark Adler(madler@alumni.caltech.edu)
+* and contributors of zlib.
+*/</span>
+<b>using</b> <span class="i n">System</span>;
+<b>namespace</b> <span class="i n">ComponentAce</span>.<span class="i n">Compression</span>.<span class="i n">Libs</span>.<span class="i n">zlib</span>
+{
+	
+	<b>sealed class</b> <a id="502251477a375329" href="../R/502251477a375329.html" target="n" data-glyph="2,0" class="t t">InfBlocks</a>
+	{
+		<b>private const int</b> <a id="50e02fc5704e1b7e" href="../R/50e02fc5704e1b7e.html" target="n" data-glyph="10,1" class="i field">MANY</a> = 1440;
+		
+		<span class="c">// And&#39;ing with mask[n] masks the lower n bits		</span>
+		<b>private static readonly int</b>[] <a id="5ab77054c0c935c1" href="../R/5ab77054c0c935c1.html" target="n" data-glyph="46,1" class="i field">inflate_mask</a> = <b>new</b> <b>int</b>[]{0x00000000, 0x00000001, 0x00000003, 0x00000007, 0x0000000f, 0x0000001f, 0x0000003f, 0x0000007f, 0x000000ff, 0x000001ff, 0x000003ff, 0x000007ff, 0x00000fff, 0x00001fff, 0x00003fff, 0x00007fff, 0x0000ffff};
+		
+		<span class="c">// Table for deflate from PKZIP&#39;s appnote.txt.		</span>
+		<b>internal static readonly int</b>[] <a id="99172c2377cd4008" href="../R/99172c2377cd4008.html" target="n" data-glyph="44,1" class="i field">border</a> = <b>new</b> <b>int</b>[]{16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
+		
+		<b>private const int</b> <a id="32324315d96b5c08" href="../R/32324315d96b5c08.html" target="n" data-glyph="10,1" class="i field">Z_OK</a> = 0;
+		<b>private const int</b> <a id="7d9c88eecbf58954" href="../R/7d9c88eecbf58954.html" target="n" data-glyph="10,1" class="i field">Z_STREAM_END</a> = 1;
+		<b>private const int</b> <a id="d7a2cf0baf5248a8" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_NEED_DICT</a> = 2;
+		<b>private const int</b> <a id="d01c003a2913878b" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_ERRNO</a> = - 1;
+		<b>private const int</b> <a id="fd1d8f39c80c585a" href="../R/fd1d8f39c80c585a.html" target="n" data-glyph="10,1" class="i field">Z_STREAM_ERROR</a> = - 2;
+		<b>private const int</b> <a id="e349c40d80ddd60a" href="../R/e349c40d80ddd60a.html" target="n" data-glyph="10,1" class="i field">Z_DATA_ERROR</a> = - 3;
+		<b>private const int</b> <a id="2f75c049d6550025" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_MEM_ERROR</a> = - 4;
+		<b>private const int</b> <a id="66c3da5322c75783" href="../R/66c3da5322c75783.html" target="n" data-glyph="10,1" class="i field">Z_BUF_ERROR</a> = - 5;
+		<b>private const int</b> <a id="f816f52e4e4ccdd9" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">Z_VERSION_ERROR</a> = - 6;
+		
+		<b>private const int</b> <a id="97cf59ff6b3ce64d" href="../R/97cf59ff6b3ce64d.html" target="n" data-glyph="10,1" class="i field">TYPE</a> = 0; <span class="c">// get type bits (3, including end bit)</span>
+		<b>private const int</b> <a id="a52c151d131ac92a" href="../R/a52c151d131ac92a.html" target="n" data-glyph="10,1" class="i field">LENS</a> = 1; <span class="c">// get lengths for stored</span>
+		<b>private const int</b> <a id="b44c8aa6598c8156" href="../R/b44c8aa6598c8156.html" target="n" data-glyph="10,1" class="i field">STORED</a> = 2; <span class="c">// processing stored block</span>
+		<b>private const int</b> <a id="f3c4612abcbab364" href="../R/f3c4612abcbab364.html" target="n" data-glyph="10,1" class="i field">TABLE</a> = 3; <span class="c">// get table lengths</span>
+		<b>private const int</b> <a id="bfa1754653ed1cc3" href="../R/bfa1754653ed1cc3.html" target="n" data-glyph="10,1" class="i field">BTREE</a> = 4; <span class="c">// get bit lengths tree for a dynamic block</span>
+		<b>private const int</b> <a id="b390b9b92c05903c" href="../R/b390b9b92c05903c.html" target="n" data-glyph="10,1" class="i field">DTREE</a> = 5; <span class="c">// get length, distance trees for a dynamic block</span>
+		<b>private const int</b> <a id="ca24470e0939c720" href="../R/ca24470e0939c720.html" target="n" data-glyph="10,1" class="i field">CODES</a> = 6; <span class="c">// processing fixed or dynamic block</span>
+		<b>private const int</b> <a id="8b35833dc8f2dbe8" href="../R/8b35833dc8f2dbe8.html" target="n" data-glyph="10,1" class="i field">DRY</a> = 7; <span class="c">// output remaining window bytes</span>
+		<b>private const int</b> <a id="0fa9de0a89792f93" href="../R/0fa9de0a89792f93.html" target="n" data-glyph="10,1" class="i field">DONE</a> = 8; <span class="c">// finished last block, done</span>
+		<b>private const int</b> <a id="2b11b386fe773d02" href="../R/2b11b386fe773d02.html" target="n" data-glyph="10,1" class="i field">BAD</a> = 9; <span class="c">// ot a data error--stuck here</span>
+		
+		<b>internal int</b> <a id="6f059981a85bb3a3" href="../R/6f059981a85bb3a3.html" target="n" data-glyph="44,1" class="i field">mode</a>; <span class="c">// current inflate_block mode </span>
+		
+		<b>internal int</b> <a id="cde983c2e6e23d03" href="../R/cde983c2e6e23d03.html" target="n" data-glyph="44,1" class="i field">left</a>; <span class="c">// if STORED, bytes left to copy </span>
+		
+		<b>internal int</b> <a id="59056edc05b4901a" href="../R/59056edc05b4901a.html" target="n" data-glyph="44,1" class="i field">table</a>; <span class="c">// table lengths (14 bits) </span>
+		<b>internal int</b> <a id="4d78353dc134c829" href="../R/4d78353dc134c829.html" target="n" data-glyph="44,1" class="i field">index</a>; <span class="c">// index into blens (or border) </span>
+		<b>internal int</b>[] <a id="c23961f35998eab1" href="../R/c23961f35998eab1.html" target="n" data-glyph="44,1" class="i field">blens</a>; <span class="c">// bit lengths of codes </span>
+		<b>internal int</b>[] <a id="0a3c9d5fbaf09e5e" href="../R/0a3c9d5fbaf09e5e.html" target="n" data-glyph="44,1" class="i field">bb</a> = <b>new</b> <b>int</b>[1]; <span class="c">// bit length tree depth </span>
+		<b>internal int</b>[] <a id="212a40c36a5feb7b" href="../R/212a40c36a5feb7b.html" target="n" data-glyph="44,1" class="i field">tb</a> = <b>new</b> <b>int</b>[1]; <span class="c">// bit length decoding tree </span>
+		
+		<b>internal</b> <a href="InfCodes.cs.html#73c4600b5e76c805" class="t t">InfCodes</a> <a id="dc8265789eb483ab" href="../R/dc8265789eb483ab.html" target="n" data-glyph="44,1" class="i field">codes</a>; <span class="c">// if CODES, current state </span>
+		
+		<b>internal int</b> <a id="1fb7f9d78d0f5e08" href="../R/1fb7f9d78d0f5e08.html" target="n" data-glyph="44,1" class="i field">last</a>; <span class="c">// true if this block is the last block </span>
+		
+		<span class="c">// mode independent information </span>
+		<b>internal int</b> <a id="2803866fc8accfde" href="../R/2803866fc8accfde.html" target="n" data-glyph="44,1" class="i field">bitk</a>; <span class="c">// bits in bit buffer </span>
+		<b>internal int</b> <a id="e2d346d9187122f4" href="../R/e2d346d9187122f4.html" target="n" data-glyph="44,1" class="i field">bitb</a>; <span class="c">// bit buffer </span>
+		<b>internal int</b>[] <a id="fa36ab6ed878448b" href="../R/fa36ab6ed878448b.html" target="n" data-glyph="44,1" class="i field">hufts</a>; <span class="c">// single malloc for tree space </span>
+		<b>internal byte</b>[] <a id="9871bb17d4542e31" href="../R/9871bb17d4542e31.html" target="n" data-glyph="44,1" class="i field">window</a>; <span class="c">// sliding window </span>
+		<b>internal int</b> <a id="3baa9d50341751a4" href="../R/3baa9d50341751a4.html" target="n" data-glyph="44,1" class="i field">end</a>; <span class="c">// one byte after sliding window </span>
+		<b>internal int</b> <a id="234622f49ee0a5cb" href="../R/234622f49ee0a5cb.html" target="n" data-glyph="44,1" class="i field">read</a>; <span class="c">// window read pointer </span>
+		<b>internal int</b> <a id="971fddb83f50f4d7" href="../R/971fddb83f50f4d7.html" target="n" data-glyph="44,1" class="i field">write</a>; <span class="c">// window write pointer </span>
+		<b>internal</b> <span class="i n">System</span>.<a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="t t">Object</a> <a id="0810abb4de0aade6" href="../R/0810abb4de0aade6.html" target="n" data-glyph="44,1" class="i field">checkfn</a>; <span class="c">// check function </span>
+		<b>internal long</b> <a id="aecb444084105c5b" href="../R/aecb444084105c5b.html" target="n" data-glyph="44,1" class="i field">check</a>; <span class="c">// check on output </span>
+		
+		<b>internal</b> <a id="403040b7062ef69a" href="../R/403040b7062ef69a.html" target="n" data-glyph="74,1" class="t constructor">InfBlocks</a>(<a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <span id="r0 rd" class="r0 r">z</span>, <span class="i n">System</span>.<a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="t t">Object</a> <span id="r1 rd" class="r1 r">checkfn</span>, <b>int</b> <span id="r2 rd" class="r2 r">w</span>)
+		{
+			<a href="#fa36ab6ed878448b" class="i field">hufts</a> = <b>new</b> <b>int</b>[<a href="#50e02fc5704e1b7e" class="i field">MANY</a> * 3];
+			<a href="#9871bb17d4542e31" class="i field">window</a> = <b>new</b> <b>byte</b>[<span class="r2 r">w</span>];
+			<a href="#3baa9d50341751a4" class="i field">end</a> = <span class="r2 r">w</span>;
+			<a href="#502251477a375329" class="k">this</a>.<a href="#0810abb4de0aade6" class="i field">checkfn</a> = <span class="r1 r">checkfn</span>;
+			<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#97cf59ff6b3ce64d" class="i field">TYPE</a>;
+			<a href="#044181185caea346" class="i method">reset</a>(<span class="r0 r">z</span>, <b>null</b>);
+		}
+		
+		<b>internal void</b>  <a id="044181185caea346" href="../R/044181185caea346.html" target="n" data-glyph="74,1" class="i method">reset</a>(<a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <span id="r3 rd" class="r3 r">z</span>, <b>long</b>[] <span id="r4 rd" class="r4 r">c</span>)
+		{
+			<b>if</b> (<span class="r4 r">c</span> != <b>null</b>)
+				<span class="r4 r">c</span>[0] = <a href="#aecb444084105c5b" class="i field">check</a>;
+			<b>if</b> (<a href="#6f059981a85bb3a3" class="i field">mode</a> == <a href="#bfa1754653ed1cc3" class="i field">BTREE</a> || <a href="#6f059981a85bb3a3" class="i field">mode</a> == <a href="#b390b9b92c05903c" class="i field">DTREE</a>)
+			{
+				<a href="#c23961f35998eab1" class="i field">blens</a> = <b>null</b>;
+			}
+			<b>if</b> (<a href="#6f059981a85bb3a3" class="i field">mode</a> == <a href="#ca24470e0939c720" class="i field">CODES</a>)
+			{
+				<a href="#dc8265789eb483ab" class="i field">codes</a>.<a href="InfCodes.cs.html#aa7f97621051092d" class="i method">free</a>(<span class="r3 r">z</span>);
+			}
+			<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#97cf59ff6b3ce64d" class="i field">TYPE</a>;
+			<a href="#2803866fc8accfde" class="i field">bitk</a> = 0;
+			<a href="#e2d346d9187122f4" class="i field">bitb</a> = 0;
+			<a href="#234622f49ee0a5cb" class="i field">read</a> = <a href="#971fddb83f50f4d7" class="i field">write</a> = 0;
+			
+			<b>if</b> (<a href="#0810abb4de0aade6" class="i field">checkfn</a> != <b>null</b>)
+				<span class="r3 r">z</span>.<a href="ZStream.cs.html#1063ffa41b0fb599" class="i field">adler</a> = <a href="#aecb444084105c5b" class="i field">check</a> = <span class="r3 r">z</span>.<a href="ZStream.cs.html#8cde0a3999744a52" class="i field">_adler</a>.<a href="Adler32.cs.html#d5495b7b6d17d765" class="i method">adler32</a>(0L, <b>null</b>, 0, 0);
+		}
+		
+		<b>internal int</b> <a id="614c5d941b93fa6a" href="../R/614c5d941b93fa6a.html" target="n" data-glyph="74,1" class="i method">proc</a>(<a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <span id="r5 rd" class="r5 r">z</span>, <b>int</b> <span id="r6 rd" class="r6 r">r</span>)
+		{
+			<b>int</b> <span id="r7 rd" class="r7 r">t</span>; <span class="c">// temporary storage</span>
+			<b>int</b> <span id="r8 rd" class="r8 r">b</span>; <span class="c">// bit buffer</span>
+			<b>int</b> <span id="r9 rd" class="r9 r">k</span>; <span class="c">// bits in bit buffer</span>
+			<b>int</b> <span id="r10 rd" class="r10 r">p</span>; <span class="c">// input data pointer</span>
+			<b>int</b> <span id="r11 rd" class="r11 r">n</span>; <span class="c">// bytes available there</span>
+			<b>int</b> <span id="r12 rd" class="r12 r">q</span>; <span class="c">// output window write pointer</span>
+			<b>int</b> <span id="r13 rd" class="r13 r">m</span>; <span class="c">// bytes to end of window or read pointer</span>
+			
+			<span class="c">// copy input/output information to locals (UPDATE macro restores)</span>
+			{
+				<span class="r10 r">p</span> = <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r11 r">n</span> = <span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>; <span class="r8 r">b</span> = <a href="#e2d346d9187122f4" class="i field">bitb</a>; <span class="r9 r">k</span> = <a href="#2803866fc8accfde" class="i field">bitk</a>;
+			}
+			{
+				<span class="r12 r">q</span> = <a href="#971fddb83f50f4d7" class="i field">write</a>; <span class="r13 r">m</span> = (<b>int</b>) (<span class="r12 r">q</span> &lt; <a href="#234622f49ee0a5cb" class="i field">read</a>?<a href="#234622f49ee0a5cb" class="i field">read</a> - <span class="r12 r">q</span> - 1:<a href="#3baa9d50341751a4" class="i field">end</a> - <span class="r12 r">q</span>);
+			}
+			
+			<span class="c">// process input based on current state</span>
+			<b>while</b> (<b>true</b>)
+			{
+				<b>switch</b> (<a href="#6f059981a85bb3a3" class="i field">mode</a>)
+				{
+					
+					<b>case</b> <a href="#97cf59ff6b3ce64d" class="i field">TYPE</a>: 
+						
+						<b>while</b> (<span class="r9 r">k</span> &lt; (3))
+						{
+							<b>if</b> (<span class="r11 r">n</span> != 0)
+							{
+								<span class="r6 r">r</span> = <a href="#32324315d96b5c08" class="i field">Z_OK</a>;
+							}
+							<b>else</b>
+							{
+								<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+								<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>;
+								<span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+								<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+								<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+							}
+							;
+							<span class="r11 r">n</span>--;
+							<span class="r8 r">b</span> |= (<span class="r5 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r10 r">p</span>++] &amp; 0xff) &lt;&lt; <span class="r9 r">k</span>;
+							<span class="r9 r">k</span> += 8;
+						}
+						<span class="r7 r">t</span> = (<b>int</b>) (<span class="r8 r">b</span> &amp; 7);
+						<a href="#1fb7f9d78d0f5e08" class="i field">last</a> = <span class="r7 r">t</span> &amp; 1;
+						
+						<b>switch</b> (<a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r7 r">t</span>, 1))
+						{
+							
+							<b>case</b> 0:  <span class="c">// stored </span>
+								{
+									<span class="r8 r">b</span> = <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r8 r">b</span>, (3)); <span class="r9 r">k</span> -= (3);
+								}
+								<span class="r7 r">t</span> = <span class="r9 r">k</span> &amp; 7; <span class="c">// go to byte boundary</span>
+								
+								{
+									<span class="r8 r">b</span> = <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r8 r">b</span>, (<span class="r7 r">t</span>)); <span class="r9 r">k</span> -= (<span class="r7 r">t</span>);
+								}
+								<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#a52c151d131ac92a" class="i field">LENS</a>; <span class="c">// get length of stored block</span>
+								<b>break</b>;
+							
+							<b>case</b> 1:  <span class="c">// fixed</span>
+								{
+									<b>int</b>[] <span id="r14 rd" class="r14 r">bl</span> = <b>new</b> <b>int</b>[1];
+									<b>int</b>[] <span id="r15 rd" class="r15 r">bd</span> = <b>new</b> <b>int</b>[1];
+									<b>int</b>[][] <span id="r16 rd" class="r16 r">tl</span> = <b>new</b> <b>int</b>[1][];
+									<b>int</b>[][] <span id="r17 rd" class="r17 r">td</span> = <b>new</b> <b>int</b>[1][];
+									
+									<a href="InfTree.cs.html#d4c28aee71fdfc0a" class="t t">InfTree</a>.<a href="InfTree.cs.html#056c32d555e46d61" class="i method">inflate_trees_fixed</a>(<span class="r14 r">bl</span>, <span class="r15 r">bd</span>, <span class="r16 r">tl</span>, <span class="r17 r">td</span>, <span class="r5 r">z</span>);
+									<a href="#dc8265789eb483ab" class="i field">codes</a> = <b>new</b> <a href="InfCodes.cs.html#bec6133bdbd9005d" class="t constructor">InfCodes</a>(<span class="r14 r">bl</span>[0], <span class="r15 r">bd</span>[0], <span class="r16 r">tl</span>[0], <span class="r17 r">td</span>[0], <span class="r5 r">z</span>);
+								}
+								
+								{
+									<span class="r8 r">b</span> = <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r8 r">b</span>, (3)); <span class="r9 r">k</span> -= (3);
+								}
+								
+								<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#ca24470e0939c720" class="i field">CODES</a>;
+								<b>break</b>;
+							
+							<b>case</b> 2:  <span class="c">// dynamic</span>
+								
+								{
+									<span class="r8 r">b</span> = <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r8 r">b</span>, (3)); <span class="r9 r">k</span> -= (3);
+								}
+								
+								<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#f3c4612abcbab364" class="i field">TABLE</a>;
+								<b>break</b>;
+							
+							<b>case</b> 3:  <span class="c">// illegal</span>
+								
+								{
+									<span class="r8 r">b</span> = <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r8 r">b</span>, (3)); <span class="r9 r">k</span> -= (3);
+								}
+								<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#2b11b386fe773d02" class="i field">BAD</a>;
+								<span class="r5 r">z</span>.<a href="ZStream.cs.html#5fca80ad93aac623" class="i field">msg</a> = <span class="s">&quot;invalid block type&quot;</span>;
+								<span class="r6 r">r</span> = <a href="#e349c40d80ddd60a" class="i field">Z_DATA_ERROR</a>;
+								
+								<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+								<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+								<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+								<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+							}
+						<b>break</b>;
+					
+					<b>case</b> <a href="#a52c151d131ac92a" class="i field">LENS</a>: 
+						
+						<b>while</b> (<span class="r9 r">k</span> &lt; (32))
+						{
+							<b>if</b> (<span class="r11 r">n</span> != 0)
+							{
+								<span class="r6 r">r</span> = <a href="#32324315d96b5c08" class="i field">Z_OK</a>;
+							}
+							<b>else</b>
+							{
+								<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+								<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>;
+								<span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+								<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+								<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+							}
+							;
+							<span class="r11 r">n</span>--;
+							<span class="r8 r">b</span> |= (<span class="r5 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r10 r">p</span>++] &amp; 0xff) &lt;&lt; <span class="r9 r">k</span>;
+							<span class="r9 r">k</span> += 8;
+						}
+						
+						<b>if</b> (((<a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>((~ <span class="r8 r">b</span>), 16)) &amp; 0xffff) != (<span class="r8 r">b</span> &amp; 0xffff))
+						{
+							<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#2b11b386fe773d02" class="i field">BAD</a>;
+							<span class="r5 r">z</span>.<a href="ZStream.cs.html#5fca80ad93aac623" class="i field">msg</a> = <span class="s">&quot;invalid stored block lengths&quot;</span>;
+							<span class="r6 r">r</span> = <a href="#e349c40d80ddd60a" class="i field">Z_DATA_ERROR</a>;
+							
+							<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+							<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+							<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+							<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+						}
+						<a href="#cde983c2e6e23d03" class="i field">left</a> = (<span class="r8 r">b</span> &amp; 0xffff);
+						<span class="r8 r">b</span> = <span class="r9 r">k</span> = 0; <span class="c">// dump bits</span>
+						<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#cde983c2e6e23d03" class="i field">left</a> != 0?<a href="#b44c8aa6598c8156" class="i field">STORED</a>:(<a href="#1fb7f9d78d0f5e08" class="i field">last</a> != 0?<a href="#8b35833dc8f2dbe8" class="i field">DRY</a>:<a href="#97cf59ff6b3ce64d" class="i field">TYPE</a>);
+						<b>break</b>;
+					
+					<b>case</b> <a href="#b44c8aa6598c8156" class="i field">STORED</a>: 
+						<b>if</b> (<span class="r11 r">n</span> == 0)
+						{
+							<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+							<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+							<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+							<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+						}
+						
+						<b>if</b> (<span class="r13 r">m</span> == 0)
+						{
+							<b>if</b> (<span class="r12 r">q</span> == <a href="#3baa9d50341751a4" class="i field">end</a> &amp;&amp; <a href="#234622f49ee0a5cb" class="i field">read</a> != 0)
+							{
+								<span class="r12 r">q</span> = 0; <span class="r13 r">m</span> = (<b>int</b>) (<span class="r12 r">q</span> &lt; <a href="#234622f49ee0a5cb" class="i field">read</a>?<a href="#234622f49ee0a5cb" class="i field">read</a> - <span class="r12 r">q</span> - 1:<a href="#3baa9d50341751a4" class="i field">end</a> - <span class="r12 r">q</span>);
+							}
+							<b>if</b> (<span class="r13 r">m</span> == 0)
+							{
+								<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+								<span class="r6 r">r</span> = <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+								<span class="r12 r">q</span> = <a href="#971fddb83f50f4d7" class="i field">write</a>; <span class="r13 r">m</span> = (<b>int</b>) (<span class="r12 r">q</span> &lt; <a href="#234622f49ee0a5cb" class="i field">read</a>?<a href="#234622f49ee0a5cb" class="i field">read</a> - <span class="r12 r">q</span> - 1:<a href="#3baa9d50341751a4" class="i field">end</a> - <span class="r12 r">q</span>);
+								<b>if</b> (<span class="r12 r">q</span> == <a href="#3baa9d50341751a4" class="i field">end</a> &amp;&amp; <a href="#234622f49ee0a5cb" class="i field">read</a> != 0)
+								{
+									<span class="r12 r">q</span> = 0; <span class="r13 r">m</span> = (<b>int</b>) (<span class="r12 r">q</span> &lt; <a href="#234622f49ee0a5cb" class="i field">read</a>?<a href="#234622f49ee0a5cb" class="i field">read</a> - <span class="r12 r">q</span> - 1:<a href="#3baa9d50341751a4" class="i field">end</a> - <span class="r12 r">q</span>);
+								}
+								<b>if</b> (<span class="r13 r">m</span> == 0)
+								{
+									<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+									<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+									<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+									<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+								}
+							}
+						}
+						<span class="r6 r">r</span> = <a href="#32324315d96b5c08" class="i field">Z_OK</a>;
+						
+						<span class="r7 r">t</span> = <a href="#cde983c2e6e23d03" class="i field">left</a>;
+						<b>if</b> (<span class="r7 r">t</span> &gt; <span class="r11 r">n</span>)
+							<span class="r7 r">t</span> = <span class="r11 r">n</span>;
+						<b>if</b> (<span class="r7 r">t</span> &gt; <span class="r13 r">m</span>)
+							<span class="r7 r">t</span> = <span class="r13 r">m</span>;
+						<a href="@0@mscorlib/A.html#156e066ecc4ccedf" class="t t">Array</a>.<a href="@0@mscorlib/A.html#7441c6721593042c" class="i method">Copy</a>(<span class="r5 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>, <span class="r10 r">p</span>, <a href="#9871bb17d4542e31" class="i field">window</a>, <span class="r12 r">q</span>, <span class="r7 r">t</span>);
+						<span class="r10 r">p</span> += <span class="r7 r">t</span>; <span class="r11 r">n</span> -= <span class="r7 r">t</span>;
+						<span class="r12 r">q</span> += <span class="r7 r">t</span>; <span class="r13 r">m</span> -= <span class="r7 r">t</span>;
+						<b>if</b> ((<a href="#cde983c2e6e23d03" class="i field">left</a> -= <span class="r7 r">t</span>) != 0)
+							<b>break</b>;
+						<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#1fb7f9d78d0f5e08" class="i field">last</a> != 0?<a href="#8b35833dc8f2dbe8" class="i field">DRY</a>:<a href="#97cf59ff6b3ce64d" class="i field">TYPE</a>;
+						<b>break</b>;
+					
+					<b>case</b> <a href="#f3c4612abcbab364" class="i field">TABLE</a>: 
+						
+						<b>while</b> (<span class="r9 r">k</span> &lt; (14))
+						{
+							<b>if</b> (<span class="r11 r">n</span> != 0)
+							{
+								<span class="r6 r">r</span> = <a href="#32324315d96b5c08" class="i field">Z_OK</a>;
+							}
+							<b>else</b>
+							{
+								<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+								<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>;
+								<span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+								<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+								<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+							}
+							;
+							<span class="r11 r">n</span>--;
+							<span class="r8 r">b</span> |= (<span class="r5 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r10 r">p</span>++] &amp; 0xff) &lt;&lt; <span class="r9 r">k</span>;
+							<span class="r9 r">k</span> += 8;
+						}
+						
+						<a href="#59056edc05b4901a" class="i field">table</a> = <span class="r7 r">t</span> = (<span class="r8 r">b</span> &amp; 0x3fff);
+						<b>if</b> ((<span class="r7 r">t</span> &amp; 0x1f) &gt; 29 || ((<span class="r7 r">t</span> &gt;&gt; 5) &amp; 0x1f) &gt; 29)
+						{
+							<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#2b11b386fe773d02" class="i field">BAD</a>;
+							<span class="r5 r">z</span>.<a href="ZStream.cs.html#5fca80ad93aac623" class="i field">msg</a> = <span class="s">&quot;too many length or distance symbols&quot;</span>;
+							<span class="r6 r">r</span> = <a href="#e349c40d80ddd60a" class="i field">Z_DATA_ERROR</a>;
+							
+							<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+							<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+							<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+							<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+						}
+						<span class="r7 r">t</span> = 258 + (<span class="r7 r">t</span> &amp; 0x1f) + ((<span class="r7 r">t</span> &gt;&gt; 5) &amp; 0x1f);
+						<a href="#c23961f35998eab1" class="i field">blens</a> = <b>new</b> <b>int</b>[<span class="r7 r">t</span>];
+						
+						{
+							<span class="r8 r">b</span> = <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r8 r">b</span>, (14)); <span class="r9 r">k</span> -= (14);
+						}
+						
+						<a href="#4d78353dc134c829" class="i field">index</a> = 0;
+						<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#bfa1754653ed1cc3" class="i field">BTREE</a>;
+						<b>goto</b> <b>case</b> <a href="#bfa1754653ed1cc3" class="i field">BTREE</a>;
+					
+					<b>case</b> <a href="#bfa1754653ed1cc3" class="i field">BTREE</a>: 
+						<b>while</b> (<a href="#4d78353dc134c829" class="i field">index</a> &lt; 4 + (<a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<a href="#59056edc05b4901a" class="i field">table</a>, 10)))
+						{
+							<b>while</b> (<span class="r9 r">k</span> &lt; (3))
+							{
+								<b>if</b> (<span class="r11 r">n</span> != 0)
+								{
+									<span class="r6 r">r</span> = <a href="#32324315d96b5c08" class="i field">Z_OK</a>;
+								}
+								<b>else</b>
+								{
+									<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+									<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>;
+									<span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+									<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+									<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+								}
+								;
+								<span class="r11 r">n</span>--;
+								<span class="r8 r">b</span> |= (<span class="r5 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r10 r">p</span>++] &amp; 0xff) &lt;&lt; <span class="r9 r">k</span>;
+								<span class="r9 r">k</span> += 8;
+							}
+							
+							<a href="#c23961f35998eab1" class="i field">blens</a>[<a href="#99172c2377cd4008" class="i field">border</a>[<a href="#4d78353dc134c829" class="i field">index</a>++]] = <span class="r8 r">b</span> &amp; 7;
+							
+							{
+								<span class="r8 r">b</span> = <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r8 r">b</span>, (3)); <span class="r9 r">k</span> -= (3);
+							}
+						}
+						
+						<b>while</b> (<a href="#4d78353dc134c829" class="i field">index</a> &lt; 19)
+						{
+							<a href="#c23961f35998eab1" class="i field">blens</a>[<a href="#99172c2377cd4008" class="i field">border</a>[<a href="#4d78353dc134c829" class="i field">index</a>++]] = 0;
+						}
+						
+						<a href="#0a3c9d5fbaf09e5e" class="i field">bb</a>[0] = 7;
+						<span class="r7 r">t</span> = <a href="InfTree.cs.html#d4c28aee71fdfc0a" class="t t">InfTree</a>.<a href="InfTree.cs.html#83d0104202f22e68" class="i method">inflate_trees_bits</a>(<a href="#c23961f35998eab1" class="i field">blens</a>, <a href="#0a3c9d5fbaf09e5e" class="i field">bb</a>, <a href="#212a40c36a5feb7b" class="i field">tb</a>, <a href="#fa36ab6ed878448b" class="i field">hufts</a>, <span class="r5 r">z</span>);
+						<b>if</b> (<span class="r7 r">t</span> != <a href="#32324315d96b5c08" class="i field">Z_OK</a>)
+						{
+							<span class="r6 r">r</span> = <span class="r7 r">t</span>;
+							<b>if</b> (<span class="r6 r">r</span> == <a href="#e349c40d80ddd60a" class="i field">Z_DATA_ERROR</a>)
+							{
+								<a href="#c23961f35998eab1" class="i field">blens</a> = <b>null</b>;
+								<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#2b11b386fe773d02" class="i field">BAD</a>;
+							}
+							
+							<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+							<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+							<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+							<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+						}
+						
+						<a href="#4d78353dc134c829" class="i field">index</a> = 0;
+						<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#b390b9b92c05903c" class="i field">DTREE</a>;
+						<b>goto</b> <b>case</b> <a href="#b390b9b92c05903c" class="i field">DTREE</a>;
+					
+					<b>case</b> <a href="#b390b9b92c05903c" class="i field">DTREE</a>: 
+						<b>while</b> (<b>true</b>)
+						{
+							<span class="r7 r">t</span> = <a href="#59056edc05b4901a" class="i field">table</a>;
+							<b>if</b> (!(<a href="#4d78353dc134c829" class="i field">index</a> &lt; 258 + (<span class="r7 r">t</span> &amp; 0x1f) + ((<span class="r7 r">t</span> &gt;&gt; 5) &amp; 0x1f)))
+							{
+								<b>break</b>;
+							}
+							
+							
+							<b>int</b> <span id="r18 rd" class="r18 r">i</span>, <span id="r19 rd" class="r19 r">j</span>, <span id="r20 rd" class="r20 r">c</span>;
+							
+							<span class="r7 r">t</span> = <a href="#0a3c9d5fbaf09e5e" class="i field">bb</a>[0];
+							
+							<b>while</b> (<span class="r9 r">k</span> &lt; (<span class="r7 r">t</span>))
+							{
+								<b>if</b> (<span class="r11 r">n</span> != 0)
+								{
+									<span class="r6 r">r</span> = <a href="#32324315d96b5c08" class="i field">Z_OK</a>;
+								}
+								<b>else</b>
+								{
+									<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+									<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>;
+									<span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+									<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+									<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+								}
+								;
+								<span class="r11 r">n</span>--;
+								<span class="r8 r">b</span> |= (<span class="r5 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r10 r">p</span>++] &amp; 0xff) &lt;&lt; <span class="r9 r">k</span>;
+								<span class="r9 r">k</span> += 8;
+							}
+							
+							<b>if</b> (<a href="#212a40c36a5feb7b" class="i field">tb</a>[0] == - 1)
+							{
+								<span class="c">//System.err.println(&quot;null...&quot;);</span>
+							}
+							
+							<span class="r7 r">t</span> = <a href="#fa36ab6ed878448b" class="i field">hufts</a>[(<a href="#212a40c36a5feb7b" class="i field">tb</a>[0] + (<span class="r8 r">b</span> &amp; <a href="#5ab77054c0c935c1" class="i field">inflate_mask</a>[<span class="r7 r">t</span>])) * 3 + 1];
+							<span class="r20 r">c</span> = <a href="#fa36ab6ed878448b" class="i field">hufts</a>[(<a href="#212a40c36a5feb7b" class="i field">tb</a>[0] + (<span class="r8 r">b</span> &amp; <a href="#5ab77054c0c935c1" class="i field">inflate_mask</a>[<span class="r7 r">t</span>])) * 3 + 2];
+							
+							<b>if</b> (<span class="r20 r">c</span> &lt; 16)
+							{
+								<span class="r8 r">b</span> = <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r8 r">b</span>, (<span class="r7 r">t</span>)); <span class="r9 r">k</span> -= (<span class="r7 r">t</span>);
+								<a href="#c23961f35998eab1" class="i field">blens</a>[<a href="#4d78353dc134c829" class="i field">index</a>++] = <span class="r20 r">c</span>;
+							}
+							<b>else</b>
+							{
+								<span class="c">// c == 16..18</span>
+								<span class="r18 r">i</span> = <span class="r20 r">c</span> == 18?7:<span class="r20 r">c</span> - 14;
+								<span class="r19 r">j</span> = <span class="r20 r">c</span> == 18?11:3;
+								
+								<b>while</b> (<span class="r9 r">k</span> &lt; (<span class="r7 r">t</span> + <span class="r18 r">i</span>))
+								{
+									<b>if</b> (<span class="r11 r">n</span> != 0)
+									{
+										<span class="r6 r">r</span> = <a href="#32324315d96b5c08" class="i field">Z_OK</a>;
+									}
+									<b>else</b>
+									{
+										<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+										<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>;
+										<span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+										<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+										<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+									}
+									;
+									<span class="r11 r">n</span>--;
+									<span class="r8 r">b</span> |= (<span class="r5 r">z</span>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a>[<span class="r10 r">p</span>++] &amp; 0xff) &lt;&lt; <span class="r9 r">k</span>;
+									<span class="r9 r">k</span> += 8;
+								}
+								
+								<span class="r8 r">b</span> = <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r8 r">b</span>, (<span class="r7 r">t</span>)); <span class="r9 r">k</span> -= (<span class="r7 r">t</span>);
+								
+								<span class="r19 r">j</span> += (<span class="r8 r">b</span> &amp; <a href="#5ab77054c0c935c1" class="i field">inflate_mask</a>[<span class="r18 r">i</span>]);
+								
+								<span class="r8 r">b</span> = <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r8 r">b</span>, (<span class="r18 r">i</span>)); <span class="r9 r">k</span> -= (<span class="r18 r">i</span>);
+								
+								<span class="r18 r">i</span> = <a href="#4d78353dc134c829" class="i field">index</a>;
+								<span class="r7 r">t</span> = <a href="#59056edc05b4901a" class="i field">table</a>;
+								<b>if</b> (<span class="r18 r">i</span> + <span class="r19 r">j</span> &gt; 258 + (<span class="r7 r">t</span> &amp; 0x1f) + ((<span class="r7 r">t</span> &gt;&gt; 5) &amp; 0x1f) || (<span class="r20 r">c</span> == 16 &amp;&amp; <span class="r18 r">i</span> &lt; 1))
+								{
+									<a href="#c23961f35998eab1" class="i field">blens</a> = <b>null</b>;
+									<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#2b11b386fe773d02" class="i field">BAD</a>;
+									<span class="r5 r">z</span>.<a href="ZStream.cs.html#5fca80ad93aac623" class="i field">msg</a> = <span class="s">&quot;invalid bit length repeat&quot;</span>;
+									<span class="r6 r">r</span> = <a href="#e349c40d80ddd60a" class="i field">Z_DATA_ERROR</a>;
+									
+									<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+									<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+									<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+									<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+								}
+								
+								<span class="r20 r">c</span> = <span class="r20 r">c</span> == 16?<a href="#c23961f35998eab1" class="i field">blens</a>[<span class="r18 r">i</span> - 1]:0;
+								<b>do</b> 
+								{
+									<a href="#c23961f35998eab1" class="i field">blens</a>[<span class="r18 r">i</span>++] = <span class="r20 r">c</span>;
+								}
+								<b>while</b> (--<span class="r19 r">j</span> != 0);
+								<a href="#4d78353dc134c829" class="i field">index</a> = <span class="r18 r">i</span>;
+							}
+						}
+						
+						<a href="#212a40c36a5feb7b" class="i field">tb</a>[0] = - 1;
+						{
+							<b>int</b>[] <span id="r21 rd" class="r21 r">bl</span> = <b>new</b> <b>int</b>[1];
+							<b>int</b>[] <span id="r22 rd" class="r22 r">bd</span> = <b>new</b> <b>int</b>[1];
+							<b>int</b>[] <span id="r23 rd" class="r23 r">tl</span> = <b>new</b> <b>int</b>[1];
+							<b>int</b>[] <span id="r24 rd" class="r24 r">td</span> = <b>new</b> <b>int</b>[1];
+							
+							
+							<span class="r21 r">bl</span>[0] = 9; <span class="c">// must be &lt;= 9 for lookahead assumptions</span>
+							<span class="r22 r">bd</span>[0] = 6; <span class="c">// must be &lt;= 9 for lookahead assumptions</span>
+							<span class="r7 r">t</span> = <a href="#59056edc05b4901a" class="i field">table</a>;
+							<span class="r7 r">t</span> = <a href="InfTree.cs.html#d4c28aee71fdfc0a" class="t t">InfTree</a>.<a href="InfTree.cs.html#45ed23b4a0702fb2" class="i method">inflate_trees_dynamic</a>(257 + (<span class="r7 r">t</span> &amp; 0x1f), 1 + ((<span class="r7 r">t</span> &gt;&gt; 5) &amp; 0x1f), <a href="#c23961f35998eab1" class="i field">blens</a>, <span class="r21 r">bl</span>, <span class="r22 r">bd</span>, <span class="r23 r">tl</span>, <span class="r24 r">td</span>, <a href="#fa36ab6ed878448b" class="i field">hufts</a>, <span class="r5 r">z</span>);
+							<b>if</b> (<span class="r7 r">t</span> != <a href="#32324315d96b5c08" class="i field">Z_OK</a>)
+							{
+								<b>if</b> (<span class="r7 r">t</span> == <a href="#e349c40d80ddd60a" class="i field">Z_DATA_ERROR</a>)
+								{
+									<a href="#c23961f35998eab1" class="i field">blens</a> = <b>null</b>;
+									<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#2b11b386fe773d02" class="i field">BAD</a>;
+								}
+								<span class="r6 r">r</span> = <span class="r7 r">t</span>;
+								
+								<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+								<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+								<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+								<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+							}
+							
+							<a href="#dc8265789eb483ab" class="i field">codes</a> = <b>new</b> <a href="InfCodes.cs.html#7587a585c0ac4aa9" class="t constructor">InfCodes</a>(<span class="r21 r">bl</span>[0], <span class="r22 r">bd</span>[0], <a href="#fa36ab6ed878448b" class="i field">hufts</a>, <span class="r23 r">tl</span>[0], <a href="#fa36ab6ed878448b" class="i field">hufts</a>, <span class="r24 r">td</span>[0], <span class="r5 r">z</span>);
+						}
+						<a href="#c23961f35998eab1" class="i field">blens</a> = <b>null</b>;
+						<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#ca24470e0939c720" class="i field">CODES</a>;
+						<b>goto</b> <b>case</b> <a href="#ca24470e0939c720" class="i field">CODES</a>;
+					
+					<b>case</b> <a href="#ca24470e0939c720" class="i field">CODES</a>: 
+						<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+						<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+						<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+						
+						<b>if</b> ((<span class="r6 r">r</span> = <a href="#dc8265789eb483ab" class="i field">codes</a>.<a href="InfCodes.cs.html#d52498f6d348d204" class="i method">proc</a>(<a href="#502251477a375329" class="k">this</a>, <span class="r5 r">z</span>, <span class="r6 r">r</span>)) != <a href="#7d9c88eecbf58954" class="i field">Z_STREAM_END</a>)
+						{
+							<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+						}
+						<span class="r6 r">r</span> = <a href="#32324315d96b5c08" class="i field">Z_OK</a>;
+						<a href="#dc8265789eb483ab" class="i field">codes</a>.<a href="InfCodes.cs.html#aa7f97621051092d" class="i method">free</a>(<span class="r5 r">z</span>);
+						
+						<span class="r10 r">p</span> = <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r11 r">n</span> = <span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a>; <span class="r8 r">b</span> = <a href="#e2d346d9187122f4" class="i field">bitb</a>; <span class="r9 r">k</span> = <a href="#2803866fc8accfde" class="i field">bitk</a>;
+						<span class="r12 r">q</span> = <a href="#971fddb83f50f4d7" class="i field">write</a>; <span class="r13 r">m</span> = (<b>int</b>) (<span class="r12 r">q</span> &lt; <a href="#234622f49ee0a5cb" class="i field">read</a>?<a href="#234622f49ee0a5cb" class="i field">read</a> - <span class="r12 r">q</span> - 1:<a href="#3baa9d50341751a4" class="i field">end</a> - <span class="r12 r">q</span>);
+						
+						<b>if</b> (<a href="#1fb7f9d78d0f5e08" class="i field">last</a> == 0)
+						{
+							<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#97cf59ff6b3ce64d" class="i field">TYPE</a>;
+							<b>break</b>;
+						}
+						<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#8b35833dc8f2dbe8" class="i field">DRY</a>;
+						<b>goto</b> <b>case</b> <a href="#8b35833dc8f2dbe8" class="i field">DRY</a>;
+					
+					<b>case</b> <a href="#8b35833dc8f2dbe8" class="i field">DRY</a>: 
+						<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+						<span class="r6 r">r</span> = <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+						<span class="r12 r">q</span> = <a href="#971fddb83f50f4d7" class="i field">write</a>; <span class="r13 r">m</span> = (<b>int</b>) (<span class="r12 r">q</span> &lt; <a href="#234622f49ee0a5cb" class="i field">read</a>?<a href="#234622f49ee0a5cb" class="i field">read</a> - <span class="r12 r">q</span> - 1:<a href="#3baa9d50341751a4" class="i field">end</a> - <span class="r12 r">q</span>);
+						<b>if</b> (<a href="#234622f49ee0a5cb" class="i field">read</a> != <a href="#971fddb83f50f4d7" class="i field">write</a>)
+						{
+							<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+							<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+							<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+							<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+						}
+						<a href="#6f059981a85bb3a3" class="i field">mode</a> = <a href="#0fa9de0a89792f93" class="i field">DONE</a>;
+						<b>goto</b> <b>case</b> <a href="#0fa9de0a89792f93" class="i field">DONE</a>;
+					
+					<b>case</b> <a href="#0fa9de0a89792f93" class="i field">DONE</a>: 
+						<span class="r6 r">r</span> = <a href="#7d9c88eecbf58954" class="i field">Z_STREAM_END</a>;
+						
+						<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+						<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+						<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+						<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+					
+					<b>case</b> <a href="#2b11b386fe773d02" class="i field">BAD</a>: 
+						<span class="r6 r">r</span> = <a href="#e349c40d80ddd60a" class="i field">Z_DATA_ERROR</a>;
+						
+						<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+						<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+						<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+						<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+					
+					
+					<b>default</b>: 
+						<span class="r6 r">r</span> = <a href="#fd1d8f39c80c585a" class="i field">Z_STREAM_ERROR</a>;
+						
+						<a href="#e2d346d9187122f4" class="i field">bitb</a> = <span class="r8 r">b</span>; <a href="#2803866fc8accfde" class="i field">bitk</a> = <span class="r9 r">k</span>;
+						<span class="r5 r">z</span>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <span class="r11 r">n</span>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a> += <span class="r10 r">p</span> - <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a>; <span class="r5 r">z</span>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = <span class="r10 r">p</span>;
+						<a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r12 r">q</span>;
+						<b>return</b> <a href="#6c3329c9483c3497" class="i method">inflate_flush</a>(<span class="r5 r">z</span>, <span class="r6 r">r</span>);
+					
+				}
+			}
+		}
+		
+		<b>internal void</b>  <a id="7e0c811819a36ff0" href="../R/7e0c811819a36ff0.html" target="n" data-glyph="74,1" class="i method">free</a>(<a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <span id="r25 rd" class="r25 r">z</span>)
+		{
+			<a href="#044181185caea346" class="i method">reset</a>(<span class="r25 r">z</span>, <b>null</b>);
+			<a href="#9871bb17d4542e31" class="i field">window</a> = <b>null</b>;
+			<a href="#fa36ab6ed878448b" class="i field">hufts</a> = <b>null</b>;
+			<span class="c">//ZFREE(z, s);</span>
+		}
+		
+		<b>internal void</b>  <a id="f356da4f60d32349" href="../R/f356da4f60d32349.html" target="n" data-glyph="74,1" class="i method">set_dictionary</a>(<b>byte</b>[] <span id="r26 rd" class="r26 r">d</span>, <b>int</b> <span id="r27 rd" class="r27 r">start</span>, <b>int</b> <span id="r28 rd" class="r28 r">n</span>)
+		{
+			<a href="@0@mscorlib/A.html#156e066ecc4ccedf" class="t t">Array</a>.<a href="@0@mscorlib/A.html#7441c6721593042c" class="i method">Copy</a>(<span class="r26 r">d</span>, <span class="r27 r">start</span>, <a href="#9871bb17d4542e31" class="i field">window</a>, 0, <span class="r28 r">n</span>);
+			<a href="#234622f49ee0a5cb" class="i field">read</a> = <a href="#971fddb83f50f4d7" class="i field">write</a> = <span class="r28 r">n</span>;
+		}
+		
+		<span class="c">// Returns true if inflate is currently at the end of a block generated</span>
+		<span class="c">// by Z_SYNC_FLUSH or Z_FULL_FLUSH. </span>
+		<b>internal int</b> <a id="2d9e3e4d502cfe31" href="../R/2d9e3e4d502cfe31.html" target="n" data-glyph="74,1" class="i method">sync_point</a>()
+		{
+			<b>return</b> <a href="#6f059981a85bb3a3" class="i field">mode</a> == <a href="#a52c151d131ac92a" class="i field">LENS</a>?1:0;
+		}
+		
+		<span class="c">// copy as much as possible from the sliding window to the output area</span>
+		<b>internal int</b> <a id="6c3329c9483c3497" href="../R/6c3329c9483c3497.html" target="n" data-glyph="74,1" class="i method">inflate_flush</a>(<a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <span id="r29 rd" class="r29 r">z</span>, <b>int</b> <span id="r30 rd" class="r30 r">r</span>)
+		{
+			<b>int</b> <span id="r31 rd" class="r31 r">n</span>;
+			<b>int</b> <span id="r32 rd" class="r32 r">p</span>;
+			<b>int</b> <span id="r33 rd" class="r33 r">q</span>;
+			
+			<span class="c">// local copies of source and destination pointers</span>
+			<span class="r32 r">p</span> = <span class="r29 r">z</span>.<a href="ZStream.cs.html#a10769e24d50abed" class="i field">next_out_index</a>;
+			<span class="r33 r">q</span> = <a href="#234622f49ee0a5cb" class="i field">read</a>;
+			
+			<span class="c">// compute number of bytes to copy as far as end of window</span>
+			<span class="r31 r">n</span> = (<b>int</b>) ((<span class="r33 r">q</span> &lt;= <a href="#971fddb83f50f4d7" class="i field">write</a>?<a href="#971fddb83f50f4d7" class="i field">write</a>:<a href="#3baa9d50341751a4" class="i field">end</a>) - <span class="r33 r">q</span>);
+			<b>if</b> (<span class="r31 r">n</span> &gt; <span class="r29 r">z</span>.<a href="ZStream.cs.html#41bbdb79e61b8518" class="i field">avail_out</a>)
+				<span class="r31 r">n</span> = <span class="r29 r">z</span>.<a href="ZStream.cs.html#41bbdb79e61b8518" class="i field">avail_out</a>;
+			<b>if</b> (<span class="r31 r">n</span> != 0 &amp;&amp; <span class="r30 r">r</span> == <a href="#66c3da5322c75783" class="i field">Z_BUF_ERROR</a>)
+				<span class="r30 r">r</span> = <a href="#32324315d96b5c08" class="i field">Z_OK</a>;
+			
+			<span class="c">// update counters</span>
+			<span class="r29 r">z</span>.<a href="ZStream.cs.html#41bbdb79e61b8518" class="i field">avail_out</a> -= <span class="r31 r">n</span>;
+			<span class="r29 r">z</span>.<a href="ZStream.cs.html#cbbe8a5a89555d7d" class="i field">total_out</a> += <span class="r31 r">n</span>;
+			
+			<span class="c">// update check information</span>
+			<b>if</b> (<a href="#0810abb4de0aade6" class="i field">checkfn</a> != <b>null</b>)
+				<span class="r29 r">z</span>.<a href="ZStream.cs.html#1063ffa41b0fb599" class="i field">adler</a> = <a href="#aecb444084105c5b" class="i field">check</a> = <span class="r29 r">z</span>.<a href="ZStream.cs.html#8cde0a3999744a52" class="i field">_adler</a>.<a href="Adler32.cs.html#d5495b7b6d17d765" class="i method">adler32</a>(<a href="#aecb444084105c5b" class="i field">check</a>, <a href="#9871bb17d4542e31" class="i field">window</a>, <span class="r33 r">q</span>, <span class="r31 r">n</span>);
+			
+			<span class="c">// copy as far as end of window</span>
+			<a href="@0@mscorlib/A.html#156e066ecc4ccedf" class="t t">Array</a>.<a href="@0@mscorlib/A.html#7441c6721593042c" class="i method">Copy</a>(<a href="#9871bb17d4542e31" class="i field">window</a>, <span class="r33 r">q</span>, <span class="r29 r">z</span>.<a href="ZStream.cs.html#74fa8b4826c731d2" class="i field">next_out</a>, <span class="r32 r">p</span>, <span class="r31 r">n</span>);
+			<span class="r32 r">p</span> += <span class="r31 r">n</span>;
+			<span class="r33 r">q</span> += <span class="r31 r">n</span>;
+			
+			<span class="c">// see if more to copy at beginning of window</span>
+			<b>if</b> (<span class="r33 r">q</span> == <a href="#3baa9d50341751a4" class="i field">end</a>)
+			{
+				<span class="c">// wrap pointers</span>
+				<span class="r33 r">q</span> = 0;
+				<b>if</b> (<a href="#971fddb83f50f4d7" class="i field">write</a> == <a href="#3baa9d50341751a4" class="i field">end</a>)
+					<a href="#971fddb83f50f4d7" class="i field">write</a> = 0;
+				
+				<span class="c">// compute bytes to copy</span>
+				<span class="r31 r">n</span> = <a href="#971fddb83f50f4d7" class="i field">write</a> - <span class="r33 r">q</span>;
+				<b>if</b> (<span class="r31 r">n</span> &gt; <span class="r29 r">z</span>.<a href="ZStream.cs.html#41bbdb79e61b8518" class="i field">avail_out</a>)
+					<span class="r31 r">n</span> = <span class="r29 r">z</span>.<a href="ZStream.cs.html#41bbdb79e61b8518" class="i field">avail_out</a>;
+				<b>if</b> (<span class="r31 r">n</span> != 0 &amp;&amp; <span class="r30 r">r</span> == <a href="#66c3da5322c75783" class="i field">Z_BUF_ERROR</a>)
+					<span class="r30 r">r</span> = <a href="#32324315d96b5c08" class="i field">Z_OK</a>;
+				
+				<span class="c">// update counters</span>
+				<span class="r29 r">z</span>.<a href="ZStream.cs.html#41bbdb79e61b8518" class="i field">avail_out</a> -= <span class="r31 r">n</span>;
+				<span class="r29 r">z</span>.<a href="ZStream.cs.html#cbbe8a5a89555d7d" class="i field">total_out</a> += <span class="r31 r">n</span>;
+				
+				<span class="c">// update check information</span>
+				<b>if</b> (<a href="#0810abb4de0aade6" class="i field">checkfn</a> != <b>null</b>)
+					<span class="r29 r">z</span>.<a href="ZStream.cs.html#1063ffa41b0fb599" class="i field">adler</a> = <a href="#aecb444084105c5b" class="i field">check</a> = <span class="r29 r">z</span>.<a href="ZStream.cs.html#8cde0a3999744a52" class="i field">_adler</a>.<a href="Adler32.cs.html#d5495b7b6d17d765" class="i method">adler32</a>(<a href="#aecb444084105c5b" class="i field">check</a>, <a href="#9871bb17d4542e31" class="i field">window</a>, <span class="r33 r">q</span>, <span class="r31 r">n</span>);
+				
+				<span class="c">// copy</span>
+				<a href="@0@mscorlib/A.html#156e066ecc4ccedf" class="t t">Array</a>.<a href="@0@mscorlib/A.html#7441c6721593042c" class="i method">Copy</a>(<a href="#9871bb17d4542e31" class="i field">window</a>, <span class="r33 r">q</span>, <span class="r29 r">z</span>.<a href="ZStream.cs.html#74fa8b4826c731d2" class="i field">next_out</a>, <span class="r32 r">p</span>, <span class="r31 r">n</span>);
+				<span class="r32 r">p</span> += <span class="r31 r">n</span>;
+				<span class="r33 r">q</span> += <span class="r31 r">n</span>;
+			}
+			
+			<span class="c">// update pointers</span>
+			<span class="r29 r">z</span>.<a href="ZStream.cs.html#a10769e24d50abed" class="i field">next_out_index</a> = <span class="r32 r">p</span>;
+			<a href="#234622f49ee0a5cb" class="i field">read</a> = <span class="r33 r">q</span>;
+			
+			<span class="c">// done</span>
+			<b>return</b> <span class="r30 r">r</span>;
+		}
+	}
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html><head><title>Scene.xaml.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(89);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#ControlsAndLayout/Scene.xaml.cs" target="_top">Scene.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#ControlsAndLayout" target="_top">HelpProjects\WPF-MORE\Getting Started\ControlsAndLayout\ControlsAndLayout\ControlsAndLayout.csproj</a> (ControlsAndLayout)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Markup</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+
+<b>namespace</b> <span class="i n">ControlsAndLayout</span>
+{
+    <b>public</b> <a href="P/51e2e5dd30fc9e4f.html" target="s" class="k">partial</a> <b>class</b> <a id="51e2e5dd30fc9e4f" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="3551b3e88ddadd47">Scene</span></a>
+    {
+        <b>public bool</b> <a id="d904cdc6adc18f8a" href="R/d904cdc6adc18f8a.html" target="n" data-glyph="42,1" class="i field">RealTimeUpdate</a> = <b>true</b>;
+
+        <b>private void</b> <a id="56b6e35296cebdb2" href="R/56b6e35296cebdb2.html" target="n" data-glyph="76,1" class="i method">HandleSelectionChanged</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@PresentationFramework/A.html#c488465397cb1452" class="t t">SelectionChangedEventArgs</a> <span id="r1 rd" class="r1 r">args</span>)
+        {
+            <b>if</b> (<span class="r0 r">sender</span> == <b>null</b>)
+                <b>return</b>;
+
+            <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#56e176b80c5b3831" class="i field">Details</a>.<a href="@0@PresentationFramework/A.html#e4aaca7514916173" class="i property">DataContext</a> = (<span class="r0 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#fef199e8c0e96177" class="t t">ListBox</a>).<a href="@0@PresentationFramework/A.html#e4aaca7514916173" class="i property">DataContext</a>;
+        }
+
+        <b>protected void</b> <a id="fe7f34440990e9db" href="R/fe7f34440990e9db.html" target="n" data-glyph="75,1" class="i method">HandleTextChanged</a>(<b>object</b> <span id="r2 rd" class="r2 r">sender</span>, <a href="@0@PresentationFramework/A.html#b619f7b054bda67d" class="t t">TextChangedEventArgs</a> <span id="r3 rd" class="r3 r">me</span>)
+        {
+            <b>if</b> (<a href="#d904cdc6adc18f8a" class="i field">RealTimeUpdate</a>) <a href="#5b878594e56117f5" class="i method">ParseCurrentBuffer</a>();
+        }
+
+        <b>private void</b> <a id="5b878594e56117f5" href="R/5b878594e56117f5.html" target="n" data-glyph="76,1" class="i method">ParseCurrentBuffer</a>()
+        {
+            <b>try</b>
+            {
+                <b>var</b> <span id="r4 rd" class="r4 r">ms</span> = <b>new</b> <span class="t constructor">MemoryStream</span>();
+                <b>var</b> <span id="r5 rd" class="r5 r">sw</span> = <b>new</b> <span class="t constructor">StreamWriter</span>(<span class="r4 r">ms</span>);
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r6 rd" class="r6 r">str</span> = <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#f1c05ef18f8cf624" class="i field">TextBox1</a>.<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>;
+                <span class="r5 r">sw</span>.<span class="i method">Write</span>(<span class="r6 r">str</span>);
+                <span class="r5 r">sw</span>.<span class="i method">Flush</span>();
+                <span class="r4 r">ms</span>.<span class="i method">Flush</span>();
+                <span class="r4 r">ms</span>.<span class="i property">Position</span> = 0;
+                <b>try</b>
+                {
+                    <a href="@1@System.Runtime/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r7 rd" class="r7 r">content</span> = <a href="@0@PresentationFramework/A.html#7449eaf937932294" class="t t">XamlReader</a>.<a href="@0@PresentationFramework/A.html#5a2e202c49f4093f" class="i method">Load</a>(<span class="r4 r">ms</span>);
+                    <b>if</b> (<span class="r7 r">content</span> != <b>null</b>)
+                    {
+                        <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#c3a25aac66407627" class="i field">cc</a>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#5ec678e22d847fa1" class="i method">Clear</a>();
+                        <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#c3a25aac66407627" class="i field">cc</a>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>((<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>) <span class="r7 r">content</span>);
+                    }
+                    <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#f1c05ef18f8cf624" class="i field">TextBox1</a>.<a href="@0@PresentationFramework/A.html#21b5be493ba2b86f" class="i property">Foreground</a> = <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#4c63c441ae36a080" class="i property">Black</a>;
+                    <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#b6748af1353415d3" class="i field">ErrorText</a>.<a href="@0@PresentationFramework/A.html#e77c881b0d6f7e9e" class="i property">Text</a> = <span class="s">&quot;&quot;</span>;
+                }
+
+                <b>catch</b> (<a href="@0@PresentationFramework/A.html#e46034fc732d2dec" class="t t">XamlParseException</a> <span id="r8 rd" class="r8 r">xpe</span>)
+                {
+                    <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#f1c05ef18f8cf624" class="i field">TextBox1</a>.<a href="@0@PresentationFramework/A.html#21b5be493ba2b86f" class="i property">Foreground</a> = <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#171db3d6b44cb67a" class="i property">Red</a>;
+                    <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#f1c05ef18f8cf624" class="i field">TextBox1</a>.<a href="@0@PresentationFramework/A.html#3f1347788defaf39" class="i property">TextWrapping</a> = <a href="@0@PresentationCore/A.html#06cbdc94c6ffe9f2" class="t t">TextWrapping</a>.<a href="@0@PresentationCore/A.html#0f519f2db63336a5" class="i field">Wrap</a>;
+                    <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#b6748af1353415d3" class="i field">ErrorText</a>.<a href="@0@PresentationFramework/A.html#e77c881b0d6f7e9e" class="i property">Text</a> = <span class="r8 r">xpe</span>.<a href="@1@System.Runtime/A.html#5fba0e16215b42a3" class="i property">Message</a>;
+                }
+            }
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a>)
+            {
+                <span class="c">// ignored</span>
+            }
+        }
+
+        <b>protected void</b> <a id="5eff4e5b68d090a1" href="R/../../0000000000.html" target="n" data-glyph="75,1" class="i method">OnClickParseButton</a>(<b>object</b> <span id="r9 rd" class="r9 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r10 rd" class="r10 r">args</span>)
+        {
+            <a href="#5b878594e56117f5" class="i method">ParseCurrentBuffer</a>();
+        }
+
+        <b>protected void</b> <a id="54020521edc3cf57" href="R/54020521edc3cf57.html" target="n" data-glyph="75,1" class="i method">ShowPreview</a>(<b>object</b> <span id="r11 rd" class="r11 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r12 rd" class="r12 r">args</span>)
+        {
+            <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#7d48b9643a0d22e2" class="i field">PreviewRow</a>.<a href="@0@PresentationFramework/A.html#032580915971adf8" class="i property">Height</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#29cb12d2dd927c25" class="t constructor">GridLength</a>(1, <a href="@0@PresentationFramework/A.html#9f3a8f5ddb555d71" class="t t">GridUnitType</a>.<a href="@0@PresentationFramework/A.html#cb237f301ceffd1c" class="i field">Star</a>);
+            <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#376fa5fd5726bf73" class="i field">CodeRow</a>.<a href="@0@PresentationFramework/A.html#032580915971adf8" class="i property">Height</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#28b2f80ed7952dad" class="t constructor">GridLength</a>(0);
+        }
+
+        <b>protected void</b> <a id="bc65fc5705175945" href="R/bc65fc5705175945.html" target="n" data-glyph="75,1" class="i method">ShowCode</a>(<b>object</b> <span id="r13 rd" class="r13 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r14 rd" class="r14 r">args</span>)
+        {
+            <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#7d48b9643a0d22e2" class="i field">PreviewRow</a>.<a href="@0@PresentationFramework/A.html#032580915971adf8" class="i property">Height</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#28b2f80ed7952dad" class="t constructor">GridLength</a>(0);
+            <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#376fa5fd5726bf73" class="i field">CodeRow</a>.<a href="@0@PresentationFramework/A.html#032580915971adf8" class="i property">Height</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#29cb12d2dd927c25" class="t constructor">GridLength</a>(1, <a href="@0@PresentationFramework/A.html#9f3a8f5ddb555d71" class="t t">GridUnitType</a>.<a href="@0@PresentationFramework/A.html#cb237f301ceffd1c" class="i field">Star</a>);
+        }
+
+        <b>protected void</b> <a id="ecfb30ae3c772d08" href="R/ecfb30ae3c772d08.html" target="n" data-glyph="75,1" class="i method">ShowSplit</a>(<b>object</b> <span id="r15 rd" class="r15 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r16 rd" class="r16 r">args</span>)
+        {
+            <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#7d48b9643a0d22e2" class="i field">PreviewRow</a>.<a href="@0@PresentationFramework/A.html#032580915971adf8" class="i property">Height</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#29cb12d2dd927c25" class="t constructor">GridLength</a>(1, <a href="@0@PresentationFramework/A.html#9f3a8f5ddb555d71" class="t t">GridUnitType</a>.<a href="@0@PresentationFramework/A.html#cb237f301ceffd1c" class="i field">Star</a>);
+            <a href="obj/Debug/netcoreapp3.1/Scene.g.cs.html#376fa5fd5726bf73" class="i field">CodeRow</a>.<a href="@0@PresentationFramework/A.html#032580915971adf8" class="i property">Height</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#29cb12d2dd927c25" class="t constructor">GridLength</a>(1, <a href="@0@PresentationFramework/A.html#9f3a8f5ddb555d71" class="t t">GridUnitType</a>.<a href="@0@PresentationFramework/A.html#cb237f301ceffd1c" class="i field">Star</a>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

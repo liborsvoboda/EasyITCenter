@@ -1,4 +1,7 @@
-﻿```csharp  
+﻿[Zpět](../../../index)   
+
+
+```csharp  
 using SimpleMvcSitemap;
 using SimpleMvcSitemap.Images;
 using SimpleMvcSitemap.News;

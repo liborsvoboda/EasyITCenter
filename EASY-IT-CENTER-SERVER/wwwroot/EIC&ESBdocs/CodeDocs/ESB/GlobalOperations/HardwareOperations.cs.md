@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿[Zpět](../../index)   
+
+```cshtml   
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace EasyITSystemCenter.GlobalOperations {

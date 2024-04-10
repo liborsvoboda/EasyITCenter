@@ -26,6 +26,12 @@ https://github.com/wiltaylor/EasyRoslynScript
 užitečné JS k postavení čehokoli naprosto stačí 110 repos webviewer apps
 https://github.com/orgs/PDFTron/repositories?type=all&page=3
 
+* servicestack  publikace služeb, management klientů  řešení, a začít dělat služby
+https://github.com/ServiceStack/ServiceStack
+1 seznam měst atd udělat druhou DB kde budou 
+https://docs.servicestack.net/templates/
+https://docs.servicestack.net/
+
 
 # Nezdokumentované Poznámky
 

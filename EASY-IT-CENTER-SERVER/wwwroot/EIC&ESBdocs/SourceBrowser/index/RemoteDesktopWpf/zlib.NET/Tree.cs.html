@@ -1,0 +1,358 @@
+﻿<!DOCTYPE html>
+<html><head><title>Tree.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(349);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RemoteDesktopWpf/zlib.NET/Tree.cs" target="_top">zlib.NET\Tree.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RemoteDesktopWpf" target="_top">..\..\..\EASY-TOOLS\EASYTools.VNCLib\EASYTools.VNCLib.csproj</a> (RemoteDesktopWpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Copyright (c) 2006, ComponentAce</span>
+<span class="c">// http://www.componentace.com</span>
+<span class="c">// All rights reserved.</span>
+ 
+<span class="c">// Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</span>
+ 
+<span class="c">// Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. </span>
+<span class="c">// Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. </span>
+<span class="c">// Neither the name of ComponentAce nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. </span>
+<span class="c">// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+ 
+<span class="c">/*
+Copyright (c) 2000,2001,2002,2003 ymnk, JCraft,Inc. All rights reserved.
+ 
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+ 
+1. Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
+ 
+2. Redistributions in binary form must reproduce the above copyright 
+notice, this list of conditions and the following disclaimer in 
+the documentation and/or other materials provided with the distribution.
+ 
+3. The names of the authors may not be used to endorse or promote products
+derived from this software without specific prior written permission.
+ 
+THIS SOFTWARE IS PROVIDED ``AS IS&#39;&#39; AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JCRAFT,
+INC. OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/</span>
+<span class="c">/*
+* This program is based on zlib-1.1.3, so all credit should go authors
+* Jean-loup Gailly(jloup@gzip.org) and Mark Adler(madler@alumni.caltech.edu)
+* and contributors of zlib.
+*/</span>
+<b>using</b> <span class="i n">System</span>;
+<b>namespace</b> <span class="i n">ComponentAce</span>.<span class="i n">Compression</span>.<span class="i n">Libs</span>.<span class="i n">zlib</span>
+{
+	
+	<b>sealed class</b> <a id="92198ab875a9cb31" href="../R/92198ab875a9cb31.html" target="n" data-glyph="2,0" class="t t"><span id="3685a9a5cc95234f">Tree</span></a>
+	{
+		<b>private const int</b> <a id="c3911e75bbabea59" href="../R/c3911e75bbabea59.html" target="n" data-glyph="10,1" class="i field">MAX_BITS</a> = 15;
+		<b>private const int</b> <a id="4dc97986a0229a07" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">BL_CODES</a> = 19;
+		<b>private const int</b> <a id="5d5a4456a27cab07" href="../R/../../0000000000.html" target="n" data-glyph="10,1" class="i field">D_CODES</a> = 30;
+		<b>private const int</b> <a id="3cfa69725725cbb2" href="../R/3cfa69725725cbb2.html" target="n" data-glyph="10,1" class="i field">LITERALS</a> = 256;
+		<b>private const int</b> <a id="1ad96c1c47431fa2" href="../R/1ad96c1c47431fa2.html" target="n" data-glyph="10,1" class="i field">LENGTH_CODES</a> = 29;		
+		<b>private static readonly int</b> <a id="41a1b75e97a5487f" href="../R/41a1b75e97a5487f.html" target="n" data-glyph="46,1" class="i field">L_CODES</a> = (<a href="#3cfa69725725cbb2" class="i field">LITERALS</a> + 1 + <a href="#1ad96c1c47431fa2" class="i field">LENGTH_CODES</a>);		
+		<b>private static readonly int</b> <a id="ac3c985ed6fbb37f" href="../R/ac3c985ed6fbb37f.html" target="n" data-glyph="46,1" class="i field">HEAP_SIZE</a> = (2 * <a href="#41a1b75e97a5487f" class="i field">L_CODES</a> + 1);
+		
+		<span class="c">// Bit length codes must not exceed MAX_BL_BITS bits</span>
+		<b>internal const int</b> <a id="6af25e370dec7897" href="../R/../../0000000000.html" target="n" data-glyph="8,1" class="i field">MAX_BL_BITS</a> = 7;
+		
+		<span class="c">// end of block literal code</span>
+		<b>internal const int</b> <a id="3972284033b2aa69" href="../R/../../0000000000.html" target="n" data-glyph="8,1" class="i field">END_BLOCK</a> = 256;
+		
+		<span class="c">// repeat previous bit length 3-6 times (2 bits of repeat count)</span>
+		<b>internal const int</b> <a id="0c8c020a50ab6e7e" href="../R/../../0000000000.html" target="n" data-glyph="8,1" class="i field">REP_3_6</a> = 16;
+		
+		<span class="c">// repeat a zero length 3-10 times  (3 bits of repeat count)</span>
+		<b>internal const int</b> <a id="9be8f4c7e266d5fe" href="../R/../../0000000000.html" target="n" data-glyph="8,1" class="i field">REPZ_3_10</a> = 17;
+		
+		<span class="c">// repeat a zero length 11-138 times  (7 bits of repeat count)</span>
+		<b>internal const int</b> <a id="98857bca47e47105" href="../R/../../0000000000.html" target="n" data-glyph="8,1" class="i field">REPZ_11_138</a> = 18;
+		
+		<span class="c">// extra bits for each length code		</span>
+		<b>internal static readonly int</b>[] <a id="db2062d08603de3a" href="../R/db2062d08603de3a.html" target="n" data-glyph="44,1" class="i field">extra_lbits</a> = <b>new</b> <b>int</b>[]{0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0};
+		
+		<span class="c">// extra bits for each distance code		</span>
+		<b>internal static readonly int</b>[] <a id="29f0223eddd3f6c2" href="../R/29f0223eddd3f6c2.html" target="n" data-glyph="44,1" class="i field">extra_dbits</a> = <b>new</b> <b>int</b>[]{0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13};
+		
+		<span class="c">// extra bits for each bit length code		</span>
+		<b>internal static readonly int</b>[] <a id="204672dc04d51a9f" href="../R/204672dc04d51a9f.html" target="n" data-glyph="44,1" class="i field">extra_blbits</a> = <b>new</b> <b>int</b>[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7};
+				
+		<b>internal static readonly byte</b>[] <a id="06326e9d099dda07" href="../R/06326e9d099dda07.html" target="n" data-glyph="44,1" class="i field">bl_order</a> = <b>new</b> <b>byte</b>[]{16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
+		
+		
+		<span class="c">// The lengths of the bit length codes are sent in order of decreasing</span>
+		<span class="c">// probability, to avoid transmitting the lengths for unused bit</span>
+		<span class="c">// length codes.</span>
+		
+		<b>internal const int</b> <a id="c095de1e9f5c3ef3" href="../R/../../0000000000.html" target="n" data-glyph="8,1" class="i field">Buf_size</a> = 8 * 2;
+		
+		<span class="c">// see definition of array dist_code below</span>
+		<b>internal const int</b> <a id="a54c0a679f18d2f3" href="../R/../../0000000000.html" target="n" data-glyph="8,1" class="i field">DIST_CODE_LEN</a> = 512;
+				
+		<b>internal static readonly byte</b>[] <a id="1133118c491e847b" href="../R/1133118c491e847b.html" target="n" data-glyph="44,1" class="i field">_dist_code</a> = <b>new</b> <b>byte</b>[]{0, 1, 2, 3, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 0, 0, 16, 17, 18, 18, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 
+			29, 29, 29, 29, 29, 29, 29, 29, 29};
+		
+		<b>internal static readonly byte</b>[] <a id="8540517b81677237" href="../R/8540517b81677237.html" target="n" data-glyph="44,1" class="i field">_length_code</a> = <b>new</b> <b>byte</b>[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18, 18, 19, 19, 19, 19, 19, 19, 19, 19, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 28};
+		
+		<b>internal static readonly int</b>[] <a id="2ff8e18112e24f99" href="../R/2ff8e18112e24f99.html" target="n" data-glyph="44,1" class="i field">base_length</a> = <b>new</b> <b>int</b>[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 16, 20, 24, 28, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 0};
+				
+		<b>internal static readonly int</b>[] <a id="27c098793c72fabd" href="../R/27c098793c72fabd.html" target="n" data-glyph="44,1" class="i field">base_dist</a> = <b>new</b> <b>int</b>[]{0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128, 192, 256, 384, 512, 768, 1024, 1536, 2048, 3072, 4096, 6144, 8192, 12288, 16384, 24576};
+		
+		<span class="c">// Mapping from a distance to a distance code. dist is the distance - 1 and</span>
+		<span class="c">// must not have side effects. _dist_code[256] and _dist_code[257] are never</span>
+		<span class="c">// used.</span>
+		<b>internal static int</b> <a id="a4fc775c220a24d6" href="../R/a4fc775c220a24d6.html" target="n" data-glyph="74,1" class="i method">d_code</a>(<b>int</b> <span id="r0 rd" class="r0 r">dist</span>)
+		{
+			<b>return</b> ((<span class="r0 r">dist</span>) &lt; 256?<a href="#1133118c491e847b" class="i field">_dist_code</a>[<span class="r0 r">dist</span>]:<a href="#1133118c491e847b" class="i field">_dist_code</a>[256 + (<a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>((<span class="r0 r">dist</span>), 7))]);
+		}
+		
+		<b>internal short</b>[] <a id="e0b7b6007dee9daf" href="../R/e0b7b6007dee9daf.html" target="n" data-glyph="44,1" class="i field">dyn_tree</a>; <span class="c">// the dynamic tree</span>
+		<b>internal int</b> <a id="1812bf07ffbc5038" href="../R/1812bf07ffbc5038.html" target="n" data-glyph="44,1" class="i field">max_code</a>; <span class="c">// largest code with non zero frequency</span>
+		<b>internal</b> <a href="StaticTree.cs.html#4023b91d18ea0cfd" class="t t">StaticTree</a> <a id="d3c17452ac2c374c" href="../R/d3c17452ac2c374c.html" target="n" data-glyph="44,1" class="i field">stat_desc</a>; <span class="c">// the corresponding static tree</span>
+		
+		<span class="c">// Compute the optimal bit lengths for a tree and update the total bit length</span>
+		<span class="c">// for the current block.</span>
+		<span class="c">// IN assertion: the fields freq and dad are set, heap[heap_max] and</span>
+		<span class="c">//    above are the tree nodes sorted by increasing frequency.</span>
+		<span class="c">// OUT assertions: the field len is set to the optimal bit length, the</span>
+		<span class="c">//     array bl_count contains the frequencies for each bit length.</span>
+		<span class="c">//     The length opt_len is updated; static_len is also updated if stree is</span>
+		<span class="c">//     not null.</span>
+		<b>internal void</b>  <a id="855c38b7a536527e" href="../R/855c38b7a536527e.html" target="n" data-glyph="74,1" class="i method">gen_bitlen</a>(<a href="Deflate.cs.html#3496d1fb392d4fee" class="t t">Deflate</a> <span id="r1 rd" class="r1 r">s</span>)
+		{
+			<b>short</b>[] <span id="r2 rd" class="r2 r">tree</span> = <a href="#e0b7b6007dee9daf" class="i field">dyn_tree</a>;
+			<b>short</b>[] <span id="r3 rd" class="r3 r">stree</span> = <a href="#d3c17452ac2c374c" class="i field">stat_desc</a>.<a href="StaticTree.cs.html#a1dabbc23398360e" class="i field">static_tree</a>;
+			<b>int</b>[] <span id="r4 rd" class="r4 r">extra</span> = <a href="#d3c17452ac2c374c" class="i field">stat_desc</a>.<a href="StaticTree.cs.html#1b38a4786c17fb5b" class="i field">extra_bits</a>;
+			<b>int</b> <span id="r5 rd" class="r5 r">base_Renamed</span> = <a href="#d3c17452ac2c374c" class="i field">stat_desc</a>.<a href="StaticTree.cs.html#c7177ea5d7638580" class="i field">extra_base</a>;
+			<b>int</b> <span id="r6 rd" class="r6 r">max_length</span> = <a href="#d3c17452ac2c374c" class="i field">stat_desc</a>.<a href="StaticTree.cs.html#b4287caafad91c6e" class="i field">max_length</a>;
+			<b>int</b> <span id="r7 rd" class="r7 r">h</span>; <span class="c">// heap index</span>
+			<b>int</b> <span id="r8 rd" class="r8 r">n</span>, <span id="r9 rd" class="r9 r">m</span>; <span class="c">// iterate over the tree elements</span>
+			<b>int</b> <span id="r10 rd" class="r10 r">bits</span>; <span class="c">// bit length</span>
+			<b>int</b> <span id="r11 rd" class="r11 r">xbits</span>; <span class="c">// extra bits</span>
+			<b>short</b> <span id="r12 rd" class="r12 r">f</span>; <span class="c">// frequency</span>
+			<b>int</b> <span id="r13 rd" class="r13 r">overflow</span> = 0; <span class="c">// number of elements with bit length too large</span>
+			
+			<b>for</b> (<span class="r10 r">bits</span> = 0; <span class="r10 r">bits</span> &lt;= <a href="#c3911e75bbabea59" class="i field">MAX_BITS</a>; <span class="r10 r">bits</span>++)
+				<span class="r1 r">s</span>.<a href="Deflate.cs.html#295e12b6b2ad9b91" class="i field">bl_count</a>[<span class="r10 r">bits</span>] = 0;
+			
+			<span class="c">// In a first pass, compute the optimal bit lengths (which may</span>
+			<span class="c">// overflow in the case of the bit length tree).</span>
+			<span class="r2 r">tree</span>[<span class="r1 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[<span class="r1 r">s</span>.<a href="Deflate.cs.html#26025a20a06adb7f" class="i field">heap_max</a>] * 2 + 1] = 0; <span class="c">// root of the heap</span>
+			
+			<b>for</b> (<span class="r7 r">h</span> = <span class="r1 r">s</span>.<a href="Deflate.cs.html#26025a20a06adb7f" class="i field">heap_max</a> + 1; <span class="r7 r">h</span> &lt; <a href="#ac3c985ed6fbb37f" class="i field">HEAP_SIZE</a>; <span class="r7 r">h</span>++)
+			{
+				<span class="r8 r">n</span> = <span class="r1 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[<span class="r7 r">h</span>];
+				<span class="r10 r">bits</span> = <span class="r2 r">tree</span>[<span class="r2 r">tree</span>[<span class="r8 r">n</span> * 2 + 1] * 2 + 1] + 1;
+				<b>if</b> (<span class="r10 r">bits</span> &gt; <span class="r6 r">max_length</span>)
+				{
+					<span class="r10 r">bits</span> = <span class="r6 r">max_length</span>; <span class="r13 r">overflow</span>++;
+				}
+				<span class="r2 r">tree</span>[<span class="r8 r">n</span> * 2 + 1] = (<b>short</b>) <span class="r10 r">bits</span>;
+				<span class="c">// We overwrite tree[n*2+1] which is no longer needed</span>
+				
+				<b>if</b> (<span class="r8 r">n</span> &gt; <a href="#1812bf07ffbc5038" class="i field">max_code</a>)
+					<b>continue</b>; <span class="c">// not a leaf node</span>
+				
+				<span class="r1 r">s</span>.<a href="Deflate.cs.html#295e12b6b2ad9b91" class="i field">bl_count</a>[<span class="r10 r">bits</span>]++;
+				<span class="r11 r">xbits</span> = 0;
+				<b>if</b> (<span class="r8 r">n</span> &gt;= <span class="r5 r">base_Renamed</span>)
+					<span class="r11 r">xbits</span> = <span class="r4 r">extra</span>[<span class="r8 r">n</span> - <span class="r5 r">base_Renamed</span>];
+				<span class="r12 r">f</span> = <span class="r2 r">tree</span>[<span class="r8 r">n</span> * 2];
+				<span class="r1 r">s</span>.<a href="Deflate.cs.html#4172360fa4e75007" class="i field">opt_len</a> += <span class="r12 r">f</span> * (<span class="r10 r">bits</span> + <span class="r11 r">xbits</span>);
+				<b>if</b> (<span class="r3 r">stree</span> != <b>null</b>)
+					<span class="r1 r">s</span>.<a href="Deflate.cs.html#c69badf7cc190641" class="i field">static_len</a> += <span class="r12 r">f</span> * (<span class="r3 r">stree</span>[<span class="r8 r">n</span> * 2 + 1] + <span class="r11 r">xbits</span>);
+			}
+			<b>if</b> (<span class="r13 r">overflow</span> == 0)
+				<b>return</b> ;
+			
+			<span class="c">// This happens for example on obj2 and pic of the Calgary corpus</span>
+			<span class="c">// Find the first bit length which could increase:</span>
+			<b>do</b> 
+			{
+				<span class="r10 r">bits</span> = <span class="r6 r">max_length</span> - 1;
+				<b>while</b> (<span class="r1 r">s</span>.<a href="Deflate.cs.html#295e12b6b2ad9b91" class="i field">bl_count</a>[<span class="r10 r">bits</span>] == 0)
+					<span class="r10 r">bits</span>--;
+				<span class="r1 r">s</span>.<a href="Deflate.cs.html#295e12b6b2ad9b91" class="i field">bl_count</a>[<span class="r10 r">bits</span>]--; <span class="c">// move one leaf down the tree</span>
+				<span class="r1 r">s</span>.<a href="Deflate.cs.html#295e12b6b2ad9b91" class="i field">bl_count</a>[<span class="r10 r">bits</span> + 1] = (<b>short</b>) (<span class="r1 r">s</span>.<a href="Deflate.cs.html#295e12b6b2ad9b91" class="i field">bl_count</a>[<span class="r10 r">bits</span> + 1] + 2); <span class="c">// move one overflow item as its brother</span>
+				<span class="r1 r">s</span>.<a href="Deflate.cs.html#295e12b6b2ad9b91" class="i field">bl_count</a>[<span class="r6 r">max_length</span>]--;
+				<span class="c">// The brother of the overflow item also moves one step up,</span>
+				<span class="c">// but this does not affect bl_count[max_length]</span>
+				<span class="r13 r">overflow</span> -= 2;
+			}
+			<b>while</b> (<span class="r13 r">overflow</span> &gt; 0);
+			
+			<b>for</b> (<span class="r10 r">bits</span> = <span class="r6 r">max_length</span>; <span class="r10 r">bits</span> != 0; <span class="r10 r">bits</span>--)
+			{
+				<span class="r8 r">n</span> = <span class="r1 r">s</span>.<a href="Deflate.cs.html#295e12b6b2ad9b91" class="i field">bl_count</a>[<span class="r10 r">bits</span>];
+				<b>while</b> (<span class="r8 r">n</span> != 0)
+				{
+					<span class="r9 r">m</span> = <span class="r1 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[--<span class="r7 r">h</span>];
+					<b>if</b> (<span class="r9 r">m</span> &gt; <a href="#1812bf07ffbc5038" class="i field">max_code</a>)
+						<b>continue</b>;
+					<b>if</b> (<span class="r2 r">tree</span>[<span class="r9 r">m</span> * 2 + 1] != <span class="r10 r">bits</span>)
+					{
+						<span class="r1 r">s</span>.<a href="Deflate.cs.html#4172360fa4e75007" class="i field">opt_len</a> = (<b>int</b>) (<span class="r1 r">s</span>.<a href="Deflate.cs.html#4172360fa4e75007" class="i field">opt_len</a> + ((<b>long</b>) <span class="r10 r">bits</span> - (<b>long</b>) <span class="r2 r">tree</span>[<span class="r9 r">m</span> * 2 + 1]) * (<b>long</b>) <span class="r2 r">tree</span>[<span class="r9 r">m</span> * 2]);
+						<span class="r2 r">tree</span>[<span class="r9 r">m</span> * 2 + 1] = (<b>short</b>) <span class="r10 r">bits</span>;
+					}
+					<span class="r8 r">n</span>--;
+				}
+			}
+		}
+		
+		<span class="c">// Construct one Huffman tree and assigns the code bit strings and lengths.</span>
+		<span class="c">// Update the total bit length for the current block.</span>
+		<span class="c">// IN assertion: the field freq is set for all tree elements.</span>
+		<span class="c">// OUT assertions: the fields len and code are set to the optimal bit length</span>
+		<span class="c">//     and corresponding code. The length opt_len is updated; static_len is</span>
+		<span class="c">//     also updated if stree is not null. The field max_code is set.</span>
+		<b>internal void</b>  <a id="3b05d091169d1df1" href="../R/3b05d091169d1df1.html" target="n" data-glyph="74,1" class="i method">build_tree</a>(<a href="Deflate.cs.html#3496d1fb392d4fee" class="t t">Deflate</a> <span id="r14 rd" class="r14 r">s</span>)
+		{
+			<b>short</b>[] <span id="r15 rd" class="r15 r">tree</span> = <a href="#e0b7b6007dee9daf" class="i field">dyn_tree</a>;
+			<b>short</b>[] <span id="r16 rd" class="r16 r">stree</span> = <a href="#d3c17452ac2c374c" class="i field">stat_desc</a>.<a href="StaticTree.cs.html#a1dabbc23398360e" class="i field">static_tree</a>;
+			<b>int</b> <span id="r17 rd" class="r17 r">elems</span> = <a href="#d3c17452ac2c374c" class="i field">stat_desc</a>.<a href="StaticTree.cs.html#9c35177a45dc15c4" class="i field">elems</a>;
+			<b>int</b> <span id="r18 rd" class="r18 r">n</span>, <span id="r19 rd" class="r19 r">m</span>; <span class="c">// iterate over heap elements</span>
+			<b>int</b> <span id="r20 rd" class="r20 r">max_code</span> = - 1; <span class="c">// largest code with non zero frequency</span>
+			<b>int</b> <span id="r21 rd" class="r21 r">node</span>; <span class="c">// new node being created</span>
+			
+			<span class="c">// Construct the initial heap, with least frequent element in</span>
+			<span class="c">// heap[1]. The sons of heap[n] are heap[2*n] and heap[2*n+1].</span>
+			<span class="c">// heap[0] is not used.</span>
+			<span class="r14 r">s</span>.<a href="Deflate.cs.html#c212991112a7436f" class="i field">heap_len</a> = 0;
+			<span class="r14 r">s</span>.<a href="Deflate.cs.html#26025a20a06adb7f" class="i field">heap_max</a> = <a href="#ac3c985ed6fbb37f" class="i field">HEAP_SIZE</a>;
+			
+			<b>for</b> (<span class="r18 r">n</span> = 0; <span class="r18 r">n</span> &lt; <span class="r17 r">elems</span>; <span class="r18 r">n</span>++)
+			{
+				<b>if</b> (<span class="r15 r">tree</span>[<span class="r18 r">n</span> * 2] != 0)
+				{
+					<span class="r14 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[++<span class="r14 r">s</span>.<a href="Deflate.cs.html#c212991112a7436f" class="i field">heap_len</a>] = <span class="r20 r">max_code</span> = <span class="r18 r">n</span>;
+					<span class="r14 r">s</span>.<a href="Deflate.cs.html#fca823ce09d46c53" class="i field">depth</a>[<span class="r18 r">n</span>] = 0;
+				}
+				<b>else</b>
+				{
+					<span class="r15 r">tree</span>[<span class="r18 r">n</span> * 2 + 1] = 0;
+				}
+			}
+			
+			<span class="c">// The pkzip format requires that at least one distance code exists,</span>
+			<span class="c">// and that at least one bit should be sent even if there is only one</span>
+			<span class="c">// possible code. So to avoid special checks later on we force at least</span>
+			<span class="c">// two codes of non zero frequency.</span>
+			<b>while</b> (<span class="r14 r">s</span>.<a href="Deflate.cs.html#c212991112a7436f" class="i field">heap_len</a> &lt; 2)
+			{
+				<span class="r21 r">node</span> = <span class="r14 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[++<span class="r14 r">s</span>.<a href="Deflate.cs.html#c212991112a7436f" class="i field">heap_len</a>] = (<span class="r20 r">max_code</span> &lt; 2?++<span class="r20 r">max_code</span>:0);
+				<span class="r15 r">tree</span>[<span class="r21 r">node</span> * 2] = 1;
+				<span class="r14 r">s</span>.<a href="Deflate.cs.html#fca823ce09d46c53" class="i field">depth</a>[<span class="r21 r">node</span>] = 0;
+				<span class="r14 r">s</span>.<a href="Deflate.cs.html#4172360fa4e75007" class="i field">opt_len</a>--;
+				<b>if</b> (<span class="r16 r">stree</span> != <b>null</b>)
+					<span class="r14 r">s</span>.<a href="Deflate.cs.html#c69badf7cc190641" class="i field">static_len</a> -= <span class="r16 r">stree</span>[<span class="r21 r">node</span> * 2 + 1];
+				<span class="c">// node is 0 or 1 so it does not have extra bits</span>
+			}
+			<a href="#92198ab875a9cb31" class="k">this</a>.<a href="#1812bf07ffbc5038" class="i field">max_code</a> = <span class="r20 r">max_code</span>;
+			
+			<span class="c">// The elements heap[heap_len/2+1 .. heap_len] are leaves of the tree,</span>
+			<span class="c">// establish sub-heaps of increasing lengths:</span>
+			
+			<b>for</b> (<span class="r18 r">n</span> = <span class="r14 r">s</span>.<a href="Deflate.cs.html#c212991112a7436f" class="i field">heap_len</a> / 2; <span class="r18 r">n</span> &gt;= 1; <span class="r18 r">n</span>--)
+				<span class="r14 r">s</span>.<a href="Deflate.cs.html#a5fc59738e3c58c6" class="i method">pqdownheap</a>(<span class="r15 r">tree</span>, <span class="r18 r">n</span>);
+			
+			<span class="c">// Construct the Huffman tree by repeatedly combining the least two</span>
+			<span class="c">// frequent nodes.</span>
+			
+			<span class="r21 r">node</span> = <span class="r17 r">elems</span>; <span class="c">// next internal node of the tree</span>
+			<b>do</b> 
+			{
+				<span class="c">// n = node of least frequency</span>
+				<span class="r18 r">n</span> = <span class="r14 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[1];
+				<span class="r14 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[1] = <span class="r14 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[<span class="r14 r">s</span>.<a href="Deflate.cs.html#c212991112a7436f" class="i field">heap_len</a>--];
+				<span class="r14 r">s</span>.<a href="Deflate.cs.html#a5fc59738e3c58c6" class="i method">pqdownheap</a>(<span class="r15 r">tree</span>, 1);
+				<span class="r19 r">m</span> = <span class="r14 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[1]; <span class="c">// m = node of next least frequency</span>
+				
+				<span class="r14 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[--<span class="r14 r">s</span>.<a href="Deflate.cs.html#26025a20a06adb7f" class="i field">heap_max</a>] = <span class="r18 r">n</span>; <span class="c">// keep the nodes sorted by frequency</span>
+				<span class="r14 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[--<span class="r14 r">s</span>.<a href="Deflate.cs.html#26025a20a06adb7f" class="i field">heap_max</a>] = <span class="r19 r">m</span>;
+				
+				<span class="c">// Create a new node father of n and m</span>
+				<span class="r15 r">tree</span>[<span class="r21 r">node</span> * 2] = (<b>short</b>) (<span class="r15 r">tree</span>[<span class="r18 r">n</span> * 2] + <span class="r15 r">tree</span>[<span class="r19 r">m</span> * 2]);
+				<span class="r14 r">s</span>.<a href="Deflate.cs.html#fca823ce09d46c53" class="i field">depth</a>[<span class="r21 r">node</span>] = (<b>byte</b>) (<span class="i n">System</span>.<a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#4e0c4eb7e183679d" class="i method">Max</a>((<b>byte</b>) <span class="r14 r">s</span>.<a href="Deflate.cs.html#fca823ce09d46c53" class="i field">depth</a>[<span class="r18 r">n</span>], (<b>byte</b>) <span class="r14 r">s</span>.<a href="Deflate.cs.html#fca823ce09d46c53" class="i field">depth</a>[<span class="r19 r">m</span>]) + 1);
+				<span class="r15 r">tree</span>[<span class="r18 r">n</span> * 2 + 1] = <span class="r15 r">tree</span>[<span class="r19 r">m</span> * 2 + 1] = (<b>short</b>) <span class="r21 r">node</span>;
+				
+				<span class="c">// and insert the new node in the heap</span>
+				<span class="r14 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[1] = <span class="r21 r">node</span>++;
+				<span class="r14 r">s</span>.<a href="Deflate.cs.html#a5fc59738e3c58c6" class="i method">pqdownheap</a>(<span class="r15 r">tree</span>, 1);
+			}
+			<b>while</b> (<span class="r14 r">s</span>.<a href="Deflate.cs.html#c212991112a7436f" class="i field">heap_len</a> &gt;= 2);
+			
+			<span class="r14 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[--<span class="r14 r">s</span>.<a href="Deflate.cs.html#26025a20a06adb7f" class="i field">heap_max</a>] = <span class="r14 r">s</span>.<a href="Deflate.cs.html#c74da0930886146f" class="i field">heap</a>[1];
+			
+			<span class="c">// At this point, the fields freq and dad are set. We can now</span>
+			<span class="c">// generate the bit lengths.</span>
+			
+			<a href="#855c38b7a536527e" class="i method">gen_bitlen</a>(<span class="r14 r">s</span>);
+			
+			<span class="c">// The field len is now set, we can generate the bit codes</span>
+			<a href="#db33b8a7b3531de4" class="i method">gen_codes</a>(<span class="r15 r">tree</span>, <span class="r20 r">max_code</span>, <span class="r14 r">s</span>.<a href="Deflate.cs.html#295e12b6b2ad9b91" class="i field">bl_count</a>);
+		}
+		
+		<span class="c">// Generate the codes for a given tree and bit counts (which need not be</span>
+		<span class="c">// optimal).</span>
+		<span class="c">// IN assertion: the array bl_count contains the bit length statistics for</span>
+		<span class="c">// the given tree and the field len is set for all tree elements.</span>
+		<span class="c">// OUT assertion: the field code is set for all tree elements of non</span>
+		<span class="c">//     zero code length.</span>
+		<b>internal static void</b>  <a id="db33b8a7b3531de4" href="../R/db33b8a7b3531de4.html" target="n" data-glyph="74,1" class="i method">gen_codes</a>(<b>short</b>[] <span id="r22 rd" class="r22 r">tree</span>, <b>int</b> <span id="r23 rd" class="r23 r">max_code</span>, <b>short</b>[] <span id="r24 rd" class="r24 r">bl_count</span>)
+		{
+			<b>short</b>[] <span id="r25 rd" class="r25 r">next_code</span> = <b>new</b> <b>short</b>[<a href="#c3911e75bbabea59" class="i field">MAX_BITS</a> + 1]; <span class="c">// next code value for each bit length</span>
+			<b>short</b> <span id="r26 rd" class="r26 r">code</span> = 0; <span class="c">// running code value</span>
+			<b>int</b> <span id="r27 rd" class="r27 r">bits</span>; <span class="c">// bit index</span>
+			<b>int</b> <span id="r28 rd" class="r28 r">n</span>; <span class="c">// code index</span>
+			
+			<span class="c">// The distribution counts are first used to generate the code values</span>
+			<span class="c">// without bit reversal.</span>
+			<b>for</b> (<span class="r27 r">bits</span> = 1; <span class="r27 r">bits</span> &lt;= <a href="#c3911e75bbabea59" class="i field">MAX_BITS</a>; <span class="r27 r">bits</span>++)
+			{
+				<span class="r25 r">next_code</span>[<span class="r27 r">bits</span>] = <span class="r26 r">code</span> = (<b>short</b>) ((<span class="r26 r">code</span> + <span class="r24 r">bl_count</span>[<span class="r27 r">bits</span> - 1]) &lt;&lt; 1);
+			}
+			
+			<span class="c">// Check that the bit counts in bl_count are consistent. The last code</span>
+			<span class="c">// must be all ones.</span>
+			<span class="c">//Assert (code + bl_count[MAX_BITS]-1 == (1&lt;&lt;MAX_BITS)-1,</span>
+			<span class="c">//        &quot;inconsistent bit counts&quot;);</span>
+			<span class="c">//Tracev((stderr,&quot;\ngen_codes: max_code %d &quot;, max_code));</span>
+			
+			<b>for</b> (<span class="r28 r">n</span> = 0; <span class="r28 r">n</span> &lt;= <span class="r23 r">max_code</span>; <span class="r28 r">n</span>++)
+			{
+				<b>int</b> <span id="r29 rd" class="r29 r">len</span> = <span class="r22 r">tree</span>[<span class="r28 r">n</span> * 2 + 1];
+				<b>if</b> (<span class="r29 r">len</span> == 0)
+					<b>continue</b>;
+				<span class="c">// Now reverse the bits</span>
+				<span class="r22 r">tree</span>[<span class="r28 r">n</span> * 2] = (<b>short</b>) (<a href="#e36bb7187aceb3c0" class="i method">bi_reverse</a>(<span class="r25 r">next_code</span>[<span class="r29 r">len</span>]++, <span class="r29 r">len</span>));
+			}
+		}
+		
+		<span class="c">// Reverse the first len bits of a code, using straightforward code (a faster</span>
+		<span class="c">// method would use a table)</span>
+		<span class="c">// IN assertion: 1 &lt;= len &lt;= 15</span>
+		<b>internal static int</b> <a id="e36bb7187aceb3c0" href="../R/e36bb7187aceb3c0.html" target="n" data-glyph="74,1" class="i method">bi_reverse</a>(<b>int</b> <span id="r30 rd" class="r30 r">code</span>, <b>int</b> <span id="r31 rd" class="r31 r">len</span>)
+		{
+			<b>int</b> <span id="r32 rd" class="r32 r">res</span> = 0;
+			<b>do</b> 
+			{
+				<span class="r32 r">res</span> |= <span class="r30 r">code</span> &amp; 1;
+				<span class="r30 r">code</span> = <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r30 r">code</span>, 1);
+				<span class="r32 r">res</span> &lt;&lt;= 1;
+			}
+			<b>while</b> (--<span class="r31 r">len</span> &gt; 0);
+			<b>return</b> <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#1b50ae0c5479687b" class="i method">URShift</a>(<span class="r32 r">res</span>, 1);
+		}
+	}
+}</pre></td></tr></table></div></body></html>

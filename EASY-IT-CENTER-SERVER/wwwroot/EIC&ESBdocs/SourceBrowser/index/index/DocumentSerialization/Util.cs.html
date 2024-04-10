@@ -1,0 +1,925 @@
+﻿<!DOCTYPE html>
+<html><head><title>Util.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(916);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#DocumentSerialization/Util.cs" target="_top">Util.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#DocumentSerialization" target="_top">HelpProjects\WPF-MORE\Documents\Fixed Documents\DocumentSerialization\DocumentSerialization.csproj</a> (DocumentSerialization)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// DocumentSerialize SDK Sample - Util.cs</span>
+<span class="c">// Copyright (c) Microsoft Corporation. All rights reserved.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Markup</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Xml</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Security</span>;
+
+<b>namespace</b> <span class="i n">DocumentSerialization</span>
+{
+    <b>public static class</b> <a id="554dc4b2f3ea8fd7" href="R/554dc4b2f3ea8fd7.html" target="n" data-glyph="0,0" class="t t">Util</a>
+    {
+        <b>public static</b> <a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <a id="292f76df0529fbd0" href="R/292f76df0529fbd0.html" target="n" data-glyph="72,1" class="i method">ConvertTextToStream</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">text</span>)
+        {
+            <span class="i n">System</span>.<span class="i n">Text</span>.<a href="@1@System.Runtime/A.html#3b6090c501893c25" class="t t">Encoding</a> <span id="r1 rd" class="r1 r">encoding</span> = <span class="i n">System</span>.<span class="i n">Text</span>.<a href="@1@System.Runtime/A.html#3b6090c501893c25" class="t t">Encoding</a>.<a href="@1@System.Runtime/A.html#3ab75dace56ae6d2" class="i property">Unicode</a>;
+            <b>byte</b>[] <span id="r2 rd" class="r2 r">encodedBytes</span> = <span class="r1 r">encoding</span>.<a href="@1@System.Runtime/A.html#83f2d2c6f22db1a9" class="i method">GetBytes</a>(<span class="r0 r">text</span>);
+            <b>byte</b>[] <span id="r3 rd" class="r3 r">preamble</span> = <span class="r1 r">encoding</span>.<a href="@1@System.Runtime/A.html#dc455ee5d06c386f" class="i method">GetPreamble</a>();
+            <b>byte</b>[] <span id="r4 rd" class="r4 r">identifiableContent</span>;
+
+            <b>if</b> (<span class="r3 r">preamble</span>.<a href="@1@System.Runtime/A.html#42e9b7616956cf94" class="i property">Length</a> == 0)
+            {
+                <span class="r4 r">identifiableContent</span> = <span class="r2 r">encodedBytes</span>;
+            }
+            <b>else</b>
+            {
+                <span class="r4 r">identifiableContent</span> = <b>new</b> <b>byte</b>[<span class="r3 r">preamble</span>.<a href="@1@System.Runtime/A.html#42e9b7616956cf94" class="i property">Length</a> + <span class="r2 r">encodedBytes</span>.<a href="@1@System.Runtime/A.html#42e9b7616956cf94" class="i property">Length</a>];
+                <span class="r3 r">preamble</span>.<a href="@1@System.Runtime/A.html#d3c9a3da4e5d9327" class="i method">CopyTo</a>(<span class="r4 r">identifiableContent</span>, 0);
+                <span class="r2 r">encodedBytes</span>.<a href="@1@System.Runtime/A.html#d3c9a3da4e5d9327" class="i method">CopyTo</a>(<span class="r4 r">identifiableContent</span>, <span class="r3 r">preamble</span>.<a href="@1@System.Runtime/A.html#42e9b7616956cf94" class="i property">Length</a>);
+            }
+
+            <b>return</b> <b>new</b> <span class="t constructor">MemoryStream</span>(<span class="r4 r">identifiableContent</span>);
+        }
+
+        <b>public static object</b> <a id="a5eb7ba97f1e878c" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">DeSerializeObjectTree</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r5 rd" class="r5 r">xaml</span>)
+        {
+            <a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r6 rd" class="r6 r">stream</span> = <a href="#292f76df0529fbd0" class="i method">ConvertTextToStream</a>(<span class="r5 r">xaml</span>);
+            <a href="@0@PresentationFramework/A.html#ea31b6428ed12199" class="t t">ParserContext</a> <span id="r7 rd" class="r7 r">parserContext</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#b6d0ea91411904f5" class="t constructor">ParserContext</a>();
+            <span class="r7 r">parserContext</span>.<a href="@0@PresentationFramework/A.html#9b97aeadcf9bce81" class="i property">BaseUri</a> = <b>new</b> <a href="@1@System.Runtime/A.html#9e1bb2fef0d1159b" class="t constructor">Uri</a>(<span class="s">&quot;pack://siteoforigin:,,,/&quot;</span>);
+            <b>return</b> <a href="@0@PresentationFramework/A.html#7449eaf937932294" class="t t">XamlReader</a>.<a href="@0@PresentationFramework/A.html#39ebc10136a0393f" class="i method">Load</a>(<span class="r6 r">stream</span>, <span class="r7 r">parserContext</span>);
+        }
+
+        <b>public static string</b> <a id="b0cc8c4976d0d917" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SerializeObjectTree</a>(<b>object</b> <span id="r8 rd" class="r8 r">objectTree</span>, <a href="@0@PresentationFramework/A.html#4395c2b94e4d1452" class="t t">XamlWriterMode</a> <span id="r9 rd" class="r9 r">expressionMode</span>)
+        {
+            <a href="@1@System.Runtime/A.html#adf60ee46ebd299f" class="t t">StringBuilder</a> <span id="r10 rd" class="r10 r">sb</span> = <b>new</b> <a href="@1@System.Runtime/A.html#6e631639c1e2746b" class="t constructor">StringBuilder</a>();
+            <span class="t t">TextWriter</span> <span id="r11 rd" class="r11 r">writer</span> = <b>new</b> <span class="t constructor">StringWriter</span>(<span class="r10 r">sb</span>);
+            <span class="t t">XmlTextWriter</span> <span id="r12 rd" class="r12 r">xmlWriter</span> = <b>null</b>;
+
+            <b>try</b>
+            {
+                <span class="c">// Create XmlTextWriter</span>
+                <span class="r12 r">xmlWriter</span> = <b>new</b> <span class="t constructor">XmlTextWriter</span>(<span class="r11 r">writer</span>);
+
+                <span class="c">// Set serialization mode</span>
+                <a href="@0@PresentationFramework/A.html#e7fd00344acea094" class="t t">XamlDesignerSerializationManager</a> <span id="r13 rd" class="r13 r">manager</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#5a3768b646de1ce2" class="t constructor">XamlDesignerSerializationManager</a>(<span class="r12 r">xmlWriter</span>);
+                <span class="r13 r">manager</span>.<a href="@0@PresentationFramework/A.html#79ac8cd6c06f77ab" class="i property">XamlWriterMode</a> = <span class="r9 r">expressionMode</span>;
+                <span class="c">// Serialize</span>
+                <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Markup</span>.<a href="@0@PresentationFramework/A.html#cd9253c5736f89b3" class="t t">XamlWriter</a>.<a href="@0@PresentationFramework/A.html#f700ab1d28489e28" class="i method">Save</a>(<span class="r8 r">objectTree</span>, <span class="r13 r">manager</span>);
+            }
+            <b>finally</b>
+            {
+                <b>if</b> (<span class="r12 r">xmlWriter</span> != <b>null</b>)
+                    <span class="r12 r">xmlWriter</span>.<span class="i method">Close</span>();
+            }
+
+            <b>return</b> <span class="r10 r">sb</span>.<a href="@1@System.Runtime/A.html#5a97da49a158a3c9" class="i method">ToString</a>();
+        }
+
+        <b>public static string</b> <a id="4d4ced01e7224e60" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetSavedDataPath</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r14 rd" class="r14 r">savedXamlFileName</span>)
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r15 rd" class="r15 r">path</span> = <b>null</b>;
+
+            <span class="r15 r">path</span> = <span class="t t">Directory</span>.<span class="i method">GetCurrentDirectory</span>();
+
+            <span class="r15 r">path</span> = <span class="i n">System</span>.<span class="i n">IO</span>.<span class="t t">Path</span>.<span class="i method">Combine</span>(<span class="r15 r">path</span>, <span class="r14 r">savedXamlFileName</span>);
+            <b>return</b> <span class="r15 r">path</span>;
+        }
+
+        <b>public static</b> <a href="@1@System.Runtime/A.html#e23a38af5d11ddd3" class="t t">FileStream</a> <a id="caf8a5fdec8131b6" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetStreamForSavedXamlFile</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r16 rd" class="r16 r">savedDataPath</span>, <a href="@1@System.Runtime/A.html#c0cb6ba6af625b3a" class="t t">FileMode</a> <span id="r17 rd" class="r17 r">mode</span>)
+        {
+<span class="k preprocess">#</span><span class="k preprocess">if</span> <span class="i">XamlPadExpressApp</span>
+<span class="e">            // Get a store from Isolated Storage and see if xamlpad_saved.xaml exists
+            // for this user/application.
+            IsolatedStorageFile isoStore;
+            try
+            {
+                isoStore = IsolatedStorageFile.GetUserStoreForApplication();
+            }
+
+            catch (SecurityException)
+            {
+                // Just return null as if the saved file wasn&#39;t there.
+                return null;
+            }
+
+            // Get a stream for this file
+            try
+            {
+                IsolatedStorageFileStream stream = new IsolatedStorageFileStream(
+                    savedXamlFileName,
+                    mode,
+                    isoStore);
+
+                return stream;
+            }
+
+            catch (FileNotFoundException)
+            {
+                // We are trying to open an existing file but it&#39;s not there.
+                // Just return null and we&#39;ll default to the initial content.
+                return null;
+            }
+
+            catch (IsolatedStorageException e)
+            {
+                // Isolated Storage permissions may not be granted to this user.
+                return null;
+            }
+
+</span><span class="k preprocess">#</span><span class="k preprocess">else</span>
+            <span class="c">// Use the rules for reading/writing the saved file -- if the app was deployed</span>
+            <span class="c">// with ClickOnce, it goes to/from the user&#39;s desktop, otherwise the current </span>
+            <span class="c">// directory is used.</span>
+            <b>try</b>
+            {
+                <a href="@1@System.Runtime/A.html#e23a38af5d11ddd3" class="t t">FileStream</a> <span id="r18 rd" class="r18 r">stream</span> = <b>new</b> <a href="@1@System.Runtime/A.html#66c00a58470ce47d" class="t constructor">FileStream</a>(<span class="r16 r">savedDataPath</span>, <span class="r17 r">mode</span>);
+                <b>return</b> <span class="r18 r">stream</span>;
+            }
+
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#94e3cb4b7b7d78be" class="t t">UnauthorizedAccessException</a>)
+            {
+                <b>return</b> <b>null</b>;
+            }
+
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#c6061cd41c022374" class="t t">SecurityException</a>)
+            {
+                <b>return</b> <b>null</b>;
+            }
+
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#fd582974d1f75ac7" class="t t">FileNotFoundException</a>)
+            {
+                <b>return</b> <b>null</b>;
+            }
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#bf546e435199e83c" class="t t">IOException</a>)
+            {
+                <b>return</b> <b>null</b>;
+            }
+<span class="k preprocess">#</span><span class="k preprocess">endif</span>
+        }
+
+        <b>public static void</b> <a id="b2a7aed11720cf9e" href="R/b2a7aed11720cf9e.html" target="n" data-glyph="72,1" class="i method">FlushDispatcher</a>()
+        {
+            <a href="#e26adae94bac7217" class="i method">FlushDispatcher</a>(<a href="@0@WindowsBase/A.html#078d6b27d9837a35" class="t t">Dispatcher</a>.<a href="@0@WindowsBase/A.html#f630b5e1523cab3b" class="i property">CurrentDispatcher</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r19 r">ctx</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public static void</b> <a id="e26adae94bac7217" href="R/e26adae94bac7217.html" target="n" data-glyph="72,1" class="i method">FlushDispatcher</a>(<a href="@0@WindowsBase/A.html#078d6b27d9837a35" class="t t">Dispatcher</a> <span id="r19 rd" class="r19 r">ctx</span>)
+        {
+            <a href="#6950a996b086a8c2" class="i method">FlushDispatcher</a>(<span class="r19 r">ctx</span>, <a href="@0@WindowsBase/A.html#af2d44a802e4535c" class="t t">DispatcherPriority</a>.<a href="@0@WindowsBase/A.html#32f957d7e0277f2b" class="i field">SystemIdle</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r20 r">ctx</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r21 r">priority</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public static void</b> <a id="6950a996b086a8c2" href="R/6950a996b086a8c2.html" target="n" data-glyph="72,1" class="i method">FlushDispatcher</a>(<a href="@0@WindowsBase/A.html#078d6b27d9837a35" class="t t">Dispatcher</a> <span id="r20 rd" class="r20 r">ctx</span>, <a href="@0@WindowsBase/A.html#af2d44a802e4535c" class="t t">DispatcherPriority</a> <span id="r21 rd" class="r21 r">priority</span>)
+        {
+            <span class="r20 r">ctx</span>.<a href="@0@WindowsBase/A.html#df611d211d028cc2" class="i method">Invoke</a>(<span class="r21 r">priority</span>, <b>new</b> <span class="t">DispatcherOperationCallback</span>(<b>delegate</b> { <b>return</b> <b>null</b>; }), <b>null</b>);
+        }
+
+        <b>public static string</b> <a id="4327b120a99ea313" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetIndentedXAML</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r22 rd" class="r22 r">designXAML</span>)
+        {
+            <b>if</b> (<span class="r22 r">designXAML</span>.<a href="@1@System.Runtime/A.html#06a5f7c688e69307" class="i method">Trim</a>() == <span class="s">&quot;&quot;</span>) <b>return</b> <span class="s">&quot;&quot;</span>;
+            <span class="t t">TextReader</span> <span id="r23 rd" class="r23 r">treader</span> = <b>new</b> <span class="t constructor">StringReader</span>(<span class="r22 r">designXAML</span>);
+            <span class="t t">XmlReader</span> <span id="r24 rd" class="r24 r">xmlReader</span> = <span class="t t">XmlReader</span>.<span class="i method">Create</span>(<span class="r23 r">treader</span>);
+            <span class="r24 r">xmlReader</span>.<span class="i method">Read</span>();
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r25 rd" class="r25 r">indentedXAML</span> = <span class="s">&quot;&quot;</span>;
+
+            <b>while</b> (!<span class="r24 r">xmlReader</span>.<span class="i property">EOF</span>)
+            {
+                <b>switch</b> (<span class="r24 r">xmlReader</span>.<span class="i property">NodeType</span>)
+                {
+                    <b>case</b> <span class="t t">XmlNodeType</span>.<span class="i field">Element</span>:
+                        <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r26 rd" class="r26 r">tabs</span> = <span class="s">&quot;&quot;</span>;
+                        <b>for</b> (<b>int</b> <span id="r27 rd" class="r27 r">i</span> = 0; <span class="r27 r">i</span> &lt; <span class="r24 r">xmlReader</span>.<span class="i property">Depth</span>; <span class="r27 r">i</span>++) <span class="r26 r">tabs</span> += <span class="s">&quot;    &quot;</span>;
+
+                        <b>if</b> ((<span class="r24 r">xmlReader</span>.<span class="i property">XmlSpace</span> == <span class="t t">XmlSpace</span>.<span class="i field">Preserve</span>))
+                        {
+                            <span class="r25 r">indentedXAML</span> += <span class="s">&quot;\n&quot;</span> + <span class="r26 r">tabs</span> + <span class="r24 r">xmlReader</span>.<span class="i method">ReadOuterXml</span>();
+                            <b>continue</b>;
+                        }
+
+                        <span class="r25 r">indentedXAML</span> += <span class="s">&quot;\n&quot;</span> + <span class="r26 r">tabs</span> + <span class="s">&quot;&lt;&quot;</span> + <span class="r24 r">xmlReader</span>.<span class="i property">Name</span>;
+                        <b>bool</b> <span id="r28 rd" class="r28 r">emptyElement</span> = <span class="r24 r">xmlReader</span>.<span class="i property">IsEmptyElement</span>;
+                        <b>if</b> (<span class="r24 r">xmlReader</span>.<span class="i property">HasAttributes</span>)
+                        {
+                            <b>for</b> (<b>int</b> <span id="r29 rd" class="r29 r">i</span> = 0; <span class="r29 r">i</span> &lt; <span class="r24 r">xmlReader</span>.<span class="i property">AttributeCount</span>; <span class="r29 r">i</span>++)
+                            {
+                                <span class="r24 r">xmlReader</span>.<span class="i method">MoveToAttribute</span>(<span class="r29 r">i</span>);
+                                <span class="r25 r">indentedXAML</span> += <span class="s">&quot; &quot;</span> + <span class="r24 r">xmlReader</span>.<span class="i property">Name</span> + <span class="s">&quot;=\&quot;&quot;</span> + <span class="r24 r">xmlReader</span>.<span class="i property">Value</span> + <span class="s">&quot;\&quot;&quot;</span>;
+                            }
+                        }
+
+                        <b>if</b> (<span class="r28 r">emptyElement</span>) <span class="r25 r">indentedXAML</span> += <span class="s">&quot;/&quot;</span>;
+                        <span class="r25 r">indentedXAML</span> += <span class="s">&quot;&gt;&quot;</span>;
+                        <span class="r24 r">xmlReader</span>.<span class="i method">Read</span>();
+                        <b>break</b>;
+                    <b>case</b> <span class="t t">XmlNodeType</span>.<span class="i field">Text</span>:
+                        <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r30 rd" class="r30 r">origValue</span> = <span class="r24 r">xmlReader</span>.<span class="i property">Value</span>;
+                        <span class="r30 r">origValue</span> = <span class="r30 r">origValue</span>.<a href="@1@System.Runtime/A.html#69fc1d0aa6df8a90" class="i method">Replace</a>(<span class="s">&quot;&amp;&quot;</span>, <span class="s">&quot;&amp;amp;&quot;</span>);
+                        <span class="r30 r">origValue</span> = <span class="r30 r">origValue</span>.<a href="@1@System.Runtime/A.html#69fc1d0aa6df8a90" class="i method">Replace</a>(<span class="s">&quot;&lt;&quot;</span>, <span class="s">&quot;&amp;lt;&quot;</span>);
+                        <span class="r30 r">origValue</span> = <span class="r30 r">origValue</span>.<a href="@1@System.Runtime/A.html#69fc1d0aa6df8a90" class="i method">Replace</a>(<span class="s">&quot;&gt;&quot;</span>, <span class="s">&quot;&amp;gt;&quot;</span>);
+                        <span class="r30 r">origValue</span> = <span class="r30 r">origValue</span>.<a href="@1@System.Runtime/A.html#69fc1d0aa6df8a90" class="i method">Replace</a>(<span class="s">&quot;\&quot;&quot;</span>, <span class="s">&quot;&amp;quot;&quot;</span>);
+                        <span class="r25 r">indentedXAML</span> += <span class="r30 r">origValue</span>;
+                        <span class="r24 r">xmlReader</span>.<span class="i method">Read</span>();
+                        <b>break</b>;
+                    <b>case</b> <span class="t t">XmlNodeType</span>.<span class="i field">EndElement</span>:
+                        <span class="r26 r">tabs</span> = <span class="s">&quot;&quot;</span>;
+                        <b>for</b> (<b>int</b> <span id="r31 rd" class="r31 r">i</span> = 0; <span class="r31 r">i</span> &lt; <span class="r24 r">xmlReader</span>.<span class="i property">Depth</span>; <span class="r31 r">i</span>++) <span class="r26 r">tabs</span> += <span class="s">&quot;    &quot;</span>;
+                        <span class="r25 r">indentedXAML</span> += <span class="s">&quot;\n&quot;</span> + <span class="r26 r">tabs</span> + <span class="s">&quot;&lt;/&quot;</span> + <span class="r24 r">xmlReader</span>.<span class="i property">Name</span> + <span class="s">&quot;&gt;&quot;</span>;
+                        <span class="r24 r">xmlReader</span>.<span class="i method">Read</span>();
+                        <b>break</b>;
+                    <b>case</b> <span class="t t">XmlNodeType</span>.<span class="i field">Whitespace</span>:
+                        <span class="c">//indentedXAML += xmlReader.Value;</span>
+                        <span class="r24 r">xmlReader</span>.<span class="i method">Read</span>();
+                        <b>break</b>;
+                    <b>default</b>:
+                        <span class="r24 r">xmlReader</span>.<span class="i method">Read</span>();
+                        <b>break</b>;
+                }
+            }
+
+            <span class="c">// remove the first \n</span>
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r32 rd" class="r32 r">realText</span> = <span class="r25 r">indentedXAML</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(1, <span class="r25 r">indentedXAML</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> - 1);
+            <span class="r25 r">indentedXAML</span> = <span class="r32 r">realText</span>;
+            <b>return</b> <span class="r25 r">indentedXAML</span>;
+        }
+
+        <b>private static void</b> <a id="b4a3e1447b302b67" href="R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">InsertBlockWithinParagraph</a>(<a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="t t">Paragraph</a> <span id="r33 rd" class="r33 r">origP</span>, <a href="@0@PresentationFramework/A.html#653528d814b49dce" class="t t">TextPointer</a> <span id="r34 rd" class="r34 r">_caretPosition</span>, <a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a> <span id="r35 rd" class="r35 r">objectToInsert</span>)
+        {
+            <b>if</b> (<a href="#de0560afab288659" class="i method">IsParagraphEmpty</a>(<span class="r33 r">origP</span>))
+            {
+                <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a> <span id="r36 rd" class="r36 r">fd</span> = <span class="r33 r">origP</span>.<a href="@0@PresentationFramework/A.html#6e6e89698f99eb50" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a>;
+                <b>if</b> (<span class="r36 r">fd</span> != <b>null</b>)
+                {
+                    <span class="r36 r">fd</span>.<a href="@0@PresentationFramework/A.html#4d1bf7b5451a11f8" class="i property">Blocks</a>.<a href="@0@PresentationFramework/A.html#efb7272dec5b9284" class="i method">InsertAfter</a>(<span class="r33 r">origP</span>, <span class="r35 r">objectToInsert</span>);
+                    <span class="r36 r">fd</span>.<a href="@0@PresentationFramework/A.html#4d1bf7b5451a11f8" class="i property">Blocks</a>.<a href="@0@PresentationFramework/A.html#a70c37378045f7ec" class="i method">Remove</a>(<span class="r33 r">origP</span>);
+                    <b>return</b>;
+                }
+
+                <a href="@0@PresentationFramework/A.html#a7410ebbf0d73f2d" class="t t">ListItem</a> <span id="r37 rd" class="r37 r">li</span> = <span class="r33 r">origP</span>.<a href="@0@PresentationFramework/A.html#6e6e89698f99eb50" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#a7410ebbf0d73f2d" class="t t">ListItem</a>;
+                <b>if</b> (<span class="r37 r">li</span> != <b>null</b>)
+                {
+                    <span class="r37 r">li</span>.<a href="@0@PresentationFramework/A.html#48658afc1938b29c" class="i property">Blocks</a>.<a href="@0@PresentationFramework/A.html#efb7272dec5b9284" class="i method">InsertAfter</a>(<span class="r33 r">origP</span>, <span class="r35 r">objectToInsert</span>);
+                    <span class="r37 r">li</span>.<a href="@0@PresentationFramework/A.html#48658afc1938b29c" class="i property">Blocks</a>.<a href="@0@PresentationFramework/A.html#a70c37378045f7ec" class="i method">Remove</a>(<span class="r33 r">origP</span>);
+                    <b>return</b>;
+                }
+            }
+
+            <span class="r34 r">_caretPosition</span>.<a href="@0@PresentationFramework/A.html#0ae9ae2f4e8bb03d" class="i method">InsertParagraphBreak</a>();
+            <span class="r33 r">origP</span>.<a href="@0@PresentationFramework/A.html#a8f40867fc373c61" class="i property">SiblingBlocks</a>.<a href="@0@PresentationFramework/A.html#efb7272dec5b9284" class="i method">InsertAfter</a>(<span class="r33 r">origP</span>, <span class="r35 r">objectToInsert</span>);
+        }
+
+        <b>public static string</b> <a id="1f3ac6c5b9b005fa" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetFileName</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r38 rd" class="r38 r">path</span>)
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>[] <span id="r39 rd" class="r39 r">values</span> = <span class="r38 r">path</span>.<a href="@1@System.Runtime/A.html#b06c6275ef677846" class="i method">Split</a>(<span class="s">&#39;/&#39;</span>);
+
+            <b>foreach</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r40 rd" class="r40 r">s</span> <b>in</b> <span class="r39 r">values</span>)
+            {
+                <b>if</b> (<span class="r40 r">s</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>().<a href="@1@System.Runtime/A.html#428c5c9954dea844" class="i method">Contains</a>(<span class="s">&quot;.jpg&quot;</span>) || <span class="r40 r">s</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>().<a href="@1@System.Runtime/A.html#428c5c9954dea844" class="i method">Contains</a>(<span class="s">&quot;.bmp&quot;</span>) || <span class="r40 r">s</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>().<a href="@1@System.Runtime/A.html#428c5c9954dea844" class="i method">Contains</a>(<span class="s">&quot;.png&quot;</span>) || <span class="r40 r">s</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>().<a href="@1@System.Runtime/A.html#428c5c9954dea844" class="i method">Contains</a>(<span class="s">&quot;.gif&quot;</span>))
+                {
+                    <b>return</b> <span class="r40 r">s</span>;
+                }
+            }
+            <b>return</b> <span class="s">&quot;&quot;</span>;
+        }
+
+        <b>public static string</b> <a id="9e1881d8526f3703" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">FindNumeric</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r41 rd" class="r41 r">content</span>)
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>[] <span id="r42 rd" class="r42 r">values</span> = <span class="r41 r">content</span>.<a href="@1@System.Runtime/A.html#b06c6275ef677846" class="i method">Split</a>(<span class="s">&#39; &#39;</span>);
+            <b>if</b> (<span class="r42 r">values</span> != <b>null</b>)
+            {
+                <b>return</b> <span class="r42 r">values</span>[0];
+            }
+
+            <b>return</b> <span class="s">&quot;none&quot;</span>;
+        }
+
+        <b>public static string</b> <a id="060e5a16f77a1376" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetBrushesFromString</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r43 rd" class="r43 r">value</span>)
+        {
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#bdcea65a88a95471" class="i property">AliceBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;AliceBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#ab3218c2e7eca8e7" class="i property">AntiqueWhite</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;AntiqueWhite&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#39a788cc4436d577" class="i property">Aqua</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Aqua&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#fafc84426ccdc472" class="i property">Aquamarine</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Aquamarine&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#9519fadb2e0f5220" class="i property">Azure</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Azure&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#5391b3b394458f88" class="i property">Beige</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Beige&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#831242ab20384033" class="i property">Bisque</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Bisque&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#4c63c441ae36a080" class="i property">Black</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Black&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f236f99870bccfe1" class="i property">BlanchedAlmond</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;BlanchedAlmond&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#77e9f989597d129c" class="i property">Blue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Blue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#0c2f69ba48c5d54e" class="i property">BlueViolet</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;BlueViolet&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f036fa28aa2377e6" class="i property">Brown</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Brown&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#0abd85e8d81948c4" class="i property">BurlyWood</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;BurlyWood&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#48956b99d0090bd2" class="i property">CadetBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;CadetBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#11e28f7328c9ff4a" class="i property">Chartreuse</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Chartreuse&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#be7a2a3174c25c46" class="i property">Chocolate</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Chocolate&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f1cab9ca1e50262b" class="i property">Coral</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Coral&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#35e2230d250ea3ef" class="i property">CornflowerBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;CornflowerBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#100151a40f66162e" class="i property">Cornsilk</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Cornsilk&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#9526742f0f7652e5" class="i property">Crimson</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Crimson&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f1f0061adf5eb69b" class="i property">Cyan</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Cyan&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1fd48d6ad6479ade" class="i property">DarkBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#dd531a8ba2b8d91c" class="i property">DarkCyan</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkCyan&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<span class="i">Compare</span>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<span class="i">DarkEasyITCenterrod</span>.<span class="i">ToString</span>()) == 0) <b>return</b> <span class="s">&quot;DarkEasyITCenterrod&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#eb95080a8457a58a" class="i property">DarkGray</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkGray&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1ee71991fea389c4" class="i property">DarkGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#6b6346818ed077f0" class="i property">DarkKhaki</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkKhaki&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1bd6f1c2b3105390" class="i property">DarkMagenta</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkMagenta&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1c020a4a92ea2c9c" class="i property">DarkOliveGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkOliveGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#b1e152c81c8c4886" class="i property">DarkOrange</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkOrange&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#41279f42769ba342" class="i property">DarkOrchid</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkOrchid&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#130eea95569b288a" class="i property">DarkRed</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkRed&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#56b0a74e84499551" class="i property">DarkSalmon</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkSalmon&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#e195506c2f4b3ca0" class="i property">DarkSeaGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkSeaGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#913bf8f841e2e4db" class="i property">DarkSlateBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkSlateBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#a43635cf2ea9bb6d" class="i property">DarkSlateGray</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkSlateGray&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#3722cf7bd912817e" class="i property">DarkTurquoise</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkTurquoise&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#4fe7e4dec02b6979" class="i property">DarkViolet</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DarkViolet&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#9c91702b77fe8aa3" class="i property">DeepPink</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DeepPink&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#65d3137381e5b686" class="i property">DeepSkyBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DeepSkyBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#664b33ed19478679" class="i property">DimGray</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DimGray&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#cfbfb7b2b2ff8093" class="i property">DodgerBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;DodgerBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#c43df14ff317f739" class="i property">Firebrick</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Firebrick&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#dc5b18beb5751750" class="i property">FloralWhite</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;FloralWhite&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#c7606755372be66c" class="i property">ForestGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;ForestGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#5bb87b4687485427" class="i property">Fuchsia</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Fuchsia&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#8c9703edabe3de34" class="i property">Gainsboro</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Gainsboro&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#e85fd460d002cf09" class="i property">GhostWhite</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;GhostWhite&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#435a4b71c4ac97a1" class="i property">Gold</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Gold&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<span class="i">Compare</span>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<span class="i">EasyITCenterrod</span>.<span class="i">ToString</span>()) == 0) <b>return</b> <span class="s">&quot;EasyITCenterrod&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#7440f2f19725fbb5" class="i property">Gray</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Gray&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#c9b04dd5b4375ae3" class="i property">Green</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Green&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#e3b0ee58d3d6d49a" class="i property">GreenYellow</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;GreenYellow&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#8d2d1160d9cebebe" class="i property">Honeydew</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Honeydew&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#d6ea5d92103c2c8c" class="i property">HotPink</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;HotPink&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#905dd4a8a07bb29f" class="i property">IndianRed</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;IndianRed&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#54631384e49be619" class="i property">Indigo</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Indigo&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#357b70d4fabceac4" class="i property">Ivory</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Ivory&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#32c35575d00a5c53" class="i property">Khaki</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Khaki&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#0ae271e31b4b3bef" class="i property">Lavender</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Lavender&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#6af04b095f11e5ac" class="i property">LavenderBlush</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LavenderBlush&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#d75db852a7606f06" class="i property">LawnGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LawnGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f6dd17a5317c88f7" class="i property">LemonChiffon</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LemonChiffon&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#6d11663f899e2235" class="i property">LightBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LightBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#90c8abffd6a5ffbd" class="i property">LightCoral</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LightCoral&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#82f7815bafde3ae1" class="i property">LightCyan</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LightCyan&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<span class="i">Compare</span>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<span class="i">LightEasyITCenterrodYellow</span>.<span class="i">ToString</span>()) == 0) <b>return</b> <span class="s">&quot;LightEasyITCenterrodYellow&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#a3f15457596bf78b" class="i property">LightGray</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LightGray&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#09c6ada0a7316117" class="i property">LightGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LightGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f58500cd0b23c510" class="i property">LightPink</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LightPink&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#9ff0226169df6523" class="i property">LightSalmon</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LightSalmon&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#12370a1d55492de2" class="i property">LightSeaGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LightSeaGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#7a6ce7819d71dab8" class="i property">LightSkyBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LightSkyBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#c7b70ebe1099f18e" class="i property">LightSlateGray</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LightSlateGray&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#540e802a13346c69" class="i property">LightSteelBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LightSteelBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#513c194cf8f37ff4" class="i property">LightYellow</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LightYellow&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#2f0e82f007ec1579" class="i property">Lime</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Lime&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#b9128879ccb36b12" class="i property">LimeGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;LimeGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1f2890157e40ef48" class="i property">Linen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Linen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#ef90d5e081c16630" class="i property">Magenta</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Magenta&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#3d48f028d0786dea" class="i property">Maroon</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Maroon&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#2eb37567d0c77bc3" class="i property">MediumAquamarine</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;MediumAquamarine&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#41e902bc70577264" class="i property">MediumBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;MediumBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#7a63887fd75de87f" class="i property">MediumOrchid</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;MediumOrchid&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1dd4db48fdbcf959" class="i property">MediumPurple</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;MediumPurple&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#3e5412bf5f26772c" class="i property">MediumSeaGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;MediumSeaGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#168ea255e75c7711" class="i property">MediumSlateBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;MediumSlateBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#ac0f53476864c217" class="i property">MediumSpringGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;MediumSpringGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#2adaf8013b2b5f9d" class="i property">MediumTurquoise</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;MediumTurquoise&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f9e474a6a470c7cb" class="i property">MediumVioletRed</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;MediumVioletRed&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1dcc7fcfb9fbd631" class="i property">MidnightBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;MidnightBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#7c6965443ca67d57" class="i property">MintCream</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;MintCream&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f2869355b738dc98" class="i property">MistyRose</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;MistyRose&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#8e03db427e42f8c2" class="i property">Moccasin</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Moccasin&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#54c832439c3d1d06" class="i property">NavajoWhite</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;NavajoWhite&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#0e88a9c9dd8ddd8d" class="i property">Navy</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Navy&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#872d2ee1cb44bcf7" class="i property">OldLace</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;OldLace&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#5b677cee945dbba0" class="i property">Olive</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Olive&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#dc7d448d431c379f" class="i property">OliveDrab</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;OliveDrab&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#e579b637ab2623cb" class="i property">Orange</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Orange&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#876cfb5118808ba1" class="i property">OrangeRed</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;OrangeRed&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#3dfbd6503a4233b2" class="i property">Orchid</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Orchid&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<span class="i">Compare</span>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<span class="i">PaleEasyITCenterrod</span>.<span class="i">ToString</span>()) == 0) <b>return</b> <span class="s">&quot;PaleEasyITCenterrod&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#2253e9b6c94d59f8" class="i property">PaleGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;AntiqueWhite&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#e792d0066b1cd52c" class="i property">PaleTurquoise</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;PaleGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#22ceb2b11ca89ea5" class="i property">PaleVioletRed</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;PaleVioletRed&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#2a99877c4ff154fe" class="i property">PapayaWhip</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;PapayaWhip&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#db9f54fcde093333" class="i property">PeachPuff</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;PeachPuff&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#ba6afde848f3c33c" class="i property">Peru</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Peru&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#6253081be64c1a16" class="i property">Pink</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Pink&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#31a3100413791d24" class="i property">Plum</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Plum&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#07429706bc39acb8" class="i property">PowderBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;PowderBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#a40d607b97d6613e" class="i property">Purple</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Purple&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#171db3d6b44cb67a" class="i property">Red</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Red&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#6df002a509a7ff56" class="i property">RosyBrown</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;RosyBrown&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#3933b5c894057dd4" class="i property">RoyalBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;RoyalBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#b4659ed9a1ea6ac8" class="i property">SaddleBrown</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;SaddleBrown&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f4f45f9f22e679dc" class="i property">Salmon</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Salmon&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#caa5ef5394f46c9a" class="i property">SandyBrown</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;SandyBrown&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#bf11d3ee79480f5d" class="i property">SeaGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;SeaGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#7eab396dbd86c6f3" class="i property">SeaShell</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;SeaShell&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#79e553c178bb24d3" class="i property">Sienna</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Sienna&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#fd082cd3f5ea472d" class="i property">Silver</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Silver&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#fa6e39c954f9fb89" class="i property">SkyBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;SkyBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#23a658d6a46e7c3f" class="i property">SlateBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;SlateBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#b7be46c5141e339c" class="i property">SlateGray</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;SlateGray&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#72f41aa7598221c4" class="i property">Snow</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Snow&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#3232634114dc1a86" class="i property">SpringGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;SpringGreen&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#90108b5f629e6704" class="i property">SteelBlue</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;SteelBlue&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#61856506c17e8471" class="i property">Tan</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Tan&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f1c4dd3b877542cf" class="i property">Teal</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Teal&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#aa79b91fef151922" class="i property">Thistle</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Thistle&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#804ff17104673c96" class="i property">Tomato</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Tomato&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#8131d3ac109ee20d" class="i property">Transparent</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Transparent&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#42c90dc86f6e2f03" class="i property">Turquoise</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Turquoise&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#ba66acba0f57ad14" class="i property">Violet</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Violet&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#7e1b0bc6c286c7b5" class="i property">Wheat</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Wheat&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#11eb50ba6c5ef1c6" class="i property">White</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;White&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#d011533fc3db1d45" class="i property">WhiteSmoke</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;WhiteSmoke&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#92f756a40a45c1a7" class="i property">Yellow</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;Yellow&quot;</span>;
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#b42f029a93d6432a" class="i method">Compare</a>(<span class="r43 r">value</span>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#b629effa671866da" class="i property">YellowGreen</a>.<a href="@0@PresentationCore/A.html#60fd81c4823670b5" class="i method">ToString</a>()) == 0) <b>return</b> <span class="s">&quot;YellowGreen&quot;</span>;
+
+            <b>return</b> <span class="s">&quot;color not specified&quot;</span>;
+        }
+
+        <b>public static</b> <a href="@0@PresentationCore/A.html#2bdb4a721050df52" class="t t">SolidColorBrush</a> <a id="4849d12bb8c01e4b" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">ColorStringToBrushes</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r44 rd" class="r44 r">colorString</span>)
+        {
+            <span class="r44 r">colorString</span> = <span class="r44 r">colorString</span>.<a href="@1@System.Runtime/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+            <b>if</b> (<b>null</b> != <span class="r44 r">colorString</span>)
+            {
+                <span class="c">// We use invariant culture because we don&#39;t globalize our color names</span>
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r45 rd" class="r45 r">colorUpper</span> = <span class="r44 r">colorString</span>.<a href="@1@System.Runtime/A.html#d5550d7faec6e530" class="i method">ToUpper</a>(<span class="i n">System</span>.<span class="i n">Globalization</span>.<a href="@1@System.Runtime/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@1@System.Runtime/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>);
+
+                <span class="c">// Use String.Equals because it does explicit equality</span>
+                <span class="c">// StartsWith/EndsWith are culture sensitive and are 4-7 times slower than Equals</span>
+
+                <b>switch</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>)
+                {
+                    <b>case</b> 3:
+                        <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;RED&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#171db3d6b44cb67a" class="i property">Red</a>;
+                        <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;TAN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#61856506c17e8471" class="i property">Tan</a>;
+                        <b>break</b>;
+                    <b>case</b> 4:
+                        <b>switch</b> (<span class="r45 r">colorUpper</span>[0])
+                        {
+                            <b>case</b> <span class="s">&#39;A&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;AQUA&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#39a788cc4436d577" class="i property">Aqua</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;B&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;BLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#77e9f989597d129c" class="i property">Blue</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;C&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;CYAN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f1f0061adf5eb69b" class="i property">Cyan</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;G&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;GOLD&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#435a4b71c4ac97a1" class="i property">Gold</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;GRAY&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#7440f2f19725fbb5" class="i property">Gray</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;L&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIME&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#2f0e82f007ec1579" class="i property">Lime</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;N&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;NAVY&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#0e88a9c9dd8ddd8d" class="i property">Navy</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;P&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;PERU&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#ba6afde848f3c33c" class="i property">Peru</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;PINK&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#6253081be64c1a16" class="i property">Pink</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;PLUM&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#31a3100413791d24" class="i property">Plum</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;S&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;SNOW&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#72f41aa7598221c4" class="i property">Snow</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;T&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;TEAL&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f1c4dd3b877542cf" class="i property">Teal</a>;
+                                <b>break</b>;
+                        }
+                        <b>break</b>;
+                    <b>case</b> 5:
+                        <b>switch</b> (<span class="r45 r">colorUpper</span>[0])
+                        {
+                            <b>case</b> <span class="s">&#39;A&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;AZURE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#9519fadb2e0f5220" class="i property">Azure</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;B&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;BEIGE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#5391b3b394458f88" class="i property">Beige</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;BLACK&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#4c63c441ae36a080" class="i property">Black</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;BROWN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f036fa28aa2377e6" class="i property">Brown</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;C&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;CORAL&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f1cab9ca1e50262b" class="i property">Coral</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;G&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;GREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#c9b04dd5b4375ae3" class="i property">Green</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;I&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;IVORY&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#357b70d4fabceac4" class="i property">Ivory</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;K&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;KHAKI&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#32c35575d00a5c53" class="i property">Khaki</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;L&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LINEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1f2890157e40ef48" class="i property">Linen</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;O&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;OLIVE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#5b677cee945dbba0" class="i property">Olive</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;W&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;WHEAT&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#7e1b0bc6c286c7b5" class="i property">Wheat</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;WHITE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#11eb50ba6c5ef1c6" class="i property">White</a>;
+                                <b>break</b>;
+                        }
+                        <b>break</b>;
+                    <b>case</b> 6:
+                        <b>switch</b> (<span class="r45 r">colorUpper</span>[0])
+                        {
+                            <b>case</b> <span class="s">&#39;B&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;BISQUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#831242ab20384033" class="i property">Bisque</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;I&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;INDIGO&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#54631384e49be619" class="i property">Indigo</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;M&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MAROON&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#3d48f028d0786dea" class="i property">Maroon</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;O&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;ORANGE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#e579b637ab2623cb" class="i property">Orange</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;ORCHID&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#3dfbd6503a4233b2" class="i property">Orchid</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;P&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;PURPLE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#a40d607b97d6613e" class="i property">Purple</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;S&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;SALMON&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f4f45f9f22e679dc" class="i property">Salmon</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;SIENNA&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#79e553c178bb24d3" class="i property">Sienna</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;SILVER&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#fd082cd3f5ea472d" class="i property">Silver</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;T&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;TOMATO&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#804ff17104673c96" class="i property">Tomato</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;V&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;VIOLET&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#ba66acba0f57ad14" class="i property">Violet</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;Y&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;YELLOW&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#92f756a40a45c1a7" class="i property">Yellow</a>;
+                                <b>break</b>;
+                        }
+                        <b>break</b>;
+                    <b>case</b> 7:
+                        <b>switch</b> (<span class="r45 r">colorUpper</span>[0])
+                        {
+                            <b>case</b> <span class="s">&#39;C&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;CRIMSON&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#9526742f0f7652e5" class="i property">Crimson</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;D&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKRED&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#130eea95569b288a" class="i property">DarkRed</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DIMGRAY&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#664b33ed19478679" class="i property">DimGray</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;F&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;FUCHSIA&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#5bb87b4687485427" class="i property">Fuchsia</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;H&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;HOTPINK&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#d6ea5d92103c2c8c" class="i property">HotPink</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;M&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MAGENTA&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#ef90d5e081c16630" class="i property">Magenta</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;O&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;OLDLACE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#872d2ee1cb44bcf7" class="i property">OldLace</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;S&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;SKYBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#fa6e39c954f9fb89" class="i property">SkyBlue</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;T&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;THISTLE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#aa79b91fef151922" class="i property">Thistle</a>;
+                                <b>break</b>;
+                        }
+                        <b>break</b>;
+                    <b>case</b> 8:
+                        <b>switch</b> (<span class="r45 r">colorUpper</span>[0])
+                        {
+                            <b>case</b> <span class="s">&#39;C&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;CORNSILK&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#100151a40f66162e" class="i property">Cornsilk</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;D&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1fd48d6ad6479ade" class="i property">DarkBlue</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKCYAN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#dd531a8ba2b8d91c" class="i property">DarkCyan</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKGRAY&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#eb95080a8457a58a" class="i property">DarkGray</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DEEPPINK&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#9c91702b77fe8aa3" class="i property">DeepPink</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;H&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;HONEYDEW&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#8d2d1160d9cebebe" class="i property">Honeydew</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;L&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LAVENDER&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#0ae271e31b4b3bef" class="i property">Lavender</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;M&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MOCCASIN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#8e03db427e42f8c2" class="i property">Moccasin</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;S&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;SEAGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#bf11d3ee79480f5d" class="i property">SeaGreen</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;SEASHELL&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#7eab396dbd86c6f3" class="i property">SeaShell</a>;
+                                <b>break</b>;
+                        }
+                        <b>break</b>;
+                    <b>case</b> 9:
+                        <b>switch</b> (<span class="r45 r">colorUpper</span>[0])
+                        {
+                            <b>case</b> <span class="s">&#39;A&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;ALICEBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#bdcea65a88a95471" class="i property">AliceBlue</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;B&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;BURLYWOOD&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#0abd85e8d81948c4" class="i property">BurlyWood</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;C&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;CADETBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#48956b99d0090bd2" class="i property">CadetBlue</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;CHOCOLATE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#be7a2a3174c25c46" class="i property">Chocolate</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;D&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1ee71991fea389c4" class="i property">DarkGreen</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKKHAKI&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#6b6346818ed077f0" class="i property">DarkKhaki</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;F&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;FIREBRICK&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#c43df14ff317f739" class="i property">Firebrick</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;G&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;GAINSBORO&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#8c9703edabe3de34" class="i property">Gainsboro</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;EasyITCenterROD&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<span class="i">EasyITCenterrod</span>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;I&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;INDIANRED&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#905dd4a8a07bb29f" class="i property">IndianRed</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;L&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LAWNGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#d75db852a7606f06" class="i property">LawnGreen</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#6d11663f899e2235" class="i property">LightBlue</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTCYAN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#82f7815bafde3ae1" class="i property">LightCyan</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTGRAY&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#a3f15457596bf78b" class="i property">LightGray</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTPINK&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f58500cd0b23c510" class="i property">LightPink</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIMEGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#b9128879ccb36b12" class="i property">LimeGreen</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;M&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MINTCREAM&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#7c6965443ca67d57" class="i property">MintCream</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MISTYROSE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f2869355b738dc98" class="i property">MistyRose</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;O&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;OLIVEDRAB&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#dc7d448d431c379f" class="i property">OliveDrab</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;ORANGERED&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#876cfb5118808ba1" class="i property">OrangeRed</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;P&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;PALEGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#2253e9b6c94d59f8" class="i property">PaleGreen</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;PEACHPUFF&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#db9f54fcde093333" class="i property">PeachPuff</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;R&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;ROSYBROWN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#6df002a509a7ff56" class="i property">RosyBrown</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;ROYALBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#3933b5c894057dd4" class="i property">RoyalBlue</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;S&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;SLATEBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#23a658d6a46e7c3f" class="i property">SlateBlue</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;SLATEGRAY&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#b7be46c5141e339c" class="i property">SlateGray</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;STEELBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#90108b5f629e6704" class="i property">SteelBlue</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;T&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;TURQUOISE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#42c90dc86f6e2f03" class="i property">Turquoise</a>;
+                                <b>break</b>;
+                        }
+                        <b>break</b>;
+                    <b>case</b> 10:
+                        <b>switch</b> (<span class="r45 r">colorUpper</span>[0])
+                        {
+                            <b>case</b> <span class="s">&#39;A&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;AQUAMARINE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#fafc84426ccdc472" class="i property">Aquamarine</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;B&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;BLUEVIOLET&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#0c2f69ba48c5d54e" class="i property">BlueViolet</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;C&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;CHARTREUSE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#11e28f7328c9ff4a" class="i property">Chartreuse</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;D&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKORANGE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#b1e152c81c8c4886" class="i property">DarkOrange</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKORCHID&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#41279f42769ba342" class="i property">DarkOrchid</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKSALMON&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#56b0a74e84499551" class="i property">DarkSalmon</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKVIOLET&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#4fe7e4dec02b6979" class="i property">DarkViolet</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DODGERBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#cfbfb7b2b2ff8093" class="i property">DodgerBlue</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;G&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;GHOSTWHITE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#e85fd460d002cf09" class="i property">GhostWhite</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;L&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTCORAL&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#90c8abffd6a5ffbd" class="i property">LightCoral</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#09c6ada0a7316117" class="i property">LightGreen</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;M&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MEDIUMBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#41e902bc70577264" class="i property">MediumBlue</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;P&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;PAPAYAWHIP&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#2a99877c4ff154fe" class="i property">PapayaWhip</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;POWDERBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#07429706bc39acb8" class="i property">PowderBlue</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;S&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;SANDYBROWN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#caa5ef5394f46c9a" class="i property">SandyBrown</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;W&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;WHITESMOKE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#d011533fc3db1d45" class="i property">WhiteSmoke</a>;
+                                <b>break</b>;
+                        }
+                        <b>break</b>;
+                    <b>case</b> 11:
+                        <b>switch</b> (<span class="r45 r">colorUpper</span>[0])
+                        {
+                            <b>case</b> <span class="s">&#39;D&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKMAGENTA&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1bd6f1c2b3105390" class="i property">DarkMagenta</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DEEPSKYBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#65d3137381e5b686" class="i property">DeepSkyBlue</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;F&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;FLORALWHITE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#dc5b18beb5751750" class="i property">FloralWhite</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;FORESTGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#c7606755372be66c" class="i property">ForestGreen</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;G&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;GREENYELLOW&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#e3b0ee58d3d6d49a" class="i property">GreenYellow</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;L&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTSALMON&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#9ff0226169df6523" class="i property">LightSalmon</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTYELLOW&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#513c194cf8f37ff4" class="i property">LightYellow</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;N&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;NAVAJOWHITE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#54c832439c3d1d06" class="i property">NavajoWhite</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;S&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;SADDLEBROWN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#b4659ed9a1ea6ac8" class="i property">SaddleBrown</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;SPRINGGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#3232634114dc1a86" class="i property">SpringGreen</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;T&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;TRANSPARENT&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#8131d3ac109ee20d" class="i property">Transparent</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;Y&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;YELLOWGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#b629effa671866da" class="i property">YellowGreen</a>;
+                                <b>break</b>;
+                        }
+                        <b>break</b>;
+                    <b>case</b> 12:
+                        <b>switch</b> (<span class="r45 r">colorUpper</span>[0])
+                        {
+                            <b>case</b> <span class="s">&#39;A&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;ANTIQUEWHITE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#ab3218c2e7eca8e7" class="i property">AntiqueWhite</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;D&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKSEAGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#e195506c2f4b3ca0" class="i property">DarkSeaGreen</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;L&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTSKYBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#7a6ce7819d71dab8" class="i property">LightSkyBlue</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LEMONCHIFFON&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f6dd17a5317c88f7" class="i property">LemonChiffon</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;M&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MEDIUMORCHID&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#7a63887fd75de87f" class="i property">MediumOrchid</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MEDIUMPURPLE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1dd4db48fdbcf959" class="i property">MediumPurple</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MIDNIGHTBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1dcc7fcfb9fbd631" class="i property">MidnightBlue</a>;
+                                <b>break</b>;
+                        }
+                        <b>break</b>;
+                    <b>case</b> 13:
+                        <b>switch</b> (<span class="r45 r">colorUpper</span>[0])
+                        {
+                            <b>case</b> <span class="s">&#39;D&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKSLATEBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#913bf8f841e2e4db" class="i property">DarkSlateBlue</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKSLATEGRAY&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#a43635cf2ea9bb6d" class="i property">DarkSlateGray</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKEasyITCenterROD&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<span class="i">DarkEasyITCenterrod</span>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKTURQUOISE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#3722cf7bd912817e" class="i property">DarkTurquoise</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;L&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTSEAGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#12370a1d55492de2" class="i property">LightSeaGreen</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LAVENDERBLUSH&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#6af04b095f11e5ac" class="i property">LavenderBlush</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;P&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;PALEEasyITCenterROD&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<span class="i">PaleEasyITCenterrod</span>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;PALETURQUOISE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#e792d0066b1cd52c" class="i property">PaleTurquoise</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;PALEVIOLETRED&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#22ceb2b11ca89ea5" class="i property">PaleVioletRed</a>;
+                                <b>break</b>;
+                        }
+                        <b>break</b>;
+                    <b>case</b> 14:
+                        <b>switch</b> (<span class="r45 r">colorUpper</span>[0])
+                        {
+                            <b>case</b> <span class="s">&#39;B&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;BLANCHEDALMOND&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f236f99870bccfe1" class="i property">BlanchedAlmond</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;C&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;CORNFLOWERBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#35e2230d250ea3ef" class="i property">CornflowerBlue</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;D&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;DARKOLIVEGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#1c020a4a92ea2c9c" class="i property">DarkOliveGreen</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;L&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTSLATEGRAY&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#c7b70ebe1099f18e" class="i property">LightSlateGray</a>;
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTSTEELBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#540e802a13346c69" class="i property">LightSteelBlue</a>;
+                                <b>break</b>;
+                            <b>case</b> <span class="s">&#39;M&#39;</span>:
+                                <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MEDIUMSEAGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#3e5412bf5f26772c" class="i property">MediumSeaGreen</a>;
+                                <b>break</b>;
+                        }
+                        <b>break</b>;
+                    <b>case</b> 15:
+                        <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MEDIUMSLATEBLUE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#168ea255e75c7711" class="i property">MediumSlateBlue</a>;
+                        <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MEDIUMTURQUOISE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#2adaf8013b2b5f9d" class="i property">MediumTurquoise</a>;
+                        <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MEDIUMVIOLETRED&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#f9e474a6a470c7cb" class="i property">MediumVioletRed</a>;
+                        <b>break</b>;
+                    <b>case</b> 16:
+                        <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MEDIUMAQUAMARINE&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#2eb37567d0c77bc3" class="i property">MediumAquamarine</a>;
+                        <b>break</b>;
+                    <b>case</b> 17:
+                        <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;MEDIUMSPRINGGREEN&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#ac0f53476864c217" class="i property">MediumSpringGreen</a>;
+                        <b>break</b>;
+                    <b>case</b> 20:
+                        <b>if</b> (<span class="r45 r">colorUpper</span>.<a href="@1@System.Runtime/A.html#31b307b02a3bd6b9" class="i method">Equals</a>(<span class="s">&quot;LIGHTEasyITCenterRODYELLOW&quot;</span>)) <b>return</b> <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<span class="i">LightEasyITCenterrodYellow</span>;
+                        <b>break</b>;
+                }
+            }
+            <b>return</b> <b>null</b>;
+        }
+
+        <b>public static</b> <span class="t t">List</span>&lt;<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>&gt; <a id="0877a7ca1a53c9de" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">UIElementsInElement</a>(<a href="@0@PresentationFramework/A.html#12f57ec65f270e8f" class="t t">FrameworkContentElement</a> <span id="r46 rd" class="r46 r">parent</span>)
+        {
+            <span class="t t">List</span>&lt;<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>&gt; <span id="r47 rd" class="r47 r">UIEresults</span> = <b>new</b> <span class="t constructor">List</span>&lt;<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>&gt;();
+            <a href="#ed84da8cb83b009c" class="i method">GetUIElementsRecursively</a>(<span class="r46 r">parent</span> <b>as</b> <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>, <span class="r47 r">UIEresults</span>);
+
+            <b>return</b> <span class="r47 r">UIEresults</span>;
+        }
+
+        <b>static void</b> <a id="ed84da8cb83b009c" href="R/ed84da8cb83b009c.html" target="n" data-glyph="76,1" class="i method">GetUIElementsRecursively</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r48 rd" class="r48 r">dObj</span>, <span class="t t">List</span>&lt;<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>&gt; <span id="r49 rd" class="r49 r">UIresults</span>)
+        {
+            <b>if</b> (<span class="r48 r">dObj</span> == <b>null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r50 rd" class="r50 r">uiElement</span> = <span class="r48 r">dObj</span> <b>as</b> <a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>;
+            <b>if</b> (<span class="r50 r">uiElement</span> != <b>null</b>)
+            {
+                <span class="r49 r">UIresults</span>.<span class="i method">Add</span>(<span class="r50 r">uiElement</span>);
+            }
+
+            <b>foreach</b> (<b>object</b> <span id="r51 rd" class="r51 r">o</span> <b>in</b> <a href="@0@PresentationFramework/A.html#7b6652b52c5711cc" class="t t">LogicalTreeHelper</a>.<a href="@0@PresentationFramework/A.html#5d3b3dc0e6664c82" class="i method">GetChildren</a>(<span class="r48 r">dObj</span>))
+            {
+                <a href="#ed84da8cb83b009c" class="i method">GetUIElementsRecursively</a>(<span class="r51 r">o</span> <b>as</b> <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>, <span class="r49 r">UIresults</span>);
+            }
+        }
+
+        <b>static void</b> <a id="e885327c5f399da6" href="R/e885327c5f399da6.html" target="n" data-glyph="76,1" class="i method">GetContentElementsRecursively</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r52 rd" class="r52 r">dObj</span>, <span class="t t">List</span>&lt;<a href="@0@PresentationCore/A.html#110a5eca64130d8f" class="t t">ContentElement</a>&gt; <span id="r53 rd" class="r53 r">CEresults</span>)
+        {
+            <b>if</b> (<span class="r52 r">dObj</span> == <b>null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <a href="@0@PresentationCore/A.html#110a5eca64130d8f" class="t t">ContentElement</a> <span id="r54 rd" class="r54 r">ceElement</span> = <span class="r52 r">dObj</span> <b>as</b> <a href="@0@PresentationCore/A.html#110a5eca64130d8f" class="t t">ContentElement</a>;
+            <b>if</b> (<span class="r54 r">ceElement</span> != <b>null</b>)
+            {
+                <span class="r53 r">CEresults</span>.<span class="i method">Add</span>(<span class="r54 r">ceElement</span>);
+            }
+
+            <b>foreach</b> (<b>object</b> <span id="r55 rd" class="r55 r">o</span> <b>in</b> <a href="@0@PresentationFramework/A.html#7b6652b52c5711cc" class="t t">LogicalTreeHelper</a>.<a href="@0@PresentationFramework/A.html#5d3b3dc0e6664c82" class="i method">GetChildren</a>(<span class="r52 r">dObj</span>))
+            {
+                <a href="#e885327c5f399da6" class="i method">GetContentElementsRecursively</a>(<span class="r55 r">o</span> <b>as</b> <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>, <span class="r53 r">CEresults</span>);
+            }
+        }
+
+        <b>static public bool</b> <a id="de0560afab288659" href="R/de0560afab288659.html" target="n" data-glyph="72,1" class="i method">IsParagraphEmpty</a>(<a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="t t">Paragraph</a> <span id="r56 rd" class="r56 r">suspect</span>)
+        {
+            <b>if</b> (<span class="r56 r">suspect</span>.<a href="@0@PresentationFramework/A.html#065c321bf62a9a0f" class="i property">Inlines</a>.<a href="@0@PresentationFramework/A.html#fb42255a7aae26a9" class="i property">Count</a> == 0)
+                <b>return</b> <b>true</b>;
+
+            <b>if</b> (<span class="r56 r">suspect</span>.<a href="@0@PresentationFramework/A.html#065c321bf62a9a0f" class="i property">Inlines</a>.<a href="@0@PresentationFramework/A.html#fb42255a7aae26a9" class="i property">Count</a> == 1)
+            {
+                <a href="@0@PresentationFramework/A.html#1ac1e72ace7cb608" class="t t">Run</a> <span id="r57 rd" class="r57 r">r</span> = <span class="r56 r">suspect</span>.<a href="@0@PresentationFramework/A.html#065c321bf62a9a0f" class="i property">Inlines</a>.<a href="@0@PresentationFramework/A.html#0bf4cd9b3eae7cb8" class="i property">FirstInline</a> <b>as</b> <a href="@0@PresentationFramework/A.html#1ac1e72ace7cb608" class="t t">Run</a>;
+                <b>if</b> (<span class="r57 r">r</span> != <b>null</b>)
+                {
+                    <b>if</b> (<span class="r57 r">r</span>.<a href="@0@PresentationFramework/A.html#71abb94b5eed4bb2" class="i property">Text</a> == <span class="s">&quot;&quot;</span>)
+                    {
+                        <b>return</b> <b>true</b>;
+                    }
+                }
+            }
+
+            <b>return</b> <b>false</b>;
+        }
+
+        <b>static void</b> <a id="05ed2dfcdb3b4d75" href="R/05ed2dfcdb3b4d75.html" target="n" data-glyph="76,1" class="i method">FindParentParagraph</a>(<a href="@0@PresentationFramework/A.html#be5c6e4c02b1655f" class="t t">Span</a> <span id="r58 rd" class="r58 r">child</span>, <b>ref</b> <a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="t t">Paragraph</a> <span id="r59 rd" class="r59 r">parent</span>)
+        {
+            <b>if</b> (<span class="r58 r">child</span>.<a href="@0@PresentationFramework/A.html#6e6e89698f99eb50" class="i property">Parent</a> <b>is</b> <a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="t t">Paragraph</a>)
+            {
+                <span class="r59 r">parent</span> = <span class="r58 r">child</span>.<a href="@0@PresentationFramework/A.html#6e6e89698f99eb50" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="t t">Paragraph</a>;
+                <b>return</b>;
+            }
+            <b>else</b>
+            {
+                <a href="#05ed2dfcdb3b4d75" class="i method">FindParentParagraph</a>(<span class="r58 r">child</span>.<a href="@0@PresentationFramework/A.html#6e6e89698f99eb50" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#be5c6e4c02b1655f" class="t t">Span</a>, <b>ref</b> <span class="r59 r">parent</span>);
+            }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

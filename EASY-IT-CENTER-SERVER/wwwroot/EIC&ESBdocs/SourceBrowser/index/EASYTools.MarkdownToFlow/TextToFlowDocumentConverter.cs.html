@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html><head><title>TextToFlowDocumentConverter.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(63);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.MarkdownToFlow/TextToFlowDocumentConverter.cs" target="_top">TextToFlowDocumentConverter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.MarkdownToFlow" target="_top">..\..\..\EASY-TOOLS\EASYTools.MarkdownToFlow\EASYTools.MarkdownToFlow.csproj</a> (EASYTools.MarkdownToFlow)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">MarkdownToFlow</span> {
+ 
+    <b>public class</b> <a id="bb68acef4084dc4f" href="R/bb68acef4084dc4f.html" target="n" data-glyph="0,0" class="t t"><span id="4ab78be78b3decd3">TextToFlowDocumentConverter</span></a> : <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>, <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <b>public</b> <a href="Markdown.cs.html#dd77a29c705d6373" class="t t">Markdown</a> <a id="cda28e749f593b14" href="R/cda28e749f593b14.html" target="n" data-glyph="102,1" class="i property">Markdown</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="Markdown.cs.html#dd77a29c705d6373" class="t t">Markdown</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#64f6c90cc84011ad" class="i field">MarkdownProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#64f6c90cc84011ad" class="i field">MarkdownProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">// Using a DependencyProperty as the backing store for Markdown.  This enables animation, styling, binding, etc...</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="64f6c90cc84011ad" href="R/64f6c90cc84011ad.html" target="n" data-glyph="42,1" class="i field">MarkdownProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;Markdown&quot;</span>, <b>typeof</b>(<a href="Markdown.cs.html#dd77a29c705d6373" class="t t">Markdown</a>), <b>typeof</b>(<a href="#bb68acef4084dc4f" class="t t">TextToFlowDocumentConverter</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts a value. </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A converted value. If the method returns null, the valid null value is used.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The value produced by the binding source.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">targetType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The type of the binding target property.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">parameter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The converter parameter to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r3 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The culture to use in the converter.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="3da85b6948a477c8" href="R/3da85b6948a477c8.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b> <span id="r0 rd" class="r0 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r1 rd" class="r1 r">targetType</span>, <b>object</b> <span id="r2 rd" class="r2 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r3 rd" class="r3 r">culture</span>)
+        {
+            <b>if</b> (<span class="r0 r">value</span> <b>is null</b>)
+            {
+                <b>return</b> <b>null</b>;
+            }
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r4 rd" class="r4 r">text</span> = (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>)<span class="r0 r">value</span>;
+ 
+            <a href="Markdown.cs.html#dd77a29c705d6373" class="k">var</a> <span id="r5 rd" class="r5 r">engine</span> = <a href="#cda28e749f593b14" class="i property">Markdown</a> ?? <a href="#e6bcc86710db2236" class="i field">mMarkdown</a>.<a href="@0@mscorlib/A.html#606a17645b0dc0ff" class="i property">Value</a>;
+ 
+            <b>return</b> <span class="r5 r">engine</span>.<a href="Markdown.cs.html#0fb038378a653e71" class="i method">Transform</a>(<span class="r4 r">text</span>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Converts a value. </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A converted value. If the method returns null, the valid null value is used.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r6 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The value that is produced by the binding target.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">targetType</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The type to convert to.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">parameter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The converter parameter to use.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">culture</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The culture to use in the converter.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="122abae737c0d687" href="R/122abae737c0d687.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r6 rd" class="r6 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r7 rd" class="r7 r">targetType</span>, <b>object</b> <span id="r8 rd" class="r8 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r9 rd" class="r9 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+ 
+        <b>private readonly</b> <a href="@0@mscorlib/A.html#8b99c1f377873554" class="t t">Lazy</a>&lt;<a href="Markdown.cs.html#dd77a29c705d6373" class="t t">Markdown</a>&gt; <a id="e6bcc86710db2236" href="R/e6bcc86710db2236.html" target="n" data-glyph="46,1" class="i field">mMarkdown</a>
+            = <b>new</b> <a href="@0@mscorlib/A.html#c0f7b98bacad370a" class="t constructor">Lazy</a>&lt;<a href="Markdown.cs.html#dd77a29c705d6373" class="t t">Markdown</a>&gt;(() =&gt; <b>new</b> <a href="Markdown.cs.html#c2eb422027419e24" class="t constructor">Markdown</a>());
+    }
+}
+</pre></td></tr></table></div></body></html>

@@ -1,4 +1,7 @@
-﻿
+﻿[Zpět](../../../index)   
+
+
+
 ```csharp   
 
 using System.Linq.Expressions;

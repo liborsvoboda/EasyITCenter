@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html><head><title>MetroHeader.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(81);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/MetroHeader.cs" target="_top">Controls\MetroHeader.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Automation</span>.<span class="i n">Peers</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Automation</span>.<span class="i n">Peers</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <b>public class</b> <a id="76bec57b0e1e9bee" href="../R/76bec57b0e1e9bee.html" target="n" data-glyph="0,0" class="t t"><span id="761ee93d2b14931c">MetroHeader</span></a> : <a href="@0@PresentationFramework/A.html#fe9d6cabf8655080" class="t t">GroupBox</a>
+    {
+        <b>private const string</b> <a id="8d7dfb99cc7b8df2" href="../R/8d7dfb99cc7b8df2.html" target="n" data-glyph="10,1" class="i field">PartHeaderPresenter</a> = <span class="s">&quot;PART_Header&quot;</span>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#bd75a884486c2c74" class="i property">Orientation</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="0d7f89625d52cb16" href="../R/0d7f89625d52cb16.html" target="n" data-glyph="42,1" class="i field">OrientationProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#bd75a884486c2c74" class="i property">Orientation</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a>),
+                                          <b>typeof</b>(<a href="#76bec57b0e1e9bee" class="t t">MetroHeader</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a>.<a href="@0@PresentationFramework/A.html#fa09895e0e094750" class="i field">Vertical</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#bd75a884486c2c74" class="i property">Orientation</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> used for the header.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> If set to </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a>.<a href="@0@PresentationFramework/A.html#fa09895e0e094750" class="i field">Vertical</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> the header will be above the content.</span>
+        <span class="c">///</span><span class="c"> If set to </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a>.<a href="@0@PresentationFramework/A.html#eb60498b6a8ff15f" class="i field">Horizontal</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> the header will be to the left of the content.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a> <a id="bd75a884486c2c74" href="../R/bd75a884486c2c74.html" target="n" data-glyph="102,1" class="i property">Orientation</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a>)<a href="#76bec57b0e1e9bee" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#0d7f89625d52cb16" class="i field">OrientationProperty</a>);
+            <b>set</b> =&gt; <a href="#76bec57b0e1e9bee" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#0d7f89625d52cb16" class="i field">OrientationProperty</a>, <b>value</b>);
+        }
+
+        <b>static</b> <a id="167e3921f17010e5" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">MetroHeader</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6339cc8ec3e1311a" class="i field">DefaultStyleKeyProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#76bec57b0e1e9bee" class="t t">MetroHeader</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>typeof</b>(<a href="#76bec57b0e1e9bee" class="t t">MetroHeader</a>)));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span> <span class="c">/&gt;</span>
+        <b>public override void</b> <a id="6cecdc5487edcde3" href="../R/6cecdc5487edcde3.html" target="n" data-glyph="72,1" class="i method">OnApplyTemplate</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#fe9d6cabf8655080" class="k">base</a>.<a href="@0@PresentationFramework/A.html#0c1b13beb625a4a2" class="i method">OnApplyTemplate</a>();
+
+            <a href="#76bec57b0e1e9bee" class="k">this</a>.<a href="#5d5033a86e60597e" class="i method">SetHeaderVisibility</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span> <span class="c">/&gt;</span>
+        <b>protected override</b> <a href="@0@PresentationCore/A.html#a5e7d19a3e41ef98" class="t t">AutomationPeer</a> <a id="ff24499d83e89df6" href="../R/ff24499d83e89df6.html" target="n" data-glyph="75,1" class="i method">OnCreateAutomationPeer</a>()
+        {
+            <b>return</b> <b>new</b> <a href="../Automation/Peers/MetroHeaderAutomationPeer.cs.html#29abd8cb7b2594de" class="t constructor">MetroHeaderAutomationPeer</a>(<a href="#76bec57b0e1e9bee" class="k">this</a>);
+        }
+
+        <b>protected override void</b> <a id="21d087bf7ebf70f8" href="../R/21d087bf7ebf70f8.html" target="n" data-glyph="75,1" class="i method">OnHeaderChanged</a>(<b>object</b> <span id="r0 rd" class="r0 r">oldHeader</span>, <b>object</b> <span id="r1 rd" class="r1 r">newHeader</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#fe9d6cabf8655080" class="k">base</a>.<a href="@0@PresentationFramework/A.html#8d82a9f56fd4edcf" class="i method">OnHeaderChanged</a>(<span class="r0 r">oldHeader</span>, <span class="r1 r">newHeader</span>);
+
+            <a href="#76bec57b0e1e9bee" class="k">this</a>.<a href="#5d5033a86e60597e" class="i method">SetHeaderVisibility</a>();
+        }
+
+        <b>private void</b> <a id="5d5033a86e60597e" href="../R/5d5033a86e60597e.html" target="n" data-glyph="76,1" class="i method">SetHeaderVisibility</a>()
+        {
+            <b>if</b> (<a href="#76bec57b0e1e9bee" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<a href="#8d7dfb99cc7b8df2" class="i field">PartHeaderPresenter</a>) <b>is</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r2 rd" class="r2 r">headerPresenter</span>)
+            {
+                <b>if</b> (<a href="#76bec57b0e1e9bee" class="k">this</a>.<a href="@0@PresentationFramework/A.html#2cc7278b4ea8419d" class="i property">Header</a> <b>is string</b> <span id="r3 rd" class="r3 r">headerText</span>)
+                {
+                    <span class="r2 r">headerPresenter</span>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<span class="r3 r">headerText</span>)
+                        ? <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a>
+                        : <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a>;
+                }
+                <b>else</b>
+                {
+                    <span class="r2 r">headerPresenter</span>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="#76bec57b0e1e9bee" class="k">this</a>.<a href="@0@PresentationFramework/A.html#2cc7278b4ea8419d" class="i property">Header</a> != <b>null</b>
+                        ? <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a>
+                        : <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#b5dcd78ae53c5916" class="i field">Collapsed</a>;
+                }
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

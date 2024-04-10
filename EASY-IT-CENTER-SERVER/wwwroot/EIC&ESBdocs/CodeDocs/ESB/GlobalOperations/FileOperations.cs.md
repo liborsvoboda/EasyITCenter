@@ -1,4 +1,7 @@
-﻿using ICSharpCode.WpfDesign.Designer;
+﻿[Zpět](../../index)   
+
+```cshtml   
+using ICSharpCode.WpfDesign.Designer;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

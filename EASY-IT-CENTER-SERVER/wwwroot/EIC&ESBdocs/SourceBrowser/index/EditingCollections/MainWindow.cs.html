@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html><head><title>MainWindow.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(106);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EditingCollections/MainWindow.cs" target="_top">MainWindow.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EditingCollections" target="_top">HelpProjects\WPF-MORE\Data Binding\EditingCollections\EditingCollections.csproj</a> (EditingCollections)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+
+<b>namespace</b> <span class="i n">EditingCollections</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     Interaction logic for MainWindow.xaml</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <a href="P/41960770815c968c.html" target="s" class="k">partial</a> <b>class</b> <a id="41960770815c968c" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">MainWindow</a> : <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>
+    {
+        <b>public</b> <a id="397a7f0aa86c7c29" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MainWindow</a>()
+        {
+            <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#e6a5d90ff3f8a9d4" class="i method">InitializeComponent</a>();
+        }
+
+        <b>private void</b> <a id="953a5e3226a919d3" href="R/953a5e3226a919d3.html" target="n" data-glyph="76,1" class="i method">Edit_Click</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <b>if</b> (<a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#20c2d8657d314179" class="i field">itemsControl</a>.<a href="@0@PresentationFramework/A.html#f053c8f858b51411" class="i property">SelectedItem</a> == <b>null</b>)
+            {
+                <a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#d30dae02a986885a" class="i method">Show</a>(<span class="s">&quot;No item is selected&quot;</span>);
+                <b>return</b>;
+            }
+
+            <a href="@0@WindowsBase/A.html#4965c3706880eb2d" class="k">var</a> <span id="r2 rd" class="r2 r">editableCollectionView</span> =
+                <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#20c2d8657d314179" class="i field">itemsControl</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a> <b>as</b> <a href="@0@WindowsBase/A.html#4965c3706880eb2d" class="t t">IEditableCollectionView</a>;
+
+            <span class="c">// Create a window that prompts the user to edit an item.</span>
+            <a href="P/ceb05d52b267eb88.html#ceb05d52b267eb88" class="k">var</a> <span id="r3 rd" class="r3 r">win</span> = <b>new</b> <a href="ChangeItem.cs.html#a5f4bee67abd9e62" class="t constructor">ChangeItem</a>();
+            <span class="r2 r">editableCollectionView</span>.<a href="@0@WindowsBase/A.html#4220b14a54fc808c" class="i method">EditItem</a>(<a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#20c2d8657d314179" class="i field">itemsControl</a>.<a href="@0@PresentationFramework/A.html#f053c8f858b51411" class="i property">SelectedItem</a>);
+            <span class="r3 r">win</span>.<a href="@0@PresentationFramework/A.html#e4aaca7514916173" class="i property">DataContext</a> = <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#20c2d8657d314179" class="i field">itemsControl</a>.<a href="@0@PresentationFramework/A.html#f053c8f858b51411" class="i property">SelectedItem</a>;
+
+            <span class="c">// If the user submits the new item, commit the changes.</span>
+            <span class="c">// If the user cancels the edits, discard the changes. </span>
+            <b>if</b> ((<b>bool</b>) <span class="r3 r">win</span>.<a href="@0@PresentationFramework/A.html#61d39b218b53dbbe" class="i method">ShowDialog</a>())
+            {
+                <span class="r2 r">editableCollectionView</span>.<a href="@0@WindowsBase/A.html#e774322197c823ce" class="i method">CommitEdit</a>();
+            }
+            <b>else</b>
+            {
+                <span class="r2 r">editableCollectionView</span>.<a href="@0@WindowsBase/A.html#bd23bcaec0e0f9be" class="i method">CancelEdit</a>();
+            }
+        }
+
+        <b>private void</b> <a id="67d7ef6911978de3" href="R/67d7ef6911978de3.html" target="n" data-glyph="76,1" class="i method">Add_Click</a>(<b>object</b> <span id="r4 rd" class="r4 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r5 rd" class="r5 r">e</span>)
+        {
+            <a href="@0@WindowsBase/A.html#4965c3706880eb2d" class="k">var</a> <span id="r6 rd" class="r6 r">editableCollectionView</span> = <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#20c2d8657d314179" class="i field">itemsControl</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a> <b>as</b> <a href="@0@WindowsBase/A.html#4965c3706880eb2d" class="t t">IEditableCollectionView</a>;
+
+            <b>if</b> (!<span class="r6 r">editableCollectionView</span>.<a href="@0@WindowsBase/A.html#3f270c0e4e6f6c28" class="i property">CanAddNew</a>)
+            {
+                <a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#d30dae02a986885a" class="i method">Show</a>(<span class="s">&quot;You cannot add items to the list.&quot;</span>);
+                <b>return</b>;
+            }
+
+            <span class="c">// Create a window that prompts the user to enter a new</span>
+            <span class="c">// item to sell.</span>
+            <a href="P/ceb05d52b267eb88.html#ceb05d52b267eb88" class="k">var</a> <span id="r7 rd" class="r7 r">win</span> = <b>new</b> <a href="ChangeItem.cs.html#a5f4bee67abd9e62" class="t constructor">ChangeItem</a> {<a href="@0@PresentationFramework/A.html#e4aaca7514916173" class="i property">DataContext</a> = <span class="r6 r">editableCollectionView</span>.<a href="@0@WindowsBase/A.html#7aa23f028e0fa4ce" class="i method">AddNew</a>()};
+
+            <span class="c">//Create a new item to be added to the collection.</span>
+
+            <span class="c">// If the user submits the new item, commit the new</span>
+            <span class="c">// object to the collection.  If the user cancels </span>
+            <span class="c">// adding the new item, discard the new item.</span>
+            <b>if</b> ((<b>bool</b>) <span class="r7 r">win</span>.<a href="@0@PresentationFramework/A.html#61d39b218b53dbbe" class="i method">ShowDialog</a>())
+            {
+                <span class="r6 r">editableCollectionView</span>.<a href="@0@WindowsBase/A.html#caf1c098118b66d8" class="i method">CommitNew</a>();
+            }
+            <b>else</b>
+            {
+                <span class="r6 r">editableCollectionView</span>.<a href="@0@WindowsBase/A.html#cd29f369ee27c2b4" class="i method">CancelNew</a>();
+            }
+        }
+
+        <b>private void</b> <a id="af4971f90d5b39b7" href="R/af4971f90d5b39b7.html" target="n" data-glyph="76,1" class="i method">Remove_Click</a>(<b>object</b> <span id="r8 rd" class="r8 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r9 rd" class="r9 r">e</span>)
+        {
+            <a href="PurchaseItem.cs.html#93a0048b0ab2974e" class="k">var</a> <span id="r10 rd" class="r10 r">item</span> = <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#20c2d8657d314179" class="i field">itemsControl</a>.<a href="@0@PresentationFramework/A.html#f053c8f858b51411" class="i property">SelectedItem</a> <b>as</b> <a href="PurchaseItem.cs.html#93a0048b0ab2974e" class="t t">PurchaseItem</a>;
+
+            <b>if</b> (<span class="r10 r">item</span> == <b>null</b>)
+            {
+                <a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#d30dae02a986885a" class="i method">Show</a>(<span class="s">&quot;No Item is selected&quot;</span>);
+                <b>return</b>;
+            }
+
+            <a href="@0@WindowsBase/A.html#4965c3706880eb2d" class="k">var</a> <span id="r11 rd" class="r11 r">editableCollectionView</span> =
+                <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#20c2d8657d314179" class="i field">itemsControl</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a> <b>as</b> <a href="@0@WindowsBase/A.html#4965c3706880eb2d" class="t t">IEditableCollectionView</a>;
+
+            <b>if</b> (!<span class="r11 r">editableCollectionView</span>.<a href="@0@WindowsBase/A.html#d1c7f0f64bace12e" class="i property">CanRemove</a>)
+            {
+                <a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#d30dae02a986885a" class="i method">Show</a>(<span class="s">&quot;You cannot remove items from the list.&quot;</span>);
+                <b>return</b>;
+            }
+
+            <b>if</b> (<a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#752d71d45030723d" class="i method">Show</a>(<span class="s">&quot;Are you sure you want to remove &quot;</span> + <span class="r10 r">item</span>.<a href="PurchaseItem.cs.html#8a5fed0a63219056" class="i property">Description</a>,
+                <span class="s">&quot;Remove Item&quot;</span>, <a href="@0@PresentationFramework/A.html#57cf33522d50233a" class="t t">MessageBoxButton</a>.<a href="@0@PresentationFramework/A.html#16e750a307be596c" class="i field">YesNo</a>) == <a href="@0@PresentationFramework/A.html#5227558bcf50a556" class="t t">MessageBoxResult</a>.<a href="@0@PresentationFramework/A.html#031af1bf56a26a80" class="i field">Yes</a>)
+            {
+                <span class="r11 r">editableCollectionView</span>.<a href="@0@WindowsBase/A.html#2d683abd04b4e358" class="i method">Remove</a>(<a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#20c2d8657d314179" class="i field">itemsControl</a>.<a href="@0@PresentationFramework/A.html#f053c8f858b51411" class="i property">SelectedItem</a>);
+            }
+        }
+    }
+
+    <span class="c">// PurchaseItem implements INotifyPropertyChanged so that the </span>
+    <span class="c">// application is notified when a property changes.  It </span>
+    <span class="c">// implements IEditableObject so that pending changes can be discarded.</span>
+}</pre></td></tr></table></div></body></html>

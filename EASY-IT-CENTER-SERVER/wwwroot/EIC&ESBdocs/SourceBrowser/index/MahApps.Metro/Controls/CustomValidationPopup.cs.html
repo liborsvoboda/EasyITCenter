@@ -1,0 +1,479 @@
+﻿<!DOCTYPE html>
+<html><head><title>CustomValidationPopup.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(470);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/CustomValidationPopup.cs" target="_top">Controls\CustomValidationPopup.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<span class="i n">Primitives</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Interop</span>;
+<b>using</b> <span class="i n">Windows</span>.<span class="i n">Win32</span>;
+<b>using</b> <span class="i n">Windows</span>.<span class="i n">Win32</span>.<span class="i n">Foundation</span>;
+<b>using</b> <span class="i n">Windows</span>.<span class="i n">Win32</span>.<span class="i n">UI</span>.<span class="i n">WindowsAndMessaging</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> This custom popup is used by the validation error template.</span>
+    <span class="c">///</span><span class="c"> It provides some additional nice features:</span>
+    <span class="c">///</span><span class="c">     - repositioning if host-window size or location changed</span>
+    <span class="c">///</span><span class="c">     - repositioning if host-window gets maximized and vice versa</span>
+    <span class="c">///</span><span class="c">     - it&#39;s only topmost if the host-window is activated</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="099b6b548dc018e4" href="../R/099b6b548dc018e4.html" target="n" data-glyph="0,0" class="t t">CustomValidationPopup</a> : <a href="@0@PresentationFramework/A.html#40ab7810a8f8c8f6" class="t t">Popup</a>
+    {
+        <b>private</b> <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>? <a id="12bc640c19d768ae" href="../R/12bc640c19d768ae.html" target="n" data-glyph="46,1" class="i field">hostWindow</a>;
+        <b>private</b> <a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>? <a id="de219300ac194f6e" href="../R/de219300ac194f6e.html" target="n" data-glyph="46,1" class="i field">scrollViewer</a>;
+        <b>private</b> <a href="MetroContentControl.cs.html#ada3b6c67ca804b4" class="t t">MetroContentControl</a>? <a id="064c3d5fa54b3daf" href="../R/064c3d5fa54b3daf.html" target="n" data-glyph="46,1" class="i field">metroContentControl</a>;
+        <b>private</b> <a href="TransitioningContentControl.cs.html#1769ba86ed27d94a" class="t t">TransitioningContentControl</a>? <a id="fdac15c99b012b0b" href="../R/fdac15c99b012b0b.html" target="n" data-glyph="46,1" class="i field">transitioningContentControl</a>;
+        <b>private</b> <a href="Flyout.cs.html#eb512f8b339f4e5b" class="t t">Flyout</a>? <a id="bd81cd50c92fc401" href="../R/bd81cd50c92fc401.html" target="n" data-glyph="46,1" class="i field">flyout</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#076732ac048557cb" class="i property">CloseOnMouseLeftButtonDown</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="88d27b191664d65f" href="../R/88d27b191664d65f.html" target="n" data-glyph="42,1" class="i field">CloseOnMouseLeftButtonDownProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#076732ac048557cb" class="i property">CloseOnMouseLeftButtonDown</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#099b6b548dc018e4" class="t t">CustomValidationPopup</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether if the popup can be closed by left mouse button down.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="076732ac048557cb" href="../R/076732ac048557cb.html" target="n" data-glyph="102,1" class="i property">CloseOnMouseLeftButtonDown</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#88d27b191664d65f" class="i field">CloseOnMouseLeftButtonDownProperty</a>);
+            <b>set</b> =&gt; <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#88d27b191664d65f" class="i field">CloseOnMouseLeftButtonDownProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#17e6d4d6bba8fb96" class="i property">ShowValidationErrorOnMouseOver</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b7e0039e35dfcad2" href="../R/b7e0039e35dfcad2.html" target="n" data-glyph="42,1" class="i field">ShowValidationErrorOnMouseOverProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(<b>nameof</b>(<a href="#17e6d4d6bba8fb96" class="i property">ShowValidationErrorOnMouseOver</a>),
+                                                  <b>typeof</b>(<b>bool</b>),
+                                                  <b>typeof</b>(<a href="#099b6b548dc018e4" class="t t">CustomValidationPopup</a>),
+                                                  <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the validation error text will be shown when hovering the validation triangle.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="17e6d4d6bba8fb96" href="../R/17e6d4d6bba8fb96.html" target="n" data-glyph="102,1" class="i property">ShowValidationErrorOnMouseOver</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b7e0039e35dfcad2" class="i field">ShowValidationErrorOnMouseOverProperty</a>);
+            <b>set</b> =&gt; <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b7e0039e35dfcad2" class="i field">ShowValidationErrorOnMouseOverProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#15455ed2641ef32d" class="i property">ShowValidationErrorOnKeyboardFocus</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="e1975c4c3bf77591" href="../R/e1975c4c3bf77591.html" target="n" data-glyph="42,1" class="i field">ShowValidationErrorOnKeyboardFocusProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#15455ed2641ef32d" class="i property">ShowValidationErrorOnKeyboardFocus</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#099b6b548dc018e4" class="t t">CustomValidationPopup</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the validation error text will be shown when the element has the keyboard focus.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="15455ed2641ef32d" href="../R/15455ed2641ef32d.html" target="n" data-glyph="102,1" class="i property">ShowValidationErrorOnKeyboardFocus</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#e1975c4c3bf77591" class="i field">ShowValidationErrorOnKeyboardFocusProperty</a>);
+            <b>set</b> =&gt; <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#e1975c4c3bf77591" class="i field">ShowValidationErrorOnKeyboardFocusProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#1d5dae91eee0edd0" class="i property">AdornedElement</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="ff25c4c48525cf03" href="../R/ff25c4c48525cf03.html" target="n" data-glyph="42,1" class="i field">AdornedElementProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#1d5dae91eee0edd0" class="i property">AdornedElement</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>),
+                                          <b>typeof</b>(<a href="#099b6b548dc018e4" class="t t">CustomValidationPopup</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>)));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Windows.UIElement</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> that this </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Windows.Controls.Primitives.Popup</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> object is reserving space for.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>? <a id="1d5dae91eee0edd0" href="../R/1d5dae91eee0edd0.html" target="n" data-glyph="102,1" class="i property">AdornedElement</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>?)<a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#ff25c4c48525cf03" class="i field">AdornedElementProperty</a>);
+            <b>set</b> =&gt; <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#ff25c4c48525cf03" class="i field">AdornedElementProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#d0f2bb8912d9753d" class="i property">CanShow</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static readonly</b> <a href="@0@WindowsBase/A.html#380f95e0ba8ab2a0" class="t t">DependencyPropertyKey</a> <a id="b124f53c582f1e2e" href="../R/b124f53c582f1e2e.html" target="n" data-glyph="46,1" class="i field">CanShowPropertyKey</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#25c0b2e1e0148e79" class="i method">RegisterReadOnly</a>(<b>nameof</b>(<a href="#d0f2bb8912d9753d" class="i property">CanShow</a>),
+                                                  <b>typeof</b>(<b>bool</b>),
+                                                  <b>typeof</b>(<a href="#099b6b548dc018e4" class="t t">CustomValidationPopup</a>),
+                                                  <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#d0f2bb8912d9753d" class="i property">CanShow</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="393dd1d91ceea32f" href="../R/393dd1d91ceea32f.html" target="n" data-glyph="42,1" class="i field">CanShowProperty</a> = <a href="#b124f53c582f1e2e" class="i field">CanShowPropertyKey</a>.<a href="@0@WindowsBase/A.html#d39196af37a6f1cf" class="i property">DependencyProperty</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets whether the popup can be shown (useful for transitions).</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="d0f2bb8912d9753d" href="../R/d0f2bb8912d9753d.html" target="n" data-glyph="102,1" class="i property">CanShow</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#393dd1d91ceea32f" class="i field">CanShowProperty</a>);
+            <b>protected set</b> =&gt; <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#b124f53c582f1e2e" class="i field">CanShowPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <b>public</b> <a id="92497342745797ef" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">CustomValidationPopup</a>()
+        {
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#ea29e251ad2c9599" class="i method">CustomValidationPopup_Loaded</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#4668161f1ed3bddf" class="i">Opened</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#c0d877689f05bf59" class="i method">CustomValidationPopup_Opened</a>;
+        }
+
+        <b>protected override void</b> <a id="e78db770b0e552e1" href="../R/e78db770b0e552e1.html" target="n" data-glyph="75,1" class="i method">OnPreviewMouseLeftButtonDown</a>(<a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r0 rd" class="r0 r">e</span>)
+        {
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#076732ac048557cb" class="i property">CloseOnMouseLeftButtonDown</a>)
+            {
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#d7b2a797baf882fb" class="i field">IsOpenProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>);
+            }
+            <b>else</b>
+            {
+                <a href="@0@PresentationCore/A.html#7911653ccb506216" class="k">var</a> <span id="r1 rd" class="r1 r">adornedElement</span> = <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#1d5dae91eee0edd0" class="i property">AdornedElement</a>;
+                <b>if</b> (<span class="r1 r">adornedElement</span> != <b>null</b> &amp;&amp; <a href="Helper/ValidationHelper.cs.html#8d60700160cb0964" class="t t">ValidationHelper</a>.<a href="Helper/ValidationHelper.cs.html#1bf54eeebea96e10" class="i method">GetCloseOnMouseLeftButtonDown</a>(<span class="r1 r">adornedElement</span>))
+                {
+                    <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#d7b2a797baf882fb" class="i field">IsOpenProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>);
+                }
+                <b>else</b>
+                {
+                    <span class="r0 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+                }
+            }
+        }
+
+        <b>private void</b> <a id="ea29e251ad2c9599" href="../R/ea29e251ad2c9599.html" target="n" data-glyph="76,1" class="i method">CustomValidationPopup_Loaded</a>(<b>object</b>? <span id="r2 rd" class="r2 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r3 rd" class="r3 r">e</span>)
+        {
+            <a href="@0@PresentationCore/A.html#7911653ccb506216" class="k">var</a> <span id="r4 rd" class="r4 r">adornedElement</span> = <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#1d5dae91eee0edd0" class="i property">AdornedElement</a>;
+            <b>if</b> (<span class="r4 r">adornedElement</span> <b>is null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a> = <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>.<a href="@0@PresentationFramework/A.html#d82ac67277fcffc1" class="i method">GetWindow</a>(<span class="r4 r">adornedElement</span>);
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a> <b>is null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#b124f53c582f1e2e" class="i field">CanShowPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>);
+            <a href="@0@mscorlib/A.html#f1b135ff6c380b37" class="k">var</a> <span id="r5 rd" class="r5 r">canShow</span> = <b>true</b>;
+
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#de219300ac194f6e" class="i field">scrollViewer</a> != <b>null</b>)
+            {
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#de219300ac194f6e" class="i field">scrollViewer</a>.<a href="@0@PresentationFramework/A.html#46795889bc55ea98" class="i">ScrollChanged</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#5d4213d38a9f7c59" class="i method">ScrollViewer_ScrollChanged</a>;
+            }
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#de219300ac194f6e" class="i field">scrollViewer</a> = <span class="r4 r">adornedElement</span>.<a href="TreeHelper.cs.html#72b106778f5cbda6" class="i method">GetVisualAncestor</a>&lt;<a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>&gt;();
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#de219300ac194f6e" class="i field">scrollViewer</a> != <b>null</b>)
+            {
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#de219300ac194f6e" class="i field">scrollViewer</a>.<a href="@0@PresentationFramework/A.html#46795889bc55ea98" class="i">ScrollChanged</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#5d4213d38a9f7c59" class="i method">ScrollViewer_ScrollChanged</a>;
+            }
+
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#064c3d5fa54b3daf" class="i field">metroContentControl</a> != <b>null</b>)
+            {
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#064c3d5fa54b3daf" class="i field">metroContentControl</a>.<a href="MetroContentControl.cs.html#88d8a4ccf447cb30" class="i">TransitionStarted</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#079fac6ed542c3e2" class="i method">OnTransitionStarted</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#064c3d5fa54b3daf" class="i field">metroContentControl</a>.<a href="MetroContentControl.cs.html#ba6819049512cd60" class="i">TransitionCompleted</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b698b7930486555d" class="i method">OnTransitionCompleted</a>;
+            }
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#064c3d5fa54b3daf" class="i field">metroContentControl</a> = <span class="r4 r">adornedElement</span>.<a href="TreeHelper.cs.html#cbbe3a66a5b55955" class="i method">TryFindParent</a>&lt;<a href="MetroContentControl.cs.html#ada3b6c67ca804b4" class="t t">MetroContentControl</a>&gt;();
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#064c3d5fa54b3daf" class="i field">metroContentControl</a> != <b>null</b>)
+            {
+                <span class="r5 r">canShow</span> = !<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#064c3d5fa54b3daf" class="i field">metroContentControl</a>.<a href="MetroContentControl.cs.html#778fb3e75478609c" class="i property">TransitionsEnabled</a> || !<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#064c3d5fa54b3daf" class="i field">metroContentControl</a>.<a href="MetroContentControl.cs.html#3e0e1f8712488001" class="i property">IsTransitioning</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#064c3d5fa54b3daf" class="i field">metroContentControl</a>.<a href="MetroContentControl.cs.html#88d8a4ccf447cb30" class="i">TransitionStarted</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#079fac6ed542c3e2" class="i method">OnTransitionStarted</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#064c3d5fa54b3daf" class="i field">metroContentControl</a>.<a href="MetroContentControl.cs.html#ba6819049512cd60" class="i">TransitionCompleted</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b698b7930486555d" class="i method">OnTransitionCompleted</a>;
+            }
+
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#fdac15c99b012b0b" class="i field">transitioningContentControl</a> != <b>null</b>)
+            {
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#fdac15c99b012b0b" class="i field">transitioningContentControl</a>.<a href="TransitioningContentControl.cs.html#c86ed1626b40fc8b" class="i">TransitionCompleted</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b698b7930486555d" class="i method">OnTransitionCompleted</a>;
+            }
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#fdac15c99b012b0b" class="i field">transitioningContentControl</a> = <span class="r4 r">adornedElement</span>.<a href="TreeHelper.cs.html#cbbe3a66a5b55955" class="i method">TryFindParent</a>&lt;<a href="TransitioningContentControl.cs.html#1769ba86ed27d94a" class="t t">TransitioningContentControl</a>&gt;();
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#fdac15c99b012b0b" class="i field">transitioningContentControl</a> != <b>null</b>)
+            {
+                <span class="r5 r">canShow</span> = <span class="r5 r">canShow</span> &amp;&amp; (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#fdac15c99b012b0b" class="i field">transitioningContentControl</a>.<a href="TransitioningContentControl.cs.html#cd0b8638e45759a0" class="i property">CurrentTransition</a> == <b>null</b> || !<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#fdac15c99b012b0b" class="i field">transitioningContentControl</a>.<a href="TransitioningContentControl.cs.html#ff2a44331c59cb24" class="i property">IsTransitioning</a>);
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#fdac15c99b012b0b" class="i field">transitioningContentControl</a>.<a href="TransitioningContentControl.cs.html#c86ed1626b40fc8b" class="i">TransitionCompleted</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b698b7930486555d" class="i method">OnTransitionCompleted</a>;
+            }
+
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a> != <b>null</b>)
+            {
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a>.<a href="Flyout.cs.html#9d063a8e5b75f9f6" class="i">OpeningFinished</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#2d5b8ed8ef6407cd" class="i method">Flyout_OpeningFinished</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a>.<a href="Flyout.cs.html#1cf712083f07b277" class="i">IsOpenChanged</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#47b7e0134b36da4f" class="i method">Flyout_IsOpenChanged</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a>.<a href="Flyout.cs.html#d09829d2f20da6d7" class="i">ClosingFinished</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#605aef967ee86852" class="i method">Flyout_ClosingFinished</a>;
+            }
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a> = <span class="r4 r">adornedElement</span>.<a href="TreeHelper.cs.html#cbbe3a66a5b55955" class="i method">TryFindParent</a>&lt;<a href="Flyout.cs.html#eb512f8b339f4e5b" class="t t">Flyout</a>&gt;();
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a> != <b>null</b>)
+            {
+                <span class="r5 r">canShow</span> = <span class="r5 r">canShow</span> &amp;&amp; (!<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a>.<a href="Flyout.cs.html#9d8915d045888f70" class="i property">AreAnimationsEnabled</a> || <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a>.<a href="Flyout.cs.html#e0bb29141cc473ff" class="i property">IsShown</a>);
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a>.<a href="Flyout.cs.html#9d063a8e5b75f9f6" class="i">OpeningFinished</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#2d5b8ed8ef6407cd" class="i method">Flyout_OpeningFinished</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a>.<a href="Flyout.cs.html#1cf712083f07b277" class="i">IsOpenChanged</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#47b7e0134b36da4f" class="i method">Flyout_IsOpenChanged</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a>.<a href="Flyout.cs.html#d09829d2f20da6d7" class="i">ClosingFinished</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#605aef967ee86852" class="i method">Flyout_ClosingFinished</a>;
+            }
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#0fed81344da0d601" class="i">LocationChanged</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#f38337cea26c5a2f" class="i method">OnSizeOrLocationChanged</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#0fed81344da0d601" class="i">LocationChanged</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#f38337cea26c5a2f" class="i method">OnSizeOrLocationChanged</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#ec1a90b4f82457bf" class="i">SizeChanged</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#f38337cea26c5a2f" class="i method">OnSizeOrLocationChanged</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#ec1a90b4f82457bf" class="i">SizeChanged</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#f38337cea26c5a2f" class="i method">OnSizeOrLocationChanged</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#3325cf754593d931" class="i">StateChanged</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#1e88af627219d714" class="i method">OnHostWindowStateChanged</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#3325cf754593d931" class="i">StateChanged</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#1e88af627219d714" class="i method">OnHostWindowStateChanged</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#9fc8ef2442aad7d9" class="i">Activated</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#ff1ed6aa7e2c4230" class="i method">OnHostWindowActivated</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#9fc8ef2442aad7d9" class="i">Activated</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#ff1ed6aa7e2c4230" class="i method">OnHostWindowActivated</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#a6f3c4ba26a2f0d6" class="i">Deactivated</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#57ba268ee5779cec" class="i method">OnHostWindowDeactivated</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#a6f3c4ba26a2f0d6" class="i">Deactivated</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#57ba268ee5779cec" class="i method">OnHostWindowDeactivated</a>;
+
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#6710517f0af5ce90" class="i property">PlacementTarget</a> <b>is</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r6 rd" class="r6 r">frameworkElement</span>)
+            {
+                <span class="r6 r">frameworkElement</span>.<a href="@0@PresentationFramework/A.html#ec1a90b4f82457bf" class="i">SizeChanged</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#f38337cea26c5a2f" class="i method">OnSizeOrLocationChanged</a>;
+                <span class="r6 r">frameworkElement</span>.<a href="@0@PresentationFramework/A.html#ec1a90b4f82457bf" class="i">SizeChanged</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#f38337cea26c5a2f" class="i method">OnSizeOrLocationChanged</a>;
+            }
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b5475fb0d132f363" class="i method">RefreshPosition</a>();
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#b124f53c582f1e2e" class="i field">CanShowPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<span class="r5 r">canShow</span>));
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#a39976beebfd32e1" class="i method">OnLoaded</a>();
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#139f238b2a895570" class="i">Unloaded</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#38ecbd7576e0c988" class="i method">CustomValidationPopup_Unloaded</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#139f238b2a895570" class="i">Unloaded</a> += <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#38ecbd7576e0c988" class="i method">CustomValidationPopup_Unloaded</a>;
+        }
+
+        <b>private bool</b> <a id="5032000f7d4b7993" href="../R/5032000f7d4b7993.html" target="n" data-glyph="76,1" class="i method">ShouldPopupOpen</a>()
+        {
+            <a href="@0@PresentationCore/A.html#7911653ccb506216" class="k">var</a> <span id="r7 rd" class="r7 r">adornedElement</span> = <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#1d5dae91eee0edd0" class="i property">AdornedElement</a>;
+            <a href="@0@mscorlib/A.html#f1b135ff6c380b37" class="k">var</a> <span id="r8 rd" class="r8 r">isOpen</span> = <span class="r7 r">adornedElement</span> <b>is not null</b>
+                         &amp;&amp; <a href="@0@PresentationFramework/A.html#b8aca7c0487cdef1" class="t t">Validation</a>.<a href="@0@PresentationFramework/A.html#9b9424355c4688d4" class="i method">GetHasError</a>(<span class="r7 r">adornedElement</span>)
+                         &amp;&amp; <span class="r7 r">adornedElement</span>.<a href="@0@PresentationCore/A.html#731d700ccd201ec4" class="i property">IsKeyboardFocusWithin</a>
+                         &amp;&amp; <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#15455ed2641ef32d" class="i property">ShowValidationErrorOnKeyboardFocus</a>
+                         &amp;&amp; <a href="Helper/ValidationHelper.cs.html#8d60700160cb0964" class="t t">ValidationHelper</a>.<a href="Helper/ValidationHelper.cs.html#06e3bad9d6a3774e" class="i method">GetShowValidationErrorOnKeyboardFocus</a>(<span class="r7 r">adornedElement</span>);
+            <b>return</b> <span class="r8 r">isOpen</span>;
+        }
+
+        <b>private void</b> <a id="2d5b8ed8ef6407cd" href="../R/2d5b8ed8ef6407cd.html" target="n" data-glyph="76,1" class="i method">Flyout_OpeningFinished</a>(<b>object</b>? <span id="r9 rd" class="r9 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r10 rd" class="r10 r">e</span>)
+        {
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b5475fb0d132f363" class="i method">RefreshPosition</a>();
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#d7b2a797baf882fb" class="i field">IsOpenProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#5032000f7d4b7993" class="i method">ShouldPopupOpen</a>()));
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#b124f53c582f1e2e" class="i field">CanShowPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>);
+        }
+
+        <b>private void</b> <a id="47b7e0134b36da4f" href="../R/47b7e0134b36da4f.html" target="n" data-glyph="76,1" class="i method">Flyout_IsOpenChanged</a>(<b>object</b>? <span id="r11 rd" class="r11 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r12 rd" class="r12 r">e</span>)
+        {
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b5475fb0d132f363" class="i method">RefreshPosition</a>();
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#b124f53c582f1e2e" class="i field">CanShowPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>);
+        }
+
+        <b>private void</b> <a id="605aef967ee86852" href="../R/605aef967ee86852.html" target="n" data-glyph="76,1" class="i method">Flyout_ClosingFinished</a>(<b>object</b>? <span id="r13 rd" class="r13 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r14 rd" class="r14 r">e</span>)
+        {
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b5475fb0d132f363" class="i method">RefreshPosition</a>();
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#b124f53c582f1e2e" class="i field">CanShowPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>);
+        }
+
+        <b>private void</b> <a id="079fac6ed542c3e2" href="../R/079fac6ed542c3e2.html" target="n" data-glyph="76,1" class="i method">OnTransitionStarted</a>(<b>object</b>? <span id="r15 rd" class="r15 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r16 rd" class="r16 r">e</span>)
+        {
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b5475fb0d132f363" class="i method">RefreshPosition</a>();
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#b124f53c582f1e2e" class="i field">CanShowPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>);
+        }
+
+        <b>private void</b> <a id="b698b7930486555d" href="../R/b698b7930486555d.html" target="n" data-glyph="76,1" class="i method">OnTransitionCompleted</a>(<b>object</b>? <span id="r17 rd" class="r17 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r18 rd" class="r18 r">e</span>)
+        {
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b5475fb0d132f363" class="i method">RefreshPosition</a>();
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#d7b2a797baf882fb" class="i field">IsOpenProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#5032000f7d4b7993" class="i method">ShouldPopupOpen</a>()));
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#b124f53c582f1e2e" class="i field">CanShowPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>);
+        }
+
+        <b>private void</b> <a id="5d4213d38a9f7c59" href="../R/5d4213d38a9f7c59.html" target="n" data-glyph="76,1" class="i method">ScrollViewer_ScrollChanged</a>(<b>object</b>? <span id="r19 rd" class="r19 r">sender</span>, <a href="@0@PresentationFramework/A.html#e2b36b41803b1a00" class="t t">ScrollChangedEventArgs</a> <span id="r20 rd" class="r20 r">e</span>)
+        {
+            <b>if</b> (<span class="r20 r">e</span>.<a href="@0@PresentationFramework/A.html#12e2fa49a2f123b0" class="i property">VerticalChange</a> <b>is</b> &gt; 0 <b>or</b> &lt; 0 || <span class="r20 r">e</span>.<a href="@0@PresentationFramework/A.html#c10bc63f821ba87e" class="i property">HorizontalChange</a> <b>is</b> &gt; 0 <b>or</b> &lt; 0)
+            {
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b5475fb0d132f363" class="i method">RefreshPosition</a>();
+
+                <b>if</b> (<a href="#3f600ee4656c72c0" class="i method">IsElementVisible</a>(<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#1d5dae91eee0edd0" class="i property">AdornedElement</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>, <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#de219300ac194f6e" class="i field">scrollViewer</a>))
+                {
+                    <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#d7b2a797baf882fb" class="i field">IsOpenProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#5032000f7d4b7993" class="i method">ShouldPopupOpen</a>()));
+                }
+                <b>else</b>
+                {
+                    <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#d7b2a797baf882fb" class="i field">IsOpenProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>);
+                }
+            }
+        }
+
+        <b>private static bool</b> <a id="3f600ee4656c72c0" href="../R/3f600ee4656c72c0.html" target="n" data-glyph="76,1" class="i method">IsElementVisible</a>(<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>? <span id="r21 rd" class="r21 r">element</span>, <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>? <span id="r22 rd" class="r22 r">container</span>)
+        {
+            <b>if</b> (<span class="r21 r">element</span> <b>is null</b> || <span class="r22 r">container</span> <b>is null</b> || !<span class="r21 r">element</span>.<a href="@0@PresentationCore/A.html#90bc97a020426061" class="i property">IsVisible</a>)
+            {
+                <b>return</b> <b>false</b>;
+            }
+
+            <a href="@0@WindowsBase/A.html#fc387a6f7a1c2856" class="k">var</a> <span id="r23 rd" class="r23 r">bounds</span> = <span class="r21 r">element</span>.<a href="@0@PresentationCore/A.html#c8fcbc7ed8770a87" class="i method">TransformToAncestor</a>(<span class="r22 r">container</span>)
+                                .<a href="@0@PresentationCore/A.html#b7441dc7ac2c6738" class="i method">TransformBounds</a>(<b>new</b> <a href="@0@WindowsBase/A.html#299a3fd614724168" class="t constructor">Rect</a>(0.0, 0.0, <span class="r21 r">element</span>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>, <span class="r21 r">element</span>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>));
+            <a href="@0@WindowsBase/A.html#fc387a6f7a1c2856" class="k">var</a> <span id="r24 rd" class="r24 r">rect</span> = <b>new</b> <a href="@0@WindowsBase/A.html#299a3fd614724168" class="t constructor">Rect</a>(0.0, 0.0, <span class="r22 r">container</span>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>, <span class="r22 r">container</span>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>);
+            <b>return</b> <span class="r24 r">rect</span>.<a href="@0@WindowsBase/A.html#04390f584fcba8e4" class="i method">IntersectsWith</a>(<span class="r23 r">bounds</span>);
+        }
+
+        <b>private void</b> <a id="c0d877689f05bf59" href="../R/c0d877689f05bf59.html" target="n" data-glyph="76,1" class="i method">CustomValidationPopup_Opened</a>(<b>object</b>? <span id="r25 rd" class="r25 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r26 rd" class="r26 r">e</span>)
+        {
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#5ba9513e47ba7a6a" class="i method">SetTopmostState</a>(<b>true</b>);
+        }
+
+        <b>private void</b> <a id="ff1ed6aa7e2c4230" href="../R/ff1ed6aa7e2c4230.html" target="n" data-glyph="76,1" class="i method">OnHostWindowActivated</a>(<b>object</b>? <span id="r27 rd" class="r27 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r28 rd" class="r28 r">e</span>)
+        {
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#5ba9513e47ba7a6a" class="i method">SetTopmostState</a>(<b>true</b>);
+        }
+
+        <b>private void</b> <a id="57ba268ee5779cec" href="../R/57ba268ee5779cec.html" target="n" data-glyph="76,1" class="i method">OnHostWindowDeactivated</a>(<b>object</b>? <span id="r29 rd" class="r29 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r30 rd" class="r30 r">e</span>)
+        {
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#5ba9513e47ba7a6a" class="i method">SetTopmostState</a>(<b>false</b>);
+        }
+
+        <b>private void</b> <a id="38ecbd7576e0c988" href="../R/38ecbd7576e0c988.html" target="n" data-glyph="76,1" class="i method">CustomValidationPopup_Unloaded</a>(<b>object</b>? <span id="r31 rd" class="r31 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r32 rd" class="r32 r">e</span>)
+        {
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#2df3c6336a22714c" class="i method">OnUnLoaded</a>();
+
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#6710517f0af5ce90" class="i property">PlacementTarget</a> <b>is</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r33 rd" class="r33 r">frameworkElement</span>)
+            {
+                <span class="r33 r">frameworkElement</span>.<a href="@0@PresentationFramework/A.html#ec1a90b4f82457bf" class="i">SizeChanged</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#f38337cea26c5a2f" class="i method">OnSizeOrLocationChanged</a>;
+            }
+
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a> != <b>null</b>)
+            {
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#0fed81344da0d601" class="i">LocationChanged</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#f38337cea26c5a2f" class="i method">OnSizeOrLocationChanged</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#ec1a90b4f82457bf" class="i">SizeChanged</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#f38337cea26c5a2f" class="i method">OnSizeOrLocationChanged</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#3325cf754593d931" class="i">StateChanged</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#1e88af627219d714" class="i method">OnHostWindowStateChanged</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#9fc8ef2442aad7d9" class="i">Activated</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#ff1ed6aa7e2c4230" class="i method">OnHostWindowActivated</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#a6f3c4ba26a2f0d6" class="i">Deactivated</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#57ba268ee5779cec" class="i method">OnHostWindowDeactivated</a>;
+            }
+
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#de219300ac194f6e" class="i field">scrollViewer</a> != <b>null</b>)
+            {
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#de219300ac194f6e" class="i field">scrollViewer</a>.<a href="@0@PresentationFramework/A.html#46795889bc55ea98" class="i">ScrollChanged</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#5d4213d38a9f7c59" class="i method">ScrollViewer_ScrollChanged</a>;
+            }
+
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#064c3d5fa54b3daf" class="i field">metroContentControl</a> != <b>null</b>)
+            {
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#064c3d5fa54b3daf" class="i field">metroContentControl</a>.<a href="MetroContentControl.cs.html#88d8a4ccf447cb30" class="i">TransitionStarted</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#079fac6ed542c3e2" class="i method">OnTransitionStarted</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#064c3d5fa54b3daf" class="i field">metroContentControl</a>.<a href="MetroContentControl.cs.html#ba6819049512cd60" class="i">TransitionCompleted</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b698b7930486555d" class="i method">OnTransitionCompleted</a>;
+            }
+
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#fdac15c99b012b0b" class="i field">transitioningContentControl</a> != <b>null</b>)
+            {
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#fdac15c99b012b0b" class="i field">transitioningContentControl</a>.<a href="TransitioningContentControl.cs.html#c86ed1626b40fc8b" class="i">TransitionCompleted</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b698b7930486555d" class="i method">OnTransitionCompleted</a>;
+            }
+
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a> != <b>null</b>)
+            {
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a>.<a href="Flyout.cs.html#9d063a8e5b75f9f6" class="i">OpeningFinished</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#2d5b8ed8ef6407cd" class="i method">Flyout_OpeningFinished</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a>.<a href="Flyout.cs.html#1cf712083f07b277" class="i">IsOpenChanged</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#47b7e0134b36da4f" class="i method">Flyout_IsOpenChanged</a>;
+                <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#bd81cd50c92fc401" class="i field">flyout</a>.<a href="Flyout.cs.html#d09829d2f20da6d7" class="i">ClosingFinished</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#605aef967ee86852" class="i method">Flyout_ClosingFinished</a>;
+            }
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#139f238b2a895570" class="i">Unloaded</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#38ecbd7576e0c988" class="i method">CustomValidationPopup_Unloaded</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#4668161f1ed3bddf" class="i">Opened</a> -= <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#c0d877689f05bf59" class="i method">CustomValidationPopup_Opened</a>;
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a> = <b>null</b>;
+        }
+
+        <b>protected virtual void</b> <a id="a39976beebfd32e1" href="../R/a39976beebfd32e1.html" target="n" data-glyph="75,1" class="i method">OnLoaded</a>()
+        {
+        }
+
+        <b>protected virtual void</b> <a id="2df3c6336a22714c" href="../R/2df3c6336a22714c.html" target="n" data-glyph="75,1" class="i method">OnUnLoaded</a>()
+        {
+        }
+
+        <b>private void</b> <a id="1e88af627219d714" href="../R/1e88af627219d714.html" target="n" data-glyph="76,1" class="i method">OnHostWindowStateChanged</a>(<b>object</b>? <span id="r34 rd" class="r34 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r35 rd" class="r35 r">e</span>)
+        {
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a> != <b>null</b> &amp;&amp; <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#12bc640c19d768ae" class="i field">hostWindow</a>.<a href="@0@PresentationFramework/A.html#517238bcdb0593d7" class="i property">WindowState</a> != <a href="@0@PresentationFramework/A.html#27ce608a1c9bb620" class="t t">WindowState</a>.<a href="@0@PresentationFramework/A.html#2c66992bf048806c" class="i field">Minimized</a>)
+            {
+                <a href="@0@PresentationCore/A.html#7911653ccb506216" class="k">var</a> <span id="r36 rd" class="r36 r">adornedElement</span> = <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#1d5dae91eee0edd0" class="i property">AdornedElement</a>;
+                <b>if</b> (<span class="r36 r">adornedElement</span> != <b>null</b>)
+                {
+                    <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#053a5817c71a5476" class="i property">PopupAnimation</a> = <a href="@0@PresentationFramework/A.html#3c0fff4278e78f7e" class="t t">PopupAnimation</a>.<a href="@0@PresentationFramework/A.html#96f458b3c7f351ac" class="i field">None</a>;
+                    <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#d7b2a797baf882fb" class="i field">IsOpenProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>);
+                    <a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r37 rd" class="r37 r">errorTemplate</span> = <span class="r36 r">adornedElement</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="@0@PresentationFramework/A.html#b8aca7c0487cdef1" class="t t">Validation</a>.<a href="@0@PresentationFramework/A.html#ef0aaae7b8e8d506" class="i field">ErrorTemplateProperty</a>);
+                    <span class="r36 r">adornedElement</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="@0@PresentationFramework/A.html#b8aca7c0487cdef1" class="t t">Validation</a>.<a href="@0@PresentationFramework/A.html#ef0aaae7b8e8d506" class="i field">ErrorTemplateProperty</a>, <b>null</b>);
+                    <span class="r36 r">adornedElement</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="@0@PresentationFramework/A.html#b8aca7c0487cdef1" class="t t">Validation</a>.<a href="@0@PresentationFramework/A.html#ef0aaae7b8e8d506" class="i field">ErrorTemplateProperty</a>, <span class="r37 r">errorTemplate</span>);
+                }
+            }
+        }
+
+        <b>private void</b> <a id="f38337cea26c5a2f" href="../R/f38337cea26c5a2f.html" target="n" data-glyph="76,1" class="i method">OnSizeOrLocationChanged</a>(<b>object</b>? <span id="r38 rd" class="r38 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r39 rd" class="r39 r">e</span>)
+        {
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#b5475fb0d132f363" class="i method">RefreshPosition</a>();
+        }
+
+        <b>private void</b> <a id="b5475fb0d132f363" href="../R/b5475fb0d132f363.html" target="n" data-glyph="76,1" class="i method">RefreshPosition</a>()
+        {
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r40 rd" class="r40 r">offset</span> = <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#dfcffd974f074dfa" class="i property">HorizontalOffset</a>;
+            <span class="c">// &quot;bump&quot; the offset to cause the popup to reposition itself on its own</span>
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#949f19e742126878" class="i field">HorizontalOffsetProperty</a>, <span class="r40 r">offset</span> + 1);
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#949f19e742126878" class="i field">HorizontalOffsetProperty</a>, <span class="r40 r">offset</span>);
+        }
+
+        <b>private bool</b>? <a id="75da768c32f90717" href="../R/75da768c32f90717.html" target="n" data-glyph="46,1" class="i field">appliedTopMost</a>;
+
+        <b>private unsafe void</b> <a id="5ba9513e47ba7a6a" href="../R/5ba9513e47ba7a6a.html" target="n" data-glyph="76,1" class="i method">SetTopmostState</a>(<b>bool</b> <span id="r41 rd" class="r41 r">isTop</span>)
+        {
+            <span class="c">// Don&#39;t apply state if it&#39;s the same as incoming state</span>
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="#75da768c32f90717" class="i field">appliedTopMost</a>.<a href="@0@mscorlib/A.html#7bbe60e33e857298" class="i property">HasValue</a> &amp;&amp; <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#75da768c32f90717" class="i field">appliedTopMost</a> == <span class="r41 r">isTop</span>)
+            {
+                <b>return</b>;
+            }
+
+            <b>if</b> (<a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#3b7f690e176987e1" class="i property">Child</a> <b>is null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <b>if</b> (!(<a href="@0@PresentationCore/A.html#317e126bb0affb36" class="t t">PresentationSource</a>.<a href="@0@PresentationCore/A.html#5fd0a5ffda5383c7" class="i method">FromVisual</a>(<a href="#099b6b548dc018e4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#3b7f690e176987e1" class="i property">Child</a>) <b>is</b> <a href="@0@PresentationCore/A.html#47ce6b5ad70db257" class="t t">HwndSource</a> <span id="r42 rd" class="r42 r">hwndSource</span>))
+            {
+                <b>return</b>;
+            }
+
+            <b>var</b> <span id="r43 rd" class="r43 r">handle</span> = <b>new</b> <span class="t">HWND</span>(<span class="r42 r">hwndSource</span>.<a href="@0@PresentationCore/A.html#a2b8bde522dda7e9" class="i property">Handle</a>);
+
+            <b>var</b> <span id="r44 rd" class="r44 r">rect</span> = <b>new</b> <span class="t">RECT</span>();
+            <span class="t">PInvoke</span>.<span class="i">GetWindowRect</span>(<span class="r43 r">handle</span>, &amp;<span class="r44 r">rect</span>);
+            <b>if</b> (<span class="r44 r">rect</span>.<span class="i">left</span> == 0
+                &amp;&amp; <span class="r44 r">rect</span>.<span class="i">top</span> == 0
+                &amp;&amp; <span class="r44 r">rect</span>.<span class="i">right</span> == 0
+                &amp;&amp; <span class="r44 r">rect</span>.<span class="i">bottom</span> == 0)
+            {
+                <b>return</b>;
+            }
+            <span class="c">//Debug.WriteLine(&quot;setting z-order &quot; + isTop);</span>
+
+            <b>const</b> <span class="t">SET_WINDOW_POS_FLAGS</span> <span id="r45 rd" class="r45 r">SWP_TOPMOST</span> = <span class="t">SET_WINDOW_POS_FLAGS</span>.<span class="i">SWP_NOACTIVATE</span> | <span class="t">SET_WINDOW_POS_FLAGS</span>.<span class="i">SWP_NOOWNERZORDER</span> | <span class="t">SET_WINDOW_POS_FLAGS</span>.<span class="i">SWP_NOSIZE</span> | <span class="t">SET_WINDOW_POS_FLAGS</span>.<span class="i">SWP_NOMOVE</span> | <span class="t">SET_WINDOW_POS_FLAGS</span>.<span class="i">SWP_NOREDRAW</span> | <span class="t">SET_WINDOW_POS_FLAGS</span>.<span class="i">SWP_NOSENDCHANGING</span>;
+
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r46 rd" class="r46 r">left</span> = <span class="r44 r">rect</span>.<span class="i">left</span>;
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r47 rd" class="r47 r">top</span> = <span class="r44 r">rect</span>.<span class="i">top</span>;
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r48 rd" class="r48 r">width</span> = <span class="r44 r">rect</span>.<a href="../Internal/PInvokeExtensions.cs.html#81927e96e7ef9335" class="i method">GetWidth</a>();
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r49 rd" class="r49 r">height</span> = <span class="r44 r">rect</span>.<a href="../Internal/PInvokeExtensions.cs.html#34f27272896067ac" class="i method">GetHeight</a>();
+            <b>if</b> (<span class="r41 r">isTop</span>)
+            {
+                <span class="t">PInvoke</span>.<span class="i">SetWindowPos</span>(<span class="r43 r">handle</span>, <span class="t">HWND</span>.<span class="i">HWND_TOPMOST</span>, <span class="r46 r">left</span>, <span class="r47 r">top</span>, <span class="r48 r">width</span>, <span class="r49 r">height</span>, <span class="r45 r">SWP_TOPMOST</span>);
+            }
+            <b>else</b>
+            {
+                <span class="c">// Z-Order would only get refreshed/reflected if clicking the</span>
+                <span class="c">// the titlebar (as opposed to other parts of the external</span>
+                <span class="c">// window) unless I first set the popup to HWND_BOTTOM</span>
+                <span class="c">// then HWND_TOP before HWND_NOTOPMOST</span>
+                <span class="t">PInvoke</span>.<span class="i">SetWindowPos</span>(<span class="r43 r">handle</span>, <span class="t">HWND</span>.<span class="i">HWND_BOTTOM</span>, <span class="r46 r">left</span>, <span class="r47 r">top</span>, <span class="r48 r">width</span>, <span class="r49 r">height</span>, <span class="r45 r">SWP_TOPMOST</span>);
+                <span class="t">PInvoke</span>.<span class="i">SetWindowPos</span>(<span class="r43 r">handle</span>, <span class="t">HWND</span>.<span class="i">HWND_TOP</span>, <span class="r46 r">left</span>, <span class="r47 r">top</span>, <span class="r48 r">width</span>, <span class="r49 r">height</span>, <span class="r45 r">SWP_TOPMOST</span>);
+                <span class="t">PInvoke</span>.<span class="i">SetWindowPos</span>(<span class="r43 r">handle</span>, <span class="t">HWND</span>.<span class="i">HWND_NOTOPMOST</span>, <span class="r46 r">left</span>, <span class="r47 r">top</span>, <span class="r48 r">width</span>, <span class="r49 r">height</span>, <span class="r45 r">SWP_TOPMOST</span>);
+            }
+
+            <a href="#099b6b548dc018e4" class="k">this</a>.<a href="#75da768c32f90717" class="i field">appliedTopMost</a> = <span class="r41 r">isTop</span>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

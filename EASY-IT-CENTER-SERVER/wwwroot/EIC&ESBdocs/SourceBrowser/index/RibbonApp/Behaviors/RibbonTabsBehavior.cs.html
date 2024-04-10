@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html><head><title>RibbonTabsBehavior.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(130);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RibbonApp/Behaviors/RibbonTabsBehavior.cs" target="_top">Behaviors\RibbonTabsBehavior.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RibbonApp" target="_top">HelpProjects\WPF-MAIN\WPFprism\RibbonApp\RibbonApp\RibbonApp.csproj</a> (RibbonApp)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">ObjectModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+
+<b>using</b> <span class="i n">Fluent</span>;
+
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Xaml</span>.<span class="i n">Behaviors</span>;
+
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Regions</span>;
+
+<b>using</b> <span class="i n">RibbonApp</span>.<span class="i n">Constants</span>;
+<b>using</b> <span class="i n">RibbonApp</span>.<span class="i n">Models</span>;
+
+<b>namespace</b> <span class="i n">RibbonApp</span>.<span class="i n">Behaviors</span>
+{
+    <span class="c">// See how to add new Tabs and new groups in Home Tab from your pages https://github.com/microsoft/WindowsTemplateStudio/blob/master/docs/WPF/projectTypes/ribbon.md</span>
+    <b>public class</b> <a id="84d02d1354e099f8" href="../R/84d02d1354e099f8.html" target="n" data-glyph="0,0" class="t t"><span id="10fa39b40899b2f1">RibbonTabsBehavior</span></a> : <span class="t t">Behavior</span>&lt;<span class="t t">Ribbon</span>&gt;
+    {
+        <b>private</b> <span class="t t">IRegionManager</span> <a id="347b958cd43e0a01" href="../R/347b958cd43e0a01.html" target="n" data-glyph="46,1" class="i field">_regionManager</a>;
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="fe6cf17c0d614a21" href="../R/fe6cf17c0d614a21.html" target="n" data-glyph="42,1" class="i field">IsHomeTabProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+            <span class="s">&quot;IsHomeTab&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="#84d02d1354e099f8" class="t t">RibbonTabsBehavior</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>bool</b>)));
+
+        <b>public static void</b> <a id="d13d9bb28d4de314" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetIsHomeTab</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">element</span>, <b>bool</b> <span id="r1 rd" class="r1 r">value</span>)
+            =&gt; <span class="r0 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#fe6cf17c0d614a21" class="i field">IsHomeTabProperty</a>, <span class="r1 r">value</span>);
+
+        <b>public static bool</b> <a id="8af7c0bbb504da90" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetIsHomeTab</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r2 rd" class="r2 r">element</span>)
+            =&gt; (<b>bool</b>)<span class="r2 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#fe6cf17c0d614a21" class="i field">IsHomeTabProperty</a>);
+
+        <b>public static bool</b> <a id="ebcedb9699d2126e" href="../R/ebcedb9699d2126e.html" target="n" data-glyph="72,1" class="i method">GetIsTabFromPage</a>(<span class="t t">RibbonTabItem</span> <span id="r3 rd" class="r3 r">item</span>)
+            =&gt; (<b>bool</b>)<span class="r3 r">item</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#7630293c35f6e443" class="i field">IsTabFromPageProperty</a>);
+
+        <b>public static void</b> <a id="1dd9c22c09678e48" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetIsTabFromPage</a>(<span class="t t">RibbonTabItem</span> <span id="r4 rd" class="r4 r">item</span>, <b>bool</b> <span id="r5 rd" class="r5 r">value</span>)
+            =&gt; <span class="r4 r">item</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#7630293c35f6e443" class="i field">IsTabFromPageProperty</a>, <span class="r5 r">value</span>);
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="7630293c35f6e443" href="../R/7630293c35f6e443.html" target="n" data-glyph="42,1" class="i field">IsTabFromPageProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(<span class="s">&quot;IsTabFromPage&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<span class="t t">RibbonTabItem</span>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>false</b>));
+
+        <b>public static bool</b> <a id="2410ff1e3e99f880" href="../R/2410ff1e3e99f880.html" target="n" data-glyph="72,1" class="i method">GetIsGroupFromPage</a>(<span class="t t">RibbonGroupBox</span> <span id="r6 rd" class="r6 r">item</span>)
+            =&gt; (<b>bool</b>)<span class="r6 r">item</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#7527213dab5ea49e" class="i field">IsGroupFromPageProperty</a>);
+
+        <b>public static void</b> <a id="1d76f44a844eaf80" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetIsGroupFromPage</a>(<span class="t t">RibbonGroupBox</span> <span id="r7 rd" class="r7 r">item</span>, <b>bool</b> <span id="r8 rd" class="r8 r">value</span>)
+            =&gt; <span class="r7 r">item</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#7527213dab5ea49e" class="i field">IsGroupFromPageProperty</a>, <span class="r8 r">value</span>);
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="7527213dab5ea49e" href="../R/7527213dab5ea49e.html" target="n" data-glyph="42,1" class="i field">IsGroupFromPageProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(<span class="s">&quot;IsGroupFromPage&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<span class="t t">RibbonGroupBox</span>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>false</b>));
+
+        <b>public static</b> <a href="RibbonPageConfiguration.cs.html#1d6a9ef0177d4149" class="t t">RibbonPageConfiguration</a> <a id="cad94b5e59f6a580" href="../R/cad94b5e59f6a580.html" target="n" data-glyph="72,1" class="i method">GetPageConfiguration</a>(<a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a> <span id="r9 rd" class="r9 r">item</span>)
+            =&gt; (<a href="RibbonPageConfiguration.cs.html#1d6a9ef0177d4149" class="t t">RibbonPageConfiguration</a>)<span class="r9 r">item</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#88cf42155e894ff4" class="i field">PageConfigurationProperty</a>);
+
+        <b>public static void</b> <a id="81f26dc25b0c1111" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetPageConfiguration</a>(<a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a> <span id="r10 rd" class="r10 r">item</span>, <a href="RibbonPageConfiguration.cs.html#1d6a9ef0177d4149" class="t t">RibbonPageConfiguration</a> <span id="r11 rd" class="r11 r">value</span>)
+            =&gt; <span class="r10 r">item</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#88cf42155e894ff4" class="i field">PageConfigurationProperty</a>, <span class="r11 r">value</span>);
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="88cf42155e894ff4" href="../R/88cf42155e894ff4.html" target="n" data-glyph="42,1" class="i field">PageConfigurationProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;PageConfiguration&quot;</span>, <b>typeof</b>(<a href="RibbonPageConfiguration.cs.html#1d6a9ef0177d4149" class="t t">RibbonPageConfiguration</a>), <b>typeof</b>(<a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>new</b> <a href="RibbonPageConfiguration.cs.html#dbd48cfb39a28d1c" class="t constructor">RibbonPageConfiguration</a>()));
+
+        <b>public void</b> <a id="293f89eb05a07b2a" href="../R/293f89eb05a07b2a.html" target="n" data-glyph="72,1" class="i method">Initialize</a>(<span class="t t">IRegionManager</span> <span id="r12 rd" class="r12 r">regionManager</span>)
+        {
+            <a href="#347b958cd43e0a01" class="i field">_regionManager</a> = <span class="r12 r">regionManager</span>;
+            <b>var</b> <span id="r13 rd" class="r13 r">navigationService</span> = <a href="#347b958cd43e0a01" class="i field">_regionManager</a>.<span class="i property">Regions</span>[<a href="../Constants/Regions.cs.html#9c9d622458c01406" class="t t">Regions</a>.<a href="../Constants/Regions.cs.html#3c1e78c92892ba50" class="i field">Main</a>].<span class="i property">NavigationService</span>;
+            <span class="r13 r">navigationService</span>.<span class="i">Navigated</span> += <a href="#1fd800c256795744" class="i method">OnNavigated</a>;
+        }
+
+        <b>public void</b> <a id="e5bdc261109a0293" href="../R/e5bdc261109a0293.html" target="n" data-glyph="72,1" class="i method">Unsubscribe</a>()
+        {
+            <b>var</b> <span id="r14 rd" class="r14 r">navigationService</span> = <a href="#347b958cd43e0a01" class="i field">_regionManager</a>.<span class="i property">Regions</span>[<a href="../Constants/Regions.cs.html#9c9d622458c01406" class="t t">Regions</a>.<a href="../Constants/Regions.cs.html#3c1e78c92892ba50" class="i field">Main</a>].<span class="i property">NavigationService</span>;
+            <span class="r14 r">navigationService</span>.<span class="i">Navigated</span> -= <a href="#1fd800c256795744" class="i method">OnNavigated</a>;
+        }
+
+        <b>private void</b> <a id="1fd800c256795744" href="../R/1fd800c256795744.html" target="n" data-glyph="76,1" class="i method">OnNavigated</a>(<b>object</b> <span id="r15 rd" class="r15 r">sender</span>, <span class="t t">RegionNavigationEventArgs</span> <span id="r16 rd" class="r16 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="k">var</a> <span id="r17 rd" class="r17 r">page</span> = <a href="#347b958cd43e0a01" class="i field">_regionManager</a>.<span class="i property">Regions</span>[<a href="../Constants/Regions.cs.html#9c9d622458c01406" class="t t">Regions</a>.<a href="../Constants/Regions.cs.html#3c1e78c92892ba50" class="i field">Main</a>].<span class="i property">ActiveViews</span>.<span class="i method">First</span>() <b>as</b> <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a>;
+            <a href="#7bf48834a36e7ab8" class="i method">UpdateTabs</a>(<span class="r17 r">page</span>);
+        }
+
+        <b>private void</b> <a id="7bf48834a36e7ab8" href="../R/7bf48834a36e7ab8.html" target="n" data-glyph="76,1" class="i method">UpdateTabs</a>(<a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a> <span id="r18 rd" class="r18 r">page</span>)
+        {
+            <b>if</b> (<span class="r18 r">page</span> != <b>null</b>)
+            {
+                <a href="RibbonPageConfiguration.cs.html#1d6a9ef0177d4149" class="k">var</a> <span id="r19 rd" class="r19 r">config</span> = <a href="#cad94b5e59f6a580" class="i method">GetPageConfiguration</a>(<span class="r18 r">page</span>);
+                <a href="#b5d59f2d38716063" class="i method">SetupHomeGroups</a>(<span class="r19 r">config</span>.<a href="RibbonPageConfiguration.cs.html#7c0f8432c4487735" class="i property">HomeGroups</a>);
+                <a href="#19cdc4164315cff3" class="i method">SetupTabs</a>(<span class="r19 r">config</span>.<a href="RibbonPageConfiguration.cs.html#0f6624b109a972ad" class="i property">Tabs</a>);
+            }
+        }
+
+        <b>private void</b> <a id="b5d59f2d38716063" href="../R/b5d59f2d38716063.html" target="n" data-glyph="76,1" class="i method">SetupHomeGroups</a>(<a href="@1@System.Runtime/A.html#281923b8611114ec" class="t t">Collection</a>&lt;<span class="t t">RibbonGroupBox</span>&gt; <span id="r20 rd" class="r20 r">homeGroups</span>)
+        {
+            <b>var</b> <span id="r21 rd" class="r21 r">homeTab</span> = <span class="i property">AssociatedObject</span>.<span class="i property">Tabs</span>.<span class="i method">FirstOrDefault</span>();
+            <b>if</b> (<span class="r21 r">homeTab</span> != <b>null</b>)
+            {
+                <b>for</b> (<b>int</b> <span id="r22 rd" class="r22 r">i</span> = <span class="r21 r">homeTab</span>.<span class="i property">Groups</span>.<a href="@1@System.Runtime/A.html#f2419069e9890f5d" class="i property">Count</a> - 1; <span class="r22 r">i</span> &gt;= 0; <span class="r22 r">i</span>--)
+                {
+                    <b>if</b> (<a href="#2410ff1e3e99f880" class="i method">GetIsGroupFromPage</a>(<span class="r21 r">homeTab</span>.<span class="i property">Groups</span><a href="@1@System.Runtime/A.html#e39c46878aa03f65">[</a><span class="r22 r">i</span>]))
+                    {
+                        <span class="r21 r">homeTab</span>.<span class="i property">Groups</span>.<a href="@1@System.Runtime/A.html#f854d078ff701b74" class="i method">RemoveAt</a>(<span class="r22 r">i</span>);
+                    }
+                }
+            }
+
+            <b>foreach</b> (<b>var</b> <span id="r23 rd" class="r23 r">group</span> <b>in</b> <span class="r20 r">homeGroups</span>)
+            {
+                <b>if</b> (<a href="#2410ff1e3e99f880" class="i method">GetIsGroupFromPage</a>(<span class="r23 r">group</span>))
+                {
+                    <span class="r21 r">homeTab</span>.<span class="i property">Groups</span>.<a href="@1@System.Runtime/A.html#5c61cc24de82f7e7" class="i method">Add</a>(<span class="r23 r">group</span>);
+                }
+            }
+        }
+
+        <b>private void</b> <a id="19cdc4164315cff3" href="../R/19cdc4164315cff3.html" target="n" data-glyph="76,1" class="i method">SetupTabs</a>(<a href="@1@System.Runtime/A.html#281923b8611114ec" class="t t">Collection</a>&lt;<span class="t t">RibbonTabItem</span>&gt; <span id="r24 rd" class="r24 r">tabs</span>)
+        {
+            <b>for</b> (<b>int</b> <span id="r25 rd" class="r25 r">i</span> = <span class="i property">AssociatedObject</span>.<span class="i property">Tabs</span>.<a href="@1@System.Runtime/A.html#f2419069e9890f5d" class="i property">Count</a> - 1; <span class="r25 r">i</span> &gt;= 0; <span class="r25 r">i</span>--)
+            {
+                <b>if</b> (<a href="#ebcedb9699d2126e" class="i method">GetIsTabFromPage</a>(<span class="i property">AssociatedObject</span>.<span class="i property">Tabs</span><a href="@1@System.Runtime/A.html#e39c46878aa03f65">[</a><span class="r25 r">i</span>]))
+                {
+                    <span class="i property">AssociatedObject</span>.<span class="i property">Tabs</span>.<a href="@1@System.Runtime/A.html#f854d078ff701b74" class="i method">RemoveAt</a>(<span class="r25 r">i</span>);
+                }
+            }
+
+            <b>foreach</b> (<b>var</b> <span id="r26 rd" class="r26 r">tab</span> <b>in</b> <span class="r24 r">tabs</span>)
+            {
+                <b>if</b> (<a href="#ebcedb9699d2126e" class="i method">GetIsTabFromPage</a>(<span class="r26 r">tab</span>))
+                {
+                    <span class="i property">AssociatedObject</span>.<span class="i property">Tabs</span>.<a href="@1@System.Runtime/A.html#5c61cc24de82f7e7" class="i method">Add</a>(<span class="r26 r">tab</span>);
+                }
+            }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

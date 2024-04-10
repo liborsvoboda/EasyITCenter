@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html><head><title>MainWindow.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(70);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#ExceptionHandlingSecondaryWorkerThread/MainWindow.cs" target="_top">MainWindow.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#ExceptionHandlingSecondaryWorkerThread" target="_top">HelpProjects\WPF-MORE\Application Management\ExceptionHandlingSecondaryWorkerThread\ExceptionHandlingSecondaryWorkerThread.csproj</a> (ExceptionHandlingSecondaryWorkerThread)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Threading</span>;
+
+<b>namespace</b> <span class="i n">ExceptionHandlingSecondaryWorkerThread</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     Interaction logic for MainWindow.xaml</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <b>partial</b> <b>class</b> <a id="c8ea07bf2baf8623" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">MainWindow</a> : <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>
+    {
+        <b>public</b> <a id="fadeaba79a0430d7" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MainWindow</a>()
+        {
+            <span class="i">InitializeComponent</span>();
+
+            <a href="@0@PresentationFramework/A.html#5002b3a8c196a7d1" class="i property">Title</a> = <span class="s">$&quot;</span><span class="s">Running on Main UI Thread </span>{<span class="t t">Thread</span>.<span class="i property">CurrentThread</span>.<span class="i property">ManagedThreadId</span>}<span class="s">&quot;</span>;
+        }
+
+        <b>private void</b> <a id="26c4434831be35ed" href="R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">startSecondaryWorkerThreadButton_Click</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <span class="c">// Creates and starts a secondary thread in a single threaded apartment (STA)</span>
+            <b>var</b> <span id="r2 rd" class="r2 r">thread</span> = <b>new</b> <span class="t constructor">Thread</span>(<a href="#d76064b869cccbc2" class="i method">MethodRunningOnSecondaryWorkerThread</a>);
+            <span class="r2 r">thread</span>.<span class="i method">SetApartmentState</span>(<span class="t t">ApartmentState</span>.<span class="i field">STA</span>);
+            <span class="r2 r">thread</span>.<span class="i property">IsBackground</span> = <b>true</b>;
+            <span class="r2 r">thread</span>.<span class="i method">Start</span>();
+        }
+
+        <span class="c">// THIS METHOD RUNS ON A SECONDARY WORKER THREAD (THREAD WITHOUT A DISPATCHER)</span>
+        <b>private void</b> <a id="d76064b869cccbc2" href="R/d76064b869cccbc2.html" target="n" data-glyph="76,1" class="i method">MethodRunningOnSecondaryWorkerThread</a>()
+        {
+            <b>try</b>
+            {
+                <a href="#59c13fd67c64798d" class="i method">WorkerMethod</a>();
+            }
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r3 rd" class="r3 r">ex</span>)
+            {
+                <span class="c">// Dispatch the exception back to the main UI thread. Then, reraise</span>
+                <span class="c">// the exception on the main UI thread and handle it from the handler </span>
+                <span class="c">// the Application object&#39;s DispatcherUnhandledException event.</span>
+                <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r4 rd" class="r4 r">secondaryWorkerThreadId</span> = <span class="t t">Thread</span>.<span class="i property">CurrentThread</span>.<span class="i property">ManagedThreadId</span>;
+                <a href="@0@PresentationFramework/A.html#cf9c51e402f97b05" class="t t">Application</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>.<a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#df611d211d028cc2" class="i method">Invoke</a>(
+                    <a href="@0@WindowsBase/A.html#af2d44a802e4535c" class="t t">DispatcherPriority</a>.<a href="@0@WindowsBase/A.html#246ca2ab395503e0" class="i field">Send</a>,
+                    (<a href="@0@WindowsBase/A.html#84091724bcb39608" class="t t">DispatcherOperationCallback</a>) <b>delegate</b>
+                    {
+                        <span class="c">// THIS CODE RUNS BACK ON THE MAIN UI THREAD</span>
+                        <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r5 rd" class="r5 r">msg</span> = <span class="s">$&quot;</span><span class="s">Exception forwarded from secondary worker thread </span>{<span class="r4 r">secondaryWorkerThreadId</span>}<span class="s">.</span><span class="s">&quot;</span>;
+                        <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#266f59a804f72937" class="t constructor">Exception</a>(<span class="r5 r">msg</span>, <span class="r3 r">ex</span>);
+                    }
+                    , <b>null</b>);
+
+                <span class="c">// NOTE - Application execution will only continue from this point</span>
+                <span class="c">//        onwards if the exception was handled on the main UI thread.</span>
+                <span class="c">//        by Application.DispatcherUnhandledException</span>
+            }
+        }
+
+        <b>private void</b> <a id="59c13fd67c64798d" href="R/59c13fd67c64798d.html" target="n" data-glyph="76,1" class="i method">WorkerMethod</a>()
+        {
+            <span class="c">// This method would do real processing on the secondary worker thread.</span>
+            <span class="c">// For the purposes of this sample, it throws an exception</span>
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r6 rd" class="r6 r">msg</span> =
+                <span class="s">$&quot;</span><span class="s">Exception raised secondary on worker thread </span>{<a href="@0@WindowsBase/A.html#078d6b27d9837a35" class="t t">Dispatcher</a>.<a href="@0@WindowsBase/A.html#f630b5e1523cab3b" class="i property">CurrentDispatcher</a>.<a href="@0@WindowsBase/A.html#95a21725e528edc6" class="i property">Thread</a>.<span class="i property">ManagedThreadId</span>}<span class="s">.</span><span class="s">&quot;</span>;
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#df2d82d91ca29e40" class="t constructor">Exception</a>(<span class="r6 r">msg</span>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html><head><title>BackstageTabNavigationBehavior.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(55);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RibbonApp/Behaviors/BackstageTabNavigationBehavior.cs" target="_top">Behaviors\BackstageTabNavigationBehavior.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RibbonApp" target="_top">HelpProjects\WPF-MAIN\WPFprism\RibbonApp\RibbonApp\RibbonApp.csproj</a> (RibbonApp)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+
+<b>using</b> <span class="i n">Fluent</span>;
+
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Xaml</span>.<span class="i n">Behaviors</span>;
+
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Regions</span>;
+
+<b>namespace</b> <span class="i n">RibbonApp</span>.<span class="i n">Behaviors</span>
+{
+    <b>public class</b> <a id="c8fa410d71e8f0a8" href="../R/c8fa410d71e8f0a8.html" target="n" data-glyph="0,0" class="t t"><span id="18b25f9832c606dc">BackstageTabNavigationBehavior</span></a> : <span class="t t">Behavior</span>&lt;<span class="t t">BackstageTabControl</span>&gt;
+    {
+        <b>private</b> <span class="t t">IRegionManager</span> <a id="c89a46ae94c64403" href="../R/c89a46ae94c64403.html" target="n" data-glyph="46,1" class="i field">_regionManager</a>;
+
+        <b>public void</b> <a id="b29dccca2b0baa2e" href="../R/b29dccca2b0baa2e.html" target="n" data-glyph="72,1" class="i method">Initialize</a>(<span class="t t">IRegionManager</span> <span id="r0 rd" class="r0 r">regionManager</span>)
+        {
+            <a href="#c89a46ae94c64403" class="i field">_regionManager</a> = <span class="r0 r">regionManager</span>;
+        }
+
+        <b>protected override void</b> <a id="d46c951a70eb9d53" href="../R/d46c951a70eb9d53.html" target="n" data-glyph="75,1" class="i method">OnAttached</a>()
+        {
+            <b>base</b>.<span class="i method">OnAttached</span>();
+            <span class="i property">AssociatedObject</span>.<a href="@0@PresentationFramework/A.html#76f03b62b2915375" class="i">SelectionChanged</a> += <a href="#79b5af5c0760e42b" class="i method">OnSelectionChanged</a>;
+        }
+
+        <b>protected override void</b> <a id="e43a4f6a9141913d" href="../R/e43a4f6a9141913d.html" target="n" data-glyph="75,1" class="i method">OnDetaching</a>()
+        {
+            <b>base</b>.<span class="i method">OnDetaching</span>();
+            <span class="i property">AssociatedObject</span>.<a href="@0@PresentationFramework/A.html#76f03b62b2915375" class="i">SelectionChanged</a> -= <a href="#79b5af5c0760e42b" class="i method">OnSelectionChanged</a>;
+        }
+
+        <b>private void</b> <a id="79b5af5c0760e42b" href="../R/79b5af5c0760e42b.html" target="n" data-glyph="76,1" class="i method">OnSelectionChanged</a>(<b>object</b> <span id="r1 rd" class="r1 r">sender</span>, <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<a href="@0@PresentationFramework/A.html#c488465397cb1452" class="t t">SelectionChangedEventArgs</a> <span id="r2 rd" class="r2 r">e</span>)
+        {
+            <b>if</b> (<span class="r2 r">e</span>.<a href="@0@PresentationFramework/A.html#c18179aafc009668" class="i property">AddedItems</a>.<a href="@1@System.Runtime/A.html#e961aba0053db107" class="i property">Count</a> &gt; 0 &amp;&amp; <span class="r2 r">e</span>.<a href="@0@PresentationFramework/A.html#c18179aafc009668" class="i property">AddedItems</a>[0] <b>is</b> <span class="t t">BackstageTabItem</span> <span id="r3 rd" class="r3 r">tabItem</span>)
+            {
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r4 rd" class="r4 r">viewName</span> = <span class="r3 r">tabItem</span>.<a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> <b>as string</b>;
+                <b>if</b> (<span class="r3 r">tabItem</span>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> == <b>null</b>)
+                {
+                    <a href="@0@PresentationFramework/A.html#f8ee23c685054e71" class="k">var</a> <span id="r5 rd" class="r5 r">contentControl</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#95a2fb4089a665d1" class="t constructor">ContentControl</a>();
+                    <span class="r3 r">tabItem</span>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <span class="r5 r">contentControl</span>;
+                    <b>if</b> (<a href="#c89a46ae94c64403" class="i field">_regionManager</a>.<span class="i property">Regions</span>.<span class="i method">ContainsRegionWithName</span>(<span class="r4 r">viewName</span>))
+                    {
+                        <a href="#c89a46ae94c64403" class="i field">_regionManager</a>.<span class="i property">Regions</span>.<span class="i method">Remove</span>(<span class="r4 r">viewName</span>);
+                    }
+
+                    <span class="t t">RegionManager</span>.<span class="i method">SetRegionName</span>(<span class="r5 r">contentControl</span>, <span class="r4 r">viewName</span>);
+                    <span class="t t">RegionManager</span>.<span class="i method">SetRegionManager</span>(<span class="r5 r">contentControl</span>, <a href="#c89a46ae94c64403" class="i field">_regionManager</a>);
+                }
+
+                <a href="#c89a46ae94c64403" class="i field">_regionManager</a>.<span class="i method">RequestNavigate</span>(<span class="r4 r">viewName</span>, <span class="r4 r">viewName</span>);
+            }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

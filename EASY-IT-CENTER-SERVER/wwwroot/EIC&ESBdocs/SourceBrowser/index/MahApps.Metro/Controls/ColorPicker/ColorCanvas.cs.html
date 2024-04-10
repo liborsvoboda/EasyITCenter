@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html><head><title>ColorCanvas.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(90);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/ColorPicker/ColorCanvas.cs" target="_top">Controls\ColorPicker\ColorCanvas.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;PART_SaturationValueBox&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#6750b721a2294fc5" class="t t">Control</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;PART_ColorEyeDropper&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="ColorEyeDropper.cs.html#ad215b920c6442a2" class="t t">ColorEyeDropper</a>))]
+    <b>public class</b> <a id="4b5dbac94d25d9bb" href="../../R/4b5dbac94d25d9bb.html" target="n" data-glyph="0,0" class="t t"><span id="1ff1a043985df08a">ColorCanvas</span></a> : <a href="ColorPickerBase.cs.html#66c8ef13517405b4" class="t t">ColorPickerBase</a>
+    {
+        <b>private</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>? <a id="25b43c7ce0301c01" href="../../R/25b43c7ce0301c01.html" target="n" data-glyph="46,1" class="i field">saturationValueBox</a>;
+
+        <b>static</b> <a id="abec371d2ba204a5" href="../../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">ColorCanvas</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6339cc8ec3e1311a" class="i field">DefaultStyleKeyProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#4b5dbac94d25d9bb" class="t t">ColorCanvas</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>typeof</b>(<a href="#4b5dbac94d25d9bb" class="t t">ColorCanvas</a>)));
+        }
+
+        <b>private void</b> <a id="f264db135d441fd1" href="../../R/f264db135d441fd1.html" target="n" data-glyph="76,1" class="i method">PART_SaturationValueBox_MouseLeftButtonUp</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a>!.<a href="@0@PresentationCore/A.html#d6873c5315db5dbb" class="i method">ReleaseMouseCapture</a>();
+            <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a>.<a href="@0@PresentationCore/A.html#8af943423996f9bf" class="i">MouseMove</a> -= <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#a1496b1af36e1295" class="i method">PART_SaturationValueBox_MouseMove</a>;
+        }
+
+        <b>private void</b> <a id="d32932d7a8fdd1d1" href="../../R/d32932d7a8fdd1d1.html" target="n" data-glyph="76,1" class="i method">PART_SaturationValueBox_MouseLeftButtonDown</a>(<b>object</b> <span id="r2 rd" class="r2 r">sender</span>, <a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r3 rd" class="r3 r">e</span>)
+        {
+            <a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#22f90a54e95dcc06" class="i method">Capture</a>(<a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a>);
+            <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a>!.<a href="@0@PresentationCore/A.html#8af943423996f9bf" class="i">MouseMove</a> += <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#a1496b1af36e1295" class="i method">PART_SaturationValueBox_MouseMove</a>;
+
+            <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#d144e407a13d0734" class="i method">UpdateValues</a>(<span class="r3 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a>));
+        }
+
+        <b>private void</b> <a id="a1496b1af36e1295" href="../../R/a1496b1af36e1295.html" target="n" data-glyph="76,1" class="i method">PART_SaturationValueBox_MouseMove</a>(<b>object</b> <span id="r4 rd" class="r4 r">sender</span>, <a href="@0@PresentationCore/A.html#2bd9049c90bfe71a" class="t t">MouseEventArgs</a> <span id="r5 rd" class="r5 r">e</span>)
+        {
+            <b>if</b> (<span class="r5 r">e</span>.<a href="@0@PresentationCore/A.html#325207ca856ea87d" class="i property">LeftButton</a> == <a href="@0@PresentationCore/A.html#c49fee26f1f7a30c" class="t t">MouseButtonState</a>.<a href="@0@PresentationCore/A.html#84ab65d095fc0025" class="i field">Pressed</a>)
+            {
+                <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#d144e407a13d0734" class="i method">UpdateValues</a>(<span class="r5 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a>));
+            }
+        }
+
+        <b>private void</b> <a id="d144e407a13d0734" href="../../R/d144e407a13d0734.html" target="n" data-glyph="76,1" class="i method">UpdateValues</a>(<a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <span id="r6 rd" class="r6 r">position</span>)
+        {
+            <b>if</b> (<a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a>!.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a> &lt; 1 || <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a> &lt; 1)
+            {
+                <b>return</b>;
+            }
+
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r7 rd" class="r7 r">s</span> = <span class="r6 r">position</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> / <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>;
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r8 rd" class="r8 r">v</span> = 1 - (<span class="r6 r">position</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> / <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>);
+
+            <b>if</b> (<span class="r7 r">s</span> &gt; 1)
+            {
+                <span class="r7 r">s</span> = 1;
+            }
+
+            <b>if</b> (<span class="r8 r">v</span> &gt; 1)
+            {
+                <span class="r8 r">v</span> = 1;
+            }
+
+            <b>if</b> (<span class="r7 r">s</span> &lt; 0)
+            {
+                <span class="r7 r">s</span> = 0;
+            }
+
+            <b>if</b> (<span class="r8 r">v</span> &lt; 0)
+            {
+                <span class="r8 r">v</span> = 0;
+            }
+
+            <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="ColorPickerBase.cs.html#3cbbd6054bb34c8a" class="i field">SaturationProperty</a>, <span class="r7 r">s</span>);
+            <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="ColorPickerBase.cs.html#869f254a95787baf" class="i field">ValueProperty</a>, <span class="r8 r">v</span>);
+        }
+
+        <b>public override void</b> <a id="a9b4ac3263d89d3c" href="../../R/a9b4ac3263d89d3c.html" target="n" data-glyph="72,1" class="i method">OnApplyTemplate</a>()
+        {
+            <a href="ColorPickerBase.cs.html#66c8ef13517405b4" class="k">base</a>.<a href="@0@PresentationFramework/A.html#0c1b13beb625a4a2" class="i method">OnApplyTemplate</a>();
+
+            <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a> = (<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>?)<a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;PART_SaturationValueBox&quot;</span>);
+            <b>if</b> (<a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a> != <b>null</b>)
+            {
+                <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a>.<a href="@0@PresentationCore/A.html#7d8f094db08df28d" class="i">MouseLeftButtonDown</a> += <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#d32932d7a8fdd1d1" class="i method">PART_SaturationValueBox_MouseLeftButtonDown</a>;
+                <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#25b43c7ce0301c01" class="i field">saturationValueBox</a>.<a href="@0@PresentationCore/A.html#f8107c257693ab79" class="i">MouseLeftButtonUp</a> += <a href="#4b5dbac94d25d9bb" class="k">this</a>.<a href="#f264db135d441fd1" class="i method">PART_SaturationValueBox_MouseLeftButtonUp</a>;
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

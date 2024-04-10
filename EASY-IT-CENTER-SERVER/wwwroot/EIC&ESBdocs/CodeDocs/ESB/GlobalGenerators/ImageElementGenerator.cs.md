@@ -1,4 +1,7 @@
-﻿using System;
+﻿[Zpět](../../index)   
+
+```cshtml   
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;

@@ -1,0 +1,503 @@
+﻿<!DOCTYPE html>
+<html><head><title>wordxmlwriter.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(494);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#DocumentSerialization/WordXmlSerialize/wordxmlwriter.cs" target="_top">WordXmlSerialize\wordxmlwriter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#DocumentSerialization" target="_top">HelpProjects\WPF-MORE\Documents\Fixed Documents\DocumentSerialization\DocumentSerialization.csproj</a> (DocumentSerialization)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//////////////////////////////////////////////////////////////////////</span>
+<span class="c">//</span>
+<span class="c">// WordXmlWriter.cs</span>
+<span class="c">//</span>
+<span class="c">// Provides a class to support writing Word 2003 XML files.</span>
+<span class="c">//</span>
+<span class="c">//////////////////////////////////////////////////////////////////////</span>
+
+<b>namespace</b> <span class="i n">DocumentSerialization</span>
+{
+    <span class="k preprocess">#</span><span class="k preprocess">region</span> Namespaces.
+
+    <b>using</b> <span class="i n">System</span>;
+    <b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+    <b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+    <b>using</b> <span class="i n">System</span>.<span class="i n">Reflection</span>;
+    <b>using</b> <span class="i n">System</span>.<span class="i n">Security</span>.<span class="i n">Policy</span>;
+    <b>using</b> <span class="i n">System</span>.<span class="i n">Xml</span>;
+    <b>using</b> <span class="i n">System</span>.<span class="i n">Xml</span>.<span class="i n">Xsl</span>;
+    <b>using</b> <span class="i n">System</span>.<span class="i n">Xml</span>.<span class="i n">XPath</span>;
+    <b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+    <b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>;
+    <b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+    <b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+
+    <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Namespaces.
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Encapsulates the operation of writing WordXML documents.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>class</b> <a id="1399912bc34933e4" href="../R/1399912bc34933e4.html" target="n" data-glyph="2,0" class="t t">WordXmlWriter</a>
+    {
+        <span class="c">//------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">//  Constructors</span>
+        <span class="c">//</span>
+        <span class="c">//------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructors.
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Initializes a new WordXmlWriter instance.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal</b> <a id="27358cbd1fb41af2" href="../R/27358cbd1fb41af2.html" target="n" data-glyph="74,1" class="t constructor">WordXmlWriter</a>()
+        {
+            <a href="#040f3117c4ee74a9" class="i field">_dir</a> = <a href="@0@PresentationFramework/A.html#ea3cad6dc7ae64ef" class="t t">LogicalDirection</a>.<a href="@0@PresentationFramework/A.html#db84cc4f1e52efc3" class="i field">Forward</a>;
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Constructors.
+
+        <span class="c">//------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">//  Public Methods</span>
+        <span class="c">//</span>
+        <span class="c">//------------------------------------------------------</span>
+
+        <span class="c">//------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">//  Public Properties</span>
+        <span class="c">//</span>
+        <span class="c">//------------------------------------------------------</span>
+
+        <span class="c">//------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">//  Protected Methods</span>
+        <span class="c">//</span>
+        <span class="c">//------------------------------------------------------</span>
+
+        <span class="c">//------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">//  Internal Methods</span>
+        <span class="c">//</span>
+        <span class="c">//------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Internal methods.
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Writes the container into the specified XmlWriter.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal void</b> <a id="000da90b5eb3f49f" href="../R/000da90b5eb3f49f.html" target="n" data-glyph="74,1" class="i method">Write</a>(<a href="@0@PresentationFramework/A.html#653528d814b49dce" class="t t">TextPointer</a> <span id="r0 rd" class="r0 r">start</span>, <a href="@0@PresentationFramework/A.html#653528d814b49dce" class="t t">TextPointer</a> <span id="r1 rd" class="r1 r">end</span>, <span class="t t">XmlWriter</span> <span id="r2 rd" class="r2 r">writer</span>)
+        {
+            <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="t t">Debug</span>.<span class="i method">Assert</span>(<span class="r0 r">start</span> != <b>null</b>);
+            <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="t t">Debug</span>.<span class="i method">Assert</span>(<span class="r1 r">end</span> != <b>null</b>);
+            <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="t t">Debug</span>.<span class="i method">Assert</span>(<span class="r0 r">start</span>.<a href="@0@PresentationFramework/A.html#824de490c482952e" class="i method">CompareTo</a>(<span class="r1 r">end</span>) &lt;= 0);
+            <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="t t">Debug</span>.<span class="i method">Assert</span>(<span class="r2 r">writer</span> != <b>null</b>);
+
+            <a href="#60bcaff86ca3ef25" class="i method">WriteContainer</a>(<span class="r0 r">start</span>, <span class="r1 r">end</span>, <span class="r2 r">writer</span>);
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Internal methods.
+
+        <span class="c">//------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">//  Internal Properties</span>
+        <span class="c">//</span>
+        <span class="c">//------------------------------------------------------</span>
+
+        <span class="c">//------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">//  Private Methods</span>
+        <span class="c">//</span>
+        <span class="c">//------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private methods.
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Checks whether the specified property is applicable to paragraphs.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private bool</b> <a id="2543229afb81202d" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">IsParagraphProperty</a>(<a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <span id="r3 rd" class="r3 r">property</span>)
+        {
+            <b>if</b> (<span class="r3 r">property</span> == <b>null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r3 r">property</span>));
+            }
+            <b>return</b> <b>false</b>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Checks whether the specified property is applicable to ranges.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private bool</b> <a id="456195720bd29019" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">IsRangeProperty</a>(<a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <span id="r4 rd" class="r4 r">property</span>)
+        {
+            <b>if</b> (<span class="r4 r">property</span> == <b>null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r4 r">property</span>));
+            }
+            <b>return</b>
+                (<span class="r4 r">property</span> == <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#88ee95b2cce46d27" class="i field">FontWeightProperty</a>) ||
+                (<span class="r4 r">property</span> == <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#13b9e0d0834b993c" class="i field">FontStyleProperty</a>) ||
+                (<span class="r4 r">property</span> == <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#ec06b91e90d46caf" class="i field">ForegroundProperty</a>) ||
+                (<span class="r4 r">property</span> == <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#93ba7392b999a01c" class="i field">FontSizeProperty</a>) ||
+                (<span class="r4 r">property</span> == <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#b450a3a45d073bbb" class="i field">FontFamilyProperty</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Writes the container into the specified XmlWriter.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="60bcaff86ca3ef25" href="../R/60bcaff86ca3ef25.html" target="n" data-glyph="76,1" class="i method">WriteContainer</a>(<a href="@0@PresentationFramework/A.html#653528d814b49dce" class="t t">TextPointer</a> <span id="r5 rd" class="r5 r">start</span>, <a href="@0@PresentationFramework/A.html#653528d814b49dce" class="t t">TextPointer</a> <span id="r6 rd" class="r6 r">end</span>, <span class="t t">XmlWriter</span> <span id="r7 rd" class="r7 r">writer</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#e28640b48d79de57" class="t t">TextElement</a> <span id="r8 rd" class="r8 r">textElement</span>;
+
+            <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="t t">Debug</span>.<span class="i method">Assert</span>(<span class="r5 r">start</span> != <b>null</b>);
+            <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="t t">Debug</span>.<span class="i method">Assert</span>(<span class="r6 r">end</span> != <b>null</b>);
+            <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="t t">Debug</span>.<span class="i method">Assert</span>(<span class="r7 r">writer</span> != <b>null</b>);
+
+            <a href="#3ff94718c781542f" class="i field">_writer</a> = <span class="r7 r">writer</span>;
+
+            <a href="#75d60b8ae21f41ea" class="i method">WriteWordXmlHead</a>();
+
+            <a href="#213bbbc94d53b2b8" class="i field">_cursor</a> = <span class="r5 r">start</span>;
+            <b>while</b> (<a href="#213bbbc94d53b2b8" class="i field">_cursor</a>.<a href="@0@PresentationFramework/A.html#824de490c482952e" class="i method">CompareTo</a>(<span class="r6 r">end</span>) &lt; 0)
+            {
+                <b>switch</b> (<a href="#213bbbc94d53b2b8" class="i field">_cursor</a>.<a href="@0@PresentationFramework/A.html#796ac5bd5e8ce15f" class="i method">GetPointerContext</a>(<a href="#040f3117c4ee74a9" class="i field">_dir</a>))
+                {
+                    <b>case</b> <a href="@0@PresentationFramework/A.html#827318cbbece5ea9" class="t t">TextPointerContext</a>.<a href="@0@PresentationFramework/A.html#25d55c8bbb5f2625" class="i field">None</a>:
+                        <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="t t">Debug</span>.<span class="i method">Assert</span>(<b>false</b>,
+                            <span class="s">&quot;Next symbol should never be None if cursor &lt; End.&quot;</span>);
+                        <b>break</b>;
+                    <b>case</b> <a href="@0@PresentationFramework/A.html#827318cbbece5ea9" class="t t">TextPointerContext</a>.<a href="@0@PresentationFramework/A.html#3a054a93bedee2d0" class="i field">Text</a>:
+                        <a href="#93508590f6a35eea" class="i method">RequireOpenRange</a>();
+                        <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#a55b410d45111e4c" class="i field">WordTextTag</a>);
+                        <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteString</span>(<a href="#213bbbc94d53b2b8" class="i field">_cursor</a>.<a href="@0@PresentationFramework/A.html#1324cacf669bcd71" class="i method">GetTextInRun</a>(<a href="#040f3117c4ee74a9" class="i field">_dir</a>));
+                        <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();
+                        <b>break</b>;
+                    <b>case</b> <a href="@0@PresentationFramework/A.html#827318cbbece5ea9" class="t t">TextPointerContext</a>.<a href="@0@PresentationFramework/A.html#ff9873fbcbfd47d5" class="i field">EmbeddedElement</a>:
+                        <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r9 rd" class="r9 r">obj</span> = <a href="#213bbbc94d53b2b8" class="i field">_cursor</a>.<a href="@0@PresentationFramework/A.html#b6a7e49a4d1f4493" class="i method">GetAdjacentElement</a>(<a href="@0@PresentationFramework/A.html#ea3cad6dc7ae64ef" class="t t">LogicalDirection</a>.<a href="@0@PresentationFramework/A.html#db84cc4f1e52efc3" class="i field">Forward</a>);
+                        <b>if</b> (<span class="r9 r">obj</span> <b>is</b> <a href="@0@PresentationFramework/A.html#d56a2d0f48cf2fb0" class="t t">LineBreak</a>)
+                        {
+                            <a href="#93508590f6a35eea" class="i method">RequireOpenRange</a>();
+                            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#328fdee1ea461c74" class="i field">WordBreakTag</a>);
+                            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();
+                        }
+                        <span class="c">// TODO: try to convert some known embedded objects.</span>
+                        <b>break</b>;
+                    <b>case</b> <a href="@0@PresentationFramework/A.html#827318cbbece5ea9" class="t t">TextPointerContext</a>.<a href="@0@PresentationFramework/A.html#8a7609be8f19d6fa" class="i field">ElementStart</a>:
+                        <a href="@0@PresentationFramework/A.html#653528d814b49dce" class="t t">TextPointer</a> <span id="r10 rd" class="r10 r">position</span>;
+                        <span class="r10 r">position</span> = <a href="#213bbbc94d53b2b8" class="i field">_cursor</a>;
+                        <span class="r10 r">position</span> = <span class="r10 r">position</span>.<a href="@0@PresentationFramework/A.html#7f8329065b3c571f" class="i method">GetNextContextPosition</a>(<a href="@0@PresentationFramework/A.html#ea3cad6dc7ae64ef" class="t t">LogicalDirection</a>.<a href="@0@PresentationFramework/A.html#db84cc4f1e52efc3" class="i field">Forward</a>);
+                        <span class="r8 r">textElement</span> = <span class="r10 r">position</span>.<a href="@0@PresentationFramework/A.html#94eeeb51b6b1b9a3" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#e28640b48d79de57" class="t t">TextElement</a>;
+
+                        <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="t t">Paragraph</a>)
+                        {
+                            <a href="#30e069b3c679c239" class="i method">RequireClosedRange</a>();
+                            <a href="#584784b6cbdfe62f" class="i method">RequireOpenParagraph</a>();
+                        }
+                        <b>else</b> <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>)
+                        {
+                            <a href="#30e069b3c679c239" class="i method">RequireClosedRange</a>();
+                            <a href="#584784b6cbdfe62f" class="i method">RequireOpenParagraph</a>();
+                            <a href="#93508590f6a35eea" class="i method">RequireOpenRange</a>();
+                        }
+                        <b>break</b>;
+                    <b>case</b> <a href="@0@PresentationFramework/A.html#827318cbbece5ea9" class="t t">TextPointerContext</a>.<a href="@0@PresentationFramework/A.html#9cd5b35989d5b516" class="i field">ElementEnd</a>:
+                        <span class="r8 r">textElement</span> = <a href="#213bbbc94d53b2b8" class="i field">_cursor</a>.<a href="@0@PresentationFramework/A.html#94eeeb51b6b1b9a3" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#e28640b48d79de57" class="t t">TextElement</a>;
+
+                        <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>)
+                        {
+                            <a href="#30e069b3c679c239" class="i method">RequireClosedRange</a>();
+                        }
+                        <b>else</b> <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="t t">Paragraph</a>)
+                        {
+                            <a href="#3adedb770ab465fc" class="i method">RequireClosedParagraph</a>();
+                        }
+                        <b>break</b>;
+                }
+                <a href="#213bbbc94d53b2b8" class="i field">_cursor</a> = <a href="#213bbbc94d53b2b8" class="i field">_cursor</a>.<a href="@0@PresentationFramework/A.html#7f8329065b3c571f" class="i method">GetNextContextPosition</a>(<a href="#040f3117c4ee74a9" class="i field">_dir</a>);
+            }
+
+            <a href="#30e069b3c679c239" class="i method">RequireClosedRange</a>();
+            <a href="#5a96b9bcef0a6921" class="i method">WriteWordXmlTail</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Writes the given property to the output document.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r11 r">property</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Property to write.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r12 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Value of property to write.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> If the property is not supported, this method does nothing.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="228097b56a969565" href="../R/228097b56a969565.html" target="n" data-glyph="76,1" class="i method">WriteProperty</a>(<a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <span id="r11 rd" class="r11 r">property</span>, <b>object</b> <span id="r12 rd" class="r12 r">value</span>)
+        {
+            <b>if</b> (<span class="r11 r">property</span> == <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#88ee95b2cce46d27" class="i field">FontWeightProperty</a>)
+            {
+                <a href="@0@PresentationCore/A.html#752e5f2538a21812" class="t t">FontWeight</a> <span id="r13 rd" class="r13 r">weight</span>;
+
+                <span class="r13 r">weight</span> = (<a href="@0@PresentationCore/A.html#752e5f2538a21812" class="t t">FontWeight</a>)<span class="r12 r">value</span>;
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#bb9816615c3c3bf6" class="i field">WordBoldTag</a>);
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteAttributeString</span>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#ad0050bf31791c32" class="i field">WordValue</a>,
+                    (<span class="r13 r">weight</span> &gt; <a href="@0@PresentationCore/A.html#c05354a296740eb4" class="t t">FontWeights</a>.<a href="@0@PresentationCore/A.html#58dd61ba630ac075" class="i property">Medium</a>)? <a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#49a10f9e110d614e" class="i field">WordOn</a> : <a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#fe51843ed9242be3" class="i field">WordOff</a>);
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();
+            }
+            <b>else</b> <b>if</b> (<span class="r11 r">property</span> == <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#13b9e0d0834b993c" class="i field">FontStyleProperty</a>)
+            {
+                <a href="@0@PresentationCore/A.html#2ab2b9e33c0199f4" class="t t">FontStyle</a> <span id="r14 rd" class="r14 r">style</span>;
+
+                <span class="r14 r">style</span> = (<a href="@0@PresentationCore/A.html#2ab2b9e33c0199f4" class="t t">FontStyle</a>)<span class="r12 r">value</span>;
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#d38979ef160d3230" class="i field">WordItalicTag</a>);
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteAttributeString</span>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#ad0050bf31791c32" class="i field">WordValue</a>,
+                    (<span class="r14 r">style</span> != <a href="@0@PresentationCore/A.html#804113b45b995ba5" class="t t">FontStyles</a>.<a href="@0@PresentationCore/A.html#7b5db0eb103372a3" class="i property">Normal</a>)? <a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#49a10f9e110d614e" class="i field">WordOn</a> : <a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#fe51843ed9242be3" class="i field">WordOff</a>);
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();
+            }
+            <b>else</b> <b>if</b> (<span class="r11 r">property</span> == <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#ec06b91e90d46caf" class="i field">ForegroundProperty</a>)
+            {
+                <a href="@0@PresentationCore/A.html#2bdb4a721050df52" class="t t">SolidColorBrush</a> <span id="r15 rd" class="r15 r">brush</span>;
+                <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a> <span id="r16 rd" class="r16 r">color</span>;
+
+                <span class="c">// Note: gradient and other brushes not supported.</span>
+                <span class="r15 r">brush</span> = <span class="r12 r">value</span> <b>as</b> <a href="@0@PresentationCore/A.html#2bdb4a721050df52" class="t t">SolidColorBrush</a>;
+                <b>if</b> (<span class="r15 r">brush</span> != <b>null</b>)
+                {
+                    <span class="r16 r">color</span> = <span class="r15 r">brush</span>.<a href="@0@PresentationCore/A.html#eed7cf36d73cf29b" class="i property">Color</a>;
+                    <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#f540a23df2a7b6a0" class="i field">WordColorTag</a>);
+                    <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteAttributeString</span>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#ad0050bf31791c32" class="i field">WordValue</a>,
+                        <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a>.<a href="@1@System.Runtime/A.html#6e5f254563fed78e" class="i method">Format</a>( <span class="s">&quot;{0:x2}{1:x2}{2:x2}&quot;</span>,
+                        <span class="r16 r">color</span>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>, <span class="r16 r">color</span>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>, <span class="r16 r">color</span>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>));
+                    <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();
+                }
+            }
+            <b>else</b> <b>if</b> (<span class="r11 r">property</span> == <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#93ba7392b999a01c" class="i field">FontSizeProperty</a>)
+            {
+                <b>double</b> <span id="r17 rd" class="r17 r">size</span>;
+
+                <span class="c">// w:sz is specified in 1/144ths of an inch</span>
+                <span class="r17 r">size</span> = (<b>double</b>)<span class="r12 r">value</span>;
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#02005a1cb9132c2f" class="i field">WordFontSizeTag</a>);
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteAttributeString</span>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#ad0050bf31791c32" class="i field">WordValue</a>,
+                    ((<b>int</b>)((<span class="r17 r">size</span> * 72.0 / 96.0) * 2)).<a href="@1@System.Runtime/A.html#8d6f2d8bc0589463" class="i method">ToString</a>());
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();
+            }
+            <b>else</b> <b>if</b> (<span class="r11 r">property</span> == <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#b450a3a45d073bbb" class="i field">FontFamilyProperty</a>)
+            {
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r18 rd" class="r18 r">fontFamily</span>;
+
+                <span class="r18 r">fontFamily</span> = <span class="r12 r">value</span>.<a href="@1@System.Runtime/A.html#ff31a6bf27c58f89" class="i method">ToString</a>();
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<span class="s">&quot;w:rFonts&quot;</span>);
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteAttributeString</span>(<span class="s">&quot;w:ascii&quot;</span>, <span class="r18 r">fontFamily</span>);
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteAttributeString</span>(<span class="s">&quot;w:h-ansi&quot;</span>, <span class="r18 r">fontFamily</span>);
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteAttributeString</span>(<span class="s">&quot;w:cs&quot;</span>, <span class="r18 r">fontFamily</span>);
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();
+
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<span class="s">&quot;wx:font&quot;</span>);
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteAttributeString</span>(<span class="s">&quot;wx:val&quot;</span>, <span class="r18 r">fontFamily</span>);
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Writes the properties for a range of text (w:rPr).</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="e2e1fa17675930e3" href="../R/e2e1fa17675930e3.html" target="n" data-glyph="76,1" class="i method">WriteRangeProperties</a>()
+        {
+            <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="#619aff13deb4cd5e" class="i field">_inRange</a>);
+            <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="#040f3117c4ee74a9" class="i field">_dir</a> == <a href="@0@PresentationFramework/A.html#ea3cad6dc7ae64ef" class="t t">LogicalDirection</a>.<a href="@0@PresentationFramework/A.html#db84cc4f1e52efc3" class="i field">Forward</a>);
+
+            <a href="#3e10c05b12af957f" class="i method">WriteProperties</a>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#708ef4df50e382aa" class="i field">WordRangePropertiesTag</a>,
+                <a href="#812faac65cb8c756" class="i property">RangeProperties</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Writes the properties for a range of text (w:pPr).</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="3151fb1cfac546bc" href="../R/3151fb1cfac546bc.html" target="n" data-glyph="76,1" class="i method">WriteParagraphProperties</a>()
+        {
+            <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="#175f8ef4231bdcd0" class="i field">_inParagraph</a>);
+            <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="#040f3117c4ee74a9" class="i field">_dir</a> == <a href="@0@PresentationFramework/A.html#ea3cad6dc7ae64ef" class="t t">LogicalDirection</a>.<a href="@0@PresentationFramework/A.html#db84cc4f1e52efc3" class="i field">Forward</a>);
+
+            <a href="#3e10c05b12af957f" class="i method">WriteProperties</a>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#08bacb7f2d65ad3a" class="i field">WordParagraphPropertiesTag</a>,
+                <a href="#dcd12824dc4b0166" class="i property">ParagraphProperties</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Writes properties in the specified properties element.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r19 r">tagName</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Name of element to write properties in.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r20 r">properties</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Properties to write.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="3e10c05b12af957f" href="../R/3e10c05b12af957f.html" target="n" data-glyph="76,1" class="i method">WriteProperties</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r19 rd" class="r19 r">tagName</span>, <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>[] <span id="r20 rd" class="r20 r">properties</span>)
+        {
+            <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r21 rd" class="r21 r">parent</span>;
+            <a href="@0@PresentationFramework/A.html#653528d814b49dce" class="t t">TextPointer</a> <span id="r22 rd" class="r22 r">position</span>;
+
+            <span class="r22 r">position</span> = <a href="#213bbbc94d53b2b8" class="i field">_cursor</a>;
+            <span class="r22 r">position</span> = <span class="r22 r">position</span>.<a href="@0@PresentationFramework/A.html#7f8329065b3c571f" class="i method">GetNextContextPosition</a>(<a href="@0@PresentationFramework/A.html#ea3cad6dc7ae64ef" class="t t">LogicalDirection</a>.<a href="@0@PresentationFramework/A.html#db84cc4f1e52efc3" class="i field">Forward</a>);
+            <span class="r21 r">parent</span> = <span class="r22 r">position</span>.<a href="@0@PresentationFramework/A.html#94eeeb51b6b1b9a3" class="i property">Parent</a>;
+
+            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<span class="r19 r">tagName</span>);
+            <b>foreach</b>(<a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <span id="r23 rd" class="r23 r">property</span> <b>in</b> <span class="r20 r">properties</span>)
+            {
+                <a href="#228097b56a969565" class="i method">WriteProperty</a>(<span class="r23 r">property</span>, <span class="r21 r">parent</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<span class="r23 r">property</span>));
+            }
+            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Writes the XML document header and all required WordXML</span>
+        <span class="c">///</span><span class="c"> opening tags and namespace declarations.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span><span class="c">This is symmetrical with WriteWordXmlTail.</span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="75d60b8ae21f41ea" href="../R/75d60b8ae21f41ea.html" target="n" data-glyph="76,1" class="i method">WriteWordXmlHead</a>()
+        {
+            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartDocument</span>(<b>true</b>);
+            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteProcessingInstruction</span>(
+                <span class="s">&quot;mso-application&quot;</span>, <span class="s">&quot;progid=\&quot;Word.Document\&quot;&quot;</span>);
+            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<span class="s">&quot;w&quot;</span>, <span class="s">&quot;wordDocument&quot;</span>,
+                <span class="s">&quot;http://schemas.microsoft.com/office/word/2003/wordml&quot;</span>);
+
+            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteAttributeString</span>(<span class="s">&quot;xmlns&quot;</span>, <span class="s">&quot;wx&quot;</span>, <b>null</b>, <span class="s">&quot;http://schemas.microsoft.com/office/word/2003/auxHint&quot;</span>);
+            <span class="c">// NOTE: this will be required for more advanced conversions.</span>
+            <span class="c">// _writer.WriteAttributeString(&quot;xmlns&quot;, &quot;v&quot;, null, &quot;urn:schemas-microsoft-com:vml&quot;);</span>
+            <span class="c">// _writer.WriteAttributeString(&quot;xmlns&quot;, &quot;o&quot;, null, &quot;urn:schemas-microsoft-com:office:office&quot;);</span>
+            <span class="c">// _writer.WriteAttributeString(&quot;xmlns&quot;, &quot;w10&quot;, null, &quot;urn:schemas-microsoft-com:office:word&quot;);</span>
+            <span class="c">// _writer.WriteAttributeString(&quot;xmlns&quot;, &quot;sl&quot;, null, &quot;http://schemas.microsoft.com/schemaLibrary/2003/core&quot;);</span>
+            <span class="c">// _writer.WriteAttributeString(&quot;xmlns&quot;, &quot;aml&quot;, null, &quot;http://schemas.microsoft.com/aml/2001/core&quot;);</span>
+            <span class="c">// _writer.WriteAttributeString(&quot;xmlns&quot;, &quot;dt&quot;, null, &quot;uuid:C2F41010-65B3-11d1-A29F-00AA00C14882&quot;);</span>
+
+            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteAttributeString</span>(<span class="s">&quot;xml:space&quot;</span>, <span class="s">&quot;preserve&quot;</span>);
+
+            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<span class="s">&quot;w:body&quot;</span>);
+            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<span class="s">&quot;w:sect&quot;</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Writes the tail of the WordXML file.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span><span class="c">This is symmetrical with WriteWordXmlHead.</span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="5a96b9bcef0a6921" href="../R/5a96b9bcef0a6921.html" target="n" data-glyph="76,1" class="i method">WriteWordXmlTail</a>()
+        {
+            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();   <span class="c">// Close w:sect.</span>
+            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();   <span class="c">// Close w:body.</span>
+            <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();   <span class="c">// Close w:wordDocument.</span>
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Ensures that an open range is available.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="93508590f6a35eea" href="../R/93508590f6a35eea.html" target="n" data-glyph="76,1" class="i method">RequireOpenRange</a>()
+        {
+            <a href="#584784b6cbdfe62f" class="i method">RequireOpenParagraph</a>();
+            <b>if</b> (!<a href="#619aff13deb4cd5e" class="i field">_inRange</a>)
+            {
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#e2d2380c09bd476c" class="i field">WordRangeTag</a>);
+                <a href="#619aff13deb4cd5e" class="i field">_inRange</a> = <b>true</b>;
+                <a href="#e2e1fa17675930e3" class="i method">WriteRangeProperties</a>();
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Ensures than an open paragraph is available.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="584784b6cbdfe62f" href="../R/584784b6cbdfe62f.html" target="n" data-glyph="76,1" class="i method">RequireOpenParagraph</a>()
+        {
+            <b>if</b> (!<a href="#175f8ef4231bdcd0" class="i field">_inParagraph</a>)
+            {
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteStartElement</span>(<a href="wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="wordxmlserializer.cs.html#cd573fd3bc0b20e9" class="i field">WordParagraphTag</a>);
+                <a href="#175f8ef4231bdcd0" class="i field">_inParagraph</a> = <b>true</b>;
+                <a href="#3151fb1cfac546bc" class="i method">WriteParagraphProperties</a>();
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Ensures that there is no open range.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="30e069b3c679c239" href="../R/30e069b3c679c239.html" target="n" data-glyph="76,1" class="i method">RequireClosedRange</a>()
+        {
+            <b>if</b> (<a href="#619aff13deb4cd5e" class="i field">_inRange</a>)
+            {
+                <span class="c">// Close w:r.</span>
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();
+                <a href="#619aff13deb4cd5e" class="i field">_inRange</a> = <b>false</b>;
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Ensures that there is no open paragraph.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="3adedb770ab465fc" href="../R/3adedb770ab465fc.html" target="n" data-glyph="76,1" class="i method">RequireClosedParagraph</a>()
+        {
+            <a href="#30e069b3c679c239" class="i method">RequireClosedRange</a>();
+            <b>if</b> (<a href="#175f8ef4231bdcd0" class="i field">_inParagraph</a>)
+            {
+                <span class="c">// Close w:p.</span>
+                <a href="#3ff94718c781542f" class="i field">_writer</a>.<span class="i method">WriteEndElement</span>();
+                <a href="#175f8ef4231bdcd0" class="i field">_inParagraph</a> = <b>false</b>;
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Private methods.
+
+        <span class="c">//------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">//  Private Properties</span>
+        <span class="c">//</span>
+        <span class="c">//------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private properties.
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Paragraph-level properties in Word object model.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>[] <a id="dcd12824dc4b0166" href="../R/dcd12824dc4b0166.html" target="n" data-glyph="106,1" class="i property">ParagraphProperties</a>
+        {
+            <b>get</b>
+            {
+                <b>if</b> (<a href="#ad67dc17b34ec57b" class="i field">_paragraphProperties</a> == <b>null</b>)
+                {
+                    <a href="#ad67dc17b34ec57b" class="i field">_paragraphProperties</a> = <b>new</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>[] {
+                        <a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>.<a href="@0@PresentationFramework/A.html#8737f536da68f5ae" class="i field">MarginProperty</a>,
+                        <a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>.<a href="@0@PresentationFramework/A.html#6918a9ea75cacd42" class="i field">TextAlignmentProperty</a>
+                    };
+                }
+                <b>return</b> <a href="#ad67dc17b34ec57b" class="i field">_paragraphProperties</a>;
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Range-level properties in Word object model.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>[] <a id="812faac65cb8c756" href="../R/812faac65cb8c756.html" target="n" data-glyph="106,1" class="i property">RangeProperties</a>
+        {
+            <b>get</b>
+            {
+                <b>if</b> (<a href="#634fc56de074be63" class="i field">_rangeProperties</a> == <b>null</b>)
+                {
+                    <a href="#634fc56de074be63" class="i field">_rangeProperties</a> = <b>new</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>[] {
+                        <a href="@0@PresentationFramework/A.html#e28640b48d79de57" class="t t">TextElement</a>.<a href="@0@PresentationFramework/A.html#1095011dbcb3482a" class="i field">FontFamilyProperty</a>,
+                        <a href="@0@PresentationFramework/A.html#e28640b48d79de57" class="t t">TextElement</a>.<a href="@0@PresentationFramework/A.html#633afd8fd82a7c5f" class="i field">FontSizeProperty</a>,
+                        <a href="@0@PresentationFramework/A.html#e28640b48d79de57" class="t t">TextElement</a>.<a href="@0@PresentationFramework/A.html#aff4d320f1fcab69" class="i field">FontWeightProperty</a>,
+                        <a href="@0@PresentationFramework/A.html#e28640b48d79de57" class="t t">TextElement</a>.<a href="@0@PresentationFramework/A.html#e595613a791999ee" class="i field">FontStyleProperty</a>,
+                        <a href="@0@PresentationFramework/A.html#e28640b48d79de57" class="t t">TextElement</a>.<a href="@0@PresentationFramework/A.html#e76b7a3f2b462339" class="i field">ForegroundProperty</a>,
+                    };
+                }
+                <b>return</b> <a href="#634fc56de074be63" class="i field">_rangeProperties</a>;
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Private properties.
+
+        <span class="c">//------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">//  Private Fields</span>
+        <span class="c">//</span>
+        <span class="c">//------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private fields.
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Cursor moving through document.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@PresentationFramework/A.html#653528d814b49dce" class="t t">TextPointer</a> <a id="213bbbc94d53b2b8" href="../R/213bbbc94d53b2b8.html" target="n" data-glyph="46,1" class="i field">_cursor</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Direction in which the cursor moves.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> For the current implementatino, the direction is always</span>
+        <span class="c">///</span><span class="c"> forward. This may change for more complex implementations.</span>
+        <span class="c">///</span><span class="c"> Until then, this acts as a constant (but constants cannot</span>
+        <span class="c">///</span><span class="c"> refer to enumeration valueS).</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>private readonly</b> <a href="@0@PresentationFramework/A.html#ea3cad6dc7ae64ef" class="t t">LogicalDirection</a> <a id="040f3117c4ee74a9" href="../R/040f3117c4ee74a9.html" target="n" data-glyph="46,1" class="i field">_dir</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Whether writer has opened a paragraph.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private bool</b> <a id="175f8ef4231bdcd0" href="../R/175f8ef4231bdcd0.html" target="n" data-glyph="46,1" class="i field">_inParagraph</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Whether writer has opened a range.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private bool</b> <a id="619aff13deb4cd5e" href="../R/619aff13deb4cd5e.html" target="n" data-glyph="46,1" class="i field">_inRange</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Paragraph-level properties in Word object model</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>[] <a id="ad67dc17b34ec57b" href="../R/ad67dc17b34ec57b.html" target="n" data-glyph="46,1" class="i field">_paragraphProperties</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Range-level properties in Word object model</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>[] <a id="634fc56de074be63" href="../R/634fc56de074be63.html" target="n" data-glyph="46,1" class="i field">_rangeProperties</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Writer used to output document.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <span class="t t">XmlWriter</span> <a id="3ff94718c781542f" href="../R/3ff94718c781542f.html" target="n" data-glyph="46,1" class="i field">_writer</a>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Private fields.
+    }
+}
+</pre></td></tr></table></div></body></html>

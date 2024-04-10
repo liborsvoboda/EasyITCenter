@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html><head><title>EncodedRectangle.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(172);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RemoteDesktopWpf/Encodings/EncodedRectangle.cs" target="_top">Encodings\EncodedRectangle.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RemoteDesktopWpf" target="_top">..\..\..\EASY-TOOLS\EASYTools.VNCLib\EASYTools.VNCLib.csproj</a> (RemoteDesktopWpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// RemoteDesktopWpf - .NET VNC Client for WPF Library</span>
+<span class="c">// Copyright (C) 2008 David Humphrey</span>
+<span class="c">// Copyright (C) 2011 Masanori Nakano (Modified VncSharp for WPF)</span>
+<span class="c">//</span>
+<span class="c">// This program is free software; you can redistribute it and/or modify</span>
+<span class="c">// it under the terms of the GNU General Public License as published by</span>
+<span class="c">// the Free Software Foundation; either version 2 of the License, or</span>
+<span class="c">// (at your option) any later version.</span>
+<span class="c">//</span>
+<span class="c">// This program is distributed in the hope that it will be useful,</span>
+<span class="c">// but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c">// GNU General Public License for more details.</span>
+<span class="c">//</span>
+<span class="c">// You should have received a copy of the GNU General Public License</span>
+<span class="c">// along with this program; if not, write to the Free Software</span>
+<span class="c">// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</span>
+ 
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>.<span class="i n">Imaging</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Runtime</span>.<span class="i n">InteropServices</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+ 
+<b>namespace</b> <span class="i n">RemoteDesktopWpf</span>.<span class="i n">Encodings</span>
+{
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+	<span class="c">///</span><span class="c"> Abstract class representing an Encoded Rectangle to be read, decoded, and drawn.</span>
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+	<b>public abstract class</b> <a id="6366ecabf8671d89" href="../R/6366ecabf8671d89.html" target="n" data-glyph="0,0" class="t t">EncodedRectangle</a> : <a href="../IDesktopUpdater.cs.html#ac54fc0d022943d6" class="t t">IDesktopUpdater</a>
+	{
+		<b>protected</b> <a href="../RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a>	<a id="c31b295164312949" href="../R/c31b295164312949.html" target="n" data-glyph="45,1" class="i field">rfb</a>;
+		<b>protected</b> <a href="@0@System.Drawing/A.html#17559e21008f381d" class="t t">Rectangle</a>		<a id="c89697e85f54533a" href="../R/c89697e85f54533a.html" target="n" data-glyph="45,1" class="i field">rectangle</a>;
+		<b>protected</b> <a href="../Framebuffer.cs.html#271f2ef1d4bba1cb" class="t t">Framebuffer</a>	<a id="79621dc218919606" href="../R/79621dc218919606.html" target="n" data-glyph="45,1" class="i field">framebuffer</a>;
+		<b>protected</b> <a href="PixelReader.cs.html#5d42e253235dd2b5" class="t t">PixelReader</a>	<a id="f2b82a97228633c3" href="../R/f2b82a97228633c3.html" target="n" data-glyph="45,1" class="i field">preader</a>;
+ 
+		<b>public</b> <a id="f46bc1de249d56e4" href="../R/f46bc1de249d56e4.html" target="n" data-glyph="72,1" class="t constructor">EncodedRectangle</a>(<a href="../RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a> <span id="r0 rd" class="r0 r">rfb</span>, <a href="../Framebuffer.cs.html#271f2ef1d4bba1cb" class="t t">Framebuffer</a> <span id="r1 rd" class="r1 r">framebuffer</span>, <a href="@0@System.Drawing/A.html#17559e21008f381d" class="t t">Rectangle</a> <span id="r2 rd" class="r2 r">rectangle</span>, <b>int</b> <span id="r3 rd" class="r3 r">encoding</span>)
+		{
+			<a href="#6366ecabf8671d89" class="k">this</a>.<a href="#c31b295164312949" class="i field">rfb</a> = <span class="r0 r">rfb</span>;
+			<a href="#6366ecabf8671d89" class="k">this</a>.<a href="#79621dc218919606" class="i field">framebuffer</a> = <span class="r1 r">framebuffer</span>;
+			<a href="#6366ecabf8671d89" class="k">this</a>.<a href="#c89697e85f54533a" class="i field">rectangle</a> = <span class="r2 r">rectangle</span>;
+ 
+			<span class="c">//Select appropriate reader</span>
+			<a href="@0@mscorlib/A.html#4f6cad84482876ff" class="t t">BinaryReader</a> <span id="r4 rd" class="r4 r">reader</span> = (<span class="r3 r">encoding</span> == <a href="../RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a>.<a href="../RfbProtocol.cs.html#b6b0ed7c7971608e" class="i field">ZRLE_ENCODING</a>) ? <span class="r0 r">rfb</span>.<a href="../RfbProtocol.cs.html#a115ec7d28e576ba" class="i property">ZrleReader</a> : <span class="r0 r">rfb</span>.<a href="../RfbProtocol.cs.html#34e475046957cc34" class="i property">Reader</a>;
+ 
+			<span class="c">// Create the appropriate PixelReader depending on screen size and encoding</span>
+			<b>switch</b> (<span class="r1 r">framebuffer</span>.<a href="../Framebuffer.cs.html#0d4347085a68198e" class="i property">BitsPerPixel</a>)
+			{
+				<b>case</b> 32:
+					<b>if</b> (<span class="r3 r">encoding</span> == <a href="../RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a>.<a href="../RfbProtocol.cs.html#b6b0ed7c7971608e" class="i field">ZRLE_ENCODING</a>)
+					{
+						<a href="#f2b82a97228633c3" class="i field">preader</a> = <b>new</b> <a href="CPixelReader.cs.html#c6600034f1479acf" class="t constructor">CPixelReader</a>(<span class="r4 r">reader</span>, <span class="r1 r">framebuffer</span>);
+					}
+					<b>else</b>
+					{
+						<a href="#f2b82a97228633c3" class="i field">preader</a> = <b>new</b> <a href="PixelReader32.cs.html#6c79c8bc6cfba670" class="t constructor">PixelReader32</a>(<span class="r4 r">reader</span>, <span class="r1 r">framebuffer</span>);
+					}
+					<b>break</b>;
+				<b>case</b> 16:
+					<a href="#f2b82a97228633c3" class="i field">preader</a> = <b>new</b> <a href="PixelReader16.cs.html#ae05cec76dba8cc2" class="t constructor">PixelReader16</a>(<span class="r4 r">reader</span>, <span class="r1 r">framebuffer</span>);
+					<b>break</b>;
+				<b>case</b> 8:
+					<a href="#f2b82a97228633c3" class="i field">preader</a> = <b>new</b> <a href="PixelReader8.cs.html#92450f0d733ddef8" class="t constructor">PixelReader8</a>(<span class="r4 r">reader</span>, <span class="r1 r">framebuffer</span>, <span class="r0 r">rfb</span>);
+					<b>break</b>;
+				<b>default</b>:
+					<b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#c524af42f1a5665e" class="t constructor">ArgumentOutOfRangeException</a>(<span class="s">&quot;BitsPerPixel&quot;</span>, <span class="r1 r">framebuffer</span>.<a href="../Framebuffer.cs.html#0d4347085a68198e" class="i property">BitsPerPixel</a>, <span class="s">&quot;Valid VNC Pixel Widths are 8, 16 or 32 bits.&quot;</span>);
+			}
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Gets the rectangle that needs to be decoded and drawn.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public</b> <a href="@0@System.Drawing/A.html#17559e21008f381d" class="t t">Rectangle</a> <a id="7ed64e6193e189da" href="../R/7ed64e6193e189da.html" target="n" data-glyph="102,1" class="i property">UpdateRectangle</a> {
+			<b>get</b> {
+				<b>return</b> <a href="#c89697e85f54533a" class="i field">rectangle</a>;
+			}
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Obtain all necessary information from VNC Host (i.e., read) in order to Draw the rectangle, and store in colours[].</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public abstract void</b> <a id="b9dae2caf7d3f20f" href="../R/b9dae2caf7d3f20f.html" target="n" data-glyph="72,1" class="i method">Decode</a>();
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> After calling Decode() an EncodedRectangle can be drawn to a Bitmap, which is the local representation of the remote desktop.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r5 r">desktop</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The image the represents the remote desktop. NOTE: this image will be altered.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public virtual void</b> <a id="8e83c249f9b4baaf" href="../R/8e83c249f9b4baaf.html" target="n" data-glyph="72,1" class="i method">Draw</a>(<a href="@0@PresentationCore/A.html#d8e6670e61603043" class="t t">WriteableBitmap</a> <span id="r5 rd" class="r5 r">desktop</span>)
+        {
+            <span class="r5 r">desktop</span>.<a href="@0@PresentationCore/A.html#234a768e081e2dc6" class="i method">WritePixels</a>(<b>new</b> <a href="@0@WindowsBase/A.html#c7ba7e87ea0d094a" class="t constructor">Int32Rect</a>(0, 0, <a href="#c89697e85f54533a" class="i field">rectangle</a>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a>, <a href="#c89697e85f54533a" class="i field">rectangle</a>.<a href="@0@System.Drawing/A.html#dd217069ab7562a6" class="i property">Height</a>), 
+                                <a href="#79621dc218919606" class="i field">framebuffer</a>.<a href="../Framebuffer.cs.html#c27f1e523d5adfcd" class="i method">GetPixelArray</a>(),
+                                <a href="#c89697e85f54533a" class="i field">rectangle</a>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a> * 4,
+                                <a href="#c89697e85f54533a" class="i field">rectangle</a>.<a href="@0@System.Drawing/A.html#f045c0910eceecfd" class="i property">X</a>,
+                                <a href="#c89697e85f54533a" class="i field">rectangle</a>.<a href="@0@System.Drawing/A.html#e83b4dcac590f07f" class="i property">Y</a>);
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Fills the given Rectangle with a solid colour (i.e., all pixels will have the same value--colour).</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r6 r">rect</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The rectangle to be filled.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">colour</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The colour to use when filling the rectangle.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>protected void</b> <a id="f1c996fab32b3851" href="../R/f1c996fab32b3851.html" target="n" data-glyph="75,1" class="i method">FillRectangle</a>(<a href="@0@System.Drawing/A.html#17559e21008f381d" class="t t">Rectangle</a> <span id="r6 rd" class="r6 r">rect</span>, <b>int</b> <span id="r7 rd" class="r7 r">colour</span>)
+		{
+            <b>int</b> <span id="r8 rd" class="r8 r">ptr</span> = 0;
+            <b>int</b> <span id="r9 rd" class="r9 r">offset</span> = 0;
+ 
+            <span class="c">// If the two rectangles don&#39;t match, then rect is contained within rectangle, and</span>
+            <span class="c">// ptr and offset need to be adjusted to position things at the proper starting point.</span>
+            <b>if</b> (<span class="r6 r">rect</span> != <a href="#c89697e85f54533a" class="i field">rectangle</a>)
+            {
+                <span class="r8 r">ptr</span> = <span class="r6 r">rect</span>.<a href="@0@System.Drawing/A.html#e83b4dcac590f07f" class="i property">Y</a> * <a href="#c89697e85f54533a" class="i field">rectangle</a>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a> + <span class="r6 r">rect</span>.<a href="@0@System.Drawing/A.html#f045c0910eceecfd" class="i property">X</a>;	<span class="c">// move to the start of the rectangle in pixels</span>
+                <span class="r9 r">offset</span> = <a href="#c89697e85f54533a" class="i field">rectangle</a>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a> - <span class="r6 r">rect</span>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a>;		<span class="c">// calculate the offset to get to the start of the next row</span>
+            }
+ 
+            <b>int</b>[] <span id="r10 rd" class="r10 r">srcArray</span> = <a href="@0@System.Core/A.html#577032c8811e20d3" class="t t">Enumerable</a>.<a href="@0@System.Core/A.html#e2850cfe2b0cc87f" class="i method">Repeat</a>(<span class="r7 r">colour</span>, <span class="r6 r">rect</span>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a>).<a href="@0@System.Core/A.html#783a052330e7d48d" class="i method">ToArray</a>();
+ 
+            <b>for</b> (<b>int</b> <span id="r11 rd" class="r11 r">y</span> = 0; <span class="r11 r">y</span> &lt; <span class="r6 r">rect</span>.<a href="@0@System.Drawing/A.html#dd217069ab7562a6" class="i property">Height</a>; ++<span class="r11 r">y</span>)
+            {
+                <a href="@0@mscorlib/A.html#156e066ecc4ccedf" class="t t">Array</a>.<a href="@0@mscorlib/A.html#7441c6721593042c" class="i method">Copy</a>(<span class="r10 r">srcArray</span>, 0, <a href="#79621dc218919606" class="i field">framebuffer</a>.<a href="../Framebuffer.cs.html#c27f1e523d5adfcd" class="i method">GetPixelArray</a>(), <span class="r8 r">ptr</span> + <span class="r11 r">y</span> * <a href="#c89697e85f54533a" class="i field">rectangle</a>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a>, <span class="r6 r">rect</span>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a>);
+            }
+		}
+ 
+		<b>protected void</b> <a id="042f6d5fef9a4e8d" href="../R/042f6d5fef9a4e8d.html" target="n" data-glyph="75,1" class="i method">FillRectangle</a>(<a href="@0@System.Drawing/A.html#17559e21008f381d" class="t t">Rectangle</a> <span id="r12 rd" class="r12 r">rect</span>, <b>int</b>[] <span id="r13 rd" class="r13 r">tile</span>)
+		{
+			<b>int</b> <span id="r14 rd" class="r14 r">ptr</span> = 0;
+			<b>int</b> <span id="r15 rd" class="r15 r">offset</span> = 0;
+ 
+			<span class="c">// If the two rectangles don&#39;t match, then rect is contained within rectangle, and</span>
+			<span class="c">// ptr and offset need to be adjusted to position things at the proper starting point.</span>
+			<b>if</b> (<span class="r12 r">rect</span> != <a href="#c89697e85f54533a" class="i field">rectangle</a>) {
+				<span class="r14 r">ptr</span> = <span class="r12 r">rect</span>.<a href="@0@System.Drawing/A.html#e83b4dcac590f07f" class="i property">Y</a> * <a href="#c89697e85f54533a" class="i field">rectangle</a>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a> + <span class="r12 r">rect</span>.<a href="@0@System.Drawing/A.html#f045c0910eceecfd" class="i property">X</a>;	<span class="c">// move to the start of the rectangle in pixels</span>
+				<span class="r15 r">offset</span> = <a href="#c89697e85f54533a" class="i field">rectangle</a>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a> - <span class="r12 r">rect</span>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a>;		<span class="c">// calculate the offset to get to the start of the next row</span>
+			}
+ 
+			<b>int</b> <span id="r16 rd" class="r16 r">idx</span> = 0;
+			<b>for</b> (<b>int</b> <span id="r17 rd" class="r17 r">y</span> = 0; <span class="r17 r">y</span> &lt; <span class="r12 r">rect</span>.<a href="@0@System.Drawing/A.html#dd217069ab7562a6" class="i property">Height</a>; ++<span class="r17 r">y</span>) {
+				<b>for</b> (<b>int</b> <span id="r18 rd" class="r18 r">x</span> = 0; <span class="r18 r">x</span> &lt; <span class="r12 r">rect</span>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a>; ++<span class="r18 r">x</span>) {
+					<a href="#79621dc218919606" class="i field">framebuffer</a><a href="../Framebuffer.cs.html#9b6886350959b793">[</a><span class="r14 r">ptr</span>++] = <span class="r13 r">tile</span>[<span class="r16 r">idx</span>++];
+				}
+				<span class="r14 r">ptr</span> += <span class="r15 r">offset</span>;								<span class="c">// advance to next row within pixels</span>
+			}
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Fills the given Rectangle with pixel values read from the server (i.e., each pixel may have its own value).</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r19 r">rect</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The rectangle to be filled.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>protected void</b> <a id="3373e1c5bd7eab5e" href="../R/3373e1c5bd7eab5e.html" target="n" data-glyph="75,1" class="i method">FillRectangle</a>(<a href="@0@System.Drawing/A.html#17559e21008f381d" class="t t">Rectangle</a> <span id="r19 rd" class="r19 r">rect</span>)
+		{
+			<b>int</b> <span id="r20 rd" class="r20 r">ptr</span> = 0;
+			<b>int</b> <span id="r21 rd" class="r21 r">offset</span> = 0;
+ 
+			<span class="c">// If the two rectangles don&#39;t match, then rect is contained within rectangle, and</span>
+			<span class="c">// ptr and offset need to be adjusted to position things at the proper starting point.</span>
+			<b>if</b> (<span class="r19 r">rect</span> != <a href="#c89697e85f54533a" class="i field">rectangle</a>) {
+				<span class="r20 r">ptr</span> = <span class="r19 r">rect</span>.<a href="@0@System.Drawing/A.html#e83b4dcac590f07f" class="i property">Y</a> * <a href="#c89697e85f54533a" class="i field">rectangle</a>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a> + <span class="r19 r">rect</span>.<a href="@0@System.Drawing/A.html#f045c0910eceecfd" class="i property">X</a>;	<span class="c">// move to the start of the rectangle in pixels</span>
+				<span class="r21 r">offset</span> = <a href="#c89697e85f54533a" class="i field">rectangle</a>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a> - <span class="r19 r">rect</span>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a>;		<span class="c">// calculate the offset to get to the start of the next row</span>
+			}
+ 
+			<b>for</b> (<b>int</b> <span id="r22 rd" class="r22 r">y</span> = 0; <span class="r22 r">y</span> &lt; <span class="r19 r">rect</span>.<a href="@0@System.Drawing/A.html#dd217069ab7562a6" class="i property">Height</a>; ++<span class="r22 r">y</span>) {
+				<b>for</b> (<b>int</b> <span id="r23 rd" class="r23 r">x</span> = 0; <span class="r23 r">x</span> &lt; <span class="r19 r">rect</span>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a>; ++<span class="r23 r">x</span>) {
+					<a href="#79621dc218919606" class="i field">framebuffer</a><a href="../Framebuffer.cs.html#9b6886350959b793">[</a><span class="r20 r">ptr</span>++] = <a href="#f2b82a97228633c3" class="i field">preader</a>.<a href="PixelReader.cs.html#5c8a552640d4862c" class="i method">ReadPixel</a>();	<span class="c">// every pixel needs to be read from server</span>
+				}
+				<span class="r20 r">ptr</span> += <span class="r21 r">offset</span>;								    <span class="c">// advance to next row within pixels</span>
+			}
+		}
+	}
+}
+</pre></td></tr></table></div></body></html>

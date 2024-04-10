@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html><head><title>DefaultStringToObjectParser.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(73);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/MultiSelectionComboBox/DefaultStringToObjectParser.cs" target="_top">Controls\MultiSelectionComboBox\DefaultStringToObjectParser.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">   This class is a helper class for the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">. </span>
+    <span class="c">///</span><span class="c">   It uses the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@System/A.html#5ffdbf35aab9cd1c" class="t t">TypeConverter</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> for the elements </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">. If you need more control</span>
+    <span class="c">///</span><span class="c">   over the conversion you should create your own class which implements </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="IParseStringToObject.cs.html#82d88a8482bca4b6" class="t t">IParseStringToObject</a><span class="c">&quot;</span><span class="c">/&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="43f9753cea6f36bc" href="../../R/43f9753cea6f36bc.html" target="n" data-glyph="0,0" class="t t"><span id="76bb056bb6729876">DefaultStringToObjectParser</span></a> : <a href="IParseStringToObject.cs.html#82d88a8482bca4b6" class="t t">IParseStringToObject</a>
+    {
+        <b>public static readonly</b> <a href="#43f9753cea6f36bc" class="t t">DefaultStringToObjectParser</a> <a id="53d2b77e80ce91c6" href="../../R/53d2b77e80ce91c6.html" target="n" data-glyph="42,1" class="i field">Instance</a> = <a href="#43f9753cea6f36bc" class="k">new</a>();
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span> <span class="c">/&gt;</span>
+        <b>public bool</b> <a id="34884bcf4108fa67" href="../../R/34884bcf4108fa67.html" target="n" data-glyph="72,1" class="i method">TryCreateObjectFromString</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>? <span id="r0 rd" class="r0 r">input</span>,
+                                              <b>out object</b>? <span id="r1 rd" class="r1 r">result</span>,
+                                              <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>? <span id="r2 rd" class="r2 r">culture</span> = <b>null</b>,
+                                              <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>? <span id="r3 rd" class="r3 r">stringFormat</span> = <b>null</b>,
+                                              <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>? <span id="r4 rd" class="r4 r">targetType</span> = <b>null</b>)
+        {
+            <b>try</b>
+            {
+                <span class="c">// If the input is null the result is also null</span>
+                <b>if</b> (<span class="r0 r">input</span> <b>is null</b>)
+                {
+                    <span class="r1 r">result</span> = <b>null</b>;
+                    <b>return</b> <b>true</b>;
+                }
+
+                <span class="c">// If we don&#39;t know the target type we cannot convert in this class.</span>
+                <span class="c">// Either provide the target type or roll your own class implementing IParseStringToObject</span>
+                <b>if</b> (<span class="r4 r">targetType</span> <b>is null</b>)
+                {
+                    <span class="r1 r">result</span> = <b>null</b>;
+                    <b>return</b> <b>false</b>;
+                }
+
+                <span class="r1 r">result</span> = <a href="@0@System/A.html#7a0aedc986512dd3" class="t t">TypeDescriptor</a>.<a href="@0@System/A.html#977adff822336d07" class="i method">GetConverter</a>(<span class="r4 r">targetType</span>).<a href="@0@System/A.html#74e6eb5897bb50bd" class="i method">ConvertFromString</a>(<b>default</b>!, <span class="r2 r">culture</span> ?? <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>, <span class="r0 r">input</span>);
+                <b>return</b> <b>true</b>;
+            }
+            <b>catch</b>
+            {
+                <span class="r1 r">result</span> = <b>null</b>;
+                <b>return</b> <b>false</b>;
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Tries to get the elements </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> for a given </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@mscorlib/A.html#9be451ac13d86a97" class="t t">IEnumerable</a><span class="c">&quot;</span><span class="c">/&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r5 r">list</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Any collection of elements</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">the elements </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>? <a id="fd4e9471bd4232ca" href="../../R/fd4e9471bd4232ca.html" target="n" data-glyph="72,1" class="i method">GetElementType</a>(<a href="@0@mscorlib/A.html#9be451ac13d86a97" class="t t">IEnumerable</a>? <span id="r5 rd" class="r5 r">list</span>)
+        {
+            <b>if</b> (<span class="r5 r">list</span> <b>is null</b>)
+            {
+                <b>return</b> <b>null</b>;
+            }
+
+            <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="k">var</a> <span id="r6 rd" class="r6 r">listType</span> = <span class="r5 r">list</span>.<a href="@0@mscorlib/A.html#4d73eb225aef8a61" class="i method">GetType</a>();
+
+            <b>return</b> <span class="r6 r">listType</span>.<a href="@0@mscorlib/A.html#b81fd50dfeabd50c" class="i property">IsGenericType</a> ? <span class="r6 r">listType</span>.<a href="@0@mscorlib/A.html#e0094047204f40ea" class="i method">GetGenericArguments</a>().<a href="@0@System.Core/A.html#8087366974af11d2" class="i method">FirstOrDefault</a>() : <span class="r6 r">listType</span>.<a href="@0@mscorlib/A.html#3199ad67c15d1676" class="i method">GetElementType</a>();
+        }
+    }
+}</pre></td></tr></table></div></body></html>

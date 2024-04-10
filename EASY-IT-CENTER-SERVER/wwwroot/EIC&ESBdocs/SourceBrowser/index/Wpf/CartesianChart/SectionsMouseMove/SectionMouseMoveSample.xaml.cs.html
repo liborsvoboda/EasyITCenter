@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html><head><title>SectionMouseMoveSample.xaml.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(46);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#Wpf/CartesianChart/SectionsMouseMove/SectionMouseMoveSample.xaml.cs" target="_top">CartesianChart\SectionsMouseMove\SectionMouseMoveSample.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Examples\Wpf\Wpf.csproj</a> (Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">LiveCharts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Helpers</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>;
+
+<b>namespace</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">SectionsMouseMove</span>
+{
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+	<span class="c">///</span><span class="c"> Interaction logic for SectionMouseMoveSample.xaml</span>
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+	<b>public</b> <b>partial</b> <b>class</b> <a id="c477784f07e63121" href="../../R/c477784f07e63121.html" target="n" data-glyph="0,0" class="t t">SectionMouseMoveSample</a> : <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a>
+	{
+		<b>public</b> <a id="1a5bc8fc4d650920" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">SectionMouseMoveSample</a>()
+		{
+			<span class="i">InitializeComponent</span>();
+		}
+
+	    <b>private void</b> <a id="1b9b8d60d635fea0" href="../../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">UIElement_OnMouseMove</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@PresentationCore/A.html#2bd9049c90bfe71a" class="t t">MouseEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+	    {
+	        <a href="ViewModel.cs.html#7d51922d3d6c742c" class="k">var</a> <span id="r2 rd" class="r2 r">vm</span> = (<a href="ViewModel.cs.html#7d51922d3d6c742c" class="t t">ViewModel</a>) <a href="@0@PresentationFramework/A.html#e4aaca7514916173" class="i property">DataContext</a>;
+	        <a href="/LiveCharts.Wpf/A.html#a04511d8391a6cd4" class="k">var</a> <span id="r3 rd" class="r3 r">chart</span> = (<span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<a href="/LiveCharts.Wpf/A.html#a04511d8391a6cd4" class="t t">CartesianChart</a>) <span class="r0 r">sender</span>;
+
+            <span class="c">//lets get where the mouse is at our chart</span>
+	        <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r4 rd" class="r4 r">mouseCoordinate</span> = <span class="r1 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<span class="r3 r">chart</span>);
+
+            <span class="c">//now that we know where the mouse is, lets use</span>
+            <span class="c">//ConverToChartValues extension</span>
+            <span class="c">//it takes a point in pixes and scales it to our chart current scale/values</span>
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r5 rd" class="r5 r">p</span> = <span class="r3 r">chart</span>.<a href="/LiveCharts.Wpf/A.html#c354e6865c314ce4" class="i method">ConvertToChartValues</a>(<span class="r4 r">mouseCoordinate</span>);
+            
+            <span class="c">//in the Y section, lets use the raw value</span>
+	        <span class="r2 r">vm</span>.<a href="ViewModel.cs.html#4f41d08018732655" class="i property">YPointer</a> = <span class="r5 r">p</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+
+            <span class="c">//for X in this case we will only highlight the closest point.</span>
+            <span class="c">//lets use the already defined ClosestPointTo extension</span>
+            <span class="c">//it will return the closest ChartPoint to a value according to an axis.</span>
+            <span class="c">//here we get the closest point to p.X according to the X axis</span>
+	        <a href="/LiveCharts/A.html#44463e44050cefb2" class="k">var</a> <span id="r6 rd" class="r6 r">series</span> = <span class="r3 r">chart</span>.<a href="/LiveCharts.Wpf/A.html#8fbf2d0f60cd97e3" class="i property">Series</a>[0];
+            <a href="/LiveCharts/A.html#a7b99b1eebb29334" class="k">var</a> <span id="r7 rd" class="r7 r">closetsPoint</span> = <span class="r6 r">series</span>.<a href="/LiveCharts/A.html#22092f12be85eff7" class="i method">ClosestPointTo</a>(<span class="r5 r">p</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>, <a href="/LiveCharts/A.html#294f3d11a155a9e1" class="t t">AxisOrientation</a>.<a href="/LiveCharts/A.html#bd744e223a4b16a1" class="i field">X</a>);
+
+            <span class="r2 r">vm</span>.<a href="ViewModel.cs.html#286c0cefa05b15b4" class="i property">XPointer</a> = <span class="r7 r">closetsPoint</span>.<a href="/LiveCharts/A.html#b51782bb1f4c229b" class="i property">X</a>;
+	    }
+	}
+}
+</pre></td></tr></table></div></body></html>
