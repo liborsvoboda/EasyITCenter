@@ -141,7 +141,7 @@ namespace EasyITCenter {
                 if (requestPath.Equals("/") || requestPath.StartsWith("/downloads") || requestPath.StartsWith("/server") || requestPath.StartsWith("/metro")
                 || requestPath.StartsWith("/portal") || requestPath.StartsWith("/docportal") || requestPath.StartsWith("/servermodules")
                 || requestPath.StartsWith("/docs") || requestPath.StartsWith("/eic&esbcodebrowser")
-                || context.Response.StatusCode == StatusCodes.Status200OK)
+                || context.Response.StatusCode == StatusCodes.Status200OK || context.Response.StatusCode == StatusCodes.Status302Found)
                 { return; }
 
 

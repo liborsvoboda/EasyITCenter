@@ -152,7 +152,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     setup.UIPath = ServerConfigSettings.ModuleHealthServicePath.StartsWith("/") ? ServerConfigSettings.ModuleHealthServicePath : "/" + ServerConfigSettings.ModuleHealthServicePath;
                     setup.AsideMenuOpened = true;
                     setup.PageTitle = ServerConfigSettings.ConfigCoreServerRegisteredName;
-                    setup.AddCustomStylesheet("ServerCoreDefinitions/Styles/HealthChecksUI.css");
+                    setup.AddCustomStylesheet(Path.Combine(ServerRuntimeData.WebRoot_path,"ServerCoreTools", "JsCssLibrary","HealthCheck", "HealthChecksUI.css"));
                 });
             }
         }

@@ -27,7 +27,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) { head = new EasyITCenterContext().WebSettingLists.Where(a => a.Key == "WebBuilderHeadSection").First().Value; }
                 try {
                     string? prevHeader = Regex.Split(data, "<HEAD>", RegexOptions.IgnoreCase)[0];
-                    string? pastHeader = Regex.Split(data, "</HEAD>", RegexOptions.IgnoreCase)[1];
+                    string? pastHeader = Regex.Split(data, "</HEAD>", RegexOptions.IgnoreCase).Length > 1 ? Regex.Split(data, "</HEAD>", RegexOptions.IgnoreCase)[1] : "";
                     data = prevHeader + head + pastHeader;
                 } catch { data = head + data; }
 
@@ -57,7 +57,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) { head = new EasyITCenterContext().WebSettingLists.Where(a => a.Key == "WebBuilderHeadSection").First().Value; }
                 try {
                     string? prevHeader = Regex.Split(data, "<HEAD>", RegexOptions.IgnoreCase)[0];
-                    string? pastHeader = Regex.Split(data, "</HEAD>", RegexOptions.IgnoreCase)[1];
+                    string? pastHeader = Regex.Split(data, "</HEAD>", RegexOptions.IgnoreCase).Length > 1 ? Regex.Split(data, "</HEAD>", RegexOptions.IgnoreCase)[1] : "";
                     data = prevHeader + head + pastHeader;
                 } catch { data = head + data; }
 
