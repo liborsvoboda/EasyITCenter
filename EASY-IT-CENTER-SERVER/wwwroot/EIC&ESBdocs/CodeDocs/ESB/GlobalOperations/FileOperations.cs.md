@@ -1,6 +1,6 @@
-﻿[Zpět](../../index)   
+﻿[Zpět](../../)   
 
-```cshtml   
+```csharp   
 using ICSharpCode.WpfDesign.Designer;
 using Newtonsoft.Json;
 using System;

@@ -74,22 +74,6 @@
         /// </summary>
         public static bool ConfigLogWarnPlusToDbEnabled { get; set; } = false;
 
-
-
-        public static string ResourceAccessMode { get; set; } = "DbResourceManager";
-        public static string ResourceTableName { get; set; } = "SolutionDatabaseGeneratorList";
-        public static string StronglyTypedGlobalResource { get; set; } = "~/Properties/DynamicApiDefinitions.cs";
-        public static string ResourceBaseNamespace { get; set; } = "EasyITCenter.DynamicControllers";
-        public static string ResxExportProjectType { get; set; } = "Project";
-        public static string ResxBaseFolder { get; set; } = "~/Properties/";
-        public static bool AddMissingResources { get; set; } = true;
-        public static string? ActiveConfiguration { get; set; } = null;
-        public static string LocalizationFormWebPath { get; set; } = "/ServerCoreTools/DatabaseAdmin";
-        public static string BingClientId { get; set; } = "";
-        public static string GoogleApiKey { get; set; } = "";
-
-
-
         #endregion Server Database
 
         #region Server Future Technologies
@@ -389,6 +373,11 @@
         /// </summary>
         public static bool ModuleCSharpCodeBuilder { get; set; } = true;
 
+
+        /// <summary>
+        /// Zapíná/Vypína Modul Procházení Kódů Projektů Online
+        /// </summary>
+        public static bool EnableCodeBrowser { get; set; } = true;
         
         #endregion Server Modules
 
@@ -475,15 +464,15 @@
         /// v případě 404 stránka nenalezena. 
         /// Je také nastavena jako Výchozí Stránka
         /// </summary>
-        public static string RedirectPath { get; set; } = "/Index";
+        public static string RedirectPath { get; set; } = "/Portal";
 
 
 
         /// <summary>
-        /// Zapíná/Vypína Automatické zobrazení MD souboru jako HTML
-        /// v rozsahu celého Web Serveru
+        /// Zapíná Vypína Automatické zobrazení MD souboru 
+        /// ve Statickém úložišti jako HTML s URL bez ".md"
         /// </summary>
-        public static bool EnableAutoShowMdAsHtml { get; set; } = true;
+        public static bool EnableAutoShowStaticMdAsHtml { get; set; } = true;
 
         #endregion Server Web Portal
 

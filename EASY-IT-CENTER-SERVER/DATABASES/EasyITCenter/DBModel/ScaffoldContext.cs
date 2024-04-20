@@ -89,6 +89,7 @@ namespace EasyITCenter.DBModel
         public virtual DbSet<SolutionSchedulerProcessList> SolutionSchedulerProcessLists { get; set; } = null!;
         public virtual DbSet<SolutionStaticFileList> SolutionStaticFileLists { get; set; } = null!;
         public virtual DbSet<SolutionStaticFilePathList> SolutionStaticFilePathLists { get; set; } = null!;
+        public virtual DbSet<SolutionTaskList> SolutionTaskLists { get; set; } = null!;
         public virtual DbSet<SolutionUserList> SolutionUserLists { get; set; } = null!;
         public virtual DbSet<SolutionUserRoleList> SolutionUserRoleLists { get; set; } = null!;
         public virtual DbSet<SolutionWebsiteList> SolutionWebsiteLists { get; set; } = null!;
@@ -920,7 +921,7 @@ namespace EasyITCenter.DBModel
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.SolutionFailLists)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_SystemFailList_UserList");
+                    .HasConstraintName("FK_SolutionFailList_UserList");
             });
 
             modelBuilder.Entity<SolutionLanguageList>(entity =>
@@ -1040,6 +1041,15 @@ namespace EasyITCenter.DBModel
                     .WithMany(p => p.SolutionStaticFilePathLists)
                     .HasForeignKey(d => d.WebsiteId)
                     .HasConstraintName("FK_SolutionStaticFilePathList_SolutionWebsiteList");
+            });
+
+            modelBuilder.Entity<SolutionTaskList>(entity =>
+            {
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.SolutionTaskLists)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SolutionTaskList_UserList");
             });
 
             modelBuilder.Entity<SolutionUserList>(entity =>

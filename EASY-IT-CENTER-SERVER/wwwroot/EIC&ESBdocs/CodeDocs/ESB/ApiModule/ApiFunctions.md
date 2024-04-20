@@ -1,6 +1,6 @@
-﻿[Zpět](../../index)   
+﻿[Zpět](../../)   
 
-```cshtml   
+```csharp   
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using Newtonsoft.Json;

@@ -1,6 +1,6 @@
-﻿[Zpět](../../index)   
+﻿[Zpět](../../)   
 
-```cshtml   
+```csharp   
 using EasyITSystemCenter.Classes;
 using System;
 using System.Diagnostics;

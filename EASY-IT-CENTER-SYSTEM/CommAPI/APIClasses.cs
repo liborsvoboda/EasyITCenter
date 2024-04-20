@@ -79,6 +79,7 @@
         EasyITCenterSolutionMottoList,
         EasyITCenterSolutionSchedulerList,
         EasyITCenterSolutionSchedulerProcessList,
+        EasyITCenterSolutionTaskList,
         EasyITCenterSolutionUserList,
         EasyITCenterSolutionUserRoleList,
         SolutionStaticFileList,

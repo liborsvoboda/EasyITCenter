@@ -1,6 +1,6 @@
-﻿[Zpět](../../index)   
+﻿[Zpět](../../)   
 
-```cshtml   
+```csharp   
 using System;
 
 namespace EasyITSystemCenter.GlobalOperations {

@@ -1,5 +1,11 @@
 ﻿
 
+užitečné Odkazy
+https://rust-lang.github.io/mdBook/format/theme/editor.html
+https://github.com/rust-lang/mdBook/blob/master/test_book/src/individual/strikethrough.md
+
+
+
 ### Nekonečná Inspirace z Github
 
 Aktuálně je staženo cca 500 projektů různých typů pro Check a implementaci do Řešení  
@@ -35,8 +41,8 @@ A je třeba je oprojít celé.
 Aktuální Poznámky k Vývoji k nahlednutí. Jaká je vize, nápady, chuť
 a zda není čas se rozhodnout si nasadit systém a podpořit tak vývoj
 
-[EIC - Vývojářské Poznámky](./EIC-WaitForImplement.md)  
-[EIC - Vývojářské Poznámky](./ESB-WaitForImplement.md) 
+[EIC - Vývojářské Poznámky](./EIC-WaitForImplement)  
+[ESB - Vývojářské Poznámky](./ESB-WaitForImplement) 
 
 ### Change Technology
 
@@ -61,10 +67,4 @@ new Razor Dynamic Register page by
 var razorizer = new Razorizer();
 var result = razorizer.Parse("<p>Hello @Model.Name!</p>", new { Name = "Razor" });
 
----
-
-### Postřehy Vývojáře k Implementacím Nových řešení
-
-[EIC Online Poznámky Vývojáře](./EIC-WaitForImplement.md)  
-[ESB Online Poznámky Vývojáře](./ESB-WaitForImplement.md)  
 

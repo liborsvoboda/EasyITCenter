@@ -10,7 +10,7 @@
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                 IsolationLevel = IsolationLevel.ReadUncommitted //with NO LOCK
             })) {
-                data = new EasyITCenterContext().SystemTranslationLists.OrderByDescending(a=>a.Timestamp).ToList();
+                data = new EasyITCenterContext().SystemTranslationLists.OrderByDescending(a=>a.Id).ToList();
             }
 
             return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });

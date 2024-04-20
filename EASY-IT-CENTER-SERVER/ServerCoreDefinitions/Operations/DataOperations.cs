@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using DocumentFormat.OpenXml.Vml;
+using System.Data;
 using System.Text.RegularExpressions;
 
 namespace EasyITCenter.ServerCoreStructure {
@@ -125,7 +126,9 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <param name="input">The input.</param>
         /// <returns></returns>
         public static string MarkDownLineEndSpacesResolve(string input) {
-            input.Split(new[] { '\r', '\n' }).ToList().ForEach(line => { line = line.TrimEnd() + "    "; });
+            List<string> inputWithSpaces = new();
+            input.Split(new[] {'\n' }).ToList().ForEach((line) => { line = line.TrimEnd() + "    "; inputWithSpaces.Add(line); });
+            input = string.Join("\n", inputWithSpaces.ToArray());
             return input;
         }
 
@@ -144,13 +147,8 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <param name="utf8String"></param>
         /// <returns></returns>
         public static string Utf8toUnicode(this string utf8String) {
-            // copy the string as UTF-8 bytes.
             byte[] utf8Bytes = new byte[utf8String.Length];
-            for (int i = 0; i < utf8String.Length; ++i) {
-                //Debug.Assert( 0 <= utf8String[i] && utf8String[i] <= 255, "the char must be in byte's range");
-                utf8Bytes[i] = (byte)utf8String[i];
-            }
-
+            for (int i = 0; i < utf8String.Length; ++i) { utf8Bytes[i] = (byte)utf8String[i]; }
             return Encoding.UTF8.GetString(utf8Bytes, 0, utf8Bytes.Length);
         }
 

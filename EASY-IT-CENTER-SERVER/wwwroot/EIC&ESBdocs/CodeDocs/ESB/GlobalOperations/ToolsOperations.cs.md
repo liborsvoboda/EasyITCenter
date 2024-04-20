@@ -1,6 +1,6 @@
-﻿[Zpět](../../index)   
+﻿[Zpět](../../)   
 
-```cshtml   
+```csharp   
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;

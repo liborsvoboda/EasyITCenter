@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EasyITCenter.Controllers
 {
+    /*
     [ApiController]
     public class OpenSearchController : Controller
     {
         [HttpGet("/opensearch")]
         public IActionResult GetOpenSearchDescriptionDocument()
         {
-            var pathBase = String.IsNullOrWhiteSpace(Request.PathBase) ? "" : "/" + Request.PathBase;
+            var pathBase = String.IsNullOrWhiteSpace(Request.PathBase) ? "/SourceBrowser" : "/SourceBrowser/" + Request.PathBase;
             var urlBase = $"{Request.Scheme}://{Request.Host}{pathBase}";
             var result = String.Join("\r\n",
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
@@ -23,4 +24,6 @@ namespace EasyITCenter.Controllers
             return Content(result, "application/opensearchdescription+xml", Encoding.UTF8);
         }
     }
+    */
+
 }

@@ -17,26 +17,25 @@ namespace EasyITCenter.ServerCoreDBSettings {
             this.hostingEnvironment = hostingEnvironment;
         }
 
-        [Route("ServerCoreTools/MarkdownFromUrl/{url}")]
-        public async Task<IActionResult> MarkdownFromUrl(string markdownUrl) {
+        [HttpPost("/ServerCoreTools/UploadMarkdownFromUrl")]
+        public async Task<string> UploadMarkdownFromUrl(string markdownUrl) {
+            /*
             var basePath = ServerRuntimeData.WebRoot_path;
             string relativePath = HttpContext.Request.Path;
             if (relativePath == null) return NotFound();
-
             //relativePath = GetSystemFileSystemPath(relativePath).Substring(1);
             string? pageFile = Path.Combine(basePath, relativePath);
-
             //TODO CanCheck Database MarkDown
             if (!System.IO.File.Exists(pageFile)) return NotFound();
-
             var markdown = await System.IO.File.ReadAllTextAsync(pageFile);
             if (string.IsNullOrEmpty(markdown)) return NotFound();
+            */
 
-            ViewBag.MarkdownText = Markdown.ParseHtmlStringFromFile(markdown,true,false,false);
-            return View("Markdown");
+            string MdAsHtml = await Markdown.ParseFromUrlAsync(markdownUrl, true, false, false);
+            return MdAsHtml;
         }
 
 
-       
+
     }
 }

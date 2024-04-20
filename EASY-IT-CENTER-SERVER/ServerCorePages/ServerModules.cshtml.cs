@@ -19,24 +19,6 @@ namespace ServerCorePages {
         /// </summary>
         public void OnGet() {
 
-
-            try {//Standalone Load File From Url Request
-                string? requestedUrlPath = "";
-                try { requestedUrlPath = ((string?)HttpContext.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
-                string? filePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
-                var fileContent = System.IO.File.ReadAllText(filePath);
-                this.Content(fileContent);
-                result = Markdown.ParseHtmlString(fileContent)?.Value.ToString();
-            } catch {
-                string? requestedUrlPath = "";
-                try { requestedUrlPath = ((string?)HttpContext.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
-                string? filePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
-                var fileContent = System.IO.File.ReadAllText(filePath);
-                this.Content(fileContent);
-                result = fileContent.ToString();
-            }
-
-
             string? requestToken = HttpContext.Request.Cookies.FirstOrDefault(a => a.Key == "ApiToken").Value;
             if (!string.IsNullOrWhiteSpace(requestToken)) {
                 ServerWebPagesToken = CoreOperations.CheckTokenValidityFromString(requestToken);

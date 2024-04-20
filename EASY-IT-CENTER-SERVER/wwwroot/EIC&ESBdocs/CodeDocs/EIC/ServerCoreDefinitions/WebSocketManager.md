@@ -1,4 +1,4 @@
-﻿[Zpět](../../index)   
+﻿[Zpět](../../)   
 
 * Server Core Web Helpers
 * System Extensions for Correct Core working

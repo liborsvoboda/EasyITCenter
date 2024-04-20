@@ -1,4 +1,4 @@
-[Zpět](../../index)   
+[Zpět](../../)   
 
 ```xml   
 <ResourceDictionary
@@ -1327,3 +1327,5 @@ Pozor Může mít za následedk i kolaps serveru
     <system:String x:Key="yes" xml:space="preserve">Ano</system:String>
     <system:String x:Key="youDoesNotHaveRights" xml:space="preserve">Nemáte Právo</system:String>
 </ResourceDictionary>
+```    
+

@@ -38,9 +38,9 @@ namespace EasyITCenter.ServerCoreStructure {
                 //Allow All Fouded Static Files Not MD
                 //TODO slozky upravit na browsable, allowedOpen in browser, must be authorized
                 //Check Static Valid Paths For File Types/Modules Allow Return  = not redirect again
-                if (validPath == null && (routePath.StartsWith("/server") || routePath.StartsWith("/metro") || routePath.StartsWith("/EIC&ESBdocs")
-                    || DbOperations.CheckServerModuleExists(routePath) != null
-                   )) { routeLayout = RouteLayout.EmptyLayout; validPath = routePath; routingResult = RoutingResult.Return; }
+                //if (validPath == null && (routePath.StartsWith("/server") || routePath.StartsWith("/metro") || routePath.StartsWith("/EIC&ESBdocs")
+                //    || DbOperations.CheckServerModuleExists(routePath) != null
+                //   )) { routeLayout = RouteLayout.EmptyLayout; validPath = routePath; routingResult = RoutingResult.Return; }
 
 
                 //Check Server Module
@@ -83,7 +83,7 @@ namespace EasyITCenter.ServerCoreStructure {
 
 
                 //Check DocPortal index.md Type EveryTime
-                if (ServerConfigSettings.EnableAutoShowMdAsHtml) {
+                if (ServerConfigSettings.EnableAutoShowStaticMdAsHtml) {
                     if ((routePath.EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + "index.md"))
                         || (!routePath.EndsWith("/") && !context.Request.Path.ToString().Split("/").Last().Contains(".") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + Path.DirectorySeparatorChar + "index.md"))
                         ) {
@@ -93,7 +93,7 @@ namespace EasyITCenter.ServerCoreStructure {
                 }
 
                 //Check MarkDown Type missing .md for Show in Markdown Layout
-                if (ServerConfigSettings.EnableAutoShowMdAsHtml) {
+                if (ServerConfigSettings.EnableAutoShowStaticMdAsHtml) {
                     if (!routePath.EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + ".md")) 
                     { validPath = routePath + ".md"; routeLayout = RouteLayout.MarkDownFileLayout; routingResult = RoutingResult.Next; }
                 }

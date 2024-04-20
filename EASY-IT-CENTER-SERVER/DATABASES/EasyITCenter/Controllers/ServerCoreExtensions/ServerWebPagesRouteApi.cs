@@ -13,15 +13,16 @@ namespace EasyITCenter.ServerCoreDBSettings {
     [ApiController]
     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerWebPagesRouteApi : ControllerBase {
-        /*
+
         /// <summary>
-        /// Server Root "/" Redirection to "server" Folder
+        /// StartUp Web Redirection
         /// </summary>
         /// <returns></returns>
         [HttpGet("/")]
         public IActionResult Index() {
-            return new RedirectResult("/Index");
+            return ServerConfigSettings.RedirectOnPageNotFound ?
+                new RedirectResult(ServerConfigSettings.RedirectPath) : new RedirectResult("/Portal");
         }
-        */
+
     }
 }

@@ -1,58 +1,56 @@
 ﻿## Projects Legend 
-    EB = EASYBuilder 
-    ED = Golden
+    ESB = EasySYSTEMbuilder    
+    EIC = EasyITcenter    
     SD = EASYBuilderDataCenter
     SP = EASYBuilder application
     I  = Install file
     DB = Database
 
-    Each changes IN EB/SP can be deployed to the second program
-    Each changes IN ED/SD can be deployed to the second program
+Každá změna v EB/SP může být nasazena do druhého programu  
+Každá změna IN ED/SD může být nasazena do druhého programu   
 
-Project/Program Install file are for absolute simple Installation with all Dependencies
-Documentation And Software for Testing you find on  
+Instalační soubory projektu/programu jsou pro naprosto jednoduchou instalaci se všemi závislostmi
+Dokumentaci a software pro testování najdete na
 
-[https://groupware-solution.eu/webdav/Marketing/](https://groupware-solution.eu/webdav/Marketing/ "")  
-login: marketing/marketing
+[https://groupware-solution.eu/webdav/Marketing/](https://groupware-solution.eu/webdav/Marketing/ "")
+přihlášení: marketing/marketing
 
 
-    ALL Applications Prepared for Simple Installation / Buy in more installation Types - by user friendly Install file and License Server
+     VŠECHNY aplikace připraveny pro jednoduchou instalaci / Koupit více typů instalace - podle uživatelsky přívětivého instalačního souboru a licenčního serveru
     
 ---
 
-### Application Clones FE + BE
-    LicenseSrv    -  MultiOS License Server with listen API GET/POST server / generate 
-                     Unlimited Static/Dynamic CODES and Client for managing
-    PRUVODKY      -  Windows XP+ Implementation Production Guides for Production Companies 
-                     For Office / Touch Panels using with unlimited Clients and printing possibilities
-    ShoPingER     -  Windows XP+ MultiBranch Offer/Order/Invoice System with multimedia Files 
-                     Supported with Unlimited Clients and Printing possibilities
-    LicenceShoper -  MultiOS License Server PLUS Windows XP+ MultiBranch Invoice system 
-                     [LicenseSrv + ShoPingER]
+### Aplikační klony FE + BE
+     LicenseSrv - MultiOS licenční server s nasloucháním API GET/POST server / generování
+                      Neomezené statické/dynamické KÓDY a klient pro správu
+     PRŮVODKY - Implementace Windows XP+ Výrobní příručky pro produkční společnosti
+                      Pro kancelářské / dotykové panely s neomezeným počtem klientů a možností tisku
+     ShoPingER - Windows XP+ MultiBranch Nabídka/Objednávka/Fakturační systém s multimediálními soubory
+                      Podporováno s neomezenými klienty a možnostmi tisku
+     LicenceShoper - MultiOS License Server PLUS Windows XP+ MultiBranch Fakturační systém
+                      [LicenseSrv + ShoPingER]
 
-    
 ---
 
-### SOLUTION MAIN PARTS
-    EASYBuilder  Developing C# WPF Visual Studio Project With MustiVariable Menu Settings, 
-     With All DataForm Template types DATAView / DATADetail / With SubDATAview / 
-     With SubFullDataDetail / 3D / Document / Video
-     for Build ANY Information / Multimedia / Control / Flow / Reporting and More Systems
-     FOR NEXT COPY / PASTE DEVELOPMENT IN EXTREMELY LOW PRICE 5000Kč/200EURO - Project LICENSE
+### ŘEŠENÍ HLAVNÍ DÍLY
+     EASYBuilder vyvíjí projekt C# WPF Visual Studio s nastavením nabídky MustiVariable,
+      Se všemi typy šablon datových formulářů DATAView / DATADetail / With SubDATAview /
+      S SubFullDataDetail / 3D / Dokument / Video
+      pro sestavení JAKÝCHKOLI informačních / multimédií / řízení / toku / podávání zpráv a dalších systémů
+      PRO DALŠÍ VÝVOJ KOPÍROVÁNÍ / VLOŽENÍ ZA EXTRÉMNĚ NÍZKOU CENU 5000Kč/200EURO - LICENCE projektu
 
-    Golden - Universal Secure MultiPlatform MultiDATABASE Backend Server Project 
-                     WiTH RESTFULL / WEBSOCKET implementations
-         With All Template types for INSERT / UPDATE / DELETE / SELECT / 
-         PROCEDURE / SUBFORMDATA and more Other
-         With DATABASE , Table Template, Procedure Template, View Template, 
-         Backup/Restore and more Examples
-         With Tables, Indexes, ForeignKeys in All Standard DB Using 
-         FOR NEXT COPY / PASTE DEVELOPMENT IN EXTREMELY LOW PRICE 5000Kč/200EURO - Project LICENSE
+     Golden - Univerzální bezpečný multiplatformní projekt backendového serveru MultiDATABASE
+                      S implementacemi RESTFULL / WEBSOCKET
+          Se všemi typy šablon pro INSERT / UPDATE / DELETE / SELECT /
+          PROCEDURE / SUBFORMDATA a další Jiné
+          S DATABÁZÍ, šablonou tabulky, šablonou procedury, šablonou zobrazení,
+          Zálohování/obnovení a další příklady
+          S tabulkami, indexy, cizími klíči ve všech standardních DB
+          PRO DALŠÍ VÝVOJ KOPÍROVÁNÍ / VLOŽENÍ ZA EXTRÉMNĚ NÍZKOU CENU 5000Kč/200EURO - LICENCE projektu
     
-    FYI Reporting  - FreeWare Full Report Designer and Viewer for Printing All document Types 
-                     / Barcodes, EAN, QR, Graphs, SubReport, etc.
+     FYI Reporting - FreeWare Full Report Designer a Viewer pro tisk všech typů dokumentů
+                      / Čárové kódy, EAN, QR, grafy, dílčí sestava atd.
 
-    
 ---
 
 ### SW   Date        Version  Speed Development Description by one man Only
@@ -114,7 +112,7 @@ System By Clicking on Mouse.
 ### 05.12.23 Globální Změny
 > Vznikla první agenda s automaticky překládanými poli
 >> Úkol, aktualizovat všechny existující aonliner agendy na automatický překlad
-```cs
+
 - Automatický Překlad sbírá pomocí funkce "TranslateFormFields"
 všechny Popisky-LAbel typy a Button Tlačítka Typy a překládá je oproti
 DB překladovému seznamu 
@@ -136,6 +134,32 @@ nebo přes lokální Slovníky "Languages" pro použití OffLine
 - Slovníky lze Generovat z Backendu a Vložit Do projektu Systému pro Offline Použití
 - Použité Jazyky CS,EN, neomezená možnost jednoduchého rozšíření Lang Tabulky
 
-```
+---
+
+### Starší Zápisy
+
+Změny ve volných chvílích při zaměstnání 12.2023 - Nestačím Zapisovat https://KlikneteZde.Cz
+30.12 Generic API , nyní stačí registace názvu nové tabulky do příslušné Skupiny Dle Práv
+29.12 Agenda Dynamické Moduly a Služby [custom HTML/CSS/JS API moduly] + Sekundární Zabezpečení API
+28.12 Připraven Interface pro DBWebStatic FileStructure
+27.12 Agenda Static WebSites - další webstránky na subdoménách url://website.domain.xx nebo url://domain.xx/website
+26.12 Agenda Operace Systému - DB SP operace, Import/Export/Backup/Clone/Generate Docs/Generate DB Object atd..
+24-27.12 STATIC WEB Studio  https://kliknetezde.cz/server-web/static-web-studio/ - prezentační fáze pro Global Administrátor
+23.12 Předělána Agenda ServerSetting do Dynamic Form, nová nastavení automaticky přiskočí
+
+9.1 po změnách Změna Klient Setting na Generic Form + MultiSameTab + MultiInstanceCloneByDrag
+
+09.12.2023
+ESB -  Implementován SystemMenu ToolTip Dle Param nastavení, zobrazen Popisek menu
+ESB+WEB - Imlementována Agenda Správa globálních HTML, a Finálně převeden Layout do DB správy
+Web je Nyní Plně v Režii DB a je Skládán z částí HTML Globální + Stánka z Editoru dle Práv v nastavené sekvenci
+
+
+### 19.04.24 Globální Změny
+
+- částečné narovnání FulText Dokumentace 
+- Vytvoření Agendy Úkoly a Zápis všech poznamenaných Cílů
+- rušení angličniny v dokumentaci, vracení do CZ, Je Překládána Automaticky
+
 
 ---

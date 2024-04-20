@@ -1,4 +1,7 @@
-﻿<ResourceDictionary
+﻿[Zpět](../../)   
+
+```xml   
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:system="clr-namespace:System;assembly=mscorlib">
@@ -1322,3 +1325,5 @@ First set numbering in Dials.</system:String>
     <system:String x:Key="yes" xml:space="preserve">Yes</system:String>
     <system:String x:Key="youDoesNotHaveRights" xml:space="preserve">YouDoesNotHaveRights</system:String>
 </ResourceDictionary>
+```   
+

@@ -1,6 +1,6 @@
-﻿[Zpět](../../../index)   
+﻿[Zpět](../)   
 
-```cs   
+```csharp   
 using Dragablz;
 using EasyITSystemCenter.Api;
 using EasyITSystemCenter.Classes;

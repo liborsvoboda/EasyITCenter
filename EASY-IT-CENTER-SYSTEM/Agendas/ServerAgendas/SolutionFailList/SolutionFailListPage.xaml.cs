@@ -53,13 +53,18 @@ namespace EasyITSystemCenter.Pages {
         private async void DgListView_Translate(object sender, EventArgs ex) {
             try {
                 ((DataGrid)sender).Columns.ToList().ForEach(async e => {
-                    string headername = e.Header.ToString();
-                    if (headername == "UserName") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
-                    else if (headername == "Source") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
-                    else if (headername == "Message") e.Header = await DBOperations.DBTranslation(headername);
-                    else if (headername == "TimeStamp") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                    else if (headername == "Id") e.DisplayIndex = 0;
-                    else if (headername == "UserId") e.Visibility = Visibility.Hidden;
+                    string headername = e.Header.ToString().ToLower();
+                    if (headername == "UserName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                    else if (headername == "Source".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                    else if (headername == "Message".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+                    else if (headername == "TimeStamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                   
+                    else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
+                    else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "ImageName".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "Image".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "AttachmentName".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "Attachment".ToLower()) e.Visibility = Visibility.Hidden;
                 });
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }

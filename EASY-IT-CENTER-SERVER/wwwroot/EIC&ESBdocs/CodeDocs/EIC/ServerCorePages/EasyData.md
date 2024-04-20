@@ -1,9 +1,9 @@
-﻿[Zpět](../../index)   
+﻿[Zpět](../../)   
 
-```cshtml  
+```csharp  
 
 @page "/easydata/{**entity}"
-@* @{ Layout = "/ServerCorePages/Shared/MetroLayout.cshtml"; } *@
+@* @{ Layout = "/ServerCorePages/Shared/MetroLayout.csharp"; } *@
 
 @addTagHelper *, WebOptimizer.Core
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

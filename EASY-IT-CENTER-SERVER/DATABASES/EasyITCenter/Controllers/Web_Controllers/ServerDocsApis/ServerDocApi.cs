@@ -26,9 +26,8 @@
                     List<DocSrvDocumentationList> data;
                     using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
                         data = new EasyITCenterContext().DocSrvDocumentationLists.Where(a => a.DocumentationGroup.Active && a.Active)
-                            .Include(a => a.DocumentationGroup)
-                            .OrderBy(a => a.Sequence).ToList()
-                            .OrderBy(a => a.DocumentationGroup.Sequence).ToList();
+                            .Include(a => a.DocumentationGroup).OrderBy(a => a.DocumentationGroup.Sequence)
+                           .ThenBy(a => a.Sequence).ThenBy(a => a.Name).ToList();
                     }
 
                     if (data.Any()) {
@@ -41,14 +40,14 @@
                         FileOperations.CreatePath(Path.Combine(_hostingEnvironment.WebRootPath, "server-doc", "md-book", "src"));
                         FileOperations.ClearFolder(Path.Combine(_hostingEnvironment.WebRootPath, "server-doc", "md-book", "src"));
 
-                        string lastDocGroup = "", summary = "";
+                        string lastDocGroup = "", summary = "" +Environment.NewLine;
                         data.ForEach(documentation => {
                             if (lastDocGroup != documentation.DocumentationGroup.Name) {
                                 if (lastDocGroup != "") { summary += "    ```  " + Environment.NewLine + Environment.NewLine + "---" + Environment.NewLine; }
-                                summary += "### " + documentation.DocumentationGroup.Name + "  " + Environment.NewLine + Environment.NewLine + "    ```markdown  " + Environment.NewLine; lastDocGroup = documentation.DocumentationGroup.Name;
+                                summary += "# " + documentation.DocumentationGroup.Name + "  " + Environment.NewLine + Environment.NewLine + "    ```markdown  " + Environment.NewLine; lastDocGroup = documentation.DocumentationGroup.Name;
                             }
 
-                            summary += "[" + "Ver." + documentation.AutoVersion + ": " + documentation.Name + "](./" + DataOperations.RemoveWhitespace(documentation.Name) + ".md" + ")   " + Environment.NewLine;
+                            summary += "- [" + "Ver." + documentation.AutoVersion + ": " + documentation.Name + "](./" + DataOperations.RemoveWhitespace(documentation.Name) + ".md" + ")   " + Environment.NewLine;
 
                             System.IO.File.WriteAllText(Path.Combine(ServerRuntimeData.Startup_path, "Docs", DataOperations.RemoveWhitespace(documentation.Name) + ".md"), documentation.MdContent, Encoding.UTF8);
                             System.IO.File.WriteAllText(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "server-doc", "md-book", "src", DataOperations.RemoveWhitespace(documentation.Name) + ".md"), documentation.MdContent, Encoding.UTF8);

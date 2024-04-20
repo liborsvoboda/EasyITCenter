@@ -1,6 +1,6 @@
-﻿[Zpět](../../index)   
+﻿[Zpět](../../)   
 
-```cshtml   
+```csharp   
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;

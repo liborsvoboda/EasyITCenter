@@ -145,7 +145,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
                 x.TokenValidationParameters = CoreOperations.ValidAndGetTokenParameters();
-                x.ForwardSignIn = "/Login";
+                x.ForwardSignIn = new EasyITCenterContext().ServerModuleAndServiceLists.Where(a=>a.IsLoginModule).FirstOrDefault()?.UrlSubPath;
 
                 if (ServerConfigSettings.ConfigTimeTokenValidationEnabled) { x.TokenValidationParameters.LifetimeValidator = EasyITCenterAuthenticationApi.LifetimeValidator; }
 
@@ -179,7 +179,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     }).AddRazorPagesOptions(opt => {
                         opt.RootDirectory = "/ServerCorePages";
                     });
-                }//services.AddRazorPages();
+                }
             }
 
             if (ServerConfigSettings.WebMvcPagesEngineEnabled) {

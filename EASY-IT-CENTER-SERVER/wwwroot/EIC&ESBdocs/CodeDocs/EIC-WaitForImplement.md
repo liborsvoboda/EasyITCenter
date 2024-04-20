@@ -1,6 +1,5 @@
 ﻿# FIRST TODO LIST
 
-* Zprovoznit ExperDoc Editor a Viewer Pro Doc Server, potazmo pridat pravo zapisovat externistun
 * puppeter sharp netcore scraping
 * https://github.com/libgit2/libgit2sharp/tree/master implementace komunikace s gitem
 * prikazy muzu provadet i po socketu

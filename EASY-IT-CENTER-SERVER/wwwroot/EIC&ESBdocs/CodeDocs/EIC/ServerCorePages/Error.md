@@ -1,6 +1,6 @@
-﻿[Zpět](../../index)   
+﻿[Zpět](../../)   
 
-```cshtml  
+```csharp  
 
 @page "/Error"
 @model ServerCorePages.ErrorModel

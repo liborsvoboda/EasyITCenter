@@ -183,18 +183,18 @@ namespace EasyITSystemCenter.Pages {
         private void SetRecord(bool? showForm = null, bool copy = false) {
             txt_id.Value = (copy) ? 0 : selectedRecord.Id;
 
-            cb_documentationGroup.SelectedItem = (selectedRecord.Id == 0) ? documentationGroupList.FirstOrDefault() : documentationGroupList.First(a => a.Id == selectedRecord.DocumentationGroupId);
-            txt_name.Text = selectedRecord.Name;
-            txt_sequence.Value = selectedRecord.Sequence;
-            txt_description.Text = selectedRecord.Description;
+            try {
+                cb_documentationGroup.SelectedItem = (selectedRecord.Id == 0) ? documentationGroupList.FirstOrDefault() : documentationGroupList.FirstOrDefault(a => a.Id == selectedRecord.DocumentationGroupId);
+                txt_name.Text = selectedRecord.Name;
+                txt_sequence.Value = selectedRecord.Sequence;
+                txt_description.Text = selectedRecord.Description;
 
-            md_editor.Text = selectedRecord.MdContent;
-            //EASYTools.MarkdownToHtml.Markdown markdown = new EASYTools.MarkdownToHtml.Markdown();
-            //html_htmlContent.Browser.OpenDocument(markdown.Transform(md_editor.Text).Replace("<HEAD></HEAD>", "<HEAD><META content=text/html;utf-8 http-equiv=content-type></HEAD>");
+                md_editor.Text = selectedRecord.MdContent;
 
-            chb_active.IsChecked = (selectedRecord.Id == 0) ? bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_activeNewInputDefault").Value) : selectedRecord.Active;
-            txt_autoversion.Value = selectedRecord.AutoVersion;
+                chb_active.IsChecked = (selectedRecord.Id == 0) ? bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_activeNewInputDefault").Value) : selectedRecord.Active;
+                txt_autoversion.Value = selectedRecord.AutoVersion;
 
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             if (showForm != null && showForm == true) {
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;
                 ListView.Visibility = Visibility.Hidden; ListForm.Visibility = Visibility.Visible; dataViewSupport.FormShown = true;

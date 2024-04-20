@@ -1,7 +1,7 @@
-﻿[Zpět](../../index)   
+﻿[Zpět](../../)   
 
 
-```cshtml  
+```csharp  
 using EasyITCenter.DBModel;
 
 namespace EasyITCenter.Controllers {

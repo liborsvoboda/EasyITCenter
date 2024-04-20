@@ -1,6 +1,6 @@
-﻿[Zpět](../../../index)   
+﻿[Zpět](../../../)   
 
-```cshtml  
+```xml  
 
 <!DOCTYPE html>
 <html lang="cs-CZ">

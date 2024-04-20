@@ -1,7 +1,7 @@
-﻿[Zpět](../../index)   
+﻿[Zpět](../../)   
 
 
-```cshtml  
+```csharp  
 
 @page "/ServerCoreTools/MarkDown"
 

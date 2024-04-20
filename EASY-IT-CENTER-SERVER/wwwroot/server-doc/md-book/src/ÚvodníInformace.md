@@ -1,169 +1,115 @@
-﻿
-EN: 
- 
-New in the menu "Absolutely unique EASY SYSTEM BUILDER"
-absolutely easy to create a 3-tier system (ANY DB, BACKEND-SERVER, FRONTEND-KLIENT) with excel knowledge
-Just create a Table for Data and a Form, all in graphic designers
-So you literally click on the system, 1 table every day = sales system with orders and offers per month
-And that's not all, by any chance.
-It doesn't have to be only a data system, but also a multimedia one without any problem, for cutting videos, working with photos or 3D
-or even a CONTROL SYSTEM for machine control (Currently SIEMENS PLC is supported), or any other Hardware
-after delivery of specifications.
-Or the Control system, Backup, DataWarehouse, Controlling, BI OLAP, Flow Processes,
-Production, Information or business touch Terminals. IT CAN ALSO BE USED ONLY AS AN EXTENSION OR CONNECTION OF SYSTEMS
-
-The starting cost for the core is only 10,000 CZK / 400 Euro, and you can try it yourself or order cheaply
-what you want to add there. Don't bow down to the system, GET A CUSTOMIZED SYSTEM.
-For idea:
-  - invoicing system with OBJ+NAB+MULTI BRANCHES, WAREHOUSE, CHECKOUT - 14 DAYS
-  - implementation of a touch terminal in production for work reports - 4 DAYS
-  - A system for hotels including room agency, invoicing and orders is currently being created - 1 MONTH
-  - Free updates, 1 development for all clients via shared project agendas in code
- 
-  Unlimited users, unlimited printing, unlimited options, tutorials, tips, tricks, advice,
-  Prepared for all types of systems and terminals for MS WINDOWS
- 
-INTELLIGENT DOCUMENTATION: https://liborsvoboda.github.io/EASYSYSTEM-EASYSERVER-EN/  
-CODE: https://github.com/liborsvoboda/EASYSYSTEM-EASYSERVER-EN  
-ONLINE EXAMPLE: https://kliknetezde.cz  
-
-  SO DON'T DELAY AND CALL TODAY BEFORE THE PRICE GOES UP
-  BACKEND SERVER CAN BE USED INDEPENDENTLY FOR ANY OTHER MULTIPLATFORM PROJECT
-
-  IT Architect
-  Libor Svoboda GroupWare-Solution.Eu
-  Tel: 00420 724986873, email: Libor.Svoboda@GroupWare-Solution.Eu
-  
-  
-### UNIVERSAL MODERN BE + MS FE SOLUTION FOR BUILDING ANY 3-layer technological software or its parts
-<sup>**For thinking, the development of tools and work with them worthy in the 21st century**</sup>
-
-
-* Golden - Universal multi-platform MultiDatabase Backend server solution with all standard technologies implemented
-* EASYSYSTEMBuilder - Universal modern Metro WPF Frontend System Builder solution for quick and easy development of any system with minimal knowledge
-* Combined solution - is a simple solution for rapid development of any modern system,
-    runs perfectly on prepared System Core and templates for Graphical/Click Development
-
-
----
-
-**Complete Development Documentation and Smart Search:   [https://liborsvoboda.github.io/EASYSYSTEM-EASYSERVER-EN](https://liborsvoboda.github.io/EASYSYSTEM-EASYSERVER-EN "")**   
-
-**Complete free projects codes, templates, help, tips, trics, etc: [https://github.com/liborsvoboda/EASYSYSTEM-EASYSERVER-EN](https://github.com/liborsvoboda/EASYSYSTEM-EASYSERVER-EN "")**   
-
----
-### GroupWare-Solutions FOR Universal IT World
-
-[SolutionsVisions&Ideas.MD](SolutionsVisions&Ideas.MD)  
-[AUTO_STEPS_Look_First.md](AUTO_STEPS_Look_First.md)  
-[CoreStructureDefinition.md](CoreStructureDefinition.md)  
-[DATABASES.md](DATABASES.md)  
-[Golden_Code_Help.MD](Golden_Code_Help.MD)  
-[EASYSYSTEMBuilder_Code_Help.md](EASYSYSTEMBuilder_Code_Help.md)   
-[EASYTools_3rdFreeAddons.MD](EASYTools_3rdFreeAddons.MD)  
-[FIYReporting.md](FIYReporting.md)  
-[OS_GIT_GCLOUD_WIN_LIN_DOCKER_Help.md](OS_GIT_GCLOUD_WIN_LIN_DOCKER_Help.md)  
-[SolutionsChangeLog.MD](SolutionsChangeLog.MD)  
-[3rdPartyVisionsTips.md](3rdPartyVisionsTips.md)  
-[SUMMARY.md](SUMMARY.md)  
-
-
----
-
-### EASY-SYSTEM-Builder
-Visual Studio project solution EASYSYSTEMBuilder for
-
-**C# WPF Low/no code solution For immediate development of your own SYSTEM:**
-* FOR EVERY Company/Data Management/IS/OS/HW
-* Multilingual WPF application supported
-* Full support for the creation of any MS system (modern SAP, etc.).
-* Control system with graph support
-* Support for a unique media system,
-* Touch terminals supported
-* Bussiness/City/Country/ANY touch touch terminals on Windows AIO monitors are supported
-* NEXT YEAR Web Convert Support for LINUX/WINDOWS
-* Thousands of IS/OS/etc. tools on Github for free
-* Transparent clean code
-* Low/no code development support - Click-to-click graphic development
-
-**For standard IT/terminal systems development, the XAML graphical Builder with Class Copy is all you need for development**
-* System updates are free
-* Code updates and all changes are public
-
-```
-1. DataWorking/IO/PRINT/SHOW
-With all types of data form templates for standardized:
-DATAView / DATADetail / DATAView with SubDATAview / DATAView with SubFullDataDetail
-3D / Document / Video
-1. To build ANY information / multimedia / control / flow / reporting and other systems
-```
-
-**COPY/PASTE DEVELOPMENT PRICE 5000CZK/200EURO - PROJECT LICENSE** 
-
----
-
-### EASY-DATA-CENTER
-Visual Studio project solution Golden ASPNETCORE6 providing:
-
-Simple development of Universal secure Multiplatform MultiDB Backend Server
-With RESTFULL / WEBSOCKET implementations
-
-* With all types of templates for INSERT / UPDATE / DELETE / SELECT / PROCEDURE / SUBFORMDATA / etc.
-* WITH DATABASE, table template, Procerure template, view template,
-* Backup/restore/set DB rights and other examples
-* With tables, indexes, foreign keys in all standard DB uses
-
-      **COPY/PASTE DEVELOPMENT PRICE 5000CZK/200EURO - PROJECT LICENSE**
-
----
-
-### FYI Reporting - Report Editor / Viewer
-FreeWare Full Report Designer and Viewer for printing all types of documents / barcodes, EAN, QR
-
----
-### EASYTOOLS
-* Add-ons for touch panels, controls, data types, forms, media, documents, 3D,
-* They are completely free to download (including every license pack)  
-* Open Source community to include more than 1000 tools in the system by community  
-
-----
- 
-### EXISTING CLONE SYSTEMS CREATED IN 14 DAYS
-1. **LicenseSrv**
-MultiOS license server with listening API GET/POST server / generation of unlimited static/dynamic license CODES and application client to manage the Server
-1. **GUIDES** Windows XP+ Implementation of production sources in the production of a production company For office / touch panels with an unlimited number of clients and the possibility of printing
-1. **ShoPingER** Windows XP+ Multi Branch Quotation/Order/Invoicing system with multimedia files supported by unlimited clients and printing capabilities
-1. **LicenceShoper** MultiOS License Server PLUS Windows XP+ MultiBranches Billing System [LicenseSrv + ShoPingER]
-
----
-
-### SOLUTION - WHERE TO FIND COMPLETE INFORMATION
-All documentation, license, case study, price list, media, developer information, help, manuals, technology information, installation, images, videos, downloads, etc. can be found here:
-
-
-* Info Global Server Running: [https://Kliknetezde.Cz:5000/](https://Kliknetezde.Cz:5000/)
-* Generators & Client Support is Preparing: [https://Kliknetezde.Cz:5000/DashBoard](https://Kliknetezde.Cz:5000/DashBoard)  
-* Youtube: [https://www.youtube.com/playlist?list=PLmE7gP9LTBimNJQ444ypG8HVce23fa2Hb](https://www.youtube.com/playlist?list=PLmE7gP9LTBimNJQ444ypG8HVce23fa2Hb)
-* Facebook: [https://www.facebook.com/GroupWareSolution](https://www.facebook.com/GroupWareSolution)
-* LinkedIn: [https://www.linkedin.com/in/libor-svoboda-7b96014a/](https://www.linkedin.com/in/libor-svoboda-7b96014a/)
-* Eshop: [https://GroupWare-Solutions.Eu](https://GroupWare-Solutions.Eu)
-* WebPages: [https://GroupWare-Solution.Eu](https://GroupWare-Solution.Eu)
-* Online Application for testing: [Https://KlikneteZde.Cz](Https://KlikneteZde.Cz)
-* GitHub Complete Information and Help: [https://github.com/liborsvoboda/EASYSYSTEM-EASYSERVER-EN](https://github.com/liborsvoboda/EASYSYSTEM-EASYSERVER-EN) 
-
-**Complete Development Documentation and Smart Search:**   [https://liborsvoboda.github.io/EASYSYSTEM-EASYSERVER-EN](https://liborsvoboda.github.io/EASYSYSTEM-EASYSERVER-EN "")  
-
----
-### Company contact for suppliers   
-
-**Email:**
-- Libor.Svoboda@GroupWare-Solution.eu  
-- Libor.Svoboda@KlikneteZde.Cz
-
-**Address:**  
-Street: Žlutava 173  
-City: Žlutava  
-PostCode: 761 63  
-State: Czech Republic  
-Phone: 00420 724 986 873  
-
+﻿    
+# Minimal Info EIC+ESB    
+*Pro myšlení, vývoj nástrojů a práci s nimi hodné 21. století*    
+**Visual Studio C# projekt EIC ASP NETCORE6**    
+**Visual Studio C# projekt ESB NetFramework4.6.2**    
+    
+    
+- naprosto snadná pro tvorbu 3-vrstvých systémů (LIBOVOLNÁ DB, BACKEND-SERVER, FRONTEND-KLIENT) se znalostmi excelu    
+- Stačí vytvořit tabulku pro data a formulář, vše v grafických designérech    
+- Takže se doslova proklikáte systémem, každý den 1 tabulka = prodejní systém s objednávkami a nabídkami za měsíc    
+    
+A to není ani náhodou vše.    
+Nemusí to být jen datový systém, ale bez problému i multimediální, pro stříhání videí, práci s fotkami nebo 3D    
+nebo dokonce ŘÍDÍCÍ SYSTÉM pro řízení stroje (v současné době je podporován PLC SIEMENS),    
+řešení je chystané na Rok 2024.    
+    
+Nebo Řídicí systém, Zálohování, DataWarehouse, Controlling, BI OLAP, Flow Processes,    
+Výrobní, informační nebo obchodní dotykové terminály. LZE TAKY POUŽÍT POUZE JAKO ROZŠÍŘENÍ NEBO PROPOJENÍ SYSTÉMŮ    
+    
+    
+### UNIVERZÁLNÍ MODERNÍ ŘEŠENÍ BE + FE    
+*Za myšlení, vývoj nástrojů a práci s nimi hodný 21. století*    
+**PRO VÝSTAVBU JAKÉHOKOLI 3vrstvého technologického softwaru nebo jeho částí**    
+    
+* EasyITcenter - Univerzální multiplatformní serverové řešení MultiDatabase Backend s implementovanými všemi standardními technologiemi    
+* EasySYSTEMbuilder - Univerzální moderní řešení Metro WPF Frontend System Builder pro rychlý a snadný vývoj jakéhokoli systému s minimálními znalostmi    
+* Kombinované řešení - je jednoduché řešení pro rychlý vývoj jakéhokoli moderního systému,    
+     běží perfektně na připraveném System Core a šablonách pro Graphical/Click Development    
+    
+**Vývoj celého řešení jen založerním DB Tabulky a následně pomocí pouhého Kopírování a Přejmenování Šablon**    
+---    
+    
+### EasyITcenter    
+*Pro myšlení, vývoj nástrojů a práci s nimi hodné 21. století*    
+Visual Studio C# projekt EIC ASP NETCORE6    
+    
+Jednoduchý vývoj Universálního Zabezpečeného MultiDB MultiOS MultiLang Backend Serveru a násobně více    
+S implementacemi RESTFULL / WEBSOCKET    
+    
+* Se všemi typy šablon pro INSERT / UPDATE / DELETE / SELECT / PROCEDURE / SUBFORMDATA / atd.    
+* S DATABÁZÍ, šablonou tabulky, šablonou Procerure, šablonou zobrazení,    
+* Zálohování/obnovení/nastavení práv DB a další příklady    
+* S tabulkami, indexy, cizími klíči ve všech standardních použitích DB    
+    
+**Vývoj API pomocí pouhého Kopírování a Přejmenování Šablon**    
+---    
+    
+# EasySYSTEMbuilder    
+**C# WPF Nízký/žádný kód řešení Pro okamžitý vývoj vašeho vlastního SYSTÉMU:**    
+* PRO KAŽDOU Společnost/Data Management/IS/OS/HW/Dotykobé Panely/Stroje    
+* Podporována vícejazyčná aplikace WPF    
+* Plná podpora pro tvorbu libovolného MS systému (moderní SAP atd.).    
+* Řídicí systém s podporou grafů    
+* Podpora jedinečného mediálního systému,    
+* Podporovány dotykové terminály    
+* Jsou podporovány dotykové terminály Business/City/Country/JAKÉKOLI na monitorech Windows AIO    
+* Tisíce nástrojů na Github zdarma    
+* Transparentní čistý kód    
+* Vývoj bez či s minimální znalosti kódu - Vývoj Grafickými Nástroji, zaučení Orientace v knihovnách    
+* Odkup Nových Agend do Centrálního Projektu    
+* Vývoj a Implementace Nových Agend a Rozšíření Online    
+* MultiJazyčná Dokumentace,    
+* Vlastní WebServer pro Statické moduly    
+* Přidružené Aplikace    
+* Multi Web Server Pro Nativní a Reakční Web Aplikace    
+    
+```    
+Standardizované Typy Šablon:    
+DATAView / DATADetail / DATAView se SubDATAview / DATAView se SubFullDataDetail    
+3D / Dokument / Video / Web    
+    
+1. Pro Tvorbu Jakéhokoliv informační / multimédia / Control/ Flow / reporting /Touch / Monitor / a dalších systémů    
+```    
+    
+**Vývoj pomocí pouhého Kopírování a Přejmenování Šablon**    
+---    
+    
+#FYI Reporting - Report Designer / Viewer / Cmd    
+Zdarma Report Designer a Viewer pro tisk všech typů dokumentů / čárových kódů, EAN, QR    
+    
+---    
+    
+# EASYTOOLS    
+* Doplňky pro dotykové panely, ovládací prvky, datové typy, formuláře, média, dokumenty, 3D,    
+* Jsou zcela zdarma ke stažení (součástí ESB OpenCode balíčku)    
+* Github/Gitlab/Azure komunita pro zahrnutí více než 1000 nástrojů do systému podle komunity    
+* Doplňky jsou upravené Github Projekty začlěněné jako Rozšíření    
+    
+----    
+    
+### STÁVAJÍCÍ KLONOVÉ SYSTÉMY VYTVOŘENÉ ZA 14 DNÍ    
+1. **LicenseSrv**    
+MultiOS licenční server s naslouchajícím API GET/POST server / generování neomezených statických/dynamických licenčních KÓDŮ a aplikačního klienta pro správu serveru    
+1. **NÁVODY** Windows XP+ Implementace produkčních zdrojů do výroby produkční společnosti Pro kancelářské / dotykové panely s neomezeným počtem klientů a možností tisku    
+1. **ShoPingER** Windows XP+ více pobočkový systém nabídek/objednávky/fakturace s multimediálními soubory podporovanými neomezeným počtem klientů a možnostmi tisku    
+1. **LicenceShoper** MultiOS License Server PLUS Windows XP+ více pobočkový fakturační systém [LicenseSrv + ShoPingER]    
+---    
+    
+### ŘEŠENÍ - KDE NAJÍT KOMPLETNÍ INFORMACE    
+Veškerou dokumentaci, licenci, případovou studii, ceník, média, informace pro vývojáře, nápovědu, manuály, informace o technologii, instalaci, obrázky, videa, soubory ke stažení atd. naleznete zde:    
+    
+* Youtube: [https://www.youtube.com/playlist?list=PLmE7gP9LTBimNJQ444ypG8HVce23fa2Hb](https://www.youtube.com/playlist?list=PLmE7gP9LTBimNJQ444ypG8HVce23fa2Hb)    
+* Facebook: [https://www.facebook.com/GroupWareSolution](https://www.facebook.com/GroupWareSolution)    
+* Facebook: [Nejen SW pro vaši firmu ](https://www.facebook.com/profile.php?id=100092148917768)    
+* LinkedIn: [https://www.linkedin.com/in/libor-svoboda-7b96014a/](https://www.linkedin.com/in/libor-svoboda-7b96014a/)    
+* Eshop: [https://GroupWare-Solutions.Eu](https://GroupWare-Solutions.Eu)    
+* Webové Stránky: [https://GroupWare-Solution.Eu](https://GroupWare-Solution.Eu)    
+* Online Module Doc Viewer Modul: [Https://KlikneteZde.Cz](Https://KlikneteZde.Cz)    
+* Online Dokumentační Portal: [Https://KlikneteZde.Cz/EIC&ESBdocs/CodeDocs](Https://KlikneteZde.Cz/EIC&ESBdocs/CodeDocs)    
+* Online Web Portal z Editorůl: [Https://KlikneteZde.Cz/Portal](Https://KlikneteZde.Cz/Portal)    
+* Online MS System ESB: [https://Kliknetezde.Cz:5000/](https://Kliknetezde.Cz:5000/)    
+    
+    
+    
+    

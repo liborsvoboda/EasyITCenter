@@ -69,23 +69,23 @@ s možností si přidávat pouhým zkopírováním Cokoliv dalšího z Github a 
 
 1. Třídy, jsou definice použitých datových typů, které jsou použity jako proměnné hodnoty celého řešení
 Ty jsou rozděleny podle významu do následujících definic:  
-[Definice Nastavení Jádra Serveru](javascript:ChangeSource('/EIC&ESBdocsjavascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCoreDefinitions/Classes/ServerConfigurationDefinitions'))   
-[Definice Komunikací Jádra Serveru](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCoreDefinitions/Classes/ServerCoreClassesDefinitions'))   
-[Runtime Definice Jádra Serveru](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCoreDefinitions/Classes/ServerCoreRuntimeDefinitions'))   
-[WebSocket Definice](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCoreDefinitions/Classes/WebSocketClassesDefinitions'))   
+[Definice Nastavení Jádra Serveru](/EIC/ServerCoreDefinitions/Classes/ServerConfigurationDefinitions)   
+[Definice Komunikací Jádra Serveru](/EIC/ServerCoreDefinitions/Classes/ServerCoreClassesDefinitions)   
+[Runtime Definice Jádra Serveru](/EIC/ServerCoreDefinitions/Classes/ServerCoreRuntimeDefinitions)   
+[WebSocket Definice](/EIC/ServerCoreDefinitions/Classes/WebSocketClassesDefinitions)   
 
 a nechtěné nutné bordely externích modulů:   
-[Definice modulu SiteMap](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCoreDefinitions/Classes/ServerCoreWebSitemapClasses'))   
+[Definice modulu SiteMap](/EIC/ServerCoreDefinitions/Classes/ServerCoreWebSitemapClasses)   
 
 ---
 
 2. Interfaces,je definice různých typů modulů, řešení a jejich funkcionalit v řešení   
 Ty jsou rozděleny podle významu do následujících Funkcionalit:  
-[AutoScheduler](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCoreDefinitions/Interfaces/AutoScheduledTasksDefs'))   
-[NET,DB,SW,HW,Service,atd.. Monitoring](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCoreDefinitions/Interfaces/HealthCheckNotifycationsDefs'))   
-[Rozšíření API Auth Info pro Databáze](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCoreDefinitions/Interfaces/HttpRequestsFullUserInfoDefs'))   
-[Static SubDomain Websites](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCoreDefinitions/Interfaces/WebsitesStaticFileDbProvider'))   
-[WebSocket Server Monitor](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCoreDefinitions/Interfaces/AutoScheduledTasksDefs'))   
+[AutoScheduler](/EIC/ServerCoreDefinitions/Interfaces/AutoScheduledTasksDefs)   
+[NET,DB,SW,HW,Service,atd.. Monitoring](/EIC/ServerCoreDefinitions/Interfaces/HealthCheckNotifycationsDefs)   
+[Rozšíření API Auth Info pro Databáze](/EIC/ServerCoreDefinitions/Interfaces/HttpRequestsFullUserInfoDefs)   
+[Static SubDomain Websites](/EIC/ServerCoreDefinitions/Interfaces/WebsitesStaticFileDbProvider)   
+[WebSocket Server Monitor](/EIC/ServerCoreDefinitions/Interfaces/AutoScheduledTasksDefs)   
 
 ---
 
@@ -101,8 +101,8 @@ Bežný Vývoj API k DB se vyvýjí jen pouhým zkopírováním a přejmenován�
 Speciální Funkcionality si pak musíte do této šablony Zaimplementovat: např: Odeslání SMS po uložení záznamu   
 
 * Zde je ukázka nového API pouhou Registrací Tabulky:   
-[Registrace API s Autorizací](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/Database/StdAuthGenericProviderApi'))  
-[Registrace otevřené API](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/Database/StdFreeGenericProviderApi'))  
+[Registrace API s Autorizací](/EIC/Database/StdAuthGenericProviderApi)  
+[Registrace otevřené API](/EIC/Database/StdFreeGenericProviderApi)  
 
 Takto snadno lze vyvíjet libovolný API server který potřebujete pro každý systém, internet, aplikaci  
 
@@ -113,13 +113,13 @@ stačí 1 Šablona REST FULL zajištující vše: INSERT,UPDATE,DELETE,SELECT-AL
 i tak jsou nachystány další šablony pro FULL DB využití PROCEDURY,MULTI-SAVE,SUBFORMS,IMAGES,FILES.
 Zde je jejich Přehled:
 
-[Šablona pro SP proceduru s návratem Generické Tabulky](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/APITemplates/TemplateAnySProcedureDataListApi'))  
-[Šablona pro SP proceduru s návratem Jediné Hodnoty](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/APITemplates/TemplateAnySProcedureFieldApi'))  
-[Šablona Implementace Autorizace Baasic/JWT](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/APITemplates/TemplateAuthApi'))  
-[Šabona API Publikace Obrázků/Souborů](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/APITemplates/TemplateImageApi'))  
-[RestFull Šablona API sta49 na v 95% Požadavků](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/APITemplates/TemplateListApi'))  
-[Šablona Ukládání Seznamu Dat](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/APITemplates/TemplateRangeApi'))  
-[Šablona pro ukládání se Sub Položkami](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/APITemplates/TemplateSubRangeListApi'))  
+[Šablona pro SP proceduru s návratem Generické Tabulky](/EIC/APITemplates/TemplateAnySProcedureDataListApi)  
+[Šablona pro SP proceduru s návratem Jediné Hodnoty](/EIC/APITemplates/TemplateAnySProcedureFieldApi)  
+[Šablona Implementace Autorizace Baasic/JWT](/EIC/APITemplates/TemplateAuthApi)  
+[Šabona API Publikace Obrázků/Souborů](/EIC/APITemplates/TemplateImageApi)  
+[RestFull Šablona API sta49 na v 95% Požadavků](/EIC/APITemplates/TemplateListApi)  
+[Šablona Ukládání Seznamu Dat](/EIC/APITemplates/TemplateRangeApi)  
+[Šablona pro ukládání se Sub Položkami](/EIC/APITemplates/TemplateSubRangeListApi)  
 
 ----
 
@@ -135,13 +135,13 @@ Ajaxovými částmi.
 
 A Zde Zmíněné Layouty a Multi Endopinty Pro Moduly a Specifické Soubory:
 
-[Čistá Šablona pro Libovolný Obsah Dokumentu](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCorePages/Shared/CleanLayout'))  
-[Šablona pro integrovaný Github Server](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCorePages/Shared/GithubLayout'))  
-[Šablona pro Integrovaný MarkDown Viewer](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCorePages/Shared/MarkDownLayout'))  
-[Šablona pro Metro4 Stránky](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCorePages/Shared/MetroLayout'))  
-[Šablona pro Moduláž Dokumentů Multijazyčná](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCorePages/Shared/MultiLangLayout'))  
-[Šablona pro Moduláž Dokumentů Více Modulární](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCorePages/Shared/CentralLayout'))  
-[Šablona pro další jiné Typy Modulací](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCorePages/Shared/GlobalLayout'))  
+[Čistá Šablona pro Libovolný Obsah Dokumentu](/EIC/ServerCorePages/Shared/CleanLayout)  
+[Šablona pro integrovaný Github Server](/EIC/ServerCorePages/Shared/GithubLayout)  
+[Šablona pro Integrovaný MarkDown Viewer](/EIC/ServerCorePages/Shared/MarkDownLayout)  
+[Šablona pro Metro4 Stránky](/EIC/ServerCorePages/Shared/MetroLayout)  
+[Šablona pro Moduláž Dokumentů Multijazyčná](/EIC/ServerCorePages/Shared/MultiLangLayout)  
+[Šablona pro Moduláž Dokumentů Více Modulární](/EIC/ServerCorePages/Shared/CentralLayout)  
+[Šablona pro další jiné Typy Modulací](/EIC/ServerCorePages/Shared/GlobalLayout)  
 
 Modulacemi je myšleno, že se má načíst stránka, ale v systému existuje 1 nebo více modulů: HTML/JS/CSS
 který odpovídá Čestě Dotazu, tak Dojde k jeho připojení do Obsahu, například Automatický Překladač
@@ -152,10 +152,10 @@ A Zde Kondové Body Ztn. Pevné Body, Kde každý může být jinak modulovaný 
 Nyní stačí zatím 3 pro WEb Portal, Statické Stránky, Různé Dokumenty A Moduly.
 
 
-[Globální Výchozí Endpoint](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCorePages/Index'))  
-[Integrovaný Web DB Manažer](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCorePages/EasyData'))   
-[Integrovaný MarkDown Převodník na Html](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCorePages/Markdown'))   
-[Neaktivní, bude Upraven pro Monitoring](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/EIC/ServerCorePages/Error'))    
+[Globální Výchozí Endpoint](/EIC/ServerCorePages/Index)  
+[Integrovaný Web DB Manažer](/EIC/ServerCorePages/EasyData)   
+[Integrovaný MarkDown Převodník na Html](/EIC/ServerCorePages/Markdown)   
+[Neaktivní, bude Upraven pro Monitoring](/EIC/ServerCorePages/Error)    
 
 A to je celé Jádro přes 20 Serverů, 1000+ Objektů pro WEby
 v Řešení Multi Sever, Multi System, Multi web, Multi Lang, NoBuilD,EASY Code, EASY Dev, EASY IT
@@ -210,41 +210,41 @@ Systém již obsahuje přes 100 formulářů z toho je více než 80% systémov�
 
 1. **Zde je Pák ukázek Unikátnívh Formulářů:**   
 
-[Multi Šablona s cca 10 grafy Form](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ESBTemplates/MultiMedia/GraphsPage.xaml'))  
-[Multi Šablona s cca 10 grafy Funkce](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ESBTemplates/MultiMedia/GraphsPage.xaml.cs'))   
+[Multi Šablona s cca 10 grafy Form](/ESB/ESBTemplates/MultiMedia/GraphsPage.xaml)  
+[Multi Šablona s cca 10 grafy Funkce](/ESB/ESBTemplates/MultiMedia/GraphsPage.xaml.cs)   
 
-[Prohlížeč Multi Typů Formátů Dokumentů Form](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateDocumentViewPage.xaml'))  
-[Prohlížeč Multi Typů Formátů Dokumentů Funkce](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateDocumentViewPage.xaml.cs'))   
+[Prohlížeč Multi Typů Formátů Dokumentů Form](/ESB/ESBTemplates/MultiMedia/TemplateDocumentViewPage.xaml)  
+[Prohlížeč Multi Typů Formátů Dokumentů Funkce](/ESB/ESBTemplates/MultiMedia/TemplateDocumentViewPage.xaml.cs)   
 
-[Přehrávač Videí Form](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateVideoPage.xaml'))  
-[Přehrávač Videí Funkce](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateVideoPage.xaml.cs'))   
+[Přehrávač Videí Form](/ESB/ESBTemplates/MultiMedia/TemplateVideoPage.xaml)  
+[Přehrávač Videí Funkce](/ESB/ESBTemplates/MultiMedia/TemplateVideoPage.xaml.cs)   
 
-[Prohlížeč 3D Formátů Form](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateSTLPage.xaml'))  
-[Prohlížeč 3D Formátů Funkce](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateSTLPage.xaml.cs'))   
+[Prohlížeč 3D Formátů Form](/ESB/ESBTemplates/MultiMedia/TemplateSTLPage.xaml)  
+[Prohlížeč 3D Formátů Funkce](/ESB/ESBTemplates/MultiMedia/TemplateSTLPage.xaml.cs)   
 
-[Web Prohlížeč Form](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateWebViewPage.xaml'))    
-[Web Prohlížeč Funkce](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ESBTemplates/MultiMedia/TemplateWebViewPage.xaml.cs'))   
+[Web Prohlížeč Form](/ESB/ESBTemplates/MultiMedia/TemplateWebViewPage.xaml)    
+[Web Prohlížeč Funkce](/ESB/ESBTemplates/MultiMedia/TemplateWebViewPage.xaml.cs)   
 
 2. **a Zde Systémové Formuláře:**  
 všimněte si že Fnkční soubor, je skoro vždy stejný - protože se pořád dělá to samé   
 
-[Šablona Data Pohledu a Editace Form](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationPage.xaml'))    
-[Šablona Data Pohledu a Editace  Funkce](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationPage.xaml.cs'))   
+[Šablona Data Pohledu a Editace Form](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationPage.xaml)    
+[Šablona Data Pohledu a Editace  Funkce](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationPage.xaml.cs)   
 
-[Šablona Data Pohledu Form](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationViewPage.xaml'))    
-[Šablona Data Pohledu Funkce](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationViewPage.xaml.cs'))   
+[Šablona Data Pohledu Form](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationViewPage.xaml)    
+[Šablona Data Pohledu Funkce](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationViewPage.xaml.cs)   
 
-[Šablona Data Pohledu a Editace s Podičem Form](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithParentPage.xaml'))    
-[Šablona Data Pohledu a Editace s Podičem Funkce](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithParentPage.xaml.cs'))   
+[Šablona Data Pohledu a Editace s Podičem Form](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithParentPage.xaml)    
+[Šablona Data Pohledu a Editace s Podičem Funkce](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithParentPage.xaml.cs)   
 
-[Šablona Data Pohledu a Editace Form](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationPage.xaml'))    
-[Šablona Data Pohledu a Editace  Funkce](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationPage.xaml.cs'))   
+[Šablona Data Pohledu a Editace Form](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationPage.xaml)    
+[Šablona Data Pohledu a Editace  Funkce](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationPage.xaml.cs)   
 
-[Šablona Data Pohledu a Editace s Celým Rodič Form + Form](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubPage.xaml.cs'))    
-[Šablona Data Pohledu a Editace s Celým Rodič Form + Funkce](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubPage.xaml.cs'))   
+[Šablona Data Pohledu a Editace s Celým Rodič Form + Form](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubPage.xaml.cs)    
+[Šablona Data Pohledu a Editace s Celým Rodič Form + Funkce](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubPage.xaml.cs)   
 
-[Šablona Data Pohledu s Celým Rodičem Form](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubViewPage.xaml'))    
-[Šablona Data Pohledu s Celým Rodičem Funkce](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubViewPage.xaml.cs'))   
+[Šablona Data Pohledu s Celým Rodičem Form](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubViewPage.xaml)    
+[Šablona Data Pohledu s Celým Rodičem Funkce](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubViewPage.xaml.cs)   
 
 
 A tím jsme Vyčerpali Předbolby pro 90% Všech Systémů na Celé Planetě
@@ -253,8 +253,8 @@ A tím jsme Vyčerpali Předbolby pro 90% Všech Systémů na Celé Planetě
 Stačí 1 Definice pro RESTFULL s číselníkem API volání a je HOTOVO
 je potřeba přidávat jen nová api do seznamu.
 
-[Číselník API Endpointů](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ApiModule/APIClasses'))    
-[Definice API Funkcí](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/ApiModule/ApiFunctions'))   
+[Číselník API Endpointů](/ESB/ApiModule/APIClasses)    
+[Definice API Funkcí](/ESB/ApiModule/ApiFunctions)   
 
 Tyto 2 Definice zajišŤují kopletní Komunikaci Celého Systému.
 
@@ -262,10 +262,10 @@ Tyto 2 Definice zajišŤují kopletní Komunikaci Celého Systému.
 4. **Datové Definice Jadra Systému, které je již hotové**   
 Datové Definice jádra a Modulů, Doplňků
 
-[DDatasety Systému](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalClassesjavascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalClasses.cs'))    
-[Číselníky Systému - Bude přesunuto do DB](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalClasses/GlobalEnumSetDefinitions.cs'))   
-[Unikatní Kolekce - Galerie](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalClasses/PhotoCollectionClasses.cs'))   
-[Dynamickla Kolekce](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalClasses/ConcurrentObservableList.cs'))
+[DDatasety Systému](/ESB/GlobalClasses/ESB/GlobalClasses.cs)    
+[Číselníky Systému - Bude přesunuto do DB](/ESB/GlobalClasses/GlobalEnumSetDefinitions.cs)   
+[Unikatní Kolekce - Galerie](/ESB/GlobalClasses/PhotoCollectionClasses.cs)   
+[Dynamickla Kolekce](/ESB/GlobalClasses/ConcurrentObservableList.cs)
 
 Tyto Datové Definice stačí pro provoz Systému o více jak 100 Agendách
 
@@ -273,23 +273,23 @@ Tyto Datové Definice stačí pro provoz Systému o více jak 100 Agendách
 Lze Implemetovat nespočet Generátorů Zde jsou zatím první z nich,
 a jsou plně kompatibilní s Webovou Technologií METRO a zobrazují se tedy i na Webu 
 
-[Generátor Ikon](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalGenerators/IconMaker.cs'))  
-[Generator Obrázků](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalGenerators/ImageElementGenerator.cs'))   
+[Generátor Ikon](/ESB/GlobalGenerators/IconMaker.cs)  
+[Generator Obrázků](/ESB/GlobalGenerators/ImageElementGenerator.cs)   
 
 
 5. **Systémové Funkcionality - Operace**   
 Stajně jako u Projektu Serveru jsou zde rozloženy Funkcionality podle povahy.  
 Dobře se s nimi pracuje, a hned je jasné kde je hledat.   
 
-[Komunikační Operace](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalOperations/CommOperations.cs'))  
-[Datové Operace](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalOperations/DataOperations.cs'))  
-[Databázové Operace](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalOperations/DBOperations.cs'))  
-[Formulářové Operace](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalOperations/FormOperations.cs'))  
-[Souborové Operace](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalOperations/FileOperations.cs'))  
-[Matematické Operace](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalOperations/MathTypeOperations.cs'))  
-[Media Operace](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalOperations/MediaOperations.cs'))  
-[Systémové Operace](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalOperations/SystemOperations.cs'))  
-[Operace Modulů](javascript:ChangeSource('/EIC&ESBdocs/CodeDocs/ESB/GlobalOperations/ToolsOperations.cs'))  
+[Komunikační Operace](/ESB/GlobalOperations/CommOperations.cs)  
+[Datové Operace](/ESB/GlobalOperations/DataOperations.cs)  
+[Databázové Operace](/ESB/GlobalOperations/DBOperations.cs)  
+[Formulářové Operace](/ESB/GlobalOperations/FormOperations.cs)  
+[Souborové Operace](/ESB/GlobalOperations/FileOperations.cs)  
+[Matematické Operace](/ESB/GlobalOperations/MathTypeOperations.cs)  
+[Media Operace](/ESB/GlobalOperations/MediaOperations.cs)  
+[Systémové Operace](/ESB/GlobalOperations/SystemOperations.cs)  
+[Operace Modulů](/ESB/GlobalOperations/ToolsOperations.cs)  
 
 Když si je prohlédnete zjistíte že jich není moc, zato dohromady
 dokážou zajistit Tvorbu či provedení Čehokoliv. 
@@ -303,17 +303,17 @@ Je to totiž proto, že Multimediální Povaha Celého Systému Dokáže pracova
 Typů Objektů pomocí jednihé Objektu. A tím se vše neskutečně zjednodušilo.
 
 
-[Doplňující Definice Vlastích Polí](/GlobalStylesLibrary/ObjectDefinitionsLibrary/CustomObjectDefaultKeySetStyles.xaml'))  
-[Globální Definice Metro Stylu](/GlobalStylesLibrary/ObjectDefinitionsLibrary/MetroObjectDefaultStyles.xaml'))  
-[Standartní Definice](/GlobalStylesLibrary/ObjectDefinitionsLibrary/StandardObjectDefaultStyles.xaml'))  
+[Doplňující Definice Vlastích Polí](/ESB/GlobalStylesLibrary/ObjectDefinitionsLibrary/CustomObjectDefaultKeySetStyles.xaml)  
+[Globální Definice Metro Stylu](/ESB/GlobalStylesLibrary/ObjectDefinitionsLibrary/MetroObjectDefaultStyles.xaml)  
+[Standartní Definice](/ESB/GlobalStylesLibrary/ObjectDefinitionsLibrary/StandardObjectDefaultStyles.xaml)  
 
 programátorské definice Stylů:
-[Kombinování Stylů](/GlobalStylesLibrary/GlobalUsingStyleExtensions.cs'))  
-[Styly pro programovou Aplikaci](/GlobalStylesLibrary/GlobalProgramaticStyleDefinitions.cs'))  
+[Kombinování Stylů](/ESB/GlobalStylesLibrary/GlobalUsingStyleExtensions.cs)  
+[Styly pro programovou Aplikaci](/ESB/GlobalStylesLibrary/GlobalProgramaticStyleDefinitions.cs)  
 
 a ještě styly Externích Nástrojů:
-[MarkDown Styly](/GlobalStylesLibrary/Tools/Markdown/MarkdownStylesLibrary.xaml'))  
-[Knihovna Stylů pro Moduly a Nástroje](/GlobalStylesLibrary/Tools/ToolsStylesLibrary.xaml'))  
+[MarkDown Styly](/ESB/GlobalStylesLibrary/Tools/Markdown/MarkdownStylesLibrary.xaml)  
+[Knihovna Stylů pro Moduly a Nástroje](/ESB/GlobalStylesLibrary/Tools/ToolsStylesLibrary.xaml)  
 
 Toto stačí Pro jednotný a přitom bohatý Vzhled Celého Systémů.
 Chcete přece aby systém vypadal stejně sa ne každy formulář jinak :)
@@ -328,8 +328,8 @@ Navíc Tentýž slovník následně používá i Server. Slovníky se jen vyexpo
 do Systému i pro možnost Offline použití - můžete pracovat i když nejede Server.
 Ono se to pak dodatečně Uloží :)
 
-[Čsský Slovník](/Languages/StringResources.cs-CZ.xaml'))  
-[Anglický Slovník](/Languages/StringResources.xaml'))  
+[Čsský Slovník](/ESB/Languages/StringResources.cs-CZ.xaml)  
+[Anglický Slovník](/ESB/Languages/StringResources.xaml)  
 
 A to je Celá Struktura Systému.
 
@@ -337,8 +337,8 @@ A to je Celá Struktura Systému.
 A Zde si můžete prohlédnout jak Vypadá Jádro systému, které vše Ovladá z 1 Bodu.
 Zde se spojují všechny formuláře, moduly, Data, Dotazy a Výsledky, a řídí se jejich zpracování
 
-[Centrální Formulář](/SystemWindow.xaml'))  
-[Centrální Systém](/SystemWindow.xaml'))  
+[Centrální Formulář](/ESB/SystemWindow.xaml)  
+[Centrální Systém](/ESB/SystemWindow.xaml.cs)  
 
 
 A to je vše. Je to Jednoduché a Pokud Vám to nepřipadá rád pro vás Cokoliv Vyvinu.

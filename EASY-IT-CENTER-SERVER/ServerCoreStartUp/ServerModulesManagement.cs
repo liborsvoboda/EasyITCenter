@@ -11,6 +11,8 @@ using Pek.Markdig.HighlightJs;
 using Docfx.MarkdigEngine.Extensions;
 using Markdig.Prism;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SourceBrowserIndex = Microsoft.SourceBrowser.SourceIndexServer.Models.Index;
+
 
 namespace EasyITCenter.ServerCoreConfiguration {
    
@@ -34,14 +36,24 @@ namespace EasyITCenter.ServerCoreConfiguration {
 
 
         /// <summary>
+        /// Server Module: Set Startup Path for CodeBrowser 
+        /// </summary>
+        /// <param name="services"></param>
+        internal static void ConfigureCodeBrowser(ref IServiceCollection services) {
+            if (ServerConfigSettings.EnableCodeBrowser) {
+                var subfolder = Path.Combine(ServerRuntimeData.WebRoot_path, "EIC&ESBCodeBrowser");
+                if (File.Exists(subfolder)) { services.AddSingleton(new SourceBrowserIndex(subfolder)); }
+            }
+        }
+
+
+        /// <summary>
         /// Server Module: Configure Automatic MDtoHtml Files Show in WebPages
         /// </summary>
         /// <param name="services"></param>
         internal static void ConfigureMarkdownAsHtmlFiles(ref IServiceCollection services) {
-            if (ServerConfigSettings.EnableAutoShowMdAsHtml) { 
+            if (ServerConfigSettings.EnableAutoShowStaticMdAsHtml) { 
                 services.AddMarkdown(config => {
-                    // Create custom MarkdigPipeline 
-                    // using MarkDig; for extension methods
                     config.ConfigureMarkdigPipeline = builder => {
                         builder.UseEmphasisExtras(Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Default)
                             .UsePipeTables().UseGridTables().UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
@@ -55,8 +67,6 @@ namespace EasyITCenter.ServerCoreConfiguration {
                             .UseUrlRewriter(link => link.Url.AsRelativeResource())
                             //.UseUrlRewriter(link => link.Url.Replace(!ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS ? "https://" : "http://", !ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS ? "http://" : "https://"))
                             .UseFigures().UseTaskLists().UseCustomContainers().UseGenericAttributes();//.Build();
-
-                        //.DisableHtml();   // don't render HTML - encode as text
                     };
                 }); 
             }
@@ -275,7 +285,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
         /// </summary>
         /// <param name="app"></param>
         internal static void EnableMarkdownAsHtmlFiles(ref IApplicationBuilder app) {
-            if (ServerConfigSettings.EnableAutoShowMdAsHtml) { app.UseMarkdown(); }
+            if (ServerConfigSettings.EnableAutoShowStaticMdAsHtml) { app.UseMarkdown(); }
         }
 
 
@@ -288,8 +298,9 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     builder.HighlightJsStyle = "../../ServerCoreTools/JsCssLibrary/Docs/material-darker.css";
                     builder.GetMdlStyle = "../../ServerCoreTools/JsCssLibrary/Docs/material.min.css";
                     builder.NavBarStyle = MarkdownDocumenting.Elements.NavBarStyle.Default;
-                    builder.RootPathHandling = HandlingType.Redirect;
-                    builder.SetIndexDocument("AutomatickéFunkcinality"); //Nemenit moznost ztraty dosahu css
+                    builder.RootPathHandling = HandlingType.Handle;
+                    builder.SetIndexDocument(new EasyITCenterContext().DocSrvDocumentationLists.OrderBy(a => a.DocumentationGroup.Sequence)
+                    .ThenBy(a => a.Sequence).ThenBy(a => a.Name).FirstOrDefault().Name.Replace(" ", ""));
 
                     //if (ServerConfigSettings.ServerRazorWebPagesEngineEnabled) builder.AddCustomLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate("DashBoard", ServerConfigSettings.ServiceServerLanguage), "/DashBoard"));
                     //if (ServerConfigSettings.ModuleHealthServiceEnabled) builder.AddCustomLink(new MarkdownDocumenting.Elements.CustomLink(ServerCoreDbOperations.DBTranslate("GithubInteli", ServerConfigSettings.ServiceServerLanguage), "/Tools/EDC_ESB_InteliHelp/book/"));

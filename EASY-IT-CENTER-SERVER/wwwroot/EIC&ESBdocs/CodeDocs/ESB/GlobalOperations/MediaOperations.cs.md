@@ -1,6 +1,6 @@
-﻿[Zpět](../../index)   
+﻿[Zpět](../../)   
 
-```cshtml   
+```csharp   
 using HelixToolkit.Wpf.SharpDX;
 using Microsoft.Win32;
 using System;

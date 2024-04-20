@@ -13,6 +13,7 @@ using Index = Microsoft.SourceBrowser.SourceIndexServer.Models.Index;
 
 namespace EasyITCenter.Controllers
 {
+  /*
     [ApiController]
     public class SymbolsController : Controller
     {
@@ -172,4 +173,5 @@ namespace EasyITCenter.Controllers
             }
         }
     }
+  */
 }

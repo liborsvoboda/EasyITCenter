@@ -1,4 +1,4 @@
-[Zpìt](../../index)   
+[Zpìt](../../)   
 
 ```cshtml   
 using FubarDev.FtpServer;
