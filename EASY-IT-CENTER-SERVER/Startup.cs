@@ -1,25 +1,17 @@
-﻿using DocumentFormat.OpenXml.Office2013.Excel;
-using EasyITCenter.ServerCoreStructure;
+﻿using EasyITCenter.ServerCoreStructure;
 using EasyITCenter.ServerCoreWebPages;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileProviders.Physical;
-using NPOI.OpenXmlFormats.Dml;
-using NuGet.Protocol.Plugins;
 using ServerCorePages;
-using ServiceStack.Host;
 using System.Diagnostics.Metrics;
 using System.Linq;
-using Westwind.AspNetCore.LiveReload;
-using Westwind.AspNetCore.Markdown;
-using static Quartz.Logging.OperationName;
-
+using EasyData.Services;
 
 namespace EasyITCenter {
 
@@ -127,6 +119,7 @@ namespace EasyITCenter {
             app.Use(async (HttpContext context, Func<Task> next) => { await next(); 
                 string requestPath = context.Request.Path.ToString().ToLower();bool redirected =false;
 
+                //TODO server-users security for content
 
                 //Verify Request For Detect Layout, Redirection, Module, Correct File Path, WebMenu Selection
                 RouteLayout routeLayout = RouteLayout.EmptyLayout; RoutingResult commandType = RoutingResult.None; string fileValidUrl = context.Request.Path;
@@ -163,11 +156,11 @@ namespace EasyITCenter {
 
                 //Others Type Detected
                 else if (context.Request.Path.ToString().ToLower() != fileValidUrl)
-                { redirected = true; context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; }
+                { redirected = true; context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
 
                 if (commandType == RoutingResult.Return) { return; }
-                else if (!redirected && commandType == RoutingResult.Next && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                else if (!redirected && commandType == RoutingResult.Next) 
                 { context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
                 else if (commandType == RoutingResult.Next && context.Request.Path.ToString().ToLower() == fileValidUrl) { return; }
             });
@@ -183,7 +176,7 @@ namespace EasyITCenter {
 
             //TODO define over Administration
             var staticFilesProvider = new FileExtensionContentTypeProvider();
-            staticFilesProvider.Mappings[".jscript"] = "application/javascript"; staticFilesProvider.Mappings[".style"] = "text/css";
+            staticFilesProvider.Mappings[".javascript"] = "application/javascript"; staticFilesProvider.Mappings[".style"] = "text/css";
             staticFilesProvider.Mappings[".data"] = "text/json"; staticFilesProvider.Mappings[".code"] = "text/cs";
             staticFilesProvider.Mappings[".design"] = "text/xaml"; staticFilesProvider.Mappings[".archive"] = "application/zip";
             staticFilesProvider.Mappings[".docu"] = "text/markdown";
@@ -200,7 +193,7 @@ namespace EasyITCenter {
                 app.UseStaticFiles(new StaticFileOptions {
                     ServeUnknownFileTypes = true,
                     FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices),
-                    RequestPath = "/" + website.WebsiteName + ".",
+                    RequestPath = "/server-users/" + website.WebsiteName + ".",
                     HttpsCompression = HttpsCompressionMode.Compress,
                     DefaultContentType = "text/html",
                     ContentTypeProvider = staticFilesProvider

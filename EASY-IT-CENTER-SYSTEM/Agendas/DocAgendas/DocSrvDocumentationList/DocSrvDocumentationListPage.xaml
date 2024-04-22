@@ -7,7 +7,7 @@
     xmlns:html="clr-namespace:EASYTools.HTMLFullEditor;assembly=EASYTools.HTMLFullEditor"
     xmlns:local="clr-namespace:EasyITSystemCenter.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:md="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
     Name="Form"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
@@ -15,24 +15,12 @@
     d:DesignWidth="600"
     Tag="Form"
     mc:Ignorable="d">
-    <!--  xmlns:md="clr-namespace:EASYTools.MarkdownToFlow;assembly=EASYTools.MarkdownToFlow"  -->
 
-    <UserControl.Resources>
-        <!--<md:Markdown
-            x:Key="Markdown"
-            DocumentStyle="{StaticResource DocumentStyle}"
-            Heading1Style="{StaticResource H1Style}"
-            Heading2Style="{StaticResource H2Style}"
-            Heading3Style="{StaticResource H3Style}"
-            Heading4Style="{StaticResource H4Style}"
-            ImageStyle="{StaticResource ImageStyle}"
-            LinkStyle="{StaticResource LinkStyle}"
-            SeparatorStyle="{StaticResource SeparatorStyle}"
-            TableHeaderStyle="{StaticResource TableHeaderStyle}"
-            TableStyle="{StaticResource TableStyle}" />
+    <FrameworkElement.CommandBindings>
+        <CommandBinding Command="{x:Static md:Commands.Hyperlink}" Executed="OpenHyperlink" />
+        <CommandBinding Command="{x:Static md:Commands.Image}" Executed="ClickOnImage" />
+    </FrameworkElement.CommandBindings>
 
-        <md:TextToFlowDocumentConverter x:Key="TextToFlowDocumentConverter" Markdown="{StaticResource Markdown}" />-->
-    </UserControl.Resources>
     <Grid
         Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
         Background="{DynamicResource AccentColorBrush}">
@@ -174,17 +162,10 @@
                     Margin="0,2,0,2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     Controls:TextBoxHelper.ClearTextButton="False" Controls:TextBoxHelper.Watermark="" AcceptsReturn="True" TextChanged="Md_editor_TextChanged" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" />
 
-                <html:HtmlEditor
-                    x:Name="html_htmlContent"
-                    Grid.Row="0" Grid.Column="1"
-                    Margin="0,2,0,2"
-                    BorderThickness="0.5"
-                    HtmlContent="{Binding SourceCode}" />
+                <md:MarkdownViewer
+                    x:Name="mdViewer"
+                    Grid.Row="0" Grid.Column="1" />
 
-                <!--<FlowDocumentScrollViewer
-                    Grid.Row="0" Grid.Column="1" Margin="0,2,0,2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                    Document="{Binding ElementName=md_editor, Path=Text, Converter={StaticResource TextToFlowDocumentConverter}}"
-                    VerticalScrollBarVisibility="Visible" />-->
             </Grid>
 
             <Label
@@ -209,10 +190,30 @@
             <Button
                 Name="btn_generateInteliDoc"
                 Grid.Row="10" Grid.Column="0"
-                Width="200" Height="40"
-                Margin="0,0,0,10" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                Width="200" Height="40" Padding="5"
+                Margin="0,0,0,10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
                 Click="BtnGenerateInteliDoc_Click"
                 Style="{DynamicResource AccentedSquareButtonStyle}" />
+
+
+            <Button
+                x:Name="ExportDocx" Grid.Row="10" Grid.Column="0" Width="80" Height="40"
+                Margin="5" Padding="5" HorizontalAlignment="Left" VerticalAlignment="Top"
+                Click="BtnExportDocx_Click" Content="Export Docx" Cursor="Hand" />
+
+            <Button
+                x:Name="ExportHtml"
+                Grid.Row="10" Grid.Column="0"
+                Width="80" Height="40" VerticalAlignment="Top"
+                Margin="5" Padding="5" HorizontalAlignment="Center"
+                Click="BtnExportHtml_Click" Content="Export Html" Cursor="Hand" />
+
+            <Button
+                x:Name="ExportMd" Grid.Row="10" Grid.Column="0"
+                Width="80" Height="40" VerticalAlignment="Top"
+                Margin="5" Padding="5" HorizontalAlignment="Right"
+                Click="BtnExportMd_Click" Content="Export Md" Cursor="Hand" />
+
 
             <Button
                 Name="btn_save"

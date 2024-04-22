@@ -4,10 +4,16 @@ using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
+using Markdig;
+using Markdig.Renderers.Docx;
+using Markdig.Wpf;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using Pek.Markdig.HighlightJs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -38,6 +44,12 @@ namespace EasyITSystemCenter.Pages {
                 } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
                 LoadParameters();
+
+                new MarkdownPipelineBuilder().UseEmphasisExtras().UseAbbreviations().UseAdvancedExtensions().UseBootstrap()
+                .UseDiagrams().UseEmphasisExtras().UseEmojiAndSmiley(true).UseDefinitionLists().UseTableOfContent().UseTaskLists()
+                .UseSupportedExtensions().UseSmartyPants().UsePipeTables().UseMediaLinks().UseMathematics().UseListExtras().UseHighlightJs()
+                .UseGridTables().UseGlobalization().UseGenericAttributes().UseFootnotes().UseFooters().UseSyntaxHighlighting().UseFigures().Build();
+
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             _ = LoadDataList();
@@ -158,7 +170,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Description = txt_description.Text;
 
                 selectedRecord.MdContent = md_editor.Text;
-                selectedRecord.HtmlContent = html_htmlContent.Browser.GetCurrentHtml();
+                selectedRecord.HtmlContent = Markdig.Markdown.ToHtml(mdViewer.Markdown);
 
                 selectedRecord.UserId = App.UserData.Authentification.Id;
 
@@ -205,9 +217,9 @@ namespace EasyITSystemCenter.Pages {
             }
         }
 
+
         private void Md_editor_TextChanged(object sender, TextChangedEventArgs e) {
-            EASYTools.MarkdownToHtml.Markdown markdown = new EASYTools.MarkdownToHtml.Markdown();
-            html_htmlContent.Browser.OpenDocument(markdown.Transform("<HEAD><META content=text/html;utf-8 http-equiv=content-type></HEAD>" + md_editor.Text));
+            mdViewer.Markdown = md_editor.Text;
         }
 
         private void DataListDoubleClick(object sender, MouseButtonEventArgs e) {
@@ -232,7 +244,6 @@ namespace EasyITSystemCenter.Pages {
             using (HttpClient httpClient = new HttpClient()) {
                 try {
                     MainWindow.ProgressRing = Visibility.Visible;
-                    html_htmlContent.Browser.ToggleSourceEditor(html_htmlContent.Toolbar, true);
 
                     DBResultMessage dBResult;
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", App.UserData.Authentification.Token);
@@ -248,6 +259,39 @@ namespace EasyITSystemCenter.Pages {
                     await MainWindow.ShowMessageOnMainWindow(false, "Exception Error : " + ex.Message + Environment.NewLine + ex.StackTrace);
                 }
             }
+        }
+
+        private void OpenHyperlink(object sender, ExecutedRoutedEventArgs e) {
+            Process.Start(e.Parameter.ToString());
+        }
+
+        private void ClickOnImage(object sender, ExecutedRoutedEventArgs e) {
+            MessageBox.Show($"URL: {e.Parameter}");
+        }
+
+        private void BtnExportDocx_Click(object sender, RoutedEventArgs e) {
+            var document = DocxTemplateHelper.Standard;
+            var styles = new DocumentStyles();
+            var renderer = new DocxDocumentRenderer(document, styles, NullLogger<DocxDocumentRenderer>.Instance);
+            var pipeline = new MarkdownPipelineBuilder().UseEmphasisExtras().UseAbbreviations().UseAdvancedExtensions().UseBootstrap()
+                .UseDiagrams().UseEmphasisExtras().UseEmojiAndSmiley(true).UseDefinitionLists().UseTableOfContent().UseTaskLists()
+                .UseSupportedExtensions().UseSmartyPants().UsePipeTables().UseMediaLinks().UseMathematics().UseListExtras().UseHighlightJs()
+                .UseGridTables().UseGlobalization().UseGenericAttributes().UseFootnotes().UseFooters().UseSyntaxHighlighting().UseFigures().Build();
+            object exportedFile = Markdig.Markdown.Convert(mdViewer.Markdown, renderer, pipeline);
+
+            SaveFileDialog dlg = new SaveFileDialog { DefaultExt = ".docx", Filter = "Word files |*.docx", Title = Resources["fileOpenDescription"].ToString() };
+            if (dlg.ShowDialog() == true) { ((DocxDocumentRenderer)exportedFile).Document.SaveAs(dlg.FileName); }
+        }
+
+        private void BtnExportHtml_Click(object sender, RoutedEventArgs e) {
+            string exportedFile = Markdig.Markdown.ToHtml(mdViewer.Markdown);
+            SaveFileDialog dlg = new SaveFileDialog { DefaultExt = ".html", Filter = "Html files |*.html", Title = Resources["fileOpenDescription"].ToString() };
+            if (dlg.ShowDialog() == true) { FileOperations.ByteArrayToFile(dlg.FileName, System.Text.Encoding.UTF8.GetBytes(exportedFile)); }
+        }
+
+        private void BtnExportMd_Click(object sender, RoutedEventArgs e) {
+            SaveFileDialog dlg = new SaveFileDialog { DefaultExt = ".md", Filter = "Md files |*.md", Title = Resources["fileOpenDescription"].ToString() };
+            if (dlg.ShowDialog() == true) { FileOperations.ByteArrayToFile(dlg.FileName, System.Text.Encoding.UTF8.GetBytes(mdViewer.Markdown)); }
         }
     }
 }

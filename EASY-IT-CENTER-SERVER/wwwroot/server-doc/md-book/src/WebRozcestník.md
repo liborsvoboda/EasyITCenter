@@ -1,4 +1,5 @@
 ﻿#### Členění Webu EIC Serveru    
+[[toc]]    
 *Pro myšlení, vývoj nástrojů a práci s nimi hodné 21. století*    
     
 **Podívejte se čerstvě Vydaný Dokumentační Portal komlpet v Češtině.**    

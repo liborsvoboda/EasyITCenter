@@ -28,19 +28,30 @@ namespace EasyITCenter.ServerCoreStructure {
         public static string Startup_path { get; set; } = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
         /// <summary>
-        /// Gets or Sets the startup_path.
-        /// </summary>
-        public static string WebRoot_path { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ServerConfigSettings.DefaultStaticWebFilesFolder);
-
-        /// <summary>
         /// Gets or Sets the setting_folder.
         /// </summary>
         public static string Setting_folder { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0]);
 
         /// <summary>
+        /// Gets or Sets the startup_path.
+        /// </summary>
+        public static string WebRoot_path { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ServerConfigSettings.DefaultStaticWebFilesFolder);
+
+        /// <summary>
         /// Gets or Sets the configure file.
         /// </summary>
-        public static string UserPath { get; set; } = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0]), "Users");
+        public static string UserPath { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ServerConfigSettings.DefaultStaticWebFilesFolder, "server-users");
+
+        /// <summary>
+        /// GITsubServer Path Definition
+        /// </summary>
+        public static string GitServerPath { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ServerConfigSettings.DefaultStaticWebFilesFolder, "server-users");
+
+        /// <summary>
+        /// FTPsubServer Path Definition
+        /// </summary>
+        public static string FTPServerPath { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ServerConfigSettings.DefaultStaticWebFilesFolder, "server-users");
+
 
         /// <summary>
         /// Gets or Sets the configure file.

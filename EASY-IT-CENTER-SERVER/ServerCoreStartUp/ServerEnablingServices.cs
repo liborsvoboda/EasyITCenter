@@ -5,7 +5,6 @@ using MirrorSharp;
 using MirrorSharp.AspNetCore;
 using MonacoProvider;
 using MonacoProvider.Api;
-using Prometheus;
 using Snickler.RSSCore.Caching;
 using Snickler.RSSCore.Extensions;
 using Snickler.RSSCore.Models;

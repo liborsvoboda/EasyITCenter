@@ -6,12 +6,17 @@ using ICSharpCode.AvalonEdit.Editing;
 namespace EasyITSystemCenter.Tools {
 
 
-	/// <summary>
-	/// Implements AvalonEdit ICompletionData interface to provide the entries in the completion drop down.
-	/// </summary>
-	public class MyCompletionData : ICompletionData
+    //TODO CREATE METHOD CYCLE FOR 
+    //  var newModel = Activator.CreateInstance(mType, objects);   WITH Mine List<Assembly>
+    // and Insert To Referenced code completion data.Add(new MyCompletionData("Item1"));
+	//NEXT WAIT FOR PROJECT WILL BE IN DATANASE AND READ METHODS with comments Create Databases Table 
+
+    /// <summary>
+    /// Implements AvalonEdit ICompletionData interface to provide the entries in the completion drop down.
+    /// </summary>
+    public class MyCompletionData : ICompletionData
 	{
-		public MyCompletionData(string text)
+		public MyCompletionData(string text )
 		{
 			this.Text = text;
 		}

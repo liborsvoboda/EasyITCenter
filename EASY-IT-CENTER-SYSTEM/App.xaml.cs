@@ -49,12 +49,13 @@ namespace EasyITSystemCenter {
         public static List<SystemMenuList> SystemMenuList = null;
         public static List<SystemCustomPageList> SystemCustomList = null;
         public static List<SystemSvgIconList> SystemSvgIconList = null;
-
         public static List<SystemModuleList> SystemModuleList = null;
         public static List<ServerServerSettingList> ServerSetting = new List<ServerServerSettingList>();
         public static List<SystemParameterList> ParameterList = null;
         public static List<SystemTranslationList> LanguageList = null;
         public static List<SystemIgnoredExceptionList> IgnoredExceptionList = new List<SystemIgnoredExceptionList>();
+
+
         public static SystemLoggerWebSocketClass SystemLoggerWebSocketMonitor = new SystemLoggerWebSocketClass();
         public static UserData UserData = new UserData();
 
@@ -64,6 +65,7 @@ namespace EasyITSystemCenter {
         /// Application Global Exceptions Controls Definitions
         /// </summary>
         public App() {
+
             FileOperations.LoadSettings();
             SystemOperations.SetLanguageDictionary(Resources, appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 

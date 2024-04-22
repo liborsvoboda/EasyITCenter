@@ -28,7 +28,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
         internal static void ConfigureGitServer(ref IServiceCollection services) {
             if (ServerConfigSettings.GitServerEnabled) {
                     services.Configure<GitSettings>(options => {
-                    options.BasePath = Path.Combine(ServerRuntimeData.Startup_path, ServerRuntimeData.DataPath,"GitServer");
+                    options.BasePath = ServerRuntimeData.GitServerPath;
                     options.GitPath = "git";
                 });
             }

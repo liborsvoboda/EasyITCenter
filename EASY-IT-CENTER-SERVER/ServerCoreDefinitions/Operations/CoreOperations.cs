@@ -130,6 +130,8 @@ namespace EasyITCenter.ServerCoreStructure {
             if (context.Items.FirstOrDefault(a => a.Key.ToString() == "RouteLayout").Value == null) { context.Items.Add("RouteLayout", routeLayout); }
             if (context.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value == null) { context.Items.Add("FileValidUrl", validPath); }
             if (context.Items.FirstOrDefault(a => a.Key.ToString() == "ComandType").Value != null) { context.Items.Remove("ComandType"); context.Items.Add("ComandType", RoutingResult.Return); }
+            else { context.Items.Add("ComandType", routingResult); }
+
             return context;
         }
 

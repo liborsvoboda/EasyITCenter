@@ -92,10 +92,10 @@ namespace EasyITSystemCenter.Pages {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    SolutionEmailTemplateList user = e as SolutionEmailTemplateList;
-                    return user.TemplateName.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.Subject) && user.Subject.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.Email) && user.Email.ToLower().Contains(filter.ToLower())
+                    SolutionEmailTemplateList search = e as SolutionEmailTemplateList;
+                    return search.TemplateName.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.Subject) && search.Subject.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.Email) && search.Email.ToLower().Contains(filter.ToLower())
                     ;
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }

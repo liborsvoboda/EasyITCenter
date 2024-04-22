@@ -32,14 +32,14 @@ namespace EasyITCenter.ServerCoreConfiguration {
         internal static void ConfigureFTPServer(ref IServiceCollection services) {
             if (ServerConfigSettings.ServerFtpEngineEnabled) {
                 services.AddFtpServer(
-                                    builder => {
-                                        if (!ServerConfigSettings.ServerFtpSecurityEnabled) { builder.EnableAnonymousAuthentication(); }
-                                        builder.UseDotNetFileSystem().DisableChecks().UseSingleRoot();
-                                    });
-
+                    builder => {
+                        if (!ServerConfigSettings.ServerFtpSecurityEnabled) 
+                        { builder.UseDotNetFileSystem().DisableChecks().UseSingleRoot().EnableAnonymousAuthentication(); }
+                        else { builder.UseDotNetFileSystem().DisableChecks().UseRootPerUser(); }
+                    });
                 services.Configure<FtpServerOptions>(opt => opt.ServerAddress = "*");
                 services.Configure<DotNetFileSystemOptions>(opt => {
-                    opt.RootPath = Path.Combine(ServerRuntimeData.WebRoot_path, ServerConfigSettings.ServerFtpStorageRootPath);
+                    opt.RootPath = ServerRuntimeData.FTPServerPath;
                     opt.AllowNonEmptyDirectoryDelete = true;
                 });
                 services.AddSingleton<IMembershipProvider, HostedFtpServerMembershipProvider>();

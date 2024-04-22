@@ -4,17 +4,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:html="clr-namespace:EASYTools.HTMLFullEditor;assembly=EASYTools.HTMLFullEditor"
     xmlns:local="clr-namespace:EasyITSystemCenter.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-    Name="Form"
+    xmlns:md="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
     d:DesignHeight="500"
     d:DesignWidth="600"
     Tag="Form"
     mc:Ignorable="d">
+
+    <FrameworkElement.CommandBindings>
+        <CommandBinding Command="{x:Static md:Commands.Hyperlink}" Executed="OpenHyperlink" />
+        <CommandBinding Command="{x:Static md:Commands.Image}" Executed="ClickOnImage" />
+    </FrameworkElement.CommandBindings>
 
     <Grid
         Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -94,9 +97,9 @@
                 Controls:TextBoxHelper.ClearTextButton="true" Controls:TextBoxHelper.IsWaitingForData="True" Controls:TextBoxHelper.Watermark="" />
 
             <Label
-                x:Name="lbl_description"
-                Grid.Row="2" Grid.Column="1"
+                x:Name="lbl_description" Grid.Row="2" Grid.Column="1" Width="50"
                 HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
+            
             <TextBox
                 x:Name="txt_description"
                 Grid.Row="2" Grid.Column="2"
@@ -136,19 +139,28 @@
                     Margin="0,2,0,2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     Controls:TextBoxHelper.ClearTextButton="False" Controls:TextBoxHelper.Watermark="" AcceptsReturn="True" TextChanged="Md_editor_TextChanged" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" />
 
-                <html:HtmlEditor
-                    x:Name="html_htmlContent"
-                    Grid.Row="0" Grid.Column="1"
-                    Margin="0,2,0,2"
-                    BorderThickness="0.5"
-                    HtmlContent="{Binding SourceCode}" />
+                <md:MarkdownViewer
+                    x:Name="mdViewer"
+                    Grid.Row="0" Grid.Column="1" />
 
-                <!--<FlowDocumentScrollViewer
-                    Grid.Row="0" Grid.Column="1" Margin="0,2,0,2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                    Document="{Binding ElementName=md_editor, Path=Text, Converter={StaticResource TextToFlowDocumentConverter}}"
-                    VerticalScrollBarVisibility="Visible" />-->
             </Grid>
 
+            <Button
+                x:Name="ExportDocx" Width="80" HorizontalAlignment="Left"
+                Grid.Row="10" Grid.Column="0" Margin="5" Padding="5"
+                Click="BtnExportDocx_Click" Content="Export Docx" Cursor="Hand" />
+
+            <Button
+                 x:Name="ExportHtml" Width="80" HorizontalAlignment="Center"
+                 Grid.Row="10" Grid.Column="0" Margin="5" Padding="5"
+                 Click="BtnExportHtml_Click" Content="Export Html" Cursor="Hand" />
+
+            <Button
+                 x:Name="ExportMd" Width="80" HorizontalAlignment="Right"
+                 Grid.Row="10" Grid.Column="0" Margin="5" Padding="5"
+                 Click="BtnExportMd_Click" Content="Export Md" Cursor="Hand" />
+
+            
             <Button
                 Name="btn_save"
                 Grid.Row="10" Grid.Column="1"

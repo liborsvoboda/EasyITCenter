@@ -261,12 +261,6 @@
         public static bool ServerFtpSecurityEnabled { get; set; } = true;
 
         /// <summary>
-        /// FTP Server Storage Path Definition It Will be under wwwroot for Posibility Share Data or
-        /// For WebAccess/Browser Over WebPortal
-        /// </summary>
-        public static string ServerFtpStorageRootPath { get; set; } = "FTPServer";
-
-        /// <summary>
         /// CORS Hlavčky HTTP Requestů příchozích na server WEB + API, Povolit jakýkoli původ
         /// </summary>
         public static bool ServerCorsAllowAnyOrigin { get; set; } = true;

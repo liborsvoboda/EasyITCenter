@@ -43,10 +43,6 @@ namespace EasyITSystemCenter.Pages {
                     _ = DataOperations.TranslateFormFields(ListForm);
                 } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
-                //html_htmlMessage.HtmlContentDisableInitialChange = true;
-                //html_htmlMessage.Toolbar.SetSourceMode(true);
-                //html_htmlMessage.Browser.ToggleSourceEditor(html_htmlMessage.Toolbar, true);
-
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             _ = LoadDataList();
@@ -114,10 +110,10 @@ namespace EasyITSystemCenter.Pages {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    SolutionMessageModuleList filterColumns = e as SolutionMessageModuleList;
-                    return filterColumns.Subject.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(filterColumns.HtmlMessage) && filterColumns.HtmlMessage.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(filterColumns.ParentMessageSubject) && filterColumns.ParentMessageSubject.ToLower().Contains(filter.ToLower())
+                    SolutionMessageModuleList search = e as SolutionMessageModuleList;
+                    return search.Subject.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.HtmlMessage) && search.HtmlMessage.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.ParentMessageSubject) && search.ParentMessageSubject.ToLower().Contains(filter.ToLower())
                     ;
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }

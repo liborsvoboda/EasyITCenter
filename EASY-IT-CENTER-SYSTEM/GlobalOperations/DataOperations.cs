@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows.Controls;
@@ -87,6 +89,16 @@ namespace EasyITSystemCenter.GlobalOperations {
                 }
                 return result;
             } catch { return result; }
+        }
+
+
+        /// <summary>
+        /// Convert String To ByteArray
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static byte[] StringToByteArray(string input) {
+            return Encoding.UTF8.GetBytes(input);
         }
     }
 }

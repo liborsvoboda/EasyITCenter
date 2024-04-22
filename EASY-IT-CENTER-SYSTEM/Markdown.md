@@ -1,0 +1,143 @@
+https://github.com/RHEAGROUP/docupanel
+
+umi pekne zobrazit dokumntaci 
+
+
+https://nugetmusthaves.com/Package/Gorgon.Editor.API
+HLEDAT ZDE  hitova reseni na vse
+
+
+
+
+
+
+
+---
+### Plánované ůlohy system WINDOWS a Správa Počítače
+
+přidat agendu správa Počítače a v ní je možnost přidat   
+otevřtít nástroje ze systému
+
+např:   
+    // Create a new task
+    const string taskName = "Test";
+    Task t = TaskService.Instance.AddTask(taskName,
+        new TimeTrigger() {
+            StartBoundary = DateTime.Now + TimeSpan.FromHours(1),
+            Enabled = false
+        },
+        new ExecAction("notepad.exe", "c:\\test.log", "C:\\"));
+
+    //https://nugetmusthaves.com/Package?page=3&q=editor  EDITORY
+
+    // https://github.com/dahall/TaskScheduler/wiki/Examples#Complex-example  
+    //zaimplmentovat
+
+    // Edit task and re-register if user clicks Ok
+    TaskEditDialog editorForm = new TaskEditDialog();
+    editorForm.Editable = true;
+    editorForm.RegisterTaskOnAccept = true;
+    editorForm.Initialize(t);
+    // ** The four lines above can be replaced by using the full constructor
+    // TaskEditDialog editorForm = new TaskEditDialog(t, true, true);
+    editorForm.ShowDialog();
+
+---   
+
+Takto Vypadá vývoj v EIS&ESB IT Řešení pro všechny.  
+Právě mě napadl následující popis Řešení Dokumentace
+
+IT Řešení a Dokumentace [EIC&ESB](https://kliknetezde.cz)
+
+### Požadavek implementace Řešení Media Dokument Flow  
+Návrh a zaevidování řešení pro centrální řízení a politiku Dokumentů jako Word, Excel, PDF, HTML   
+s publikací v agendě Dokumenty a na internetu.  
+
+Je to Globální IT Řešení pro všechny.
+
+**Řešení bude obsahovat**   
+
+- tvorbu a agendu dokumentů v systému pro všechny uživatele.    
+- Automatické verzování při uložení   
+- možnost sdílení s vybranými uživateli nebo se všemi.  
+- možnost sledování uživateli, zazílá notifikace o nové verzi  
+- Automatické čištění starší verze při uložení   
+
+1. XAML podporuje vše i AUDIO/Video/3D - vyřešit HTML Exportem    
+   Ale vyžaduje upravit editor na DRAGDROP   
+   s double klikem pro přepis textu   
+2. Nebo Vest Dokumentaci V MD Editoru a exportovat do všech formátů
+   tvorba je již vyřešena v MD dokumentaci
+
+- Nastavení Složky s Dokumenty jako Webová Publikace   
+  tím se provede export do veřejné Webové složky s menu obsahem   
+  všech dokumentů
+- Automaticky Tisk, Export   
+
+**NÁSLEDNĚ ROZŠÍŘIT**   
+
+- TODO přidat možnost sdílení [nova agenda] jako "iframe" s automatickou aktualizací a genorováním vlastní URL pouze pro Dokument = řešení pomocí ServerHTML Module nová Page s vlastníAPI
+  bude tak i řešení pro RSS, NEWS, InfokKanal, WebSocket, Email,Export   
+
+
+**ZDE Postup Implementace:**   
+*https://learn.microsoft.com/en-us/archive/blogs/llobo/
+udělat agendu dokument flow se sdílením, verzováním, sledováním notifikací o nové verzi (postal tem kdo ma zapnuto sledování)
+exportem do XLS,doc, pdf, Image, html, print, copy*
+
+- umí to typ DocumentFlow
+- jeho editor je XAMLPAD/XAMLPADX - lze zobrazovat i na webu   
+a dělat tak i Web stránky   
+
+**Odhadovaná Pracnost MAX 1 týden**   
+
+---  
+
+ a navazujici napad rozsireni SYSTEMU o 
+
+# iMPLEMENTACE XML Editoru pro cokoliv   
+https://github.com/microsoft/XmlNotepad  
+
+a PŘIDRUŽIT I VŠECHNY IMPLEMENTOVANE generatory   
+jako generovani dokumentace z XML, XML->HTML, XML->MD     
+
+----
+microsot knihovna ukazek řešení XAML
+https://learn.microsoft.com/en-us/previous-versions/dotnet/netframework-3.5/bb400848(v=vs.90)
+----
+
+rozsireni pro metro WPF
+https://rehansaeed.com/wpf-metro-part4-elysium-extra/
+
+orchestra dalsi framework example csv editor,log viewer,gant,flexgrid
+https://github.com/WildGums/Orchestra
+
+napr csvtexteditor jde nahrat i jako balicek viz:
+https://github.com/WildGums/CsvTextEditor
+
+SPRAVA PROJEKTU PANOVE
+naji spoustu  WPF objektu třeba instalovani balicku přimo z APP
+PRAVE PRO RIZENI PROEKTU: ANALYTICS,DEPENDENCY GRAPH,ATD
+
+project management a dalsi xamltools umi dat vsechny definice stylu fo jednoho jako default, takze takto by mohlo jit menit styly
+viz: https://github.com/WildGums/XAMLTools
+https://github.com/orgs/WildGums/repositories?type=all
+----
+lokalni telemetrie jednou provzdy i s dashboardem
+https://github.com/dotnet/aspire/tree/main/src/Grafana
+
+****
+aspire řešení pro distribuci balíčků včetně dasboardu
+https://github.com/dotnet/aspire/tree/main
+včetně metrik a všeho
+samostatné řešení
+a do vlastniho projektu se nahraji opentelemetry balicky pro sledovani
+
+viz:
+https://medium.com/@asimmon/net-aspire-dashboard-is-the-best-tool-to-visualize-your-opentelemetry-data-during-local-development-88f8e182c528
+----
+
+
+
+
+

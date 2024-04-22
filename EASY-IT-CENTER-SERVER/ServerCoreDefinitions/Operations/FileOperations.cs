@@ -13,9 +13,7 @@
                     CreatePath(ServerRuntimeData.Setting_folder);
                     CopyFile(System.IO.Path.Combine(ServerRuntimeData.Startup_path, ServerRuntimeData.DataPath, ServerRuntimeData.ConfigFile), System.IO.Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile));
                 }
-                if (!CheckDirectory(ServerRuntimeData.UserPath)) {
-                    CreatePath(ServerRuntimeData.UserPath);
-                }
+                if (!CheckDirectory(ServerRuntimeData.UserPath)) { CreatePath(ServerRuntimeData.UserPath); }
             } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
         }
 
@@ -24,9 +22,7 @@
         /// </summary>
         /// <param name="file">The file.</param>
         /// <returns></returns>
-        public static bool CheckFile(string file) {
-            return File.Exists(file);
-        }
+        public static bool CheckFile(string file) { return File.Exists(file);}
 
         /// <summary>
         /// Prepared Method for Files Copy
@@ -102,9 +98,7 @@
         /// <param name="file"></param>
         /// <returns></returns>
         public static bool CreateFile(string file) {
-            if (!File.Exists(file))
-                File.Create(file).Close();
-
+            if (!File.Exists(file)) { File.Create(file).Close(); }
             return CheckFile(file);
         }
 
@@ -114,10 +108,11 @@
         /// <param name="file">   The file.</param>
         /// <param name="content">The content.</param>
         public static void WriteToFile(string file, string content) {
-            CreateFile(file);
-            StreamWriter objWriter = new StreamWriter(file, true);
-            objWriter.WriteLine(content);
-            objWriter.Close();
+            if (CreateFile(file)) {
+                StreamWriter objWriter = new StreamWriter(file, true);
+                objWriter.WriteLine(content);
+                objWriter.Close();
+            }
         }
 
         /// <summary>

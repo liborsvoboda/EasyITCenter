@@ -28,6 +28,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Wpf.Ui.Appearance;
 
 
 namespace EasyITSystemCenter {
@@ -271,6 +272,13 @@ namespace EasyITSystemCenter {
                 InitializeComponent();
                 SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
                 Title = Resources["appName"].ToString();
+
+
+
+                //https://github.com/lepoco/wpfui
+                //ApplicationThemeManager.Apply(this);
+
+
 
                 //Startup Setup MainWindow
                 ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(DependencyObject), new FrameworkPropertyMetadata(int.MaxValue));
