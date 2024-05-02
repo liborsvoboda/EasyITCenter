@@ -58,12 +58,12 @@ namespace EasyITCenter.DBModel
             ProviderAutoGenServerReqLists = new HashSet<ProviderAutoGenServerReqList>();
             ProviderGeneratedLicenseLists = new HashSet<ProviderGeneratedLicenseList>();
             ProviderGeneratedToolLists = new HashSet<ProviderGeneratedToolList>();
-            ServerBrowsablePathLists = new HashSet<ServerBrowsablePathList>();
             ServerCorsDefAllowedOriginLists = new HashSet<ServerCorsDefAllowedOriginList>();
             ServerHealthCheckTaskLists = new HashSet<ServerHealthCheckTaskList>();
             ServerLiveDataMonitorLists = new HashSet<ServerLiveDataMonitorList>();
             ServerModuleAndServiceLists = new HashSet<ServerModuleAndServiceList>();
             ServerSettingLists = new HashSet<ServerSettingList>();
+            ServerStaticOrMvcDefPathLists = new HashSet<ServerStaticOrMvcDefPathList>();
             ServerToolPanelDefinitionLists = new HashSet<ServerToolPanelDefinitionList>();
             ServerToolTypeLists = new HashSet<ServerToolTypeList>();
             SolutionEmailTemplateLists = new HashSet<SolutionEmailTemplateList>();
@@ -236,8 +236,6 @@ namespace EasyITCenter.DBModel
         [InverseProperty("User")]
         public virtual ICollection<ProviderGeneratedToolList> ProviderGeneratedToolLists { get; set; }
         [InverseProperty("User")]
-        public virtual ICollection<ServerBrowsablePathList> ServerBrowsablePathLists { get; set; }
-        [InverseProperty("User")]
         public virtual ICollection<ServerCorsDefAllowedOriginList> ServerCorsDefAllowedOriginLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<ServerHealthCheckTaskList> ServerHealthCheckTaskLists { get; set; }
@@ -247,6 +245,8 @@ namespace EasyITCenter.DBModel
         public virtual ICollection<ServerModuleAndServiceList> ServerModuleAndServiceLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<ServerSettingList> ServerSettingLists { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<ServerStaticOrMvcDefPathList> ServerStaticOrMvcDefPathLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<ServerToolPanelDefinitionList> ServerToolPanelDefinitionLists { get; set; }
         [InverseProperty("User")]

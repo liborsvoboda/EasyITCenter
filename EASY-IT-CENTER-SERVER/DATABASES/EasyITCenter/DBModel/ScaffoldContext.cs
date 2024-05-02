@@ -68,12 +68,12 @@ namespace EasyITCenter.DBModel
         public virtual DbSet<ProviderGeneratedLicenseList> ProviderGeneratedLicenseLists { get; set; } = null!;
         public virtual DbSet<ProviderGeneratedToolList> ProviderGeneratedToolLists { get; set; } = null!;
         public virtual DbSet<ProviderViewGeneratedToolRatingList> ProviderViewGeneratedToolRatingLists { get; set; } = null!;
-        public virtual DbSet<ServerBrowsablePathList> ServerBrowsablePathLists { get; set; } = null!;
         public virtual DbSet<ServerCorsDefAllowedOriginList> ServerCorsDefAllowedOriginLists { get; set; } = null!;
         public virtual DbSet<ServerHealthCheckTaskList> ServerHealthCheckTaskLists { get; set; } = null!;
         public virtual DbSet<ServerLiveDataMonitorList> ServerLiveDataMonitorLists { get; set; } = null!;
         public virtual DbSet<ServerModuleAndServiceList> ServerModuleAndServiceLists { get; set; } = null!;
         public virtual DbSet<ServerSettingList> ServerSettingLists { get; set; } = null!;
+        public virtual DbSet<ServerStaticOrMvcDefPathList> ServerStaticOrMvcDefPathLists { get; set; } = null!;
         public virtual DbSet<ServerToolPanelDefinitionList> ServerToolPanelDefinitionLists { get; set; } = null!;
         public virtual DbSet<ServerToolTypeList> ServerToolTypeLists { get; set; } = null!;
         public virtual DbSet<SolutionEmailTemplateList> SolutionEmailTemplateLists { get; set; } = null!;
@@ -823,15 +823,6 @@ namespace EasyITCenter.DBModel
                 entity.ToView("ProviderViewGeneratedToolRatingList");
             });
 
-            modelBuilder.Entity<ServerBrowsablePathList>(entity =>
-            {
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.ServerBrowsablePathLists)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ServerBrowsablePathList_UserList");
-            });
-
             modelBuilder.Entity<ServerCorsDefAllowedOriginList>(entity =>
             {
                 entity.HasOne(d => d.User)
@@ -875,6 +866,15 @@ namespace EasyITCenter.DBModel
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ServerSettingList_SolutionUserList");
+            });
+
+            modelBuilder.Entity<ServerStaticOrMvcDefPathList>(entity =>
+            {
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.ServerStaticOrMvcDefPathLists)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ServerStaticOrMvcDefPathList_UserList");
             });
 
             modelBuilder.Entity<ServerToolPanelDefinitionList>(entity =>

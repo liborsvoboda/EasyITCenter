@@ -54,7 +54,7 @@ namespace EasyITCenter {
             #endregion Server WebServer
 
             #region Server Core & Security Web
-
+            
             ServerConfigurationServices.ConfigureCookie(ref services);
             ServerConfigurationServices.ConfigureControllers(ref services);
             ServerConfigurationServices.ConfigureAuthentication(ref services);
@@ -116,8 +116,17 @@ namespace EasyITCenter {
             }
 
             //Aplied new Working Style For Files Makdow, Html, Editor, Images,
-            app.Use(async (HttpContext context, Func<Task> next) => { await next(); 
-                string requestPath = context.Request.Path.ToString().ToLower();bool redirected =false;
+            app.Use(async (HttpContext context, Func<Task> next) => { await next();
+                string requestPath = context.Request.Path.ToString().ToLower(); bool redirected = false;
+
+                //Solve Token Logic By Add Token to Request 
+                ServerWebPagesToken? serverWebPagesToken = null; string token = context.Request.Cookies.FirstOrDefault(a => a.Key == "ApiToken").Value;
+                if (token == null && context.Request.Headers.Authorization.ToString().Length > 0) { token = context.Request.Headers.Authorization.ToString().Substring(7); }
+                if (token != null) {
+                    serverWebPagesToken = CoreOperations.CheckTokenValidityFromString(token);
+                    if (serverWebPagesToken.IsValid) { context.User.AddIdentities(serverWebPagesToken.UserClaims.Identities); try { context.Items.Add(new KeyValuePair<object, object>("ServerWebPagesToken", serverWebPagesToken)); } catch { } }
+                }
+
 
                 //TODO server-users security for content
 
@@ -130,12 +139,10 @@ namespace EasyITCenter {
 
 
                 //Excluded Urls For Server Browsing From Page Settings, redirected Defined paths
-                //TODO move to Local Dials + New Agenda
-                if (requestPath.Equals("/") || requestPath.StartsWith("/downloads") || requestPath.StartsWith("/server") || requestPath.StartsWith("/metro")
-                || requestPath.StartsWith("/portal") || requestPath.StartsWith("/docportal") || requestPath.StartsWith("/servermodules")
-                || requestPath.StartsWith("/docs") || requestPath.StartsWith("/eic&esbcodebrowser")
-                || context.Response.StatusCode == StatusCodes.Status200OK || context.Response.StatusCode == StatusCodes.Status302Found)
-                { return; }
+                if (DbOperations.CheckStaticOrMvcDefPath(requestPath).Count() > 0
+                || context.Response.StatusCode == StatusCodes.Status200OK || context.Response.StatusCode == StatusCodes.Status302Found
+                ) { return; }
+
 
 
                 //Start DocPortal by Link Without index.md
@@ -184,7 +191,7 @@ namespace EasyITCenter {
             if (ServerConfigSettings.ConfigServerStartupOnHttps) { app.UseHttpsRedirection(); }
             app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, ContentTypeProvider = staticFilesProvider, HttpsCompression = HttpsCompressionMode.Compress, DefaultContentType = "text/html" });
 
-
+            //TODO Websites and subdomains
             List<SolutionWebsiteList> websites;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
                 websites = new EasyITCenterContext().SolutionWebsiteLists.Where(a => a.Active).ToList();
@@ -215,7 +222,6 @@ namespace EasyITCenter {
             app.UseResponseCompression();
             app.UseAuthentication();
             app.UseAuthorization();
-
             ServerEnablingServices.EnableCors(ref app);
             ServerEnablingServices.EnableWebSocket(ref app);
             ServerEnablingServices.EnableEndpoints(ref app);
@@ -223,19 +229,16 @@ namespace EasyITCenter {
             ServerEnablingServices.EnableRssFeed(ref app);
 
             if (ServerConfigSettings.WebBrowserContentEnabled) {
-                //These commented setting enable full browsing
-                //app.UseDirectoryBrowser(); app.UseFileServer(enableDirectoryBrowsing: true);
-
-                List<ServerBrowsablePathList> data;
-                using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                    data = new EasyITCenterContext().ServerBrowsablePathLists.Where(a => a.Active).ToList();
-                }
-
+                
+                //Browsable Path Definitions
+                List<ServerStaticOrMvcDefPathList> data;
+                using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) 
+                    { data = new EasyITCenterContext().ServerStaticOrMvcDefPathLists.Where(a => a.IsBrowsable && a.Active).ToList(); }
                 data.ForEach(path => {
                     try {
                         app.UseFileServer(new FileServerOptions {
-                            FileProvider = new PhysicalFileProvider(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, path.WebRootPath)),
-                            RequestPath = "/" + (path.AliasPath != null && path.AliasPath.Length > 0 ? path.AliasPath : path.WebRootPath),
+                            FileProvider = new PhysicalFileProvider(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, FileOperations.ConvertSystemFilePathFromUrl(path.WebRootSubPath))),
+                            RequestPath = (path.AliasPath != null && path.AliasPath.Length > 0 ? (path.AliasPath.StartsWith("/") ? path.AliasPath : "/" + path.AliasPath) : (path.WebRootSubPath.StartsWith("/") ? path.WebRootSubPath : "/" + path.WebRootSubPath)),
                             EnableDirectoryBrowsing = true,
                         }); ;
                     } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }

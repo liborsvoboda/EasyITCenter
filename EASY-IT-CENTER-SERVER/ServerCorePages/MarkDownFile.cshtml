@@ -37,14 +37,20 @@
 <script type="text/javascript" src="~/ServerCoreTools/markdown/js/globalScript.js"></script>
 <script type="text/javascript" src="~/ServerCoreTools/markdown/highlightjs/highlight.pack.js"></script>
 <script type="text/javascript" src="~/ServerCoreTools/markdown/highlightjs/highlightjs-badge.js"></script>
+<script type="text/javascript" src="~/ServerCoreTools/markdown/highlightjs/mermaid.min.cdn.js"></script>
 
 <script>
+    async function Mermaid() { try { await mermaid.run({ nodes: document.querySelectorAll('.class-mermaid'), }); } catch (err) { } }
+
     var pres = document.querySelectorAll("pre>code"); pres = document.querySelectorAll("code");
     for (var i = 0; i < pres.length; i++) { hljs.highlightBlock(pres[i]); }
     window.highlightJsBadge();
     $(document).ready(function () {
         $("#docLoader").hide();
-        setTimeout(() => { googleTranslateElementInit(); }, 3000);
+        setTimeout(() => { 
+            googleTranslateElementInit(); 
+            Mermaid();
+        }, 3000);
     });
 </script>
 

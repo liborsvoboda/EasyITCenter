@@ -3,7 +3,7 @@
     [Authorize]
     [ApiController]
     [Route("EasyITCenterServerHealthCheckTaskList")]
-    public class EasyITCenterServerHealthCheckTaskListApi : ControllerBase {
+    public class ServerHealthCheckTaskListApi : ControllerBase {
 
         [HttpGet("/EasyITCenterServerHealthCheckTaskList")]
         public async Task<string> GetServerHealthCheckTaskList() {

@@ -2,7 +2,7 @@
 
     [ApiController]
     [Route("EasyITCenterServerSettingList")]
-    public class EasyITCenterServerSettingListApi : ControllerBase {
+    public class ServerSettingListApi : ControllerBase {
 
         [HttpGet("/EasyITCenterServerSettingList")]
         public async Task<string> GetServerSettingList() {

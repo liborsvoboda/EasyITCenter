@@ -61,12 +61,12 @@
         EasyITCenterLicSrvUsedLicenseList,
 
         /*Server Administartion Setting APIs*/
-        EasyITCenterServerBrowsablePathList,
         EasyITCenterServerCorsDefAllowedOriginList,
         EasyITCenterServerHealthCheckTaskList,
         EasyITCenterServerLiveDataMonitorList,
         ServerModuleAndServiceList,
         EasyITCenterServerSettingList,
+        EasyITCenterServerStaticOrMvcDefPathList,
         EasyITCenterServerToolPanelDefinitionList,
         EasyITCenterServerToolTypeList,
         EasyITCenterSolutionEmailerHistoryList,

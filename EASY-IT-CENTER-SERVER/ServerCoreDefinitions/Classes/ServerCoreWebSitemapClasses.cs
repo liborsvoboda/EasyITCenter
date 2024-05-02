@@ -102,22 +102,6 @@ namespace EasyITCenter.ServerCoreStructure {
             return new SitemapNode("http://www.example.com/videos/some_video_landing_page.html") { Video = CreateSitemapVideoWithRequiredProperties() };
         }
 
-        public SitemapNode CreateSitemapNodeWithNewsRequiredProperties() {
-            return new SitemapNode("http://www.example.org/business/article55.html") {
-                News = new SitemapNews(new NewsPublication("The Example Times", "en"), new DateTime(2014, 11, 5, 0, 0, 0, DateTimeKind.Utc), "Companies A, B in Merger Talks")
-            };
-        }
-
-        public SitemapNode CreateSitemapNodeWithNewsAllProperties() {
-            return new SitemapNode("http://www.example.org/business/article55.html") {
-                News = new SitemapNews(new NewsPublication("The Example Times", "en"), new DateTime(2014, 11, 5, 0, 0, 0, DateTimeKind.Utc), "Companies A, B in Merger Talks") {
-                    Access = NewsAccess.Subscription,
-                    Genres = "PressRelease, Blog",
-                    Keywords = "business, merger, acquisition, A, B",
-                    StockTickers = "NASDAQ:A, NASDAQ:B"
-                }
-            };
-        }
 
         public SitemapModel CreateSitemapWithTranslations() {
             var sitemapNodes = new List<SitemapNode>

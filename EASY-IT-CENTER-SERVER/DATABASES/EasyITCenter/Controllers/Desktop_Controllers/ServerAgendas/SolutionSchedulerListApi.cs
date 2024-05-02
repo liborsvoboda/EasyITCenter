@@ -3,7 +3,7 @@
     [Authorize]
     [ApiController]
     [Route("EasyITCenterSolutionSchedulerList")]
-    public class EasyITCenterSolutionSchedulerListApi : ControllerBase {
+    public class SolutionSchedulerListApi : ControllerBase {
 
         [HttpGet("/EasyITCenterSolutionSchedulerList")]
         public async Task<string> GetSolutionSchedulerList() {

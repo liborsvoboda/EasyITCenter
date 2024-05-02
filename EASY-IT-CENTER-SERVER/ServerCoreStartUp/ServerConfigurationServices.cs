@@ -239,6 +239,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
 
 
 
+
         /// <summary>
         /// Server Core: Configures the Transient.
         /// </summary>

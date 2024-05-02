@@ -129,7 +129,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                                 try {
                                     if (FileOperations.CheckDirectory(Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath))) {
                                         config.LiveReloadEnabled = true;
-                                        config.ServerRefreshTimeout = 1000;
+                                        config.ServerRefreshTimeout = 10000;
                                         config.FolderToMonitor = Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath);
                                         if (monitor.FileExtensions.Length > 0) { config.ClientFileExtensions = monitor.FileExtensions; }
                                     }

@@ -6,6 +6,10 @@ umi pekne zobrazit dokumntaci
 https://nugetmusthaves.com/Package/Gorgon.Editor.API
 HLEDAT ZDE  hitova reseni na vse
 
+a ZDE HLEDAT HOTOVA Řešení
+https://www.nuget.org/
+
+
 
 
 
@@ -44,6 +48,7 @@ např:
 
 ---   
 
+
 Takto Vypadá vývoj v EIS&ESB IT Řešení pro všechny.  
 Právě mě napadl následující popis Řešení Dokumentace
 
@@ -77,7 +82,7 @@ Je to Globální IT Řešení pro všechny.
 **NÁSLEDNĚ ROZŠÍŘIT**   
 
 - TODO přidat možnost sdílení [nova agenda] jako "iframe" s automatickou aktualizací a genorováním vlastní URL pouze pro Dokument = řešení pomocí ServerHTML Module nová Page s vlastníAPI
-  bude tak i řešení pro RSS, NEWS, InfokKanal, WebSocket, Email,Export   
+  bude tak i řešení pro RSS, NEWS, InfoKanal, WebSocket, Email,Export   
 
 
 **ZDE Postup Implementace:**   
@@ -95,15 +100,17 @@ a dělat tak i Web stránky
 
  a navazujici napad rozsireni SYSTEMU o 
 
-# iMPLEMENTACE XML Editoru pro cokoliv   
+# Implementace XML Editoru pro cokoliv   
 https://github.com/microsoft/XmlNotepad  
 
 a PŘIDRUŽIT I VŠECHNY IMPLEMENTOVANE generatory   
 jako generovani dokumentace z XML, XML->HTML, XML->MD     
 
-----
+----    
+
 microsot knihovna ukazek řešení XAML
 https://learn.microsoft.com/en-us/previous-versions/dotnet/netframework-3.5/bb400848(v=vs.90)
+
 ----
 
 rozsireni pro metro WPF
@@ -122,11 +129,12 @@ PRAVE PRO RIZENI PROEKTU: ANALYTICS,DEPENDENCY GRAPH,ATD
 project management a dalsi xamltools umi dat vsechny definice stylu fo jednoho jako default, takze takto by mohlo jit menit styly
 viz: https://github.com/WildGums/XAMLTools
 https://github.com/orgs/WildGums/repositories?type=all
+
 ----
+
 lokalni telemetrie jednou provzdy i s dashboardem
 https://github.com/dotnet/aspire/tree/main/src/Grafana
 
-****
 aspire řešení pro distribuci balíčků včetně dasboardu
 https://github.com/dotnet/aspire/tree/main
 včetně metrik a všeho
@@ -135,8 +143,17 @@ a do vlastniho projektu se nahraji opentelemetry balicky pro sledovani
 
 viz:
 https://medium.com/@asimmon/net-aspire-dashboard-is-the-best-tool-to-visualize-your-opentelemetry-data-during-local-development-88f8e182c528
+
 ----
 
+
+media knihovny 204repos Avalonia/animace atd
+https://github.com/wieslawsoltes?tab=repositories
+
+405 repos
+https://github.com/jsuarezruiz?tab=repositories
+
+----
 
 
 

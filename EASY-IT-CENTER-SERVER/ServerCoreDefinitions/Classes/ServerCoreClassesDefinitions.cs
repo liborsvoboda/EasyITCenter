@@ -70,6 +70,7 @@
     public enum ServerLocalDbDials {
         SystemTranslationLists,
         ServerModuleAndServiceLists,
+        ServerStaticOrMvcDefPathLists,
         WebCoreFileLists,
         WebGlobalPageBlockLists
     }

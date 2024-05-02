@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace EasyITSystemCenter.GlobalOperations {
@@ -206,6 +207,21 @@ namespace EasyITSystemCenter.GlobalOperations {
             return Directory.Exists(directory);
         }
 
+
+
+        /// <summary>
+        /// Get Folder Files from Direct Folder
+        /// or FULL Structure by fileMask
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="fileMask"></param>
+        /// <param name="searchOption"></param>
+        /// <returns></returns>
+        public static List<string> GetPathFiles(string sourcePath, string fileMask, SearchOption searchOption) {
+            return Directory.GetFiles(sourcePath, fileMask, searchOption).ToList();
+        }
+        
+        
         /// <summary>
         /// Copy Full directory.
         /// </summary>

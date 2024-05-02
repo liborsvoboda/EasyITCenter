@@ -210,41 +210,41 @@ Systém již obsahuje přes 100 formulářů z toho je více než 80% systémov�
 
 1. **Zde je Pák ukázek Unikátnívh Formulářů:**   
 
-[Multi Šablona s cca 10 grafy Form](/ESB/ESBTemplates/MultiMedia/GraphsPage.xaml)  
-[Multi Šablona s cca 10 grafy Funkce](/ESB/ESBTemplates/MultiMedia/GraphsPage.xaml.cs)   
+[Multi Šablona s cca 10 grafy Form](/ESB/ESBTemplates/MultiMedia/GraphsPage_xaml)  
+[Multi Šablona s cca 10 grafy Funkce](/ESB/ESBTemplates/MultiMedia/GraphsPage_xaml_cs)   
 
-[Prohlížeč Multi Typů Formátů Dokumentů Form](/ESB/ESBTemplates/MultiMedia/TemplateDocumentViewPage.xaml)  
-[Prohlížeč Multi Typů Formátů Dokumentů Funkce](/ESB/ESBTemplates/MultiMedia/TemplateDocumentViewPage.xaml.cs)   
+[Prohlížeč Multi Typů Formátů Dokumentů Form](/ESB/ESBTemplates/MultiMedia/TemplateDocumentViewPage_xaml)  
+[Prohlížeč Multi Typů Formátů Dokumentů Funkce](/ESB/ESBTemplates/MultiMedia/TemplateDocumentViewPage_xaml_cs)   
 
-[Přehrávač Videí Form](/ESB/ESBTemplates/MultiMedia/TemplateVideoPage.xaml)  
-[Přehrávač Videí Funkce](/ESB/ESBTemplates/MultiMedia/TemplateVideoPage.xaml.cs)   
+[Přehrávač Videí Form](/ESB/ESBTemplates/MultiMedia/TemplateVideoPage_xaml)  
+[Přehrávač Videí Funkce](/ESB/ESBTemplates/MultiMedia/TemplateVideoPage_xaml_cs)   
 
-[Prohlížeč 3D Formátů Form](/ESB/ESBTemplates/MultiMedia/TemplateSTLPage.xaml)  
-[Prohlížeč 3D Formátů Funkce](/ESB/ESBTemplates/MultiMedia/TemplateSTLPage.xaml.cs)   
+[Prohlížeč 3D Formátů Form](/ESB/ESBTemplates/MultiMedia/TemplateSTLPage_xaml)  
+[Prohlížeč 3D Formátů Funkce](/ESB/ESBTemplates/MultiMedia/TemplateSTLPage_xaml_cs)   
 
-[Web Prohlížeč Form](/ESB/ESBTemplates/MultiMedia/TemplateWebViewPage.xaml)    
-[Web Prohlížeč Funkce](/ESB/ESBTemplates/MultiMedia/TemplateWebViewPage.xaml.cs)   
+[Web Prohlížeč Form](/ESB/ESBTemplates/MultiMedia/TemplateWebViewPage_xaml)    
+[Web Prohlížeč Funkce](/ESB/ESBTemplates/MultiMedia/TemplateWebViewPage_xaml_cs)   
 
 2. **a Zde Systémové Formuláře:**  
 všimněte si že Fnkční soubor, je skoro vždy stejný - protože se pořád dělá to samé   
 
-[Šablona Data Pohledu a Editace Form](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationPage.xaml)    
-[Šablona Data Pohledu a Editace  Funkce](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationPage.xaml.cs)   
+[Šablona Data Pohledu a Editace Form](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationPage_xaml)    
+[Šablona Data Pohledu a Editace  Funkce](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationPage_xaml_cs)   
 
-[Šablona Data Pohledu Form](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationViewPage.xaml)    
-[Šablona Data Pohledu Funkce](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationViewPage.xaml.cs)   
+[Šablona Data Pohledu Form](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationViewPage_xaml)    
+[Šablona Data Pohledu Funkce](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationViewPage_xaml_cs)   
 
-[Šablona Data Pohledu a Editace s Podičem Form](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithParentPage.xaml)    
-[Šablona Data Pohledu a Editace s Podičem Funkce](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithParentPage.xaml.cs)   
+[Šablona Data Pohledu a Editace s Podičem Form](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationWithParentPage_xaml)    
+[Šablona Data Pohledu a Editace s Podičem Funkce](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationWithParentPage_xaml_cs)   
 
-[Šablona Data Pohledu a Editace Form](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationPage.xaml)    
-[Šablona Data Pohledu a Editace  Funkce](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationPage.xaml.cs)   
+[Šablona Data Pohledu a Editace Form](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationPage_xaml)    
+[Šablona Data Pohledu a Editace  Funkce](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationPage_xaml_cs)   
 
-[Šablona Data Pohledu a Editace s Celým Rodič Form + Form](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubPage.xaml.cs)    
-[Šablona Data Pohledu a Editace s Celým Rodič Form + Funkce](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubPage.xaml.cs)   
+[Šablona Data Pohledu a Editace s Celým Rodič Form + Form](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationWithSubPage_xaml_cs)    
+[Šablona Data Pohledu a Editace s Celým Rodič Form + Funkce](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationWithSubPage_xaml_cs)   
 
-[Šablona Data Pohledu s Celým Rodičem Form](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubViewPage.xaml)    
-[Šablona Data Pohledu s Celým Rodičem Funkce](/ESB/ServerCorePages/System/TemplateClassListAutoDBTranslationWithSubViewPage.xaml.cs)   
+[Šablona Data Pohledu s Celým Rodičem Form](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationWithSubViewPage_xaml)    
+[Šablona Data Pohledu s Celým Rodičem Funkce](/ESB/ESBTemplates/System/TemplateClassListAutoDBTranslationWithSubViewPage_xaml_cs)   
 
 
 A tím jsme Vyčerpali Předbolby pro 90% Všech Systémů na Celé Planetě
@@ -262,10 +262,10 @@ Tyto 2 Definice zajišŤují kopletní Komunikaci Celého Systému.
 4. **Datové Definice Jadra Systému, které je již hotové**   
 Datové Definice jádra a Modulů, Doplňků
 
-[DDatasety Systému](/ESB/GlobalClasses/ESB/GlobalClasses.cs)    
-[Číselníky Systému - Bude přesunuto do DB](/ESB/GlobalClasses/GlobalEnumSetDefinitions.cs)   
-[Unikatní Kolekce - Galerie](/ESB/GlobalClasses/PhotoCollectionClasses.cs)   
-[Dynamickla Kolekce](/ESB/GlobalClasses/ConcurrentObservableList.cs)
+[DDatasety Systému](/ESB/GlobalClasses/ESB/GlobalClasses_cs)    
+[Číselníky Systému - Bude přesunuto do DB](/ESB/GlobalClasses/GlobalEnumSetDefinitions_cs)   
+[Unikatní Kolekce - Galerie](/ESB/GlobalClasses/PhotoCollectionClasses_cs)   
+[Dynamickla Kolekce](/ESB/GlobalClasses/ConcurrentObservableList_cs)
 
 Tyto Datové Definice stačí pro provoz Systému o více jak 100 Agendách
 
@@ -273,23 +273,23 @@ Tyto Datové Definice stačí pro provoz Systému o více jak 100 Agendách
 Lze Implemetovat nespočet Generátorů Zde jsou zatím první z nich,
 a jsou plně kompatibilní s Webovou Technologií METRO a zobrazují se tedy i na Webu 
 
-[Generátor Ikon](/ESB/GlobalGenerators/IconMaker.cs)  
-[Generator Obrázků](/ESB/GlobalGenerators/ImageElementGenerator.cs)   
+[Generátor Ikon](/ESB/GlobalGenerators/IconMaker_cs)  
+[Generator Obrázků](/ESB/GlobalGenerators/ImageElementGenerator_cs)   
 
 
 5. **Systémové Funkcionality - Operace**   
 Stajně jako u Projektu Serveru jsou zde rozloženy Funkcionality podle povahy.  
 Dobře se s nimi pracuje, a hned je jasné kde je hledat.   
 
-[Komunikační Operace](/ESB/GlobalOperations/CommOperations.cs)  
-[Datové Operace](/ESB/GlobalOperations/DataOperations.cs)  
-[Databázové Operace](/ESB/GlobalOperations/DBOperations.cs)  
-[Formulářové Operace](/ESB/GlobalOperations/FormOperations.cs)  
-[Souborové Operace](/ESB/GlobalOperations/FileOperations.cs)  
-[Matematické Operace](/ESB/GlobalOperations/MathTypeOperations.cs)  
-[Media Operace](/ESB/GlobalOperations/MediaOperations.cs)  
-[Systémové Operace](/ESB/GlobalOperations/SystemOperations.cs)  
-[Operace Modulů](/ESB/GlobalOperations/ToolsOperations.cs)  
+[Komunikační Operace](/ESB/GlobalOperations/CommOperations_cs)  
+[Datové Operace](/ESB/GlobalOperations/DataOperations_cs)  
+[Databázové Operace](/ESB/GlobalOperations/DBOperations_cs)  
+[Formulářové Operace](/ESB/GlobalOperations/FormOperations_cs)  
+[Souborové Operace](/ESB/GlobalOperations/FileOperations_cs)  
+[Matematické Operace](/ESB/GlobalOperations/MathTypeOperations_cs)  
+[Media Operace](/ESB/GlobalOperations/MediaOperations_cs)  
+[Systémové Operace](/ESB/GlobalOperations/SystemOperations_cs)  
+[Operace Modulů](/ESB/GlobalOperations/ToolsOperations_cs)  
 
 Když si je prohlédnete zjistíte že jich není moc, zato dohromady
 dokážou zajistit Tvorbu či provedení Čehokoliv. 
@@ -303,17 +303,17 @@ Je to totiž proto, že Multimediální Povaha Celého Systému Dokáže pracova
 Typů Objektů pomocí jednihé Objektu. A tím se vše neskutečně zjednodušilo.
 
 
-[Doplňující Definice Vlastích Polí](/ESB/GlobalStylesLibrary/ObjectDefinitionsLibrary/CustomObjectDefaultKeySetStyles.xaml)  
-[Globální Definice Metro Stylu](/ESB/GlobalStylesLibrary/ObjectDefinitionsLibrary/MetroObjectDefaultStyles.xaml)  
-[Standartní Definice](/ESB/GlobalStylesLibrary/ObjectDefinitionsLibrary/StandardObjectDefaultStyles.xaml)  
+[Doplňující Definice Vlastích Polí](/ESB/GlobalStylesLibrary/ObjectDefinitionsLibrary/CustomObjectDefaultKeySetStyles_xaml)  
+[Globální Definice Metro Stylu](/ESB/GlobalStylesLibrary/ObjectDefinitionsLibrary/MetroObjectDefaultStyles_xaml)  
+[Standartní Definice](/ESB/GlobalStylesLibrary/ObjectDefinitionsLibrary/StandardObjectDefaultStyles_xaml)  
 
 programátorské definice Stylů:
-[Kombinování Stylů](/ESB/GlobalStylesLibrary/GlobalUsingStyleExtensions.cs)  
-[Styly pro programovou Aplikaci](/ESB/GlobalStylesLibrary/GlobalProgramaticStyleDefinitions.cs)  
+[Kombinování Stylů](/ESB/GlobalStylesLibrary/GlobalUsingStyleExtensions_cs)  
+[Styly pro programovou Aplikaci](/ESB/GlobalStylesLibrary/GlobalProgramaticStyleDefinitions_cs)  
 
 a ještě styly Externích Nástrojů:
-[MarkDown Styly](/ESB/GlobalStylesLibrary/Tools/Markdown/MarkdownStylesLibrary.xaml)  
-[Knihovna Stylů pro Moduly a Nástroje](/ESB/GlobalStylesLibrary/Tools/ToolsStylesLibrary.xaml)  
+[MarkDown Styly](/ESB/GlobalStylesLibrary/Tools/Markdown/MarkdownStylesLibrary_xaml)  
+[Knihovna Stylů pro Moduly a Nástroje](/ESB/GlobalStylesLibrary/Tools/ToolsStylesLibrary_xaml)  
 
 Toto stačí Pro jednotný a přitom bohatý Vzhled Celého Systémů.
 Chcete přece aby systém vypadal stejně sa ne každy formulář jinak :)
@@ -328,8 +328,8 @@ Navíc Tentýž slovník následně používá i Server. Slovníky se jen vyexpo
 do Systému i pro možnost Offline použití - můžete pracovat i když nejede Server.
 Ono se to pak dodatečně Uloží :)
 
-[Čsský Slovník](/ESB/Languages/StringResources.cs-CZ.xaml)  
-[Anglický Slovník](/ESB/Languages/StringResources.xaml)  
+[Český Slovník](/ESB/Languages/StringResources_cs-CZ_xaml)  
+[Anglický Slovník](/ESB/Languages/StringResources_xaml)  
 
 A to je Celá Struktura Systému.
 
@@ -337,8 +337,8 @@ A to je Celá Struktura Systému.
 A Zde si můžete prohlédnout jak Vypadá Jádro systému, které vše Ovladá z 1 Bodu.
 Zde se spojují všechny formuláře, moduly, Data, Dotazy a Výsledky, a řídí se jejich zpracování
 
-[Centrální Formulář](/ESB/SystemWindow.xaml)  
-[Centrální Systém](/ESB/SystemWindow.xaml.cs)  
+[Centrální Formulář](/ESB/SystemWindow_xaml)  
+[Centrální Systém](/ESB/SystemWindow_xaml_cs)  
 
 
 A to je vše. Je to Jednoduché a Pokud Vám to nepřipadá rád pro vás Cokoliv Vyvinu.

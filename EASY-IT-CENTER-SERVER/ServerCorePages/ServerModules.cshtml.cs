@@ -157,7 +157,7 @@ namespace ServerCorePages {
 
             //Load Css Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = DbOperations.GetWebPortalJsCssScripts("css", "multi-lang-layout.").OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("css", "multilang-layout.").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {
@@ -399,7 +399,7 @@ namespace ServerCorePages {
             string? authRole = User.FindFirstValue(ClaimTypes.Role.ToString())?.ToLower();
             //Load Js Section
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
-                data = DbOperations.GetWebPortalJsCssScripts("js", "multi-lang-layout.").OrderBy(a => a.Sequence).ToList();
+                data = DbOperations.GetWebPortalJsCssScripts("js", "multilang-layout.").OrderBy(a => a.Sequence).ToList();
             }
             string insertedPart = "";
             data.ForEach(managedFile => {

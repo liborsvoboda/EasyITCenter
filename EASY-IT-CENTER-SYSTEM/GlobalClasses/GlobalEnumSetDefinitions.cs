@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 
 namespace EasyITSystemCenter.GlobalClasses {
 
+
+    //TODO move ALL to mixed Enums
     internal class SystemLocalEnumSets {
 
         /// <summary>
@@ -36,16 +38,6 @@ namespace EasyITSystemCenter.GlobalClasses {
         /// TODO FOR MOVE TO MICRODIAL
         /// </summary>
 
-        public static ObservableCollection<Language> SpecificationScriptTypes = new ObservableCollection<Language>() {
-            new Language() { Name = "Css", Value = "Css" },
-            new Language() { Name = "Js", Value = "Js" },
-            new Language() { Name = "MinCss", Value = "MinCss" },
-            new Language() { Name = "MinJs", Value = "MinJs" },
-            new Language() { Name = "Image", Value = "Image" },
-            new Language() { Name = "Media", Value = "Media" },
-            new Language() { Name = "Package", Value = "Package" },
-            new Language() { Name = "CustomFile", Value = "CustomFile" },
-        };
 
         public static ObservableCollection<Language> MenuTypes = new ObservableCollection<Language>() {
             new Language() { Name = "Dial", Value = "Dial" },

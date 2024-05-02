@@ -17,6 +17,9 @@
             } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
         }
 
+
+
+
         /// <summary>
         /// Checks the file.
         /// </summary>
@@ -161,6 +164,21 @@
         public static bool CheckDirectory(string directory) {
             return Directory.Exists(directory);
         }
+
+
+
+        /// <summary>
+        /// Get Folder Files from Direct Folder
+        /// or FULL Structure by fileMask
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="fileMask"></param>
+        /// <param name="searchOption"></param>
+        /// <returns></returns>
+        public static List<string> GetPathFiles(string sourcePath, string fileMask, SearchOption searchOption) {
+            return Directory.GetFiles(sourcePath, fileMask, searchOption).ToList();
+        }
+
 
         /// <summary>
         /// Copy Full directory.

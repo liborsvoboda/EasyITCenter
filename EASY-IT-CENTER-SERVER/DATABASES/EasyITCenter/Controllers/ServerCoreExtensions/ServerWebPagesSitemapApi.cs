@@ -1,4 +1,8 @@
-﻿using SimpleMvcSitemap;
+﻿using IdentityModel.Client;
+using SimpleMvcSitemap;
+using SimpleMvcSitemap.Images;
+using SimpleMvcSitemap.News;
+using System.Collections.Generic;
 
 namespace EasyITCenter.ServerCoreDBSettings {
 
@@ -43,73 +47,217 @@ namespace EasyITCenter.ServerCoreDBSettings {
             dataBuilder = new SitemapDataBuilder();
         }
 
+        /// <summary>
+        /// SiteMap File Generator
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index() {
-            //Sitemap Types
             return sitemapProvider.CreateSitemapIndex(new SitemapIndexModel(new List<SitemapIndexNode>
             {
-                !ServerConfigSettings.WebSitemapFileEnabled ? null : new SitemapIndexNode(Url.Action("WebPages")),
-                //new SitemapIndexNode(Url.Action("Images")),
+                !ServerConfigSettings.WebSitemapFileEnabled ? null : 
+
+                new SitemapIndexNode(Url.Action("WebDocPortals")),
+                new SitemapIndexNode(Url.Action("DeveloperNews")),
+                new SitemapIndexNode(Url.Action("Images")),
+                new SitemapIndexNode(Url.Action("WebPortal")),
+
+                //TODO Links - Tools
+                //TODO Modules
+                //TODO Message Modul
+                //GitHuB
+
                 //new SitemapIndexNode(Url.Action("Videos")),
-                //new SitemapIndexNode(Url.Action("News")),
                 //new SitemapIndexNode(Url.Action("Translation")),
                 //new SitemapIndexNode(Url.Action("StyleSheet")),
                 //new SitemapIndexNode(Url.Action("Huge")),
             }));
         }
 
-        [Route("webpages")]
-        public ActionResult WebPages() {
+
+        /// <summary>
+        /// Static Web Portal
+        /// </summary>
+        /// <returns></returns>
+        [Route("WebPortal")]
+        public ActionResult WebPortal() {
             List<WebMenuList> data;
-            using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) { data = new EasyITCenterContext().WebMenuLists.Where(a => a.Active && a.Group.Active).ToList(); }
+            using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted }))
+                { data = new EasyITCenterContext().WebMenuLists.Where(a => a.Active && a.Group.Active).OrderBy(a=>a.Group.Sequence).ThenBy(a=>a.Sequence).ToList(); }
             List<SitemapNode> webpagesUrls = new();
 
-            string requestUrl = $"{Request.Scheme}://{Request.Host.Value}/";
-            data.ForEach(webMenu => { webpagesUrls.Add(new SitemapNode(requestUrl + webMenu.Id + "-" + webMenu.Name.Replace(" ", string.Empty)) { LastModificationDate = DateTime.UtcNow.ToLocalTime(),Url = ServerConfigSettings.ServerPublicUrl, ChangeFrequency = ChangeFrequency.Weekly, Priority = 0.8M }); });
-            sitemapProvider.CreateSitemap(new SitemapModel(webpagesUrls));
+            data.ForEach(webMenu => { webpagesUrls.Add(
+                new SitemapNode(ServerConfigSettings.ServerPublicUrl + "/" + webMenu.Id + "-" + webMenu.Name.Replace(" ", string.Empty)) { LastModificationDate = DateTime.UtcNow.ToLocalTime(),
+                Url = ServerConfigSettings.ServerPublicUrl + "/" + webMenu.Id + "-" + webMenu.Name.Replace(" ", string.Empty), ChangeFrequency = ChangeFrequency.Weekly, Priority = 0.8M }); });
+
             return sitemapProvider.CreateSitemap(new SitemapModel(webpagesUrls));
         }
 
-        [Route("images")]
+
+        /// <summary>
+        /// Web Portals 
+        /// </summary>
+        /// <returns></returns>
+        [Route("WebDocPortals")]
+        public ActionResult WebDocPortals() {
+            List<SitemapNode> webpagesUrls = new();
+
+            webpagesUrls.Add(
+                new SitemapNode("EIC&ESB Solution Documentation Portal") {
+                    LastModificationDate = DateTime.UtcNow.ToLocalTime(),
+                    Url = ServerConfigSettings.ServerPublicUrl + "/EIC&ESBdocs/CodeDocs/",
+                    News = new SitemapNews(new NewsPublication("EIC&ESB IT Groupware Solution Documentation Portal", "en"), DateTimeOffset.UtcNow.DateTime, "EasyITcenter & EasySYSTEMbuilder IT Groupware Solution Documentation Portal"),
+
+                    ChangeFrequency = ChangeFrequency.Weekly,
+                    Priority = 0.8M
+                });
+            webpagesUrls.Add(
+                new SitemapNode("EIC&ESB Inteligentni Web Dokumentace") {
+                    LastModificationDate = DateTime.UtcNow.ToLocalTime(),
+                    Url = ServerConfigSettings.ServerPublicUrl + "/server-doc/md-book/book/",
+                    News = new SitemapNews(new NewsPublication("EIC&ESB Inteligentni Web Dokumentace", "cs"), DateTimeOffset.UtcNow.DateTime, "EasyITcenter & EasySYSTEMbuilder Inteligentni Web Dokumentace"),
+                    ChangeFrequency = ChangeFrequency.Weekly,
+                    Priority = 0.8M
+                }
+            );
+            webpagesUrls.Add(
+                new SitemapNode("EIC&ESB Visual Studio Online Code Browser") {
+                    LastModificationDate = DateTime.UtcNow.ToLocalTime(),
+                    Url = ServerConfigSettings.ServerPublicUrl + "/EiC&ESBCodeBrowser/index/index.html",
+                    News = new SitemapNews(new NewsPublication("EIC&ESB Visual Studio Online Code Browser", "en"), DateTimeOffset.UtcNow.DateTime, "EasyITcenter & EasySYSTEMbuilder Visual Studio Online Code Browser"),
+                    ChangeFrequency = ChangeFrequency.Weekly,
+                    Priority = 0.8M
+                }
+            );
+            webpagesUrls.Add(
+                new SitemapNode("EIC&ESB Solution Docs") {
+                LastModificationDate = DateTime.UtcNow.ToLocalTime(),
+                Url = ServerConfigSettings.ServerPublicUrl + "/Docs",
+                News = new SitemapNews(new NewsPublication("Easy List Viewer Documentation EIC&ESB Solution", "cs"), DateTimeOffset.UtcNow.DateTime, "Easy List Viewer Documentation EasyITcenter & EasySYSTEMbuilder Solution"),
+                ChangeFrequency = ChangeFrequency.Weekly,
+                Priority = 0.8M
+                }
+            );
+            webpagesUrls.Add(
+                new SitemapNode("EIC&ESB Solution YouTube PlayList") {
+                    LastModificationDate = DateTime.UtcNow.ToLocalTime(),
+                    Url = "https://www.youtube.com/embed/6ThVBv_diGo?list=PLmE7gP9LTBimNJQ444ypG8HVce23fa2Hb",
+                    News = new SitemapNews(new NewsPublication("EIC&ESB Solution YouTube PlayList", "en"), DateTimeOffset.UtcNow.DateTime, "EasyITcenter & EasySYSTEMbuilder Solution YouTube PlayList"),
+                    ChangeFrequency = ChangeFrequency.Weekly,
+                    Priority = 0.8M
+                }
+            );
+            webpagesUrls.Add(
+                new SitemapNode("EIC&ESB Solution FaceBook") {
+                    LastModificationDate = DateTime.UtcNow.ToLocalTime(),
+                    Url = "https://www.facebook.com/GroupWareSolution",
+                    News = new SitemapNews(new NewsPublication("EIC&ESB Solution FaceBook", "en"), DateTimeOffset.UtcNow.DateTime, "EasyITcenter & EasySYSTEMbuilder Solution FaceBook"),
+                    ChangeFrequency = ChangeFrequency.Weekly,
+                    Priority = 0.8M
+                }
+            );
+            return sitemapProvider.CreateSitemap(new SitemapModel(webpagesUrls));
+
+        }
+
+
+        /// <summary>
+        /// Get All Images From Static Documentation 
+        /// In EIC & ESB Nodes
+        /// </summary>
+        /// <returns></returns>
+        [Route("Images")]
         public ActionResult Images() {
-            return sitemapProvider.CreateSitemap(new SitemapModel(new List<SitemapNode>
-            {
-                dataBuilder.CreateSitemapNodeWithImageRequiredProperties(),
-                dataBuilder.CreateSitemapNodeWithImageAllProperties()
-            }));
+            List<SitemapNode> imageNodes = new();
+
+            List<SitemapImage> imageList = new List<SitemapImage>();
+            List<string> staticImages = FileOperations.GetPathFiles(Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl("/EIC&ESBdocs/EIC-Gallery/img"), "*.png", SearchOption.TopDirectoryOnly);
+            staticImages.ForEach(image => {
+                imageList.Add(
+                    new SitemapImage(ServerConfigSettings.ServerPublicUrl + "/EIC&ESBdocs/EIC-Gallery/img/" + Path.GetFileName(image)) {
+                        Caption = "EasyITCenter Solution", Location = "Solution Server Online", Title = Path.GetFileName(image),
+                        Url = ServerConfigSettings.ServerPublicUrl + "/EIC&ESBdocs/EIC-Gallery/img/" + Path.GetFileName(image)
+                    });
+            });
+
+
+            imageNodes.Add(new SitemapNode(ServerConfigSettings.ServerPublicUrl + "/EIC&ESBdocs/EIC-Gallery/") { 
+                Images = imageList, Url = ServerConfigSettings.ServerPublicUrl + "/EIC&ESBdocs/EIC-Gallery/", 
+                ChangeFrequency = ChangeFrequency.Weekly,Priority = 0.8M
+            });
+
+            imageList = new List<SitemapImage>();
+            staticImages = FileOperations.GetPathFiles(Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl("/EIC&ESBdocs/ESB-Gallery/img"), "*.png", SearchOption.TopDirectoryOnly);
+            staticImages.ForEach(image => {
+                imageList.Add(
+                    new SitemapImage(ServerConfigSettings.ServerPublicUrl + "/EIC&ESBdocs/ESB-Gallery/img/" + Path.GetFileName(image)) {
+                        Caption = "EasySYSTEMBuilder Solution", Location = "Solution Server Online", Title = Path.GetFileName(image),
+                        Url = ServerConfigSettings.ServerPublicUrl + "/EIC&ESBdocs/ESB-Gallery/img/" + Path.GetFileName(image)
+                    });
+            });
+
+            imageNodes.Add(new SitemapNode(ServerConfigSettings.ServerPublicUrl + "/EIC&ESBdocs/ESB-Gallery/") {
+                Images = imageList,
+                Url = ServerConfigSettings.ServerPublicUrl + "/EIC&ESBdocs/ESB-Gallery/",
+                ChangeFrequency = ChangeFrequency.Weekly,
+                Priority = 0.8M
+            });
+
+            return sitemapProvider.CreateSitemap(new SitemapModel(imageNodes));
         }
 
-        [Route("videos")]
-        public ActionResult Videos() {
-            return sitemapProvider.CreateSitemap(new SitemapModel(new List<SitemapNode>
-            {
-                dataBuilder.CreateSitemapNodeWithVideoRequiredProperties(),
-                dataBuilder.CreateSitemapNodeWithVideoAllProperties()
-            }));
+
+
+        //[Route("videos")]
+        //public ActionResult Videos() {
+        //    return sitemapProvider.CreateSitemap(new SitemapModel(new List<SitemapNode>
+        //    {
+        //        dataBuilder.CreateSitemapNodeWithVideoRequiredProperties(),
+        //        dataBuilder.CreateSitemapNodeWithVideoAllProperties()
+        //    }));
+        //}
+
+        [Route("DeveloperNews")]
+        public ActionResult DeveloperNews() {
+            //string requestUrl = $"{Request.Scheme}://{Request.Host.Value}/";
+            List<SitemapNode> newsList = new();
+
+            List<WebDeveloperNewsList> data = new();
+            if (ServerConfigSettings.WebRobotTxtFileEnabled) {
+                using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
+                    IsolationLevel = IsolationLevel.ReadUncommitted
+                })) { data = new EasyITCenterContext().WebDeveloperNewsLists.Where(a => a.Active).OrderByDescending(a => a.TimeStamp).ToList(); }
+            }
+
+            data.ForEach(news => {
+                newsList.Add(new SitemapNode(ServerConfigSettings.ServerPublicUrl + "/DeveloperNews") {
+                    Url = ServerConfigSettings.ServerPublicUrl + "/DeveloperNews",
+                    LastModificationDate = news.TimeStamp,
+                    News = new SitemapNews(new NewsPublication(news.Title, "cs"), news.TimeStamp, news.Title) {
+                        PublicationDate = news.TimeStamp,
+                        Genres = "IT, Groupware, Solution, Central, Global, Universal, System, Web, Pages, Portal, Touch, Panels, MultiLanguage, MultiServer,Server, MultiSystem, Business",
+                        Title = news.Title,
+                        Keywords = "IT, Groupware, Solution, Central, Global, Universal, System, Web, Pages, Portal, Touch, Panels, MultiLanguage, MultiServer,Server, MultiSystem, Business"
+                    }
+                });
+            });
+
+            return sitemapProvider.CreateSitemap(new SitemapModel(newsList));
         }
 
-        [Route("news")]
-        public ActionResult News() {
-            return sitemapProvider.CreateSitemap(new SitemapModel(new List<SitemapNode>
-            {
-                dataBuilder.CreateSitemapNodeWithNewsRequiredProperties(),
-                dataBuilder.CreateSitemapNodeWithNewsAllProperties()
-            }));
-        }
+        //[Route("translation")]
+        //public ActionResult Translation() {
+        //    return sitemapProvider.CreateSitemap(dataBuilder.CreateSitemapWithTranslations());
+        //}
 
-        [Route("translation")]
-        public ActionResult Translation() {
-            return sitemapProvider.CreateSitemap(dataBuilder.CreateSitemapWithTranslations());
-        }
+        //[Route("stylesheet")]
+        //public ActionResult StyleSheet() {
+        //    return sitemapProvider.CreateSitemap(dataBuilder.CreateSitemapWithSingleStyleSheet());
+        //}
 
-        [Route("stylesheet")]
-        public ActionResult StyleSheet() {
-            return sitemapProvider.CreateSitemap(dataBuilder.CreateSitemapWithSingleStyleSheet());
-        }
-
-        [Route("huge")]
-        public ActionResult Huge() {
-            return sitemapProvider.CreateSitemap(dataBuilder.CreateHugeSitemap());
-        }
+        //[Route("huge")]
+        //public ActionResult Huge() {
+        //    return sitemapProvider.CreateSitemap(dataBuilder.CreateHugeSitemap());
+        //}
 
         //[Route("sitemapcategories")]
         //public ActionResult Categories()

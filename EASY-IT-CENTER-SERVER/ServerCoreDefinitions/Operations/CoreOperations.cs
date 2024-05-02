@@ -22,14 +22,6 @@ namespace EasyITCenter.ServerCoreStructure {
             RouteLayout routeLayout = RouteLayout.EmptyLayout; RoutingResult routingResult = RoutingResult.None;
             string routePath = context.Request.Path.ToString().ToLower(); string? validPath = null;
             try {
-                //Solve Token Logic By Add Token to Request 
-                ServerWebPagesToken? serverWebPagesToken = null; string token = context.Request.Cookies.FirstOrDefault(a => a.Key == "ApiToken").Value;
-                if (token == null && context.Request.Headers.Authorization.ToString().Length > 0) { token = context.Request.Headers.Authorization.ToString().Substring(7); }
-                if (token != null) {
-                    serverWebPagesToken = CoreOperations.CheckTokenValidityFromString(token);
-                    if (serverWebPagesToken.IsValid) { context.User.AddIdentities(serverWebPagesToken.UserClaims.Identities); try { context.Items.Add(new KeyValuePair<object, object>("ServerWebPagesToken", serverWebPagesToken)); } catch { } }
-                }
-
                 /*301,302,404 Ignore Files*/
                 if (context.Response.StatusCode != StatusCodes.Status200OK && context.Request.Path.ToString().Split("/").Last().Contains(".")) {
                     routeLayout = RouteLayout.EmptyLayout; validPath = routePath; routingResult = RoutingResult.Return;
@@ -55,7 +47,7 @@ namespace EasyITCenter.ServerCoreStructure {
                         try { context.Response.Cookies.Append("IsLoginRequest", "correct"); } catch { }
                         try { context.Response.Cookies.Append("RequestedModulePath", serverModule.UrlSubPath); } catch { }
                     }
-                    routeLayout = RouteLayout.ServerModulesLayout; validPath = "/ServerModules"; routingResult = RoutingResult.Return;
+                    routeLayout = RouteLayout.ServerModulesLayout; validPath = "/ServerModules"; routingResult = RoutingResult.Next;
                 }
 
                 #region Solve Controlled Static Files

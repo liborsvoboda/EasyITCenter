@@ -28,7 +28,7 @@
 # EIC-Dev Pravidla  
 
     ```markdown  
-- [Ver.10: EIC OS Implementace](./EICOSImplementace.md)   
+- [Ver.15: EIC Server Instalace WIN_LIN](./EICServerInstalaceWIN_LIN.md)   
     ```  
 
 ---

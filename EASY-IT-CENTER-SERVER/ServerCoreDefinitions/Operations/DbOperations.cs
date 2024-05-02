@@ -41,6 +41,11 @@ namespace EasyITCenter.ServerCoreStructure {
                                 int wgIndexLL = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == wgDataLL.GetType());
                                 if (wgIndexLL >= 0) ServerRuntimeData.LocalDBTableList[wgIndexLL] = wgDataLL; else ServerRuntimeData.LocalDBTableList.Add(wgDataLL);
                                 break;
+                            case "ServerStaticOrMvcDefPathLists":
+                                List<ServerStaticOrMvcDefPathList>? ssmDataLL = new EasyITCenterContext().ServerStaticOrMvcDefPathLists.ToList();
+                                int ssmIndexLL = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == ssmDataLL.GetType());
+                                if (ssmIndexLL >= 0) ServerRuntimeData.LocalDBTableList[ssmIndexLL] = ssmDataLL; else ServerRuntimeData.LocalDBTableList.Add(ssmDataLL);
+                                break;
                             default: break;
                         }
                         if (onlyThis != null) break;
@@ -75,6 +80,18 @@ namespace EasyITCenter.ServerCoreStructure {
             return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? CheckServerModuleOffline(modulePath) : CheckServerModuleOnline(modulePath);
         }
 
+
+        /// <summary>
+        /// Default Operation For Set Ignoring App.Use Paths
+        /// For MVC Tools, Static Webs And Content
+        /// </summary>
+        /// <param name="serverPath"></param>
+        /// <returns></returns>
+        public static List<ServerStaticOrMvcDefPathList>? CheckStaticOrMvcDefPath(string serverPath) {
+            return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? CheckStaticOrMvcDefPathOffline(serverPath) : CheckStaticOrMvcDefPathOnline(serverPath);
+        }
+
+        
 
         /// <summary>
         /// Default Operation For Working Wihth 
@@ -205,6 +222,37 @@ namespace EasyITCenter.ServerCoreStructure {
         private static ServerModuleAndServiceList? CheckServerModuleOnline(string modulePath) {
             return new EasyITCenterContext().ServerModuleAndServiceLists.Where(a => a.UrlSubPath.ToLower() == modulePath.ToLower()).FirstOrDefault();
         }
+
+
+
+        /// <summary>
+        /// Get Ignored Static Web Or MVC Too Path In App.Use
+        /// For Continue Loading of Defined Layout or Static Web
+        /// Offline LocalDB Operation
+        /// </summary>
+        /// <param name="serverPath"></param>
+        /// <returns></returns>
+        private static List<ServerStaticOrMvcDefPathList>? CheckStaticOrMvcDefPathOffline(string serverPath) {
+            int index = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == new List<ServerStaticOrMvcDefPathList>().GetType());
+            serverPath = (serverPath.StartsWith("/") ? serverPath.Substring(1).ToLower() : serverPath.ToLower());
+
+            return ((List<ServerStaticOrMvcDefPathList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => serverPath.StartsWith(a.WebRootSubPath.ToLower()) && a.IsStaticOrMvcDefOnly && a.Active).ToList();
+        }
+
+
+
+        /// <summary>
+        /// Get Ignored Static Web Or MVC Too Path In App.Use
+        /// For Continue Loading of Defined Layout or Static Web
+        /// Online LocalDB Operation
+        /// </summary>
+        /// <param name="serverPath"></param>
+        /// <returns></returns>
+        private static List<ServerStaticOrMvcDefPathList>? CheckStaticOrMvcDefPathOnline(string serverPath) {
+            serverPath = (serverPath.StartsWith("/") ? serverPath.Substring(1).ToLower() : serverPath.ToLower());
+            return new EasyITCenterContext().ServerStaticOrMvcDefPathLists.Where(a => serverPath.StartsWith(a.WebRootSubPath.ToLower()) && a.IsStaticOrMvcDefOnly && a.Active).ToList();
+        }
+
 
 
         /// <summary>

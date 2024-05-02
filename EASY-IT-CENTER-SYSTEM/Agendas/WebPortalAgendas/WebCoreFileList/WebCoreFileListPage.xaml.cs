@@ -24,6 +24,8 @@ namespace EasyITSystemCenter.Pages {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
         public static WebCoreFileList selectedRecord = new WebCoreFileList();
 
+
+        private List<SolutionMixedEnumList> solutionMixedEnumList = new List<SolutionMixedEnumList>();
         private List<WebCoreFileList> WebCoreFileList = new List<WebCoreFileList>();
         private int FoundedPositionIndex = 0; private int ReplacePositionIndex = 0;
 
@@ -51,11 +53,14 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
+                solutionMixedEnumList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/JsCssTypesDefinition", App.UserData.Authentification.Token);
                 WebCoreFileList = await CommApi.GetApiRequest<List<WebCoreFileList>>(ApiUrls.EasyITCenterWebCoreFileList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+
+                solutionMixedEnumList.ForEach(async tasktype => { tasktype.Translation = await DBOperations.DBTranslation(tasktype.Name); });
 
                 DgListView.ItemsSource = WebCoreFileList;
                 DgListView.Items.Refresh();
-                cb_specificationType.ItemsSource = SystemLocalEnumSets.SpecificationScriptTypes;
+                cb_specificationType.ItemsSource = solutionMixedEnumList.OrderBy(a=>a.Name);
                 lb_dataList.ItemsSource = WebCoreFileList;
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden; return true;
@@ -173,7 +178,7 @@ namespace EasyITSystemCenter.Pages {
 
                 txt_sequence.Value = selectedRecord.Sequence;
                 int index = 0;
-                cb_specificationType.SelectedItem = selectedRecord.Id == 0 || SystemLocalEnumSets.SpecificationScriptTypes.FirstOrDefault(a => a.Name == selectedRecord.SpecificationType) == null ? SystemLocalEnumSets.SpecificationScriptTypes.First() : SystemLocalEnumSets.SpecificationScriptTypes.FirstOrDefault(a => a.Name == selectedRecord.SpecificationType);
+                cb_specificationType.SelectedItem = selectedRecord.Id == 0 || solutionMixedEnumList.FirstOrDefault(a => a.Name == selectedRecord.SpecificationType) == null ? solutionMixedEnumList.First() : solutionMixedEnumList.FirstOrDefault(a => a.Name == selectedRecord.SpecificationType);
                 txt_metroPath.Text = selectedRecord.MetroPath;
                 chb_rewriteLowerLevel.IsChecked = selectedRecord.RewriteLowerLevel;
                 chb_isUniquePath.IsChecked = selectedRecord.IsUniquePath;
@@ -188,15 +193,18 @@ namespace EasyITSystemCenter.Pages {
                 AdminHtmlContentEditor.Text = selectedRecord.AdminFileContent;
                 ProviderHtmlContentEditor.Text = selectedRecord.ProviderContent;
 
-                if (showForm != null && showForm == true) {
-                    MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;
-                    ListView.Visibility = Visibility.Hidden; ListForm.Visibility = Visibility.Visible; dataViewSupport.FormShown = true;
-                }
-                else {
-                    MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = true;
-                    ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; dataViewSupport.FormShown = showForm == null && !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key.ToLower() == "beh_closeformaftersave".ToLower()).Value);
-                }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+
+            if (showForm != null && showForm == true) {
+                MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;
+                ListView.Visibility = Visibility.Hidden; ListForm.Visibility = Visibility.Visible; dataViewSupport.FormShown = true;
+            }
+            else {
+                MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = true;
+                ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; dataViewSupport.FormShown = showForm == null && !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key.ToLower() == "beh_closeformaftersave".ToLower()).Value);
+            }
+           
         }
 
         private async Task<bool> SaveRecord(bool closeForm, bool asNew) {
@@ -207,7 +215,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Id = (int)((txt_id.Value != null) && !asNew ? txt_id.Value : 0);
 
                 selectedRecord.Sequence = int.Parse(txt_sequence.Value.ToString());
-                selectedRecord.SpecificationType = ((Language)cb_specificationType.SelectedItem).Name;
+                selectedRecord.SpecificationType = ((SolutionMixedEnumList)cb_specificationType.SelectedItem).Name;
                 selectedRecord.MetroPath = txt_metroPath.Text;
                 selectedRecord.FileName = txt_fileName.Text;
                 selectedRecord.Description = txt_description.Text;
