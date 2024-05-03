@@ -92,7 +92,7 @@ namespace EasyITCenter.ServerCoreStructure {
 
 
                 //Check Report By extension '.frx' for Show
-                if (routePath.EndsWith(".frx")) 
+                if (routePath.EndsWith(".frx") || routePath.EndsWith(".fpx")) 
                     { routeLayout = RouteLayout.ViewerReportFileLayout; validPath = routePath; routingResult = RoutingResult.Next; }
 
 

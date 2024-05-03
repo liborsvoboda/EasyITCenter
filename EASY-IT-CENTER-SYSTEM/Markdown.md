@@ -30,7 +30,7 @@ https://github.com/dotnet/Open-XML-SDK
 nOVÝ rEPORTING  - GENEROVANI REPORTU - NUTNO VYtvořit Editor
 https://github.com/FastReports/FastReport?tab=readme-ov-file
 https://github.com/FastReports/FastReport.Documentation
-
+https://www.fast-report.com/public_download/docs/FRNet/online/en/UserManual/en-US/PreviewPrintExport.html
 
 westwind scripting umi spoustet kod primo
 westwing.htmpackager exportuje html stanku jako Cely staticky zipfile

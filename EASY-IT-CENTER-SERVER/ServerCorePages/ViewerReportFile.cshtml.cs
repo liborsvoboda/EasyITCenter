@@ -19,9 +19,8 @@ namespace ServerCorePages {
 
 
         public class ReportList {
-            public WebReport WebReport { get; set; } = new WebReport();
+            public WebReport WebReport { get; set; }
             public List<string> ReportNameList { get; set; } = new List<string>();
-            public List<WebReport> ReportContent { get; set; } = new List<WebReport>();
         }
 
 
@@ -44,17 +43,24 @@ namespace ServerCorePages {
                 if (requestedUrlPath != null && requestedUrlPath.ToLower().EndsWith(".frx")) { /*TODO LOAD FROM DB BY UNIQUE NAME AFTER SELECT DELETE FROM DB*/}
 
                 else {//Show Examples
-                    var exampleFiles = FileOperations.GetPathFiles(Path.Combine(ServerRuntimeData.WebRoot_path, "ServerCoreTools", "Viewers", "Report", "Example"), "*.frx", SearchOption.TopDirectoryOnly);
+                    var exampleFiles = FileOperations.GetPathFiles(Path.Combine(ServerRuntimeData.WebRoot_path, "ServerCoreTools", "Viewers", "Report", "Example"), "*.*", SearchOption.TopDirectoryOnly);
 
                     string param = this.Request.Query.FirstOrDefault(a => a.Key == "ReportId").Value;
                     int? reportId = param != null && int.TryParse(param, out int intParam) ? intParam : null;
 
                     exampleFiles.ForEach(example => {
                         try {
-                            if (reportList.WebReport == null && reportId != null) { reportList.WebReport = new WebReport(); reportList.WebReport.Report.Load(exampleFiles[(int)reportId]); }
-                            else if (reportList.WebReport == null) { reportList.WebReport = new WebReport(); reportList.WebReport.Report.Load(example); }
+                            if (reportList.WebReport == null && reportId != null) {
+                                reportList.WebReport = new WebReport();
+                                if (exampleFiles[(int)reportId].EndsWith(".frx")) { reportList.WebReport.Report.Load(exampleFiles[(int)reportId]); }
+                                else { reportList.WebReport.Report.LoadPrepared(exampleFiles[(int)reportId]); }
+                            }
+                            else if (reportList.WebReport == null) {
+                                reportList.WebReport = new WebReport();
+                                if (example.EndsWith(".frx")) { reportList.WebReport.Report.Load(example); }
+                                else { reportList.WebReport.Report.LoadPrepared(example); }
+                            }
 
-                            var test = new WebReport(); test.Report.Load(exampleFiles[(int)reportId]); reportList.ReportContent.Add(test);
                         } catch (Exception ex) { }
 
                         reportList.ReportNameList.Add(Path.GetFileName(example)); 
@@ -76,18 +82,6 @@ namespace ServerCorePages {
 
         }
 
-
-        /// <summary>
-        /// Change Report By Selection
-        /// </summary>
-        /// <param name="reportName"></param>
-        public bool LoadSelectedReport(int reportIndex) {
-            try {
-                reportList.WebReport = reportList.ReportContent[reportIndex];
-            } catch { }
-            return true;
-
-        }
 
     }
 }
