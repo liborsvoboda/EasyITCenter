@@ -15,20 +15,18 @@ To znamená publikovat automaticky z jediného jazyka pro celý svět a naopak.
 
 
 **V přípravě Inteligentí nástroje pro Vývoj a Správu Projwektů Online**   
-* [Inteligentí Vývoj Projektů C# Online](../../ServerCoreTools/csharpedit/)    
-* [Inteligentní Vývoj Všech typů kódů s podporou Intelisense Online](../../ServerCoreTools/monaco)  
-* [Porovnávání Souborů kódu s podporou Intelisense Online](../../ServerCoreTools/monaco/indexdiff.html)  
-* [Mluvící Editor Kódu s možností Implementace InteliSense](../../ServerCoreTools/monacospeech/)  
-* [Online Database Desiger pro Vývoj DB Online](../../ServerCoreTools/sqldesigner/)  
+* [Inteligentí Vývoj Projektů C# Online](../../ServerCoreTools/modules/csharpedit/)    
+* [Inteligentní Vývoj Všech typů kódů s podporou Intelisense Online](../../ServerCoreTools/tools/monaco)  
+* [Porovnávání Souborů kódu s podporou Intelisense Online](../../ServerCoreTools/tools/monaco/indexdiff.html)  
+* [Online Database Desiger pro Vývoj DB Online](../../ServerCoreTools/tools/sqldesigner/)  
 * [Nový Online Developer Portal pro vývoj Projektů přes Internet z Editorů - ve fázi přípravy](../../server-provider/DeveloperBoard/Ideas/Template)  
 * [Webový Portál Generovaný pomocí Editoru v Systému](../../server-provider/DeveloperBoard/Ideas/Template)  
-* [Online Kompilace Kódu - připravuje se vlastní nástroj](../../ServerCoreTools/ExternalServices/csharponline.html)  
+* [Online Kompilace Kódu - připravuje se vlastní nástroj](../../ServerCoreTools/tools/csharponline.html)  
 
 **Další nástoje Serveru**   
 * [DB EasyDATABASE Manager Web Správa Databáze](../../EasyData)
-* [Inteligentní Vývoj C# Online](../../ServerCoreTools/csharpedit/)
 
-* [Online Monitoring Serveru](../../ServerCoreTools/wsservermonitor.html)  
+* [Online Monitoring Serveru](../../ServerCoreTools/tools/wsservermonitor.html)  
 * [Dohledové Centrum Přehled Stavů](../../ServerHealthService)
 * [Docs Prohlížeč verzované Dokumentace](../../Docs)
 * [ExpertDocViewer Prohlížeč verzované Dokumentace pro Libovolné Webové Stránky](../../server-doc/expertdoc-viewer/)

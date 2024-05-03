@@ -47,6 +47,14 @@ namespace EasyITCenter.ServerCoreConfiguration {
         }
 
 
+
+        /// <summary>
+        /// Server Module: Configure Report Designer Module
+        /// </summary>
+        /// <param name="app"></param>
+        internal static void ConfigureReportDesigner(ref IServiceCollection services) => services.AddFastReport();
+        
+
         /// <summary>
         /// Server Module: Configure Automatic MDtoHtml Files Show in WebPages
         /// </summary>
@@ -295,8 +303,8 @@ namespace EasyITCenter.ServerCoreConfiguration {
         internal static void EnableDocumentation(ref IApplicationBuilder app) {
             if (ServerConfigSettings.ModuleMdDocumentationEnabled) {
                 app.UseDocumentation(builder => {
-                    builder.HighlightJsStyle = "../../ServerCoreTools/JsCssLibrary/Docs/material-darker.css";
-                    builder.GetMdlStyle = "../../ServerCoreTools/JsCssLibrary/Docs/material.min.css";
+                    builder.HighlightJsStyle = "../../ServerCoreTools/modules/JsCssLibrary/Docs/material-darker.css";
+                    builder.GetMdlStyle = "../../ServerCoreTools/modules/JsCssLibrary/Docs/material.min.css";
                     builder.NavBarStyle = MarkdownDocumenting.Elements.NavBarStyle.Default;
                     builder.RootPathHandling = HandlingType.Handle;
                     builder.SetIndexDocument(new EasyITCenterContext().DocSrvDocumentationLists.OrderBy(a => a.DocumentationGroup.Sequence)
@@ -354,6 +362,13 @@ namespace EasyITCenter.ServerCoreConfiguration {
         /// Server Module: Enable Live Data Monitor
         /// </summary>
         internal static void EnableLiveDataMonitor(ref IApplicationBuilder app) { if (ServerConfigSettings.WebLiveDataMonitorEnabled) { app.UseLiveReload(); } }
+
+
+        /// <summary>
+        /// Enable Report Designer Module
+        /// </summary>
+        /// <param name="app"></param>
+        internal static void EnableReportDesigner(ref IApplicationBuilder app) => app.UseFastReport();
 
 
         /// <summary>

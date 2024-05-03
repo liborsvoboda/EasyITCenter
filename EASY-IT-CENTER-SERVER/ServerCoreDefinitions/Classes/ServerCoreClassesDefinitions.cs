@@ -28,16 +28,18 @@
         CentralLayout,
         DocPortalLayout,
         EasyDataLayout,
+        EditorHtmlFileLayout,
         EmptyLayout,
         GitHubLayout,
         GlobalLayout,
-        HtmlFileEditorLayout,
-        MarkDownFileLayout,
         MetroLayout,
         MultiLangLayout,
         PortalLayout,
         ServerModulesLayout,
-        StaticFileLayout
+        StaticFileLayout,
+        ViewerMarkDownFileLayout,
+        ViewerReportFileLayout,
+
     }
 
 

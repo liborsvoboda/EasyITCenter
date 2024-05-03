@@ -10,11 +10,43 @@ a ZDE HLEDAT HOTOVA Řešení
 https://www.nuget.org/
 
 
+CSHTML editor 
+https://www.c-sharpcorner.com/article/inserting-rich-text-editor-in-asp-net-mvc-6/
+
+FluentRibbon - Multimenu pro Editory
+https://fluentribbon.github.io/documentation/
+
+EASYDATA FOR WPF
+https://korzh.com/easyquery/docs/getting-started/wpf
+
+UZASNA SBIRKA ZNALOSTI netcore sOUPIS VSEHO MOZNEHO
+https://github.com/korzh/awesome-dotnet-core?tab=readme-ov-file#graphics
 
 
+wpf netcore SPR8VA dOKUMENTŮ
+https://github.com/dotnet/Open-XML-SDK
 
 
+nOVÝ rEPORTING  - GENEROVANI REPORTU - NUTNO VYtvořit Editor
+https://github.com/FastReports/FastReport?tab=readme-ov-file
+https://github.com/FastReports/FastReport.Documentation
 
+
+westwind scripting umi spoustet kod primo
+westwing.htmpackager exportuje html stanku jako Cely staticky zipfile
+
+
+Rozčlenit nástroje na:
+- Dokumentace
+- Obrázek
+- Online Tool
+- Github
+
+110Repos
+https://github.com/RickStrahl?tab=repositories
+
+Kompletní WorkFlow
+https://github.com/optimajet
 
 ---
 ### Plánované ůlohy system WINDOWS a Správa Počítače
@@ -156,5 +188,7 @@ https://github.com/jsuarezruiz?tab=repositories
 ----
 
 
+Change Password to encrypt
+isValid = BCrypt.Net.BCrypt.Verify(word, hashedWordFromDB);
 
 

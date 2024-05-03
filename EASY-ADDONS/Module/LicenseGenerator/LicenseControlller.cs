@@ -25,7 +25,7 @@ namespace LicenseGenerator {
             lic_model = new LicenseData();
             try {
                 XmlDocument xmlDoc = new();
-                xmlDoc.Load(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data\\license.lic"));
+                xmlDoc.Load(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data","license.lic"));
 
                 string pubKey = isServerCheck ? xmlDoc.SelectSingleNode("//License/PublicKey").InnerXml : publicKey;
                 xmlDoc.SelectSingleNode("//License/PublicKey").RemoveAll();

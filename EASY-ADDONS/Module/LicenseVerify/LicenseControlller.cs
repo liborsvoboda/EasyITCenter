@@ -22,7 +22,7 @@ namespace LicenseVerify {
             lic_model = new LicenseData();
             try {
                 XmlDocument xmlDoc = new();
-                xmlDoc.Load(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data\\license.lic"));
+                xmlDoc.Load(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data","license.lic"));
 
                 string pubKey = xmlDoc.SelectSingleNode("//License/PublicKey").InnerXml;
                 xmlDoc.SelectSingleNode("//License/PublicKey").RemoveAll();

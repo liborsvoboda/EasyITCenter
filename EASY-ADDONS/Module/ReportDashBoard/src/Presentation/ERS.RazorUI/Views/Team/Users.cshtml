@@ -1,0 +1,91 @@
+﻿@using System.Collections;
+@using System.Security.Claims;
+@using ERS.Services;
+
+@inject IUserContextAccessor userAccessor;
+@{
+    ViewData["Title"] = "Team members";
+    ViewBag.BrandTitle = "Team members";
+    var userContext = userAccessor.GetContext();
+}
+
+@model IEnumerable<UserItem>
+
+<div class="container-fluid er-top-container">
+    <div class="card border-0">
+        <div class="card-header bg-transparent border-0">
+            <div class="er-links">
+                <a href="#" class="card-link" onclick="window.location.href='@Url.Action("AddUser","Team")'">New Team Member</a>
+            </div>
+        </div>
+        <div class="card-body table-responsive">
+            @if (Model.Count() > 0) {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Email
+                            </th>
+                            <th>
+                                Role
+                            </th>
+                            <th>
+                                Registered
+                            </th>
+                            <th>
+                                Last login
+                            </th>
+                            <th>
+
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model) {
+                            <tr>
+                                <td>
+                                    @user.ContactName
+                                </td>
+                                <td>
+                                    @user.Email
+                                </td>
+                                <td>
+                                    @(string.Join(", ", user.Roles))
+                                </td>
+                                <td>
+                                    <local-datetime value="@user.Registered" />
+                                </td>
+                                <td>
+                                    <local-datetime value="@user.LastLogin" />
+                                </td>
+                                @if (user.Id == userContext.UserId) {
+                                    <td>
+                                        @Html.ActionLink("Edit", "Index", "Manage")
+                                    </td>
+                                }
+                                else {
+                                    @if (user.Roles.Contains("owner")) {
+                                        <td>
+                                            Not aviable
+                                        </td>
+                                    }
+                                    else {
+                                        <td>
+                                            <a asp-action="EditUser" asp-controller="Team" asp-route-id="@user.Id">Edit</a> 
+                                            | <a asp-action="DeleteUser" asp-controller="Team" asp-route-id="@user.Id">Delete</a> 
+                                        </td>
+                                    }
+                                }
+
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

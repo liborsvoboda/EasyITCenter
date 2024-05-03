@@ -80,7 +80,9 @@ namespace EasyITCenter {
             ServerModules.ConfigureGitServer(ref services);
             ServerModules.ConfigureMarkdownAsHtmlFiles(ref services);
             ServerModules.ConfigureCodeBrowser(ref services);
-            
+            ServerModules.ConfigureReportDesigner(ref services);
+
+
             #endregion Server Modules
 
             ServerConfigurationServices.ConfigureTransient(ref services);
@@ -109,6 +111,7 @@ namespace EasyITCenter {
             ServerModulesEnabling.EnableSwagger(ref app);
             ServerModulesEnabling.EnableLiveDataMonitor(ref app);
             ServerModulesEnabling.EnableDBEntitySchema(ref app);
+            ServerModulesEnabling.EnableReportDesigner(ref app);
 
             if (ServerConfigSettings.ConfigServerStartupOnHttps) {
                 app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.All });
@@ -128,6 +131,12 @@ namespace EasyITCenter {
                 }
 
 
+                //Excluded Urls For Server Browsing From Page Settings, redirected Defined paths
+                if (DbOperations.CheckStaticOrMvcDefPath(requestPath).Count() > 0
+                || context.Response.StatusCode == StatusCodes.Status200OK || context.Response.StatusCode == StatusCodes.Status301MovedPermanently || context.Response.StatusCode == StatusCodes.Status302Found
+                )
+                { return; }
+
                 //TODO server-users security for content
 
                 //Verify Request For Detect Layout, Redirection, Module, Correct File Path, WebMenu Selection
@@ -138,20 +147,24 @@ namespace EasyITCenter {
                 try { fileValidUrl = ((string)context.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
 
 
-                //Excluded Urls For Server Browsing From Page Settings, redirected Defined paths
-                if (DbOperations.CheckStaticOrMvcDefPath(requestPath).Count() > 0
-                || context.Response.StatusCode == StatusCodes.Status200OK || context.Response.StatusCode == StatusCodes.Status302Found
-                ) { return; }
-
-
-
                 //Start DocPortal by Link Without index.md
                 if (routeLayout == RouteLayout.DocPortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
-                { redirected = true; context.Request.Path = "/DocPortal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                    { redirected = true; context.Request.Path = "/DocPortal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
                 //Show MarkDownFile in Layout by missing .md extension
-                else if (routeLayout == RouteLayout.MarkDownFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
-                { redirected = true; context.Request.Path = "/MarkDownFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                else if (routeLayout == RouteLayout.EditorHtmlFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                { redirected = true; context.Request.Path = "/ServerCoreTools/EditorHtmlFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+
+
+                //Show MarkDownFile in Layout by missing .md extension
+                else if (routeLayout == RouteLayout.ViewerMarkDownFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                    { redirected = true; context.Request.Path = "/ServerCoreTools/ViewerMarkDownFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+
+                //Show Report File in Layout by .frx extension
+                else if (routeLayout == RouteLayout.ViewerReportFileLayout) 
+                { redirected = true; context.Request.Path = "/ServerCoreTools/ViewerReportFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+
+
 
                 //Show Portal in Layout
                 else if (routeLayout == RouteLayout.PortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
@@ -166,10 +179,15 @@ namespace EasyITCenter {
                 { redirected = true; context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
 
-                if (commandType == RoutingResult.Return) { return; }
+
+                if (!redirected && commandType == RoutingResult.Return)
+                { return; }
+
                 else if (!redirected && commandType == RoutingResult.Next) 
                 { context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-                else if (commandType == RoutingResult.Next && context.Request.Path.ToString().ToLower() == fileValidUrl) { return; }
+
+                else if (!redirected && commandType == RoutingResult.Next && context.Request.Path.ToString().ToLower() == fileValidUrl) 
+                { return; }
             });
 
 

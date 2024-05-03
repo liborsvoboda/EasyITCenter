@@ -70,7 +70,7 @@ namespace EasyITCenter.ServerCoreStructure {
 
                 //Check Server Tools
                 //TODO vytvořit agendu nastroju a k nim templaty v ni budou i editory a nastroje Kazdy Layout bude mit svoji Page
-                if (validPath == null && routePath.StartsWith("/github", StringComparison.OrdinalIgnoreCase)) { routeLayout = RouteLayout.GitHubLayout; validPath = routePath; routingResult = RoutingResult.Return; }
+                if (validPath == null && routePath.StartsWith("/server-web/github", StringComparison.OrdinalIgnoreCase)) { routeLayout = RouteLayout.GitHubLayout; validPath = routePath; routingResult = RoutingResult.Return; }
                 if (validPath == null && routePath.StartsWith("/easydata", StringComparison.OrdinalIgnoreCase)) { routeLayout = RouteLayout.MetroLayout; validPath = routePath; routingResult = RoutingResult.Return; }
 
 
@@ -87,23 +87,32 @@ namespace EasyITCenter.ServerCoreStructure {
                 //Check MarkDown Type missing .md for Show in Markdown Layout
                 if (ServerConfigSettings.EnableAutoShowStaticMdAsHtml) {
                     if (!routePath.EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + ".md")) 
-                    { validPath = routePath + ".md"; routeLayout = RouteLayout.MarkDownFileLayout; routingResult = RoutingResult.Next; }
+                    { validPath = routePath + ".md"; routeLayout = RouteLayout.ViewerMarkDownFileLayout; routingResult = RoutingResult.Next; }
                 }
 
 
-                //Check Html file
+                //Check Report By extension '.frx' for Show
+                if (routePath.EndsWith(".frx")) 
+                    { routeLayout = RouteLayout.ViewerReportFileLayout; validPath = routePath; routingResult = RoutingResult.Next; }
+
+
+                //Check Html By missing '.html' for Open In HTML Editor
+                if (!routePath.EndsWith("/") && !context.Request.Path.ToString().Split("/").Last().Contains(".") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + ".html")) 
+                    { routeLayout = RouteLayout.EditorHtmlFileLayout; validPath = routePath + ".html"; routingResult = RoutingResult.Next; }
+
+
+                //Check Index.html & Html file
                 if (validPath == null) {
                     if (routePath.EndsWith(".html") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath))) {
                         routeLayout = RouteLayout.StaticFileLayout; validPath = routePath; routingResult = RoutingResult.Next;
                     }
 
-                    if ((!routePath.EndsWith("/") && !context.Request.Path.ToString().Split("/").Last().Contains(".") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + ".html"))
-                        || (routePath.EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + "index.html"))
+                    if ((routePath.EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + "index.html"))
                         || (!routePath.EndsWith("/") && !context.Request.Path.ToString().Split("/").Last().Contains(".") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + Path.DirectorySeparatorChar + "index.html"))
                         ) {
                         if (!routePath.ToLower().EndsWith(".html")) {
                             validPath = !routePath.ToLower().EndsWith(".html") && !routePath.ToLower().EndsWith("index") && !routePath.EndsWith('/')
-                            ? routePath + "/index.html" : routePath.ToLower().EndsWith("index") ? routePath + ".html" : routePath + "index.html";
+                            ? routePath + "/index.html" : routePath + "index.html";
                             routeLayout = RouteLayout.StaticFileLayout; routingResult = RoutingResult.Next;
                         }
                     }

@@ -58,6 +58,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
 
                 new SitemapIndexNode(Url.Action("WebDocPortals")),
                 new SitemapIndexNode(Url.Action("DeveloperNews")),
+                new SitemapIndexNode(Url.Action("News")),
                 new SitemapIndexNode(Url.Action("Images")),
                 new SitemapIndexNode(Url.Action("WebPortal")),
 
@@ -236,6 +237,36 @@ namespace EasyITCenter.ServerCoreDBSettings {
                         PublicationDate = news.TimeStamp,
                         Genres = "IT, Groupware, Solution, Central, Global, Universal, System, Web, Pages, Portal, Touch, Panels, MultiLanguage, MultiServer,Server, MultiSystem, Business",
                         Title = news.Title,
+                        Keywords = "IT, Groupware, Solution, Central, Global, Universal, System, Web, Pages, Portal, Touch, Panels, MultiLanguage, MultiServer,Server, MultiSystem, Business"
+                    }
+                });
+            });
+
+            return sitemapProvider.CreateSitemap(new SitemapModel(newsList));
+        }
+
+
+
+        [Route("News")]
+        public ActionResult News() {
+            //string requestUrl = $"{Request.Scheme}://{Request.Host.Value}/";
+            List<SitemapNode> newsList = new();
+
+            List<SolutionMessageModuleList> data = new();
+            if (ServerConfigSettings.WebRobotTxtFileEnabled) {
+                using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
+                    IsolationLevel = IsolationLevel.ReadUncommitted
+                })) { data = new EasyITCenterContext().SolutionMessageModuleLists.Where(a => a.MessageType.Name == "newsletter" && a.Published && !a.Archived).OrderByDescending(a => a.TimeStamp).ToList(); }
+            }
+
+            data.ForEach(news => {
+                newsList.Add(new SitemapNode(ServerConfigSettings.ServerPublicUrl + "/CommercialNews") {
+                    Url = ServerConfigSettings.ServerPublicUrl + "/CommercialNews",
+                    LastModificationDate = news.TimeStamp,
+                    News = new SitemapNews(new NewsPublication(news.Subject, "cs"), news.TimeStamp, news.Subject) {
+                        PublicationDate = news.TimeStamp,
+                        Genres = "IT, Groupware, Solution, Central, Global, Universal, System, Web, Pages, Portal, Touch, Panels, MultiLanguage, MultiServer,Server, MultiSystem, Business",
+                        Title = news.Subject,
                         Keywords = "IT, Groupware, Solution, Central, Global, Universal, System, Web, Pages, Portal, Touch, Panels, MultiLanguage, MultiServer,Server, MultiSystem, Business"
                     }
                 });

@@ -126,6 +126,8 @@
 
    <ItemGroup>
      <Content Remove="wwwroot\EIC&amp;ESBdocs\SourceBrowser\**" />
+     <Content Remove="wwwroot\ServerCoreTools\JsCssLibrary\**" />
+     <EntityDeploy Remove="wwwroot\ServerCoreTools\JsCssLibrary\**" />
    </ItemGroup>
 
    <ItemGroup>
@@ -134,10 +136,6 @@
      <Content Remove="wwwroot\server-doc\md-book\src\ExpertDocUkázkyFormátování.md" />
      <Content Remove="wwwroot\server-doc\md-book\src\ExpertDocWebServer.md" />
      <Content Remove="wwwroot\server-doc\md-book\src\ZrušenýMVCWebPortalCsHtml.md" />
-   </ItemGroup>
-
-   <ItemGroup>
-     <EmbeddedResource Include="wwwroot\ServerCoreTools\JsCssLibrary\HealthCheck\HealthChecksUI.css" />
    </ItemGroup>
   
   <ItemGroup>
@@ -192,6 +190,11 @@
     <PackageReference Include="EasyData.Exporters.Default" Version="1.5.2" />
     <PackageReference Include="EasyData.Exporters.PdfSharp" Version="1.5.2" />
     <PackageReference Include="ErikEJ.EntityFrameworkCore.DgmlBuilder" Version="6.0.0" />
+    <PackageReference Include="FastReport.Data.MsSql" Version="2024.2.2" />
+    <PackageReference Include="FastReport.Localization" Version="2024.2.2" />
+    <PackageReference Include="FastReport.OpenSource" Version="2024.2.1" />
+    <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2024.2.1" />
+    <PackageReference Include="FastReport.OpenSource.Web" Version="2024.2.1" />
     <PackageReference Include="FileContextCore" Version="3.4.0" />
     <PackageReference Include="FluentFTP" Version="50.0.1" />
     <PackageReference Include="FubarDev.FtpServer" Version="3.1.2" />
@@ -259,8 +262,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="6.0.27" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="6.0.27" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="6.0.27" />
@@ -312,30 +313,7 @@
     <PackageReference Include="Quartz.Plugins" Version="3.8.1" />
     <PackageReference Include="ReportGenerator" Version="5.2.4" />
     <PackageReference Include="ReportGenerator.Core" Version="5.1.10" />
-    <PackageReference Include="Roslynator.Analyzers" Version="4.12.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Roslynator.CodeAnalysis.Analyzers" Version="4.12.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Roslynator.CodeFixes" Version="4.12.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Roslynator.Core" Version="4.12.1" />
-    <PackageReference Include="Roslynator.CSharp" Version="4.12.1" />
-    <PackageReference Include="Roslynator.CSharp.Workspaces" Version="4.12.1" />
-    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.12.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Roslynator.Refactorings" Version="4.12.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Roslynator.Workspaces.Core" Version="4.12.1" />
+    <PackageReference Include="ReverseMarkdown" Version="4.3.0" />
     <PackageReference Include="Sentry" Version="4.4.0" />
     <PackageReference Include="Sentry.AspNetCore" Version="4.4.0" />
     <PackageReference Include="Sentry.DiagnosticSource" Version="4.4.0" />
@@ -388,7 +366,6 @@
     <PackageReference Include="Westwind.AspNetCore.LiveReload" Version="0.4.2" />
     <PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.16.0" />
     <PackageReference Include="Westwind.HtmlPackager" Version="0.2.4" />
-    <PackageReference Include="Westwind.Scripting" Version="1.4.1" />
     <PackageReference Include="Westwind.Utilities" Version="4.0.20" />
     <PackageReference Include="Witline.RazorEditor" Version="3.1.0" />
     <PackageReference Include="Xoredge.RazorEditor" Version="3.1.0" />
@@ -442,6 +419,9 @@
   
  
   <ItemGroup>
+    <EmbeddedResource Update="Data\certificates\groupware.pfx">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Update="Data\config.example.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -457,6 +437,11 @@
     <EmbeddedResource Update="Data\license.lic">
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  
+ 
+  <ItemGroup>
+    <Folder Include="Data\certificates\" />
   </ItemGroup>
   
 

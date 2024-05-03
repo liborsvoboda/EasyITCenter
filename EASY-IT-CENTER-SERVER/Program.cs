@@ -59,38 +59,38 @@ namespace EasyITCenter {
                 FileOperations.LoadOrCreateSettings();
 
                 var hostBuilder = BuildWebHost(ServerRuntimeData.ServerArgs);
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                if (CoreOperations.GetOperatingSystemInfo.IsWindows()) {
                     hostBuilder.UseWindowsService(options => {
                         options.ServiceName = ServerConfigSettings.ConfigCoreServerRegisteredName;
                     });
                 }
 
                 //Load StartupDBdata
-                if (ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials) ServerStartupDbDataLoading();
+                if (ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials) { ServerStartupDbDataLoading(); }
 
                 //Start Server
                 await hostBuilder.Build().RunAsync(ServerRuntimeData.ServerCancelToken.Token);
-            } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
+            } catch (Exception Ex) {
+                
+                CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) });
+                Console.WriteLine("Server Startup Error: " + DataOperations.GetSystemErrMessage(Ex));
+                Environment.Exit(3);
+            }
         }
 
         /// <summary>
-        /// Final Preparing Server HostBuilder Definition Exit 10 Is missing or Format Problem with
+        /// Final Preparing Server HostBuilder Definition
         /// Configuration File
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
         private static IHostBuilder BuildWebHost(string[] args) {
-            try {
-                LoadConfigurationFromFile();
-                LoadConfigurationFromDb();
-            } catch (Exception ex) {
-                CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) });
-                Environment.Exit(10);
-            }
+            LoadConfigurationFromFile();
+            LoadConfigurationFromDb();
             
             return Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder => {
-                if (ServerConfigSettings.ConfigServerStartupOnHttps) {
+                if (ServerConfigSettings.ConfigServerStartupOnHttps || ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS) {
                     webBuilder.ConfigureKestrel(options => {
                         options.AddServerHeader = true;
 
@@ -162,16 +162,25 @@ namespace EasyITCenter {
             bool licenseStatus = LicenseControlller.VerifyLicense(out LicenseData licenseModel, true);
             if (string.IsNullOrEmpty(licenseModel.Status)) { Console.WriteLine("Missing License file in \"Data\" folder"); }
             Console.WriteLine("License Info: " + JsonSerializer.Serialize(licenseModel));
-            if (!licenseStatus) { Console.WriteLine("Server will be in 30 second ShutDown"); Thread.Sleep(30 * 1000); Environment.Exit(5); }
+            if (!licenseStatus) { Console.WriteLine("Server will be in 30 second ShutDown"); Thread.Sleep(30 * 1000); 
+                Environment.Exit(5); 
+            }
         }
 
         /// <summary>
         /// Server Core: Load Configuration From Config File In Startup Folder/Data/config.json
+        /// For Linux is Loaded from server FOLder/Data/config.json
+        /// For Windows sysDrive://ProgramData/EasyITCenter/config.json
+        /// its Alone Different Setting FOR More Platforms
         /// </summary>
         private static void LoadConfigurationFromFile() {
             try {
                 //Load From Config File
-                string json = File.ReadAllText(Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile), FileOperations.FileDetectEncoding(Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile)));
+                string json = CoreOperations.GetOperatingSystemInfo.IsWindows()
+                    ?  File.ReadAllText(Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile), FileOperations.FileDetectEncoding(Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile)))
+                    : File.ReadAllText(Path.Combine(ServerRuntimeData.Startup_path, "Data", ServerRuntimeData.ConfigFile), FileOperations.FileDetectEncoding(Path.Combine(ServerRuntimeData.Startup_path, "Data", ServerRuntimeData.ConfigFile)))
+                    ;
+
                 Dictionary<string, object> exportServerSettingList = new Dictionary<string, object>();
                 exportServerSettingList.AddRange(JsonSerializer.Deserialize<Dictionary<string, object>>(json).ToList());
 
@@ -184,6 +193,7 @@ namespace EasyITCenter {
                 });
             } catch (Exception ex) {
                 CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }, true);
+                Console.WriteLine("LoadConfigurationFromFile Error: " + DataOperations.GetSystemErrMessage(ex));
                 Environment.Exit(10);
             }
         }
@@ -203,6 +213,11 @@ namespace EasyITCenter {
                 }
             } catch (Exception ex) {
                 CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) });
+                Console.WriteLine("LoadConfigurationFromDb Error: "
+                    + "Config File from Folder: "
+                    + (CoreOperations.GetOperatingSystemInfo.IsWindows() ? Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile) : Path.Combine(ServerRuntimeData.Startup_path, "Data", ServerRuntimeData.ConfigFile))
+                    + "With ConnectionString: " + ServerConfigSettings.DatabaseConnectionString + Environment.NewLine 
+                    + "Has Error: " + DataOperations.GetSystemErrMessage(ex));
                 Environment.Exit(20);
             }
         }

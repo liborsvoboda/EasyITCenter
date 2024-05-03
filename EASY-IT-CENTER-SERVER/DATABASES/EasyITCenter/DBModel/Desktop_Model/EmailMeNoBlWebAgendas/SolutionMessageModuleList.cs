@@ -30,7 +30,7 @@ namespace EasyITCenter.DBModel
         public bool IsSystemMessage { get; set; }
         public bool Published { get; set; }
         public int? FromUserId { get; set; }
-        public int ToUserId { get; set; }
+        public int? ToUserId { get; set; }
         public DateTime TimeStamp { get; set; }
 
         [ForeignKey("FromUserId")]
@@ -44,7 +44,7 @@ namespace EasyITCenter.DBModel
         public virtual SolutionMessageTypeList MessageType { get; set; } = null!;
         [ForeignKey("ToUserId")]
         [InverseProperty("SolutionMessageModuleListToUsers")]
-        public virtual SolutionUserList ToUser { get; set; } = null!;
+        public virtual SolutionUserList? ToUser { get; set; }
         [InverseProperty("MessageParent")]
         public virtual ICollection<SolutionMessageModuleList> InverseMessageParent { get; set; }
     }

@@ -1,0 +1,93 @@
+﻿@page "/ServerCoreTools/EditorHtmlFile"
+@{
+    Layout = "/ServerCorePages/Shared/EditorHtmlFileLayout.cshtml";
+}
+
+@addTagHelper *, WebOptimizer.Core
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Westwind.AspNetCore.Markdown
+
+@using ServerCorePages;
+@using Microsoft.AspNetCore.Html;
+@using EasyITCenter.DBModel;
+@using EasyITCenter.ServerCoreWebPages;
+@using EasyITCenter.ServerCoreStructure;
+@using System.Security.Claims;
+@model ServerCorePages.EditorHtmlFileModel
+@{
+
+    //Standalone Load File From Url Request
+    string? requestedUrlPath = ""; string fileContent = null;
+    try {
+        try { requestedUrlPath = ((string?)this.HttpContext.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
+        string? filePath = System.IO.Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(requestedUrlPath);
+        fileContent = System.IO.File.ReadAllText(filePath);
+    } catch { }
+  
+}
+
+
+<script type="text/javascript" src="~/ServerCoreTools/editors/tinymce/tinymce.min.js"></script>
+<script>
+    const floatEditor = {
+        selector: '.tinymce-heading', menubar: true, inline: true,
+        plugins: [ 'link', 'lists', 'powerpaste', 'autolink' ],
+        toolbar: [  'undo redo | bold italic underline | fontfamily fontsize', 'forecolor backcolor | alignleft aligncenter alignright alignfull | numlist bullist outdent indent' ],
+        valid_elements: 'strong,em,span[style],a[href],p[style],ul,ol,li',
+        valid_styles: { '*': 'font-size,font-family,color,text-decoration,text-align' },
+        powerpaste_word_import: 'clean', powerpaste_html_import: 'clean',
+    };
+
+    const standardEditor = {
+        selector: 'textarea#Body',
+        skin: 'oxide-dark',
+        content_css: 'dark',
+        width: window.innerWidth,
+        height: window.innerHeight,
+        plugins: [
+            'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
+            'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
+            'insertdatetime', ' checklist ', 'wordcount', ' tinymcespellchecker ', 'editimage', 'media', 'table', 'emoticons', 'help'
+        ],
+        toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | ' +
+            'bullist numlist outdent indent | link image | print preview media fullscreen | ' + 'forecolor backcolor emoticons | help',
+        menu: { menubar: 'favs file edit view insert format tools table help', content_css: 'css/content.css' }
+    };
+
+   // tinymce.init(floatEditor);
+    tinymce.init(standardEditor);
+</script>
+
+
+<div class="d-inline-flex form-outline bg-cyan">
+    <div style="width:200px;height:100%;">
+        <div class="d-block h-100">
+            <input id="reason" class="form-control w-100" placeholder="Důvod Úpravy" />
+            
+        </div>
+    </div>
+    <div class="d-block">
+
+
+    </div>
+    <div id="editorSection">
+        <textarea id="Body" class="form-control">
+        @{
+            if (EditorHtmlFileModel.result != null) {
+                    @Html.Raw(EditorHtmlFileModel.result)
+            }
+            else if (fileContent != null) {
+                    @Html.Raw(fileContent)
+            }
+        }
+        </textarea>
+    </div>
+</div>
+
+
+
+@* 
+@if (this.BodyContent != null) {
+    Html.Raw(this.BodyContent);
+}
+ *@

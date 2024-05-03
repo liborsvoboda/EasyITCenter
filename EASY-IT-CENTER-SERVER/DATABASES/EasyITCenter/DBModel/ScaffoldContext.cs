@@ -954,7 +954,6 @@ namespace EasyITCenter.DBModel
                 entity.HasOne(d => d.ToUser)
                     .WithMany(p => p.SolutionMessageModuleListToUsers)
                     .HasForeignKey(d => d.ToUserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SolutionMessageModuleList_SolutionUserListTo");
             });
 

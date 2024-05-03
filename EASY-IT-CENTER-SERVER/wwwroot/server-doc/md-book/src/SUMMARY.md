@@ -1,18 +1,8 @@
 ﻿
-# Start -DATABASE-RULE  
-
-    ```markdown  
-- [Ver.8: Web Rozcestník](./WebRozcestník.md)   
-- [Ver.49: DB Tabulky Řešení](./DBTabulkyŘešení.md)   
-- [Ver.48: DB Procedury Řešení](./DBProceduryŘešení.md)   
-- [Ver.46: DB Triggery](./DBTriggery.md)   
-- [Ver.44: DB View a Funkce](./DBViewaFunkce.md)   
-    ```  
-
----
 # EIC&ESB-Globální IT Řešení na míru  
 
     ```markdown  
+- [Ver.4: Historie Reklamních Sdělení](./HistorieReklamníchSdělení.md)   
 - [Ver.22: Úvodní Informace](./ÚvodníInformace.md)   
 - [Ver.42: Připravované Novinky](./PřipravovanéNovinky.md)   
 - [Ver.8: Vize a Nápady a Postupy](./VizeaNápadyaPostupy.md)   
@@ -22,6 +12,17 @@
 - [Ver.31: Zpracováváné A ChangeLog](./ZpracovávánéAChangeLog.md)   
 - [Ver.22: Ceník EIC&ESB a IT Služeb](./CeníkEIC&ESBaITSlužeb.md)   
 - [Ver.2: Kontakty](./Kontakty.md)   
+    ```  
+
+---
+# Start -DATABASE-RULE  
+
+    ```markdown  
+- [Ver.8: Web Rozcestník](./WebRozcestník.md)   
+- [Ver.49: DB Tabulky Řešení](./DBTabulkyŘešení.md)   
+- [Ver.48: DB Procedury Řešení](./DBProceduryŘešení.md)   
+- [Ver.46: DB Triggery](./DBTriggery.md)   
+- [Ver.44: DB View a Funkce](./DBViewaFunkce.md)   
     ```  
 
 ---
