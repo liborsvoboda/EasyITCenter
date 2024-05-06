@@ -61,6 +61,7 @@
         EasyITCenterLicSrvUsedLicenseList,
 
         /*Server Administartion Setting APIs*/
+        EasyITCenterServerApiSecurityList,
         EasyITCenterServerCorsDefAllowedOriginList,
         EasyITCenterServerHealthCheckTaskList,
         EasyITCenterServerLiveDataMonitorList,

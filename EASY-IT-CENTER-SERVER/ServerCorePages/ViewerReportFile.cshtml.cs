@@ -10,7 +10,9 @@ namespace ServerCorePages {
 
 
     /// <summary>
-    /// HTML Editor TINYMCE
+    /// Fast Report Webový Prohlížeč Reportů 
+    /// V případě že je zadána Cesta nástroje Zobrazí Ukázky
+    /// Cesta Nástoje: /ServerCoreTools/ViewerReportFile
     /// </summary>
     public class ViewerReportFileModel : PageModel {
         public static ServerWebPagesToken serverWebPagesToken;
@@ -32,8 +34,7 @@ namespace ServerCorePages {
             if (!string.IsNullOrWhiteSpace(requestToken)) {
                 serverWebPagesToken = CoreOperations.CheckTokenValidityFromString(requestToken);
                 if (serverWebPagesToken.IsValid) { User.AddIdentities(serverWebPagesToken.UserClaims.Identities); }
-            }
-            else { serverWebPagesToken = new ServerWebPagesToken(); }
+            } else { serverWebPagesToken = new ServerWebPagesToken(); }
 
 
             //Show Examples OR TODO DB Report
@@ -43,7 +44,7 @@ namespace ServerCorePages {
                 if (requestedUrlPath != null && requestedUrlPath.ToLower().EndsWith(".frx")) { /*TODO LOAD FROM DB BY UNIQUE NAME AFTER SELECT DELETE FROM DB*/}
 
                 else {//Show Examples
-                    var exampleFiles = FileOperations.GetPathFiles(Path.Combine(ServerRuntimeData.WebRoot_path, "ServerCoreTools", "Viewers", "Report", "Example"), "*.*", SearchOption.TopDirectoryOnly);
+                    var exampleFiles = FileOperations.GetPathFiles(Path.Combine(ServerRuntimeData.WebRoot_path, "ServerCoreTools", "Viewers", "FastReport", "Example"), "*.*", SearchOption.TopDirectoryOnly);
 
                     string param = this.Request.Query.FirstOrDefault(a => a.Key == "ReportId").Value;
                     int? reportId = param != null && int.TryParse(param, out int intParam) ? intParam : null;
@@ -78,8 +79,6 @@ namespace ServerCorePages {
                 //using (FileStream file = new FileStream(pathToSave, FileMode.Create)) { reportForSave.CopyToAsync(file); }
 
             } catch { }
-
-
         }
 
 

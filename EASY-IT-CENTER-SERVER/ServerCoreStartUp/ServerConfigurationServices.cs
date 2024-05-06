@@ -47,6 +47,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
 
                 using (var serviceProvider = services.BuildServiceProvider()) {
                     ServerRuntimeData.ServerFTPProvider = serviceProvider.GetRequiredService<IFtpServerHost>();
+                    ServerRuntimeData.ServerFTPRunningStatus = true;
                 }
             }
         }

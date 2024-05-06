@@ -9,7 +9,8 @@ namespace EasyITCenter.ServerCoreDBSettings {
     /// <seealso cref="ControllerBase"/>
     [Authorize]
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    //[ApiExplorerSettings(IgnoreApi = true)]
+    [Route("ServerManagement")]
     public class ServerManagementApi : ControllerBase {
         private readonly ILogger logger;
 
@@ -60,7 +61,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// Core Server Restart Control Api
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/CoreServerRestart")]
+        [HttpGet("/ServerManagement/CoreServerRestart")]
         public async Task<string> ServerRestart() {
             try {
                 if (CommunicationController.IsAdmin()) {
@@ -77,11 +78,14 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// FtpServerStart Api
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/FtpServerStart")]
+        [HttpGet("/ServerManagement/FtpServerStart")]
         public async Task<string> FtpServerStart() {
             try {
                 if (CommunicationController.IsAdmin()) {
-                    if (ServerRuntimeData.ServerFTPProvider != null) { await ServerRuntimeData.ServerFTPProvider.StartAsync(); }
+                    if (ServerRuntimeData.ServerFTPProvider != null) {
+                        ServerRuntimeData.ServerFTPRunningStatus = true;
+                        await ServerRuntimeData.ServerFTPProvider.StartAsync(); 
+                    }
 
                     return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = 0, Status = DBResult.success.ToString(), RecordCount = 0, ErrorMessage = DbOperations.DBTranslate("serverRestarting") });
                 }
@@ -93,16 +97,36 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// FtpServerStop Api
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/FtpServerStop")]
+        [HttpGet("/ServerManagement/FtpServerStop")]
         public async Task<string> FtpServerStop() {
             try {
                 if (CommunicationController.IsAdmin()) {
-                    if (ServerRuntimeData.ServerFTPProvider != null) { await ServerRuntimeData.ServerFTPProvider.StopAsync(); }
+                    if (ServerRuntimeData.ServerFTPProvider != null) {
+                        ServerRuntimeData.ServerFTPRunningStatus = false;
+                        await ServerRuntimeData.ServerFTPProvider.StopAsync();
+                    }
 
                     return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = 0, Status = DBResult.success.ToString(), RecordCount = 0, ErrorMessage = DbOperations.DBTranslate("serverRestarting") });
                 }
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.DeniedYouAreNotAdmin.ToString(), RecordCount = 0, ErrorMessage = DbOperations.DBTranslate(DBResult.DeniedYouAreNotAdmin.ToString()) });
             } catch (Exception ex) { return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
         }
+
+
+
+        /// <summary>
+        /// FTP Server Status
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("/ServerManagement/FtpServerStatus")]
+        public async Task<IActionResult> FtpServerStatus() {
+            try {
+                if (CommunicationController.IsAdmin()) {
+                    return Ok(JsonSerializer.Serialize(new DBResultMessage() { Status = !ServerRuntimeData.ServerFTPRunningStatus ? ServerStatuses.Stopped.ToString() : ServerStatuses.Running.ToString(), ErrorMessage = string.Empty }));
+                }
+                else { return BadRequest(new DBResultMessage() { Status = DBResult.error.ToString(), ErrorMessage = DbOperations.DBTranslate("YouDoesNotHaveRights") }); }
+            } catch (Exception ex) { return BadRequest(new DBResultMessage() { Status = DBResult.error.ToString(), ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
+        }
+
     }
 }

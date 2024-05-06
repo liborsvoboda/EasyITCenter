@@ -48,6 +48,9 @@ https://github.com/RickStrahl?tab=repositories
 Kompletní WorkFlow
 https://github.com/optimajet
 
+až buje injection udělat Float panel s exportem html do MD na webu 
+
+
 ---
 ### Plánované ůlohy system WINDOWS a Správa Počítače
 

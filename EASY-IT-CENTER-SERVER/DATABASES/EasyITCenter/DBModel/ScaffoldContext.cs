@@ -68,6 +68,7 @@ namespace EasyITCenter.DBModel
         public virtual DbSet<ProviderGeneratedLicenseList> ProviderGeneratedLicenseLists { get; set; } = null!;
         public virtual DbSet<ProviderGeneratedToolList> ProviderGeneratedToolLists { get; set; } = null!;
         public virtual DbSet<ProviderViewGeneratedToolRatingList> ProviderViewGeneratedToolRatingLists { get; set; } = null!;
+        public virtual DbSet<ServerApiSecurityList> ServerApiSecurityLists { get; set; } = null!;
         public virtual DbSet<ServerCorsDefAllowedOriginList> ServerCorsDefAllowedOriginLists { get; set; } = null!;
         public virtual DbSet<ServerHealthCheckTaskList> ServerHealthCheckTaskLists { get; set; } = null!;
         public virtual DbSet<ServerLiveDataMonitorList> ServerLiveDataMonitorLists { get; set; } = null!;
@@ -821,6 +822,15 @@ namespace EasyITCenter.DBModel
             modelBuilder.Entity<ProviderViewGeneratedToolRatingList>(entity =>
             {
                 entity.ToView("ProviderViewGeneratedToolRatingList");
+            });
+
+            modelBuilder.Entity<ServerApiSecurityList>(entity =>
+            {
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.ServerApiSecurityLists)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ServerApiSecurityList_UserList");
             });
 
             modelBuilder.Entity<ServerCorsDefAllowedOriginList>(entity =>

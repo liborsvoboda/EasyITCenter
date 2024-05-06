@@ -58,6 +58,7 @@ namespace EasyITCenter.DBModel
             ProviderAutoGenServerReqLists = new HashSet<ProviderAutoGenServerReqList>();
             ProviderGeneratedLicenseLists = new HashSet<ProviderGeneratedLicenseList>();
             ProviderGeneratedToolLists = new HashSet<ProviderGeneratedToolList>();
+            ServerApiSecurityLists = new HashSet<ServerApiSecurityList>();
             ServerCorsDefAllowedOriginLists = new HashSet<ServerCorsDefAllowedOriginList>();
             ServerHealthCheckTaskLists = new HashSet<ServerHealthCheckTaskList>();
             ServerLiveDataMonitorLists = new HashSet<ServerLiveDataMonitorList>();
@@ -235,6 +236,8 @@ namespace EasyITCenter.DBModel
         public virtual ICollection<ProviderGeneratedLicenseList> ProviderGeneratedLicenseLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<ProviderGeneratedToolList> ProviderGeneratedToolLists { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<ServerApiSecurityList> ServerApiSecurityLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<ServerCorsDefAllowedOriginList> ServerCorsDefAllowedOriginLists { get; set; }
         [InverseProperty("User")]

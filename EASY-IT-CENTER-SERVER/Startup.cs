@@ -12,6 +12,7 @@ using ServerCorePages;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using EasyData.Services;
+using YesSql.Services;
 
 namespace EasyITCenter {
 
@@ -128,6 +129,17 @@ namespace EasyITCenter {
                 if (token != null) {
                     serverWebPagesToken = CoreOperations.CheckTokenValidityFromString(token);
                     if (serverWebPagesToken.IsValid) { context.User.AddIdentities(serverWebPagesToken.UserClaims.Identities); try { context.Items.Add(new KeyValuePair<object, object>("ServerWebPagesToken", serverWebPagesToken)); } catch { } }
+                }
+
+                //Check Server Api Security
+                ServerApiSecurityList? serverApiSecurity = DbOperations.GetServerApiSecurity(requestPath);
+                if (context.Response.StatusCode == StatusCodes.Status200OK && serverApiSecurity != null) {
+                    if (token == null && ((context.Request.Method == "GET" && serverApiSecurity.ReadRestrictedAccess) || (context.Request.Method == "POST" && serverApiSecurity.WriteRestrictedAccess))) {
+                        if (serverApiSecurity.RedirectPathOnError?.Length == 0) { context.Response.StatusCode = StatusCodes.Status401Unauthorized; return; } else { context.Request.Path = serverApiSecurity.RedirectPathOnError; await next(); }
+                    } else if (token != null && (
+                    (context.Request.Method == "GET" && serverApiSecurity.ReadRestrictedAccess && serverApiSecurity.ReadAllowedRoles != null && !serverApiSecurity.ReadAllowedRoles.ToLower().Split(",").Contains(serverWebPagesToken?.userRole.ToLower()))
+                    || (context.Request.Method != "GET" && serverApiSecurity.WriteRestrictedAccess && serverApiSecurity.WriteAllowedRoles != null && !serverApiSecurity.WriteAllowedRoles.ToLower().Split(",").Contains(serverWebPagesToken?.userRole.ToLower()))
+                    )) { if (serverApiSecurity.RedirectPathOnError?.Length == 0) { context.Response.StatusCode = StatusCodes.Status401Unauthorized; return; } else { context.Request.Path = serverApiSecurity.RedirectPathOnError; await next(); } }
                 }
 
 

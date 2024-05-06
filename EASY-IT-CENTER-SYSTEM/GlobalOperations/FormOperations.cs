@@ -49,8 +49,9 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// <param name="userControl"></param>
         public async static void DisplayAllToolTips_OnClick(FrameworkElement userControl) {
             foreach (var element in FindVisualChildren<FrameworkElement>(userControl)) {
-                if (element.ToolTip == null)
-                    continue;
+                
+                if (element.ToolTip == null) { continue; }
+                if(!element.IsVisible) { continue; }
 
                 var toolTip = element.ToolTip as ToolTip ??
                               new ToolTip { Content = element.ToolTip };

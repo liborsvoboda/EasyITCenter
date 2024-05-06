@@ -321,7 +321,7 @@ namespace EasyITCenter.ServerCoreStructure {
             try {
                 JwtSecurityTokenHandler? tokenForChek = new JwtSecurityTokenHandler();
                 ClaimsPrincipal userClaims = tokenForChek.ValidateToken(tokenString, ValidAndGetTokenParameters(), out SecurityToken refreshedToken);
-                ServerWebPagesToken validation = new() { Data = new() { { "Token", tokenString } }, UserClaims = userClaims, stringToken = tokenString, Token = refreshedToken, IsValid = refreshedToken != null };
+                ServerWebPagesToken validation = new() { Data = new() { { "Token", tokenString } }, UserClaims = userClaims, stringToken = tokenString, Token = refreshedToken, IsValid = refreshedToken != null, userRole = userClaims.FindFirstValue(ClaimTypes.Role) };
                 return validation;
             } catch { }
             return new ServerWebPagesToken();

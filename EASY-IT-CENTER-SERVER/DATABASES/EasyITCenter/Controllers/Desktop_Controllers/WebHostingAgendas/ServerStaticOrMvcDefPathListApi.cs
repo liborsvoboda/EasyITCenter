@@ -48,6 +48,10 @@
                 record.User = null;  //EntityState.Detached IDENTITY_INSERT is set to OFF
                 var data = new EasyITCenterContext().ServerStaticOrMvcDefPathLists.Add(record);
                 int result = await data.Context.SaveChangesAsync();
+
+                //Update Server LocalFile
+                DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.ServerStaticOrMvcDefPathLists);
+
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
             } catch (Exception ex) {
@@ -61,6 +65,10 @@
             try {
                 var data = new EasyITCenterContext().ServerStaticOrMvcDefPathLists.Update(record);
                 int result = await data.Context.SaveChangesAsync();
+
+                //Update Server LocalFile
+                DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.ServerStaticOrMvcDefPathLists);
+
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
             } catch (Exception ex) { return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
@@ -76,6 +84,10 @@
 
                 var data = new EasyITCenterContext().ServerStaticOrMvcDefPathLists.Remove(record);
                 int result = await data.Context.SaveChangesAsync();
+
+                //Update Server LocalFile
+                DbOperations.LoadOrRefreshStaticDbDials(ServerLocalDbDials.ServerStaticOrMvcDefPathLists);
+
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
                 else return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = result, ErrorMessage = string.Empty });
             } catch (Exception ex) {

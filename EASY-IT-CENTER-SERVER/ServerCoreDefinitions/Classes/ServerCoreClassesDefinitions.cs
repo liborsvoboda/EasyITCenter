@@ -70,6 +70,7 @@
     /// Table when is First Using Its can be used for more Dials
     /// </summary>
     public enum ServerLocalDbDials {
+        ServerApiSecurityLists,
         SystemTranslationLists,
         ServerModuleAndServiceLists,
         ServerStaticOrMvcDefPathLists,

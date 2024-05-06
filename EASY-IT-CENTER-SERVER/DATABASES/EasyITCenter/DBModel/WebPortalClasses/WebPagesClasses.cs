@@ -28,6 +28,7 @@
         public SecurityToken? Token { get; set; } = null;
         public string? stringToken { get; set; } = null;
         public bool IsValid { get; set; } = false;
+        public string userRole { get; set; } = null;
     }
 
     /// <summary>

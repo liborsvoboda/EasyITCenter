@@ -90,6 +90,7 @@ namespace EasyITSystemCenter {
         /// </summary>
         /// <param name="e"></param>
         protected override void OnStartup(StartupEventArgs e) {
+
             base.OnStartup(e);
             if (!bool.Parse(appRuntimeData.AppClientSettings.First(a => a.Key == "beh_hideStartVideo").Value)) {
                 MetroWindow startupAnimation = new WelcomePage();

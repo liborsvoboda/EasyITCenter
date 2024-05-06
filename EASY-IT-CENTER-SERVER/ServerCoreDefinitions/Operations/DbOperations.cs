@@ -1,5 +1,6 @@
 ﻿using ColorCode.Compilation.Languages;
 using DocumentFormat.OpenXml.ExtendedProperties;
+using EasyITCenter.DBModel;
 using IdentityModel.OidcClient;
 using System.Data;
 
@@ -45,6 +46,11 @@ namespace EasyITCenter.ServerCoreStructure {
                                 List<ServerStaticOrMvcDefPathList>? ssmDataLL = new EasyITCenterContext().ServerStaticOrMvcDefPathLists.ToList();
                                 int ssmIndexLL = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == ssmDataLL.GetType());
                                 if (ssmIndexLL >= 0) ServerRuntimeData.LocalDBTableList[ssmIndexLL] = ssmDataLL; else ServerRuntimeData.LocalDBTableList.Add(ssmDataLL);
+                                break;
+                            case "ServerApiSecurityLists":
+                                List<ServerApiSecurityList>? sasDataLL = new EasyITCenterContext().ServerApiSecurityLists.ToList();
+                                int sasIndexLL = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == sasDataLL.GetType());
+                                if (sasIndexLL >= 0) ServerRuntimeData.LocalDBTableList[sasIndexLL] = sasDataLL; else ServerRuntimeData.LocalDBTableList.Add(sasDataLL);
                                 break;
                             default: break;
                         }
@@ -105,6 +111,10 @@ namespace EasyITCenter.ServerCoreStructure {
         }
 
 
+        public static ServerApiSecurityList? GetServerApiSecurity(string apiPath) {
+            return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? GetServerApiSecurityOffline(apiPath) : GetServerApiSecurityOnline(apiPath);
+        }
+
         /// <summary>
         /// Default Operation For Generate Web Portal
         /// Over Local Tables Functionality
@@ -118,6 +128,27 @@ namespace EasyITCenter.ServerCoreStructure {
         #endregion Public definitions for standard using
 
         #region Private or On-line/Off-line Definitions
+
+
+        /// <summary>
+        /// Get Standard Api Security Definition Offline Method
+        /// </summary>
+        /// <param name="modulePath"></param>
+        /// <returns></returns>
+        private static ServerApiSecurityList? GetServerApiSecurityOffline(string apiPath) {
+            int index = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == new List<ServerApiSecurityList>().GetType());
+
+            return ((List<ServerApiSecurityList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => a.UrlSubPath?.ToLower() == apiPath.ToLower()).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Get Standard Api Security Definition Online Method
+        /// </summary>
+        /// <param name="modulePath"></param>
+        /// <returns></returns>
+        private static ServerApiSecurityList? GetServerApiSecurityOnline(string apiPath) {
+            return new EasyITCenterContext().ServerApiSecurityLists.Where(a => a.UrlSubPath.ToLower() == apiPath.ToLower()).FirstOrDefault();
+        }
 
 
         /// <summary>

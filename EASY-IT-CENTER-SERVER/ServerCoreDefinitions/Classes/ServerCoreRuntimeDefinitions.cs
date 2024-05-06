@@ -94,6 +94,11 @@ namespace EasyITCenter.ServerCoreStructure {
         public static bool ServerRestartRequest;
 
         /// <summary>
+        /// Server Securited FTP Provider RunningStatus
+        /// </summary>
+        public static bool ServerFTPRunningStatus;
+
+        /// <summary>
         /// Server Securited FTP Provider for Remote Control
         /// </summary>
         public static IFtpServerHost? ServerFTPProvider;
