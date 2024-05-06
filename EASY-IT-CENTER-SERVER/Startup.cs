@@ -12,7 +12,7 @@ using ServerCorePages;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using EasyData.Services;
-using YesSql.Services;
+
 
 namespace EasyITCenter {
 
@@ -55,7 +55,7 @@ namespace EasyITCenter {
             #endregion Server WebServer
 
             #region Server Core & Security Web
-            
+
             ServerConfigurationServices.ConfigureCookie(ref services);
             ServerConfigurationServices.ConfigureControllers(ref services);
             ServerConfigurationServices.ConfigureAuthentication(ref services);
@@ -69,7 +69,7 @@ namespace EasyITCenter {
             ServerConfigurationServices.ConfigureRSSfeed(ref services);
 
             #endregion Server Core & Security Web
-   
+
             #region Server Modules
 
             ServerModules.ConfigureScheduler(ref services);
@@ -283,6 +283,7 @@ namespace EasyITCenter {
             
             if (ServerConfigSettings.BrowserLinkEnabled) { app.UseBrowserLink(); }
             if (ServerConfigSettings.ModuleWebDataManagerEnabled) { app.UseEasyData(); }
+
         }
 
         /// <summary>

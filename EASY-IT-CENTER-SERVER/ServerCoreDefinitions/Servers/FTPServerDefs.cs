@@ -31,7 +31,7 @@ namespace EasyITCenter.ServerCoreServers {
     /// Password in Database
     /// </summary>
     public class HostedFtpServerMembershipProvider : IMembershipProvider {
-
+        
         /// <summary>
         /// FTP User Validation Its for Open FTP and User Validation
         /// </summary>

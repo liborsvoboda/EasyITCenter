@@ -8,6 +8,7 @@ using MonacoProvider.Api;
 using Snickler.RSSCore.Caching;
 using Snickler.RSSCore.Extensions;
 using Snickler.RSSCore.Models;
+using System.Collections.Immutable;
 
 namespace EasyITCenter.ServerCoreConfiguration {
 
@@ -134,13 +135,34 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     e.Response.StatusCode = 405;
                 });
 
-
                 //MirrorSharp Support
-                if (ServerConfigSettings.ModuleCSharpCodeBuilder) { endpoints.MapMirrorSharp("/mirrorsharp", new MirrorSharpOptions { SelfDebugEnabled = true, IncludeExceptionDetails = true  }); }
-         
+                if (ServerConfigSettings.ModuleCSharpCodeBuilder) { endpoints.MapMirrorSharp("/mirrorsharp", new MirrorSharpOptions { SelfDebugEnabled = true, IncludeExceptionDetails = true  }
+                .SetupCSharp(o => {
+                    o.AddMetadataReferencesFromFiles(FileOperations.GetPathFiles(ServerRuntimeData.Startup_path, "*.dll", SearchOption.TopDirectoryOnly).ToArray());// = ..MetadataReferences = GetAllReferences().ToImmutableList();
+                })); }
 
+                static IEnumerable<MetadataReference> GetAllReferences() {
+                    yield return ReferenceAssembly("System.Runtime");
+                    //yield return ReferenceAssembly("System.Runtime");
+                    //yield return ReferenceAssembly("System.Collections");
+                    var assembly = typeof(IScriptGlobals).Assembly;
+                    yield return MetadataReference.CreateFromFile(assembly.Location);
+                    foreach (var reference in assembly.GetReferencedAssemblies()) {
+                        yield return ReferenceAssembly(reference.Name!);
+                    }
+                }
+
+                static MetadataReference ReferenceAssembly(string name) {
+                    var rootPath = Path.Combine(AppContext.BaseDirectory);
+                    var assemblyPath = Path.Combine(rootPath, name + ".dll");
+                    var documentationPath = Path.Combine(rootPath, name + ".xml");
+
+                    return MetadataReference.CreateFromFile(
+                        assemblyPath, documentation: null
+                    );
+                }
             });
-
+            
             //MirrorSharp Support
             if (ServerConfigSettings.ModuleCSharpCodeBuilder) { app.MapMirrorSharp("/mirrorsharp"); }
 
