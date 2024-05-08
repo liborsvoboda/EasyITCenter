@@ -185,8 +185,10 @@ namespace EasyITSystemCenter.Pages {
                 }
                 else { dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterDocSrvDocumentationList, httpContent, null, App.UserData.Authentification.Token); }
 
-                if (closeForm) { await LoadDataList(); selectedRecord = new DocSrvDocumentationList(); SetRecord(false); }
+                if (closeForm) { await LoadDataList(); selectedRecord = new DocSrvDocumentationList(); SetRecord(null); }
                 if (dBResult.RecordCount == 0) { await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage); }
+                else { selectedRecord.Id = dBResult.InsertedId; txt_id.Value = dBResult.InsertedId; }
+
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden;
             return true;
