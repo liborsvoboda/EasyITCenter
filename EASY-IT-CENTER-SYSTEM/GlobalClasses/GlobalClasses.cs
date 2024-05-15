@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MWindowInterfacesLib.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -40,7 +41,6 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string appStartupLanguage = Thread.CurrentThread.CurrentCulture.ToString();
 
         public Dictionary<string, string> AppClientSettings = new Dictionary<string, string>();
-
     }
 
     /// <summary>

@@ -23,6 +23,7 @@ namespace EasyITSystemCenter.Pages {
 
         private List<DocSrvDocTemplateList> DocSrvDocTemplateList = new List<DocSrvDocTemplateList>();
         private List<DocSrvDocumentationGroupList> docSrvDocumentationGroupList = new List<DocSrvDocumentationGroupList>();
+        private List<SolutionMixedEnumList> mixedEnumTypesList = new List<SolutionMixedEnumList>();
 
         public DocSrvDocTemplateListPage() {
             InitializeComponent();
@@ -44,11 +45,14 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
+
+                mixedEnumTypesList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/CodeTypes", App.UserData.Authentification.Token);
                 docSrvDocumentationGroupList = await CommApi.GetApiRequest<List<DocSrvDocumentationGroupList>>(ApiUrls.EasyITCenterDocSrvDocumentationGroupList, null, App.UserData.Authentification.Token);
                 DocSrvDocTemplateList = await CommApi.GetApiRequest<List<DocSrvDocTemplateList>>(ApiUrls.EasyITCenterDocSrvDocTemplateList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
                 DocSrvDocTemplateList.ForEach(item => { item.GroupName = docSrvDocumentationGroupList.First(a => a.Id == item.GroupId).Name; });
 
+                cb_codeType.ItemsSource = mixedEnumTypesList;
                 cb_documentationGroup.ItemsSource = docSrvDocumentationGroupList;
                 DgListView.ItemsSource = DocSrvDocTemplateList;
                 DgListView.Items.Refresh();
@@ -60,16 +64,18 @@ namespace EasyITSystemCenter.Pages {
         private async void DgListView_Translate(object sender, EventArgs ex) {
             try {
                 ((DataGrid)sender).Columns.ToList().ForEach(async e => {
-                    string headername = e.Header.ToString();
-                    if (headername == "GroupName") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
-                    else if (headername == "Sequence") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
-                    else if (headername == "Name") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
-                    else if (headername == "Description") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
-                    else if (headername == "TimeStamp") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                    else if (headername == "Id") e.DisplayIndex = 0;
-                    else if (headername == "UserId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "GroupId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "Template") e.Visibility = Visibility.Hidden;
+                    string headername = e.Header.ToString().ToLower();
+                    if (headername == "GroupName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                    else if (headername == "InheritedCodeType".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                    else if (headername == "Sequence".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
+                    else if (headername == "Name".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
+                    else if (headername == "Description".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 5; }
+                    else if (headername == "TimeStamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+
+                    else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
+                    else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "GroupId".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "Template".ToLower()) e.Visibility = Visibility.Hidden;
                 });
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
@@ -79,11 +85,11 @@ namespace EasyITSystemCenter.Pages {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    DocSrvDocTemplateList user = e as DocSrvDocTemplateList;
-                    return user.GroupName.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.Name) && user.Name.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.Template) && user.Template.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.Description) && user.Description.ToLower().Contains(filter.ToLower())
+                    DocSrvDocTemplateList search = e as DocSrvDocTemplateList;
+                    return search.GroupName.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.Name) && search.Name.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.Template) && search.Template.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.Description) && search.Description.ToLower().Contains(filter.ToLower())
                     ;
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
@@ -130,6 +136,7 @@ namespace EasyITSystemCenter.Pages {
                 DBResultMessage dBResult;
                 selectedRecord.Id = (int)((txt_id.Value != null) ? txt_id.Value : 0);
                 selectedRecord.GroupId = ((DocSrvDocumentationGroupList)cb_documentationGroup.SelectedItem).Id;
+                selectedRecord.InheritedCodeType = ((SolutionMixedEnumList)cb_codeType.SelectedItem).Name;
 
                 selectedRecord.Sequence = (int)txt_sequence.Value;
                 selectedRecord.Name = txt_name.Text;
@@ -162,13 +169,17 @@ namespace EasyITSystemCenter.Pages {
 
         private void SetRecord(bool? showForm = null, bool copy = false) {
             txt_id.Value = (copy) ? 0 : selectedRecord.Id;
+            try {
+                cb_documentationGroup.SelectedItem = (selectedRecord.Id == 0) ? docSrvDocumentationGroupList.FirstOrDefault() : docSrvDocumentationGroupList.First(a => a.Id == selectedRecord.GroupId);
+                cb_codeType.SelectedItem = (selectedRecord.Id == 0) ? mixedEnumTypesList.FirstOrDefault() : mixedEnumTypesList.First(a => a.Name == selectedRecord.InheritedCodeType);
 
-            cb_documentationGroup.SelectedItem = (selectedRecord.Id == 0) ? docSrvDocumentationGroupList.FirstOrDefault() : docSrvDocumentationGroupList.First(a => a.Id == selectedRecord.GroupId);
-            txt_name.Text = selectedRecord.Name;
-            txt_sequence.Value = selectedRecord.Sequence;
-            txt_description.Text = selectedRecord.Description;
+                txt_name.Text = selectedRecord.Name;
+                txt_sequence.Value = selectedRecord.Sequence;
+                txt_description.Text = selectedRecord.Description;
 
-            txt_template.Text = selectedRecord.Template;
+                txt_template.Text = selectedRecord.Template;
+
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             if (showForm != null && showForm == true) {
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;

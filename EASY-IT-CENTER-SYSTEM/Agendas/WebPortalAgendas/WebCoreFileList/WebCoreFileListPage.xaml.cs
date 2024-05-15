@@ -69,23 +69,24 @@ namespace EasyITSystemCenter.Pages {
         private async void DgListView_Translate(object sender, EventArgs ex) {
             try {
                 ((DataGrid)sender).Columns.ToList().ForEach(async e => {
-                    string headername = e.Header.ToString();
-                    if (headername == "FileName") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
-                    else if (headername == "SpecificationType") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
-                    else if (headername == "Sequence") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
-                    else if (headername == "MetroPath") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
-                    else if (headername == "RewriteLowerLevel") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 5; }
-                    else if (headername == "IsUniquePath") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 6; }
-                    else if (headername == "AutoUpdateOnSave") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 7; }
-                    else if (headername == "Active") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 8; }
-                    else if (headername == "TimeStamp") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                    else if (headername == "Id") e.DisplayIndex = 0;
-                    else if (headername == "UserId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "Description") e.Visibility = Visibility.Hidden;
-                    else if (headername == "GuestFileContent") e.Visibility = Visibility.Hidden;
-                    else if (headername == "UserFileContent") e.Visibility = Visibility.Hidden;
-                    else if (headername == "AdminFileContent") e.Visibility = Visibility.Hidden;
-                    else if (headername == "ProviderContent") e.Visibility = Visibility.Hidden;
+                    string headername = e.Header.ToString().ToLower();
+                    if (headername == "FileName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                    else if (headername == "SpecificationType".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                    else if (headername == "Sequence".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
+                    else if (headername == "MetroPath".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
+                    else if (headername == "RewriteLowerLevel".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 5; }
+                    else if (headername == "IsUniquePath".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 6; }
+                    else if (headername == "AutoUpdateOnSave".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 7; }
+                    else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 8; }
+                    else if (headername == "TimeStamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    
+                    else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
+                    else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "Description".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "GuestFileContent".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "UserFileContent".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "AdminFileContent".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "ProviderContent".ToLower()) e.Visibility = Visibility.Hidden;
                 });
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
@@ -95,14 +96,14 @@ namespace EasyITSystemCenter.Pages {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    WebCoreFileList user = e as WebCoreFileList;
-                    return user.FileName.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.GuestFileContent) && user.GuestFileContent.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.UserFileContent) && user.UserFileContent.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.AdminFileContent) && user.AdminFileContent.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.ProviderContent) && user.ProviderContent.ToLower().Contains(filter.ToLower())
-                    || user.MetroPath.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.Description) && user.Description.ToLower().Contains(filter.ToLower());
+                    WebCoreFileList search = e as WebCoreFileList;
+                    return search.FileName.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.GuestFileContent) && search.GuestFileContent.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.UserFileContent) && search.UserFileContent.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.AdminFileContent) && search.AdminFileContent.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.ProviderContent) && search.ProviderContent.ToLower().Contains(filter.ToLower())
+                    || search.MetroPath.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.Description) && search.Description.ToLower().Contains(filter.ToLower());
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }

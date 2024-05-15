@@ -1,262 +1,318 @@
 ﻿using EasyITSystemCenter.Api;
 using EasyITSystemCenter.Classes;
-using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
-using EasyITSystemCenter.GlobalStyles;
-using ICSharpCode.AvalonEdit.Highlighting;
-using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Win32;
-using Newtonsoft.Json;
+using EasyITSystemCenter.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Xml;
 using System.Windows.Input;
+using System.Windows.Threading;
+using Microsoft.Win32;
+using System.ComponentModel.Design;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.Search;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Folding;
+
+
 
 namespace EasyITSystemCenter.Pages {
 
     public partial class WebCodeLibraryListPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
-        public static WebCodeLibraryList selectedRecord = new WebCodeLibraryList();
+        public static TemplateClassList selectedRecord = new TemplateClassList();
 
-        private List<WebCodeLibraryList> webCodeLibraryList = new List<WebCodeLibraryList>();
-        private int FoundedPositionIndex = 0; private int ReplacePositionIndex = 0;
+        private List<DocSrvDocTemplateList> docSrvDocTemplateList = new List<DocSrvDocTemplateList>();
+
+        CompletionWindow completionWindow;
+        string currentFileName;
+        string lightThemeName = App.appRuntimeData.AppClientSettings.First(a => a.Key == "appe_toolLightThemeName").Value;
+        string darkThemeName = App.appRuntimeData.AppClientSettings.First(a => a.Key == "appe_toolDarkThemeName").Value;
+
 
         public WebCodeLibraryListPage() {
+
             InitializeComponent();
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
-
+            InitializeTextMarkerService();
             try {
-                _ = DataOperations.TranslateFormFields(ListForm);
-
-                lb_id.Header = DBOperations.DBTranslation("id").GetAwaiter().GetResult();
-                lb_name.Header = DBOperations.DBTranslation("name").GetAwaiter().GetResult();
-
-                html_htmlContent.HtmlContentDisableInitialChange = true;
-                html_htmlContent.Toolbar.SetSourceMode(true);
-                html_htmlContent.Browser.ToggleSourceEditor(html_htmlContent.Toolbar, true);
-
-                LoadParameters();
+                highlightingComboBox.ItemsSource = HighlightingManager.Instance.HighlightingDefinitions;
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+            try {
+                this.SetValue(TextOptions.TextFormattingModeProperty, TextFormattingMode.Display);
+                codeEditor.Options.HighlightCurrentLine = true;
+                codeEditor.Options.EnableTextDragDrop = true;
+                codeEditor.Options.AllowScrollBelowDocument = true;
+                codeEditor.Encoding = System.Text.Encoding.UTF8;
+                codeEditor.LineNumbersForeground = (Brush)ColorConverter.ConvertFromString("LightBlue");
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
-            _ = LoadDataList();
-            SetRecord(false);
-        }
 
-        private async void LoadParameters() {
-            DgListView.RowHeight = int.Parse(await DataOperations.ParameterCheck("WebAgendasFormsRowHeight"));
+            try {
+
+                SearchPanel.Install(codeEditor);
+
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+            try {
+                codeEditor.TextArea.TextEntering += codeEditor_TextArea_TextEntering;
+                codeEditor.TextArea.TextEntered += codeEditor_TextArea_TextEntered;
+                DispatcherTimer foldingUpdateTimer = new DispatcherTimer();
+                foldingUpdateTimer.Interval = TimeSpan.FromSeconds(2);
+                foldingUpdateTimer.Tick += delegate { UpdateFoldings(); };
+                foldingUpdateTimer.Start();
+
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+            _ = LoadDataList();
+
         }
 
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                webCodeLibraryList = await CommApi.GetApiRequest<List<WebCodeLibraryList>>(ApiUrls.EasyITCenterWebCodeLibraryList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
-                DgListView.ItemsSource = webCodeLibraryList;
-                lb_dataList.ItemsSource = webCodeLibraryList;
-                DgListView.Items.Refresh();
+                docSrvDocTemplateList = await CommApi.GetApiRequest<List<DocSrvDocTemplateList>>(ApiUrls.EasyITCenterDocSrvDocTemplateList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                cb_templates.ItemsSource = docSrvDocTemplateList.OrderBy(a => a.GroupId).ThenBy(a=>a.Sequence).ToList();
+
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden; return true;
         }
 
-        private void DgListView_Translate(object sender, EventArgs ex) {
-            try {
-                ((DataGrid)sender).Columns.ToList().ForEach(e => {
-                    string headername = e.Header.ToString();
-                    if (headername == "Name") { e.Header = Resources["fname"].ToString(); e.DisplayIndex = 1; }
-                    else if (headername == "Description") e.Header = Resources["description"].ToString();
-                    else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                    else if (headername == "Id") e.DisplayIndex = 0;
-                    else if (headername == "UserId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "HtmlContent") e.Visibility = Visibility.Hidden;
-                });
-            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //CODE EDITORS  
+
+        private void newFile_Click(object sender, RoutedEventArgs e) {
+            lbl_openedFile.Text = "undefined";
+            currentFileName = codeEditor.Text = null;
         }
 
-        public void Filter(string filter) {
-            try {
-                if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
-                dataViewSupport.FilteredValue = filter;
-                DgListView.Items.Filter = (e) => {
-                    WebCodeLibraryList user = e as WebCodeLibraryList;
-                    return user.Name.ToLower().Contains(filter.ToLower())
-                    || user.HtmlContent.ToLower().Contains(filter.ToLower())
-                    ;
+        void openFileClick(object sender, RoutedEventArgs e) {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.CheckFileExists = true;
+            if (dlg.ShowDialog() ?? false) {
+                currentFileName = dlg.FileName;
+                lbl_openedFile.Text = dlg.SafeFileName;
+                codeEditor.Load(dlg.FileName);
+                codeEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(Path.GetExtension(currentFileName));
+
+            }
+        }
+
+        void saveFileClick(object sender, EventArgs e) {
+            if (currentFileName == null) {
+                SaveFileDialog dlg = new SaveFileDialog();
+                if (dlg.ShowDialog() ?? false) {
+                    currentFileName = dlg.FileName;
+                    lbl_openedFile.Text = dlg.SafeFileName;
+                } else { return; }
+            }
+            codeEditor.Save(currentFileName);
+        }
+
+        private void saveAsFileClick(object sender, RoutedEventArgs e) {
+            SaveFileDialog dlg = new SaveFileDialog(); //dlg.DefaultExt = ".txt";
+            if (dlg.ShowDialog() ?? false) {
+                lbl_openedFile.Text = currentFileName = dlg.FileName;
+            }
+            else { return; }
+        }
+
+        void codeEditor_TextArea_TextEntered(object sender, TextCompositionEventArgs e) {
+            // open code completion after the user has pressed dot:
+            if (e.Text == ".") {
+                completionWindow = new CompletionWindow(codeEditor.TextArea);
+                // provide AvalonEdit with the data:
+                IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+                data.Add(new MyCompletionData("Item1"));
+                data.Add(new MyCompletionData("Item2"));
+                data.Add(new MyCompletionData("Item3"));
+                data.Add(new MyCompletionData("Another item"));
+                completionWindow.Show();
+                completionWindow.Closed += delegate {
+                    completionWindow = null;
                 };
-            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-        }
-
-        public void NewRecord() {
-            selectedRecord = new WebCodeLibraryList();
-            dataViewSupport.SelectedRecordId = selectedRecord.Id;
-            SetRecord(true);
-        }
-
-        public void EditRecord(bool copy) {
-            selectedRecord = (WebCodeLibraryList)DgListView.SelectedItem;
-            dataViewSupport.SelectedRecordId = selectedRecord.Id;
-            SetRecord(true, copy);
-        }
-
-        public async void DeleteRecord() {
-            selectedRecord = (WebCodeLibraryList)DgListView.SelectedItem;
-            dataViewSupport.SelectedRecordId = selectedRecord.Id;
-            MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + selectedRecord.Id.ToString(), true);
-            if (result == MessageDialogResult.Affirmative) {
-                DBResultMessage dBResult = await CommApi.DeleteApiRequest(ApiUrls.EasyITCenterWebCodeLibraryList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
-                if (dBResult.RecordCount == 0) await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage);
-                await LoadDataList(); SetRecord(false);
             }
         }
 
-        private void DgListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-            if (DgListView.SelectedItems.Count == 0) return;
-            selectedRecord = (WebCodeLibraryList)DgListView.SelectedItem;
-            dataViewSupport.SelectedRecordId = selectedRecord.Id;
-            SetRecord(true);
+        void codeEditor_TextArea_TextEntering(object sender, TextCompositionEventArgs e) {
+            if (e.Text.Length > 0 && completionWindow != null) {
+                if (!char.IsLetterOrDigit(e.Text[0])) {
+                    // insert the currently selected element.
+                    completionWindow.CompletionList.RequestInsertion(e);
+                }
+            }
+            // do not set e.Handled=true - we still want to insert the character that was typed
         }
 
-        private void DgListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (DgListView.SelectedItems.Count > 0) { selectedRecord = (WebCodeLibraryList)DgListView.SelectedItem; }
-            else { selectedRecord = new WebCodeLibraryList(); }
-            dataViewSupport.SelectedRecordId = selectedRecord.Id;
-        }
+        #region Folding
+        FoldingManager foldingManager;
+        object foldingStrategy;
 
-        private async void BtnSave_Click(object sender, RoutedEventArgs e) => await SaveRecord(false, false);
-
-        private async void BtnSaveClose_Click(object sender, RoutedEventArgs e) => await SaveRecord(true, false);
-
-        private async void BtnSaveAsNew_Click(object sender, RoutedEventArgs e) => await SaveRecord(false, true);
-
-        private async void BtnCancel_Click(object sender, RoutedEventArgs e) {
-            selectedRecord = (DgListView.SelectedItems.Count > 0) ? (WebCodeLibraryList)DgListView.SelectedItem : new WebCodeLibraryList();
-            await LoadDataList();
-            SetRecord(false);
-        }
-
-        private async void SetRecord(bool? showForm = null, bool copy = false) {
-            EditorSelector.IsChecked = bool.Parse(await DataOperations.ParameterCheck("WebBuilderHtmlEditorIsDefault"));
-            txt_id.Value = (copy) ? 0 : selectedRecord.Id;
-
-            lb_dataList.SelectedItem = selectedRecord.Id == 0 ? null : selectedRecord;
-            txt_name.Text = selectedRecord.Name;
-            txt_description.Text = selectedRecord.Description;
-
-            if ((bool)EditorSelector.IsChecked) { html_htmlContent.Browser.OpenDocument(selectedRecord.HtmlContent); }
-            else { txt_codeContent.Text = selectedRecord.HtmlContent; }
-
-            if (showForm != null && showForm == true) {
-                MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;
-                ListView.Visibility = Visibility.Hidden; ListForm.Visibility = Visibility.Visible; dataViewSupport.FormShown = true;
+        void HighlightingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+                codeEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition(((ComboBox)sender).SelectedValue.ToString());
+            if (codeEditor.SyntaxHighlighting == null) {
+                foldingStrategy = null;
             }
             else {
-                MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = true;
-                ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; dataViewSupport.FormShown = showForm == null && !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key.ToLower() == "beh_closeformaftersave".ToLower()).Value);
+                    switch (codeEditor.SyntaxHighlighting.Name) {
+                        case "XML":
+                            foldingStrategy = new XmlFoldingStrategy();
+                            codeEditor.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy();
+                            break;
+                        case "C#":
+                            codeEditor.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy(codeEditor.Options);
+                            foldingStrategy = new BraceFoldingStrategy();
+                        break;
+                        case "Java":
+                            codeEditor.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy(codeEditor.Options);
+                            foldingStrategy = new BraceFoldingStrategy();
+                            break;
+                        default:
+                            codeEditor.TextArea.IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.DefaultIndentationStrategy();
+                            foldingStrategy = null;
+                            break;
+                    }
+                    if (foldingStrategy != null) {
+                        if (foldingManager == null)
+                            foldingManager = FoldingManager.Install(codeEditor.TextArea);
+                        UpdateFoldings();
+                    }
+                    else {
+                        if (foldingManager != null) {
+                            FoldingManager.Uninstall(foldingManager);
+                            foldingManager = null;
+                        }
+                    }
+                }
+            }
+
+
+        void UpdateFoldings() {
+            if (foldingStrategy is BraceFoldingStrategy) {
+                ((BraceFoldingStrategy)foldingStrategy).UpdateFoldings(foldingManager, codeEditor.Document);
+            }
+            if (foldingStrategy is XmlFoldingStrategy) {
+                ((XmlFoldingStrategy)foldingStrategy).UpdateFoldings(foldingManager, codeEditor.Document);
             }
         }
+        #endregion
 
-        private void BtnLoadFromFile_Click(object sender, RoutedEventArgs e) {
-            try {
-                OpenFileDialog dlg = new OpenFileDialog() { DefaultExt = ".html", Filter = "Html files |*.html; *.cshtml; *.js; *.css|All files (*.*)|*.*", Title = Resources["fileOpenDescription"].ToString() };
-                if (dlg.ShowDialog() == true) {
-                    if ((bool)EditorSelector.IsChecked) { html_htmlContent.Browser.OpenDocument(File.ReadAllText(dlg.FileName, FileOperations.FileDetectEncoding(dlg.FileName))); }
-                    else { txt_codeContent.Text = File.ReadAllText(dlg.FileName, FileOperations.FileDetectEncoding(dlg.FileName)); }
-                }
-            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+
+        ITextMarkerService textMarkerService;
+
+        void InitializeTextMarkerService() {
+            var textMarkerService = new TextMarkerService(codeEditor.Document);
+            codeEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
+            codeEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
+            IServiceContainer services = (IServiceContainer)codeEditor.Document.ServiceProvider.GetService(typeof(IServiceContainer));
+            if (services != null)
+                services.AddService(typeof(ITextMarkerService), textMarkerService);
+            this.textMarkerService = textMarkerService;
         }
 
-        private async void BtnOpenInBrowser_Click(object sender, RoutedEventArgs e) {
-            await SaveRecord(false, false);
-            SystemOperations.StartExternalProccess(SystemLocalEnumSets.ProcessTypes.First(a => a.Value.ToLower() == "url").Value, App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + (await DataOperations.ParameterCheck("WebBuilderCodePreview")) + "/" + txt_id.Value.ToString());
+        void RemoveAllClick(object sender, RoutedEventArgs e) {
+            textMarkerService.RemoveAll(m => true);
         }
 
-        private async Task<bool> SaveRecord(bool closeForm, bool asNew) {
-            try {
-                MainWindow.ProgressRing = Visibility.Visible;
-                DBResultMessage dBResult;
-                selectedRecord.Id = (int)((txt_id.Value != null) && !asNew ? txt_id.Value : 0);
-                selectedRecord.Name = txt_name.Text;
-                selectedRecord.Description = txt_description.Text;
-
-                if ((bool)EditorSelector.IsChecked) { selectedRecord.HtmlContent = html_htmlContent.Browser.GetCurrentHtml(); }
-                else { selectedRecord.HtmlContent = txt_codeContent.Text; }
-
-                selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
-
-                string json = JsonConvert.SerializeObject(selectedRecord);
-                StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                if (selectedRecord.Id == 0) {
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterWebCodeLibraryList, httpContent, null, App.UserData.Authentification.Token);
-                }
-                else { dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterWebCodeLibraryList, httpContent, null, App.UserData.Authentification.Token); }
-
-                if (dBResult.RecordCount > 0) { await LoadDataList(); }
-                if (closeForm) { selectedRecord = new WebCodeLibraryList(); SetRecord(false); }
-                if (dBResult.RecordCount == 0) { await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage); }
-            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-            MainWindow.ProgressRing = Visibility.Hidden;
-            return true;
+        void RemoveSelectedClick(object sender, RoutedEventArgs e) {
+            textMarkerService.RemoveAll(IsSelected);
         }
 
-        private void DataListDoubleClick(object sender, MouseButtonEventArgs e) {
-            if (lb_dataList.SelectedItems.Count > 0) { selectedRecord = (WebCodeLibraryList)lb_dataList.SelectedItem; }
-            dataViewSupport.SelectedRecordId = selectedRecord.Id;
-            SetRecord(true);
+        void AddMarkerFromSelectionClick(object sender, RoutedEventArgs e) {
+            ITextMarker marker = textMarkerService.Create(codeEditor.SelectionStart, codeEditor.SelectionLength);
+            marker.MarkerTypes = TextMarkerTypes.SquigglyUnderline;
+            marker.MarkerColor = Colors.Red;
         }
 
-        private void HighlightCodeChanged(object sender, SelectionChangedEventArgs e) {
-            txt_codeContent.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition(((ListBoxItem)code_selector.SelectedValue).Content.ToString());
+        bool IsSelected(ITextMarker marker) {
+            int selectionEndOffset = codeEditor.SelectionStart + codeEditor.SelectionLength;
+            if (marker.StartOffset >= codeEditor.SelectionStart && marker.StartOffset <= selectionEndOffset)
+                return true;
+            if (marker.EndOffset >= codeEditor.SelectionStart && marker.EndOffset <= selectionEndOffset)
+                return true;
+            return false;
         }
 
-        private void EditorSelectorStatus(object sender, RoutedEventArgs e) {
-            if ((bool)EditorSelector.IsChecked) {
-                html_htmlContent.Browser.OpenDocument(selectedRecord.HtmlContent);
-                html_htmlContent.Visibility = Visibility.Visible;
-                txt_codeContent.Visibility = Visibility.Hidden;
-                code_selector.Visibility = Visibility.Hidden;
+
+        /// <summary>
+        /// UniversalEditor Theme Controls
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnTheme_Click(object sender, RoutedEventArgs e) {
+
+            if (btn_theme.Background == (Brush)new BrushConverter().ConvertFromString(lightThemeName)) {
+                codeEditor.Background = (Brush)new BrushConverter().ConvertFromString(lightThemeName);
+                btn_theme.Background = (Brush)new BrushConverter().ConvertFromString(darkThemeName);
             }
             else {
-                txt_codeContent.Text = selectedRecord.HtmlContent;
-                code_selector.Visibility = Visibility.Visible;
-                txt_codeContent.Visibility = Visibility.Visible;
-                html_htmlContent.Visibility = Visibility.Hidden;
+                codeEditor.Background = (Brush)new BrushConverter().ConvertFromString(darkThemeName);
+                btn_theme.Background = (Brush)new BrushConverter().ConvertFromString(lightThemeName);
             }
         }
 
-        private void CaseSensitiveChange(object sender, RoutedEventArgs e) {
-            if (dataViewSupport.FormShown && btn_searchText != null) { btn_searchText.IsEnabled = true; FoundedPositionIndex = ReplacePositionIndex = 0; }
-        }
 
-        private void CodeSearchTextChanged(object sender, TextChangedEventArgs e) {
-            btn_searchText.IsEnabled = true; FoundedPositionIndex = ReplacePositionIndex = 0; SearchTextInEditor();
-        }
+        /// <summary>
+        /// Set Selected Template
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TemplateSelected(object sender, SelectionChangedEventArgs e) {
+            if (((ComboBox)sender).SelectedIndex > -1) {
+                lbl_openedFile.Text = "undefined";
+                currentFileName = codeEditor.Text = ((DocSrvDocTemplateList)((ComboBox)sender).SelectedItem).Template;
 
-        private void SearchText_Click(object sender, RoutedEventArgs e) {
-            SearchTextInEditor();
-        }
+                highlightingComboBox.SelectedIndex = -1;
 
-        private void SelectedOnlyChange(object sender, RoutedEventArgs e) {
-            if (dataViewSupport.FormShown && btn_codeReplace != null) { btn_codeReplace.IsEnabled = true; FoundedPositionIndex = ReplacePositionIndex = 0; }
-        }
+                string selectHighlight = "C#";
+                if (((DocSrvDocTemplateList)((ComboBox)sender).SelectedItem).Name.ToUpper().StartsWith("C# ")) { selectHighlight = "C#"; }
+                else if (((DocSrvDocTemplateList)((ComboBox)sender).SelectedItem).Name.ToUpper().Contains("CSHTML")) { selectHighlight = "C#"; }
 
-        private void CodeReplaceTextChanged(object sender, TextChangedEventArgs e) {
-            btn_codeReplace.IsEnabled = true; FoundedPositionIndex = ReplacePositionIndex = 0;
-        }
+                else if (((DocSrvDocTemplateList)((ComboBox)sender).SelectedItem).Name.ToUpper().StartsWith("XAML ")) { selectHighlight = "XML"; }
 
-        private void SearchTextInEditor() {
-            ToolsOperations.AvalonEditorFindText(txt_codeSearch.Text, ref FoundedPositionIndex, ref txt_codeContent, (bool)chb_caseSensitiveIgnore.IsChecked);
-            if (FoundedPositionIndex == 0) { btn_searchText.IsEnabled = false; }
-        }
+                else if (((DocSrvDocTemplateList)((ComboBox)sender).SelectedItem).Name.ToUpper().StartsWith("SP ")) { selectHighlight = "TSQL"; }
+                else if (((DocSrvDocTemplateList)((ComboBox)sender).SelectedItem).Name.ToUpper().StartsWith("MSSQL ")) { selectHighlight = "TSQL"; }
+                else if (((DocSrvDocTemplateList)((ComboBox)sender).SelectedItem).Name.ToUpper().StartsWith("TR ")) { selectHighlight = "TSQL"; }
+                else if (((DocSrvDocTemplateList)((ComboBox)sender).SelectedItem).Name.ToUpper().StartsWith("TBL ")) { selectHighlight = "TSQL"; }
+                else if (((DocSrvDocTemplateList)((ComboBox)sender).SelectedItem).Name.ToUpper().StartsWith("FN ")) { selectHighlight = "TSQL"; }
 
-        private void CodeReplaceClick(object sender, RoutedEventArgs e) {
-            ToolsOperations.AvalonEditorReplaceText(txt_codeSearch.Text, txt_codeReplace.Text, ref ReplacePositionIndex, ref txt_codeContent, (bool)chb_caseSensitiveIgnore.IsChecked, (bool)chb_selectedOnly.IsChecked);
-            if (ReplacePositionIndex == 0) { btn_codeReplace.IsEnabled = false; }
+                else if (((DocSrvDocTemplateList)((ComboBox)sender).SelectedItem).Name.ToUpper().StartsWith("JS ")) { selectHighlight = "JavaScript"; }
+                else if (((DocSrvDocTemplateList)((ComboBox)sender).SelectedItem).Name.ToUpper().StartsWith("CSS ")) { selectHighlight = "CSS"; }
+                else if (((DocSrvDocTemplateList)((ComboBox)sender).SelectedItem).Name.ToUpper().StartsWith("HTML ")) { selectHighlight = "HTML"; }
+
+                highlightingComboBox.SelectedItem = HighlightingManager.Instance.HighlightingDefinitions
+                    .Where(a => a.Name == selectHighlight).FirstOrDefault();
+
+                ((ComboBox)sender).SelectedIndex = -1;
+
+                highlightingComboBox.SelectedItem = HighlightingManager.Instance.HighlightingDefinitions
+                    .Where(a => a.Name == selectHighlight).FirstOrDefault();
+
+            }
         }
     }
+
 }

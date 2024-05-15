@@ -19,7 +19,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
                     IsolationLevel = IsolationLevel.ReadUncommitted
                 })) {
                     data = new EasyITCenterContext().WebCodeLibraryLists.Where(a => a.Id == id)
-                        .OrderByDescending(a => a.TimeStamp).First().HtmlContent;
+                        .OrderByDescending(a => a.TimeStamp).First().Content;
                 }
 
                 string head;

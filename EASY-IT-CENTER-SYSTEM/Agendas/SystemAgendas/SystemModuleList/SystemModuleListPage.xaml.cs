@@ -34,7 +34,6 @@ namespace EasyITSystemCenter.Pages {
         };
 
         private List<SystemModuleList> systemModuleList = new List<SystemModuleList>();
-        //private List<SystemSvgIconList> svgIconList = new List<SystemSvgIconList>();
         private List<SolutionMixedEnumList> mixedEnumTypesList = new List<SolutionMixedEnumList>();
 
         private bool pageLoaded = false;
@@ -63,9 +62,7 @@ namespace EasyITSystemCenter.Pages {
             try {
 
                 mixedEnumTypesList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/SystemModules", App.UserData.Authentification.Token);
-                //svgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
                 systemModuleList = await CommApi.GetApiRequest<List<SystemModuleList>>(ApiUrls.SystemModuleList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
-
 
                 lv_iconViewer.Items.Clear();
                 App.SystemSvgIconList.ForEach(icon => {

@@ -115,6 +115,9 @@
         EasyITCenterWebSettingList,
         EasyITCenterWebVisitIpList,
 
+        /*WebHosting Apis*/
+        EasyITCenterWebConfiguratorList,
+
         /*Server Special APIs*/
         ServerEmailer,
 

@@ -61,15 +61,15 @@ namespace EasyITSystemCenter.Pages {
             try {
                 ((DataGrid)sender).Columns.ToList().ForEach(async e => {
                     string headername = e.Header.ToString().ToLower();
-                    if (headername == "websitename") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
-                    else if (headername == "description") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                    if (headername == "websitename".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                    else if (headername == "description".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
                     else if (headername == "MinimalReadAccessRole".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
                     else if (headername == "MinimalWriteAccessRole".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
 
-                    else if (headername == "active") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
-                    else if (headername == "timestamp") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                    else if (headername == "id") e.DisplayIndex = 0;
-                    else if (headername == "userid") e.Visibility = Visibility.Hidden;
+                    else if (headername == "active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
+                    else if (headername == "timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "id".ToLower()) e.DisplayIndex = 0;
+                    else if (headername == "userid".ToLower()) e.Visibility = Visibility.Hidden;
                     else if (headername == "MinimalReadAccessValue".ToLower()) e.Visibility = Visibility.Hidden;
                     else if (headername == "MinimalWriteAccessValue".ToLower()) e.Visibility = Visibility.Hidden;
                 });

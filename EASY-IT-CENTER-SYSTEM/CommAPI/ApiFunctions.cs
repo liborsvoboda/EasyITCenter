@@ -16,8 +16,8 @@ namespace EasyITSystemCenter.Api {
             using (HttpClient httpClient = new HttpClient()) {
                 try {
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(userName + ":" + password)));
-                    StringContent test = new StringContent("", Encoding.UTF8, "application/json");
-                    HttpResponseMessage json = await httpClient.PostAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl, test);
+                    StringContent requestContent = new StringContent("", Encoding.UTF8, "application/json");
+                    HttpResponseMessage json = await httpClient.PostAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl, requestContent);
                     return JsonConvert.DeserializeObject<Authentification>(await json.Content.ReadAsStringAsync());
                 } catch { return new Authentification() { Token = null, Expiration = null }; }
             }

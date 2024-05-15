@@ -11,7 +11,8 @@
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                 IsolationLevel = IsolationLevel.ReadUncommitted //with NO LOCK
             })) {
-                data = new EasyITCenterContext().DocSrvDocTemplateLists.OrderBy(a => a.Sequence).ThenBy(a => a.Name).ToList();
+                data = new EasyITCenterContext().DocSrvDocTemplateLists.OrderBy(a => a.InheritedCodeType)
+                    .ThenBy(a=>a.Sequence).ThenBy(a => a.Name).ToList();
             }
 
             return JsonSerializer.Serialize(data);
@@ -28,6 +29,22 @@
 
             return JsonSerializer.Serialize(data);
         }
+
+
+        [HttpGet("/EasyITCenterDocSrvDocTemplateList/ByGroup/{code}")]
+        public async Task<string> GetDocSrvDocTemplateListGroup(string code) {
+            List<DocSrvDocTemplateList> data;
+            using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
+                IsolationLevel = IsolationLevel.ReadUncommitted
+            })) {
+                data = new EasyITCenterContext().DocSrvDocTemplateLists.Where(a => 
+                (code.ToLower() == "web" && (a.InheritedCodeType.ToLower() == "html" || a.InheritedCodeType.ToLower() == "javascript" || a.InheritedCodeType.ToLower() == "css")
+                    || a.InheritedCodeType.ToLower() == code.ToLower())).OrderBy(a => a.Sequence).ThenBy(a=>a.Name).ToList();
+            }
+
+            return JsonSerializer.Serialize(data);
+        }
+
 
         [HttpGet("/EasyITCenterDocSrvDocTemplateList/{id}")]
         public async Task<string> GetDocSrvDocTemplateListKey(int id) {

@@ -29,6 +29,23 @@
             return JsonSerializer.Serialize(data);
         }
 
+
+        [HttpGet("/EasyITCenterWebCodeLibraryList/ByGroup/{code}")]
+        public async Task<string> GetWebCodeLibraryListGroup(string code) {
+            List<WebCodeLibraryList> data;
+            using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
+                IsolationLevel = IsolationLevel.ReadUncommitted
+            })) {
+                data = new EasyITCenterContext().WebCodeLibraryLists
+                    .Where(a =>
+                    (code.ToLower() == "web" && (a.InheritedCodeType.ToLower() == "html" || a.InheritedCodeType.ToLower() == "javascript" || a.InheritedCodeType.ToLower() == "css")
+                    || a.InheritedCodeType.ToLower() == code.ToLower()) && a.IsCompletion).OrderBy(a => a.InheritedCodeType).ThenBy(a=>a.Name).ToList();
+            }
+
+            return JsonSerializer.Serialize(data);
+        }
+
+
         [HttpGet("/EasyITCenterWebCodeLibraryList/{id}")]
         public async Task<string> GetWebCodeLibraryListKey(int id) {
             WebCodeLibraryList data;

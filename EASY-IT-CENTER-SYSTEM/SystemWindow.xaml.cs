@@ -11,6 +11,7 @@ using EasyITSystemCenter.SystemStructure;
 using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using MWindowInterfacesLib.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,7 @@ namespace EasyITSystemCenter {
 
         public static DateTimeOffset lastUserAction = DateTimeOffset.UtcNow.AddSeconds(int.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_timeToEnable").Value));
         public readonly Timer AppSystemTimer = new Timer() { Enabled = false, Interval = 1 };
+        
 
         //Central Variables Declarations
         public static bool dataGridSelected, dgIdSetted, dgRefresh, serviceRunning, userLogged, updateChecked, runReleaseMode, operationRunning, serverLoggerSource, multiSameTabsEnabled = false;
@@ -270,6 +272,7 @@ namespace EasyITSystemCenter {
         public MainWindow() {
             try {
                 InitializeComponent();
+
                 SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
                 Title = Resources["appName"].ToString();
 

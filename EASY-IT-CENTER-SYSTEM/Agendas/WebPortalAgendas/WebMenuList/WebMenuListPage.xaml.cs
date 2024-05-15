@@ -68,25 +68,26 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Hidden; return true;
         }
 
-        private void DgListView_Translate(object sender, EventArgs ex) {
+        private async void DgListView_Translate(object sender, EventArgs ex) {
             try {
-                ((DataGrid)sender).Columns.ToList().ForEach(e => {
-                    string headername = e.Header.ToString();
-                    if (headername == "Name") { e.Header = Resources["fname"].ToString(); e.DisplayIndex = 1; }
-                    else if (headername == "GroupName") { e.Header = Resources["role"].ToString(); e.DisplayIndex = 2; }
-                    else if (headername == "Sequence") { e.Header = Resources["sequence"].ToString(); e.DisplayIndex = 3; }
-                    else if (headername == "UserMenu") { e.Header = Resources["userMenu"].ToString(); e.DisplayIndex = 4; }
-                    else if (headername == "AdminMenu") { e.Header = Resources["adminMenu"].ToString(); e.DisplayIndex = 5; }
-                    else if (headername == "Default") { e.Header = Resources["default"].ToString(); e.DisplayIndex = 6; }
-                    else if (headername == "Active") { e.Header = Resources["active"].ToString(); e.DisplayIndex = 7; }
-                    else if (headername == "Description") e.Header = Resources["description"].ToString();
-                    else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                    else if (headername == "Id") e.DisplayIndex = 0;
-                    else if (headername == "UserId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "GroupId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "HtmlContent") e.Visibility = Visibility.Hidden;
-                    else if (headername == "UserIPAddress") e.Visibility = Visibility.Hidden;
-                    else if (headername == "MenuClass") e.Visibility = Visibility.Hidden;
+                ((DataGrid)sender).Columns.ToList().ForEach(async e => {
+                    string headername = e.Header.ToString().ToLower();
+                    if (headername == "Name".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                    else if (headername == "GroupName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                    else if (headername == "Sequence".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
+                    else if (headername == "UserMenu".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
+                    else if (headername == "AdminMenu".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 5; }
+                    else if (headername == "Default".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 6; }
+                    else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 7; }
+                    else if (headername == "Description".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+
+                    else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
+                    else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "GroupId".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "HtmlContent".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "UserIPAddress".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "MenuClass".ToLower()) e.Visibility = Visibility.Hidden;
                 });
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
@@ -96,11 +97,11 @@ namespace EasyITSystemCenter.Pages {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    WebMenuList user = e as WebMenuList;
-                    return user.Name.ToLower().Contains(filter.ToLower())
-                    || user.GroupName.ToLower().Contains(filter.ToLower())
-                    || user.HtmlContent.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.Description) && user.Description.ToLower().Contains(filter.ToLower());
+                    WebMenuList search = e as WebMenuList;
+                    return search.Name.ToLower().Contains(filter.ToLower())
+                    || search.GroupName.ToLower().Contains(filter.ToLower())
+                    || search.HtmlContent.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.Description) && search.Description.ToLower().Contains(filter.ToLower());
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
@@ -239,8 +240,8 @@ namespace EasyITSystemCenter.Pages {
         //Include Template on end in Editor
         private void DataListDoubleClick(object sender, MouseButtonEventArgs e) {
             if (lb_dataList.SelectedItems.Count > 0) {
-                if ((bool)EditorSelector.IsChecked) { html_htmlContent.HtmlContent += ((WebCodeLibraryList)lb_dataList.SelectedItem).HtmlContent; }
-                else { txt_codeContent.Text += ((WebCodeLibraryList)lb_dataList.SelectedItem).HtmlContent; }
+                if ((bool)EditorSelector.IsChecked) { html_htmlContent.HtmlContent += ((WebCodeLibraryList)lb_dataList.SelectedItem).Content; }
+                else { txt_codeContent.Text += ((WebCodeLibraryList)lb_dataList.SelectedItem).Content; }
             }
         }
 

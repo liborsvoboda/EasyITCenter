@@ -46,28 +46,72 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// is Translated Over DB List !!! Translation List is Automatic Filling For Logged Agendas
         /// Function using Referenced Objects
         /// Defined: Grid[label,button],Label, Button, EXTEND this Fuction for every Parent a Direct
+        /// Contextenu Set Header
         /// Types For One Function Translatings !!! Translate only Empty Contents
         /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parentObject"></param>
         /// <returns></returns>
         public static async Task<bool> TranslateFormFields<T>(T parentObject) {
             try {
+                if (parentObject.GetType().Name.ToLower() == "contextmenu") {
+                    (parentObject as ContextMenu).Items.OfType<MenuItem>().ToList().ForEach(async menuitem => {
+                        try { if (menuitem.Header == null) { menuitem.Header = await DBOperations.DBTranslation(menuitem.Name.Split('_')[1]); } } catch { }
+                    });
+                }
                 if (parentObject.GetType().Name.ToLower() == "grid") {
                     (parentObject as Grid).Children.OfType<Label>().ToList().ForEach(async label => {
-                        if (label.Content == null) { label.Content = await DBOperations.DBTranslation(label.Name.Split('_')[1]); }
+                        try { if (label.Content == null) { label.Content = await DBOperations.DBTranslation(label.Name.Split('_')[1]); } } catch { }
                     });
                     (parentObject as Grid).Children.OfType<Button>().ToList().ForEach(async button => {
-                        if (button.Content == null) { button.Content = await DBOperations.DBTranslation(button.Name.Split('_')[1]); }
+                       try{ if (button.Content == null) { button.Content = await DBOperations.DBTranslation(button.Name.Split('_')[1]); } } catch { }
                     });
                 }
                 if (parentObject.GetType().Name.ToLower() == "label") {
-                    if ((parentObject as Label).Content == null) { (parentObject as Label).Content = await DBOperations.DBTranslation((parentObject as Label).Name.Split('_')[1]); }
+                   try { if ((parentObject as Label).Content == null) { (parentObject as Label).Content = await DBOperations.DBTranslation((parentObject as Label).Name.Split('_')[1]); } } catch { }
                 }
                 if (parentObject.GetType().Name.ToLower() == "button") {
-                    if ((parentObject as Button).Content == null) { (parentObject as Button).Content = await DBOperations.DBTranslation((parentObject as Button).Name.Split('_')[1]); }
+                   try { if ((parentObject as Button).Content == null) { (parentObject as Button).Content = await DBOperations.DBTranslation((parentObject as Button).Name.Split('_')[1]); } } catch { }
                 }
             } catch (Exception Ex) { App.ApplicationLogging(Ex); }
             return true;
         }
+
+
+        /// <summary>
+        /// Translate Toolbar Items Name to Tooltip Description
+        /// Buttons, CheckBox, ComboBox
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parentObject"></param>
+        /// <returns></returns>
+        public static async Task<bool> TranslateSubObjectsNameToToolTip<T>(T parentObject) {
+            try {
+                if (parentObject.GetType().Name.ToLower() == "toolbar") {
+                    (parentObject as ToolBar).Items.OfType<CheckBox>().ToList().ForEach(async checkbox => {
+                       try { if (checkbox.ToolTip == null) { checkbox.ToolTip = await DBOperations.DBTranslation(checkbox.Name.Split('_')[1]); } } catch { }
+                    });
+                    (parentObject as ToolBar).Items.OfType<Button>().ToList().ForEach(async button => {
+                       try { if (button.ToolTip == null) { button.ToolTip = await DBOperations.DBTranslation(button.Name.Split('_')[1]); } } catch { }
+                    });
+                    (parentObject as ToolBar).Items.OfType<ComboBox>().ToList().ForEach(async combobox => {
+                        try { if (combobox.ToolTip == null) { combobox.ToolTip = await DBOperations.DBTranslation(combobox.Name.Split('_')[1]); } } catch { }
+                    });
+                }
+                if (parentObject.GetType().Name.ToLower() == "checkbox") {
+                   try { if ((parentObject as CheckBox).ToolTip == null) { (parentObject as CheckBox).ToolTip = await DBOperations.DBTranslation((parentObject as CheckBox).Name.Split('_')[1]); } } catch { }
+                }
+                if (parentObject.GetType().Name.ToLower() == "button") {
+                   try { if ((parentObject as Button).ToolTip == null) { (parentObject as Button).ToolTip = await DBOperations.DBTranslation((parentObject as Button).Name.Split('_')[1]); } } catch { }
+                }
+                if (parentObject.GetType().Name.ToLower() == "combobox") {
+                    try { if ((parentObject as ComboBox).ToolTip == null) { (parentObject as ComboBox).ToolTip = await DBOperations.DBTranslation((parentObject as ComboBox).Name.Split('_')[1]); } } catch { }
+                }
+            } catch (Exception Ex) { App.ApplicationLogging(Ex); }
+            return true;
+        }
+
+
 
         /// <summary>
         /// Return Requested User or if not exist default DB parameter CamelCase Ignored

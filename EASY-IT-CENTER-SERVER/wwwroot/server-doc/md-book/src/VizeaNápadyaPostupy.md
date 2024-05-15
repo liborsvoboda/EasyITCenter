@@ -1,4 +1,62 @@
-﻿### LOW/NO/FULL code EXTREMELY EASY TO DEVELOP ANY SYSTEM    
+﻿# ESB - SYSTEM DESIGNER - TOUCH SYSTEMS - WEB    
+Generátor - WebKonfigurátor - Vytvoření LIGHT Klonu    
+    
+PředObjednávky NA EasySYSTEMbuilder LIGHT za POUHÝCH 10000KČ    
+Dodání Do 1 Měsíce.    
+    
+Chystá se Nový LIGHT KLON EasySYSTEMbuilderu    
+pro účely:    
+- Samostatný ANY SYSTEM Designer/APP    
+- Dotykové TouchPaNely    
+- Provoz Dynamického WebServeru    
+    
+- Řeší Vytváření Systémů: WebView v App    
+- Řeší Vytváření Webů    
+- Řeší Vytváření TouchPanelů    
+- Z ESB udělat Light Klienta pro TOTO Řešení    
+    
+Logika:    
+- Vytvořit Tabulku Webové Objekty    
+info URL    
+seznam ostatních objektu v pořadí    
+Jak se pospojují do výsledné Stránky    
+    
+1 Tabulka na celé řešení:    
+- ID AutoIncrement    
+- Primární Ano/Ne = Startovací Stránka    
+  bude zobrazena na dotykovém panelu    
+- ServerUrl Adresa kde se spustí    
+  je nepovinná pro ID co jsou jen Objekty    
+- Požadována Autentifikace ROLE - Ano/Anonymous    
+  Když Ano - Přesměrovat+Kam nebo Přeskočit    
+- Html Content (HTML,JS,CSS) - každá část má své potřebné    
+- Seznam ID následných: umožňuje dynamickou naváznost    
+- Aktivní    
+- UserId    
+- Timestamp    
+    
+Web Zázemí: Interní Web Server Systému    
+- Metro4    
+- 1000+ k Dispozici Knihovny Statických Nástrojů    
+- JQuery    
+- SQLite DB s Editorem    
+- AutoTranslator    
+    
+Prvni musí být Matice Web Stránky, Ostatní Objekty se    
+dohrají JQuery objekt.html('')    
+    
+Vytvořit Zobrazení Schematu Provedení    
+    
+----------------------------------------    
+    
+udelat agendu generatory - tim myslim vygenerovat galerii, dokumentaci atd na ceste v administraci    
+    
+    
+----    
+    
+    
+    
+### LOW/NO/FULL code EXTREMELY EASY TO DEVELOP ANY SYSTEM    
 <sup>**For thinking, the development of tools and work with them worthy in the 21st century**</sup>    
     
 ### The development of FRONTEND as an entire IS system as you do not know it - only 3 choices are enough    

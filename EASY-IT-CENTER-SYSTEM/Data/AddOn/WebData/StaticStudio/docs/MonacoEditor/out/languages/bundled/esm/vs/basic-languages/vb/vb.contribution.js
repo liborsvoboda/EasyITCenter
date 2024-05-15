@@ -1,2 +1,0 @@
-/*! For license information please see vb.contribution.js.LICENSE.txt */
-import{registerLanguage}from"../_.contribution";registerLanguage({id:"vb",extensions:[".vb"],aliases:["Visual Basic","vb"],loader:()=>import("./vb")});

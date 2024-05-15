@@ -4,6 +4,7 @@ namespace EasyITSystemCenter.Classes {
 
     public partial class DocSrvDocTemplateList {
         public int Id { get; set; } = 0;
+        public string InheritedCodeType { get; set; } = null;
         public int GroupId { get; set; }
         public int Sequence { get; set; }
         public string Name { get; set; } = null;

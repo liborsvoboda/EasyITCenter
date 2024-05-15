@@ -1,2 +1,0 @@
-/*! For license information please see rust.contribution.js.LICENSE.txt */
-import{registerLanguage}from"../_.contribution";registerLanguage({id:"rust",extensions:[".rs",".rlib"],aliases:["Rust","rust"],loader:()=>import("./rust")});
