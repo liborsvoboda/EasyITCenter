@@ -1,4 +1,13 @@
-﻿### FYI Reporting  - FreeWare Full Report Designer and Viewer
+﻿# Úvod   ESB - Dokumentace Projektu  
+
+EASY SYSTEM Builder Universální řešení pro extrémně jednoduchou tvorbu libovolného systému.
+Primitivní vývoj pomocí pouhých formulářu vám stačí k vytvoření různých typů systémů
+Dotykové Systémy, IS systémy, Data management, Sběr Dat, Datové můsty, Ovládání Strojů, Multimediální systémy.
+Máze Otázky? neváhejte se nám Ozvat
+Popis funkcionality tiskového řešení FYI Reporting v Systému ESB
+
+
+### FYI Reporting  - FreeWare Full Report Designer and Viewer
 for Printing All document Types with Images, Barcodes, EAN, QR, Graphs, SubReport, etc.
 
 ## IMPORTANT INFO FOR REPORT DEVELOP

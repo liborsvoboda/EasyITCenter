@@ -1,4 +1,12 @@
-﻿### Literature:
+﻿# Úvod   EIC - Dokumentace Projektu  
+
+EasyITcenter Universální řešení serverů IT světa v  1 Globálním Balíčku
+Modulární Server s možností neomezeného a přesto extermně jednoduchého vývoje všemi směry
+Ideální Centrální Správa sítí, strojů, IT a všeho co si dovedete prtředstavit.
+Máte Otázky? neváhejte nám zavolat
+Poznatky a rady při vývoji
+
+### Literature:
 
 [https://code-maze.com/net-core-web-development-part1/](https://code-maze.com/net-core-web-development-part1/ "")  
 [https://docs.microsoft.com/cs-cz/aspnet/core/security/cors?view=aspnetcore-6.0](https://docs.microsoft.com/cs-cz/aspnet/core/security/cors?view=aspnetcore-6.0 "")

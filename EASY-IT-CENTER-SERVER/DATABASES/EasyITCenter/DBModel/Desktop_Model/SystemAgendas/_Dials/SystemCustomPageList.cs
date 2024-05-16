@@ -17,11 +17,12 @@ namespace EasyITCenter.DBModel
         public string PageName { get; set; } = null!;
         [Column(TypeName = "text")]
         public string? Description { get; set; }
-        public bool IsMultiFormType { get; set; }
-        public bool IsServerUrl { get; set; }
+        public bool IsSystemWebModule { get; set; }
         [StringLength(512)]
         [Unicode(false)]
         public string? StartupUrl { get; set; }
+        public bool IsMultiFormType { get; set; }
+        public bool IsServerUrl { get; set; }
         public bool IsWebServer { get; set; }
         [StringLength(150)]
         [Unicode(false)]

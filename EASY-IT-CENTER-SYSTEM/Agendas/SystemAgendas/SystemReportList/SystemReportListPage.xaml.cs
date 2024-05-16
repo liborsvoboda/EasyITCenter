@@ -25,7 +25,7 @@ namespace EasyITSystemCenter.Pages {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
         public static SystemReportList selectedRecord = new SystemReportList();
 
-        private List<SpTableList> systemTableList = new List<SpTableList>();
+        private List<GenericObject> systemTableList = new List<GenericObject>();
         private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
         private List<SystemReportList> reportList = new List<SystemReportList>();
         private bool reportSupportForListOnly = true;
@@ -51,7 +51,7 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                systemTableList = await CommApi.GetApiRequest<List<SpTableList>>(ApiUrls.EasyITCenterStoredProceduresList, "SystemSpGetTableList", App.UserData.Authentification.Token);
+                systemTableList = await CommApi.GetApiRequest<List<GenericObject>>(ApiUrls.EasyITCenterStoredProceduresList, "SystemSpGetTableList", App.UserData.Authentification.Token);
                 reportList = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
                 systemTranslatedTableList.Clear();

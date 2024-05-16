@@ -1,4 +1,15 @@
-﻿<a name='assembly'></a>
+﻿# Úvod   ESB - Dokumentace Projektu  
+
+EASY SYSTEM Builder Universální řešení pro extrémně jednoduchou tvorbu libovolného systému.
+Primitivní vývoj pomocí pouhých formulářu vám stačí k vytvoření různých typů systémů
+Dotykové Systémy, IS systémy, Data management, Sběr Dat, Datové můsty, Ovládání Strojů, Multimediální systémy.
+Máze Otázky? neváhejte se nám Ozvat
+Veškerý kód je okomentován pro Centrální Použití. To dělá z projektu výborně vyladěný Systém
+Kde jsou optimalizovány všechny vazby a provedení. Tento způsob tak Nabízí Velice snadný další libovolný Vývoj
+již jen s pomocí předchystaných šablon
+
+
+<a name='assembly'></a>
 # EasyITSystemCenter
 
 ## Contents

@@ -1,4 +1,12 @@
-﻿## EASYTOOLS      
+﻿# Úvod   ESB - Dokumentace Projektu  
+
+EASY SYSTEM Builder Universální řešení pro extrémně jednoduchou tvorbu libovolného systému.
+Primitivní vývoj pomocí pouhých formulářu vám stačí k vytvoření různých typů systémů
+Dotykové Systémy, IS systémy, Data management, Sběr Dat, Datové můsty, Ovládání Strojů, Multimediální systémy.
+Máze Otázky? neváhejte se nám Ozvat
+Zde jsou Klony, Další rozšíření Řešení o další Celé řešení a vznijakí tak Tématické servery. Neváhejte a objednejte si je pro zjednodušení vaší práce
+
+## EASYTOOLS      
 * Addons for Touch panels, Controls,Data types, Forms, Media, Docs, 3D,
 * Are Fully Free for Download (Each Licence Package included)
 * Oppened OpenSource Community for including more than 1000 tools to system by community

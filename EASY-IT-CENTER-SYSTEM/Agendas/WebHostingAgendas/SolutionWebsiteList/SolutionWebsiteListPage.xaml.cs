@@ -81,9 +81,9 @@ namespace EasyITSystemCenter.Pages {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    SolutionWebsiteList user = e as SolutionWebsiteList;
-                    return user.WebsiteName.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.Description) && user.Description.ToLower().Contains(filter.ToLower());
+                    SolutionWebsiteList search = e as SolutionWebsiteList;
+                    return search.WebsiteName.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.Description) && search.Description.ToLower().Contains(filter.ToLower());
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }

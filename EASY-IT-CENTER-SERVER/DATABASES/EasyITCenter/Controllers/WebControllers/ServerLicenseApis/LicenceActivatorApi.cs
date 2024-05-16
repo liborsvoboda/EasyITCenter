@@ -34,14 +34,14 @@
                     data = new EasyITCenterContext().Database.ExecuteSqlRaw("exec CheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output", parameters.ToArray()).ToString();
                     allowed = bool.Parse(parameters[3].Value.ToString());
                 }
-            } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
+            } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
             return JsonSerializer.Serialize(allowed);
         }
 
         [AllowAnonymous]
         [HttpPost("LicenseActivator")]
         [Consumes("application/json")]
-        public async Task<string> PostLicenseActivator([FromBody] LicenseActivator record) {
+        public async Task<string> PostLicenseActivator([FromBody] LicenseCheckRequest record) {
             string data = string.Empty; List<SqlParameter> parameters = new(); bool allowed = false; bool catched = false;
             try {
                 if (HttpContext.Connection.RemoteIpAddress != null) {

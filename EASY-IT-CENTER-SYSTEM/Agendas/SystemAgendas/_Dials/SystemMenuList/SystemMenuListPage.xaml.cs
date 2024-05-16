@@ -22,7 +22,7 @@ namespace EasyITSystemCenter.Pages {
         public static SystemMenuList selectedRecord = new SystemMenuList();
 
         private List<SystemMenuList> SystemMenuList = new List<SystemMenuList>();
-        private List<SpTableList> systemTableList = new List<SpTableList>();
+        private List<GenericObject> systemTableList = new List<GenericObject>();
         private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
         private List<SystemGroupMenuList> systemGroupMenuList = new List<SystemGroupMenuList>();
         private List<SolutionUserRoleList> userRoleList = new List<SolutionUserRoleList>();
@@ -48,7 +48,7 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                systemTableList = await CommApi.GetApiRequest<List<SpTableList>>(ApiUrls.EasyITCenterStoredProceduresList, "SystemSpGetSystemPageList", App.UserData.Authentification.Token);
+                systemTableList = await CommApi.GetApiRequest<List<GenericObject>>(ApiUrls.EasyITCenterStoredProceduresList, "SystemSpGetSystemPageList", App.UserData.Authentification.Token);
 
                 userRoleList = await CommApi.GetApiRequest<List<SolutionUserRoleList>>(ApiUrls.EasyITCenterSolutionUserRoleList, null, App.UserData.Authentification.Token);
                 systemGroupMenuList = await CommApi.GetApiRequest<List<SystemGroupMenuList>>(ApiUrls.EasyITCenterSystemGroupMenuList, null, App.UserData.Authentification.Token);

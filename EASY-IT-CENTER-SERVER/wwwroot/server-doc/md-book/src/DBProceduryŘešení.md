@@ -1,4 +1,15 @@
-﻿# DB - Export Procedur Řešení,   
+﻿# Úvod   Start -DATABASE-RULE  
+
+Vše začíná U databáze. 
+Pravidla určující MultiLogiku v 1 Balíčku.
+Zde najdete Kompletní Strukturu Aktuální Databáze
+a Seznam Pravidel, které je obecně dobré dodržovat
+
+1 pravidlo: Každé slovo má Hluboký Význam
+
+Vytvořené procedury pro automatizaci, Hromadné Operace, Správu DB
+
+# DB - Export Procedur Řešení,   
 Zde procedury pro automatizaci, Hromadné Operace, Správu DB    
 ### SP SpTaskDB_CLONE     
 

@@ -50,7 +50,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
                     bool isPaused = false;
                     if (ServerRuntimeData.ServerAutoSchedulerProvider != null) { isPaused = await ServerRuntimeData.ServerAutoSchedulerProvider.IsTriggerGroupPaused("AutoScheduler"); }
 
-                    return Ok(JsonSerializer.Serialize(new DBResultMessage() { Status = isPaused ? ServerStatuses.Stopped.ToString() : ServerStatuses.Running.ToString(), ErrorMessage = string.Empty }));
+                    return Ok(JsonSerializer.Serialize(new DBResultMessage() { Status = isPaused ? ServerStatusResult.Stopped.ToString() : ServerStatusResult.Running.ToString(), ErrorMessage = string.Empty }));
                 }
                 else { return BadRequest(new DBResultMessage() { Status = DBResult.error.ToString(), ErrorMessage = DbOperations.DBTranslate("YouDoesNotHaveRights") }); }
             } catch (Exception ex) { return BadRequest(new DBResultMessage() { Status = DBResult.error.ToString(), ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
@@ -122,7 +122,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         public async Task<IActionResult> FtpServerStatus() {
             try {
                 if (CommunicationController.IsAdmin()) {
-                    return Ok(JsonSerializer.Serialize(new DBResultMessage() { Status = !ServerRuntimeData.ServerFTPRunningStatus ? ServerStatuses.Stopped.ToString() : ServerStatuses.Running.ToString(), ErrorMessage = string.Empty }));
+                    return Ok(JsonSerializer.Serialize(new DBResultMessage() { Status = !ServerRuntimeData.ServerFTPRunningStatus ? ServerStatusResult.Stopped.ToString() : ServerStatusResult.Running.ToString(), ErrorMessage = string.Empty }));
                 }
                 else { return BadRequest(new DBResultMessage() { Status = DBResult.error.ToString(), ErrorMessage = DbOperations.DBTranslate("YouDoesNotHaveRights") }); }
             } catch (Exception ex) { return BadRequest(new DBResultMessage() { Status = DBResult.error.ToString(), ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }

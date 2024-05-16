@@ -48,12 +48,14 @@ namespace EasyITSystemCenter.Pages {
                     if (headername == "PageName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
                     else if (headername == "Description".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
                     else if (headername == "IsMultiFormType".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
-                    else if (headername == "IsServerUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
-                    else if (headername == "IsWebServer".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 5; }
-                    else if (headername == "IsGraphType".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 6; }
-                    else if (headername == "StartupUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 7; }
-                    else if (headername == "StartupSubFolder".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 8; }
-                    else if (headername == "StartupCommand".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 9; }
+                    else if (headername == "IsSystemWebModule".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
+                    else if (headername == "IsServerUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 5; }
+                    else if (headername == "IsWebServer".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 6; }
+                    else if (headername == "IsGraphType".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 7; }
+                    else if (headername == "StartupUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 8; }
+                    else if (headername == "StartupSubFolder".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 9; }
+                    else if (headername == "StartupCommand".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 10; }
+
                     else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
                     else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
 
@@ -109,12 +111,14 @@ namespace EasyITSystemCenter.Pages {
             SetRecord(true);
         }
 
+
         private void DgListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             if (DgListView.SelectedItems.Count > 0) { selectedRecord = (SystemCustomPageList)DgListView.SelectedItem; }
             else { selectedRecord = new SystemCustomPageList(); }
             dataViewSupport.SelectedRecordId = selectedRecord.Id;
             SetRecord(false);
         }
+
 
         private async void BtnSave_Click(object sender, RoutedEventArgs e) {
             try {
@@ -124,6 +128,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Description = txt_description.Text;
 
                 selectedRecord.IsMultiFormType = (bool)chb_isMultiFormType.IsChecked;
+                selectedRecord.IsSystemWebModule = 
                 selectedRecord.IsServerUrl = (bool)chb_isServerUrl.IsChecked;
                 selectedRecord.IsGraphType = (bool)chb_isGraphType.IsChecked;
                 selectedRecord.StartupUrl = (bool)chb_isMultiFormType.IsChecked || (bool)chb_isGraphType.IsChecked ? txt_startupUrl.Text : null;
@@ -152,10 +157,12 @@ namespace EasyITSystemCenter.Pages {
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
 
+
         private void BtnCancel_Click(object sender, RoutedEventArgs e) {
             selectedRecord = (DgListView.SelectedItems.Count > 0) ? (SystemCustomPageList)DgListView.SelectedItem : new SystemCustomPageList();
             SetRecord(false);
         }
+
 
         private void SetRecord(bool? showForm = null, bool copy = false) {
 
@@ -193,12 +200,14 @@ namespace EasyITSystemCenter.Pages {
                 switch (((CheckBox)sender).Name) {
                     case "chb_isMultiFormType":
                         chb_isGraphType.IsChecked = false;
-                        chb_isWebServer.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled = true;
+                        if ((bool)chb_isMultiFormType.IsChecked) { chb_isWebServer.IsEnabled = chb_isSystemWebModule.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled = true; }
+                        else { chb_isWebServer.IsEnabled = chb_isSystemWebModule.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled = false; }
+                        chb_isSystemWebModule.IsChecked = chb_isServerUrl.IsChecked = false;
                         break;
                     case "chb_isGraphType":
-                        chb_isMultiFormType.IsChecked = chb_isServerUrl.IsChecked = chb_isWebServer.IsChecked = false;
+                        chb_isMultiFormType.IsChecked = chb_isSystemWebModule.IsChecked = chb_isServerUrl.IsChecked = chb_isWebServer.IsChecked = false;
                         txt_startupUrl.Text = txt_startupCommand.Text = txt_startupSubFolder.Text = null;
-                        chb_isWebServer.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled = txt_startupCommand.IsEnabled = txt_startupSubFolder.IsEnabled = false;
+                        chb_isWebServer.IsEnabled = chb_isSystemWebModule.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled = txt_startupCommand.IsEnabled = txt_startupSubFolder.IsEnabled = false;
                         break;
                     default:
                         break;
@@ -214,6 +223,22 @@ namespace EasyITSystemCenter.Pages {
                 } else {
                     txt_startupCommand.Text = txt_startupSubFolder.Text = null;
                     txt_startupCommand.IsEnabled = txt_startupSubFolder.IsEnabled = false;
+                }
+            }
+        }
+
+
+        private void ModuleTypeSelected(object sender, RoutedEventArgs e) {
+            if (dataViewSupport.FormShown) {
+                switch (((CheckBox)sender).Name) {
+                    case "chb_isSystemWebModule":
+                        chb_isServerUrl.IsChecked = false;
+                        break;
+                    case "chb_isServerUrl":
+                        chb_isSystemWebModule.IsChecked = false;
+                        break;
+                    default:
+                        break;
                 }
             }
         }

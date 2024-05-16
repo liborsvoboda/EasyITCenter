@@ -1,4 +1,12 @@
-﻿### Server Static API pro moduly, správu a ovládání
+﻿# Úvod   EIC - Dokumentace Projektu  
+
+EasyITcenter Universální řešení serverů IT světa v  1 Globálním Balíčku
+Modulární Server s možností neomezeného a přesto extermně jednoduchého vývoje všemi směry
+Ideální Centrální Správa sítí, strojů, IT a všeho co si dovedete prtředstavit.
+Máte Otázky? neváhejte nám zavolat
+All API Types Descrtiption
+
+### Server Static API pro moduly, správu a ovládání
 Server má několik statických API používaných funkcí, správa
 implementované moduly, role, řízení.
 

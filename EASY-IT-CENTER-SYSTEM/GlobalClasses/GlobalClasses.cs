@@ -56,7 +56,6 @@ namespace EasyITSystemCenter.GlobalClasses {
 
         //Mode
         Debug,
-
         Release,
         DebugWithSystemLogger
     }
@@ -144,7 +143,7 @@ namespace EasyITSystemCenter.GlobalClasses {
     /// <summary>
     /// Generated Class TableList from Stored Procedure SystemSpGetTableList
     /// </summary>
-    public partial class SpTableList {
+    public partial class GenericObject {
         public string TableList { get; set; }
     }
 

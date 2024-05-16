@@ -19,7 +19,7 @@ namespace EasyITCenter.ServerCoreStructure {
         public static T ToEnum<T>(this string value) {
             Type enumType = typeof(T);
             if (!enumType.IsEnum) {
-                CoreOperations.SendEmail(new MailRequest() { Content = "DataOperation ToEnum Method line 22: T must be an Enumeration type." + enumType.ToString() });
+                CoreOperations.SendEmail(new SendMailRequest() { Content = "DataOperation ToEnum Method line 22: T must be an Enumeration type." + enumType.ToString() });
             } return (T)Enum.Parse(typeof(T), value, true);
         }
 

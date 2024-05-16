@@ -1,4 +1,12 @@
-﻿## Typy Globálních Operací/Funkcí
+﻿# Úvod   ESB - Dokumentace Projektu  
+
+EASY SYSTEM Builder Universální řešení pro extrémně jednoduchou tvorbu libovolného systému.
+Primitivní vývoj pomocí pouhých formulářu vám stačí k vytvoření různých typů systémů
+Dotykové Systémy, IS systémy, Data management, Sběr Dat, Datové můsty, Ovládání Strojů, Multimediální systémy.
+Máze Otázky? neváhejte se nám Ozvat
+Globální Funkce
+
+## Typy Globálních Operací/Funkcí
 
 > Datové Operace 
 > DB Operace

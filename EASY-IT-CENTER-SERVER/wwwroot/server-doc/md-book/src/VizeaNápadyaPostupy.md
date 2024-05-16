@@ -1,4 +1,12 @@
-﻿# ESB - SYSTEM DESIGNER - TOUCH SYSTEMS - WEB    
+﻿# Úvod   EIC&ESB-Globální IT Řešení na míru  
+
+EasyITcenter & EasySYSTEMbuiler - Globální Řešení vašeho IT
+Obecné Informace o Struktuře, vazbách a možnostech tohoto Unikátního Globálnho Řešení
+Celé oblasti IT až na malinké vyjímky.
+
+Zde budu průběžně zapisovat nápady
+
+# ESB - SYSTEM DESIGNER - TOUCH SYSTEMS - WEB    
 Generátor - WebKonfigurátor - Vytvoření LIGHT Klonu    
     
 PředObjednávky NA EasySYSTEMbuilder LIGHT za POUHÝCH 10000KČ    

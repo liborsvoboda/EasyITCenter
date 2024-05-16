@@ -1,4 +1,12 @@
-﻿# **DATABASES on Modern way - finally**    
+﻿# Úvod   EIC&ESB-Globální IT Řešení na míru  
+
+EasyITcenter & EasySYSTEMbuiler - Globální Řešení vašeho IT
+Obecné Informace o Struktuře, vazbách a možnostech tohoto Unikátního Globálnho Řešení
+Celé oblasti IT až na malinké vyjímky.
+
+Zde jsou Globální kódy a funkcionality pro Centralizované používání
+
+# **DATABASES on Modern way - finally**    
 One Command and One Database in Project, never less - its my new Idea    
     
     

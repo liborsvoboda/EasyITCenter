@@ -1,4 +1,15 @@
-﻿# DB - Export Procedur Řešení,   
+﻿# Úvod   Start -DATABASE-RULE  
+
+Vše začíná U databáze. 
+Pravidla určující MultiLogiku v 1 Balíčku.
+Zde najdete Kompletní Strukturu Aktuální Databáze
+a Seznam Pravidel, které je obecně dobré dodržovat
+
+1 pravidlo: Každé slovo má Hluboký Význam
+
+Základem je nastavit pevnou a jasnou strukturu a vazby již v databázi
+
+# DB - Export Procedur Řešení,   
 Zde najdete procedury, které stanovují pevnou a jasnou strukturu a vazby již v databázi   
 ### TR TR_SolutionEmailerHistoryList     
 			

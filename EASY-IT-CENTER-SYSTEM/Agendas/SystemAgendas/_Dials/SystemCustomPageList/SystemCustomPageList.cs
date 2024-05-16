@@ -6,6 +6,7 @@ namespace EasyITSystemCenter.Classes {
         public int Id { get; set; } = 0;
         public string PageName { get; set; } = null;
         public string Description { get; set; }
+        public bool IsSystemWebModule { get; set; }
         public bool IsMultiFormType { get; set; }
         public bool IsServerUrl { get; set; }
         public string StartupUrl { get; set; } = null;

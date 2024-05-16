@@ -1,4 +1,13 @@
-﻿    
+﻿# Úvod   EIC&ESB-Globální IT Řešení na míru  
+
+EasyITcenter & EasySYSTEMbuiler - Globální Řešení vašeho IT
+Obecné Informace o Struktuře, vazbách a možnostech tohoto Unikátního Globálnho Řešení
+Celé oblasti IT až na malinké vyjímky.
+
+Seznam a popisy automatických funkcinalit a pravidel, nakteých stojí bezobslužnost spousty
+jinak nutných úkonů při vývoji. Tyto pravidla zajišťují Velmi snadný a rychlý vývoj
+
+    
 ### EASY-SYSTEM-Builder & EASY-DATA-Center & Visual Studio Help    
     
     

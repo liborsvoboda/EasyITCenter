@@ -1,4 +1,20 @@
-﻿
+﻿# Globální Řešení EIC & ESB   
+
+- [Stručný Úvod EIC & ESB](../../../md-templates/EIC&ESBDocs/Solution-FastInfo)   
+- [Portál Dokumentace EIC & ESB](../../md-book/book)   
+- [DEV Portal Šablony, Kódy, Příklady](../../md-templates/book)   
+- [Průvodce kódem EIC & ESB](../../../md-templates/EIC&ESBCodeBrowser/index)   
+- [Server Info EIC](../../../EIC&ESBDocs/EIC-InfoWeb)   
+- [Systém Info ESB](../../../EIC&ESBDocs/ESB-InfoWeb)   
+- [Členění EIC](../../../EIC&ESBDocs/EIC-XmlWeb)   
+- [Členění ESB](../../../EIC&ESBDocs/ESB-XmlWeb)   
+- [Galerie EIC](../../../EIC&ESBDocs/EIC-Gallery)   
+- [Galerie ESB](../../../EIC&ESBDocs/ESB-Gallery)   
+- [Generická Nápověda](../../../EIC&ESBDocs/ITHelpIdeasDoc)   
+- [Web Portal z Editoru](../../../Portal)   
+- [Ke Stažení](../../../Downloads)   
+
+
 # EIC&ESB-Globální IT Řešení na míru  
 
     ```markdown  
@@ -9,7 +25,7 @@
 - [Ver.5: Automatické Funkcinality](AutomatickéFunkcinality.md)   
 - [Ver.3: Databáze Nápověda](DatabázeNápověda.md)   
 - [Ver.5: EIC&ESB 3rd Nástroje a Moduly](EIC&ESB3rdNástrojeaModuly.md)   
-- [Ver.33: Zpracováváné A ChangeLog](ZpracovávánéAChangeLog.md)   
+- [Ver.36: Zpracováváné A ChangeLog](ZpracovávánéAChangeLog.md)   
 - [Ver.22: Ceník EIC&ESB a IT Služeb](CeníkEIC&ESBaITSlužeb.md)   
 - [Ver.2: Kontakty](Kontakty.md)   
     ```  
@@ -102,6 +118,3 @@
     ```  
 
 ---
-# Systém Šablon EIC & ESB 
-
-- [Šablony, Kódy, Příklady](./templates/index.md)   

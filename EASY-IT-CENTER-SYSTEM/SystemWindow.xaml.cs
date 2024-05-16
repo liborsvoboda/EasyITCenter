@@ -721,6 +721,7 @@ namespace EasyITSystemCenter {
         #endregion Tools
 
         //----------------------------------------------------------------- BEGIN OF MENU REACTIONS -------------------------------------------------------------------------
+        #region Tilt Actions
 
         /// <summary>
         /// Tilts: Standardized Opening or create Tilt documents
@@ -756,6 +757,10 @@ namespace EasyITSystemCenter {
             else { App.TiltInvoiceDoc = new ExtendedOutgoingInvoiceList(); App.TiltOrderDoc = new BusinessIncomingOrderList(); App.TiltOfferDoc = new BusinessOfferList(); App.TiltDocItems = new List<DocumentItemList>(); App.tiltTargets = TiltTargets.None.ToString(); }
             return true;
         }
+
+        #endregion Tilt Actions
+
+        #region SearchPanel
 
         /// <summary>
         /// Full dynamic apply sett ed filter
@@ -891,6 +896,7 @@ namespace EasyITSystemCenter {
             }
             return filterBox;
         }
+        
 
         /// <summary>
         /// Full dynamic Remove Item from DataGrid advanced Filter
@@ -928,6 +934,9 @@ namespace EasyITSystemCenter {
                 }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
+
+        #endregion SearchPanel
+
 
         /// <summary>
         /// Dragging and separate to more Applications: TabPanel drag Controller - not Used

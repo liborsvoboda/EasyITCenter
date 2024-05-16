@@ -81,29 +81,29 @@ namespace EasyITCenter.ServerCoreStructure {
                     if (scheduledTask.StartNowOnly) {
                         try { 
                             trigger = TriggerBuilder.Create().ForJob(job).WithIdentity("TR_" + scheduledTask.Name, "AutoScheduler").WithSimpleSchedule(x => x.WithIntervalInSeconds(10).WithRepeatCount(0)).StartNow().WithPriority(scheduledTask.Sequence).Build();
-                        } catch (Exception ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
+                        } catch (Exception ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
                     }
                     else {
                         if (scheduledTask.InheritedIntervalType == "second") {
                             try {
                                 if (scheduledTask.StartAt == null) { scheduledTask.StartAt = DateTime.UtcNow; }
                                 trigger = TriggerBuilder.Create().ForJob(job).WithIdentity("TR_" + scheduledTask.Name, "AutoScheduler").WithSimpleSchedule(x => x.WithIntervalInSeconds(scheduledTask.Interval).RepeatForever()).StartAt(scheduledTask.StartAt.Value).WithPriority(scheduledTask.Sequence).Build();
-                            } catch (Exception ex ){ CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
+                            } catch (Exception ex ){ CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
                         }
                         else if (scheduledTask.InheritedIntervalType == "minute") {
                             try { 
                                 trigger = TriggerBuilder.Create().ForJob(job).WithIdentity("TR_" + scheduledTask.Name, "AutoScheduler").WithSimpleSchedule(x => x.WithIntervalInMinutes(scheduledTask.Interval).RepeatForever()).StartAt(scheduledTask.StartAt.Value).WithPriority(scheduledTask.Sequence).Build();
-                            } catch (Exception ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
+                            } catch (Exception ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
                         }
                         else if (scheduledTask.InheritedIntervalType == "hour") {
                             try { 
                                 trigger = TriggerBuilder.Create().ForJob(job).WithIdentity("TR_" + scheduledTask.Name, "AutoScheduler").WithSimpleSchedule(x => x.WithIntervalInHours(scheduledTask.Interval).RepeatForever()).StartAt(scheduledTask.StartAt.Value).WithPriority(scheduledTask.Sequence).Build();
-                            } catch (Exception ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
+                            } catch (Exception ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
                         }
                         else if (scheduledTask.InheritedIntervalType == "day") {
                             try {
                                 trigger = TriggerBuilder.Create().ForJob(job).WithIdentity("TR_" + scheduledTask.Name, "AutoScheduler").WithSimpleSchedule(x => x.WithIntervalInHours(24 * scheduledTask.Interval).RepeatForever()).StartAt(scheduledTask.StartAt.Value).WithPriority(scheduledTask.Sequence).Build();
-                            } catch (Exception ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
+                            } catch (Exception ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
                         }
                     }
                     await scheduler.ScheduleJob(job, trigger, default);
@@ -138,62 +138,62 @@ namespace EasyITCenter.ServerCoreStructure {
                         if (jobType == "email") {
                             try {
                                 IDictionary<string, string> maildata = JsonSerializer.Deserialize<IDictionary<string, string>>(data);
-                                CoreOperations.SendEmail(new MailRequest() {
+                                CoreOperations.SendEmail(new SendMailRequest() {
                                     Sender = ServerConfigSettings.ConfigManagerEmailAddress,
                                     Recipients = jobData.First(a => a.Key.ToLower() == "email").Value?.ToString()?.Split(";").ToList(),
                                     Subject = maildata?.First(a => a.Key.ToLower() == "subject").Value.ToString(),
                                     Content = maildata?.First(a => a.Key.ToLower() == "content").Value.ToString()
                                 }, true);
-                            } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
+                            } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
                         }
                         else if (jobType == "sqlemail") {
                             try {
                                 if (jobData.First(a => a.Key.ToLower() == "userrole").Value?.ToString() == "admin") {
                                     IDictionary<string, string> sqlmaildata = JsonSerializer.Deserialize<IDictionary<string, string>>(data);
-                                    CoreOperations.SendEmail(new MailRequest() {
+                                    CoreOperations.SendEmail(new SendMailRequest() {
                                         Sender = ServerConfigSettings.ConfigManagerEmailAddress,
                                         Recipients = jobData.First(a => a.Key.ToLower() == "email").Value?.ToString()?.Split(";").ToList(),
                                         Subject = sqlmaildata?.First(a => a.Key.ToLower() == "subject").Value.ToString(),
                                         Content = sqlmaildata?.First(a => a.Key.ToLower() == "content").Value.ToString()
                                     }, true);
                                 }
-                            } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
+                            } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
 
                         }
                         else if (jobType == "command") {
                             try {
                                 if (jobData.First(a => a.Key.ToLower() == "userrole").Value?.ToString() == "admin") {
-                                    ProcessClass? process = new ProcessClass() { Command = System.IO.Path.GetFullPath("cmd.exe"), Arguments = data, WorkingDirectory = System.IO.Path.GetFullPath(data.Replace(System.IO.Path.GetFileName(data), "")) };
+                                    RunProcessRequest? process = new RunProcessRequest() { Command = System.IO.Path.GetFullPath("cmd.exe"), Arguments = data, WorkingDirectory = System.IO.Path.GetFullPath(data.Replace(System.IO.Path.GetFileName(data), "")) };
                                     taskResult.ProcessLog = await CoreOperations.RunSystemProcess(process);
                                 }
-                            } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
+                            } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
 
                         }
                         else if (jobType == "sqlquery") {
                             try {
                                 if (jobData.First(a => a.Key.ToLower() == "userrole").Value?.ToString() == "admin") {
-                                    _ = new EasyITCenterContext().EasyITCenterCollectionFromSql<CustomString>($"EXEC {data};");
+                                    _ = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>($"EXEC {data};");
                                 }
 
-                            } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
+                            } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
 
                         }
                         else if (jobType == "websocketnotify") {
                             try {
                                 ServerCoreWebHelpers.SendMessageAndUpdateWebSocketsInSpecificPath(ServerConfigSettings.WebSocketGlobalNotifyPath, data);
 
-                            } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
+                            } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
                         }
                         else if (jobType == "sqlwebsocketnotify") {
                             try {
                                 if (jobData.First(a => a.Key.ToLower() == "userrole").Value?.ToString() == "admin") {
-                                    string? result = new EasyITCenterContext().EasyITCenterCollectionFromSql<CustomString>($"EXEC {data};").ToString();
+                                    string? result = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>($"EXEC {data};").ToString();
                                     ServerCoreWebHelpers.SendMessageAndUpdateWebSocketsInSpecificPath(ServerConfigSettings.WebSocketGlobalNotifyPath, result);
                                 }
 
-                            } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
+                            } catch (Exception ex) { taskResult.ProcessCrashed = true; taskResult.ProcessLog = DataOperations.GetSystemErrMessage(ex); CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
                         }
-                        else { CoreOperations.SendEmail(new MailRequest() { Content = "ThisScheduledTaskNotImplemented " + string.Join(",", jobData.KeySet()) }); }
+                        else { CoreOperations.SendEmail(new SendMailRequest() { Content = "ThisScheduledTaskNotImplemented " + string.Join(",", jobData.KeySet()) }); }
 
                         //Log Process Result
                         taskResult.ProcessCompleted = true; taskResult.TimeStamp = DateTimeOffset.Now.DateTime;
@@ -207,11 +207,11 @@ namespace EasyITCenter.ServerCoreStructure {
                             IScheduler? scheduler = ServerRuntimeData.ServerAutoSchedulerProvider;
                             JobKey remoteScheduledTask = new JobKey(taskResult.ScheduledTaskId.ToString(), "AutoScheduler"); scheduler.DeleteJob(remoteScheduledTask).GetAwaiter().GetResult();
                         }
-                    } catch (Exception ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
+                    } catch (Exception ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }); }
                 }
                 else { await Task.FromResult("DataNotFound"); }
             } catch (Exception Ex) {
-                CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) });
+                CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) });
                 await Task.FromException(Ex);
             }
             await Task.FromResult(true);

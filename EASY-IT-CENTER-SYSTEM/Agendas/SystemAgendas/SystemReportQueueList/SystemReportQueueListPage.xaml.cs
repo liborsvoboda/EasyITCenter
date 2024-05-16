@@ -26,7 +26,7 @@ namespace EasyITSystemCenter.Pages {
         public static SystemReportQueueList selectedRecord = new SystemReportQueueList();
 
         private string connectionString = null;
-        private List<SpTableList> systemTableList = new List<SpTableList>();
+        private List<GenericObject> systemTableList = new List<GenericObject>();
         private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
         private List<SystemReportQueueList> reportQueueList = new List<SystemReportQueueList>();
         private bool reportSupportForListOnly = true;
@@ -54,7 +54,7 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
                 reportQueueList = await CommApi.GetApiRequest<List<SystemReportQueueList>>(ApiUrls.EasyITCenterSystemReportQueueList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
-                systemTableList = await CommApi.GetApiRequest<List<SpTableList>>(ApiUrls.EasyITCenterStoredProceduresList, "SystemSpGetTableList", App.UserData.Authentification.Token);
+                systemTableList = await CommApi.GetApiRequest<List<GenericObject>>(ApiUrls.EasyITCenterStoredProceduresList, "SystemSpGetTableList", App.UserData.Authentification.Token);
 
                 systemTableList.ForEach(async table => { systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.TableList, Translate = await DBOperations.DBTranslation(table.TableList) }); });
 

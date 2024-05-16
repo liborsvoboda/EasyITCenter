@@ -1,4 +1,16 @@
-﻿#### Členění Webu EIC Serveru    
+﻿# Úvod   Start -DATABASE-RULE  
+
+Vše začíná U databáze. 
+Pravidla určující MultiLogiku v 1 Balíčku.
+Zde najdete Kompletní Strukturu Aktuální Databáze
+a Seznam Pravidel, které je obecně dobré dodržovat
+
+1 pravidlo: Každé slovo má Hluboký Význam
+
+Seznam a popisy automatických funkcinalit a pravidel, nakteých stojí bezobslužnost spousty
+jinak nutných úkonů při vývoji. Tyto pravidla zajišťují Velmi snadný a rychlý vývoj
+
+#### Členění Webu EIC Serveru    
     
 *Pro myšlení, vývoj nástrojů a práci s nimi hodné 21. století*    
     

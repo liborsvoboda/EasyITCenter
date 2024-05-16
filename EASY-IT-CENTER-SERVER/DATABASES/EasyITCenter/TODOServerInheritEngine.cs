@@ -47,7 +47,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
                 results = DbOperations.BindList<T>(table).ToList();
 
                 return results;
-            } catch (Exception Ex) { CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); } finally { cmd.Connection.Close(); }
+            } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); } finally { cmd.Connection.Close(); }
             return new List<T>();
         }
     }

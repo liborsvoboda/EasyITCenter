@@ -1,4 +1,13 @@
-﻿## SYSTEM PROJECT STRUCTURE - DECRIPTION    
+﻿# Úvod   ESB - Dokumentace Projektu  
+
+EASY SYSTEM Builder Universální řešení pro extrémně jednoduchou tvorbu libovolného systému.
+Primitivní vývoj pomocí pouhých formulářu vám stačí k vytvoření různých typů systémů
+Dotykové Systémy, IS systémy, Data management, Sběr Dat, Datové můsty, Ovládání Strojů, Multimediální systémy.
+Máze Otázky? neváhejte se nám Ozvat
+Popis Logiky a struktury prováznosti funkcionalit systému. 
+Výsledkem je čistý kód a funkce
+
+## SYSTEM PROJECT STRUCTURE - DECRIPTION    
 1. APP Initialization    
   - Starting APP with Welcome Page by JSON Setting    
   - Initialize Technologies    

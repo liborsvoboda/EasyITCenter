@@ -1,4 +1,15 @@
-﻿# DB - Export Tabulek Řešení,   
+﻿# Úvod   Start -DATABASE-RULE  
+
+Vše začíná U databáze. 
+Pravidla určující MultiLogiku v 1 Balíčku.
+Zde najdete Kompletní Strukturu Aktuální Databáze
+a Seznam Pravidel, které je obecně dobré dodržovat
+
+1 pravidlo: Každé slovo má Hluboký Význam
+
+Struktura Tabulek te stále Téměř totožná, Pár Pravidel stačí k vytvoření dokonalého Systému
+
+# DB - Export Tabulek Řešení,   
 Zde najdete Všechny Tabulky Řešení, Struktura má Centrální Logiku, která zamezuje vzniku chyb    
 ### TBL BasicAttachmentList     
 

@@ -1,4 +1,11 @@
-﻿# EIC- Implementované Generátory    
+﻿# Úvod   EIC Knihovny Kódů a Šablony  
+
+Knihovny kódů implementovaných v projektu. 
+Většinou už budete jen opakovat co bylo vytvořeno, takže stačí vykopírovat z Těchto Knihoven
+
+Implementované Generátory Webů Stránek, Dokumentací, Galerií, Prezentací, Webových Portálů,
+
+# EIC- Implementované Generátory    
     
 ### Generátor Dokumentace    
     

@@ -1,4 +1,12 @@
-﻿# ESB -WPF XAML Šablony,   
+﻿# Úvod   ESB - Dokumentace Projektu  
+
+EASY SYSTEM Builder Universální řešení pro extrémně jednoduchou tvorbu libovolného systému.
+Primitivní vývoj pomocí pouhých formulářu vám stačí k vytvoření různých typů systémů
+Dotykové Systémy, IS systémy, Data management, Sběr Dat, Datové můsty, Ovládání Strojů, Multimediální systémy.
+Máze Otázky? neváhejte se nám Ozvat
+Těchto pár Šablon Stačí na tvorbu Multimediálního Systému
+
+# ESB -WPF XAML Šablony,   
 
 Standardní I mediální šablony pro Vývoj Systému   ### Manuální ServerSettingPage XAML     
 			

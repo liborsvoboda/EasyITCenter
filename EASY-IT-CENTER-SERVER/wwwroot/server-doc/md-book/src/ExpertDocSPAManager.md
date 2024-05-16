@@ -1,4 +1,11 @@
-﻿# Použití konfigurací
+﻿# Úvod   EIS-ESB-ClonedSmallServers  
+
+Dokumentace klonů Serverů s implementovaou určitou Oblastí IT.
+Celé řešení Obsahuje Všechny Klonované Servery, které jsou generovány pro samostatné Použití
+
+EDC MultiMedial / MultiLanguage / MultiFormat / FullTextSearch Documentation Server  + Documentation WEB 
+
+# Použití konfigurací
 v aplikaci je jednoduchý soubor config/config.js
 Zde nastavíte jeden ze 3 režimů použití
 

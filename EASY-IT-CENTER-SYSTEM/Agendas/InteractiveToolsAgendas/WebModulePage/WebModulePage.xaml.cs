@@ -34,7 +34,6 @@ namespace EasyITSystemCenter.Pages {
             try {
                 if (!App.appRuntimeData.webServerRunning) {
                     _ = MainWindow.ShowMessageOnMainWindow(true, DBOperations.DBTranslation("WebServerNotRunningCheckClientConfiguration").GetAwaiter().GetResult());
-                    var test = App.Current;
                 }
 
             } catch (Exception ex) { App.ApplicationLogging(ex); }

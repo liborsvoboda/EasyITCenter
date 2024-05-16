@@ -298,7 +298,7 @@ namespace EasyITCenter.ControllersExtensions {
                         .Replace("UploadFileName", (string)DataOperations.RemoveWhitespace(fileList.Files[0].Name));
                     System.IO.File.WriteAllText(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "XmlToMd", "GenerateDocs.bat"), cmdGenerator);
 
-                    ProcessClass process = new ProcessClass() {
+                    RunProcessRequest process = new RunProcessRequest() {
                         Command = Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "XmlToMd", "GenerateDocs.bat"),
                         WorkingDirectory = Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "XmlToMd")
                     };
@@ -350,7 +350,7 @@ namespace EasyITCenter.ControllersExtensions {
                     .Replace("StartDrive", Path.GetPathRoot(ServerRuntimeData.UserPath)).Replace("StartupPATH", Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MdToMdBook"));
                 System.IO.File.WriteAllText(Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MdToMdBook", "GenerateMdBook.bat"), cmdGenerator);
 
-                ProcessClass process = new ProcessClass() {
+                RunProcessRequest process = new RunProcessRequest() {
                     Command = Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MdToMdBook", "GenerateMdBook.bat"),
                     WorkingDirectory = Path.Combine(ServerRuntimeData.UserPath, User.Claims.First(a => a.Issuer != null).Value, "MdToMdBook")
                 };

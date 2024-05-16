@@ -1,4 +1,15 @@
-﻿# DB - Export Views a Funkcí Řešení,   
+﻿# Úvod   Start -DATABASE-RULE  
+
+Vše začíná U databáze. 
+Pravidla určující MultiLogiku v 1 Balíčku.
+Zde najdete Kompletní Strukturu Aktuální Databáze
+a Seznam Pravidel, které je obecně dobré dodržovat
+
+1 pravidlo: Každé slovo má Hluboký Význam
+
+Složené Datapohledy a Funkce
+
+# DB - Export Views a Funkcí Řešení,   
 Zde najdete složené Datapohledy a Funkce   
 ### FNfnGetFileName     
 			

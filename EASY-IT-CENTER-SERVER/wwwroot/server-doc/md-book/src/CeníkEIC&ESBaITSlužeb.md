@@ -1,4 +1,13 @@
-﻿    
+﻿# Úvod   EIC&ESB-Globální IT Řešení na míru  
+
+EasyITcenter & EasySYSTEMbuiler - Globální Řešení vašeho IT
+Obecné Informace o Struktuře, vazbách a možnostech tohoto Unikátního Globálnho Řešení
+Celé oblasti IT až na malinké vyjímky.
+
+Neomezená možnost vývoje, pomoci, spolupráce, či cokoliv jiného jek dispozici.
+Každá spolupráce je pro mne přínosem
+
+    
 # Ceník a Licencování EIC-ESB Řešení    
     
 **EASY-IT-CENTER & EASY-SYSTEM-BUILDER**    

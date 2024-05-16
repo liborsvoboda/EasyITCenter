@@ -1,15 +1,37 @@
-﻿    
-# 15.5 Zprovozněn Generátor Docx,MD,HTML    
+﻿# Úvod   EIC&ESB-Globální IT Řešení na míru  
+
+EasyITcenter & EasySYSTEMbuiler - Globální Řešení vašeho IT
+Obecné Informace o Struktuře, vazbách a možnostech tohoto Unikátního Globálnho Řešení
+Celé oblasti IT až na malinké vyjímky.
+
+Changelog jsem začal prat teprve ted. Každý úsek který vidíte, je výsledkem 2dnů práce macimálně.    
+Pro představu co vše se dá zvládnout. Vyzkoušejte nebo požádejte o instalaci u vás ve firměš či doma a zkuste     
+vyzkoušet vo vše dané řešení nabízí. 
+
+# 16.5.2024 Rozšíření ESB Systému  v Novém Kabátě    
+- přidán Nový Generický Typ SystemWebModule    
+   nyní statické mikro App mohou sloužit jako Agendy Systému    
+   System Web Module se skládá ze samotné App a Help okna odkazující automaticky na help.html    
+    
+- Implementován SystemWebModule MarkDown Editor    
+   profesionální MD Editor    
+- Implementován 3D Vzhled Systému    
+    
+    
+# 15.5.2024 Zprovozněn Generátor Docx,MD,HTML    
 - Nasazena DB + API WEB Konfigurátoru  viz VIZE Řešení    
 - Nasazeno Automatické Generování Šablon, Knihovny Kódů, Do Dokumentace    
 - Přidáno Členění Šablon Knihovny kódů podle TYPU programovacího jazyka    
+- Připravena Implementace Universal Editoru pro Správu a Tvorbu Mikro Aplikací JAKO    
+  samostatný Systém Designer a Aplikace v 1    
+- ESB přidána funkce automatického překladu Toolbarů    
     
     
     
     
     
     
-    
+-----    
     
 # 4.5.2024  Provedené Změny    
 - Připraveno Řešení Reportingu FastReport v EIC&ESB    

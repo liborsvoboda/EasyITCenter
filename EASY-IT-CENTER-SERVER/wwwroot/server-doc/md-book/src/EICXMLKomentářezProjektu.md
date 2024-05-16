@@ -1,4 +1,15 @@
-﻿<a name='assembly'></a>
+﻿# Úvod   EIC - Dokumentace Projektu  
+
+EasyITcenter Universální řešení serverů IT světa v  1 Globálním Balíčku
+Modulární Server s možností neomezeného a přesto extermně jednoduchého vývoje všemi směry
+Ideální Centrální Správa sítí, strojů, IT a všeho co si dovedete prtředstavit.
+Máte Otázky? neváhejte nám zavolat
+Veškerý kód je okomentován pro Centrální Použití. To dělá z projektu výborně vyladěný Server
+Kde jsou optimalizovány všechny vazby a provedení. Tento způsob tak Nabízí Velice snadný další libovolný Vývoj
+již jen s pomocí předchystaných šablon
+
+
+<a name='assembly'></a>
 # EasyITCenter
 
 ## Contents

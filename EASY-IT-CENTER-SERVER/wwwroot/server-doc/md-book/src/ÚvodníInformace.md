@@ -1,4 +1,13 @@
-﻿    
+﻿# Úvod   EIC&ESB-Globální IT Řešení na míru  
+
+EasyITcenter & EasySYSTEMbuiler - Globální Řešení vašeho IT
+Obecné Informace o Struktuře, vazbách a možnostech tohoto Unikátního Globálnho Řešení
+Celé oblasti IT až na malinké vyjímky.
+
+Úvodní Informace o vlastnostech a použítí projektů, které je nyní mnohem širší 
+a proto si projděte další informace, kse se dozvíte více
+
+    
 # Minimal Info EIC+ESB    
 *Pro myšlení, vývoj nástrojů a práci s nimi hodné 21. století*    
 **Visual Studio C# projekt EIC ASP NETCORE6**    

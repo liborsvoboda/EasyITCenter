@@ -1,4 +1,11 @@
-﻿### All Documentation Graphics Code Posibilities
+﻿# Úvod   EIS-ESB-ClonedSmallServers  
+
+Dokumentace klonů Serverů s implementovaou určitou Oblastí IT.
+Celé řešení Obsahuje Všechny Klonované Servery, které jsou generovány pro samostatné Použití
+
+EDC MultiMedial / MultiLanguage / MultiFormat / FullTextSearch Documentation Server  + Documentation WEB 
+
+### All Documentation Graphics Code Posibilities
 Full documentation Codes and posibilities are on [MerMaid](https://mermaid.js.org/intro/)  
 
 ---

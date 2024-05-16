@@ -1,4 +1,12 @@
-﻿### EASYBuilder Description SYSTEM CORE
+﻿# Úvod   ESB - Dokumentace Projektu  
+
+EASY SYSTEM Builder Universální řešení pro extrémně jednoduchou tvorbu libovolného systému.
+Primitivní vývoj pomocí pouhých formulářu vám stačí k vytvoření různých typů systémů
+Dotykové Systémy, IS systémy, Data management, Sběr Dat, Datové můsty, Ovládání Strojů, Multimediální systémy.
+Máze Otázky? neváhejte se nám Ozvat
+Poznatky a rady při vývoji
+
+### EASYBuilder Description SYSTEM CORE
 <sup>**For thinking, the development of tools and work with them worthy in the 21st century**</sup>
 
 A full detailed description of the system core for easy development of any system with full support for automated functions, methods to make any of your applications work properly

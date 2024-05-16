@@ -72,7 +72,7 @@ namespace EasyITCenter {
                 await hostBuilder.Build().RunAsync(ServerRuntimeData.ServerCancelToken.Token);
             } catch (Exception Ex) {
                 
-                CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) });
+                CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) });
                 Console.WriteLine("Server Startup Error: " + DataOperations.GetSystemErrMessage(Ex));
                 Environment.Exit(3);
             }
@@ -192,7 +192,7 @@ namespace EasyITCenter {
                     }
                 });
             } catch (Exception ex) {
-                CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }, true);
+                CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) }, true);
                 Console.WriteLine("LoadConfigurationFromFile Error: " + DataOperations.GetSystemErrMessage(ex));
                 Environment.Exit(10);
             }
@@ -212,7 +212,7 @@ namespace EasyITCenter {
                     }
                 }
             } catch (Exception ex) {
-                CoreOperations.SendEmail(new MailRequest() { Content = DataOperations.GetSystemErrMessage(ex) });
+                CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) });
                 Console.WriteLine("LoadConfigurationFromDb Error: "
                     + "Config File from Folder: "
                     + (CoreOperations.GetOperatingSystemInfo.IsWindows() ? Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile) : Path.Combine(ServerRuntimeData.Startup_path, "Data", ServerRuntimeData.ConfigFile))

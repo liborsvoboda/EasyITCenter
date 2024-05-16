@@ -1,4 +1,15 @@
-﻿# Připravované Novinky,   
+﻿# Úvod   EIC&ESB-Globální IT Řešení na míru  
+
+EasyITcenter & EasySYSTEMbuiler - Globální Řešení vašeho IT
+Obecné Informace o Struktuře, vazbách a možnostech tohoto Unikátního Globálnho Řešení
+Celé oblasti IT až na malinké vyjímky.
+
+Seznam nejprioritnějších Rozšíření Systému. Ty budou zaimlemetovány během 6 měsíců
+		protože se tomu můžu věnovat jen ve volném čase. Nejen Itéčkáři v naší zemi se místo vzdělávání soustředí jak pěníze čerpat
+		místo tvořit přidanými hodnotami své činnosti. Připraveno je jíž přes více jak 500 vylepšení. Stačí stahovat z Github.
+		
+
+# Připravované Novinky,   
 		Zde je seznam dalších chystaných funkcionalit, které posouvá vývoj.   
 		To Hlavní Je přípravaWeb Portálu ONLINE s Vývojem kódu Mnanagovaným Centrálním Řešením.   
 		to Nabízí Vždy aktializace po ruce Obosměrné rozšiřování Projektů a Centralizaci Agend.   

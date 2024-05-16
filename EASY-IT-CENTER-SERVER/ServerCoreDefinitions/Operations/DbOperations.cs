@@ -17,10 +17,10 @@ namespace EasyITCenter.ServerCoreStructure {
         /// Method for All Server Defined Table for Local Using As Off line AutoUpdated Tables
         /// </summary>
         /// <param name="onlyThis"></param>
-        public static void LoadOrRefreshStaticDbDials(ServerLocalDbDials? onlyThis = null) {
+        public static void LoadOrRefreshStaticDbDials(ServerLocalDbDialsTypes? onlyThis = null) {
             if (ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials) {
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = System.Transactions.IsolationLevel.ReadUncommitted })) {
-                    foreach (ServerLocalDbDials dbTable in (ServerLocalDbDials[])Enum.GetValues(typeof(ServerLocalDbDials))) {
+                    foreach (ServerLocalDbDialsTypes dbTable in (ServerLocalDbDialsTypes[])Enum.GetValues(typeof(ServerLocalDbDialsTypes))) {
                         switch (onlyThis != null ? onlyThis.ToString() : dbTable.ToString()) {
                             case "SystemTranslationLists":
                                 List<SystemTranslationList>? stlDataLL = new EasyITCenterContext().SystemTranslationLists.ToList();
@@ -302,7 +302,7 @@ namespace EasyITCenter.ServerCoreStructure {
                     result = word;
                     //SystemTranslationList newWord = new() { SystemName = word, DescriptionCz = "", DescriptionEn = "", UserId = 1 };
                     //new EasyITCenterContext().SystemTranslationLists.Add(newWord).Context.SaveChanges();
-                    LoadOrRefreshStaticDbDials(ServerLocalDbDials.SystemTranslationLists);
+                    LoadOrRefreshStaticDbDials(ServerLocalDbDialsTypes.SystemTranslationLists);
                     return result;
                 }
             } catch { }
