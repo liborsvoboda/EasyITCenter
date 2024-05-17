@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace EasyITSystemCenter.GlobalOperations {
@@ -42,37 +43,35 @@ namespace EasyITSystemCenter.GlobalOperations {
         }
 
         /// <summary>
-        /// !!! SYSTEM RULE: naming of automatic gtanslating fields must be type_fieldname fieldname
-        /// is Translated Over DB List !!! Translation List is Automatic Filling For Logged Agendas
-        /// Function using Referenced Objects
-        /// Defined: Grid[label,button],Label, Button, EXTEND this Fuction for every Parent a Direct
-        /// Contextenu Set Header
-        /// Types For One Function Translatings !!! Translate only Empty Contents
+        /// Globa Translator for Objects with Defined Name as: xx_translatedString
+        /// Prepared for MenuItem, Label, Button
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="parentObject"></param>
         /// <returns></returns>
-        public static async Task<bool> TranslateFormFields<T>(T parentObject) {
+        public static async Task<bool> TranslateFormFields(DependencyObject parentObject) {
             try {
-                if (parentObject.GetType().Name.ToLower() == "contextmenu") {
-                    (parentObject as ContextMenu).Items.OfType<MenuItem>().ToList().ForEach(async menuitem => {
-                        try { if (menuitem.Header == null) { menuitem.Header = await DBOperations.DBTranslation(menuitem.Name.Split('_')[1]); } } catch { }
-                    });
+                foreach (var element in FormOperations.FindVisualChildren<Label>(parentObject)) {
+                    try { if (element.Name.Split('_').Length > 1 && element.Content == null) { element.Content = await DBOperations.DBTranslation(element.Name.Split('_')[1]); } } catch { }
                 }
-                if (parentObject.GetType().Name.ToLower() == "grid") {
-                    (parentObject as Grid).Children.OfType<Label>().ToList().ForEach(async label => {
-                        try { if (label.Content == null) { label.Content = await DBOperations.DBTranslation(label.Name.Split('_')[1]); } } catch { }
-                    });
-                    (parentObject as Grid).Children.OfType<Button>().ToList().ForEach(async button => {
-                       try{ if (button.Content == null) { button.Content = await DBOperations.DBTranslation(button.Name.Split('_')[1]); } } catch { }
-                    });
+                //foreach (var element in FormOperations.FindVisualChildren<MenuItem>(parentObject)) {
+                //    try { if (element.Header == null) { element.Header = await DBOperations.DBTranslation(element.Name.Split('_')[1]); } } catch { }
+                //}
+                foreach (var element in FormOperations.FindVisualChildren<Button>(parentObject)) {
+                    try { if (element.Name.Split('_').Length > 1 && element.Content == null) { element.Content = await DBOperations.DBTranslation(element.Name.Split('_')[1]); } } catch { }
                 }
-                if (parentObject.GetType().Name.ToLower() == "label") {
-                   try { if ((parentObject as Label).Content == null) { (parentObject as Label).Content = await DBOperations.DBTranslation((parentObject as Label).Name.Split('_')[1]); } } catch { }
+                foreach (var element in FormOperations.FindVisualChildren<Button>(parentObject)) {
+                    try { if (element.Name.Split('_').Length > 1 && element.Content == null) { element.Content = await DBOperations.DBTranslation(element.Name.Split('_')[1]); } } catch { }
                 }
-                if (parentObject.GetType().Name.ToLower() == "button") {
-                   try { if ((parentObject as Button).Content == null) { (parentObject as Button).Content = await DBOperations.DBTranslation((parentObject as Button).Name.Split('_')[1]); } } catch { }
-                }
+                try {
+                    if (parentObject.GetType().Name == "ToolBar") { (parentObject as ToolBar).Items.OfType<Label>().ToList().ForEach(async item => {
+                        try { if (item.Name.Split('_').Length > 1 && item.Content == null) { item.Content = await DBOperations.DBTranslation(item.Name.Split('_')[1]); } } catch { }
+                    }); } 
+                } catch { }
+                try { 
+                if (parentObject.GetType().Name == "ContextMenu") { (parentObject as ContextMenu).Items.OfType<MenuItem>().ToList().ForEach(async item => {
+                        try { if (item.Name.Split('_').Length > 1 && item.Header == null) { item.Header = await DBOperations.DBTranslation(item.Name.Split('_')[1]); } } catch { }
+                    }); }
+                } catch { }
             } catch (Exception Ex) { App.ApplicationLogging(Ex); }
             return true;
         }

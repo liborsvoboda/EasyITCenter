@@ -55,12 +55,16 @@ namespace EasyITSystemCenter.Pages {
                     else if (headername == "StartupUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 8; }
                     else if (headername == "StartupSubFolder".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 9; }
                     else if (headername == "StartupCommand".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 10; }
-
+                    else if (headername == "DevModeEnabled".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 11; }
+                    else if (headername == "ShowHelpTab".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 12; }
+                    else if (headername == "HelpTabShowOnly".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 13; }
+                    else if (headername == "HelpTabUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 14; }
                     else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
                     else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
 
                     else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
                     else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
+
                 });
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
@@ -72,6 +76,7 @@ namespace EasyITSystemCenter.Pages {
                 DgListView.Items.Filter = (e) => {
                     SystemCustomPageList search = e as SystemCustomPageList;
                     return search.PageName.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.HelpTabUrl) && search.HelpTabUrl.ToLower().Contains(filter.ToLower())
                     || !string.IsNullOrEmpty(search.Description) && search.Description.ToLower().Contains(filter.ToLower())
                     || !string.IsNullOrEmpty(search.StartupUrl) && search.StartupUrl.ToLower().Contains(filter.ToLower())
                     || !string.IsNullOrEmpty(search.StartupSubFolder) && search.StartupSubFolder.ToLower().Contains(filter.ToLower())
@@ -128,10 +133,15 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Description = txt_description.Text;
 
                 selectedRecord.IsMultiFormType = (bool)chb_isMultiFormType.IsChecked;
-                selectedRecord.IsSystemWebModule = 
+                selectedRecord.IsSystemWebModule = (bool)chb_isSystemWebModule.IsChecked;
                 selectedRecord.IsServerUrl = (bool)chb_isServerUrl.IsChecked;
                 selectedRecord.IsGraphType = (bool)chb_isGraphType.IsChecked;
                 selectedRecord.StartupUrl = (bool)chb_isMultiFormType.IsChecked || (bool)chb_isGraphType.IsChecked ? txt_startupUrl.Text : null;
+
+                selectedRecord.DevModeEnabled = (bool)chb_devModeEnabled.IsChecked;
+                selectedRecord.ShowHelpTab = (bool)chb_showHelpTab.IsChecked;
+                selectedRecord.HelpTabShowOnly = (bool)chb_helpTabShowOnly.IsChecked;
+                selectedRecord.HelpTabUrl = txt_helpTabUrl.Text;
 
                 selectedRecord.IsWebServer = (bool)chb_isWebServer.IsChecked;
                 selectedRecord.StartupSubFolder = txt_startupSubFolder.Text;
@@ -176,6 +186,12 @@ namespace EasyITSystemCenter.Pages {
                 chb_isGraphType.IsChecked = selectedRecord.IsGraphType;
                 txt_startupUrl.Text = selectedRecord.StartupUrl;
 
+                chb_devModeEnabled.IsChecked = selectedRecord.DevModeEnabled;
+                chb_showHelpTab.IsChecked = selectedRecord.ShowHelpTab;
+                chb_helpTabShowOnly.IsChecked = selectedRecord.HelpTabShowOnly;
+                txt_helpTabUrl.Text = selectedRecord.HelpTabUrl;
+
+                chb_isSystemWebModule.IsChecked = selectedRecord.IsSystemWebModule;
                 chb_isWebServer.IsChecked = selectedRecord.IsWebServer;
                 txt_startupSubFolder.Text = selectedRecord.StartupSubFolder;
                 txt_startupCommand.Text = selectedRecord.StartupCommand;
@@ -200,14 +216,15 @@ namespace EasyITSystemCenter.Pages {
                 switch (((CheckBox)sender).Name) {
                     case "chb_isMultiFormType":
                         chb_isGraphType.IsChecked = false;
-                        if ((bool)chb_isMultiFormType.IsChecked) { chb_isWebServer.IsEnabled = chb_isSystemWebModule.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled = true; }
-                        else { chb_isWebServer.IsEnabled = chb_isSystemWebModule.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled = false; }
+                        if ((bool)chb_isMultiFormType.IsChecked) { chb_isWebServer.IsEnabled = chb_isSystemWebModule.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled = chb_devModeEnabled.IsEnabled = chb_showHelpTab.IsEnabled = chb_helpTabShowOnly.IsEnabled = true; }
+                        else { chb_isWebServer.IsEnabled = chb_isSystemWebModule.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled = chb_devModeEnabled.IsEnabled = chb_showHelpTab.IsEnabled = chb_helpTabShowOnly.IsEnabled = false; }
                         chb_isSystemWebModule.IsChecked = chb_isServerUrl.IsChecked = false;
                         break;
                     case "chb_isGraphType":
-                        chb_isMultiFormType.IsChecked = chb_isSystemWebModule.IsChecked = chb_isServerUrl.IsChecked = chb_isWebServer.IsChecked = false;
+                        chb_isMultiFormType.IsChecked = chb_isSystemWebModule.IsChecked = chb_isServerUrl.IsChecked = chb_isWebServer.IsChecked = chb_devModeEnabled.IsChecked = chb_showHelpTab.IsChecked = chb_helpTabShowOnly.IsChecked = false;
                         txt_startupUrl.Text = txt_startupCommand.Text = txt_startupSubFolder.Text = null;
-                        chb_isWebServer.IsEnabled = chb_isSystemWebModule.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled = txt_startupCommand.IsEnabled = txt_startupSubFolder.IsEnabled = false;
+                        chb_isWebServer.IsEnabled = chb_isSystemWebModule.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled
+                            = txt_startupCommand.IsEnabled = txt_startupSubFolder.IsEnabled = chb_devModeEnabled.IsEnabled = chb_showHelpTab.IsEnabled = chb_helpTabShowOnly.IsEnabled = false;
                         break;
                     default:
                         break;
@@ -240,6 +257,14 @@ namespace EasyITSystemCenter.Pages {
                     default:
                         break;
                 }
+            }
+        }
+
+        private void HelpTabChecked_Changed(object sender, RoutedEventArgs e) {
+            if (dataViewSupport.FormShown) {
+                txt_helpTabUrl.IsEnabled = (bool)chb_showHelpTab.IsChecked ? true : false;
+                chb_helpTabShowOnly.IsEnabled = (bool)chb_showHelpTab.IsChecked ? true : false;
+                if (!(bool)chb_showHelpTab.IsChecked) { chb_helpTabShowOnly.IsChecked = false; }
             }
         }
     }

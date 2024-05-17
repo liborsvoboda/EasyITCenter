@@ -51,7 +51,7 @@ namespace EasyITSystemCenter.Pages {
                 codeEditor.Options.EnableTextDragDrop = true;
                 codeEditor.Options.AllowScrollBelowDocument = true;
                 codeEditor.Encoding = System.Text.Encoding.UTF8;
-                codeEditor.LineNumbersForeground = (Brush)ColorConverter.ConvertFromString("LightBlue");
+                codeEditor.LineNumbersForeground = (Brush)new BrushConverter().ConvertFromString("LightBlue");
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
 

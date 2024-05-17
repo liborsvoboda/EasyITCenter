@@ -75,7 +75,14 @@ namespace EasyITSystemCenter.GlobalOperations {
         }
 
 
-        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject {
+        /// <summary>
+        /// Get All Children of Root-Parent Object by Type
+        /// Using for Global Translating, Change Properties, etc.. 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="depObj"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject {
             if (depObj == null) yield break;
 
             for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++) {

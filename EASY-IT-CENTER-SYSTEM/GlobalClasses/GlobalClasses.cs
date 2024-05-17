@@ -30,6 +30,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string galleryFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0], "Gallery");
         public string appDataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "AddOn", "AppData");
         public string webDataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "AddOn", "WebData");
+        public string webDataUrlPath = Path.Combine("AddOn", "WebData");
         public string webSrvDataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "AddOn", "WebSrvData");
         public string appSettingFile = "config.json";
         public bool webServerRunning = false;

@@ -86,19 +86,23 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// <summary>
         /// Creates the path recursively.
         /// </summary>
-        /// <param name="path">The path.</param>
+        /// <param name="path"></param>
+        /// <param name="clearIfExist"></param>
         /// <returns></returns>
-        public static bool CreatePath(string path) {
+        public static bool CreatePath(string path, bool clearIfExist = false) {
             try {
+                if (clearIfExist && Directory.Exists(path)) { Directory.Delete(path, true); }
                 string[] pathParts = path.Split('\\');
 
                 for (int i = 0; i < pathParts.Length; i++) {
                     if (i > 0)
-                        pathParts[i] = Path.Combine(pathParts[i - 1], pathParts[i]);
+                        pathParts[i] = System.IO.Path.Combine(pathParts[i - 1], pathParts[i]);
 
                     if (!Directory.Exists(pathParts[i]))
                         Directory.CreateDirectory(pathParts[i]);
+
                 }
+
                 return true;
             } catch {
                 return false;

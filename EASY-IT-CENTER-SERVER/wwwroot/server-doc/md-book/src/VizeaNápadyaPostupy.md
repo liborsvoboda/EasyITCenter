@@ -6,10 +6,31 @@ Celé oblasti IT až na malinké vyjímky.
 
 Zde budu průběžně zapisovat nápady
 
+# Rozcestník IT Universální Řešení  EIC & ESB    
+Celé IT v Jednom Řešení pro Váš Bussines, Firmu,    
+    
+- [Systém,IS,  Administrace, Vývoj, Editace k vidění Online](https://kliknetezde.cz:8000)    
+- [30 denní Plná Verze Ke Stažení](/Downloads)    
+    
+    
+- [Stručný Úvod EIC & ESB](/EIC&ESBDocs/SolutionFastInfo/index.html)    
+- [Vývojářská Dokumentace EIC & ESB](/EIC&ESBDocs/CodeDocs/index)    
+- [Průvodce kódem EIC & ESB](/EIC&ESBCodeBrowser/index/index.html)    
+- [Server Info EIC](/EIC&ESBDocs/EIC-InfoWeb/index.html)    
+- [Systém Info ESB](/EIC&ESBDocs/ESB-InfoWeb/index.html)    
+- [Členění EIC](/EIC&ESBDocs/EIC-XmlWeb/index.html)    
+- [Členění ESB](/EIC&ESBDocs/ESB-XmlWeb/index.html)    
+- [Galerie EIC](/EIC&ESBDocs/EIC-Gallery/index.html)    
+- [Galerie ESB](/EIC&ESBDocs/ESB-Gallery/index.html)    
+- [Generická Nápověda](/EIC&ESBDocs/ITHelpIdeasDoc/index.html)    
+- [Web Portal z Editoru](/Portal)    
+    
+---    
+    
 # ESB - SYSTEM DESIGNER - TOUCH SYSTEMS - WEB    
 Generátor - WebKonfigurátor - Vytvoření LIGHT Klonu    
     
-PředObjednávky NA EasySYSTEMbuilder LIGHT za POUHÝCH 10000KČ    
+**PředObjednávky NA EasySYSTEMbuilder LIGHT za POUHÝCH 10000KČ**    
 Dodání Do 1 Měsíce.    
     
 Chystá se Nový LIGHT KLON EasySYSTEMbuilderu    

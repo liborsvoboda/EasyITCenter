@@ -45,10 +45,12 @@
         /// <summary>
         /// Creates the path recursively.
         /// </summary>
-        /// <param name="path">The System.IO.Path.</param>
+        /// <param name="path"></param>
+        /// <param name="clearIfExist"></param>
         /// <returns></returns>
-        public static bool CreatePath(string path) {
+        public static bool CreatePath(string path, bool clearIfExist = false) {
             try {
+                if (clearIfExist && Directory.Exists(path)) { Directory.Delete(path, true); }
                 string[] pathParts = path.Split('\\');
 
                 for (int i = 0; i < pathParts.Length; i++) {
@@ -57,7 +59,9 @@
 
                     if (!Directory.Exists(pathParts[i]))
                         Directory.CreateDirectory(pathParts[i]);
+                    
                 }
+                
                 return true;
             } catch {
                 return false;

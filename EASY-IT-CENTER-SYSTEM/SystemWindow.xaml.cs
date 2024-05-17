@@ -561,9 +561,9 @@ namespace EasyITSystemCenter {
 
                 if (module.ModuleType.ToLower() == "webmodule") {
 
-                    AddOrRemoveTab(((Tile)sender).Title, new WebModulePage(), "Setting");
+                    AddOrRemoveTab(((Tile)sender).Title, new WebTemplateViewerPage(), "Setting");
                     SystemTabs existingTab = ((SystemWindowDataModel)DataContext).TabContents.ToList().Where(a => a.Header.ToLower() == ((Tile)sender).Title.ToLower()).LastOrDefault();
-                    if (existingTab != null) { ((WebModulePage)existingTab.Content).ShowWebModule = module; }
+                    if (existingTab != null) { ((WebTemplateViewerPage)existingTab.Content).ShowWebModule = module; }
 
                 } else if (module.ModuleType.ToLower() == "appmodule") {
 
@@ -1116,6 +1116,8 @@ namespace EasyITSystemCenter {
                         SystemTranslationList translation = App.LanguageList.FirstOrDefault(a => a.DescriptionCz == headerName || a.DescriptionEn == headerName);
                         if (translation != null) { dbRecId = App.SystemCustomList.Where(a => a.PageName == translation.SystemName).Select(a => a.Id).FirstOrDefault(); }
                     }
+
+                    //ENABLING AND START LOAD ACTION OF SYSTEM WEB MODULE
                     ((UIElement)tabPage).Uid = dbRecId.ToString(); ((UIElement)tabPage).IsEnabled = true; }
             } catch { }
 
