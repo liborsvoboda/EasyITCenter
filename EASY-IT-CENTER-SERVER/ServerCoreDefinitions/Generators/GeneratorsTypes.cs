@@ -12,7 +12,8 @@
         public bool ScanRootOnly { get; set; }
         public bool IndexOnly { get; set; }
         public bool RewriteAllowed { get; set; }
-        public string ServerLanguage { get; set; }
+        public string ServerLanguage { get; set; } = "cz";
+        public bool IndexInFrameList { get; set; } = false;
     }
 
 

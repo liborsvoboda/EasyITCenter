@@ -154,14 +154,18 @@ namespace EasyITSystemCenter.GlobalOperations {
 
         /// <summary>
         /// Write String to File Used for JsonSaving
+        /// If rewrite file is false, content is append
         /// </summary>
-        /// <param name="file">   The file.</param>
-        /// <param name="content">The content.</param>
-        public static void WriteToFile(string file, string content) {
-            CreateFile(file);
-            StreamWriter objWriter = new StreamWriter(file, true);
-            objWriter.WriteLine(content);
-            objWriter.Close();
+        /// <param name="file"></param>
+        /// <param name="content"></param>
+        /// <param name="rewrite"></param>
+        public static void WriteToFile(string file, string content, bool rewrite = true) {
+            if (CreateFile(file)) {
+                if (rewrite) { DeleteFile(file); }
+                StreamWriter objWriter = new StreamWriter(file, true);
+                objWriter.WriteLine(content);
+                objWriter.Close();
+            }
         }
 
         /// <summary>
