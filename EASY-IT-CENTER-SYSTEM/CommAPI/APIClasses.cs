@@ -118,8 +118,8 @@
         /*WebHosting Apis*/
         EasyITCenterWebConfiguratorList,
 
-        /*Server Special APIs*/
-        ServerEmailer,
+        /*Server APIs*/
+        ServerApi,
 
         /*Servers*/
         CoreServerRestart,
@@ -128,7 +128,7 @@
 
         /*StoredProceduresList Library*/
         EasyITCenterStoredProceduresList,
-        EasyITCenterSystemOperations,
+   
 
         /*Template Classes*/
         EasyITCenterTemplateClassList,

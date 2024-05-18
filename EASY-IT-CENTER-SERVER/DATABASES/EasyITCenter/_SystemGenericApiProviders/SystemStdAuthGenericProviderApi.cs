@@ -9,9 +9,9 @@ namespace EasyITCenter.ServerCoreDBSettings {
     [Route("[controller]")]
     [ApiController]
     public abstract class SystemStdAuthGenericProviderApi<DbEntity, Tentity, TKey> : ControllerBase where DbEntity : EasyITCenterContext where Tentity : class where TKey : notnull {
-        private readonly IRepositoryAsync<DbEntity, Tentity> db;
+        private readonly IGenericApiServiceAsync<DbEntity, Tentity> db;
 
-        public SystemStdAuthGenericProviderApi(IRepositoryAsync<DbEntity, Tentity> repo) => db = repo;
+        public SystemStdAuthGenericProviderApi(IGenericApiServiceAsync<DbEntity, Tentity> repo) => db = repo;
 
         [HttpGet]
         public async Task<string> GetGenericList() {

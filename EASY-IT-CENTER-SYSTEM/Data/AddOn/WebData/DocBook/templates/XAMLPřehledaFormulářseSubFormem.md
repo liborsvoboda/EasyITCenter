@@ -256,7 +256,7 @@ namespace GoldenSystem.Pages {
             _ = SystemOperations.SetLanguageDictionary(Resources, JsonConvert.DeserializeObject<Language>(App.Setting.DefaultLanguage).Value);
 
             try {
-                DataOperations.TranslateFormFields(ref ListForm);
+                FormOperations.TranslateFormFields(ref ListForm);
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             LoadParameters();

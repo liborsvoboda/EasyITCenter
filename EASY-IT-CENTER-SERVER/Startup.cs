@@ -152,38 +152,38 @@ namespace EasyITCenter {
                 //TODO server-users security for content
 
                 //Verify Request For Detect Layout, Redirection, Module, Correct File Path, WebMenu Selection
-                RouteLayoutResult routeLayout = RouteLayoutResult.EmptyLayout; RoutingResult commandType = RoutingResult.None; string fileValidUrl = context.Request.Path;
+                RouteLayoutTypes routeLayout = RouteLayoutTypes.EmptyLayout; RoutingActionTypes commandType = RoutingActionTypes.None; string fileValidUrl = context.Request.Path;
                 context = CoreOperations.ChechUrlRequestValidOrAuthorized(context);
-                try { routeLayout = ((RouteLayoutResult)context.Items.FirstOrDefault(a => a.Key.ToString() == "RouteLayoutResult").Value); } catch { }
-                try { commandType = ((RoutingResult)context.Items.FirstOrDefault(a => a.Key.ToString() == "ComandType").Value); } catch { }
+                try { routeLayout = ((RouteLayoutTypes)context.Items.FirstOrDefault(a => a.Key.ToString() == "RouteLayoutTypes").Value); } catch { }
+                try { commandType = ((RoutingActionTypes)context.Items.FirstOrDefault(a => a.Key.ToString() == "ComandType").Value); } catch { }
                 try { fileValidUrl = ((string)context.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
 
 
                 //Start DocPortal by Link Without index.md
-                if (routeLayout == RouteLayoutResult.DocPortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                if (routeLayout == RouteLayoutTypes.DocPortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
                     { redirected = true; context.Request.Path = "/DocPortal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
                 //Show MarkDownFile in Layout by missing .md extension
-                else if (routeLayout == RouteLayoutResult.EditorHtmlFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                else if (routeLayout == RouteLayoutTypes.EditorHtmlFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
                 { redirected = true; context.Request.Path = "/ServerCoreTools/EditorHtmlFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
 
                 //Show MarkDownFile in Layout by missing .md extension
-                else if (routeLayout == RouteLayoutResult.ViewerMarkDownFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                else if (routeLayout == RouteLayoutTypes.ViewerMarkDownFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
                     { redirected = true; context.Request.Path = "/ServerCoreTools/ViewerMarkDownFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
                 //Show Report File in Layout by .frx extension
-                else if (routeLayout == RouteLayoutResult.ViewerReportFileLayout) 
+                else if (routeLayout == RouteLayoutTypes.ViewerReportFileLayout) 
                 { redirected = true; context.Request.Path = "/ServerCoreTools/ViewerReportFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
 
 
                 //Show Portal in Layout
-                else if (routeLayout == RouteLayoutResult.PortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                else if (routeLayout == RouteLayoutTypes.PortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
                 { redirected = true; context.Request.Path = "/Portal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
                 //Show ServerModules
-                else if (routeLayout == RouteLayoutResult.ServerModulesLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
+                else if (routeLayout == RouteLayoutTypes.ServerModulesLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
                 { redirected = true; context.Request.Path = "/ServerModules"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
                 //Others Type Detected
@@ -192,13 +192,13 @@ namespace EasyITCenter {
 
 
 
-                if (!redirected && commandType == RoutingResult.Return)
+                if (!redirected && commandType == RoutingActionTypes.Return)
                 { return; }
 
-                else if (!redirected && commandType == RoutingResult.Next) 
+                else if (!redirected && commandType == RoutingActionTypes.Next) 
                 { context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
-                else if (!redirected && commandType == RoutingResult.Next && context.Request.Path.ToString().ToLower() == fileValidUrl) 
+                else if (!redirected && commandType == RoutingActionTypes.Next && context.Request.Path.ToString().ToLower() == fileValidUrl) 
                 { return; }
             });
 
@@ -229,7 +229,7 @@ namespace EasyITCenter {
             websites.ForEach(website => {
                 app.UseStaticFiles(new StaticFileOptions {
                     ServeUnknownFileTypes = true,
-                    FileProvider = new WebsitesStaticFileDbProvider(app.ApplicationServices),
+                    FileProvider = new StaticFilesFileProviderService(app.ApplicationServices),
                     RequestPath = "/server-users/" + website.WebsiteName + ".",
                     HttpsCompression = HttpsCompressionMode.Compress,
                     DefaultContentType = "text/html",
@@ -283,14 +283,14 @@ namespace EasyITCenter {
             
             if (ServerConfigSettings.BrowserLinkEnabled) { app.UseBrowserLink(); }
             if (ServerConfigSettings.ModuleWebDataManagerEnabled) { app.UseEasyData(); }
-
+            
         }
 
         /// <summary>
         /// Server Core Enabling Disabling Hosted Services
         /// </summary>
-        private void ServerOnStarted() => ServerRuntimeData.ServerCoreStatus = ServerStatusResult.Running.ToString();
-        private void ServerOnStopping() => ServerRuntimeData.ServerCoreStatus = ServerStatusResult.Stopping.ToString();
-        private void ServerOnStopped() => ServerRuntimeData.ServerCoreStatus = ServerStatusResult.Stopped.ToString();
+        private void ServerOnStarted() => ServerRuntimeData.ServerCoreStatus = ServerStatusTypes.Running.ToString();
+        private void ServerOnStopping() => ServerRuntimeData.ServerCoreStatus = ServerStatusTypes.Stopping.ToString();
+        private void ServerOnStopped() => ServerRuntimeData.ServerCoreStatus = ServerStatusTypes.Stopped.ToString();
     }
 }

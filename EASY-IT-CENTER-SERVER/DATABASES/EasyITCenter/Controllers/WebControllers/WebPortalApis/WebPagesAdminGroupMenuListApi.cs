@@ -8,7 +8,7 @@
 
         [HttpGet("/WebApi/WebPages/WebAdmin/GetWebGroupMenuList")]
         public async Task<string> GetWebGroupMenuList() {
-            if (CommunicationController.IsAdmin()) {
+            if (ServerApiServiceExtension.IsAdmin()) {
                 List<WebGroupMenuList> data;
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                     IsolationLevel = IsolationLevel.ReadUncommitted //with NO LOCK
@@ -37,7 +37,7 @@
         [Consumes("application/json")]
         public async Task<string> InsertOrUpdateGroupWebMenuList([FromBody] WebSettingList1 record) {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     string authId = User.FindFirst(ClaimTypes.PrimarySid.ToString()).Value;
 
                     int RecId = int.Parse(record.Settings.FirstOrDefault(a => a.Key == "Id").Value);
@@ -81,7 +81,7 @@
         [Consumes("application/json")]
         public async Task<string> DeleteWebGroupMenuList(string id) {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     if (!int.TryParse(id, out int Ids)) return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = "Id is not set" });
 
                     WebGroupMenuList record = new() { Id = int.Parse(id) };

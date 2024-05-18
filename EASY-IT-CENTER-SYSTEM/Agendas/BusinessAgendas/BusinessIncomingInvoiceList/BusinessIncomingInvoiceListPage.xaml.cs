@@ -47,8 +47,8 @@ namespace EasyITSystemCenter.Pages {
             //translate fields in detail form
             try {
                 try {
-                    _ = DataOperations.TranslateFormFields(ListForm);
-                    _ = DataOperations.TranslateFormFields(SubListView);
+                    _ = FormOperations.TranslateFormFields(ListForm);
+                    _ = FormOperations.TranslateFormFields(SubListView);
                 } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
                 LoadParameters();

@@ -60,6 +60,7 @@
 - [Ver.63: XAML Šablony Systému](XAMLŠablonySystému.md)   
 - [Ver.5: ESB Tiskové řešení](ESBTiskovéřešení.md)   
 - [Ver.8: Doplňující SubProjekty](DoplňujícíSubProjekty.md)   
+- [Ver.9: ESB System Help Library](ESBSystemHelpLibrary.md)   
     ```  
 
 ---
@@ -92,6 +93,7 @@
 # EIC&ESB Github a Svět Neomezená Řešení   
 
     ```markdown  
+- [Ver.2: GitHub Top Priorita](GitHubTopPriorita.md)   
 - [Ver.1: awesome-dotnet-core](awesome-dotnet-core.md)   
 - [Ver.2: awesome-dotnet-core Next](awesome-dotnet-coreNext.md)   
 - [Ver.3: awesome-workflow-engines](awesome-workflow-engines.md)   
@@ -99,6 +101,13 @@
 - [Ver.4: Awesome WPF](AwesomeWPF.md)   
 - [Ver.1: Zaznamenané Nápady k prověření ](ZaznamenanéNápadykprověření.md)   
 - [Ver.3: Inspirace Github Bohaté Profily ](InspiraceGithubBohatéProfily.md)   
+    ```  
+
+---
+# EIC+ESB Sdílené WEB Řešení VŠECH   
+
+    ```markdown  
+- [WebSocket v 5 MINUTÁCH](WebSocketv5MINUTACH.md)   
     ```  
 
 ---

@@ -22,7 +22,7 @@ namespace EasyITSystemCenter.Pages {
         public static SystemMenuList selectedRecord = new SystemMenuList();
 
         private List<SystemMenuList> SystemMenuList = new List<SystemMenuList>();
-        private List<GenericObject> systemTableList = new List<GenericObject>();
+        private List<CustomTable> systemTableList = new List<CustomTable>();
         private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
         private List<SystemGroupMenuList> systemGroupMenuList = new List<SystemGroupMenuList>();
         private List<SolutionUserRoleList> userRoleList = new List<SolutionUserRoleList>();
@@ -32,7 +32,7 @@ namespace EasyITSystemCenter.Pages {
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
             try {
-                _ = DataOperations.TranslateFormFields(ListForm);
+                _ = FormOperations.TranslateFormFields(ListForm);
 
                 LoadParameters();
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
@@ -48,7 +48,7 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                systemTableList = await CommApi.GetApiRequest<List<GenericObject>>(ApiUrls.EasyITCenterStoredProceduresList, "SystemSpGetSystemPageList", App.UserData.Authentification.Token);
+                systemTableList = await CommApi.GetApiRequest<List<CustomTable>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetSystemPageList", App.UserData.Authentification.Token);
 
                 userRoleList = await CommApi.GetApiRequest<List<SolutionUserRoleList>>(ApiUrls.EasyITCenterSolutionUserRoleList, null, App.UserData.Authentification.Token);
                 systemGroupMenuList = await CommApi.GetApiRequest<List<SystemGroupMenuList>>(ApiUrls.EasyITCenterSystemGroupMenuList, null, App.UserData.Authentification.Token);

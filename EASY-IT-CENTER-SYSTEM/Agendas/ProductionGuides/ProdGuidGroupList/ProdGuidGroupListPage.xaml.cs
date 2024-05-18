@@ -24,7 +24,7 @@ namespace EasyITSystemCenter.Pages {
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
             try {
-                _ = DataOperations.TranslateFormFields(ListForm);
+                _ = FormOperations.TranslateFormFields(ListForm);
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             _ = LoadDataList();

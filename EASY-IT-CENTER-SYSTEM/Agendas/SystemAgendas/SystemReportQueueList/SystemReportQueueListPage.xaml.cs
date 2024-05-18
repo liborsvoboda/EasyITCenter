@@ -26,7 +26,7 @@ namespace EasyITSystemCenter.Pages {
         public static SystemReportQueueList selectedRecord = new SystemReportQueueList();
 
         private string connectionString = null;
-        private List<GenericObject> systemTableList = new List<GenericObject>();
+        private List<CustomTable> systemTableList = new List<CustomTable>();
         private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
         private List<SystemReportQueueList> reportQueueList = new List<SystemReportQueueList>();
         private bool reportSupportForListOnly = true;
@@ -36,7 +36,7 @@ namespace EasyITSystemCenter.Pages {
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
             try {
-                _ = DataOperations.TranslateFormFields(ListForm);
+                _ = FormOperations.TranslateFormFields(ListForm);
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             LoadParameters();
@@ -54,7 +54,7 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
                 reportQueueList = await CommApi.GetApiRequest<List<SystemReportQueueList>>(ApiUrls.EasyITCenterSystemReportQueueList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
-                systemTableList = await CommApi.GetApiRequest<List<GenericObject>>(ApiUrls.EasyITCenterStoredProceduresList, "SystemSpGetTableList", App.UserData.Authentification.Token);
+                systemTableList = await CommApi.GetApiRequest<List<CustomTable>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetTableAllList", App.UserData.Authentification.Token);
 
                 systemTableList.ForEach(async table => { systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.TableList, Translate = await DBOperations.DBTranslation(table.TableList) }); });
 

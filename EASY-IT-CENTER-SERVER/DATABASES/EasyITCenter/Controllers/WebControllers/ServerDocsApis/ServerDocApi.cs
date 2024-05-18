@@ -28,7 +28,7 @@ namespace EasyITCenter.Controllers {
         [HttpGet("/WebApi/WebDocumentation/GenerateMdBook")]
         public async Task<string> GenerateMdBook() {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
 
                     List<DocSrvDocTemplateList> templates; List<DocSrvDocumentationList> data;
 

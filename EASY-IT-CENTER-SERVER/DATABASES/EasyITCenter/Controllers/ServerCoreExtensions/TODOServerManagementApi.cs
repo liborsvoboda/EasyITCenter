@@ -24,7 +24,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         [HttpGet("/ServerManagement/AutoSchedulerServerStart")]
         public async Task<IActionResult> ServerSchedulerStart() {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     if (ServerRuntimeData.ServerAutoSchedulerProvider != null) { await ServerRuntimeData.ServerAutoSchedulerProvider.ResumeAll(); }
                     return Ok(JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.success.ToString(), ErrorMessage = string.Empty }));
                 }
@@ -35,7 +35,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         [HttpGet("/ServerManagement/AutoSchedulerServerStop")]
         public async Task<IActionResult> ServerSchedulerStop() {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     if (ServerRuntimeData.ServerAutoSchedulerProvider != null) { await ServerRuntimeData.ServerAutoSchedulerProvider.PauseAll(); }
                     return Ok(JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.success.ToString(), ErrorMessage = string.Empty }));
                 }
@@ -46,11 +46,11 @@ namespace EasyITCenter.ServerCoreDBSettings {
         [HttpGet("/ServerManagement/AutoSchedulerServerStatus")]
         public async Task<IActionResult> ServerSchedulerStatus() {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     bool isPaused = false;
                     if (ServerRuntimeData.ServerAutoSchedulerProvider != null) { isPaused = await ServerRuntimeData.ServerAutoSchedulerProvider.IsTriggerGroupPaused("AutoScheduler"); }
 
-                    return Ok(JsonSerializer.Serialize(new DBResultMessage() { Status = isPaused ? ServerStatusResult.Stopped.ToString() : ServerStatusResult.Running.ToString(), ErrorMessage = string.Empty }));
+                    return Ok(JsonSerializer.Serialize(new DBResultMessage() { Status = isPaused ? ServerStatusTypes.Stopped.ToString() : ServerStatusTypes.Running.ToString(), ErrorMessage = string.Empty }));
                 }
                 else { return BadRequest(new DBResultMessage() { Status = DBResult.error.ToString(), ErrorMessage = DbOperations.DBTranslate("YouDoesNotHaveRights") }); }
             } catch (Exception ex) { return BadRequest(new DBResultMessage() { Status = DBResult.error.ToString(), ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
@@ -64,7 +64,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         [HttpGet("/ServerManagement/CoreServerRestart")]
         public async Task<string> ServerRestart() {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     BackendServer.RestartServer();
 
                     return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = 0, Status = DBResult.success.ToString(), RecordCount = 0, ErrorMessage = DbOperations.DBTranslate("serverRestarting") });
@@ -81,7 +81,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         [HttpGet("/ServerManagement/FtpServerStart")]
         public async Task<string> FtpServerStart() {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     if (ServerRuntimeData.ServerFTPProvider != null) {
                         ServerRuntimeData.ServerFTPRunningStatus = true;
                         await ServerRuntimeData.ServerFTPProvider.StartAsync(); 
@@ -100,7 +100,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         [HttpGet("/ServerManagement/FtpServerStop")]
         public async Task<string> FtpServerStop() {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     if (ServerRuntimeData.ServerFTPProvider != null) {
                         ServerRuntimeData.ServerFTPRunningStatus = false;
                         await ServerRuntimeData.ServerFTPProvider.StopAsync();
@@ -121,8 +121,8 @@ namespace EasyITCenter.ServerCoreDBSettings {
         [HttpGet("/ServerManagement/FtpServerStatus")]
         public async Task<IActionResult> FtpServerStatus() {
             try {
-                if (CommunicationController.IsAdmin()) {
-                    return Ok(JsonSerializer.Serialize(new DBResultMessage() { Status = !ServerRuntimeData.ServerFTPRunningStatus ? ServerStatusResult.Stopped.ToString() : ServerStatusResult.Running.ToString(), ErrorMessage = string.Empty }));
+                if (ServerApiServiceExtension.IsAdmin()) {
+                    return Ok(JsonSerializer.Serialize(new DBResultMessage() { Status = !ServerRuntimeData.ServerFTPRunningStatus ? ServerStatusTypes.Stopped.ToString() : ServerStatusTypes.Running.ToString(), ErrorMessage = string.Empty }));
                 }
                 else { return BadRequest(new DBResultMessage() { Status = DBResult.error.ToString(), ErrorMessage = DbOperations.DBTranslate("YouDoesNotHaveRights") }); }
             } catch (Exception ex) { return BadRequest(new DBResultMessage() { Status = DBResult.error.ToString(), ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }

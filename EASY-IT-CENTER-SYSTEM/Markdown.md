@@ -1,4 +1,20 @@
 
+APLICATION INSIGHT
+https://learn.microsoft.com/cs-cz/azure/azure-monitor/app/opentelemetry-enable?tabs=aspnetcore
+
+UDELAT AGENDU GRAFY A JEJICH DEFINICE s moznosti vytvorit LAYOUT A PROCEDURA KTERA BUDE GENEROVAT
+data z spoustena splanovacem uloh 
+https://blog.medhat.ca/2023/01/visualizing-data-with-chartjs-in-aspnet.html
+https://github.com/medhatelmasry/ChartJsRazor/tree/main
+https://github.com/JetLightStudio/NetCoreCharts
+https://github.com/mattosaurus/ChartJSCore
+
+
+řešení pupetier
+https://github.com/khachornchit/puppeteer/tree/master/examples
+
+
+
 rozpracováno Profi MarkDown Editor
 WebCodeLibraryEditor 
 WebConfiguratorList - Hosting Agendas

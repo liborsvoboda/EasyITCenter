@@ -11,7 +11,6 @@ using EasyITSystemCenter.SystemStructure;
 using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using MWindowInterfacesLib.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -29,7 +28,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Wpf.Ui.Appearance;
 
 
 namespace EasyITSystemCenter {
@@ -349,6 +347,7 @@ namespace EasyITSystemCenter {
                 List<SolutionMixedEnumList> mixedEnumTypesList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/SystemModules", App.UserData.Authentification.Token);
                 App.SystemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
 
+                systemModuleList.Items.Clear();
                 mixedEnumTypesList.ForEach(async panelType => {
                     try {
                         WrapPanel tabMenuPanel = new WrapPanel() { Name = "wp_" + panelType.Id.ToString(), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
@@ -431,7 +430,7 @@ namespace EasyITSystemCenter {
         /// </summary>
         private async Task<bool> LoadUserMenu() {
             try {
-                App.SystemMenuList = await CommApi.GetApiRequest<List<SystemMenuList>>(ApiUrls.EasyITCenterStoredProceduresList, "SystemSpGetUserMenuList", App.UserData.Authentification.Token);
+                App.SystemMenuList = await CommApi.GetApiRequest<List<SystemMenuList>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetUserMenuList", App.UserData.Authentification.Token);
                 App.SystemCustomList = await CommApi.GetApiRequest<List<SystemCustomPageList>>(ApiUrls.EasyITCenterSystemCustomPageList, null, App.UserData.Authentification.Token);
 
                 tb_verticalSystemMenu.Items.Clear();
@@ -561,9 +560,9 @@ namespace EasyITSystemCenter {
 
                 if (module.ModuleType.ToLower() == "webmodule") {
 
-                    AddOrRemoveTab(((Tile)sender).Title, new WebTemplateViewerPage(), "Setting");
+                    AddOrRemoveTab(((Tile)sender).Title, new LocSrvWebTmpViewerPage(), "Setting");
                     SystemTabs existingTab = ((SystemWindowDataModel)DataContext).TabContents.ToList().Where(a => a.Header.ToLower() == ((Tile)sender).Title.ToLower()).LastOrDefault();
-                    if (existingTab != null) { ((WebTemplateViewerPage)existingTab.Content).ShowWebModule = module; }
+                    if (existingTab != null) { ((LocSrvWebTmpViewerPage)existingTab.Content).ShowWebModule = module; }
 
                 } else if (module.ModuleType.ToLower() == "appmodule") {
 

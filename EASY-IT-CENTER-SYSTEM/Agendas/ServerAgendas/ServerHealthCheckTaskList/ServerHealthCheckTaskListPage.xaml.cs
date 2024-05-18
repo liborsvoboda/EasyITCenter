@@ -27,7 +27,7 @@ namespace EasyITSystemCenter.Pages {
 
             try {
                 try {
-                    _ = DataOperations.TranslateFormFields(ListForm);
+                    _ = FormOperations.TranslateFormFields(ListForm);
 
                     lbl_id.Content = Resources["id"].ToString();
                     lbl_taskName.Content = Resources["taskName"].ToString();

@@ -86,7 +86,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <summary>
         /// Server Core Status
         /// </summary>
-        public static string ServerCoreStatus = ServerStatusResult.Stopped.ToString();
+        public static string ServerCoreStatus = ServerStatusTypes.Stopped.ToString();
 
         /// <summary>
         /// Server Restart Request Indicator
@@ -112,7 +112,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <summary>
         /// Central WebSocket List for Easy one place Using
         /// </summary>
-        public static List<Tuple<WebSocket, WebSocketExtension>> CentralWebSocketList = new();
+        public static List<Tuple<WebSocket, WebSocketLocation>> CentralWebSocketList = new List<Tuple<WebSocket, WebSocketLocation>>();
 
         /// <summary>
         /// Central List With references on Hested Server Sevices For Acess and Using Hosted

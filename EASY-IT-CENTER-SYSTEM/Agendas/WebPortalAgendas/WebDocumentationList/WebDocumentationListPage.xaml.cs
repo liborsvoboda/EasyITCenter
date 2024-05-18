@@ -40,7 +40,7 @@ namespace EasyITSystemCenter.Pages {
 
             try {
                 try {
-                    _ = DataOperations.TranslateFormFields(ListForm);
+                    _ = FormOperations.TranslateFormFields(ListForm);
                 } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
                 LoadParameters();

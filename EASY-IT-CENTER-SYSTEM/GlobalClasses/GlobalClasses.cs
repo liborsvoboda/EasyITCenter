@@ -112,7 +112,7 @@ namespace EasyITSystemCenter.GlobalClasses {
     }
 
     /// <summary>
-    /// Univessal Document List (Item) for Offer,Order,Invoice
+    /// Univesal Document List (Item) for Offer,Order,Invoice
     /// </summary>
     public partial class DocumentItemList {
         public int Id { get; set; } = 0;
@@ -142,23 +142,23 @@ namespace EasyITSystemCenter.GlobalClasses {
     }
 
     /// <summary>
-    /// Generated Class TableList from Stored Procedure SystemSpGetTableList
+    /// Generická Tabulka Používaná DB Procedurami
     /// </summary>
-    public partial class GenericObject {
+    public partial class CustomTable {
         public string TableList { get; set; }
     }
 
     /// <summary>
     /// Custom Definition for Returning List with One Record from Operation Stored Procedures
     /// </summary>
-    public class SystemOperationMessage {
+    public class CustomOneRowList {
         public string MessageList { get; set; }
     }
 
     /// <summary>
     /// Custom Definition for Returning List with One Record from Operation Stored Procedures
     /// </summary>
-    public class DBJsonFile {
+    public class CustomString {
         public string Value { get; set; }
     }
 

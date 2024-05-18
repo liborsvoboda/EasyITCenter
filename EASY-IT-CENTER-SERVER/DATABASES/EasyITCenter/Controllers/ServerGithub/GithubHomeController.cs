@@ -56,7 +56,7 @@ namespace EasyITCenter.GitServer.Controllers
             //if (reps.Count > 9)
             //    return View(new { error = "You have Max Limit Repositories 9 " });
             if (reps.Exists(r => r.Name == name))
-                return View(new { error = "Repository with same Name Exist" });
+                return View(new { error = "GenericApiService with same Name Exist" });
             if (!string.IsNullOrEmpty(name) && string.IsNullOrEmpty(remoteurl))
             {
                 result = RepositoryService.CreateRepository(Path.Combine(username, name));

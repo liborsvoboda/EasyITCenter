@@ -228,7 +228,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
         /// </summary>
         /// <param name="services">The services.</param>
         internal static void ConfigureWebSocketLoggerMonitor(ref IServiceCollection services) {
-            if (ServerConfigSettings.WebSocketServerMonitorEnabled) { services.AddSingleton<ILoggerProvider, WebSocketLogProvider>(); }
+            if (ServerConfigSettings.WebSocketServerMonitorEnabled) { services.AddSingleton<ILoggerProvider, ServerWebSockeMonitorService>(); }
         }
 
         /// <summary>
@@ -260,9 +260,9 @@ namespace EasyITCenter.ServerCoreConfiguration {
         /// </summary>
         /// <param name="services">The services.</param>
         internal static void ConfigureSingletons(ref IServiceCollection services) {
-            services.AddSingleton<IHttpContextAccessor, CommunicationController>();
+            services.AddSingleton<IHttpContextAccessor, ServerApiServiceExtension>();
             services.AddSingleton<ISitemapProvider, SitemapProvider>();
-            services.AddSingleton<IHealthCheckPublisher, DelegateHealthCheckPublisher>();
+            services.AddSingleton<IHealthCheckPublisher, HealthCheckActionService>();
         }
 
         /// <summary>
@@ -270,9 +270,9 @@ namespace EasyITCenter.ServerCoreConfiguration {
         /// </summary>
         /// <param name="services"></param>
         internal static void ConfigureScoped(ref IServiceCollection services) {
-            services.AddScoped(typeof(IRepositoryAsync<,>), typeof(RepositoryAsync<,>));
-            services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
-            services.AddScoped<WebsitesStaticFileDbRepository> ();
+            services.AddScoped(typeof(IGenericApiServiceAsync<,>), typeof(GenericApiServiceAsync<,>));
+            services.AddScoped(typeof(IGenericApiService<,>), typeof(GenericApiService<,>));
+            services.AddScoped<StaticFileDbService> ();
         }
 
         /// <summary>

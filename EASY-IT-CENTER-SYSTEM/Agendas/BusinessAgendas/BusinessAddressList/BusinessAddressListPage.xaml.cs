@@ -33,7 +33,7 @@ namespace EasyITSystemCenter.Pages {
                                                              };
 
             try {
-                _ = DataOperations.TranslateFormFields(ListForm);
+                _ = FormOperations.TranslateFormFields(ListForm);
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             cb_addressType.ItemsSource = addressType;

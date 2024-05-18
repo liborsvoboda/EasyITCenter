@@ -46,7 +46,7 @@
         [Consumes("application/json")]
         public async Task<string> InsertProviderGeneratedToolList([FromBody] ProviderGeneratedToolList record) {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     var data = new EasyITCenterContext().ProviderGeneratedToolLists.Add(record);
                     int result = await data.Context.SaveChangesAsync();
                     if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
@@ -62,7 +62,7 @@
         [Consumes("application/json")]
         public async Task<string> UpdateProviderGeneratedToolList([FromBody] ProviderGeneratedToolList record) {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     var data = new EasyITCenterContext().ProviderGeneratedToolLists.Update(record);
                     int result = await data.Context.SaveChangesAsync();
                     if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });
@@ -76,7 +76,7 @@
         [Consumes("application/json")]
         public async Task<string> DeleteProviderGeneratedToolList(string id) {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     if (!int.TryParse(id, out int Ids)) return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = "Id is not set" });
 
                     ProviderGeneratedToolList record = new() { Id = int.Parse(id) };

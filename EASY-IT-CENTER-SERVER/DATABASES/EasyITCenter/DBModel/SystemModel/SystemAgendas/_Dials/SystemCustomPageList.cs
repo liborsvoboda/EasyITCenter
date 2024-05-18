@@ -12,18 +12,23 @@ namespace EasyITCenter.DBModel
     {
         [Key]
         public int Id { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string InheritedFormType { get; set; } = null!;
         [StringLength(250)]
         [Unicode(false)]
         public string PageName { get; set; } = null!;
-        [Column(TypeName = "text")]
-        public string? Description { get; set; }
-        public bool IsSystemWebModule { get; set; }
-        [StringLength(512)]
         [Unicode(false)]
-        public string? StartupUrl { get; set; }
+        public string? Description { get; set; }
+        public bool IsSystemUrl { get; set; }
+        public bool IsServerUrl { get; set; }
+        public bool IsOwnServerUrl { get; set; }
         public bool DevModeEnabled { get; set; }
         public bool ShowHelpTab { get; set; }
         public bool HelpTabShowOnly { get; set; }
+        [StringLength(512)]
+        [Unicode(false)]
+        public string? StartupUrl { get; set; }
         [StringLength(512)]
         [Unicode(false)]
         public string? HelpTabUrl { get; set; }
@@ -34,24 +39,20 @@ namespace EasyITCenter.DBModel
         [StringLength(255)]
         [Unicode(false)]
         public string? ColumnName { get; set; }
-        [Column("SetDataJSCommand")]
+        [Column("SetWebDataJScriptCmd")]
         [StringLength(1024)]
         [Unicode(false)]
-        public string? SetDataJscommand { get; set; }
-        [Column("GetDataJSCommand")]
+        public string? SetWebDataJscriptCmd { get; set; }
+        [Column("GetWebDataJScriptCmd")]
         [StringLength(1024)]
         [Unicode(false)]
-        public string? GetDataJscommand { get; set; }
-        public bool IsMultiFormType { get; set; }
-        public bool IsServerUrl { get; set; }
-        public bool IsWebServer { get; set; }
+        public string? GetWebDataJscriptCmd { get; set; }
         [StringLength(150)]
         [Unicode(false)]
         public string? StartupSubFolder { get; set; }
         [StringLength(500)]
         [Unicode(false)]
         public string? StartupCommand { get; set; }
-        public bool IsGraphType { get; set; }
         public bool Active { get; set; }
         public int UserId { get; set; }
         public DateTime TimeStamp { get; set; }

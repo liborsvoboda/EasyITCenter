@@ -26,7 +26,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         //Convert MD->Html,Convert Html->Md,
         //Convert List<MD>->List<Html>,Convert List<Html>->List<Md>,
         //Convert MD->Docx,List<Md>->List<Docx>
-        //Generate List<Md>->Index.Md,Generate List<Md>->Index.Html
+        //Generate List<Md>->Index.Md,Generate List<Md>->Index.Html,Generate List<Html>->Index.Html
         //TODO Ošetřit aby Mohli menit soubory jen ve svem ulozisti
         //TODO Udelat Aendu Dynamicke Registace Trid Pro Dynamicka API a tam se zadaji file Extensions
         //TODO VKladat Static DB Soubory 
@@ -36,7 +36,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         public async Task<IActionResult> GenerateDocsFile([FromBody] MDGeneratorCreateIndexRequest webfilesrequest) {
             try {
 
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     string resultMessage = DbOperations.DBTranslate("ProcessSucessfullyCompleted", webfilesrequest.ServerLanguage);
 
                     List<string> filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath), "*." + webfilesrequest.FromType.ToString().ToLower(), webfilesrequest.ScanRootOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
@@ -48,7 +48,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
                         //Generate Index Md Or Index Html
                         if (webfilesrequest.IndexOnly) {
                             string generatedFile = webfilesrequest.ToType == SupportGenFileTypes.Md ? Environment.NewLine + $"# Index {webfilesrequest.WebRootFilePath}" + Environment.NewLine : $"<H1>Index {webfilesrequest.WebRootFilePath}</H1>" + Environment.NewLine;
-                            filelist.ForEach(file => generatedFile += webfilesrequest.ToType == SupportGenFileTypes.Md ? $"[{file}]({file})" + Environment.NewLine : $"<a href='{file}'>{file}</a>" + Environment.NewLine);
+                            filelist.ForEach(file => generatedFile += webfilesrequest.ToType == SupportGenFileTypes.Md ? $"[{Path.GetFileName(file.Split(".")[0])}]({webfilesrequest.WebRootFilePath + file.Split(webfilesrequest.WebRootFilePath)[1]})" + Environment.NewLine : $"?<p><a href='{webfilesrequest.WebRootFilePath + file.Split(webfilesrequest.WebRootFilePath)[1]}' target= 'blank' >{Path.GetFileName(file.Split(".")[0])}</a></p>" + Environment.NewLine);
 
                             if (!webfilesrequest.RewriteAllowed && FileOperations.CheckFile(Path.Combine(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) , $"index.{webfilesrequest.ToType.ToString()}"))) {
                                 return BadRequest(new { message = DbOperations.DBTranslate("RewriteFilesIsNotAllowed", webfilesrequest.ServerLanguage) });
@@ -108,7 +108,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
                     }
 
                     if (resultMessage == DbOperations.DBTranslate("ProcessSucessfullyCompleted", webfilesrequest.ServerLanguage)) { 
-                        return new OkResult();
+                        return new ContentResult() { Content = resultMessage, StatusCode = StatusCodes.Status200OK };
                     } else { return BadRequest(new { message = resultMessage }); }
 
                     //ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages.zip"));

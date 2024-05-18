@@ -14,7 +14,7 @@
         [Consumes("application/json")]
         public async Task<string> GetDynamicSql(string sqlquery) {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC " + sqlquery); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
@@ -35,7 +35,7 @@
         [HttpGet("/ServerDynamicSqlApi/RunSqlQuery/ById/{id}")]
         public async Task<string> GetDynamicSqlById(int id) {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC "); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
@@ -55,7 +55,7 @@
         [HttpGet("/ServerDynamicSqlApi/GetSavedQueries")]
         public async Task<string> GetSavedQueries() {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC "); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
@@ -75,7 +75,7 @@
         [HttpGet("/ServerDynamicSqlApi/GetSavedQueryById/{id}")]
         public async Task<string> GetSavedQueryById(int id) {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC "); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
@@ -95,7 +95,7 @@
         [HttpGet("/ServerDynamicSqlApi/SaveSqlQuery")]
         public async Task<string> SaveSqlQuery(string sql) {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC "); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
@@ -115,7 +115,7 @@
         [HttpGet("/ServerDynamicSqlApi/GetTableData")]
         public async Task<string> GetTableData(string sql) {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC "); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
@@ -135,7 +135,7 @@
         [HttpGet("/ServerDynamicSqlApi/GetTableSchema")]
         public async Task<string> GetTableSchema(string sql) {
             try {
-                if (CommunicationController.IsAdmin()) {
+                if (ServerApiServiceExtension.IsAdmin()) {
                     var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC "); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {

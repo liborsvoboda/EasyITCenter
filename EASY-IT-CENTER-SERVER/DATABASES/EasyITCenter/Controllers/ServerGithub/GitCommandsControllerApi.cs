@@ -46,7 +46,7 @@ namespace EasyITCenter.GitServer.Controllers
 			}
 			catch(RepositoryNotFoundException)
 			{
-				return MakeError("Repository not found", repoName, 404);
+				return MakeError("GenericApiService not found", repoName, 404);
 			}
 			catch(NotFoundException)
 			{
