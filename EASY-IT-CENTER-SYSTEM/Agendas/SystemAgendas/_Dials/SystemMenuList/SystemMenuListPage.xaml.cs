@@ -21,8 +21,8 @@ namespace EasyITSystemCenter.Pages {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
         public static SystemMenuList selectedRecord = new SystemMenuList();
 
-        private List<SystemMenuList> SystemMenuList = new List<SystemMenuList>();
-        private List<CustomTable> systemTableList = new List<CustomTable>();
+        private List<SystemMenuList> systemMenuList = new List<SystemMenuList>();
+        private List<CustomList> systemTableList = new List<CustomList>();
         private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
         private List<SystemGroupMenuList> systemGroupMenuList = new List<SystemGroupMenuList>();
         private List<SolutionUserRoleList> userRoleList = new List<SolutionUserRoleList>();
@@ -48,29 +48,28 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                systemTableList = await CommApi.GetApiRequest<List<CustomTable>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetSystemPageList", App.UserData.Authentification.Token);
-
+                systemTableList = await CommApi.GetApiRequest<List<CustomList>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetSystemPageList", App.UserData.Authentification.Token);
                 userRoleList = await CommApi.GetApiRequest<List<SolutionUserRoleList>>(ApiUrls.EasyITCenterSolutionUserRoleList, null, App.UserData.Authentification.Token);
                 systemGroupMenuList = await CommApi.GetApiRequest<List<SystemGroupMenuList>>(ApiUrls.EasyITCenterSystemGroupMenuList, null, App.UserData.Authentification.Token);
-                SystemMenuList = await CommApi.GetApiRequest<List<SystemMenuList>>(ApiUrls.EasyITCenterSystemMenuList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                systemMenuList = await CommApi.GetApiRequest<List<SystemMenuList>>(ApiUrls.EasyITCenterSystemMenuList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
                 systemTranslatedTableList.Clear();
                 systemTableList.ForEach(async table => {
-                    if (SystemMenuList.Where(a => a.FormPageName == table.TableList).Count() == 0) {
-                        systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.TableList, Translate = await DBOperations.DBTranslation(table.TableList) });
+                    if (systemMenuList.Where(a => a.FormPageName == table.DataName).Count() == 0) {
+                        systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.DataName, Translate = await DBOperations.DBTranslation(table.DataName) });
                     }
                 });
 
                 userRoleList.ForEach(async role => { role.Translation = await DBOperations.DBTranslation(role.SystemName); });
                 systemGroupMenuList.ForEach(async group => { group.Translation = await DBOperations.DBTranslation(group.SystemName); });
-                SystemMenuList.ForEach(async menu => {
+                systemMenuList.ForEach(async menu => {
                     menu.GroupName = systemGroupMenuList.First(a => a.Id == menu.GroupId).Translation;
                     menu.FormTranslate = await DBOperations.DBTranslation(menu.FormPageName);
                 });
 
                 SystemLocalEnumSets.MenuTypes.AsEnumerable().ToList().ForEach(async menutype => { menutype.Value = await DBOperations.DBTranslation(menutype.Name); });
 
-                DgListView.ItemsSource = SystemMenuList;
+                DgListView.ItemsSource = systemMenuList;
                 DgListView.Items.Refresh();
 
                 cb_groupName.ItemsSource = systemGroupMenuList.OrderBy(a => a.Translation).ToList();
@@ -89,19 +88,19 @@ namespace EasyITSystemCenter.Pages {
                 ((DataGrid)sender).Columns.ToList().ForEach(async e => {
                     string headername = e.Header.ToString().ToLower();
 
-                    if (headername == "translation") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
-                    else if (headername == "groupname") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
-                    else if (headername == "menutype") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
-                    else if (headername == "formpagename") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
-                    else if (headername == "formtranslate") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 5; }
-                    else if (headername == "accessrole") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 6; }
-                    else if (headername == "notshowinmenu") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 7; }
-                    else if (headername == "description") e.Header = await DBOperations.DBTranslation(headername);
-                    else if (headername == "active") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
-                    else if (headername == "timestamp") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                    else if (headername == "id") e.DisplayIndex = 0;
-                    else if (headername == "userud") e.Visibility = Visibility.Hidden;
-                    else if (headername == "groupid") e.Visibility = Visibility.Hidden;
+                    if (headername == "translation".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
+                    else if (headername == "groupname".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                    else if (headername == "menutype".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                    else if (headername == "formpagename".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
+                    else if (headername == "formtranslate".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 5; }
+                    else if (headername == "accessrole".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 6; }
+                    else if (headername == "notshowinmenu".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 7; }
+                    else if (headername == "description".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+                    else if (headername == "active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
+                    else if (headername == "timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "id".ToLower()) e.DisplayIndex = 0;
+                    else if (headername == "userud".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "groupid".ToLower()) e.Visibility = Visibility.Hidden;
                 });
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }

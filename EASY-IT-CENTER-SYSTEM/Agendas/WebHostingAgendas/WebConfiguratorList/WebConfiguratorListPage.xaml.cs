@@ -56,7 +56,7 @@ namespace EasyITSystemCenter.Pages {
                 _ = FormOperations.TranslateFormFields(ListForm);
                 _ = FormOperations.TranslateFormFields(contextMenu);
                 _ = FormOperations.TranslateFormFields(gd_codeLibraryForm);
-                _ = DataOperations.TranslateSubObjectsNameToToolTip(toolBar);
+                _ = FormOperations.TranslateSubObjectsNameToToolTip(toolBar);
                 //_ = DataOperations.TranslateSubObjectsNameToToolTip(filePanel);
                 
 

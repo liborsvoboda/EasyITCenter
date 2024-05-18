@@ -9,6 +9,23 @@
     [Route("EasyITCenterStoredProceduresList")]
     public class ServerApiSpProceduresControllers : ControllerBase {
 
+
+        /// <summary>
+        /// Gets Table List for Reporting
+        /// TODO takova bude genericka procedura
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("/EasyITCenterStoredProceduresList/SpGetTableSchema/{tableName}")]
+        public async Task<string> SpGetTableSchema(string tableName) {
+            try {
+                List<GenericData> data = new List<GenericData>();
+                data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericData>($"EXEC SpGetTableSchema @tableName = N'{tableName}';");
+                return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            } catch (Exception ex) {
+                return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) });
+            }
+        }
+
         /// <summary>
         /// Gets Table List for Reporting
         /// </summary>

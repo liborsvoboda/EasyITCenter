@@ -8,6 +8,7 @@ namespace EasyITSystemCenter.Classes {
         public string InheritedFormType { get; set; } = null;
         public string PageName { get; set; } = null;
         public string Description { get; set; }
+        public bool IsInteractAgenda { get; set; }
         public bool IsSystemUrl { get; set; }
         public bool IsServerUrl { get; set; }
         public bool IsOwnServerUrl { get; set; }

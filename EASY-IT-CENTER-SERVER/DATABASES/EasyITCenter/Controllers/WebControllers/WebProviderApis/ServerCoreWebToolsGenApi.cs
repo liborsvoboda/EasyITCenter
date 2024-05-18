@@ -67,7 +67,7 @@ namespace EasyITCenter.ControllersExtensions {
                 var saveRating = new EasyITCenterContext().ProviderGeneratedToolLists.Update(data);
                 await saveRating.Context.SaveChangesAsync();
 
-                return Ok();
+                return Ok(new string(DbOperations.DBTranslate("ProcessSucessfullyCompleted")) );
             } catch { }
             return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") });
         }
@@ -80,7 +80,7 @@ namespace EasyITCenter.ControllersExtensions {
                 var saveRating = new EasyITCenterContext().ProviderGeneratedToolLists.Update(data);
                 await saveRating.Context.SaveChangesAsync();
 
-                return Ok();
+                return Ok(new string(DbOperations.DBTranslate("ProcessSucessfullyCompleted")));
             } catch { }
             return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") });
         }

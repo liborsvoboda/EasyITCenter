@@ -18,9 +18,9 @@ namespace EasyITCenter.ServerCoreDBSettings {
     /// </summary>
     [Authorize]
     [ApiController]
-    [Route("GlobalApi/Generators")]
+    [Route("ProviderApi/Generators")]
     //[ApiExplorerSettings(IgnoreApi = true)]
-    public class GlobalApiGeneratorsApi : ControllerBase {
+    public class ProviderApiGeneratorsApi : ControllerBase {
 
         //WebFile Generator
         //Convert MD->Html,Convert Html->Md,
@@ -31,7 +31,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         //TODO Udelat Aendu Dynamicke Registace Trid Pro Dynamicka API a tam se zadaji file Extensions
         //TODO VKladat Static DB Soubory 
         //TODO Vracet jako Zip
-        [HttpPost("/GlobalApi/Generators/GenerateDocsFile")]
+        [HttpPost("/ProviderApi/Generators/GenerateDocsFile")]
         [Consumes("application/json")]
         public async Task<IActionResult> GenerateDocsFile([FromBody] MDGeneratorCreateIndexRequest webfilesrequest) {
             try {
@@ -127,7 +127,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
 
         //TODO Udelat Vlastni System/WebBrowser s Funkcemi Download MD,List Md, Html, Atd
         //BUDE TO tedy NetCore WebView2
-        [HttpPost("/GlobalApi/Generators/DownloadMarkdownFromUrlToStatic")]
+        [HttpPost("/ProviderApi/Generators/DownloadMarkdownFromUrlToStatic")]
         public async Task<string> DownloadMarkdownFromUrlToStatic(string markdownUrl) {
             /*
             var basePath = ServerRuntimeData.WebRoot_path;
@@ -154,7 +154,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("/GlobalApi/Generators/ConfigureHtmlInfoHeader")]
+        [HttpPost("/ProviderApi/Generators/ConfigureHtmlInfoHeader")]
         [Consumes("application/json")]
         public async Task<IActionResult> ConfigureHtmlInfoHeader([FromBody] WebUrlRequest request) {
             try {

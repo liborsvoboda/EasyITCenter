@@ -144,8 +144,8 @@ namespace EasyITSystemCenter.GlobalClasses {
     /// <summary>
     /// Generická Tabulka Používaná DB Procedurami
     /// </summary>
-    public partial class CustomTable {
-        public string TableList { get; set; }
+    public partial class CustomList {
+        public string DataName { get; set; }
     }
 
     /// <summary>
@@ -168,5 +168,14 @@ namespace EasyITSystemCenter.GlobalClasses {
     public class DeserializedJson {
         public string Key { get; set; }
         public string Value { get; set; }
+    }
+
+
+    /// <summary>
+    /// Final Definition For Generic Api
+    /// Structure is in Variable Data
+    /// </summary>
+    public class CustomData {
+        public string Data { get; set; }
     }
 }

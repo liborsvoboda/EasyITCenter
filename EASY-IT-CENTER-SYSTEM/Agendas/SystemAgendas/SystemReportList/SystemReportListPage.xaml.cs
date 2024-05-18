@@ -25,7 +25,7 @@ namespace EasyITSystemCenter.Pages {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
         public static SystemReportList selectedRecord = new SystemReportList();
 
-        private List<CustomTable> systemTableList = new List<CustomTable>();
+        private List<CustomList> systemTableList = new List<CustomList>();
         private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
         private List<SystemReportList> reportList = new List<SystemReportList>();
         private bool reportSupportForListOnly = true;
@@ -51,12 +51,12 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                systemTableList = await CommApi.GetApiRequest<List<CustomTable>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetAllTableList", App.UserData.Authentification.Token);
+                systemTableList = await CommApi.GetApiRequest<List<CustomList>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetAllTableList", App.UserData.Authentification.Token);
                 reportList = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
                 systemTranslatedTableList.Clear();
                 systemTableList.ForEach(async table => {
-                    systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.TableList, Translate = await DBOperations.DBTranslation(table.TableList) });
+                    systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.DataName, Translate = await DBOperations.DBTranslation(table.DataName) });
                 });
 
                 cb_pageName.ItemsSource = systemTranslatedTableList.OrderBy(a => a.Translate);
@@ -74,23 +74,23 @@ namespace EasyITSystemCenter.Pages {
         }
 
         // set translate columns in listView
-        private void DgListView_Translate(object sender, EventArgs ex) {
-            ((DataGrid)sender).Columns.ToList().ForEach(e => {
-                string headername = e.Header.ToString();
-                if (headername == "SystemName") { e.Header = Resources["systemName"].ToString(); e.DisplayIndex = 1; }
-                else if (headername == "Translation") { e.Header = Resources["translation"].ToString(); e.DisplayIndex = 2; }
-                else if (headername == "PageTranslation") { e.Header = Resources["tableName"].ToString(); e.DisplayIndex = 3; }
-                else if (headername == "JoinedId") e.Header = Resources["joinedId"].ToString();
-                else if (headername == "Description") e.Header = Resources["description"].ToString();
-                else if (headername == "Default") { e.Header = Resources["default"].ToString(); e.DisplayIndex = DgListView.Columns.Count - 3; }
-                else if (headername == "Active") { e.Header = Resources["active"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
-                else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                else if (headername == "Id") e.DisplayIndex = 0;
-                else if (headername == "UserId") e.Visibility = Visibility.Hidden;
-                else if (headername == "ReportPath") e.Visibility = Visibility.Hidden;
-                else if (headername == "File") e.Visibility = Visibility.Hidden;
-                else if (headername == "MimeType") e.Visibility = Visibility.Hidden;
-                else if (headername == "PageName") e.Visibility = Visibility.Hidden;
+        private async void DgListView_Translate(object sender, EventArgs ex) {
+            ((DataGrid)sender).Columns.ToList().ForEach(async e => {
+                string headername = e.Header.ToString().ToLower();
+                if (headername == "SystemName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                else if (headername == "Translation".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                else if (headername == "PageTranslation".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
+                else if (headername == "JoinedId".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+                else if (headername == "Description".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
+                else if (headername == "Default".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = DgListView.Columns.Count - 3; }
+                else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
+                else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
+                else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
+                else if (headername == "ReportPath".ToLower()) e.Visibility = Visibility.Hidden;
+                else if (headername == "File".ToLower()) e.Visibility = Visibility.Hidden;
+                else if (headername == "MimeType".ToLower()) e.Visibility = Visibility.Hidden;
+                else if (headername == "PageName".ToLower()) e.Visibility = Visibility.Hidden;
             });
         }
 
@@ -100,12 +100,12 @@ namespace EasyITSystemCenter.Pages {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    SystemReportList report = e as SystemReportList;
-                    return report.PageName.ToLower().Contains(filter.ToLower())
-                    || report.SystemName.ToLower().Contains(filter.ToLower())
-                    || report.PageTranslation.ToLower().Contains(filter.ToLower())
-                    || report.Translation.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.Description) && report.Description.ToLower().Contains(filter.ToLower())
+                    SystemReportList search = e as SystemReportList;
+                    return search.PageName.ToLower().Contains(filter.ToLower())
+                    || search.SystemName.ToLower().Contains(filter.ToLower())
+                    || search.PageTranslation.ToLower().Contains(filter.ToLower())
+                    || search.Translation.ToLower().Contains(filter.ToLower())
+                    || !string.IsNullOrEmpty(search.Description) && search.Description.ToLower().Contains(filter.ToLower())
                     ;
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }

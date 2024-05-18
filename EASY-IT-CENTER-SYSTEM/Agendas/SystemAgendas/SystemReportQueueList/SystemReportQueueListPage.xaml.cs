@@ -26,7 +26,7 @@ namespace EasyITSystemCenter.Pages {
         public static SystemReportQueueList selectedRecord = new SystemReportQueueList();
 
         private string connectionString = null;
-        private List<CustomTable> systemTableList = new List<CustomTable>();
+        private List<CustomList> systemTableList = new List<CustomList>();
         private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
         private List<SystemReportQueueList> reportQueueList = new List<SystemReportQueueList>();
         private bool reportSupportForListOnly = true;
@@ -54,13 +54,13 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
                 reportQueueList = await CommApi.GetApiRequest<List<SystemReportQueueList>>(ApiUrls.EasyITCenterSystemReportQueueList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
-                systemTableList = await CommApi.GetApiRequest<List<CustomTable>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetTableAllList", App.UserData.Authentification.Token);
+                systemTableList = await CommApi.GetApiRequest<List<CustomList>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetTableAllList", App.UserData.Authentification.Token);
 
-                systemTableList.ForEach(async table => { systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.TableList, Translate = await DBOperations.DBTranslation(table.TableList) }); });
+                systemTableList.ForEach(async table => { systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.DataName, Translate = await DBOperations.DBTranslation(table.DataName) }); });
 
                 systemTranslatedTableList.Clear();
                 systemTableList.ForEach(async table => {
-                    systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.TableList, Translate = await DBOperations.DBTranslation(table.TableList) });
+                    systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.DataName, Translate = await DBOperations.DBTranslation(table.DataName) });
                 });
 
                 reportQueueList.ForEach(rq => { rq.TranslatedTableName = systemTranslatedTableList.FirstOrDefault(a => a.TableName == rq.TableName).Translate; });

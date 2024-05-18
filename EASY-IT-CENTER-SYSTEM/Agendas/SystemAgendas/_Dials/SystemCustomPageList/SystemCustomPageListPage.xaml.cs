@@ -1,11 +1,13 @@
 ﻿using EasyITSystemCenter.Api;
 using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -20,6 +22,14 @@ namespace EasyITSystemCenter.Pages {
     public partial class SystemCustomPageListPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
         public static SystemCustomPageList selectedRecord = new SystemCustomPageList();
+
+
+        private List<SystemCustomPageList> systemCustomPageList = new List<SystemCustomPageList>();
+        private List<SolutionMixedEnumList> solutionMixedEnumList = new List<SolutionMixedEnumList>();
+        private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
+        private List<SystemMenuList> systemMenuList = new List<SystemMenuList>();
+        private List<CustomList> systemTableList = new List<CustomList>();
+        private List<CustomData> tableSchema = new List<CustomData>();
 
         public SystemCustomPageListPage() {
             InitializeComponent();
@@ -36,7 +46,24 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                DgListView.ItemsSource = await CommApi.GetApiRequest<List<SystemCustomPageList>>(ApiUrls.EasyITCenterSystemCustomPageList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+
+                systemTableList = await CommApi.GetApiRequest<List<CustomList>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetTableList", App.UserData.Authentification.Token);
+                solutionMixedEnumList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/SystemAgendaTypes", App.UserData.Authentification.Token);
+                systemCustomPageList = await CommApi.GetApiRequest<List<SystemCustomPageList>>(ApiUrls.EasyITCenterSystemCustomPageList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                systemMenuList = await CommApi.GetApiRequest<List<SystemMenuList>>(ApiUrls.EasyITCenterSystemMenuList,  null, App.UserData.Authentification.Token);
+
+
+                systemTableList.ForEach(async table => {
+                    if (systemMenuList.Where(a => a.FormPageName == table.DataName).Count() == 0) {
+                        systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.DataName, Translate = await DBOperations.DBTranslation(table.DataName) });
+                    }
+                });
+
+                cb_InheritedFormType.ItemsSource = solutionMixedEnumList;
+                cb_DbtableName.ItemsSource = systemTranslatedTableList;
+
+                DgListView.ItemsSource = systemCustomPageList;
+                DgListView.Items.Refresh();
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden; return true;
         }
@@ -46,19 +73,24 @@ namespace EasyITSystemCenter.Pages {
                 ((DataGrid)sender).Columns.ToList().ForEach(async e => {
                     string headername = e.Header.ToString().ToLower();
                     if (headername == "PageName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
-                    else if (headername == "Description".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
-                    else if (headername == "IsMultiFormType".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
-                    else if (headername == "IsSystemWebModule".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
+                    else if (headername == "InheritedFormType".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                    else if (headername == "IsInteractAgenda".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
+                    else if (headername == "IsSystemUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
                     else if (headername == "IsServerUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 5; }
                     else if (headername == "IsWebServer".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 6; }
-                    else if (headername == "IsGraphType".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 7; }
-                    else if (headername == "StartupUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 8; }
-                    else if (headername == "StartupSubFolder".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 9; }
-                    else if (headername == "StartupCommand".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 10; }
-                    else if (headername == "DevModeEnabled".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 11; }
-                    else if (headername == "ShowHelpTab".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 12; }
-                    else if (headername == "HelpTabShowOnly".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 13; }
-                    else if (headername == "HelpTabUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 14; }
+                    else if (headername == "StartupUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 7; }
+                    else if (headername == "StartupSubFolder".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 8; }
+                    else if (headername == "StartupCommand".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 9; }
+                    else if (headername == "DevModeEnabled".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 10; }
+                    else if (headername == "ShowHelpTab".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 11; }
+                    else if (headername == "HelpTabShowOnly".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 12; }
+                    else if (headername == "HelpTabUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 13; }
+                    else if (headername == "DbtableName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 14; }
+                    else if (headername == "ColumnName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 15; }
+                    else if (headername == "SetWebDataJscriptCmd".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 16; }
+                    else if (headername == "GetWebDataJscriptCmd".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 17; }
+
+                    else if (headername == "Description".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 8; }
                     else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
                     else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
 
@@ -75,7 +107,11 @@ namespace EasyITSystemCenter.Pages {
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
                     SystemCustomPageList search = e as SystemCustomPageList;
+
+
                     return search.PageName.ToLower().Contains(filter.ToLower())
+
+                    || !string.IsNullOrEmpty(search.InheritedFormType) && search.InheritedFormType.ToLower().Contains(filter.ToLower())
                     || !string.IsNullOrEmpty(search.HelpTabUrl) && search.HelpTabUrl.ToLower().Contains(filter.ToLower())
                     || !string.IsNullOrEmpty(search.Description) && search.Description.ToLower().Contains(filter.ToLower())
                     || !string.IsNullOrEmpty(search.StartupUrl) && search.StartupUrl.ToLower().Contains(filter.ToLower())
@@ -129,23 +165,30 @@ namespace EasyITSystemCenter.Pages {
             try {
                 DBResultMessage dBResult;
                 selectedRecord.Id = (int)((txt_id.Value != null) ? txt_id.Value : 0);
+                selectedRecord.InheritedFormType = ((SolutionMixedEnumList)cb_InheritedFormType.SelectedItem).Name;
+
                 selectedRecord.PageName = txt_pageName.Text;
                 selectedRecord.Description = txt_description.Text;
 
-                selectedRecord.IsMultiFormType = (bool)chb_isMultiFormType.IsChecked;
-                selectedRecord.IsSystemWebModule = (bool)chb_isSystemWebModule.IsChecked;
+                selectedRecord.IsInteractAgenda = (bool)chb_IsInteractAgenda.IsChecked;
+                selectedRecord.IsSystemUrl = (bool)chb_IsSystemUrl.IsChecked;
                 selectedRecord.IsServerUrl = (bool)chb_isServerUrl.IsChecked;
-                selectedRecord.IsGraphType = (bool)chb_isGraphType.IsChecked;
-                selectedRecord.StartupUrl = (bool)chb_isMultiFormType.IsChecked || (bool)chb_isGraphType.IsChecked ? txt_startupUrl.Text : null;
 
                 selectedRecord.DevModeEnabled = (bool)chb_devModeEnabled.IsChecked;
                 selectedRecord.ShowHelpTab = (bool)chb_showHelpTab.IsChecked;
                 selectedRecord.HelpTabShowOnly = (bool)chb_helpTabShowOnly.IsChecked;
+                selectedRecord.StartupUrl = txt_startupUrl.Text;
                 selectedRecord.HelpTabUrl = txt_helpTabUrl.Text;
 
-                selectedRecord.IsWebServer = (bool)chb_isWebServer.IsChecked;
+                selectedRecord.IsOwnServerUrl = (bool)chb_IsOwnServerUrl.IsChecked;
                 selectedRecord.StartupSubFolder = txt_startupSubFolder.Text;
                 selectedRecord.StartupCommand = txt_startupCommand.Text;
+
+                selectedRecord.DbtableName = ((SystemTranslatedTableList)cb_DbtableName.SelectedItem).TableName;
+                selectedRecord.ColumnName = ((CustomData)cb_ColumnName.SelectedItem).Data;
+
+                selectedRecord.GetWebDataJscriptCmd = txt_GetWebDataJscriptCmd.Text;
+                selectedRecord.SetWebDataJscriptCmd = txt_SetWebDataJscriptCmd.Text;
 
                 selectedRecord.UserId = App.UserData.Authentification.Id;
                 selectedRecord.Active = (bool)chb_active.IsChecked;
@@ -174,25 +217,39 @@ namespace EasyITSystemCenter.Pages {
         }
 
 
-        private void SetRecord(bool? showForm = null, bool copy = false) {
+        private async void SetRecord(bool? showForm = null, bool copy = false) {
 
             try {
                 txt_id.Value = (copy) ? 0 : selectedRecord.Id;
+                cb_InheritedFormType.SelectedItem = (selectedRecord.Id == 0) ? solutionMixedEnumList.FirstOrDefault() : solutionMixedEnumList.FirstOrDefault(a => a.Name == selectedRecord.InheritedFormType);
+
                 txt_pageName.Text = selectedRecord.PageName;
                 txt_description.Text = selectedRecord.Description;
 
-                chb_isMultiFormType.IsChecked = selectedRecord.IsMultiFormType;
+                chb_IsSystemUrl.IsChecked = selectedRecord.IsSystemUrl;
                 chb_isServerUrl.IsChecked = selectedRecord.IsServerUrl;
-                chb_isGraphType.IsChecked = selectedRecord.IsGraphType;
-                txt_startupUrl.Text = selectedRecord.StartupUrl;
+                chb_IsInteractAgenda.IsChecked = selectedRecord.IsServerUrl;
 
                 chb_devModeEnabled.IsChecked = selectedRecord.DevModeEnabled;
                 chb_showHelpTab.IsChecked = selectedRecord.ShowHelpTab;
                 chb_helpTabShowOnly.IsChecked = selectedRecord.HelpTabShowOnly;
+                txt_startupUrl.Text = selectedRecord.StartupUrl;
                 txt_helpTabUrl.Text = selectedRecord.HelpTabUrl;
 
-                chb_isSystemWebModule.IsChecked = selectedRecord.IsSystemWebModule;
-                chb_isWebServer.IsChecked = selectedRecord.IsWebServer;
+
+                // Insert missing
+                if (selectedRecord.DbtableName != null && systemTranslatedTableList.FirstOrDefault(a => a.TableName == selectedRecord.DbtableName) == null) {
+                    SystemTranslatedTableList page = new SystemTranslatedTableList() { TableName = selectedRecord.DbtableName, Translate = await DBOperations.DBTranslation(selectedRecord.DbtableName) };
+                    systemTranslatedTableList.Add(page);
+                    cb_DbtableName.ItemsSource = systemTranslatedTableList.OrderBy(a => a.Translate).ToList();
+                    cb_DbtableName.Items.Refresh();
+                }
+                cb_DbtableName.SelectedItem = selectedRecord.DbtableName == null ? null : systemTranslatedTableList.FirstOrDefault(a => a.TableName == selectedRecord.DbtableName);
+                cb_ColumnName.SelectedValue = selectedRecord.ColumnName;
+
+                txt_GetWebDataJscriptCmd.Text = selectedRecord.GetWebDataJscriptCmd;
+                txt_SetWebDataJscriptCmd.Text = selectedRecord.SetWebDataJscriptCmd;
+
                 txt_startupSubFolder.Text = selectedRecord.StartupSubFolder;
                 txt_startupCommand.Text = selectedRecord.StartupCommand;
 
@@ -211,60 +268,33 @@ namespace EasyITSystemCenter.Pages {
         }
 
 
-        private void MenuTypeSelected(object sender, RoutedEventArgs e) {
-            if (dataViewSupport.FormShown) {
-                switch (((CheckBox)sender).Name) {
-                    case "chb_isMultiFormType":
-                        chb_isGraphType.IsChecked = false;
-                        if ((bool)chb_isMultiFormType.IsChecked) { chb_isWebServer.IsEnabled = chb_isSystemWebModule.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled = chb_devModeEnabled.IsEnabled = chb_showHelpTab.IsEnabled = chb_helpTabShowOnly.IsEnabled = true; }
-                        else { chb_isWebServer.IsEnabled = chb_isSystemWebModule.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled = chb_devModeEnabled.IsEnabled = chb_showHelpTab.IsEnabled = chb_helpTabShowOnly.IsEnabled = false; }
-                        chb_isSystemWebModule.IsChecked = chb_isServerUrl.IsChecked = false;
-                        break;
-                    case "chb_isGraphType":
-                        chb_isMultiFormType.IsChecked = chb_isSystemWebModule.IsChecked = chb_isServerUrl.IsChecked = chb_isWebServer.IsChecked = chb_devModeEnabled.IsChecked = chb_showHelpTab.IsChecked = chb_helpTabShowOnly.IsChecked = false;
-                        txt_startupUrl.Text = txt_startupCommand.Text = txt_startupSubFolder.Text = null;
-                        chb_isWebServer.IsEnabled = chb_isSystemWebModule.IsEnabled = chb_isServerUrl.IsEnabled = txt_startupUrl.IsEnabled
-                            = txt_startupCommand.IsEnabled = txt_startupSubFolder.IsEnabled = chb_devModeEnabled.IsEnabled = chb_showHelpTab.IsEnabled = chb_helpTabShowOnly.IsEnabled = false;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-
         private void IsServerEnabled(object sender, RoutedEventArgs e) {
             if (dataViewSupport.FormShown) {
-                if ((bool)chb_isWebServer.IsChecked) {
-                    txt_startupCommand.IsEnabled = txt_startupSubFolder.IsEnabled = true;
-                } else {
-                    txt_startupCommand.Text = txt_startupSubFolder.Text = null;
-                    txt_startupCommand.IsEnabled = txt_startupSubFolder.IsEnabled = false;
-                }
+                gb_serverSetting.IsEnabled = (bool)chb_isServerUrl.IsChecked;
+            }
+        }
+
+        private void InteractAgendaSelected(object sender, RoutedEventArgs e) {
+            if (dataViewSupport.FormShown) {
+                gb_interaktSetting.IsEnabled = (bool)chb_IsInteractAgenda.IsChecked;
             }
         }
 
 
-        private void ModuleTypeSelected(object sender, RoutedEventArgs e) {
-            if (dataViewSupport.FormShown) {
-                switch (((CheckBox)sender).Name) {
-                    case "chb_isSystemWebModule":
-                        chb_isServerUrl.IsChecked = false;
-                        break;
-                    case "chb_isServerUrl":
-                        chb_isSystemWebModule.IsChecked = false;
-                        break;
-                    default:
-                        break;
-                }
+        private async void TableSelected(object sender, SelectionChangedEventArgs e) {
+            if (dataViewSupport.FormShown && cb_DbtableName.SelectedIndex > -1) {
+
+                tableSchema = await CommApi.GetApiRequest<List<CustomData>>(ApiUrls.EasyITCenterStoredProceduresList, $"SpGetTableSchema/{((SystemTranslatedTableList)cb_DbtableName.SelectedItem).TableName}", App.UserData.Authentification.Token);
+                cb_ColumnName.ItemsSource = tableSchema;
+                //TODO  nebo Data
             }
         }
 
-        private void HelpTabChecked_Changed(object sender, RoutedEventArgs e) {
+
+        private void UrlTypeSelected(object sender, RoutedEventArgs e) {
             if (dataViewSupport.FormShown) {
-                txt_helpTabUrl.IsEnabled = (bool)chb_showHelpTab.IsChecked ? true : false;
-                chb_helpTabShowOnly.IsEnabled = (bool)chb_showHelpTab.IsChecked ? true : false;
-                if (!(bool)chb_showHelpTab.IsChecked) { chb_helpTabShowOnly.IsChecked = false; }
+                if(((CheckBox)sender).Name == "chb_IsSystemUrl" && (bool)chb_IsSystemUrl.IsChecked) { chb_isServerUrl.IsChecked = false; }
+                else if (((CheckBox)sender).Name == "chb_isServerUrl" && (bool)chb_isServerUrl.IsChecked) { chb_IsSystemUrl.IsChecked = false; }
             }
         }
     }

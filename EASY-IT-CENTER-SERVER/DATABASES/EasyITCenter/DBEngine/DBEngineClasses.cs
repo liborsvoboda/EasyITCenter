@@ -69,6 +69,15 @@
     }
 
     /// <summary>
+    /// Custom Definition for Returning string List from Stored Procedures
+    /// Name is Data from Any possible Stored Procedure Result
+    /// TODO Zrusit ostatni typy a pouzivat jen tento
+    /// </summary>
+    public class GenericData {
+        public string Data { get; set; }
+    }
+
+    /// <summary>
     /// Custom Definition for Returning List with One Record from Operation Stored Procedures
     /// </summary>
     public class SystemOperationMessage {

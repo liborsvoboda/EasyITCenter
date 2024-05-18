@@ -34,7 +34,7 @@
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                 IsolationLevel = IsolationLevel.ReadUncommitted
             })) {
-                data = new EasyITCenterContext().SolutionMixedEnumLists.Where(a => a.ItemsGroup.ToLower() == groupname.ToLower()).ToList();
+                data = new EasyITCenterContext().SolutionMixedEnumLists.Where(a => a.ItemsGroup.ToLower() == groupname.ToLower()).OrderBy(a=>a.Name).ToList();
             }
 
             return JsonSerializer.Serialize(data);
