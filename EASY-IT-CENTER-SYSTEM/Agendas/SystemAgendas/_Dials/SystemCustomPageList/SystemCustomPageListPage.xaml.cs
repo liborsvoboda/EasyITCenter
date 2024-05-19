@@ -28,8 +28,8 @@ namespace EasyITSystemCenter.Pages {
         private List<SolutionMixedEnumList> solutionMixedEnumList = new List<SolutionMixedEnumList>();
         private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
         private List<SystemMenuList> systemMenuList = new List<SystemMenuList>();
-        private List<CustomList> systemTableList = new List<CustomList>();
-        private List<CustomData> tableSchema = new List<CustomData>();
+        private List<GenericDataList> systemTableList = new List<GenericDataList>();
+        private List<GenericDataList> tableSchema = new List<GenericDataList>();
 
         public SystemCustomPageListPage() {
             InitializeComponent();
@@ -37,6 +37,10 @@ namespace EasyITSystemCenter.Pages {
 
             try {
                 _ = FormOperations.TranslateFormFields(ListForm);
+                //_ = FormOperations.TranslateFormFields(gb_startupSetting);
+                //_ = FormOperations.TranslateFormFields(gb_serverSetting);
+                //_ = FormOperations.TranslateFormFields(gb_interaktSetting);
+
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             _ = LoadDataList();
@@ -47,20 +51,20 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
 
-                systemTableList = await CommApi.GetApiRequest<List<CustomList>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetTableList", App.UserData.Authentification.Token);
+                systemTableList = await CommApi.GetApiRequest<List<GenericDataList>>(ApiUrls.ServerApi, "DatabaseServices/SpGetTableList", App.UserData.Authentification.Token);
                 solutionMixedEnumList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/SystemAgendaTypes", App.UserData.Authentification.Token);
                 systemCustomPageList = await CommApi.GetApiRequest<List<SystemCustomPageList>>(ApiUrls.EasyITCenterSystemCustomPageList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
                 systemMenuList = await CommApi.GetApiRequest<List<SystemMenuList>>(ApiUrls.EasyITCenterSystemMenuList,  null, App.UserData.Authentification.Token);
 
 
                 systemTableList.ForEach(async table => {
-                    if (systemMenuList.Where(a => a.FormPageName == table.DataName).Count() == 0) {
-                        systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.DataName, Translate = await DBOperations.DBTranslation(table.DataName) });
+                    if (systemMenuList.Where(a => a.FormPageName == table.Data).Count() == 0) {
+                        systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.Data, Translate = await DBOperations.DBTranslation(table.Data) });
                     }
                 });
-
+                
                 cb_InheritedFormType.ItemsSource = solutionMixedEnumList;
-                cb_DbtableName.ItemsSource = systemTranslatedTableList;
+                cb_DbtableName.ItemsSource = systemTranslatedTableList.OrderBy(a => a.Translate).ToList(); ;
 
                 DgListView.ItemsSource = systemCustomPageList;
                 DgListView.Items.Refresh();
@@ -89,7 +93,9 @@ namespace EasyITSystemCenter.Pages {
                     else if (headername == "ColumnName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 15; }
                     else if (headername == "SetWebDataJscriptCmd".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 16; }
                     else if (headername == "GetWebDataJscriptCmd".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 17; }
-
+                    else if (headername == "UseIIOverDom".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 18; }
+                    else if (headername == "DomhtmlElementName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 19; }
+                    
                     else if (headername == "Description".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 8; }
                     else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
                     else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
@@ -107,10 +113,7 @@ namespace EasyITSystemCenter.Pages {
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
                     SystemCustomPageList search = e as SystemCustomPageList;
-
-
                     return search.PageName.ToLower().Contains(filter.ToLower())
-
                     || !string.IsNullOrEmpty(search.InheritedFormType) && search.InheritedFormType.ToLower().Contains(filter.ToLower())
                     || !string.IsNullOrEmpty(search.HelpTabUrl) && search.HelpTabUrl.ToLower().Contains(filter.ToLower())
                     || !string.IsNullOrEmpty(search.Description) && search.Description.ToLower().Contains(filter.ToLower())
@@ -185,8 +188,11 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.StartupCommand = txt_startupCommand.Text;
 
                 selectedRecord.DbtableName = ((SystemTranslatedTableList)cb_DbtableName.SelectedItem).TableName;
-                selectedRecord.ColumnName = ((CustomData)cb_ColumnName.SelectedItem).Data;
+                selectedRecord.ColumnName = ((GenericDataList)cb_ColumnName.SelectedItem).Data;
 
+
+                selectedRecord.UseIooverDom = (bool)chb_UseIooverDom.IsChecked;
+                selectedRecord.DomhtmlElementName = txt_DomhtmlElementName.Text;
                 selectedRecord.GetWebDataJscriptCmd = txt_GetWebDataJscriptCmd.Text;
                 selectedRecord.SetWebDataJscriptCmd = txt_SetWebDataJscriptCmd.Text;
 
@@ -247,6 +253,8 @@ namespace EasyITSystemCenter.Pages {
                 cb_DbtableName.SelectedItem = selectedRecord.DbtableName == null ? null : systemTranslatedTableList.FirstOrDefault(a => a.TableName == selectedRecord.DbtableName);
                 cb_ColumnName.SelectedValue = selectedRecord.ColumnName;
 
+                chb_UseIooverDom.IsChecked = selectedRecord.UseIooverDom;
+                txt_DomhtmlElementName.Text = selectedRecord.DomhtmlElementName;
                 txt_GetWebDataJscriptCmd.Text = selectedRecord.GetWebDataJscriptCmd;
                 txt_SetWebDataJscriptCmd.Text = selectedRecord.SetWebDataJscriptCmd;
 
@@ -284,9 +292,8 @@ namespace EasyITSystemCenter.Pages {
         private async void TableSelected(object sender, SelectionChangedEventArgs e) {
             if (dataViewSupport.FormShown && cb_DbtableName.SelectedIndex > -1) {
 
-                tableSchema = await CommApi.GetApiRequest<List<CustomData>>(ApiUrls.EasyITCenterStoredProceduresList, $"SpGetTableSchema/{((SystemTranslatedTableList)cb_DbtableName.SelectedItem).TableName}", App.UserData.Authentification.Token);
+                tableSchema = await CommApi.GetApiRequest<List<GenericDataList>>(ApiUrls.ServerApi, $"DatabaseServices/SpGetTableSchema/{((SystemTranslatedTableList)cb_DbtableName.SelectedItem).TableName}", App.UserData.Authentification.Token);
                 cb_ColumnName.ItemsSource = tableSchema;
-                //TODO  nebo Data
             }
         }
 
@@ -295,6 +302,13 @@ namespace EasyITSystemCenter.Pages {
             if (dataViewSupport.FormShown) {
                 if(((CheckBox)sender).Name == "chb_IsSystemUrl" && (bool)chb_IsSystemUrl.IsChecked) { chb_isServerUrl.IsChecked = false; }
                 else if (((CheckBox)sender).Name == "chb_isServerUrl" && (bool)chb_isServerUrl.IsChecked) { chb_IsSystemUrl.IsChecked = false; }
+            }
+        }
+
+        private void DomElementSelected(object sender, RoutedEventArgs e) {
+            if (dataViewSupport.FormShown) {
+                txt_SetWebDataJscriptCmd.IsEnabled = txt_GetWebDataJscriptCmd.IsEnabled = !(bool)chb_UseIooverDom.IsChecked;
+                txt_DomhtmlElementName.IsEnabled = (bool)chb_UseIooverDom.IsChecked;
             }
         }
     }

@@ -25,7 +25,7 @@ namespace EasyITSystemCenter.Pages {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
         public static SystemReportList selectedRecord = new SystemReportList();
 
-        private List<CustomList> systemTableList = new List<CustomList>();
+        private List<GenericDataList> systemTableList = new List<GenericDataList>();
         private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
         private List<SystemReportList> reportList = new List<SystemReportList>();
         private bool reportSupportForListOnly = true;
@@ -51,12 +51,12 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                systemTableList = await CommApi.GetApiRequest<List<CustomList>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetAllTableList", App.UserData.Authentification.Token);
+                systemTableList = await CommApi.GetApiRequest<List<GenericDataList>>(ApiUrls.ServerApi, "DatabaseServices/SpGetTableList", App.UserData.Authentification.Token);
                 reportList = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
                 systemTranslatedTableList.Clear();
                 systemTableList.ForEach(async table => {
-                    systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.DataName, Translate = await DBOperations.DBTranslation(table.DataName) });
+                    systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.Data, Translate = await DBOperations.DBTranslation(table.Data) });
                 });
 
                 cb_pageName.ItemsSource = systemTranslatedTableList.OrderBy(a => a.Translate);

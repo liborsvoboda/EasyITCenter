@@ -6,16 +6,17 @@
     /// <seealso cref="ControllerBase"/>
     [Authorize]
     [ApiController]
-     //[ApiExplorerSettings(IgnoreApi = true)]
+    [Route("ServerApi")]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerDynamicSqlApi : ControllerBase {
 
         [Authorize]
-        [HttpPost("/ServerDynamicSqlApi/RunSqlQuery/Sql/{slq}")]
+        [HttpPost("/ServerApi/DatabaseServices/RunSqlQuery/Sql/{slq}")]
         [Consumes("application/json")]
         public async Task<string> GetDynamicSql(string sqlquery) {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
-                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC " + sqlquery); ;
+                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericDataList>("EXEC " + sqlquery); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
                         ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -32,11 +33,11 @@
 
 
         [Authorize]
-        [HttpGet("/ServerDynamicSqlApi/RunSqlQuery/ById/{id}")]
+        [HttpGet("/ServerApi/DatabaseServices/RunSqlQuery/ById/{id}")]
         public async Task<string> GetDynamicSqlById(int id) {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
-                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC "); ;
+                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericDataList>("EXEC "); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
                         ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -52,11 +53,11 @@
         }
 
         [Authorize]
-        [HttpGet("/ServerDynamicSqlApi/GetSavedQueries")]
+        [HttpGet("/ServerApi/DatabaseServices/GetSavedQueries")]
         public async Task<string> GetSavedQueries() {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
-                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC "); ;
+                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericDataList>("EXEC "); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
                         ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -72,11 +73,11 @@
         }
 
         [Authorize]
-        [HttpGet("/ServerDynamicSqlApi/GetSavedQueryById/{id}")]
+        [HttpGet("/ServerApi/DatabaseServices/GetSavedQueryById/{id}")]
         public async Task<string> GetSavedQueryById(int id) {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
-                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC "); ;
+                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericDataList>("EXEC "); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
                         ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -92,11 +93,11 @@
         }
 
         [Authorize]
-        [HttpGet("/ServerDynamicSqlApi/SaveSqlQuery")]
+        [HttpGet("/ServerApi/DatabaseServices/SaveSqlQuery")]
         public async Task<string> SaveSqlQuery(string sql) {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
-                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC "); ;
+                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericDataList>("EXEC "); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
                         ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -112,11 +113,11 @@
         }
 
         [Authorize]
-        [HttpGet("/ServerDynamicSqlApi/GetTableData")]
+        [HttpGet("/ServerApi/DatabaseServices/GetTableData")]
         public async Task<string> GetTableData(string sql) {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
-                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC "); ;
+                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericDataList>("EXEC "); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
                         ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -132,11 +133,11 @@
         }
 
         [Authorize]
-        [HttpGet("/ServerDynamicSqlApi/GetTableSchema")]
+        [HttpGet("/ServerApi/DatabaseServices/GetTableSchema")]
         public async Task<string> GetTableSchema(string sql) {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
-                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC "); ;
+                    var data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericDataList>("EXEC "); ;
 
                     return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
                         ReferenceHandler = ReferenceHandler.IgnoreCycles,

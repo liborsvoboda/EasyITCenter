@@ -9,9 +9,9 @@ namespace EasyITCenter.Controllers {
 
     [Authorize]
     [ApiController]
-    [Route("/ProviderApi/Users")]
+    [Route("ServerApi")]
     //[ApiExplorerSettings(IgnoreApi = true)]
-    public class ProviderApiUsersApi : ControllerBase {
+    public class ServerApiUsersApi : ControllerBase {
 
         //TODO Prepare for User folder - copy  MD BOOK , change for user definition any folder
 
@@ -21,7 +21,7 @@ namespace EasyITCenter.Controllers {
         /// </summary>
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
 
-        public ProviderApiUsersApi(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment) {
+        public ServerApiUsersApi(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment) {
             _hostingEnvironment = hostingEnvironment;
         }
 

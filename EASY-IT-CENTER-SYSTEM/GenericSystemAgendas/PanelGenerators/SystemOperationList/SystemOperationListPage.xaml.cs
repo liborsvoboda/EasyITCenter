@@ -109,19 +109,20 @@ namespace EasyITSystemCenter.Pages {
         }
 
         private async void ToolPanelListPage_Click(object sender, RoutedEventArgs e) {
-            var selectedPanel = solutionOperationList.Where(a => a.Id == int.Parse(((Tile)sender).Tag.ToString())).FirstOrDefault();
+            MainWindow.progressRing = Visibility.Visible;
+            SolutionOperationList selectedPanel = solutionOperationList.Where(a => a.Id == int.Parse(((Tile)sender).Tag.ToString())).FirstOrDefault();
             List<CustomOneRowList> messageResponse = null;
-            List<CustomString> jsonResponse = null; string json = null;
+            List<GenericValue> jsonResponse = null; string json = null;
 
             try { //Request
                 switch (selectedPanel.InheritedTypeName) {
                     case "DB_SP_GET_Operace":
                         if (selectedPanel.InheritedResultTypeName == "message") {
-                            messageResponse = await CommApi.GetApiRequest<List<CustomOneRowList>>(ApiUrls.EasyITCenterStoredProceduresList, "Message/" + selectedPanel.InputData, App.UserData.Authentification.Token);
+                            messageResponse = await CommApi.GetApiRequest<List<CustomOneRowList>>(ApiUrls.ServerApi, "DatabaseServices/SpProcedure/Message/" + selectedPanel.InputData, App.UserData.Authentification.Token);
                             json = messageResponse[0].MessageList;
                         }
                         else {
-                            jsonResponse = await CommApi.GetApiRequest<List<CustomString>>(ApiUrls.EasyITCenterStoredProceduresList, "Json/" + selectedPanel.InputData, App.UserData.Authentification.Token);
+                            jsonResponse = await CommApi.GetApiRequest<List<GenericValue>>(ApiUrls.ServerApi, "DatabaseServices/SpProcedure/Json/" + selectedPanel.InputData, App.UserData.Authentification.Token);
                             JavaScriptSerializer serializer = new JavaScriptSerializer(); json = "{";
                             jsonResponse.ForEach(key => {
                                 DeserializedJson jsonObject = serializer.Deserialize<DeserializedJson>(key.Value);
@@ -139,16 +140,18 @@ namespace EasyITSystemCenter.Pages {
                     case "API_GET_Request":
                         using (HttpClient httpClient = new HttpClient()) {
                             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", App.UserData.Authentification.Token);
-                            json = await httpClient.GetStringAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + selectedPanel.InputData);
+                            json = await httpClient.GetStringAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + (selectedPanel.InputData.StartsWith("/") ? selectedPanel.InputData.Substring(1) : selectedPanel.InputData));
                         }
                         break;
 
                     case "API_POST_Request":
                         break;
                 }
+                MainWindow.progressRing = Visibility.Hidden;
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             try {
+               
                 //Response
                 switch (selectedPanel.InheritedResultTypeName) {
                     case "message":

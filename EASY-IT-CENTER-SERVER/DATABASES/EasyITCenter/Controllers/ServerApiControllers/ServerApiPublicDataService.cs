@@ -19,10 +19,10 @@ namespace EasyITCenter.ServerCoreDBSettings {
     [ApiController]
     [Route("ServerApi")]
     //[ApiExplorerSettings(IgnoreApi = true)]
-    public class ServerApiPublicDataControllers : ControllerBase {
+    public class ServerApiPublicDataService : ControllerBase {
 
 
-        [HttpGet("/ServerApi/Public/SolutionToolList")]
+        [HttpGet("/ServerApi/PublicDataServices/SolutionToolList")]
         public async Task<string> SolutionToolList() {
             try {
                 //if (CommunicationController.IsAdmin()) {

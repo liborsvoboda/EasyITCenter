@@ -8,6 +8,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Linq;
+using MahApps.Metro.Controls;
 
 namespace EasyITSystemCenter.GlobalOperations {
 
@@ -25,8 +26,30 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// <returns></returns>
         public static async Task<bool> TranslateFormFields(DependencyObject parentObject) {
             try {
-                foreach (var element in FindVisualChildren<GroupBox>(parentObject)) {
+                foreach (var element in FindVisualChildren<Grid>(parentObject)) {
+                    element.Children.OfType<Label>().ToList().ForEach(async item => {
+                        try { if (item.Name.Split('_').Length > 1 && item.Content == null) { item.Content = await DBOperations.DBTranslation(item.Name.Split('_')[1]); } } catch { }
+                    });
+                    element.Children.OfType<Button>().ToList().ForEach(async item => {
+                        try { if (item.Name.Split('_').Length > 1 && item.Content == null) { item.Content = await DBOperations.DBTranslation(item.Name.Split('_')[1]); } } catch { }
+                    });
+                    //TODO REMOVE CheckBox LAbels AND CHECK DIRECT LABELS FOR NUMERIC? TEXTBOX SAME AS CHECKBOX
+                    // THIS ENABLE SHOW CheckBox Own Label Directly
+                    //element.FindChildren<CheckBox>().ToList().ForEach(async item => {
+                    //    try { if (item.Name.Split('_').Length > 1 && item.Content == null) { item.Content = await DBOperations.DBTranslation(item.Name.Split('_')[1]); } } catch { }
+                    //});
+                }
+                foreach (var element in FindVisualChildren<GroupBox>(parentObject)) { 
                     try { if (element.Name.Split('_').Length > 1 && element.Header == null) { element.Header = await DBOperations.DBTranslation(element.Name.Split('_')[1]); } } catch { }
+                    element.FindChildren<Label>().ToList().ForEach(async item => {
+                        try { if (item.Name.Split('_').Length > 1 && item.Content == null) { item.Content = await DBOperations.DBTranslation(item.Name.Split('_')[1]); } } catch { }
+                    });
+                    element.FindChildren<Button>().ToList().ForEach(async item => {
+                        try { if (item.Name.Split('_').Length > 1 && item.Content == null) { item.Content = await DBOperations.DBTranslation(item.Name.Split('_')[1]); } } catch { }
+                    });
+                    element.FindChildren<CheckBox>().ToList().ForEach(async item => {
+                        try { if (item.Name.Split('_').Length > 1 && item.Content == null) { item.Content = await DBOperations.DBTranslation(item.Name.Split('_')[1]); } } catch { }
+                    });
                 }
                 foreach (var element in FindVisualChildren<Label>(parentObject)) {
                     try { if (element.Name.Split('_').Length > 1 && element.Content == null) { element.Content = await DBOperations.DBTranslation(element.Name.Split('_')[1]); } } catch { }
@@ -40,7 +63,7 @@ namespace EasyITSystemCenter.GlobalOperations {
                 foreach (var element in FindVisualChildren<Button>(parentObject)) {
                     try { if (element.Name.Split('_').Length > 1 && element.Content == null) { element.Content = await DBOperations.DBTranslation(element.Name.Split('_')[1]); } } catch { }
                 }
-                try {
+               try {
                     if (parentObject.GetType().Name == "ToolBar") {
                         (parentObject as ToolBar).Items.OfType<Label>().ToList().ForEach(async item => {
                             try { if (item.Name.Split('_').Length > 1 && item.Content == null) { item.Content = await DBOperations.DBTranslation(item.Name.Split('_')[1]); } } catch { }

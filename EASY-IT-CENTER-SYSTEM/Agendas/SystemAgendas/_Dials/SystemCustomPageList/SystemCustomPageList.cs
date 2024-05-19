@@ -1,5 +1,6 @@
 ﻿using System;
 
+
 namespace EasyITSystemCenter.Classes {
 
     public partial class SystemCustomPageList {
@@ -19,6 +20,8 @@ namespace EasyITSystemCenter.Classes {
         public string HelpTabUrl { get; set; }
         public string DbtableName { get; set; }
         public string ColumnName { get; set; }
+        public bool UseIooverDom { get; set; }
+        public string DomhtmlElementName { get; set; }
         public string SetWebDataJscriptCmd { get; set; }
         public string GetWebDataJscriptCmd { get; set; }
         public string StartupSubFolder { get; set; }

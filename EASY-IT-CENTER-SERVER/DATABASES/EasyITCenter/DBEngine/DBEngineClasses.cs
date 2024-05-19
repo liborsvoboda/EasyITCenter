@@ -61,21 +61,13 @@
     }
 
     /// <summary>
-    /// Custom Definition for Returning string List from Stored Procedures Name is ColumnName from
-    /// Stored Procedure Result
+    /// Custom Definition for Returning string List from Stored Procedures Named Data = ColumnName
+    /// in the Data string Can be Any Object
     /// </summary>
-    public class GenericObject {
-        public string TableList { get; set; }
-    }
-
-    /// <summary>
-    /// Custom Definition for Returning string List from Stored Procedures
-    /// Name is Data from Any possible Stored Procedure Result
-    /// TODO Zrusit ostatni typy a pouzivat jen tento
-    /// </summary>
-    public class GenericData {
+    public class GenericDataList {
         public string Data { get; set; }
     }
+
 
     /// <summary>
     /// Custom Definition for Returning List with One Record from Operation Stored Procedures
@@ -85,7 +77,7 @@
     }
 
     /// <summary>
-    /// Generic Table Standard Fileds Public Class For Get Informations By System
+    /// Generic Table Standard Fieds Public Class For Get Informations By System
     /// </summary>
     public class GenericTable {
         public int Id { get; set; }

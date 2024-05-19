@@ -22,6 +22,9 @@ namespace EasyITCenter.ServerCoreStructure {
         public static string ContentRootPath { get; set; } = Path.GetDirectoryName(Environment.CurrentDirectory);
 
 
+
+        public static string ServerVerion { get; set; } = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString();
+
         /// <summary>
         /// Gets or Sets the startup_path.
         /// </summary>
@@ -57,6 +60,12 @@ namespace EasyITCenter.ServerCoreStructure {
         /// Gets or Sets the configure file.
         /// </summary>
         public static string ConfigFile { get; set; } = "config.json";
+
+
+        /// <summary>
+        /// OpenApi Online API Description And API Testing
+        /// </summary>
+        public static string OpenApiDescriptionFile { get; set; } = "/swagger/" + Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() + "/swagger.json";
 
         /// <summary>
         /// Gets or Sets the data path.

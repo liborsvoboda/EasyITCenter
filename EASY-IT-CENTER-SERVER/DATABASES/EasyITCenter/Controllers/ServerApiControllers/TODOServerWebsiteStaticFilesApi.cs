@@ -2,7 +2,7 @@
 
     [AllowAnonymous]
     [ApiController]
-    [Route("/WebApi/StaticFiles")]
+    [Route("ServerApi")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ServerWebsiteStaticFilesApi : ControllerBase {
         private readonly ILogger<ServerWebsiteStaticFilesApi> _logger;
@@ -19,7 +19,7 @@
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("/WebApi/StaticFiles/GetFiles")]
+        [HttpPost("/ServerApi/StaticFilesServices/GetFiles")]
         [Consumes("application/json")]
         public IActionResult GetFiles([FromBody] StaticFilesRequest request) {
             try {

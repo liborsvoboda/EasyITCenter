@@ -142,12 +142,11 @@ namespace EasyITCenter {
                     )) { if (serverApiSecurity.RedirectPathOnError?.Length == 0) { context.Response.StatusCode = StatusCodes.Status401Unauthorized; return; } else { context.Request.Path = serverApiSecurity.RedirectPathOnError; await next(); } }
                 }
 
-
+                //TODO CHECK AGAIN IF NOT Authorized?  
                 //Excluded Urls For Server Browsing From Page Settings, redirected Defined paths
-                if (DbOperations.CheckStaticOrMvcDefPath(requestPath).Count() > 0
+                if (DbOperations.CheckDBServerApiRule(requestPath).Count() > 0
                 || context.Response.StatusCode == StatusCodes.Status200OK || context.Response.StatusCode == StatusCodes.Status301MovedPermanently || context.Response.StatusCode == StatusCodes.Status302Found
-                )
-                { return; }
+                ) { return; }
 
                 //TODO server-users security for content
 
@@ -159,9 +158,10 @@ namespace EasyITCenter {
                 try { fileValidUrl = ((string)context.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
 
 
+
                 //Start DocPortal by Link Without index.md
-                if (routeLayout == RouteLayoutTypes.DocPortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
-                    { redirected = true; context.Request.Path = "/DocPortal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                if (routeLayout == RouteLayoutTypes.DocPortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) { 
+                    redirected = true; context.Request.Path = "/DocPortal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
                 //Show MarkDownFile in Layout by missing .md extension
                 else if (routeLayout == RouteLayoutTypes.EditorHtmlFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
@@ -170,7 +170,7 @@ namespace EasyITCenter {
 
                 //Show MarkDownFile in Layout by missing .md extension
                 else if (routeLayout == RouteLayoutTypes.ViewerMarkDownFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
-                    { redirected = true; context.Request.Path = "/ServerCoreTools/ViewerMarkDownFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                { redirected = true; context.Request.Path = "/ServerCoreTools/ViewerMarkDownFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
                 //Show Report File in Layout by .frx extension
                 else if (routeLayout == RouteLayoutTypes.ViewerReportFileLayout) 
@@ -179,29 +179,29 @@ namespace EasyITCenter {
 
 
                 //Show Portal in Layout
-                else if (routeLayout == RouteLayoutTypes.PortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
-                { redirected = true; context.Request.Path = "/Portal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                else if (routeLayout == RouteLayoutTypes.PortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) { redirected = true; context.Request.Path = "/Portal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
                 //Show ServerModules
-                else if (routeLayout == RouteLayoutTypes.ServerModulesLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) 
-                { redirected = true; context.Request.Path = "/ServerModules"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                else if (routeLayout == RouteLayoutTypes.ServerModulesLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) { redirected = true; context.Request.Path = "/ServerModules"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
                 //Others Type Detected
-                else if (context.Request.Path.ToString().ToLower() != fileValidUrl)
-                { redirected = true; context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                else if (context.Request.Path.ToString().ToLower() != fileValidUrl) { redirected = true; context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
 
 
-                if (!redirected && commandType == RoutingActionTypes.Return)
-                { return; }
+                if (!redirected && commandType == RoutingActionTypes.Return) { return; }
 
-                else if (!redirected && commandType == RoutingActionTypes.Next) 
-                { context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                else if (!redirected && commandType == RoutingActionTypes.Next) { context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
-                else if (!redirected && commandType == RoutingActionTypes.Next && context.Request.Path.ToString().ToLower() == fileValidUrl) 
-                { return; }
+                else if (!redirected && commandType == RoutingActionTypes.Next && context.Request.Path.ToString().ToLower() == fileValidUrl) { return; }
             });
 
+
+            // HERE HAS CONTENT Response Injection + MY INJECTION  CONTENT
+            //app.Run(async (context) => {
+            //    if (context.Response.StatusCode == StatusCodes.Status401Unauthorized) { context.Response.Redirect("/ServerControls/401UnauthorizedPage"); }
+            //    if (context.Response.StatusCode == StatusCodes.Status404NotFound) { context.Response.Redirect("/ServerControls/404NonExistPage"); }
+            //});
 
             //app.UseExceptionHandler("/Error");
             app.UseRouting();

@@ -6,12 +6,12 @@
     /// <seealso cref="ControllerBase"/>
     [Authorize]
     [ApiController]
-    [Route("ServerApi/Services/Email")]
+    [Route("ServerApi")]
      //[ApiExplorerSettings(IgnoreApi = true)]
-    public class ServerApiEmailServiceControllers : ControllerBase {
+    public class ServerApiEmailService : ControllerBase {
 
-        [HttpGet("/ServerApi/Services/Email/{message}")]
-        public async Task<string> GetServerEmailer(string message) {
+        [HttpGet("/ServerApi/EmailServices/GetMessenger/{message}")]
+        public async Task<string> GetMessenger(string message) {
             try {
                 string result = null;
                 if (!string.IsNullOrWhiteSpace(message)) result = CoreOperations.SendEmail(new SendMailRequest() { Content = message }, true);
@@ -20,9 +20,9 @@
             } catch (Exception ex) { return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
         }
 
-        [HttpPost("/ServerApi/Services/Email")]
+        [HttpPost("/ServerApi/EmailServices/PostMessenger")]
         [Consumes("application/json")]
-        public async Task<string> PostServerEmailer([FromBody] SendMailRequest message) {
+        public async Task<string> PostMessenger([FromBody] SendMailRequest message) {
             try {
                 string? result = null;
                 if (!string.IsNullOrWhiteSpace(message.Content)) result = CoreOperations.SendEmail(message, true);
@@ -31,9 +31,9 @@
             } catch (Exception ex) { return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
         }
 
-        [HttpPost("/ServerApi/Services/Email/Mass")]
+        [HttpPost("/ServerApi/EmailServices/PostMassMesseger")]
         [Consumes("application/json")]
-        public async Task<string> PostServerMassEmailer([FromBody] List<SendMailRequest> messages) {
+        public async Task<string> PostMassMesseger([FromBody] List<SendMailRequest> messages) {
             try {
                 if (ServerConfigSettings.ServiceEnableMassEmail) {
                     CoreOperations.SendMassEmail(messages);

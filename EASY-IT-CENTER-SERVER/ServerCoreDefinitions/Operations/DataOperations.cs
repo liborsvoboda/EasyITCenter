@@ -53,7 +53,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <param name="msgCount"> </param>
         /// <returns></returns>
         public static string GetUserApiErrMessage(Exception exception, int msgCount = 1) {
-            return exception != null ? string.Format("{0}: {1}\n{2}", msgCount, exception.Message, GetUserApiErrMessage(exception.InnerException, ++msgCount)) : string.Empty;
+            return exception != null ? string.Format("{0}: {1}\n{2}", msgCount, exception.TargetSite?.ReflectedType?.FullName + Environment.NewLine + exception.Message, GetUserApiErrMessage(exception.InnerException, ++msgCount)) : string.Empty;
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <param name="msgCount"> </param>
         /// <returns></returns>
         public static string GetSystemErrMessage(Exception exception, int msgCount = 1) {
-            return exception != null ? string.Format("{0}: {1}\n{2}", msgCount, (exception.Message + Environment.NewLine + exception.StackTrace + Environment.NewLine), GetSystemErrMessage(exception.InnerException, ++msgCount)) : string.Empty;
+            return exception != null ? string.Format("{0}: {1}\n{2}", msgCount, (exception.TargetSite?.ReflectedType?.FullName + Environment.NewLine + exception.Message + Environment.NewLine + exception.StackTrace + Environment.NewLine), GetSystemErrMessage(exception.InnerException, ++msgCount)) : string.Empty;
         }
 
         /// <summary>

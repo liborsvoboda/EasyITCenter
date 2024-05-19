@@ -8,7 +8,6 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using Org.BouncyCastle.Asn1;
-using SharpDX.WIC;
 using System;
 using System.Data.SqlClient;
 using System.Linq;
@@ -18,8 +17,14 @@ using System.Windows.Controls;
 using System.Windows.Media;
 
 
+
+
 namespace EasyITSystemCenter.Pages {
 
+    /// <summary>
+    /// !!! REMEMBER EACH NEW CONFIGURATION MUST BE INSERTED TO DICTIONARY MANUALLY !!!
+    /// !!! THIS IS ALONE OFFLINE FORM WHICH READ DICTIONARY FROM APP RESOURCES !!!
+    /// </summary>
     public partial class ClientSettingsPage : UserControl {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
         public static SolutionSchedulerList selectedRecord = new SolutionSchedulerList();

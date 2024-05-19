@@ -1,11 +1,13 @@
 ﻿using CefSharp;
 using EasyITSystemCenter.Api;
 using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Web.WebView2.Core;
+using MtrDev.WebView2.Interop;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using WebView2.DevTools.Dom;
 
 
 
@@ -23,9 +26,12 @@ namespace EasyITSystemCenter.Pages {
     public partial class MltTblGenEsbSrvFormPage : UserControl {
 
         public static DataViewSupport dataViewSupport = new DataViewSupport();
-        public static Object selectedRecord = new Object();
+        public static List<GenericTable> selectedRecord = new List<GenericTable>();
 
         SystemCustomPageList systemCustomPageList = new SystemCustomPageList();
+        List<object> genericTableList = new List<object>();
+        private Dictionary<string, string> webElement = new Dictionary<string, string>();
+        WebView2DevToolsContext devToolsContext;
 
         public MltTblGenEsbSrvFormPage() {
             try {
@@ -43,10 +49,9 @@ namespace EasyITSystemCenter.Pages {
                     //Enabling By TabController After Inserted ID, Load Data On Startup Only
                     IsEnabled = false;
                     IsEnabledChanged += (s, e) => {
-                        if (IsEnabled && systemCustomPageList == new SystemCustomPageList()) {
-                            _ = LoadDataList();
+                        if (IsEnabled && systemCustomPageList.Id == 0) {
                             webBrowser.CoreWebView2InitializationCompleted += WebBrowser_CoreWebView2InitializationCompleted;
-                            SetRecord(false);
+                            _ = webBrowser.EnsureCoreWebView2Async();
                         }
                     };
                 }
@@ -62,6 +67,8 @@ namespace EasyITSystemCenter.Pages {
             try {
                
                 systemCustomPageList = await CommApi.GetApiRequest<SystemCustomPageList>(ApiUrls.EasyITCenterSystemCustomPageList, this.Uid.ToString(), App.UserData.Authentification.Token);
+               // systemCustomPageList = await CommApi.GetApiRequest<SystemCustomPageList>(ApiUrls.EasyITCenterSystemCustomPageList, this.Uid.ToString(), App.UserData.Authentification.Token);
+
                 _ = FormOperations.TranslateFormFields(ListView);
 
             }  catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
@@ -71,44 +78,60 @@ namespace EasyITSystemCenter.Pages {
 
         //INIT SPA Solution + Help 
         private async void WebBrowser_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e) {
-            await webBrowser.EnsureCoreWebView2Async();
-            webBrowser.Source = new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.StartupUrl);
+            try {
+                await webBrowser.EnsureCoreWebView2Async();
+                await LoadDataList(); if (systemCustomPageList.ShowHelpTab) { _ = helpBrowser.EnsureCoreWebView2Async(); }
 
-            webBrowser.CoreWebView2.Settings.AreDefaultScriptDialogsEnabled =
-                webBrowser.CoreWebView2.Settings.AreHostObjectsAllowed = webBrowser.CoreWebView2.Settings.IsBuiltInErrorPageEnabled = webBrowser.CoreWebView2.Settings.IsNonClientRegionSupportEnabled =
-                webBrowser.CoreWebView2.Settings.IsWebMessageEnabled = webBrowser.CoreWebView2.Settings.IsPinchZoomEnabled = webBrowser.CoreWebView2.Settings.IsGeneralAutofillEnabled =
-                webBrowser.CoreWebView2.Settings.IsZoomControlEnabled = webBrowser.CoreWebView2.Settings.IsSwipeNavigationEnabled = webBrowser.CoreWebView2.Settings.IsStatusBarEnabled =
-                webBrowser.CoreWebView2.Settings.IsScriptEnabled = true;
+                //DOM Initiate
+                webElement = new Dictionary<string, string>();
+                webElement.Add(systemCustomPageList.ColumnName, "text");
+               
 
-            if (systemCustomPageList.DevModeEnabled) {
-                webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
-                helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
-                webBrowser.CoreWebView2.OpenDevToolsWindow();
-            }
-            else {
-                webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-                helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-            }
-            if (systemCustomPageList.ShowHelpTab) {
-                ti_helpEditor.Visibility = Visibility.Visible;
+                devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
+                var htmlDivElement = await devToolsContext.QuerySelectorAsync<HtmlDivElement>("#myDivElementId");
+                await htmlDivElement.SetInnerTextAsync("Welcome!");
+                await htmlDivElement.GetInnerTextAsync();
+
+
+
+                webBrowser.Source = new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.StartupUrl);
+
+                webBrowser.CoreWebView2.Settings.AreDefaultScriptDialogsEnabled =
+                    webBrowser.CoreWebView2.Settings.AreHostObjectsAllowed = webBrowser.CoreWebView2.Settings.IsBuiltInErrorPageEnabled = webBrowser.CoreWebView2.Settings.IsNonClientRegionSupportEnabled =
+                    webBrowser.CoreWebView2.Settings.IsWebMessageEnabled = webBrowser.CoreWebView2.Settings.IsPinchZoomEnabled = webBrowser.CoreWebView2.Settings.IsGeneralAutofillEnabled =
+                    webBrowser.CoreWebView2.Settings.IsZoomControlEnabled = webBrowser.CoreWebView2.Settings.IsSwipeNavigationEnabled = webBrowser.CoreWebView2.Settings.IsStatusBarEnabled =
+                    webBrowser.CoreWebView2.Settings.IsScriptEnabled = true;
+
+                if (systemCustomPageList.DevModeEnabled) {
+                    webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
+                    helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
+                    webBrowser.CoreWebView2.OpenDevToolsWindow();
+                }
+                else {
+                    webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+                    if (systemCustomPageList.ShowHelpTab) { helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false; }
+                }
                 if (systemCustomPageList.ShowHelpTab) {
-                    helpBrowser.Source = new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.HelpTabUrl);
-                    if (systemCustomPageList.HelpTabShowOnly) {
-                        helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-                        helpBrowser.CoreWebView2.Settings.IsScriptEnabled = false; helpBrowser.CoreWebView2.Settings.IsSwipeNavigationEnabled = false;
-                        helpBrowser.CoreWebView2.Settings.IsZoomControlEnabled = false;
+                    ti_helpEditor.Visibility = Visibility.Visible;
+                    if (systemCustomPageList.ShowHelpTab) {
+                        helpBrowser.Source = new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.HelpTabUrl);
+                        if (systemCustomPageList.HelpTabShowOnly) {
+                            helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+                            helpBrowser.CoreWebView2.Settings.IsScriptEnabled = false; helpBrowser.CoreWebView2.Settings.IsSwipeNavigationEnabled = false;
+                            helpBrowser.CoreWebView2.Settings.IsZoomControlEnabled = false;
+                        }
                     }
                 }
-            }
 
-            webBrowser.CoreWebView2.ContextMenuRequested += async delegate (object sender1, CoreWebView2ContextMenuRequestedEventArgs args) {
-                IList<CoreWebView2ContextMenuItem> menuList = args.MenuItems;
-                CoreWebView2ContextMenuItem openConsole = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("openConsole"), null, CoreWebView2ContextMenuItemKind.Command); openConsole.CustomItemSelected += openConsoleSelected;
-                CoreWebView2ContextMenuItem openTaskManager = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("printPage"), null, CoreWebView2ContextMenuItemKind.Command); openTaskManager.CustomItemSelected += openTaskManagerSelected;
-                menuList.Add(openConsole);
-                menuList.Add(openTaskManager);
-            };
-            MainWindow.ProgressRing = Visibility.Hidden;
+                webBrowser.CoreWebView2.ContextMenuRequested += async delegate (object sender1, CoreWebView2ContextMenuRequestedEventArgs args) {
+                    IList<CoreWebView2ContextMenuItem> menuList = args.MenuItems;
+                    CoreWebView2ContextMenuItem openConsole = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("openConsole"), null, CoreWebView2ContextMenuItemKind.Command); openConsole.CustomItemSelected += openConsoleSelected;
+                    CoreWebView2ContextMenuItem openTaskManager = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("printPage"), null, CoreWebView2ContextMenuItemKind.Command); openTaskManager.CustomItemSelected += openTaskManagerSelected;
+                    menuList.Add(openConsole);
+                    menuList.Add(openTaskManager);
+                };
+                MainWindow.ProgressRing = Visibility.Hidden;
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
         private void openConsoleSelected(object sender, object e) { webBrowser.CoreWebView2.OpenDevToolsWindow(); }
         private void openTaskManagerSelected(object sender, object e) { webBrowser.CoreWebView2.ShowPrintUI(); }
@@ -165,19 +188,19 @@ namespace EasyITSystemCenter.Pages {
         }
 
         public void NewRecord() {
-            selectedRecord = new SolutionWebsiteList();
+            selectedRecord = new List<GenericTable>();
             //dataViewSupport.SelectedRecordId = selectedRecord.Id;
             SetRecord(true);
         }
 
         public void EditRecord(bool copy) {
-            selectedRecord = (SolutionWebsiteList)DgListView.SelectedItem;
+            selectedRecord = (List<GenericTable>)DgListView.SelectedItem;
             //dataViewSupport.SelectedRecordId = selectedRecord.Id;
             SetRecord(true, copy);
         }
 
         public async void DeleteRecord() {
-            selectedRecord = (SolutionWebsiteList)DgListView.SelectedItem;
+            selectedRecord = (List<GenericTable>)DgListView.SelectedItem;
             /*
             dataViewSupport.SelectedRecordId = selectedRecord.Id;
             MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + selectedRecord.Id.ToString(), true);
@@ -191,14 +214,14 @@ namespace EasyITSystemCenter.Pages {
 
         private void DgListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
             if (DgListView.SelectedItems.Count == 0) return;
-            selectedRecord = (SolutionWebsiteList)DgListView.SelectedItem;
+            selectedRecord = (List<GenericTable>)DgListView.SelectedItem;
             //dataViewSupport.SelectedRecordId = selectedRecord.Id;
             SetRecord(true);
         }
 
         private void DgListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (DgListView.SelectedItems.Count > 0) { selectedRecord = (SolutionWebsiteList)DgListView.SelectedItem; }
-            else { selectedRecord = new SolutionWebsiteList(); }
+            if (DgListView.SelectedItems.Count > 0) { selectedRecord = (List<GenericTable>)DgListView.SelectedItem; }
+            else { selectedRecord = new List<GenericTable>(); }
             //dataViewSupport.SelectedRecordId = selectedRecord.Id;
             SetRecord(false);
         }
@@ -235,7 +258,7 @@ namespace EasyITSystemCenter.Pages {
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e) {
-            selectedRecord = (DgListView.SelectedItems.Count > 0) ? (SolutionWebsiteList)DgListView.SelectedItem : new SolutionWebsiteList();
+            selectedRecord = (DgListView.SelectedItems.Count > 0) ? (List<GenericTable>)DgListView.SelectedItem : new List<GenericTable>();
             SetRecord(false);
         }
 

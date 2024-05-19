@@ -260,7 +260,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                         License = new OpenApiLicense { Name = ServerConfigSettings.ConfigCoreServerRegisteredName + " Server License", Url = new Uri("https://www.groupware-solution.eu/") }
                     });
 
-                    var xmlFile = Path.Combine(AppContext.BaseDirectory, $"{ServerConfigSettings.ConfigCoreServerRegisteredName}.xml");
+                    var xmlFile = Path.Combine(ServerRuntimeData.Startup_path, $"{ServerConfigSettings.ConfigCoreServerRegisteredName}.xml");
                     if (File.Exists(xmlFile)) c.IncludeXmlComments(xmlFile, true);
 
                     //c.InferSecuritySchemes();

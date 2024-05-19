@@ -40,6 +40,12 @@ namespace EasyITCenter.DBModel
         [StringLength(255)]
         [Unicode(false)]
         public string? ColumnName { get; set; }
+        [Column("UseIOOverDom")]
+        public bool UseIooverDom { get; set; }
+        [Column("DOMHtmlElementName")]
+        [StringLength(255)]
+        [Unicode(false)]
+        public string? DomhtmlElementName { get; set; }
         [Column("SetWebDataJScriptCmd")]
         [StringLength(1024)]
         [Unicode(false)]

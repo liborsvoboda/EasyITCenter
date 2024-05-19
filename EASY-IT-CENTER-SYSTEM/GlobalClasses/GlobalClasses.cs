@@ -141,11 +141,32 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string Translate { get; set; }
     }
 
+
+    /// <summary>
+    /// Generic Table Standard Fieds Public Class For Get Informations By System
+    /// </summary>
+    public class GenericTable {
+        public int Id { get; set; }
+        public string Description { get; set; } = null;
+        public int UserId { get; set; }
+        public DateTime TimeStamp { get; set; }
+    }
+
     /// <summary>
     /// Generická Tabulka Používaná DB Procedurami
+    /// je to Objekt ve stringu, nebo string, Cokoliv,
+    /// Jen to musí být v tabulce se sloupcem Data
     /// </summary>
-    public partial class CustomList {
-        public string DataName { get; set; }
+    public class GenericDataList {
+        public string Data { get; set; }
+    }
+
+    /// <summary>
+    /// Custom Definition for Returning List with One Record from Operation Stored Procedures
+    /// Returrned the "Value"  as Key, Value 
+    /// </summary>
+    public class GenericValue {
+        public string Value { get; set; }
     }
 
     /// <summary>
@@ -158,24 +179,10 @@ namespace EasyITSystemCenter.GlobalClasses {
     /// <summary>
     /// Custom Definition for Returning List with One Record from Operation Stored Procedures
     /// </summary>
-    public class CustomString {
-        public string Value { get; set; }
-    }
-
-    /// <summary>
-    /// Custom Definition for Returning List with One Record from Operation Stored Procedures
-    /// </summary>
     public class DeserializedJson {
         public string Key { get; set; }
         public string Value { get; set; }
     }
 
 
-    /// <summary>
-    /// Final Definition For Generic Api
-    /// Structure is in Variable Data
-    /// </summary>
-    public class CustomData {
-        public string Data { get; set; }
-    }
 }

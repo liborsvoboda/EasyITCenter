@@ -22,21 +22,14 @@ namespace EasyITCenter.ServerCoreStructure {
             RouteLayoutTypes routeLayout = RouteLayoutTypes.EmptyLayout; RoutingActionTypes routingResult = RoutingActionTypes.None;
             string routePath = context.Request.Path.ToString().ToLower(); string? validPath = null;
             try {
+
                 /*301,302,404 Ignore Files*/
                 if (context.Response.StatusCode != StatusCodes.Status200OK && context.Request.Path.ToString().Split("/").Last().Contains(".")) {
                     routeLayout = RouteLayoutTypes.EmptyLayout; validPath = routePath; routingResult = RoutingActionTypes.Return;
                 }
 
-                //Allow All Fouded Static Files Not MD
-                //TODO slozky upravit na browsable, allowedOpen in browser, must be authorized
-                //Check Static Valid Paths For File Types/Modules Allow Return  = not redirect again
-                //if (validPath == null && (routePath.StartsWith("/server") || routePath.StartsWith("/metro") || routePath.StartsWith("/EIC&ESBdocs")
-                //    || DbOperations.CheckServerModuleExists(routePath) != null
-                //   )) { routeLayout = RouteLayout.EmptyLayout; validPath = routePath; routingResult = RoutingResult.Return; }
-
-
                 //Check Server Module
-                ServerModuleAndServiceList serverModule = DbOperations.CheckServerModuleExists(routePath);
+                ServerModuleAndServiceList serverModule = DbOperations.CheckDefinedWebPageExists(routePath);
                 if (serverModule != null) {
                     if (context.Items.FirstOrDefault(a => a.Key.ToString() == "ServerModule").Value != null) { context.Items.Remove("ServerModule"); }
                     try { context.Items.Add(new KeyValuePair<object, object>("ServerModule", serverModule)); } catch { }
@@ -68,7 +61,7 @@ namespace EasyITCenter.ServerCoreStructure {
                 } catch { }
                 #endregion
 
-                //Check Server Tools
+                //Check Server Defined Modules
                 //TODO vytvořit agendu nastroju a k nim templaty v ni budou i editory a nastroje Kazdy Layout bude mit svoji Page
                 if (validPath == null && routePath.StartsWith("/server-web/github", StringComparison.OrdinalIgnoreCase)) { routeLayout = RouteLayoutTypes.GitHubLayout; validPath = routePath; routingResult = RoutingActionTypes.Return; }
                 if (validPath == null && routePath.StartsWith("/easydata", StringComparison.OrdinalIgnoreCase)) { routeLayout = RouteLayoutTypes.MetroLayout; validPath = routePath; routingResult = RoutingActionTypes.Return; }
@@ -120,8 +113,8 @@ namespace EasyITCenter.ServerCoreStructure {
 
                 //Any Validation Founded
                 if (validPath == null && context.Items.FirstOrDefault(a => a.Key.ToString() == "ComandType").Value == null) {
-                    routeLayout = DataOperations.ToEnum<RouteLayoutTypes>(DbOperations.CheckServerModuleExists("/NonExistPage").InheritedLayoutType);
-                    validPath = "/ServerControls/NonExistPage"; routingResult = RoutingActionTypes.Next;
+                    routeLayout = DataOperations.ToEnum<RouteLayoutTypes>(DbOperations.CheckDefinedWebPageExists("/DefaultWebPages/404NonExistPage").InheritedLayoutType);
+                    validPath = "/ServerControls/404NonExistPage"; routingResult = RoutingActionTypes.Next;
                 }
             } catch (Exception Ex) {
                 routeLayout = RouteLayoutTypes.PortalLayout; validPath = routePath; routingResult = RoutingActionTypes.Return;

@@ -1,9 +1,11 @@
-﻿using System;
+﻿using EasyITSystemCenter.GlobalClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows;
@@ -14,7 +16,7 @@ namespace EasyITSystemCenter.GlobalOperations {
     /// <summary>
     /// Centralized DataOperations as Cleaning dataset Language Dictionary Auto filing
     /// </summary>
-    internal class DataOperations {
+    public static class DataOperations {
 
         /// <summary> Convert Dictionary<string,string> To Json Suportted Values Bool, Int, String
         /// </summary> <returns></returns>
@@ -74,5 +76,63 @@ namespace EasyITSystemCenter.GlobalOperations {
         public static byte[] StringToByteArray(string input) {
             return Encoding.UTF8.GetBytes(input);
         }
+
+
+
+        /// <summary>
+        /// Convert UTF8 to UNICODE
+        /// </summary>
+        /// <param name="utf8String"></param>
+        /// <returns></returns>
+        public static string Utf8toUnicode(this string utf8String) {
+            byte[] utf8Bytes = new byte[utf8String.Length];
+            for (int i = 0; i < utf8String.Length; ++i) { utf8Bytes[i] = (byte)utf8String[i]; }
+            return Encoding.UTF8.GetString(utf8Bytes, 0, utf8Bytes.Length);
+        }
+
+        /// <summary>
+        /// Remove Diactritics
+        /// </summary>
+        /// <param name="Text"></param>
+        /// <returns></returns>
+        public static string RemoveDiacritism(string Text) {
+            string stringFormD = Text.Normalize(NormalizationForm.FormD);
+            StringBuilder retVal = new StringBuilder();
+            for (int index = 0; index < stringFormD.Length; index++) {
+                if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(stringFormD[index]) != System.Globalization.UnicodeCategory.NonSpacingMark)
+                    retVal.Append(stringFormD[index]);
+            }
+            return retVal.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        /// <summary>
+        /// Convert Generic Tabla To Standard Table For Use Standard System Fields
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static GenericTable ConvertGenericClassToStandard<T>(T data) {
+            return JsonSerializer.Deserialize<GenericTable>(JsonSerializer.Serialize(data));
+        }
+
+
+        /// <summary>
+        /// Convert String to Enum
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static T ToEnum<T>(this string value) {
+            try {
+                Type enumType = typeof(T);
+                if (!enumType.IsEnum) {
+                    App.ApplicationLogging(new Exception("DataOperation ToEnum Method DataOperations  T ToEnum<T>: T must be an Enumeration type." + enumType.ToString()));
+                }
+            } catch (Exception Ex) { App.ApplicationLogging(Ex); }
+            return (T)Enum.Parse(typeof(T), value, true);
+        }
+
+
+    
     }
 }

@@ -126,9 +126,6 @@
         FtpServerStart,
         FtpServerStop,
 
-        /*StoredProceduresList Library*/
-        EasyITCenterStoredProceduresList,
-   
 
         /*Template Classes*/
         EasyITCenterTemplateClassList,

@@ -311,19 +311,15 @@ namespace EasyITSystemCenter {
                 PreviewMouseDown += MainWindow_MouseLeave;
                 PreviewKeyDown += MainWindow_PreviewKeyDown;
                 PreviewMouseMove += MainWindow_PreviewMouseMove;
-
-                ShowLoginDialog();
                 rt_SystemLogger.Text = Resources["welcomeLogger"].ToString();
+                ContentRendered += MainWindow_ContentRendered;
+                
             } catch (Exception ex) { App.ApplicationLogging(ex); }
         }
 
-        /// <summary>
-        /// Writing Last User action for monitoring Free Time Used by: SceenSaver
-        /// </summary>
+        private void MainWindow_ContentRendered(object sender, EventArgs e) => ShowLoginDialog();
         internal void MainWindow_MouseLeave(object sender, MouseEventArgs e) => SetLastUserAction();
-
         internal void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e) => SetLastUserAction();
-
         private void MainWindow_PreviewMouseMove(object sender, MouseEventArgs e) => SetLastUserAction();
 
         internal DateTimeOffset SetLastUserAction() {
@@ -395,11 +391,11 @@ namespace EasyITSystemCenter {
                 MetroWindow metroWindow = Application.Current.MainWindow as MetroWindow;
                 if (confirm) {
                     MetroDialogSettings settings = new MetroDialogSettings() { AffirmativeButtonText = metroWindow.Resources["yes"].ToString(), NegativeButtonText = metroWindow.Resources["no"].ToString() };
-                    result = await metroWindow.ShowMessageAsync(metroWindow.Resources["warning"].ToString(), message, MessageDialogStyle.AffirmativeAndNegative, settings);
+                    result = metroWindow.ShowModalMessageExternal(metroWindow.Resources["warning"].ToString(), message, MessageDialogStyle.AffirmativeAndNegative, settings);
                 }
                 else {
                     MetroDialogSettings settings = new MetroDialogSettings() { AffirmativeButtonText = metroWindow.Resources["ok"].ToString() };
-                    result = await metroWindow.ShowMessageAsync(error ? metroWindow.Resources["error"].ToString() : metroWindow.Resources["info"].ToString(), message, MessageDialogStyle.Affirmative, settings);
+                    result = metroWindow.ShowModalMessageExternal(error ? metroWindow.Resources["error"].ToString() : metroWindow.Resources["info"].ToString(), message, MessageDialogStyle.Affirmative, settings);
                 }
             }
             return result;
@@ -411,14 +407,11 @@ namespace EasyITSystemCenter {
         /// <param name="sender"></param>
         /// <param name="e">     </param>
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
-            try {
-                this.Invoke(() => {
+            try { this.Invoke(() => {
                     AppSystemTimer.Elapsed += SystemTimerController; AppSystemTimer.Enabled = true;
                     _ = SystemOperations.IncreaseFileVersionBuild();
                     AddOrRemoveTab(Resources["support"].ToString(), new SupportPage(), "Setting");
-                });
-
-                //Load Theme
+                }); //Load Theme
                 AppTheme theme = ThemeManager.AppThemes.FirstOrDefault(t => t.Name.Equals(App.appRuntimeData.AppClientSettings.First(a => a.Key == "apper_themeName").Value));
                 Accent accent = ThemeManager.Accents.FirstOrDefault(a => a.Name.Equals(App.appRuntimeData.AppClientSettings.First(b => b.Key == "apper_accentName").Value));
                 if ((theme != null) && (accent != null)) { ThemeManager.ChangeAppStyle(Application.Current, accent, theme); }
@@ -430,7 +423,7 @@ namespace EasyITSystemCenter {
         /// </summary>
         private async Task<bool> LoadUserMenu() {
             try {
-                App.SystemMenuList = await CommApi.GetApiRequest<List<SystemMenuList>>(ApiUrls.EasyITCenterStoredProceduresList, "SpGetUserMenuList", App.UserData.Authentification.Token);
+                App.SystemMenuList = await CommApi.GetApiRequest<List<SystemMenuList>>(ApiUrls.ServerApi, "DatabaseServices/SpGetUserMenuList", App.UserData.Authentification.Token);
                 App.SystemCustomList = await CommApi.GetApiRequest<List<SystemCustomPageList>>(ApiUrls.EasyITCenterSystemCustomPageList, null, App.UserData.Authentification.Token);
 
                 tb_verticalSystemMenu.Items.Clear();
@@ -480,6 +473,8 @@ namespace EasyITSystemCenter {
                     menuItem.Items.SortDescriptions.Add(new SortDescription("Header", ListSortDirection.Ascending));
                     menuItem.FindChildren<TreeViewItem>(false).ToList().ForEach(submenuitem => { submenuitem.Items.SortDescriptions.Add(new SortDescription("Header", ListSortDirection.Ascending)); });
                 }
+
+                await WebView2AutoInstaller.CheckAndInstallWebView();
                 return true;
             } catch (Exception ex) { App.ApplicationLogging(ex); }
             return false;
@@ -624,37 +619,31 @@ namespace EasyITSystemCenter {
         /// </summary>
         public async void ShowLoginDialog() {
             try {
-                ProgressRing = Visibility.Visible;
+                ProgressRing = Visibility.Hidden;
                 UserLogged = false; App.UserData = new UserData(); si_loggedIn.Content = null;
+                LoginDialogSettings dialogSetting = new LoginDialogSettings() {
+                    ColorScheme = MetroDialogOptions.ColorScheme, InitialUsername = "tester", InitialPassword = "tester",
+                    AffirmativeButtonText = Resources["logon"].ToString(), NegativeButtonText = Resources["end"].ToString(),
+                    AnimateShow = true, EnablePasswordPreview = true, NegativeButtonVisibility = Visibility.Visible, AnimateHide = false
+                };
 
-                LoginDialogData result = await this.ShowLoginAsync(Resources["login"].ToString(), Resources["loginToApp"].ToString(),
-                new LoginDialogSettings {
-                    ColorScheme = MetroDialogOptions.ColorScheme,
-                    InitialUsername = "tester",
-                    InitialPassword = "tester",
-                    AffirmativeButtonText = Resources["logon"].ToString(),
-                    NegativeButtonText = Resources["end"].ToString(),
-                    AnimateShow = true,
-                    EnablePasswordPreview = true,
-                    NegativeButtonVisibility = Visibility.Visible
-                });
-                if (result == null) { App.AppQuitRequest(false); }
-                else {
+                LoginDialogData result = ((MetroWindow)App.Current.MainWindow).ShowModalLoginExternal(Resources["login"].ToString(), Resources["loginToApp"].ToString(), dialogSetting);
+                if (result == null) { App.AppQuitRequest(false);
+                } else {
                     ProgressRing = Visibility.Visible;
                     App.UserData.UserName = result.Username;
                     Authentification dBResult = await CommApi.Authentification(ApiUrls.EasyITCenterAuthentication, result.Username, result.Password);
+                    ProgressRing = Visibility.Hidden;
                     if (dBResult == null || dBResult.Token == null) {
-                        ProgressRing = Visibility.Hidden;
+                        
                         if (!UserLogged) {
                             if (!serviceRunning) {
-                                await this.ShowMessageAsync(Resources["login"].ToString(), Resources["loginServiceError"].ToString() + "\n" + App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + ApiUrls.EasyITCenterAuthentication + " " + Resources["loginServiceError1"].ToString());
+                                this.ShowModalMessageExternal(Resources["login"].ToString(), Resources["loginServiceError"].ToString() + "\n" + App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + ApiUrls.EasyITCenterAuthentication + " " + Resources["loginServiceError1"].ToString());
                             }
-                            else { await this.ShowMessageAsync(Resources["login"].ToString(), Resources["incorrectNameOrPassword"].ToString()); }
+                            else { this.ShowModalMessageExternal(Resources["login"].ToString(), Resources["incorrectNameOrPassword"].ToString()); }
                             ShowLoginDialog();
-                        }
-                        else { await this.ShowMessageAsync(Resources["login"].ToString(), Resources["loginError"].ToString()); ShowLoginDialog(); }
-                    }
-                    else {
+                        } else { this.ShowModalMessageExternal(Resources["login"].ToString(), Resources["loginError"].ToString());  ShowLoginDialog(); }
+                    } else {
                         App.UserData.Authentification = dBResult;
                         si_loggedIn.Content = Resources["loggedIn"].ToString() + " " + ((App.UserData.Authentification != null) ? App.UserData.Authentification.Name + " " + App.UserData.Authentification.SurName : result.Username);
                         await DBOperations.LoadOrRefreshUserData();

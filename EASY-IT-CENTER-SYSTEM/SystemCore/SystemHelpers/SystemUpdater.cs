@@ -108,5 +108,7 @@ namespace EasyITSystemCenter.SystemHelper {
                 MainWindow.ProgressRing = Visibility.Hidden;
             }
         }
+
+
     }
 }

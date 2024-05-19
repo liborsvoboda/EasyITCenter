@@ -10,18 +10,18 @@ namespace EasyITCenter.ServerCoreDBSettings {
     [Authorize]
     [ApiController]
     //[ApiExplorerSettings(IgnoreApi = true)]
-    [Route("ServerManagement")]
-    public class ServerManagementApi : ControllerBase {
+    [Route("ServerApi")]
+    public class ServerApiManagementServicesApi : ControllerBase {
         private readonly ILogger logger;
 
-        public ServerManagementApi(ILogger<ServerManagementApi> _logger) => logger = _logger;
+        public ServerApiManagementServicesApi(ILogger<ServerApiManagementServicesApi> _logger) => logger = _logger;
 
 
         /// <summary>
         /// AutoScheduler Server Controls
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/ServerManagement/AutoSchedulerServerStart")]
+        [HttpGet("/ServerApi/ManagementServices/AutoSchedulerServerStart")]
         public async Task<IActionResult> ServerSchedulerStart() {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
@@ -32,7 +32,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
             } catch (Exception ex) { return BadRequest(new DBResultMessage() { Status = DBResult.error.ToString(), ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
         }
 
-        [HttpGet("/ServerManagement/AutoSchedulerServerStop")]
+        [HttpGet("/ServerApi/ManagementServices/AutoSchedulerServerStop")]
         public async Task<IActionResult> ServerSchedulerStop() {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
@@ -43,7 +43,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
             } catch (Exception ex) { return BadRequest(new DBResultMessage() { Status = DBResult.error.ToString(), ErrorMessage = DataOperations.GetUserApiErrMessage(ex) }); }
         }
 
-        [HttpGet("/ServerManagement/AutoSchedulerServerStatus")]
+        [HttpGet("/ServerApi/ManagementServices/AutoSchedulerServerStatus")]
         public async Task<IActionResult> ServerSchedulerStatus() {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
@@ -61,7 +61,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// Core Server Restart Control Api
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/ServerManagement/CoreServerRestart")]
+        [HttpGet("/ServerApi/ManagementServices/CoreServerRestart")]
         public async Task<string> ServerRestart() {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
@@ -78,7 +78,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// FtpServerStart Api
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/ServerManagement/FtpServerStart")]
+        [HttpGet("/ServerApi/ManagementServices/FtpServerStart")]
         public async Task<string> FtpServerStart() {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
@@ -97,7 +97,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// FtpServerStop Api
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/ServerManagement/FtpServerStop")]
+        [HttpGet("/ServerApi/ManagementServices/FtpServerStop")]
         public async Task<string> FtpServerStop() {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {
@@ -118,7 +118,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// FTP Server Status
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/ServerManagement/FtpServerStatus")]
+        [HttpGet("/ServerApi/ManagementServices/FtpServerStatus")]
         public async Task<IActionResult> FtpServerStatus() {
             try {
                 if (ServerApiServiceExtension.IsAdmin()) {

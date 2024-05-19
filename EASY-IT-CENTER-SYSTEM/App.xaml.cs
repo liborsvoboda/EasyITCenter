@@ -125,7 +125,7 @@ namespace EasyITSystemCenter {
             if (!silent) {
                 MetroWindow metroWindow = Current.MainWindow as MetroWindow;
                 MetroDialogSettings settings = new MetroDialogSettings() { AffirmativeButtonText = metroWindow.Resources["yes"].ToString(), NegativeButtonText = metroWindow.Resources["no"].ToString() };
-                MessageDialogResult result = await metroWindow.ShowMessageAsync(metroWindow.Resources["closeAppTitle"].ToString(), metroWindow.Resources["closeAppQuestion"].ToString(), MessageDialogStyle.AffirmativeAndNegative, settings);
+                MessageDialogResult result = metroWindow.ShowModalMessageExternal(metroWindow.Resources["closeAppTitle"].ToString(), metroWindow.Resources["closeAppQuestion"].ToString(), MessageDialogStyle.AffirmativeAndNegative, settings);
                 if (result == MessageDialogResult.Affirmative) ApplicationQuit();
             }
             else { ApplicationQuit(); }

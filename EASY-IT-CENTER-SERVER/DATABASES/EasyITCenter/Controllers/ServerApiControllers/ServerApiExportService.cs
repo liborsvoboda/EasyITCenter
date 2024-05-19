@@ -5,54 +5,54 @@ namespace EasyITCenter.ServerCoreDBSettings {
 
     [Authorize]
     [ApiController]
-    [Route("ServerApi/Export")]
+    [Route("ServerApi")]
      //[ApiExplorerSettings(IgnoreApi = true)]
-    public class ServerApiExportsControllers : ControllerBase {
+    public class ServerApiExportService : ControllerBase {
         private EasyITCenterContext Context { get; }
 
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
-        public ServerApiExportsControllers(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment, EasyITCenterContext context) {
+        public ServerApiExportService(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment, EasyITCenterContext context) {
             _hostingEnvironment = hostingEnvironment;
             Context = context;
         }
 
         //TODO MODIFY FOR ANY USER CAN HAVE CUSTOM PORTAL
 
-        [HttpGet("/ServerApi/Export/ExportWebPortal")]
-        public async Task<IActionResult> ExportWebPortal() {
-            try {
-                List<WebMenuList> data;
-                using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) 
-                    { data = new EasyITCenterContext().WebMenuLists.ToList(); }
+        //[HttpGet("/ServerApi/Export/ExportWebPortal")]
+        //public async Task<IActionResult> ExportWebPortal() {
+        //    try {
+        //        List<WebMenuList> data;
+        //        using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) 
+        //            { data = new EasyITCenterContext().WebMenuLists.ToList(); }
 
-                FileOperations.CreatePath(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages"));
-                FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.Startup_path, "Export"));
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "metro"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", "metro"));
-                data.ForEach(menuItem => {
-                    try {
-                        HtmlWeb hw = new HtmlWeb();
-                        HtmlDocument doc = hw.Load((Request.IsHttps ? "https" : "http") + "://" + Request.Host + "/" + DataOperations.RemoveWhitespace(menuItem.Id + "-" + menuItem.Name));
-                        doc.Save(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", DataOperations.RemoveWhitespace(menuItem.Id + "-" + menuItem.Name) + ".html"), Encoding.UTF8);
-                    } catch { }
-                });
+        //        FileOperations.CreatePath(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages"));
+        //        FileOperations.ClearFolder(Path.Combine(ServerRuntimeData.Startup_path, "Export"));
+        //        FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, "metro"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", "metro"));
+        //        data.ForEach(menuItem => {
+        //            try {
+        //                HtmlWeb hw = new HtmlWeb();
+        //                HtmlDocument doc = hw.Load((Request.IsHttps ? "https" : "http") + "://" + Request.Host + "/" + DataOperations.RemoveWhitespace(menuItem.Id + "-" + menuItem.Name));
+        //                doc.Save(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages", DataOperations.RemoveWhitespace(menuItem.Id + "-" + menuItem.Name) + ".html"), Encoding.UTF8);
+        //            } catch { }
+        //        });
 
-                ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages.zip"));
-                var zipData = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages.zip"));
+        //        ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages.zip"));
+        //        var zipData = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages.zip"));
 
-                if (data != null) { return File(zipData, "application/x-zip-compressed", "Webpages.zip"); }
-                else { return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") }); }
-            } catch (Exception ex) { return BadRequest(new { message = DataOperations.GetSystemErrMessage(ex) }); }
-        }
+        //        if (data != null) { return File(zipData, "application/x-zip-compressed", "Webpages.zip"); }
+        //        else { return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") }); }
+        //    } catch (Exception ex) { return BadRequest(new { message = DataOperations.GetSystemErrMessage(ex) }); }
+        //}
 
         /// <summary>
         /// Update Translation Table By All Tables and Field Names For Export Offline Language
         /// Dictionary CZ for System
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/ServerApi/Export/XamlCz")]
+        [HttpGet("/ServerApi/ExportServices/XamlCz")]
         public async Task<IActionResult> ExportXamlCz() {
             try {
-                new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC SpOperationFillTranslationTableList;");
+                new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericDataList>("EXEC SpOperationFillTranslationTableList;");
 
                 List<SystemTranslationList> data = null;
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) { data = new EasyITCenterContext().SystemTranslationLists.OrderBy(a => a.SystemName).ToList(); }
@@ -73,10 +73,10 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// Dictionary EN for System
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/ServerApi/Export/XamlEn")]
+        [HttpGet("/ServerApi/ExportServices/XamlEn")]
         public async Task<IActionResult> ExportXamlEn() {
             try {
-                new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericObject>("EXEC SpOperationFillTranslationTableList;");
+                new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericDataList>("EXEC SpOperationFillTranslationTableList;");
 
                 List<SystemTranslationList> data = null;
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) { data = new EasyITCenterContext().SystemTranslationLists.OrderBy(a => a.SystemName).ToList(); }
@@ -99,8 +99,8 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// on every Web servers Without Needs anythink
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/ServerApi/Export/ExportMinimalStaticWebPages")]
-        public async Task<IActionResult> ExportMinimalStaticWebPages() {
+        [HttpGet("/ServerApi/ExportServices/ExportStaticWebPortal")]
+        public async Task<IActionResult> ExportStaticWebPortal() {
             try {
 
                 FileOperations.CreatePath(Path.Combine(ServerRuntimeData.Startup_path, "Export"));
@@ -128,7 +128,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// Database Dgml Schema
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/ServerApi/Export/Dgml")]
+        [HttpGet("/ServerApi/ExportServices/DgmlDatabaseSchema")]
         public IActionResult GetDgml() {
             if (ServerConfigSettings.ModuleDbDiagramGeneratorEnabled) {
                 var response = File(Encoding.UTF8.GetBytes(new EasyITCenterContext().AsDgml()), MimeTypes.GetMimeType("DBschema.dgml"), "DBschema.dgml");
@@ -142,7 +142,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// Get Full DataBase SQL Script
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/ServerApi/Export/Sql")]
+        [HttpGet("/ServerApi/ExportServices/SqlDatabaseSchema")]
         public IActionResult Get() {
             if (ServerConfigSettings.ModuleDbDiagramGeneratorEnabled) {
                 var response = File(Encoding.UTF8.GetBytes(Context.AsSqlScript()), MimeTypes.GetMimeType("DBschema.sql"), "DBschema.sql");

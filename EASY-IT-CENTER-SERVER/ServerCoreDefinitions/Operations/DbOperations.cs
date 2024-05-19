@@ -82,8 +82,8 @@ namespace EasyITCenter.ServerCoreStructure {
         /// </summary>
         /// <param name="modulePath"></param>
         /// <returns></returns>
-        public static ServerModuleAndServiceList? CheckServerModuleExists(string modulePath) {
-            return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? CheckServerModuleOffline(modulePath) : CheckServerModuleOnline(modulePath);
+        public static ServerModuleAndServiceList? CheckDefinedWebPageExists(string modulePath) {
+            return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? CheckDefinedWebPageOffline(modulePath) : CheckDefinedWebPageOnline(modulePath);
         }
 
 
@@ -93,8 +93,8 @@ namespace EasyITCenter.ServerCoreStructure {
         /// </summary>
         /// <param name="serverPath"></param>
         /// <returns></returns>
-        public static List<ServerStaticOrMvcDefPathList>? CheckStaticOrMvcDefPath(string serverPath) {
-            return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? CheckStaticOrMvcDefPathOffline(serverPath) : CheckStaticOrMvcDefPathOnline(serverPath);
+        public static List<ServerStaticOrMvcDefPathList>? CheckDBServerApiRule(string serverPath) {
+            return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? CheckDBServerApiRuleOffline(serverPath) : CheckDBServerApiRuleOnline(serverPath);
         }
 
         
@@ -237,7 +237,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// </summary>
         /// <param name="modulePath"></param>
         /// <returns></returns>
-        private static ServerModuleAndServiceList? CheckServerModuleOffline(string modulePath) {
+        private static ServerModuleAndServiceList? CheckDefinedWebPageOffline(string modulePath) {
             int index = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == new List<ServerModuleAndServiceList>().GetType());
 
             return ((List<ServerModuleAndServiceList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => a.UrlSubPath?.ToLower() == modulePath.ToLower()).FirstOrDefault();
@@ -250,7 +250,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// </summary>
         /// <param name="modulePath"></param>
         /// <returns></returns>
-        private static ServerModuleAndServiceList? CheckServerModuleOnline(string modulePath) {
+        private static ServerModuleAndServiceList? CheckDefinedWebPageOnline(string modulePath) {
             return new EasyITCenterContext().ServerModuleAndServiceLists.Where(a => a.UrlSubPath.ToLower() == modulePath.ToLower()).FirstOrDefault();
         }
 
@@ -263,7 +263,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// </summary>
         /// <param name="serverPath"></param>
         /// <returns></returns>
-        private static List<ServerStaticOrMvcDefPathList>? CheckStaticOrMvcDefPathOffline(string serverPath) {
+        private static List<ServerStaticOrMvcDefPathList>? CheckDBServerApiRuleOffline(string serverPath) {
             int index = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == new List<ServerStaticOrMvcDefPathList>().GetType());
             serverPath = (serverPath.StartsWith("/") ? serverPath.Substring(1).ToLower() : serverPath.ToLower());
 
@@ -279,7 +279,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// </summary>
         /// <param name="serverPath"></param>
         /// <returns></returns>
-        private static List<ServerStaticOrMvcDefPathList>? CheckStaticOrMvcDefPathOnline(string serverPath) {
+        private static List<ServerStaticOrMvcDefPathList>? CheckDBServerApiRuleOnline(string serverPath) {
             serverPath = (serverPath.StartsWith("/") ? serverPath.Substring(1).ToLower() : serverPath.ToLower());
             return new EasyITCenterContext().ServerStaticOrMvcDefPathLists.Where(a => serverPath.StartsWith(a.WebRootSubPath.ToLower()) && a.IsStaticOrMvcDefOnly && a.Active).ToList();
         }

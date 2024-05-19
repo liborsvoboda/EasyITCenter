@@ -5,7 +5,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
     /// </summary>
     [AllowAnonymous]
     [ApiController]
-    [Route("ServerApi/WS")]
+    [Route("ServerApi")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ServerApiWebSocketControllers : ControllerBase {
         private static ILogger<ServerApiWebSocketControllers> _logger;
@@ -18,7 +18,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("/ServerApi/WS/{socketAPIPath}")]
+        [HttpGet("/ServerApi/WebSocketServices/{socketAPIPath}")]
         public async Task GetBySocketAPIPath(string socketAPIPath) {
             if (HttpContext.WebSockets.IsWebSocketRequest) {
                 using WebSocket? webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
@@ -34,7 +34,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// WebSocket Registration Connection API Example
         /// </summary>
         /// <returns></returns>
-        [HttpGet("/ServerApi/WS")]
+        [HttpGet("/ServerApi/WebSocketServices")]
         public async Task Get() {
             if (HttpContext.WebSockets.IsWebSocketRequest) {
                 using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();

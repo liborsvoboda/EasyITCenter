@@ -200,7 +200,7 @@ namespace EasyITSystemCenter.Pages {
         private async void BtnSendTestEmail_Click(object sender, RoutedEventArgs e) {
             try {
                 SystemOperations.SendMailWithServerSetting(await DBOperations.DBTranslation("TestEmailFrom") + " " + App.ServerSetting.FirstOrDefault(a => a.Key == "SpecialServerServiceName").Value);
-                DBResultMessage dBResultMessage = await CommApi.GetApiRequest<DBResultMessage>(ApiUrls.ServerApi, "Services/Email/" + await DBOperations.DBTranslation("TestEmailFrom") + " " + App.ServerSetting.FirstOrDefault(a => a.Key == "SpecialServerServiceName").Value + " API", App.UserData.Authentification.Token);
+                DBResultMessage dBResultMessage = await CommApi.GetApiRequest<DBResultMessage>(ApiUrls.ServerApi, "EmailServices/GetMessenger/" + await DBOperations.DBTranslation("TestEmailFrom") + " " + App.ServerSetting.FirstOrDefault(a => a.Key == "SpecialServerServiceName").Value + " API", App.UserData.Authentification.Token);
                 { await MainWindow.ShowMessageOnMainWindow(false, dBResultMessage.ErrorMessage); }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }

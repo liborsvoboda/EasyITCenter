@@ -10,6 +10,17 @@ https://github.com/JetLightStudio/NetCoreCharts
 https://github.com/mattosaurus/ChartJSCore
 
 
+
+WebView Easy DEv
+https://www.vbforums.com/showthread.php?902658-Visual-Basic-NET-Using-a-WebView2-to-Render-UI-for-Desktop-Applications
+https://github.com/michael-russin/webview2-control/tree/master
+https://github.com/R2D221/WebView2.DOM
+https://github.com/ChromiumDotNet/WebView2.DevTools.Dom
+https://github.com/ProKn1fe/WebView2.Runtime
+
+
+
+
 řešení pupetier
 https://github.com/khachornchit/puppeteer/tree/master/examples
 
