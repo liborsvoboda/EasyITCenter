@@ -16,6 +16,6 @@ using System.Windows;
     ResourceDictionaryLocation.None,
     ResourceDictionaryLocation.SourceAssembly
 )]
-[assembly: AssemblyVersion("1.9.15.2367")]
-[assembly: AssemblyFileVersion("1.9.15.2367")]
+[assembly: AssemblyVersion("1.9.18.2401")]
+[assembly: AssemblyFileVersion("1.9.18.2401")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]

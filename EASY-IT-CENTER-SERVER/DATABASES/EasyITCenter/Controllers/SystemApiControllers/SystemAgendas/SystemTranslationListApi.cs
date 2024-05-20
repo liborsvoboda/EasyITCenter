@@ -13,7 +13,7 @@
                 data = new EasyITCenterContext().SystemTranslationLists.OrderByDescending(a=>a.Id).ToList();
             }
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
         [HttpGet("/EasyITCenterSystemTranslationList/Filter/{filter}")]
@@ -25,7 +25,7 @@
                 data = new EasyITCenterContext().SystemTranslationLists.FromSqlRaw("SELECT * FROM SystemTranslationList WHERE 1=1 AND " + filter.Replace("+", " ")).AsNoTracking().ToList();
             }
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
         [HttpGet("/EasyITCenterSystemTranslationList/{id}")]
@@ -37,7 +37,7 @@
                 data = new EasyITCenterContext().SystemTranslationLists.Where(a => a.Id == id).First();
             }
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
         [HttpPut("/EasyITCenterSystemTranslationList")]

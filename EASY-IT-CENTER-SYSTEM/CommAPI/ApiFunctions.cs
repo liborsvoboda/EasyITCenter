@@ -2,11 +2,14 @@
 using EasyITSystemCenter.GlobalOperations;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace EasyITSystemCenter.Api {
 
@@ -23,12 +26,12 @@ namespace EasyITSystemCenter.Api {
             }
         }
 
-        public static async Task<T> GetApiRequest<T>(ApiUrls apiUrl, string key = null, string token = null) where T : new() {
+        public static async Task<T> GetApiRequest<T>(ApiUrls apiUrl, string UrlPathExtension = null, string token = null) where T : new() {
             string json;
             using (HttpClient httpClient = new HttpClient()) {
                 try {
                     if (token != null) { httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); }
-                    json = await httpClient.GetStringAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(key) ? "/" + key : ""));
+                    json = await httpClient.GetStringAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(UrlPathExtension) ? "/" + UrlPathExtension : ""));
                     return JsonConvert.DeserializeObject<T>(json);
                 } catch (Exception ex) {
                     if (ex.Message.Contains("401 (Unauthorized)")) {
@@ -40,12 +43,12 @@ namespace EasyITSystemCenter.Api {
             }
         }
 
-        public static async Task<DBResultMessage> PostApiRequest(ApiUrls apiUrl, HttpContent body, string key = null, string token = null) {
+        public static async Task<DBResultMessage> PostApiRequest(ApiUrls apiUrl, HttpContent body, string UrlPathExtension = null, string token = null) {
             using (HttpClient httpClient = new HttpClient()) {
                 DBResultMessage result;
                 try {
                     if (token != null) { httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); }
-                    HttpResponseMessage json = await httpClient.PostAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(key) ? "/" + key : ""), body);
+                    HttpResponseMessage json = await httpClient.PostAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(UrlPathExtension) ? "/" + UrlPathExtension : ""), body);
                     result = JsonConvert.DeserializeObject<DBResultMessage>(await json.Content.ReadAsStringAsync());
                     if (result != null && result.ErrorMessage == null) { result.ErrorMessage = await json.Content.ReadAsStringAsync(); }
                     else if (result == null && json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
@@ -58,12 +61,12 @@ namespace EasyITSystemCenter.Api {
             }
         }
 
-        public static async Task<DBResultMessage> PutApiRequest(ApiUrls apiUrl, HttpContent body, string key = null, string token = null) {
+        public static async Task<DBResultMessage> PutApiRequest(ApiUrls apiUrl, HttpContent body, string UrlPathExtension = null, string token = null) {
             using (HttpClient httpClient = new HttpClient()) {
                 DBResultMessage result;
                 try {
                     if (token != null) { httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); }
-                    HttpResponseMessage json = await httpClient.PutAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(key) ? "/" + key : ""), body);
+                    HttpResponseMessage json = await httpClient.PutAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(UrlPathExtension) ? "/" + UrlPathExtension : ""), body);
                     result = JsonConvert.DeserializeObject<DBResultMessage>(await json.Content.ReadAsStringAsync());
                     if (result != null && result.ErrorMessage == null) { result.ErrorMessage = await json.Content.ReadAsStringAsync(); }
                     else if (result == null && json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
@@ -76,12 +79,12 @@ namespace EasyITSystemCenter.Api {
             }
         }
 
-        public static async Task<DBResultMessage> DeleteApiRequest(ApiUrls apiUrl, string key = null, string token = null) {
+        public static async Task<DBResultMessage> DeleteApiRequest(ApiUrls apiUrl, string UrlPathExtension = null, string token = null) {
             using (HttpClient httpClient = new HttpClient()) {
                 DBResultMessage result;
                 try {
                     if (token != null) { httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); }
-                    HttpResponseMessage json = await httpClient.DeleteAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(key) ? "/" + key : ""));
+                    HttpResponseMessage json = await httpClient.DeleteAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(UrlPathExtension) ? "/" + UrlPathExtension : ""));
                     result = JsonConvert.DeserializeObject<DBResultMessage>(await json.Content.ReadAsStringAsync());
                     if (result != null && result.ErrorMessage == null) { result.ErrorMessage = await json.Content.ReadAsStringAsync(); }
                     else if (result == null && json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
@@ -100,6 +103,21 @@ namespace EasyITSystemCenter.Api {
                     string json = await httpClient.GetStringAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + ApiUrls.EasyITCenterBackendCheck);
                     return true;
                 } catch { return false; }
+            }
+        }
+
+
+
+        public static async Task<DataTable> PostCustomListApiRequest(ApiUrls apiUrl, HttpContent body, string UrlPathExtension = null, string token = null) {
+            using (HttpClient httpClient = new HttpClient()) {
+                DataTable result = new DataTable();
+                try {
+                    if (token != null) { httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); }
+                    HttpResponseMessage json = await httpClient.PostAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(UrlPathExtension) ? "/" + UrlPathExtension : ""), body);
+                    result = JsonConvert.DeserializeObject<DataTable>(await json.Content.ReadAsStringAsync());
+
+                } catch (Exception ex) { }
+                return result;
             }
         }
     }

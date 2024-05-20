@@ -25,6 +25,19 @@ namespace EasyITCenter.ServerCoreStructure {
 
 
         /// <summary>
+        /// Create Object Type By Type Name
+        /// Its need For Generic APi For Full Database Support
+        /// </summary>
+        /// <param name="className"></param>
+        /// <returns></returns>
+        public static object CreateObjectTypeByTypeName(string className) {
+            var assembly = Assembly.GetExecutingAssembly();
+            var type = assembly.GetTypes().First(t => t.Name == className);
+            return Activator.CreateInstance(type);
+        }
+
+        
+        /// <summary>
         /// Change First Character of String
         /// </summary>
         /// <param name="str">The string.</param>

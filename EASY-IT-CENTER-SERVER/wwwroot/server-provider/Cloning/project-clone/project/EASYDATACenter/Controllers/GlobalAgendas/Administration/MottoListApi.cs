@@ -30,7 +30,7 @@ namespace EASYDATACenter.Controllers {
                 data = new EASYDATACenterContext().MottoLists.FromSqlRaw("SELECT * FROM MottoList WHERE 1=1 AND " + filter.Replace("+", " ")).AsNoTracking().ToList();
             }
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
         [HttpGet("/GLOBALNETMottoList/{id}")]
@@ -42,7 +42,7 @@ namespace EASYDATACenter.Controllers {
                 data = new EASYDATACenterContext().MottoLists.Where(a => a.Id == id).First();
             }
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
         [Authorize]

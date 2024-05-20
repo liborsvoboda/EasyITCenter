@@ -51,7 +51,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         [Consumes("application/json")]
         public async Task<string> InsertGenericList([FromBody] Tentity record) {
             try {
-                var data = await db.AddAsync(record);
+                EntityEntry<Tentity>? data = await db.AddAsync(record);
                 int result = await data.Context.SaveChangesAsync();
 
                 int recId = 0;

@@ -14,7 +14,7 @@
                 data = new EasyITCenterContext().SystemDocumentTypeLists.ToList();
             }
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
         [HttpGet("/EasyITCenterSystemDocumentTypeList/Filter/{filter}")]
@@ -27,7 +27,7 @@
                 .AsNoTracking().ToList();
             }
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
         [HttpGet("/EasyITCenterSystemDocumentTypeList/{id}")]
@@ -39,7 +39,7 @@
                 data = new EasyITCenterContext().SystemDocumentTypeLists.Where(a => a.Id == id).First();
             }
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
         [HttpPut("/EasyITCenterSystemDocumentTypeList")]

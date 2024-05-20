@@ -16,7 +16,7 @@ namespace EASYDATACenter.Controllers {
                 data = new EASYDATACenterContext().DocumentTypeLists.ToList();
             }
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
         [HttpGet("/GLOBALNETDocumentTypeList/Filter/{filter}")]
@@ -29,7 +29,7 @@ namespace EASYDATACenter.Controllers {
                 .AsNoTracking().ToList();
             }
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
         [HttpGet("/GLOBALNETDocumentTypeList/{id}")]
@@ -41,7 +41,7 @@ namespace EASYDATACenter.Controllers {
                 data = new EASYDATACenterContext().DocumentTypeLists.Where(a => a.Id == id).First();
             }
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
         [HttpPut("/GLOBALNETDocumentTypeList")]

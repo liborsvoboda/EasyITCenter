@@ -57,7 +57,7 @@ namespace EasyITSystemCenter.Pages {
                 _ = FormOperations.TranslateFormFields(contextMenu);
                 _ = FormOperations.TranslateFormFields(gd_codeLibraryForm);
                 _ = FormOperations.TranslateSubObjectsNameToToolTip(toolBar);
-                //_ = DataOperations.TranslateSubObjectsNameToToolTip(filePanel);
+
                 
 
                 lb_id.Header = DBOperations.DBTranslation("id").GetAwaiter().GetResult();
@@ -261,7 +261,7 @@ namespace EasyITSystemCenter.Pages {
                 DBResultMessage dBResult;
                 WebCodeLibraryList codeItem = new WebCodeLibraryList() {
                     Id = 0, Name = txt_codeName.Text, Description = txt_description.Text,
-                    Content = codeReview.Text, InheritedCodeType = cb_codeType.SelectedValue.ToString(),
+                    Content = codeReview.Text, InheritedCodeType = ((SolutionMixedEnumList)cb_codeType.SelectedItem).Name.ToString(),
                     IsCompletion = true, UserId = App.UserData.Authentification.Id, TimeStamp = DateTimeOffset.Now.DateTime
                 };
                 string json = JsonConvert.SerializeObject(codeItem);
@@ -273,8 +273,6 @@ namespace EasyITSystemCenter.Pages {
                 } else { await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage); }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
-
-
         private void BtnCloseCodePopup_Click(object sender, RoutedEventArgs e) => pop_codeLibraryForm.IsOpen = false;
         private void BtnCancel_Click(object sender, RoutedEventArgs e) {
             selectedRecord = (DgListView.SelectedItems.Count > 0) ? (WebConfiguratorList)DgListView.SelectedItem : new WebConfiguratorList();
@@ -341,7 +339,7 @@ namespace EasyITSystemCenter.Pages {
 
 
         private void ShowComlpetion() {
-            completionWindow = new CompletionWindow(codeEditor.TextArea);
+            completionWindow = new CompletionWindow(codeEditor.TextArea); completionWindow.Width = 300;
             IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
             webCodeLibraryList.Where(a => a.IsCompletion).ToList().ForEach(codeHelp => { data.Add(new MyCompletionData(codeHelp.Content)); });
             if (data.Count > 0) { completionWindow.Show(); completionWindow.Closed += delegate { completionWindow = null; }; }

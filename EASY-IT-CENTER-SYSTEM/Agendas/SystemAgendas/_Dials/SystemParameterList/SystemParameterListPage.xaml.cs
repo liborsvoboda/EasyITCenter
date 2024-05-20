@@ -202,7 +202,7 @@ namespace EasyITSystemCenter.Pages {
         private void Check_Click(object sender, RoutedEventArgs e) {
             try {
                 btn_save.IsEnabled = false;
-                var test = MathTypeOperations.CheckTypeValue((string)cb_type.SelectedValue, txt_value.Text);
+                var test = ProgrammaticOperations.ConvertStringTypeValueToSpecTypeByKnownTypeName((string)cb_type.SelectedValue, txt_value.Text);
                 btn_save.IsEnabled = test.Item2 && (App.UserData.Authentification.Role == "Admin" || selectedRecord.UserId == App.UserData.Authentification.Id);
                 lbl_paramCheckResult.Content = (string)test.Item1;
             } catch { }

@@ -10,7 +10,7 @@ namespace EasyITCenter.Controllers {
             List<CustomString> data = new();
             data = new EasyITCenterContext().EasyITCenterCollectionFromSql<CustomString>("EXEC GetTables;");
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true });
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
     }
 }

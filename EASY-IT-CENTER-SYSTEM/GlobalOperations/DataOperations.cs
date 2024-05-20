@@ -111,10 +111,19 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
         /// <returns></returns>
+        public static List<GenericTable> ConvertGenericClassListToStandard<T>(T data) {
+            return JsonSerializer.Deserialize<List<GenericTable>>(JsonSerializer.Serialize(data));
+        }
+
+        /// <summary>
+        /// Convert Generic Tabla To Standard Table For Use Standard System Fields
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public static GenericTable ConvertGenericClassToStandard<T>(T data) {
             return JsonSerializer.Deserialize<GenericTable>(JsonSerializer.Serialize(data));
         }
-
 
         /// <summary>
         /// Convert String to Enum

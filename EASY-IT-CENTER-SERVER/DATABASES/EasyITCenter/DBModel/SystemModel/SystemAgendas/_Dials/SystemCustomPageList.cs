@@ -42,6 +42,9 @@ namespace EasyITCenter.DBModel
         public string? ColumnName { get; set; }
         [Column("UseIOOverDom")]
         public bool UseIooverDom { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? InheritedSetName { get; set; }
         [Column("DOMHtmlElementName")]
         [StringLength(255)]
         [Unicode(false)]

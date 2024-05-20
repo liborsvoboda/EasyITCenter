@@ -141,6 +141,8 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string Translate { get; set; }
     }
 
+    public interface IGenericRepository<T> where T : class { };
+    public class GenericRepository<T> : IGenericRepository<T> where T : class { };
 
     /// <summary>
     /// Generic Table Standard Fieds Public Class For Get Informations By System

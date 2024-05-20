@@ -4,7 +4,10 @@ using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
+using NanoByte.Common.Values;
 using Newtonsoft.Json;
+using SharpCompress;
+using SimpleBrowser;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
@@ -16,6 +19,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using JsonUtility;
+using LiveCharts.Helpers;
+using static SharpDX.Toolkit.Graphics.Buffer;
+
 
 namespace EasyITSystemCenter.Pages {
 
@@ -27,7 +34,6 @@ namespace EasyITSystemCenter.Pages {
         private List<SystemCustomPageList> systemCustomPageList = new List<SystemCustomPageList>();
         private List<SolutionMixedEnumList> solutionMixedEnumList = new List<SolutionMixedEnumList>();
         private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
-        private List<SystemMenuList> systemMenuList = new List<SystemMenuList>();
         private List<GenericDataList> systemTableList = new List<GenericDataList>();
         private List<GenericDataList> tableSchema = new List<GenericDataList>();
 
@@ -54,13 +60,10 @@ namespace EasyITSystemCenter.Pages {
                 systemTableList = await CommApi.GetApiRequest<List<GenericDataList>>(ApiUrls.ServerApi, "DatabaseServices/SpGetTableList", App.UserData.Authentification.Token);
                 solutionMixedEnumList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/SystemAgendaTypes", App.UserData.Authentification.Token);
                 systemCustomPageList = await CommApi.GetApiRequest<List<SystemCustomPageList>>(ApiUrls.EasyITCenterSystemCustomPageList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
-                systemMenuList = await CommApi.GetApiRequest<List<SystemMenuList>>(ApiUrls.EasyITCenterSystemMenuList,  null, App.UserData.Authentification.Token);
 
 
                 systemTableList.ForEach(async table => {
-                    if (systemMenuList.Where(a => a.FormPageName == table.Data).Count() == 0) {
-                        systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.Data, Translate = await DBOperations.DBTranslation(table.Data) });
-                    }
+                    systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.Data, Translate = await DBOperations.DBTranslation(table.Data) });
                 });
                 
                 cb_InheritedFormType.ItemsSource = solutionMixedEnumList;
@@ -95,6 +98,7 @@ namespace EasyITSystemCenter.Pages {
                     else if (headername == "GetWebDataJscriptCmd".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 17; }
                     else if (headername == "UseIIOverDom".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 18; }
                     else if (headername == "DomhtmlElementName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 19; }
+                    else if (headername == "InheritedSetName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 20; }
                     
                     else if (headername == "Description".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 8; }
                     else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
@@ -107,23 +111,20 @@ namespace EasyITSystemCenter.Pages {
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
 
+
+
         public void Filter(string filter) {
             try {
+                bool status = false;
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
                     SystemCustomPageList search = e as SystemCustomPageList;
-                    return search.PageName.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(search.InheritedFormType) && search.InheritedFormType.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(search.HelpTabUrl) && search.HelpTabUrl.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(search.Description) && search.Description.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(search.StartupUrl) && search.StartupUrl.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(search.StartupSubFolder) && search.StartupSubFolder.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(search.StartupCommand) && search.StartupCommand.ToLower().Contains(filter.ToLower())
-                    ;
-                };
-            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                    return search.ToJson().ToLower().Contains(filter.ToLower());
+                }; }  catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
+
+
 
         public void NewRecord() {
             selectedRecord = new SystemCustomPageList();
@@ -183,6 +184,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.StartupUrl = txt_startupUrl.Text;
                 selectedRecord.HelpTabUrl = txt_helpTabUrl.Text;
 
+                selectedRecord.InheritedSetName = txt_InheritedSetName.Text;
                 selectedRecord.IsOwnServerUrl = (bool)chb_IsOwnServerUrl.IsChecked;
                 selectedRecord.StartupSubFolder = txt_startupSubFolder.Text;
                 selectedRecord.StartupCommand = txt_startupCommand.Text;
@@ -213,7 +215,11 @@ namespace EasyITSystemCenter.Pages {
                     SetRecord(null);
                 }
                 else { await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage); }
-            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+            } catch (Exception autoEx) {
+
+                await MainWindow.ShowMessageOnMainWindow(true, SystemOperations.GetExceptionMessagesAll(autoEx),false);
+                App.ApplicationLogging(autoEx);
+            }
         }
 
 
@@ -258,6 +264,7 @@ namespace EasyITSystemCenter.Pages {
                 txt_GetWebDataJscriptCmd.Text = selectedRecord.GetWebDataJscriptCmd;
                 txt_SetWebDataJscriptCmd.Text = selectedRecord.SetWebDataJscriptCmd;
 
+                txt_InheritedSetName.Text = selectedRecord.InheritedSetName;
                 txt_startupSubFolder.Text = selectedRecord.StartupSubFolder;
                 txt_startupCommand.Text = selectedRecord.StartupCommand;
 
@@ -290,7 +297,7 @@ namespace EasyITSystemCenter.Pages {
 
 
         private async void TableSelected(object sender, SelectionChangedEventArgs e) {
-            if (dataViewSupport.FormShown && cb_DbtableName.SelectedIndex > -1) {
+            if (dataViewSupport.FormShown) {
 
                 tableSchema = await CommApi.GetApiRequest<List<GenericDataList>>(ApiUrls.ServerApi, $"DatabaseServices/SpGetTableSchema/{((SystemTranslatedTableList)cb_DbtableName.SelectedItem).TableName}", App.UserData.Authentification.Token);
                 cb_ColumnName.ItemsSource = tableSchema;

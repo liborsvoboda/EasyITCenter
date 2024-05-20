@@ -35,7 +35,7 @@ namespace EasyITSystemCenter.Pages {
             btn_stop.Content = Resources["stop"].ToString();
 
             timer1Sec.Elapsed += Timer1sec_Elapsed;
-            me_videPlayer.Source = DataResources.GetMediaResource("speed.mp4");
+            me_videPlayer.Source = new Uri(Path.Combine(App.appRuntimeData.startupPath, "Data" ,"Media","speed.mp4"));
         }
 
         private void Timer1sec_Elapsed(object sender, ElapsedEventArgs e) {

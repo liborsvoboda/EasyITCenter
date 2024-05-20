@@ -1,16 +1,12 @@
-﻿using CefSharp;
-using EasyITSystemCenter.Api;
+﻿using EasyITSystemCenter.Api;
 using EasyITSystemCenter.Classes;
-using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
-using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Web.WebView2.Core;
-using MtrDev.WebView2.Interop;
-using Newtonsoft.Json;
+using SimpleBrowser;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -26,12 +22,18 @@ namespace EasyITSystemCenter.Pages {
     public partial class MltTblGenEsbSrvFormPage : UserControl {
 
         public static DataViewSupport dataViewSupport = new DataViewSupport();
-        public static List<GenericTable> selectedRecord = new List<GenericTable>();
+        public static Dictionary<string, object> selectedRecord = new Dictionary<string, object>();
 
+        IEnumerable<Dictionary<string, object>> definedDataList = new List<Dictionary<string, object>>().AsEnumerable();
         SystemCustomPageList systemCustomPageList = new SystemCustomPageList();
-        List<object> genericTableList = new List<object>();
+        List<SolutionMixedEnumList> solutionMixedEnumList = new List<SolutionMixedEnumList>();
         private Dictionary<string, string> webElement = new Dictionary<string, string>();
         WebView2DevToolsContext devToolsContext;
+
+
+
+
+
 
         public MltTblGenEsbSrvFormPage() {
             try {
@@ -46,12 +48,14 @@ namespace EasyITSystemCenter.Pages {
                 }
                 else {
 
-                    //Enabling By TabController After Inserted ID, Load Data On Startup Only
                     IsEnabled = false;
                     IsEnabledChanged += (s, e) => {
-                        if (IsEnabled && systemCustomPageList.Id == 0) {
+                        if (IsEnabled/* && systemCustomPageList.Id == 0*/) {
+                            UuidFromMainFormLoad();
+
+                            //Initiate Existing WebViewForms When Generated
                             webBrowser.CoreWebView2InitializationCompleted += WebBrowser_CoreWebView2InitializationCompleted;
-                            _ = webBrowser.EnsureCoreWebView2Async();
+                            _= webBrowser.EnsureCoreWebView2Async(); if (systemCustomPageList.ShowHelpTab) {_= helpBrowser.EnsureCoreWebView2Async(); }
                         }
                     };
                 }
@@ -65,10 +69,10 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-               
-                systemCustomPageList = await CommApi.GetApiRequest<SystemCustomPageList>(ApiUrls.EasyITCenterSystemCustomPageList, this.Uid.ToString(), App.UserData.Authentification.Token);
-               // systemCustomPageList = await CommApi.GetApiRequest<SystemCustomPageList>(ApiUrls.EasyITCenterSystemCustomPageList, this.Uid.ToString(), App.UserData.Authentification.Token);
 
+                if (systemCustomPageList.Id == 0) {
+                    systemCustomPageList = await CommApi.GetApiRequest<SystemCustomPageList>(ApiUrls.EasyITCenterSystemCustomPageList, this.Uid.ToString(), App.UserData.Authentification.Token);
+                }
                 _ = FormOperations.TranslateFormFields(ListView);
 
             }  catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
@@ -76,94 +80,34 @@ namespace EasyITSystemCenter.Pages {
             return true;
         }
 
-        //INIT SPA Solution + Help 
-        private async void WebBrowser_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e) {
+        //Start Loading and Generaing Process
+        private async void UuidFromMainFormLoad() {
             try {
-                await webBrowser.EnsureCoreWebView2Async();
-                await LoadDataList(); if (systemCustomPageList.ShowHelpTab) { _ = helpBrowser.EnsureCoreWebView2Async(); }
+                //Load Agenda Data
+                //await webBrowser.EnsureCoreWebView2Async();
+                await LoadDataList(); 
+                /*if (systemCustomPageList.ShowHelpTab) { _ = helpBrowser.EnsureCoreWebView2Async(); }*/
+
+                //Load DefinedForm Data + Inherider Dial
+                await GetGenericTableData();
+
+
 
                 //DOM Initiate
-                webElement = new Dictionary<string, string>();
-                webElement.Add(systemCustomPageList.ColumnName, "text");
-               
-
-                devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
-                var htmlDivElement = await devToolsContext.QuerySelectorAsync<HtmlDivElement>("#myDivElementId");
-                await htmlDivElement.SetInnerTextAsync("Welcome!");
-                await htmlDivElement.GetInnerTextAsync();
+                //webElement = new Dictionary<string, string>();
+                //webElement.Add(systemCustomPageList.ColumnName, "text");
+                //devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
+                //var htmlDivElement = await devToolsContext.QuerySelectorAsync<HtmlDivElement>("#myDivElementId");
+                //await htmlDivElement.SetInnerTextAsync("Welcome!");
+                //await htmlDivElement.GetInnerTextAsync();
 
 
 
-                webBrowser.Source = new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.StartupUrl);
-
-                webBrowser.CoreWebView2.Settings.AreDefaultScriptDialogsEnabled =
-                    webBrowser.CoreWebView2.Settings.AreHostObjectsAllowed = webBrowser.CoreWebView2.Settings.IsBuiltInErrorPageEnabled = webBrowser.CoreWebView2.Settings.IsNonClientRegionSupportEnabled =
-                    webBrowser.CoreWebView2.Settings.IsWebMessageEnabled = webBrowser.CoreWebView2.Settings.IsPinchZoomEnabled = webBrowser.CoreWebView2.Settings.IsGeneralAutofillEnabled =
-                    webBrowser.CoreWebView2.Settings.IsZoomControlEnabled = webBrowser.CoreWebView2.Settings.IsSwipeNavigationEnabled = webBrowser.CoreWebView2.Settings.IsStatusBarEnabled =
-                    webBrowser.CoreWebView2.Settings.IsScriptEnabled = true;
-
-                if (systemCustomPageList.DevModeEnabled) {
-                    webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
-                    helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
-                    webBrowser.CoreWebView2.OpenDevToolsWindow();
-                }
-                else {
-                    webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-                    if (systemCustomPageList.ShowHelpTab) { helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false; }
-                }
-                if (systemCustomPageList.ShowHelpTab) {
-                    ti_helpEditor.Visibility = Visibility.Visible;
-                    if (systemCustomPageList.ShowHelpTab) {
-                        helpBrowser.Source = new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.HelpTabUrl);
-                        if (systemCustomPageList.HelpTabShowOnly) {
-                            helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-                            helpBrowser.CoreWebView2.Settings.IsScriptEnabled = false; helpBrowser.CoreWebView2.Settings.IsSwipeNavigationEnabled = false;
-                            helpBrowser.CoreWebView2.Settings.IsZoomControlEnabled = false;
-                        }
-                    }
-                }
-
-                webBrowser.CoreWebView2.ContextMenuRequested += async delegate (object sender1, CoreWebView2ContextMenuRequestedEventArgs args) {
-                    IList<CoreWebView2ContextMenuItem> menuList = args.MenuItems;
-                    CoreWebView2ContextMenuItem openConsole = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("openConsole"), null, CoreWebView2ContextMenuItemKind.Command); openConsole.CustomItemSelected += openConsoleSelected;
-                    CoreWebView2ContextMenuItem openTaskManager = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("printPage"), null, CoreWebView2ContextMenuItemKind.Command); openTaskManager.CustomItemSelected += openTaskManagerSelected;
-                    menuList.Add(openConsole);
-                    menuList.Add(openTaskManager);
-                };
                 MainWindow.ProgressRing = Visibility.Hidden;
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
-        private void openConsoleSelected(object sender, object e) { webBrowser.CoreWebView2.OpenDevToolsWindow(); }
-        private void openTaskManagerSelected(object sender, object e) { webBrowser.CoreWebView2.ShowPrintUI(); }
 
-
-        //async void WebBrowserInitializeAsync() {
-        //    webBrowser.Source = new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.StartupUrl);
-        //    if (systemCustomPageList.DevModeEnabled) {
-        //        webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
-        //        helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
-        //        webBrowser.CoreWebView2.OpenDevToolsWindow();
-        //    }
-        //    else {
-        //        webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-        //        helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-        //    }
-        //    if (systemCustomPageList.ShowHelpTab) {
-        //        ti_helpEditor.Visibility = Visibility.Visible;
-        //        if (systemCustomPageList.ShowHelpTab) {
-        //            helpBrowser.Source = new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.HelpTabUrl);
-        //            if (systemCustomPageList.HelpTabShowOnly) {
-        //                helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-        //                helpBrowser.CoreWebView2.Settings.IsScriptEnabled = false; helpBrowser.CoreWebView2.Settings.IsSwipeNavigationEnabled = false;
-        //                helpBrowser.CoreWebView2.Settings.IsZoomControlEnabled = false;
-        //            }
-        //        }
-        //    }
-        //}
- 
-
-
-
+     
         private async void DgListView_Translate(object sender, EventArgs ex) {
             try {
                 ((DataGrid)sender).Columns.ToList().ForEach(async e => {
@@ -177,52 +121,53 @@ namespace EasyITSystemCenter.Pages {
 
         public void Filter(string filter) {
             try {
+                bool status = false;
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    SolutionWebsiteList search = e as SolutionWebsiteList;
-                    return search.WebsiteName.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(search.Description) && search.Description.ToLower().Contains(filter.ToLower());
+                    Dictionary<string, object> search = e as Dictionary<string, object>;
+                    return search.ToJson().ToLower().Contains(filter.ToLower());
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
 
+
+
         public void NewRecord() {
-            selectedRecord = new List<GenericTable>();
-            //dataViewSupport.SelectedRecordId = selectedRecord.Id;
+            selectedRecord = new Dictionary<string, object>();
+            dataViewSupport.SelectedRecordId = int.Parse(selectedRecord.FirstOrDefault(a => a.Key.ToLower() == "Id".ToLower()).Value.ToString());
             SetRecord(true);
         }
 
         public void EditRecord(bool copy) {
-            selectedRecord = (List<GenericTable>)DgListView.SelectedItem;
-            //dataViewSupport.SelectedRecordId = selectedRecord.Id;
+            selectedRecord = (Dictionary<string, object>)DgListView.SelectedItem;
+            dataViewSupport.SelectedRecordId = int.Parse(selectedRecord.FirstOrDefault(a => a.Key.ToLower() == "Id".ToLower()).Value.ToString());
             SetRecord(true, copy);
         }
 
         public async void DeleteRecord() {
-            selectedRecord = (List<GenericTable>)DgListView.SelectedItem;
-            /*
-            dataViewSupport.SelectedRecordId = selectedRecord.Id;
-            MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + selectedRecord.Id.ToString(), true);
+            selectedRecord = (Dictionary<string, object>)DgListView.SelectedItem;
+            dataViewSupport.SelectedRecordId = int.Parse(selectedRecord.FirstOrDefault(a => a.Key.ToLower() == "Id".ToLower()).Value.ToString());
+            MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + selectedRecord.FirstOrDefault(a => a.Key.ToLower() == "Id".ToLower()).Value.ToString(), true);
             if (result == MessageDialogResult.Affirmative) {
-                DBResultMessage dBResult = await CommApi.DeleteApiRequest(ApiUrls.SolutionWebsiteList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
+                DBResultMessage dBResult = await CommApi.DeleteApiRequest(ApiUrls.SolutionWebsiteList, selectedRecord.FirstOrDefault(a => a.Key.ToLower() == "Id".ToLower()).Value.ToString(), App.UserData.Authentification.Token);
                 if (dBResult.RecordCount == 0) await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage);
                 await LoadDataList(); SetRecord(false);
             }
-            */
+
         }
 
         private void DgListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
             if (DgListView.SelectedItems.Count == 0) return;
-            selectedRecord = (List<GenericTable>)DgListView.SelectedItem;
-            //dataViewSupport.SelectedRecordId = selectedRecord.Id;
+            selectedRecord = (Dictionary<string, object>)DgListView.SelectedItem;
+            dataViewSupport.SelectedRecordId = int.Parse(selectedRecord.FirstOrDefault(a => a.Key.ToLower() == "Id".ToLower()).Value.ToString());
             SetRecord(true);
         }
 
         private void DgListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (DgListView.SelectedItems.Count > 0) { selectedRecord = (List<GenericTable>)DgListView.SelectedItem; }
-            else { selectedRecord = new List<GenericTable>(); }
-            //dataViewSupport.SelectedRecordId = selectedRecord.Id;
+            if (DgListView.SelectedItems.Count > 0) { selectedRecord = (Dictionary<string, object>)DgListView.SelectedItem; }
+            else { selectedRecord = new Dictionary<string, object>(); }
+            dataViewSupport.SelectedRecordId = selectedRecord.Count == 0 ? 0 : int.Parse(selectedRecord.FirstOrDefault(a => a.Key.ToLower() == "Id".ToLower()).Value.ToString());
             SetRecord(false);
         }
 
@@ -240,7 +185,7 @@ namespace EasyITSystemCenter.Pages {
                 //selectedRecord.Active = (bool)chb_active.IsChecked;
                 //selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
-                string json = JsonConvert.SerializeObject(selectedRecord);
+                string json = Newtonsoft.Json.JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                 /*if (selectedRecord.Id == 0) {
                     dBResult = await CommApi.PutApiRequest(ApiUrls.SolutionWebsiteList, httpContent, null, App.UserData.Authentification.Token);
@@ -258,7 +203,7 @@ namespace EasyITSystemCenter.Pages {
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e) {
-            selectedRecord = (DgListView.SelectedItems.Count > 0) ? (List<GenericTable>)DgListView.SelectedItem : new List<GenericTable>();
+            selectedRecord = (DgListView.SelectedItems.Count > 0) ? (Dictionary<string, object>)DgListView.SelectedItem : new Dictionary<string, object>();
             SetRecord(false);
         }
 
@@ -273,24 +218,100 @@ namespace EasyITSystemCenter.Pages {
 
             chb_active.IsChecked = (selectedRecord.Id == 0) ? bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_activeNewInputDefault").Value) : selectedRecord.Active;
             */
+            int recId = selectedRecord.Count() == 0 || int.Parse(selectedRecord?.FirstOrDefault(a => a.Key.ToLower() == "Id".ToLower()).Value.ToString()) == null ? 0 : int.Parse(selectedRecord.FirstOrDefault(a => a.Key.ToLower() == "Id".ToLower()).Value.ToString());
+
             if (showForm != null && showForm == true) {
-                MainWindow.DataGridSelected = true; /*MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id;*/ MainWindow.DgRefresh = false;
+                MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = recId != 0;
+                MainWindow.dataGridSelectedId = recId; MainWindow.DgRefresh = false;
                 ListView.Visibility = Visibility.Hidden; ListForm.Visibility = Visibility.Visible; dataViewSupport.FormShown = true;
             }
             else {
-                MainWindow.DataGridSelected = true; /*MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id;*/ MainWindow.DgRefresh = true;
+                MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = recId != 0;
+                MainWindow.dataGridSelectedId = recId; MainWindow.DgRefresh = true;
                 ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; dataViewSupport.FormShown = showForm == null && !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key.ToLower() == "beh_closeformaftersave".ToLower()).Value);
             }
 
         }
 
 
-        //TODO Library implementation
-        //private void DataListDoubleClick(object sender, MouseButtonEventArgs e) {
-        //    if (lb_dataList.SelectedItems.Count > 0) {
-        //        //webHelp.Text = ((WebCodeLibraryList)lb_dataList.SelectedItem).Content;
-        //        ti_helpEditor.IsSelected = true;
-        //    }
-        //}
+
+        /// <summary>
+        /// Generic API Request
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool> GetGenericTableData() {
+
+            List<Dictionary<string, string>> parameters = new List<Dictionary<string, string>>();
+            parameters.Add(new Dictionary<string, string>() { { "SpProcedure", "SpGetTableDataList" } });
+            parameters.Add(new Dictionary<string, string>() { { "tableName", systemCustomPageList.DbtableName } });
+            parameters.Add(new Dictionary<string, string>() { { "userRole", App.UserData.Authentification.Role } });
+            parameters.Add(new Dictionary<string, string>() { { "userId", App.UserData.Authentification.Id.ToString() } });
+
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(parameters);
+            StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            DataTable genericTableList = await CommApi.PostCustomListApiRequest(ApiUrls.ServerApi, httpContent, "DatabaseServices/SpProcedure/GetGenericDataListbyParams", App.UserData.Authentification.Token);
+            
+            
+            //DgListView.ItemsSource = definedDataList = genericTableList.DefaultView;
+            DgListView.ItemsSource = genericTableList.DefaultView;
+
+            await LoadInheritedDataList();
+
+            //Generate User Form 
+            ListForm = GlobalGenerators.XamlFormGenerators.StandardXamlFormViewGenerator(ref ListForm, definedDataList, systemCustomPageList, solutionMixedEnumList);
+            ListForm.UpdateLayout();
+
+            return true;
+
+        }
+
+
+
+        private void WebBrowser_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e) {
+
+            webBrowser.Source = new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.StartupUrl);
+
+            if (systemCustomPageList.DevModeEnabled) {
+                webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
+                helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
+            }
+            else {
+                webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+                if (systemCustomPageList.ShowHelpTab) { helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false; }
+            }
+            if (systemCustomPageList.ShowHelpTab) {
+                ti_helpEditor.Visibility = Visibility.Visible;
+                if (systemCustomPageList.ShowHelpTab) {
+                    helpBrowser.Source = new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.HelpTabUrl);
+                    if (systemCustomPageList.HelpTabShowOnly) {
+                        helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+                    }
+                }
+            }
+
+            webBrowser.CoreWebView2.ContextMenuRequested += async delegate (object sender1, CoreWebView2ContextMenuRequestedEventArgs args) {
+                IList<CoreWebView2ContextMenuItem> menuList = args.MenuItems;
+                CoreWebView2ContextMenuItem openConsole = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("openConsole"), null, CoreWebView2ContextMenuItemKind.Command); openConsole.CustomItemSelected += openConsoleSelected;
+                CoreWebView2ContextMenuItem openTaskManager = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("printPage"), null, CoreWebView2ContextMenuItemKind.Command); openTaskManager.CustomItemSelected += openTaskManagerSelected;
+                menuList.Add(openConsole);
+                menuList.Add(openTaskManager);
+            };
+
+        }
+
+        private void openConsoleSelected(object sender, object e) { webBrowser.CoreWebView2.OpenDevToolsWindow(); }
+        private void openTaskManagerSelected(object sender, object e) { webBrowser.CoreWebView2.ShowPrintUI(); }
+
+
+        private async Task<bool> LoadInheritedDataList() {
+            if (systemCustomPageList?.InheritedSetName?.Length > 0) {
+                solutionMixedEnumList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/" + systemCustomPageList.InheritedSetName, App.UserData.Authentification.Token);
+            }
+
+         
+
+            return true;
+        }
+
     }
 }
