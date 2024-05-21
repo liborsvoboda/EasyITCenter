@@ -1,5 +1,6 @@
 ﻿using ICSharpCode.WpfDesign.Designer;
 using Newtonsoft.Json;
+using ReverseMarkdown.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -307,6 +308,20 @@ namespace EasyITSystemCenter.GlobalOperations {
                 File.WriteAllText(Path.Combine(path, "UltraVNC.ini"), iniFileContent);
                 return true;
             } catch { return false; }
+        }
+
+
+        /// <summary>
+        /// Return Full File path to the operating system default slashes.
+        /// !!! USE as + With Path Combine Path.Combine(yourpath) + ConvertSystemFilePathFromUrl(string webpath);
+        /// </summary>
+        /// <param name="webpath"></param>
+        public static string ConvertSystemFilePathFromUrl(string webpath) {
+            if (string.IsNullOrEmpty(webpath)) return webpath;
+            char slash = Path.DirectorySeparatorChar;
+            if (!webpath.StartsWith("/")) { webpath = $"/{webpath}"; }
+            webpath = webpath.Replace('/', slash).Replace('\\', slash).Replace(slash.ToString() + slash.ToString(), slash.ToString());
+            return webpath;
         }
     }
 }

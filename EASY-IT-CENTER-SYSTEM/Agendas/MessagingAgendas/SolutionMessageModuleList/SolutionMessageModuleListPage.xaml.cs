@@ -53,9 +53,9 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
 
-                messageTypeList = await CommApi.GetApiRequest<List<SolutionMessageTypeList>>(ApiUrls.SolutionMessageTypeList, null, App.UserData.Authentification.Token);
-                solutionUserList = await CommApi.GetApiRequest<List<SolutionUserList>>(ApiUrls.EasyITCenterSolutionUserList, null, App.UserData.Authentification.Token);
-                messageModuleList = await CommApi.GetApiRequest<List<SolutionMessageModuleList>>(ApiUrls.SolutionMessageModuleList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                messageTypeList = await CommunicationManager.GetApiRequest<List<SolutionMessageTypeList>>(ApiUrls.SolutionMessageTypeList, null, App.UserData.Authentification.Token);
+                solutionUserList = await CommunicationManager.GetApiRequest<List<SolutionUserList>>(ApiUrls.EasyITCenterSolutionUserList, null, App.UserData.Authentification.Token);
+                messageModuleList = await CommunicationManager.GetApiRequest<List<SolutionMessageModuleList>>(ApiUrls.SolutionMessageModuleList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
                 messageTypeList.ForEach(async messageType => { messageType.Translation = await DBOperations.DBTranslation(messageType.Name); });
 
@@ -136,7 +136,7 @@ namespace EasyITSystemCenter.Pages {
             dataViewSupport.SelectedRecordId = selectedRecord.Id;
             MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + selectedRecord.Id.ToString(), true);
             if (result == MessageDialogResult.Affirmative) {
-                DBResultMessage dBResult = await CommApi.DeleteApiRequest(ApiUrls.SolutionMessageModuleList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
+                DBResultMessage dBResult = await CommunicationManager.DeleteApiRequest(ApiUrls.SolutionMessageModuleList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
                 if (dBResult.RecordCount == 0) await MainWindow.ShowMessageOnMainWindow(false, "Exception Error : " + dBResult.ErrorMessage);
                 await LoadDataList(); SetRecord(false);
             }
@@ -179,8 +179,8 @@ namespace EasyITSystemCenter.Pages {
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                 if (selectedRecord.Id == 0) {
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.SolutionMessageModuleList, httpContent, null, App.UserData.Authentification.Token);
-                } else { dBResult = await CommApi.PostApiRequest(ApiUrls.SolutionMessageModuleList, httpContent, null, App.UserData.Authentification.Token); }
+                    dBResult = await CommunicationManager.PutApiRequest(ApiUrls.SolutionMessageModuleList, httpContent, null, App.UserData.Authentification.Token);
+                } else { dBResult = await CommunicationManager.PostApiRequest(ApiUrls.SolutionMessageModuleList, httpContent, null, App.UserData.Authentification.Token); }
 
                 if (dBResult.RecordCount > 0) {
                     selectedRecord = new SolutionMessageModuleList();

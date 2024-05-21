@@ -52,13 +52,13 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
 
             try {
-                cb_unit.ItemsSource = UnitList = await CommApi.GetApiRequest<List<BasicUnitList>>(ApiUrls.EasyITCenterBasicUnitList, null, App.UserData.Authentification.Token);
-                cb_currency.ItemsSource = CurrencyList = await CommApi.GetApiRequest<List<BasicCurrencyList>>(ApiUrls.EasyITCenterBasicCurrencyList, null, App.UserData.Authentification.Token);
-                cb_vat.ItemsSource = VatList = await CommApi.GetApiRequest<List<BasicVatList>>(ApiUrls.EasyITCenterBasicVatList, null, App.UserData.Authentification.Token);
+                cb_unit.ItemsSource = UnitList = await CommunicationManager.GetApiRequest<List<BasicUnitList>>(ApiUrls.EasyITCenterBasicUnitList, null, App.UserData.Authentification.Token);
+                cb_currency.ItemsSource = CurrencyList = await CommunicationManager.GetApiRequest<List<BasicCurrencyList>>(ApiUrls.EasyITCenterBasicCurrencyList, null, App.UserData.Authentification.Token);
+                cb_vat.ItemsSource = VatList = await CommunicationManager.GetApiRequest<List<BasicVatList>>(ApiUrls.EasyITCenterBasicVatList, null, App.UserData.Authentification.Token);
 
                 List<BasicItemList> ExtendedItemList = new List<BasicItemList>(); List<ExtendedItemList> extendedItemList = new List<ExtendedItemList>();
                 if (MainWindow.serviceRunning)
-                    DgListView.ItemsSource = ExtendedItemList = await CommApi.GetApiRequest<List<BasicItemList>>(ApiUrls.EasyITCenterBasicItemList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                    DgListView.ItemsSource = ExtendedItemList = await CommunicationManager.GetApiRequest<List<BasicItemList>>(ApiUrls.EasyITCenterBasicItemList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
                 ExtendedItemList.ForEach(record => {
                     ExtendedItemList item = new ExtendedItemList(record) {
@@ -137,7 +137,7 @@ namespace EasyITSystemCenter.Pages {
             dataViewSupport.SelectedRecordId = selectedRecord.Id;
             MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + selectedRecord.Id.ToString(), true);
             if (result == MessageDialogResult.Affirmative) {
-                DBResultMessage dBResult = await CommApi.DeleteApiRequest(ApiUrls.EasyITCenterBasicItemList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
+                DBResultMessage dBResult = await CommunicationManager.DeleteApiRequest(ApiUrls.EasyITCenterBasicItemList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
                 if (dBResult.RecordCount == 0) await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage);
                 _ = LoadDataList(); SetRecord(false);
             }
@@ -182,16 +182,16 @@ namespace EasyITSystemCenter.Pages {
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                 if (selectedRecord.Id == 0) {
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterBasicItemList, httpContent, null, App.UserData.Authentification.Token);
+                    dBResult = await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterBasicItemList, httpContent, null, App.UserData.Authentification.Token);
                 }
-                else { dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterBasicItemList, httpContent, null, App.UserData.Authentification.Token); }
+                else { dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterBasicItemList, httpContent, null, App.UserData.Authentification.Token); }
 
                 if (dBResult.RecordCount > 0) {
                     //Replace Attachments
                     AttachmentList.ForEach(attachment => { attachment.ParentId = dBResult.InsertedId; attachment.Id = 0; });
-                    dBResult = await CommApi.DeleteApiRequest(ApiUrls.EasyITCenterBasicAttachmentList, "ITEM/" + selectedRecord.Id, App.UserData.Authentification.Token);
+                    dBResult = await CommunicationManager.DeleteApiRequest(ApiUrls.EasyITCenterBasicAttachmentList, "ITEM/" + selectedRecord.Id, App.UserData.Authentification.Token);
                     json = JsonConvert.SerializeObject(AttachmentList); httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterBasicAttachmentList, httpContent, null, App.UserData.Authentification.Token);
+                    dBResult = await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterBasicAttachmentList, httpContent, null, App.UserData.Authentification.Token);
                     if (dBResult.RecordCount != AttachmentList.Count()) { await MainWindow.ShowMessageOnMainWindow(true, Resources["attachmentDBError"].ToString() + Environment.NewLine + dBResult.ErrorMessage); }
                     else {
                         selectedRecord = new ExtendedItemList();
@@ -225,7 +225,7 @@ namespace EasyITSystemCenter.Pages {
 
             if (selectedRecord.Id > 0) {
                 tv_attachments.Items.Clear();
-                AttachmentList = await CommApi.GetApiRequest<List<BasicAttachmentList>>(ApiUrls.EasyITCenterBasicAttachmentList, "ITEM/" + selectedRecord.Id, App.UserData.Authentification.Token);
+                AttachmentList = await CommunicationManager.GetApiRequest<List<BasicAttachmentList>>(ApiUrls.EasyITCenterBasicAttachmentList, "ITEM/" + selectedRecord.Id, App.UserData.Authentification.Token);
                 AttachmentList.ForEach(attachment => {
                     TreeViewItem attachmentItem = new TreeViewItem() { Header = attachment.FileName, Tag = attachment.FileName.Split('.').Last(), HorizontalAlignment = HorizontalAlignment.Stretch, HorizontalContentAlignment = HorizontalAlignment.Center };
                     attachmentItem.Selected += AttachmentItem_Selected;

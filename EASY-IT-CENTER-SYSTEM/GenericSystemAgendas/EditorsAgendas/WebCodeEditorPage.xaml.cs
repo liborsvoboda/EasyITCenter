@@ -45,7 +45,7 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
 
-                serverModuleAndServiceList = await CommApi.GetApiRequest<List<ServerModuleAndServiceList>>(ApiUrls.ServerModuleAndServiceList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                serverModuleAndServiceList = await CommunicationManager.GetApiRequest<List<ServerModuleAndServiceList>>(ApiUrls.ServerModuleAndServiceList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
                 systemWebCodeEditor = serverModuleAndServiceList.FirstOrDefault(a => a.Name == "SystemWebEditors");
                 if (systemWebCodeEditor == null) { await MainWindow.ShowMessageOnMainWindow(true, "Missing HtmlBodyOnly Module: 'SystemWebEditors'"); }
                 else { WebCodeEditor.Text = systemWebCodeEditor.CustomHtmlContent; }    
@@ -94,7 +94,7 @@ namespace EasyITSystemCenter.Pages {
                 systemWebCodeEditor.CustomHtmlContent = WebCodeEditor.Text;
                 string json = JsonConvert.SerializeObject(systemWebCodeEditor);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                DBResultMessage dBResult = await CommApi.PostApiRequest(ApiUrls.ServerModuleAndServiceList, httpContent, null, App.UserData.Authentification.Token);
+                DBResultMessage dBResult = await CommunicationManager.PostApiRequest(ApiUrls.ServerModuleAndServiceList, httpContent, null, App.UserData.Authentification.Token);
 
                 if (dBResult.RecordCount > 0) {
                     SystemOperations.StartExternalProccess(SystemLocalEnumSets.ProcessTypes.First(a => a.Value.ToLower() == "url").Value, App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + systemWebCodeEditor.UrlSubPath);

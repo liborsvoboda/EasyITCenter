@@ -63,6 +63,38 @@ namespace EasyITSystemCenter.GlobalClasses {
 
 
     /// <summary>
+    /// Defined Url Sourvce types For Setting Corrtect UrlPath
+    /// With Requested Configurations: Auth, Message Format, etc.
+    /// Definitions:
+    /// EsbWebServer: AutoSelect ESB GloBal Web Server Url 
+    /// EicWebServer: AutoSelect EIC GloBal Web Server Url 
+    /// EicWebServerStdTableApi: Auto Select Api By Data Table Name
+    /// EicWebServerDynGetTableApi: Auto Select DynamicGetApi Url
+    /// EicWebServerDynSetTableApi: Auto Select DynamicSetApi Url
+    /// WebSavedAuthApi: Managed Acount for User Defined Url,
+    /// WebUrl: User Defined Url
+    /// TODO Pridat centralni sprava auth APIs URL, 
+    /// TODO Planovany Downloader, zasilac zprac cteni a preposilani na email,Procedury Atd
+    /// TODO: FOR TABLES ADD - MORE PREFIXES - TEST , DB TEST, CLONE TABLE, CLONE DB as PROVIDER solution 
+    /// TODO: MOVE THIS TO NEW AGENDA DEFINED API COMMUNICATION + Same FOR Request,responose format forGlobal Using
+    /// TODO: Can be used for showing JSON DATA, XML, CSV, DATA FOR DIRECT IMPORT BY DYNAMIC AGENDA - CAN GENERATE TABLE BY TABLE STRUCTURE
+    /// </summary>
+    public enum UrlSourceTypes {
+
+        //Mode
+        EsbWebServer,
+        EicWebServer,
+        EicWebServerAuth,
+        EicWebServerStdTableApi,
+        EicWebServerGenericGetTableApi,
+        EicWebServerGenericSetTableApi,
+        WebApiManagerApi,
+        WebUrl,
+        JsonDataUrl
+    }
+
+
+    /// <summary>
     /// Class for User Authentication information
     /// </summary>
     public class Authentification {

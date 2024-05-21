@@ -25,8 +25,8 @@ namespace EasyITSystemCenter.Pages {
             try {
                 var lines = File.ReadLines(MottoListPath);
                 foreach (string line in lines) { if (!string.IsNullOrWhiteSpace(line)) { MottoList.Add(new SolutionMottoList() { SystemName = line }); } }
-                App.LanguageList = await CommApi.GetApiRequest<List<SystemTranslationList>>(ApiUrls.EasyITCenterSystemTranslationList, null, null);
-                MottoList = await CommApi.GetApiRequest<List<SolutionMottoList>>(ApiUrls.EasyITCenterSolutionMottoList, null, null);
+                App.LanguageList = await CommunicationManager.GetApiRequest<List<SystemTranslationList>>(ApiUrls.EasyITCenterSystemTranslationList, null, null);
+                MottoList = await CommunicationManager.GetApiRequest<List<SolutionMottoList>>(ApiUrls.EasyITCenterSolutionMottoList, null, null);
             } catch { }
 
             try {

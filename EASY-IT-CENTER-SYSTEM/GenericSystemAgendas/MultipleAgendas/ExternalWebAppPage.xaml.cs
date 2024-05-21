@@ -42,7 +42,7 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = System.Windows.Visibility.Visible;
             try {
 
-                SystemCustomPageList multiWebView = await CommApi.GetApiRequest<SystemCustomPageList>(ApiUrls.EasyITCenterSystemCustomPageList, this.Uid.ToString(), App.UserData.Authentification.Token);
+                SystemCustomPageList multiWebView = await CommunicationManager.GetApiRequest<SystemCustomPageList>(ApiUrls.EasyITCenterSystemCustomPageList, this.Uid.ToString(), App.UserData.Authentification.Token);
 
                 
                 //webViewer.BeginInit();

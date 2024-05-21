@@ -340,8 +340,8 @@ namespace EasyITSystemCenter {
         /// </summary>
         private async Task<bool> SetSystemModuleListPanel() {
             try {
-                List<SolutionMixedEnumList> mixedEnumTypesList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/SystemModules", App.UserData.Authentification.Token);
-                App.SystemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
+                List<SolutionMixedEnumList> mixedEnumTypesList = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/SystemModules", App.UserData.Authentification.Token);
+                App.SystemSvgIconList = await CommunicationManager.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
 
                 systemModuleList.Items.Clear();
                 mixedEnumTypesList.ForEach(async panelType => {
@@ -423,8 +423,8 @@ namespace EasyITSystemCenter {
         /// </summary>
         private async Task<bool> LoadUserMenu() {
             try {
-                App.SystemMenuList = await CommApi.GetApiRequest<List<SystemMenuList>>(ApiUrls.ServerApi, "DatabaseServices/SpGetUserMenuList", App.UserData.Authentification.Token);
-                App.SystemCustomList = await CommApi.GetApiRequest<List<SystemCustomPageList>>(ApiUrls.EasyITCenterSystemCustomPageList, null, App.UserData.Authentification.Token);
+                App.SystemMenuList = await CommunicationManager.GetApiRequest<List<SystemMenuList>>(ApiUrls.ServerApi, "DatabaseServices/SpGetUserMenuList", App.UserData.Authentification.Token);
+                App.SystemCustomList = await CommunicationManager.GetApiRequest<List<SystemCustomPageList>>(ApiUrls.EasyITCenterSystemCustomPageList, null, App.UserData.Authentification.Token);
 
                 tb_verticalSystemMenu.Items.Clear();
                 int? lastMenuGroupId = null; tb_verticalSystemMenu.Items.Clear(); TreeViewItem menuSection = null;
@@ -501,7 +501,7 @@ namespace EasyITSystemCenter {
                     }
 
                     //Check server connection
-                    if (await CommApi.CheckApiConnection()) {
+                    if (await CommunicationManager.CheckApiConnection()) {
                         ServiceRunning = true; ServiceStatus = Resources["running"].ToString();
                         UserLogged = App.UserData.Authentification != null;
                         if (!UserLogged) { App.UserData = new UserData(); si_loggedIn.Content = null; }
@@ -632,7 +632,7 @@ namespace EasyITSystemCenter {
                 } else {
                     ProgressRing = Visibility.Visible;
                     App.UserData.UserName = result.Username;
-                    Authentification dBResult = await CommApi.Authentification(ApiUrls.EasyITCenterAuthentication, result.Username, result.Password);
+                    Authentification dBResult = await CommunicationManager.AuthApiRequest(ApiUrls.EasyITCenterAuthentication, result.Username, result.Password);
                     ProgressRing = Visibility.Hidden;
                     if (dBResult == null || dBResult.Token == null) {
                         
@@ -720,27 +720,27 @@ namespace EasyITSystemCenter {
             MainWindow metroWindow = Application.Current.MainWindow as MainWindow;
             if (App.tiltTargets == TiltTargets.OfferToOrder.ToString()) {
                 AddOrRemoveTab(translateHeader, new BusinessIncomingOrderListPage());
-                metroWindow.cb_printReports.ItemsSource = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/IncomingOrderList", App.UserData.Authentification.Token);
+                metroWindow.cb_printReports.ItemsSource = await CommunicationManager.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/IncomingOrderList", App.UserData.Authentification.Token);
             }
             else if (App.tiltTargets == TiltTargets.OfferToInvoice.ToString() || App.tiltTargets == TiltTargets.OrderToInvoice.ToString()) {
                 AddOrRemoveTab(translateHeader, new BusinessOutgoingInvoiceListPage());
-                metroWindow.cb_printReports.ItemsSource = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/OutgoingInvoiceList", App.UserData.Authentification.Token);
+                metroWindow.cb_printReports.ItemsSource = await CommunicationManager.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/OutgoingInvoiceList", App.UserData.Authentification.Token);
             }
             else if (App.tiltTargets == TiltTargets.InvoiceToCredit.ToString()) {
                 AddOrRemoveTab(translateHeader, new BusinessCreditNoteListPage());
-                metroWindow.cb_printReports.ItemsSource = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/CreditNoteList", App.UserData.Authentification.Token);
+                metroWindow.cb_printReports.ItemsSource = await CommunicationManager.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/CreditNoteList", App.UserData.Authentification.Token);
             }
             else if (App.tiltTargets == TiltTargets.ShowCredit.ToString()) {
                 AddOrRemoveTab(translateHeader, new BusinessCreditNoteListPage());
-                metroWindow.cb_printReports.ItemsSource = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/CreditNoteList", App.UserData.Authentification.Token);
+                metroWindow.cb_printReports.ItemsSource = await CommunicationManager.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/CreditNoteList", App.UserData.Authentification.Token);
             }
             else if (App.tiltTargets == TiltTargets.InvoiceToReceipt.ToString()) {
                 AddOrRemoveTab(translateHeader, new BusinessReceiptListPage());
-                metroWindow.cb_printReports.ItemsSource = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/ReceiptList", App.UserData.Authentification.Token);
+                metroWindow.cb_printReports.ItemsSource = await CommunicationManager.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/ReceiptList", App.UserData.Authentification.Token);
             }
             else if (App.tiltTargets == TiltTargets.ShowReceipt.ToString()) {
                 AddOrRemoveTab(translateHeader, new BusinessReceiptListPage());
-                metroWindow.cb_printReports.ItemsSource = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/ReceiptList", App.UserData.Authentification.Token);
+                metroWindow.cb_printReports.ItemsSource = await CommunicationManager.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/ReceiptList", App.UserData.Authentification.Token);
             }
             else { App.TiltInvoiceDoc = new ExtendedOutgoingInvoiceList(); App.TiltOrderDoc = new BusinessIncomingOrderList(); App.TiltOfferDoc = new BusinessOfferList(); App.TiltDocItems = new List<DocumentItemList>(); App.tiltTargets = TiltTargets.None.ToString(); }
             return true;
@@ -961,7 +961,7 @@ namespace EasyITSystemCenter {
                         SetReportFilter setReportFilter = new SetReportFilter() { TableName = SelectedTab.Content.GetType().Name.Replace("Page", "").Split('_')[0], Filter = advancedFilter, Search = tb_search.Text, RecId = dataGridSelectedId };
                         string json = JsonConvert.SerializeObject(setReportFilter);
                         StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                        DBResultMessage dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterSystemReportQueueList, httpContent, "WriteFilter", App.UserData.Authentification.Token);
+                        DBResultMessage dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterSystemReportQueueList, httpContent, "WriteFilter", App.UserData.Authentification.Token);
 
                         string reportFile = Path.Combine(App.appRuntimeData.reportFolder, DateTimeOffset.Now.Ticks.ToString() + ".rdl");
                         if (FileOperations.ByteArrayToFile(reportFile, ((SystemReportList)cb_printReports.SelectedItem).File)) {
@@ -1017,7 +1017,7 @@ namespace EasyITSystemCenter {
                     StringToFilter(cb_filter, "");
 
                     if (App.UserData.Authentification != null) {
-                        cb_printReports.ItemsSource = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/" + pageName.Replace("Page", "").Split('_')[0], App.UserData.Authentification.Token);
+                        cb_printReports.ItemsSource = await CommunicationManager.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/" + pageName.Replace("Page", "").Split('_')[0], App.UserData.Authentification.Token);
                     }
 
                     cb_printReports.IsEnabled = cb_printReports.Items.Count > 0;
@@ -1169,7 +1169,7 @@ namespace EasyITSystemCenter {
                                 else { dataGridSelectedId = dataViewSupport.SelectedRecordId; DataGridSelectedIdListIndicator = true; }
                             }
                             StringToFilter(cb_filter, dataViewSupport.AdvancedFilter);
-                            try { cb_printReports.ItemsSource = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/" + senderName.Replace("Page", ""), App.UserData.Authentification.Token); } catch { }
+                            try { cb_printReports.ItemsSource = await CommunicationManager.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/" + senderName.Replace("Page", ""), App.UserData.Authentification.Token); } catch { }
                             break;
 
                         //VIEWS - LIST ONLY
@@ -1178,7 +1178,7 @@ namespace EasyITSystemCenter {
                             tb_search.Text = dataViewSupport.FilteredValue; dataGridSelectedId = dataViewSupport.SelectedRecordId;
                             DataGridSelected = DataGridSelectedIdListIndicator = false; DgRefresh = true;
                             StringToFilter(cb_filter, dataViewSupport.AdvancedFilter);
-                            try { cb_printReports.ItemsSource = await CommApi.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/" + senderName.Replace("Page", ""), App.UserData.Authentification.Token); } catch { }
+                            try { cb_printReports.ItemsSource = await CommunicationManager.GetApiRequest<List<SystemReportList>>(ApiUrls.EasyITCenterSystemReportList, dataGridSelectedId.ToString() + "/" + senderName.Replace("Page", ""), App.UserData.Authentification.Token); } catch { }
                             break;
 
                         default:

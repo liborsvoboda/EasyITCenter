@@ -15,7 +15,7 @@ namespace EasyITSystemCenter.Classes {
         public bool IsOwnServerUrl { get; set; }
         public bool DevModeEnabled { get; set; }
         public bool ShowHelpTab { get; set; }
-        public bool HelpTabShowOnly { get; set; }
+        public string InheritedHelpTabSourceType { get; set; }
         public string StartupUrl { get; set; }
         public string HelpTabUrl { get; set; }
         public string DbtableName { get; set; }

@@ -32,7 +32,8 @@ namespace EasyITSystemCenter.Pages {
 
 
         private List<SystemCustomPageList> systemCustomPageList = new List<SystemCustomPageList>();
-        private List<SolutionMixedEnumList> solutionMixedEnumList = new List<SolutionMixedEnumList>();
+        private List<SolutionMixedEnumList> inheritedFormType = new List<SolutionMixedEnumList>();
+        private List<SolutionMixedEnumList> inheritedHelpTabSourceType = new List<SolutionMixedEnumList>();
         private List<SystemTranslatedTableList> systemTranslatedTableList = new List<SystemTranslatedTableList>();
         private List<GenericDataList> systemTableList = new List<GenericDataList>();
         private List<GenericDataList> tableSchema = new List<GenericDataList>();
@@ -43,10 +44,6 @@ namespace EasyITSystemCenter.Pages {
 
             try {
                 _ = FormOperations.TranslateFormFields(ListForm);
-                //_ = FormOperations.TranslateFormFields(gb_startupSetting);
-                //_ = FormOperations.TranslateFormFields(gb_serverSetting);
-                //_ = FormOperations.TranslateFormFields(gb_interaktSetting);
-
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             _ = LoadDataList();
@@ -56,19 +53,19 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-
-                systemTableList = await CommApi.GetApiRequest<List<GenericDataList>>(ApiUrls.ServerApi, "DatabaseServices/SpGetTableList", App.UserData.Authentification.Token);
-                solutionMixedEnumList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/SystemAgendaTypes", App.UserData.Authentification.Token);
-                systemCustomPageList = await CommApi.GetApiRequest<List<SystemCustomPageList>>(ApiUrls.EasyITCenterSystemCustomPageList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                inheritedHelpTabSourceType = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/HelpSourceTypes", App.UserData.Authentification.Token);
+                systemTableList = await CommunicationManager.GetApiRequest<List<GenericDataList>>(ApiUrls.ServerApi, "DatabaseServices/SpGetTableList", App.UserData.Authentification.Token);
+                inheritedFormType = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/SystemAgendaTypes", App.UserData.Authentification.Token);
+                systemCustomPageList = await CommunicationManager.GetApiRequest<List<SystemCustomPageList>>(ApiUrls.EasyITCenterSystemCustomPageList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
 
                 systemTableList.ForEach(async table => {
                     systemTranslatedTableList.Add(new SystemTranslatedTableList() { TableName = table.Data, Translate = await DBOperations.DBTranslation(table.Data) });
                 });
                 
-                cb_InheritedFormType.ItemsSource = solutionMixedEnumList;
-                cb_DbtableName.ItemsSource = systemTranslatedTableList.OrderBy(a => a.Translate).ToList(); ;
-
+                cb_InheritedFormType.ItemsSource = inheritedFormType;
+                cb_DbtableName.ItemsSource = systemTranslatedTableList.OrderBy(a => a.Translate).ToList();
+                cb_InheritedHelpTabSourceType.ItemsSource = inheritedHelpTabSourceType.OrderBy(a => a.Name).ToList();
                 DgListView.ItemsSource = systemCustomPageList;
                 DgListView.Items.Refresh();
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
@@ -90,7 +87,7 @@ namespace EasyITSystemCenter.Pages {
                     else if (headername == "StartupCommand".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 9; }
                     else if (headername == "DevModeEnabled".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 10; }
                     else if (headername == "ShowHelpTab".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 11; }
-                    else if (headername == "HelpTabShowOnly".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 12; }
+                    else if (headername == "InheritedHelpTabSourceType".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 12; }
                     else if (headername == "HelpTabUrl".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 13; }
                     else if (headername == "DbtableName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 14; }
                     else if (headername == "ColumnName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 15; }
@@ -143,7 +140,7 @@ namespace EasyITSystemCenter.Pages {
             dataViewSupport.SelectedRecordId = selectedRecord.Id;
             MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + selectedRecord.Id.ToString(), true);
             if (result == MessageDialogResult.Affirmative) {
-                DBResultMessage dBResult = await CommApi.DeleteApiRequest(ApiUrls.EasyITCenterSystemCustomPageList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
+                DBResultMessage dBResult = await CommunicationManager.DeleteApiRequest(ApiUrls.EasyITCenterSystemCustomPageList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
                 if (dBResult.RecordCount == 0) await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage);
                 await LoadDataList(); SetRecord(false);
             }
@@ -180,7 +177,8 @@ namespace EasyITSystemCenter.Pages {
 
                 selectedRecord.DevModeEnabled = (bool)chb_devModeEnabled.IsChecked;
                 selectedRecord.ShowHelpTab = (bool)chb_showHelpTab.IsChecked;
-                selectedRecord.HelpTabShowOnly = (bool)chb_helpTabShowOnly.IsChecked;
+
+                selectedRecord.InheritedHelpTabSourceType = cb_InheritedHelpTabSourceType.SelectedItem == null ? null : ((SolutionMixedEnumList)cb_InheritedHelpTabSourceType.SelectedItem).Name;
                 selectedRecord.StartupUrl = txt_startupUrl.Text;
                 selectedRecord.HelpTabUrl = txt_helpTabUrl.Text;
 
@@ -189,8 +187,8 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.StartupSubFolder = txt_startupSubFolder.Text;
                 selectedRecord.StartupCommand = txt_startupCommand.Text;
 
-                selectedRecord.DbtableName = ((SystemTranslatedTableList)cb_DbtableName.SelectedItem).TableName;
-                selectedRecord.ColumnName = ((GenericDataList)cb_ColumnName.SelectedItem).Data;
+                selectedRecord.DbtableName = cb_DbtableName.SelectedItem == null ? null : ((SystemTranslatedTableList)cb_DbtableName.SelectedItem).TableName;
+                selectedRecord.ColumnName = cb_ColumnName.SelectedItem == null ? null : ((GenericDataList)cb_ColumnName.SelectedItem).Data;
 
 
                 selectedRecord.UseIooverDom = (bool)chb_UseIooverDom.IsChecked;
@@ -205,9 +203,9 @@ namespace EasyITSystemCenter.Pages {
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                 if (selectedRecord.Id == 0) {
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterSystemCustomPageList, httpContent, null, App.UserData.Authentification.Token);
+                    dBResult = await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterSystemCustomPageList, httpContent, null, App.UserData.Authentification.Token);
                 }
-                else { dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterSystemCustomPageList, httpContent, null, App.UserData.Authentification.Token); }
+                else { dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterSystemCustomPageList, httpContent, null, App.UserData.Authentification.Token); }
 
                 if (dBResult.RecordCount > 0) {
                     selectedRecord = new SystemCustomPageList();
@@ -220,6 +218,7 @@ namespace EasyITSystemCenter.Pages {
                 await MainWindow.ShowMessageOnMainWindow(true, SystemOperations.GetExceptionMessagesAll(autoEx),false);
                 App.ApplicationLogging(autoEx);
             }
+            MainWindow.ProgressRing = Visibility.Hidden;
         }
 
 
@@ -233,7 +232,7 @@ namespace EasyITSystemCenter.Pages {
 
             try {
                 txt_id.Value = (copy) ? 0 : selectedRecord.Id;
-                cb_InheritedFormType.SelectedItem = (selectedRecord.Id == 0) ? solutionMixedEnumList.FirstOrDefault() : solutionMixedEnumList.FirstOrDefault(a => a.Name == selectedRecord.InheritedFormType);
+                cb_InheritedFormType.SelectedItem = (selectedRecord.Id == 0) ? inheritedFormType.FirstOrDefault() : inheritedFormType.FirstOrDefault(a => a.Name == selectedRecord.InheritedFormType);
 
                 txt_pageName.Text = selectedRecord.PageName;
                 txt_description.Text = selectedRecord.Description;
@@ -244,18 +243,11 @@ namespace EasyITSystemCenter.Pages {
 
                 chb_devModeEnabled.IsChecked = selectedRecord.DevModeEnabled;
                 chb_showHelpTab.IsChecked = selectedRecord.ShowHelpTab;
-                chb_helpTabShowOnly.IsChecked = selectedRecord.HelpTabShowOnly;
+
+                cb_InheritedHelpTabSourceType.SelectedItem = (selectedRecord.Id == 0) ? inheritedHelpTabSourceType.FirstOrDefault() : inheritedHelpTabSourceType.FirstOrDefault(a => a.Name == selectedRecord.InheritedHelpTabSourceType);
                 txt_startupUrl.Text = selectedRecord.StartupUrl;
                 txt_helpTabUrl.Text = selectedRecord.HelpTabUrl;
 
-
-                // Insert missing
-                if (selectedRecord.DbtableName != null && systemTranslatedTableList.FirstOrDefault(a => a.TableName == selectedRecord.DbtableName) == null) {
-                    SystemTranslatedTableList page = new SystemTranslatedTableList() { TableName = selectedRecord.DbtableName, Translate = await DBOperations.DBTranslation(selectedRecord.DbtableName) };
-                    systemTranslatedTableList.Add(page);
-                    cb_DbtableName.ItemsSource = systemTranslatedTableList.OrderBy(a => a.Translate).ToList();
-                    cb_DbtableName.Items.Refresh();
-                }
                 cb_DbtableName.SelectedItem = selectedRecord.DbtableName == null ? null : systemTranslatedTableList.FirstOrDefault(a => a.TableName == selectedRecord.DbtableName);
                 cb_ColumnName.SelectedValue = selectedRecord.ColumnName;
 
@@ -280,13 +272,14 @@ namespace EasyITSystemCenter.Pages {
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = true;
                 ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; dataViewSupport.FormShown = showForm == null && !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key.ToLower() == "beh_closeformaftersave".ToLower()).Value);
             }
+            MainWindow.ProgressRing = Visibility.Hidden;
         }
 
 
         private void IsServerEnabled(object sender, RoutedEventArgs e) {
-            if (dataViewSupport.FormShown) {
+            //if (dataViewSupport.FormShown) {
                 gb_serverSetting.IsEnabled = (bool)chb_isServerUrl.IsChecked;
-            }
+            //}
         }
 
         private void InteractAgendaSelected(object sender, RoutedEventArgs e) {
@@ -297,26 +290,24 @@ namespace EasyITSystemCenter.Pages {
 
 
         private async void TableSelected(object sender, SelectionChangedEventArgs e) {
-            if (dataViewSupport.FormShown) {
-
-                tableSchema = await CommApi.GetApiRequest<List<GenericDataList>>(ApiUrls.ServerApi, $"DatabaseServices/SpGetTableSchema/{((SystemTranslatedTableList)cb_DbtableName.SelectedItem).TableName}", App.UserData.Authentification.Token);
-                cb_ColumnName.ItemsSource = tableSchema;
-            }
+            tableSchema = await CommunicationManager.GetApiRequest<List<GenericDataList>>(ApiUrls.ServerApi, $"DatabaseServices/SpGetTableSchema/{((SystemTranslatedTableList)cb_DbtableName.SelectedItem).TableName}", App.UserData.Authentification.Token);
+            cb_ColumnName.ItemsSource = tableSchema;
+            if(selectedRecord.Id != 0) { cb_ColumnName.SelectedValue = selectedRecord.ColumnName; }
         }
 
 
         private void UrlTypeSelected(object sender, RoutedEventArgs e) {
-            if (dataViewSupport.FormShown) {
+            //f (dataViewSupport.FormShown) {
                 if(((CheckBox)sender).Name == "chb_IsSystemUrl" && (bool)chb_IsSystemUrl.IsChecked) { chb_isServerUrl.IsChecked = false; }
                 else if (((CheckBox)sender).Name == "chb_isServerUrl" && (bool)chb_isServerUrl.IsChecked) { chb_IsSystemUrl.IsChecked = false; }
-            }
+            //}
         }
 
         private void DomElementSelected(object sender, RoutedEventArgs e) {
-            if (dataViewSupport.FormShown) {
+            //if (dataViewSupport.FormShown) {
                 txt_SetWebDataJscriptCmd.IsEnabled = txt_GetWebDataJscriptCmd.IsEnabled = !(bool)chb_UseIooverDom.IsChecked;
                 txt_DomhtmlElementName.IsEnabled = (bool)chb_UseIooverDom.IsChecked;
-            }
+            //}
         }
     }
 }

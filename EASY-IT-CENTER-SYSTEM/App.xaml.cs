@@ -104,6 +104,7 @@ namespace EasyITSystemCenter {
             MetroWindow mainView = new MainWindow();
             MainWindow = mainView;
             mainView.Show(); mainView.Focus();
+
             PrepareStartupTools();
         }
 

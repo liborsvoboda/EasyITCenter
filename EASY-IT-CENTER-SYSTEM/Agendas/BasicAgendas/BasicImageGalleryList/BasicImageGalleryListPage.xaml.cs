@@ -69,7 +69,7 @@ namespace EasyITSystemCenter.Pages {
         private async Task<bool> LoadFromServer(int selectedPhotoId = 0) {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                ImageGalleryList = await CommApi.GetApiRequest<List<BasicImageGalleryList>>(ApiUrls.EasyITCenterBasicImageGalleryList, null, App.UserData.Authentification.Token);
+                ImageGalleryList = await CommunicationManager.GetApiRequest<List<BasicImageGalleryList>>(ApiUrls.EasyITCenterBasicImageGalleryList, null, App.UserData.Authentification.Token);
 
                 ClearGallery();
                 ImageGalleryList.ForEach(item => {
@@ -151,9 +151,9 @@ namespace EasyITSystemCenter.Pages {
                         StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
                         if (selectedRecord.Id == 0) {
-                            dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterBasicImageGalleryList, httpContent, null, App.UserData.Authentification.Token);
+                            dBResult = await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterBasicImageGalleryList, httpContent, null, App.UserData.Authentification.Token);
                         }
-                        else { dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterBasicImageGalleryList, httpContent, null, App.UserData.Authentification.Token); }
+                        else { dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterBasicImageGalleryList, httpContent, null, App.UserData.Authentification.Token); }
 
                         if (dBResult.RecordCount > 0) { }
                         else { await MainWindow.ShowMessageOnMainWindow(false, "Exception Error : " + dBResult.ErrorMessage); }
@@ -174,9 +174,9 @@ namespace EasyITSystemCenter.Pages {
                     StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
                     if (selectedRecord.Id == 0) {
-                        dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterBasicImageGalleryList, httpContent, null, App.UserData.Authentification.Token);
+                        dBResult = await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterBasicImageGalleryList, httpContent, null, App.UserData.Authentification.Token);
                     }
-                    else { dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterBasicImageGalleryList, httpContent, null, App.UserData.Authentification.Token); }
+                    else { dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterBasicImageGalleryList, httpContent, null, App.UserData.Authentification.Token); }
 
                     if (dBResult.RecordCount > 0) { }
                     else { await MainWindow.ShowMessageOnMainWindow(false, "Exception Error : " + dBResult.ErrorMessage); return false; }
@@ -202,7 +202,7 @@ namespace EasyITSystemCenter.Pages {
 
         private async Task<bool> DeleteImageFromServer(int dbId) {
             MainWindow.ProgressRing = Visibility.Visible;
-            DBResultMessage dBResult = await CommApi.DeleteApiRequest(ApiUrls.EasyITCenterBasicImageGalleryList, dbId.ToString(), App.UserData.Authentification.Token);
+            DBResultMessage dBResult = await CommunicationManager.DeleteApiRequest(ApiUrls.EasyITCenterBasicImageGalleryList, dbId.ToString(), App.UserData.Authentification.Token);
             MainWindow.ProgressRing = Visibility.Hidden;
 
             if (dBResult.RecordCount > 0) { return true; }

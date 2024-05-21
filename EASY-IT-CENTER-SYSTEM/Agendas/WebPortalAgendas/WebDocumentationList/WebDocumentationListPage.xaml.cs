@@ -63,8 +63,8 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                documentationCodeLibraryList = await CommApi.GetApiRequest<List<WebDocumentationCodeLibraryList>>(ApiUrls.EasyITCenterWebDocumentationCodeLibraryList, null, App.UserData.Authentification.Token);
-                documentationList = await CommApi.GetApiRequest<List<WebDocumentationList>>(ApiUrls.EasyITCenterWebDocumentationList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                documentationCodeLibraryList = await CommunicationManager.GetApiRequest<List<WebDocumentationCodeLibraryList>>(ApiUrls.EasyITCenterWebDocumentationCodeLibraryList, null, App.UserData.Authentification.Token);
+                documentationList = await CommunicationManager.GetApiRequest<List<WebDocumentationList>>(ApiUrls.EasyITCenterWebDocumentationList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
                 DgListView.ItemsSource = documentationList;
                 DgListView.Items.Refresh();
@@ -123,7 +123,7 @@ namespace EasyITSystemCenter.Pages {
             dataViewSupport.SelectedRecordId = selectedRecord.Id;
             MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + selectedRecord.Id.ToString(), true);
             if (result == MessageDialogResult.Affirmative) {
-                DBResultMessage dBResult = await CommApi.DeleteApiRequest(ApiUrls.EasyITCenterWebDocumentationList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
+                DBResultMessage dBResult = await CommunicationManager.DeleteApiRequest(ApiUrls.EasyITCenterWebDocumentationList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
                 if (dBResult.RecordCount == 0) await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage);
                 await LoadDataList(); SetRecord(false);
             }
@@ -174,9 +174,9 @@ namespace EasyITSystemCenter.Pages {
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                 if (selectedRecord.Id == 0) {
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterWebDocumentationList, httpContent, null, App.UserData.Authentification.Token);
+                    dBResult = await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterWebDocumentationList, httpContent, null, App.UserData.Authentification.Token);
                 }
-                else { dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterWebDocumentationList, httpContent, null, App.UserData.Authentification.Token); }
+                else { dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterWebDocumentationList, httpContent, null, App.UserData.Authentification.Token); }
 
                 if (closeForm) { await LoadDataList(); selectedRecord = new WebDocumentationList(); SetRecord(false); }
                 if (dBResult.RecordCount == 0) { await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage); }

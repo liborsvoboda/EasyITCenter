@@ -53,9 +53,9 @@ namespace EasyITSystemCenter.Pages {
         public async void LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                serverLanguages = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/ServerLanguages", App.UserData.Authentification.Token);
-                serverConfigGroups = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/ServerConfig", App.UserData.Authentification.Token);
-                App.ServerSetting = await CommApi.GetApiRequest<List<ServerServerSettingList>>(ApiUrls.EasyITCenterServerSettingList, null, null);
+                serverLanguages = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/ServerLanguages", App.UserData.Authentification.Token);
+                serverConfigGroups = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/ServerConfig", App.UserData.Authentification.Token);
+                App.ServerSetting = await CommunicationManager.GetApiRequest<List<ServerServerSettingList>>(ApiUrls.EasyITCenterServerSettingList, null, null);
 
                 serverLanguages.ForEach(async srvLanguage => { srvLanguage.Translation = await DBOperations.DBTranslation(srvLanguage.Name); });
                 serverConfigGroups.ForEach(async tasktype => { tasktype.Translation = await DBOperations.DBTranslation(tasktype.Name); });
@@ -183,7 +183,7 @@ namespace EasyITSystemCenter.Pages {
             if (PrepareConfigurationForSave()) {
                 string json = JsonConvert.SerializeObject(App.ServerSetting);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                DBResultMessage dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterServerSettingList, httpContent, null, App.UserData.Authentification.Token);
+                DBResultMessage dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterServerSettingList, httpContent, null, App.UserData.Authentification.Token);
                 MainWindow.ProgressRing = Visibility.Hidden;
 
                 if (dBResult.RecordCount > 0) { await MainWindow.ShowMessageOnMainWindow(false, Resources["savingSuccessfull"].ToString()); }
@@ -200,7 +200,7 @@ namespace EasyITSystemCenter.Pages {
         private async void BtnSendTestEmail_Click(object sender, RoutedEventArgs e) {
             try {
                 SystemOperations.SendMailWithServerSetting(await DBOperations.DBTranslation("TestEmailFrom") + " " + App.ServerSetting.FirstOrDefault(a => a.Key == "SpecialServerServiceName").Value);
-                DBResultMessage dBResultMessage = await CommApi.GetApiRequest<DBResultMessage>(ApiUrls.ServerApi, "EmailServices/GetMessenger/" + await DBOperations.DBTranslation("TestEmailFrom") + " " + App.ServerSetting.FirstOrDefault(a => a.Key == "SpecialServerServiceName").Value + " API", App.UserData.Authentification.Token);
+                DBResultMessage dBResultMessage = await CommunicationManager.GetApiRequest<DBResultMessage>(ApiUrls.ServerApi, "EmailServices/GetMessenger/" + await DBOperations.DBTranslation("TestEmailFrom") + " " + App.ServerSetting.FirstOrDefault(a => a.Key == "SpecialServerServiceName").Value + " API", App.UserData.Authentification.Token);
                 { await MainWindow.ShowMessageOnMainWindow(false, dBResultMessage.ErrorMessage); }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
@@ -213,7 +213,7 @@ namespace EasyITSystemCenter.Pages {
         //}
 
         private async void BtnRestartServer_Click(object sender, RoutedEventArgs e) {
-            DBResultMessage dBResultMessage = await CommApi.GetApiRequest<DBResultMessage>(ApiUrls.CoreServerRestart, null, App.UserData.Authentification.Token);
+            DBResultMessage dBResultMessage = await CommunicationManager.GetApiRequest<DBResultMessage>(ApiUrls.CoreServerRestart, null, App.UserData.Authentification.Token);
             {
                 await MainWindow.ShowMessageOnMainWindow(false, dBResultMessage.ErrorMessage);
             }

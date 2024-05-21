@@ -11,6 +11,7 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:EasyITSystemCenter"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:web="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
@@ -27,8 +28,11 @@
         Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
         Background="{DynamicResource AccentColorBrush}">
 
-        <Grid x:Name="ListView" Visibility="Visible" 
-              Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{DynamicResource WhiteBrush}">
+        <Grid
+            x:Name="ListView"
+            Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            Background="{DynamicResource WhiteBrush}"
+            Visibility="Visible">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
@@ -40,11 +44,10 @@
                 x:Name="TabMenuList"
                 Grid.Row="0" Grid.Column="0"
                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalContentAlignment="Top"
-                Background="Transparent" FontSize="8" TabStripPlacement="Bottom">
+                Background="Transparent" IsTextSearchEnabled="True" TabStripPlacement="Top">
 
                 <TabItem
-                    x:Name="ti_mainEditor"
-                    Grid.Row="0" Grid.Column="1"
+                    x:Name="ti_workBoard"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     Header="Editor">
                     <web:WebView2
@@ -54,14 +57,21 @@
                 </TabItem>
 
                 <TabItem
-                    x:Name="ti_helpEditor"
-                    Grid.Row="0" Grid.Column="1"
+                    x:Name="ti_helpUrl"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     Header="Help" Visibility="Hidden">
                     <web:WebView2
-                        x:Name="helpBrowser"
+                        x:Name="helpWebBrowser"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                </TabItem>
+                <TabItem
+                    x:Name="ti_helpDoc"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    Header="Help" Visibility="Hidden">
+                    <md:MarkdownViewer
+                        x:Name="helpDocument"
                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                        IsEnabled="True" />
+                        ToolTipService.IsEnabled="True" />
                 </TabItem>
             </TabControl>
         </Grid>

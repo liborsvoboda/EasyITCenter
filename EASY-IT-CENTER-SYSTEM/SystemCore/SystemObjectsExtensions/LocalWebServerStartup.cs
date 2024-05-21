@@ -22,16 +22,28 @@ namespace EasyITSystemCenter {
             staticFilesProvider.Mappings[".javascript"] = "application/javascript"; staticFilesProvider.Mappings[".style"] = "text/css";
             staticFilesProvider.Mappings[".data"] = "text/json"; staticFilesProvider.Mappings[".code"] = "text/cs";
             staticFilesProvider.Mappings[".design"] = "text/xaml"; staticFilesProvider.Mappings[".archive"] = "application/zip";
-            staticFilesProvider.Mappings[".docu"] = "text/markdown"; 
+            staticFilesProvider.Mappings[".docu"] = "text/markdown";
 
-            appBuilder.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, ContentTypeProvider = staticFilesProvider, DefaultContentType = "text/html" }).UseFileServer(
-            new FileServerOptions {
+            StaticFileOptions staticStorage = new StaticFileOptions {
+                ServeUnknownFileTypes = true, ContentTypeProvider = staticFilesProvider, DefaultContentType = "text/html",
+                FileSystem = new PhysicalFileSystem(App.appRuntimeData.webDataPath), RequestPath = new PathString(string.Empty)
+            };
+            bool browseModeEnabled = bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerEnableBrowse").Value);
+            FileServerOptions fileServer = new FileServerOptions {
                 EnableDefaultFiles = true,
                 FileSystem = new PhysicalFileSystem(App.appRuntimeData.webDataPath),
-                EnableDirectoryBrowsing = bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerEnableBrowse").Value),
+                EnableDirectoryBrowsing = browseModeEnabled,
                 RequestPath = new PathString(string.Empty),
-                DefaultFilesOptions = { DefaultFileNames = { "index.html","index.md", "help.html", "help.md", "example.html", "example.md" } }
-            });
+                DefaultFilesOptions = { FileSystem = new PhysicalFileSystem(App.appRuntimeData.webDataPath), 
+                    DefaultFileNames = { "index.html", "index.md", "help.html", "help.md", "example.html", "example.md" },
+                RequestPath = new PathString(string.Empty)}, DirectoryBrowserOptions = {
+                FileSystem =new PhysicalFileSystem(App.appRuntimeData.webDataPath),
+                RequestPath=new PathString(string.Empty)
+                }
+            };
+            
+            appBuilder.UseStaticFiles(staticStorage).UseFileServer(fileServer);
+            if (browseModeEnabled) { appBuilder.UseDirectoryBrowser(); }
             appBuilder.UseStageMarker(PipelineStage.MapHandler);
 
         }

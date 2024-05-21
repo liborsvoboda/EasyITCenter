@@ -34,7 +34,7 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                DgListView.ItemsSource = await CommApi.GetApiRequest<List<BasicViewAttachmentList>>(ApiUrls.EasyITCenterBasicAttachmentList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                DgListView.ItemsSource = await CommunicationManager.GetApiRequest<List<BasicViewAttachmentList>>(ApiUrls.EasyITCenterBasicAttachmentList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden; return true;
         }
@@ -84,7 +84,7 @@ namespace EasyITSystemCenter.Pages {
                     viewPort3d.Visibility = webViewer.Visibility = Visibility.Hidden;
 
                     string filePath = Path.Combine(App.appRuntimeData.tempFolder, selectedRecord.FileName);
-                    FileOperations.ByteArrayToFile(filePath, (await CommApi.GetApiRequest<BasicAttachmentList>(ApiUrls.EasyITCenterBasicAttachmentList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token)).Attachment);
+                    FileOperations.ByteArrayToFile(filePath, (await CommunicationManager.GetApiRequest<BasicAttachmentList>(ApiUrls.EasyITCenterBasicAttachmentList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token)).Attachment);
                     switch (selectedRecord.FileName.ToLower().Split('.').Last()) {
                         case "stl":
                             viewPort3d.IsEnabled = true; viewPort3d.Visibility = Visibility.Visible; //viewPort3d.Viewport.Print("");

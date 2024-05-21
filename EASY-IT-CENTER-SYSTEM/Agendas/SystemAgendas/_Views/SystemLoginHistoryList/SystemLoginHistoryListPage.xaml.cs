@@ -31,7 +31,7 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
                 if (MainWindow.serviceRunning) {
-                    DgListView.ItemsSource = await CommApi.GetApiRequest<List<SystemLoginHistoryList>>(ApiUrls.EasyITCenterSystemLoginHistoryList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                    DgListView.ItemsSource = await CommunicationManager.GetApiRequest<List<SystemLoginHistoryList>>(ApiUrls.EasyITCenterSystemLoginHistoryList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
                 }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden; return true;

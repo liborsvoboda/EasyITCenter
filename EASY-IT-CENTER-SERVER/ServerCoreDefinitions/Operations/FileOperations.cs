@@ -254,15 +254,16 @@
 
 
         /// <summary>
-        /// Return Full File path to the operating system default
-        /// slashes.
+        /// Return Full File path to the operating system default slashes.
+        /// !!! USE as + With Path Combine Path.Combine(yourpath) + ConvertSystemFilePathFromUrl(string webpath);
         /// </summary>
         /// <param name="webpath"></param>
         public static string ConvertSystemFilePathFromUrl(string webpath) {
             if (string.IsNullOrEmpty(webpath)) return webpath;
             char slash = Path.DirectorySeparatorChar;
-            webpath = webpath.Replace('/', slash).Replace('\\', slash);
-            return webpath.Replace(slash.ToString() + slash.ToString(), slash.ToString());
+            if (!webpath.StartsWith("/")) { webpath = $"/{webpath}"; }
+            webpath = webpath.Replace('/', slash).Replace('\\', slash).Replace(slash.ToString() + slash.ToString(), slash.ToString());
+            return webpath;
         }
     }
 }

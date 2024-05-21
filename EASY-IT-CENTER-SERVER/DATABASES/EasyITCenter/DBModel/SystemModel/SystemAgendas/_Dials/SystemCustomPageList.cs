@@ -27,9 +27,12 @@ namespace EasyITCenter.DBModel
         public bool DevModeEnabled { get; set; }
         public bool ShowHelpTab { get; set; }
         public bool HelpTabShowOnly { get; set; }
+        [StringLength(50)]
+        [Unicode(false)]
+        public string? InheritedHelpTabSourceType { get; set; }
         [StringLength(512)]
         [Unicode(false)]
-        public string? StartupUrl { get; set; }
+        public string StartupUrl { get; set; } = null!;
         [StringLength(512)]
         [Unicode(false)]
         public string? HelpTabUrl { get; set; }

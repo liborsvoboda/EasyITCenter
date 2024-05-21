@@ -38,8 +38,8 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                TemplateClassListWithParrent = await CommApi.GetApiRequest<List<TemplateClassListWithParrent>>(ApiUrls.EasyITCenterTemplateClassListWithParrent, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
-                parentClassList = await CommApi.GetApiRequest<List<SolutionUserRoleList>>(ApiUrls.EasyITCenterSolutionUserRoleList, null, App.UserData.Authentification.Token);
+                TemplateClassListWithParrent = await CommunicationManager.GetApiRequest<List<TemplateClassListWithParrent>>(ApiUrls.EasyITCenterTemplateClassListWithParrent, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                parentClassList = await CommunicationManager.GetApiRequest<List<SolutionUserRoleList>>(ApiUrls.EasyITCenterSolutionUserRoleList, null, App.UserData.Authentification.Token);
 
                 TemplateClassListWithParrent.ForEach(async user => { user.ParentName = await DBOperations.DBTranslation(parentClassList.First(a => a.Id == user.ParentId).SystemName); });
                 parentClassList.ForEach(async role => { role.Translation = await DBOperations.DBTranslation(role.SystemName); });
@@ -96,7 +96,7 @@ namespace EasyITSystemCenter.Pages {
             dataViewSupport.SelectedRecordId = selectedRecord.Id;
             MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + selectedRecord.Id.ToString(), true);
             if (result == MessageDialogResult.Affirmative) {
-                DBResultMessage dBResult = await CommApi.DeleteApiRequest(ApiUrls.EasyITCenterTemplateClassListWithParrent, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
+                DBResultMessage dBResult = await CommunicationManager.DeleteApiRequest(ApiUrls.EasyITCenterTemplateClassListWithParrent, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
                 if (dBResult.RecordCount == 0) await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage);
                 await LoadDataList(); SetRecord(false);
             }
@@ -130,9 +130,9 @@ namespace EasyITSystemCenter.Pages {
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                 if (selectedRecord.Id == 0) {
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterTemplateClassListWithParrent, httpContent, null, App.UserData.Authentification.Token);
+                    dBResult = await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterTemplateClassListWithParrent, httpContent, null, App.UserData.Authentification.Token);
                 }
-                else { dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterTemplateClassListWithParrent, httpContent, null, App.UserData.Authentification.Token); }
+                else { dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterTemplateClassListWithParrent, httpContent, null, App.UserData.Authentification.Token); }
 
                 if (dBResult.RecordCount > 0) {
                     selectedRecord = new TemplateClassListWithParrent();

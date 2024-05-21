@@ -20,7 +20,7 @@ namespace EasyITSystemCenter.GlobalOperations {
 
         /// <summary>
         /// Globa Translator for Objects with Defined Name as: xx_translatedString
-        /// Prepared for MenuItem, Label, Button, GroupBox
+        /// Prepared for MenuItem, Label, Button, GroupBox, TabItems
         /// </summary>
         /// <param name="parentObject"></param>
         /// <returns></returns>
@@ -38,6 +38,11 @@ namespace EasyITSystemCenter.GlobalOperations {
                     //element.FindChildren<CheckBox>().ToList().ForEach(async item => {
                     //    try { if (item.Name.Split('_').Length > 1 && item.Content == null) { item.Content = await DBOperations.DBTranslation(item.Name.Split('_')[1]); } } catch { }
                     //});
+                }
+                foreach (var element in FindVisualChildren<TabControl>(parentObject)) {
+                    element.Items.OfType<TabItem>().ToList().ForEach(async item => {
+                        try { if (item.Name.Split('_').Length > 1 && item.Header == null) { item.Header = await DBOperations.DBTranslation(item.Name.Split('_')[1]); } } catch { }
+                    });
                 }
                 foreach (var element in FindVisualChildren<GroupBox>(parentObject)) { 
                     try { if (element.Name.Split('_').Length > 1 && element.Header == null) { element.Header = await DBOperations.DBTranslation(element.Name.Split('_')[1]); } } catch { }

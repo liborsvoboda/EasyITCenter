@@ -47,8 +47,8 @@ namespace EasyITSystemCenter.Pages {
             List<SolutionUserList> userList = new List<SolutionUserList>();
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                parameterList = await CommApi.GetApiRequest<List<SystemParameterList>>(ApiUrls.EasyITCenterSystemParameterList, App.UserData.Authentification.Id.ToString(), App.UserData.Authentification.Token);
-                userList = await CommApi.GetApiRequest<List<SolutionUserList>>(ApiUrls.EasyITCenterSolutionUserList, null, App.UserData.Authentification.Token);
+                parameterList = await CommunicationManager.GetApiRequest<List<SystemParameterList>>(ApiUrls.EasyITCenterSystemParameterList, App.UserData.Authentification.Id.ToString(), App.UserData.Authentification.Token);
+                userList = await CommunicationManager.GetApiRequest<List<SolutionUserList>>(ApiUrls.EasyITCenterSolutionUserList, null, App.UserData.Authentification.Token);
 
                 parameterList.ForEach(async param => {
                     param.Translation = await DBOperations.DBTranslation(param.SystemName);
@@ -111,7 +111,7 @@ namespace EasyITSystemCenter.Pages {
             dataViewSupport.SelectedRecordId = selectedRecord.Id;
             MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + selectedRecord.Id.ToString(), true);
             if (result == MessageDialogResult.Affirmative) {
-                DBResultMessage dBResult = await CommApi.DeleteApiRequest(ApiUrls.EasyITCenterSystemParameterList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
+                DBResultMessage dBResult = await CommunicationManager.DeleteApiRequest(ApiUrls.EasyITCenterSystemParameterList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
                 if (dBResult.RecordCount == 0) await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage);
                 _ = LoadDataList(); SetRecord(false);
             }
@@ -149,13 +149,13 @@ namespace EasyITSystemCenter.Pages {
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                 if (selectedRecord.Id == 0) {
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterSystemParameterList, httpContent, null, App.UserData.Authentification.Token);
+                    dBResult = await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterSystemParameterList, httpContent, null, App.UserData.Authentification.Token);
                 }
-                else { dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterSystemParameterList, httpContent, null, App.UserData.Authentification.Token); }
+                else { dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterSystemParameterList, httpContent, null, App.UserData.Authentification.Token); }
 
                 if (dBResult.RecordCount > 0) {
                     // Refresh User Params
-                    App.ParameterList = await CommApi.GetApiRequest<List<SystemParameterList>>(ApiUrls.EasyITCenterSystemParameterList, null, null);
+                    App.ParameterList = await CommunicationManager.GetApiRequest<List<SystemParameterList>>(ApiUrls.EasyITCenterSystemParameterList, null, null);
 
                     selectedRecord = new SystemParameterList();
                     await LoadDataList();

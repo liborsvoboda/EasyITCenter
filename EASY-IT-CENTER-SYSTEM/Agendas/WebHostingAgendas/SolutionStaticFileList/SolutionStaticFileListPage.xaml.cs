@@ -46,9 +46,9 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
 
-                solutionWebsiteList = await CommApi.GetApiRequest<List<SolutionWebsiteList>>(ApiUrls.SolutionWebsiteList, null, App.UserData.Authentification.Token);
-                systemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
-                solutionStaticFileList = await CommApi.GetApiRequest<List<SolutionStaticFileList>>(ApiUrls.SolutionStaticFileList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                solutionWebsiteList = await CommunicationManager.GetApiRequest<List<SolutionWebsiteList>>(ApiUrls.SolutionWebsiteList, null, App.UserData.Authentification.Token);
+                systemSvgIconList = await CommunicationManager.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
+                solutionStaticFileList = await CommunicationManager.GetApiRequest<List<SolutionStaticFileList>>(ApiUrls.SolutionStaticFileList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
               
                 cb_websiteName.ItemsSource = solutionWebsiteList; cb_websiteName.SelectedItem = solutionWebsiteList.FirstOrDefault();
                 solutionStaticFileList = solutionStaticFileList.OrderBy(a => a.FileNamePath).ToList();
@@ -146,9 +146,9 @@ namespace EasyITSystemCenter.Pages {
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                 if (selectedRecord.Id == 0) {
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.SolutionStaticFileList, httpContent, null, App.UserData.Authentification.Token);
+                    dBResult = await CommunicationManager.PutApiRequest(ApiUrls.SolutionStaticFileList, httpContent, null, App.UserData.Authentification.Token);
                 }
-                else { dBResult = await CommApi.PostApiRequest(ApiUrls.SolutionStaticFileList, httpContent, null, App.UserData.Authentification.Token); }
+                else { dBResult = await CommunicationManager.PostApiRequest(ApiUrls.SolutionStaticFileList, httpContent, null, App.UserData.Authentification.Token); }
 
                 if (dBResult.RecordCount > 0) {
                     selectedRecord = new SolutionStaticFileList();

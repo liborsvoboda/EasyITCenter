@@ -42,9 +42,9 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                mixedEnumTypesList = await CommApi.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/OperationTypes", App.UserData.Authentification.Token);
+                mixedEnumTypesList = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/OperationTypes", App.UserData.Authentification.Token);
                 //systemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
-                solutionOperationList = await CommApi.GetApiRequest<List<SolutionOperationList>>(ApiUrls.EasyITCenterSolutionOperationList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                solutionOperationList = await CommunicationManager.GetApiRequest<List<SolutionOperationList>>(ApiUrls.EasyITCenterSolutionOperationList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
                 //Generate Menu Panel
                 TabMenuList.Items.Clear();
@@ -118,11 +118,11 @@ namespace EasyITSystemCenter.Pages {
                 switch (selectedPanel.InheritedTypeName) {
                     case "DB_SP_GET_Operace":
                         if (selectedPanel.InheritedResultTypeName == "message") {
-                            messageResponse = await CommApi.GetApiRequest<List<CustomOneRowList>>(ApiUrls.ServerApi, "DatabaseServices/SpProcedure/Message/" + selectedPanel.InputData, App.UserData.Authentification.Token);
+                            messageResponse = await CommunicationManager.GetApiRequest<List<CustomOneRowList>>(ApiUrls.ServerApi, "DatabaseServices/SpProcedure/Message/" + selectedPanel.InputData, App.UserData.Authentification.Token);
                             json = messageResponse[0].MessageList;
                         }
                         else {
-                            jsonResponse = await CommApi.GetApiRequest<List<GenericValue>>(ApiUrls.ServerApi, "DatabaseServices/SpProcedure/Json/" + selectedPanel.InputData, App.UserData.Authentification.Token);
+                            jsonResponse = await CommunicationManager.GetApiRequest<List<GenericValue>>(ApiUrls.ServerApi, "DatabaseServices/SpProcedure/Json/" + selectedPanel.InputData, App.UserData.Authentification.Token);
                             JavaScriptSerializer serializer = new JavaScriptSerializer(); json = "{";
                             jsonResponse.ForEach(key => {
                                 DeserializedJson jsonObject = serializer.Deserialize<DeserializedJson>(key.Value);

@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.IO;
+using EasyITSystemCenter.GlobalClasses;
+using Markdig;
+using Markdig.Wpf;
+using Pek.Markdig.HighlightJs;
 
 
 namespace EasyITSystemCenter.Pages {
@@ -27,17 +31,15 @@ namespace EasyITSystemCenter.Pages {
                 InitializeComponent();
                 
                 _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
-                _ = FormOperations.TranslateFormFields(ListView);
-                MainWindow.ProgressRing = Visibility.Visible;
+                if (!App.appRuntimeData.webServerRunning) {
+                    _ = MainWindow.ShowMessageOnMainWindow(true, DBOperations.DBTranslation("WebServerNotRunningCheckClientConfiguration").GetAwaiter().GetResult());
+                }
+                else { IsEnabled = false; IsEnabledChanged += (s, e) => { if (IsEnabled) { _ = LoadDataList(); } }; }
 
-                //Enabling By TabController After Inserted ID, Load Data On Startup Only
-                IsEnabled = false;
-                IsEnabledChanged += (s, e) => {
-                    if (IsEnabled && systemCustomPageList.Id == 0) {
-                        webBrowser.CoreWebView2InitializationCompleted += WebBrowser_CoreWebView2InitializationCompleted;
-                        _ = webBrowser.EnsureCoreWebView2Async();
-                    }
-                };
+                new MarkdownPipelineBuilder().UseEmphasisExtras().UseAbbreviations().UseAdvancedExtensions().UseBootstrap()
+                .UseDiagrams().UseEmphasisExtras().UseEmojiAndSmiley(true).UseDefinitionLists().UseTableOfContent().UseTaskLists()
+                .UseSupportedExtensions().UseSmartyPants().UsePipeTables().UseMediaLinks().UseMathematics().UseListExtras().UseHighlightJs()
+                .UseGridTables().UseGlobalization().UseGenericAttributes().UseFootnotes().UseFooters().UseSyntaxHighlighting().UseFigures().Build();
 
             } catch (Exception ex) { }
             MainWindow.ProgressRing = Visibility.Hidden;
@@ -50,8 +52,13 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
 
-                systemCustomPageList = await CommApi.GetApiRequest<SystemCustomPageList>(ApiUrls.EasyITCenterSystemCustomPageList, this.Uid.ToString(), App.UserData.Authentification.Token);
+                systemCustomPageList = await CommunicationManager.GetApiRequest<SystemCustomPageList>(ApiUrls.EasyITCenterSystemCustomPageList, this.Uid.ToString(), App.UserData.Authentification.Token);
+                webBrowser.CoreWebView2InitializationCompleted += WebBrowser_CoreWebView2InitializationCompleted;
+                await webBrowser.EnsureCoreWebView2Async();
+                if (systemCustomPageList.ShowHelpTab && systemCustomPageList.InheritedHelpTabSourceType.ToLower().Contains("helpurl")) { await helpWebBrowser.EnsureCoreWebView2Async(); }
 
+                _ = FormOperations.TranslateFormFields(ListView);
+                
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden; return true;
         }
@@ -59,41 +66,44 @@ namespace EasyITSystemCenter.Pages {
         //INIT SPA Solution + Help 
         private async void WebBrowser_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e) {
             try {
-                await LoadDataList(); if (systemCustomPageList.ShowHelpTab) { _ = helpBrowser.EnsureCoreWebView2Async(); }
+              
 
-
-
-                webBrowser.Source = new Uri(systemCustomPageList.IsServerUrl ? App.appRuntimeData.AppClientSettings.First(a => a.Key == "conn_apiAddress").Value +
+                //TODO IS OWN SERVER Variant
+                webBrowser.SetCurrentValue(Microsoft.Web.WebView2.Wpf.WebView2.SourceProperty, new Uri(systemCustomPageList.IsServerUrl ? App.appRuntimeData.AppClientSettings.First(a => a.Key == "conn_apiAddress").Value +
                     (systemCustomPageList.StartupUrl.StartsWith("/") ? systemCustomPageList.StartupUrl : "/" + systemCustomPageList.StartupUrl)
-                    : systemCustomPageList.StartupUrl);
+                    : systemCustomPageList.IsSystemUrl ? App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.StartupUrl
+                    : systemCustomPageList.StartupUrl
+                    ));
 
-                webBrowser.CoreWebView2.Settings.AreDefaultScriptDialogsEnabled =
-                    webBrowser.CoreWebView2.Settings.AreHostObjectsAllowed = webBrowser.CoreWebView2.Settings.IsBuiltInErrorPageEnabled = webBrowser.CoreWebView2.Settings.IsNonClientRegionSupportEnabled =
-                    webBrowser.CoreWebView2.Settings.IsWebMessageEnabled = webBrowser.CoreWebView2.Settings.IsPinchZoomEnabled = webBrowser.CoreWebView2.Settings.IsGeneralAutofillEnabled =
-                    webBrowser.CoreWebView2.Settings.IsZoomControlEnabled = webBrowser.CoreWebView2.Settings.IsSwipeNavigationEnabled = webBrowser.CoreWebView2.Settings.IsStatusBarEnabled =
-                    webBrowser.CoreWebView2.Settings.IsScriptEnabled = true;
+                if (systemCustomPageList.DevModeEnabled) { webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = true; } else { webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = false; }
 
-                if (systemCustomPageList.DevModeEnabled) {
-                    webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
-                    helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
-                    webBrowser.CoreWebView2.OpenDevToolsWindow();
-                }
-                else {
-                    webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-                    if (systemCustomPageList.ShowHelpTab) { helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false; }
-                }
                 if (systemCustomPageList.ShowHelpTab) {
-                    ti_helpEditor.Visibility = Visibility.Visible;
-                    if (systemCustomPageList.ShowHelpTab) {
-                        helpBrowser.Source = new Uri(systemCustomPageList.IsServerUrl ? App.appRuntimeData.AppClientSettings.First(a => a.Key == "conn_apiAddress").Value +
-                    (systemCustomPageList.HelpTabUrl.StartsWith("/") ? systemCustomPageList.HelpTabUrl : "/" + systemCustomPageList.HelpTabUrl)
-                    : systemCustomPageList.HelpTabUrl);
 
-                        if (systemCustomPageList.HelpTabShowOnly) {
-                            helpBrowser.CoreWebView2.Settings.AreDevToolsEnabled = helpBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-                            helpBrowser.CoreWebView2.Settings.IsScriptEnabled = false; helpBrowser.CoreWebView2.Settings.IsSwipeNavigationEnabled = false;
-                            helpBrowser.CoreWebView2.Settings.IsZoomControlEnabled = false;
-                        }
+                    switch (systemCustomPageList.InheritedHelpTabSourceType.ToLower()) {
+                        case "eicserverhelpurl":
+                        case "esbsystemhelpurl":
+                        case "publicwebhelpurl":
+                            ti_helpUrl.SetCurrentValue(VisibilityProperty, Visibility.Visible);
+                            helpWebBrowser.SetCurrentValue(Microsoft.Web.WebView2.Wpf.WebView2.SourceProperty, new Uri(systemCustomPageList.IsServerUrl ? App.appRuntimeData.AppClientSettings.First(a => a.Key == "conn_apiAddress").Value +
+                            (systemCustomPageList.HelpTabUrl != null && systemCustomPageList.HelpTabUrl.StartsWith("/") ? systemCustomPageList.HelpTabUrl : "/" + systemCustomPageList.HelpTabUrl)
+                            : systemCustomPageList.IsSystemUrl ? App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.HelpTabUrl
+                            : systemCustomPageList.HelpTabUrl
+                            ));
+                            helpWebBrowser.CoreWebView2.Settings.AreDevToolsEnabled = false;
+                            break;
+                        case "eicservermdfile":
+                            ti_helpDoc.SetCurrentValue(VisibilityProperty, Visibility.Visible);
+                            helpDocument.SetCurrentValue(MarkdownViewer.MarkdownProperty, await CommunicationManager.ApiManagerGetRequest(UrlSourceTypes.EicWebServer, systemCustomPageList.HelpTabUrl));
+                            break;
+                        case "esbsystemmdfile":
+                            ti_helpDoc.SetCurrentValue(VisibilityProperty, Visibility.Visible);
+                            helpDocument.SetCurrentValue(MarkdownViewer.MarkdownProperty, await CommunicationManager.ApiManagerGetRequest(UrlSourceTypes.EsbWebServer, systemCustomPageList.HelpTabUrl));
+                            //helpDocument.Markdown = System.IO.File.ReadAllText(System.IO.Path.Combine(App.appRuntimeData.webDataUrlPath) + FileOperations.ConvertSystemFilePathFromUrl(systemCustomPageList.HelpTabUrl));
+                            break;
+                        case "publicwebmdfile":
+                            ti_helpDoc.SetCurrentValue(VisibilityProperty, Visibility.Visible);
+                            helpDocument.SetCurrentValue(MarkdownViewer.MarkdownProperty, await CommunicationManager.ApiManagerGetRequest(UrlSourceTypes.WebUrl, systemCustomPageList.HelpTabUrl));
+                            break;
                     }
                 }
 

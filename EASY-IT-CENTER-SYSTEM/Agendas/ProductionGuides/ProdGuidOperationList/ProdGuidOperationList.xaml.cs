@@ -43,7 +43,7 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             List<ProdGuidPartList> tempPartList = new List<ProdGuidPartList>();
-            try { if (MainWindow.serviceRunning) tempPartList = await CommApi.GetApiRequest<List<ProdGuidPartList>>(ApiUrls.EasyITCenterProdGuidPartList, null, App.UserData.Authentification.Token); } catch { }
+            try { if (MainWindow.serviceRunning) tempPartList = await CommunicationManager.GetApiRequest<List<ProdGuidPartList>>(ApiUrls.EasyITCenterProdGuidPartList, null, App.UserData.Authentification.Token); } catch { }
 
             WorkPlaceList.Clear(); PartNumberList.Clear();
             double? tempPrewWorkPlaceValue = null;
@@ -52,7 +52,7 @@ namespace EasyITSystemCenter.Pages {
                 PartNumberList.Add(new PartNumberList() { WorkPlace = record.WorkPlace, PartNumber = record.Number, Name = record.Name });
             });
 
-            try { if (MainWindow.serviceRunning) DgListView.ItemsSource = OperationList = await CommApi.GetApiRequest<List<ProdGuidOperationList>>(ApiUrls.EasyITCenterProdGuidOperationList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token); } catch { }
+            try { if (MainWindow.serviceRunning) DgListView.ItemsSource = OperationList = await CommunicationManager.GetApiRequest<List<ProdGuidOperationList>>(ApiUrls.EasyITCenterProdGuidOperationList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token); } catch { }
             MainWindow.ProgressRing = Visibility.Hidden; return true;
         }
 
@@ -109,7 +109,7 @@ namespace EasyITSystemCenter.Pages {
             dataViewSupport.SelectedRecordId = selectedRecord.Id;
             MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + selectedRecord.Id.ToString(), true);
             if (result == MessageDialogResult.Affirmative) {
-                DBResultMessage dBResult = await CommApi.DeleteApiRequest(ApiUrls.EasyITCenterProdGuidOperationList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
+                DBResultMessage dBResult = await CommunicationManager.DeleteApiRequest(ApiUrls.EasyITCenterProdGuidOperationList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
                 if (dBResult.RecordCount == 0) await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage);
                 _ = LoadDataList(); SetRecord(false);
             }
@@ -148,9 +148,9 @@ namespace EasyITSystemCenter.Pages {
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                 if (selectedRecord.Id == 0) {
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterProdGuidOperationList, httpContent, null, App.UserData.Authentification.Token); ;
+                    dBResult = await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterProdGuidOperationList, httpContent, null, App.UserData.Authentification.Token); ;
                 }
-                else { dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterProdGuidOperationList, httpContent, null, App.UserData.Authentification.Token); ; }
+                else { dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterProdGuidOperationList, httpContent, null, App.UserData.Authentification.Token); ; }
 
                 if (dBResult.RecordCount > 0) {
                     selectedRecord = new ProdGuidOperationList();
@@ -177,9 +177,9 @@ namespace EasyITSystemCenter.Pages {
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                 if (selectedRecord.Id == 0) {
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterProdGuidOperationList, httpContent, null, App.UserData.Authentification.Token); ; ;
+                    dBResult = await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterProdGuidOperationList, httpContent, null, App.UserData.Authentification.Token); ; ;
                 }
-                else { dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterProdGuidOperationList, httpContent, null, App.UserData.Authentification.Token); ; }
+                else { dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterProdGuidOperationList, httpContent, null, App.UserData.Authentification.Token); ; }
 
                 if (dBResult.RecordCount > 0) {
                     selectedRecord = new ProdGuidOperationList();

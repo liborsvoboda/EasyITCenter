@@ -35,8 +35,8 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-                ServerToolTypeList = await CommApi.GetApiRequest<List<ServerToolTypeList>>(ApiUrls.EasyITCenterServerToolTypeList, null, App.UserData.Authentification.Token);
-                ServerToolPanelDefinitionList = await CommApi.GetApiRequest<List<ServerToolPanelDefinitionList>>(ApiUrls.EasyITCenterServerToolPanelDefinitionList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                ServerToolTypeList = await CommunicationManager.GetApiRequest<List<ServerToolTypeList>>(ApiUrls.EasyITCenterServerToolTypeList, null, App.UserData.Authentification.Token);
+                ServerToolPanelDefinitionList = await CommunicationManager.GetApiRequest<List<ServerToolPanelDefinitionList>>(ApiUrls.EasyITCenterServerToolPanelDefinitionList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
                 //SystemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
 
                 //Generate Menu Panel

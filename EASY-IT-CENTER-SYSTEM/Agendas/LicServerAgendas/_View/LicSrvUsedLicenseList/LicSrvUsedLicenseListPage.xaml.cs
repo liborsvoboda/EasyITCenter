@@ -33,9 +33,9 @@ namespace EasyITSystemCenter.Pages {
             List<BusinessAddressList> addressList = new List<BusinessAddressList>();
             List<LicSrvUsedLicenseList> LicSrvUsedLicenseLists = new List<LicSrvUsedLicenseList>();
             List<ExtendedLicSrvUsedLicenseList> ExtendedLicSrvUsedLicenseLists = new List<ExtendedLicSrvUsedLicenseList>();
-            try { if (MainWindow.serviceRunning) addressList = await CommApi.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token); } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-            try { if (MainWindow.serviceRunning) itemList = await CommApi.GetApiRequest<List<BasicItemList>>(ApiUrls.EasyITCenterBasicItemList, null, App.UserData.Authentification.Token); } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-            try { if (MainWindow.serviceRunning) LicSrvUsedLicenseLists = await CommApi.GetApiRequest<List<LicSrvUsedLicenseList>>(ApiUrls.EasyITCenterLicSrvUsedLicenseList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token); } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+            try { if (MainWindow.serviceRunning) addressList = await CommunicationManager.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token); } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+            try { if (MainWindow.serviceRunning) itemList = await CommunicationManager.GetApiRequest<List<BasicItemList>>(ApiUrls.EasyITCenterBasicItemList, null, App.UserData.Authentification.Token); } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+            try { if (MainWindow.serviceRunning) LicSrvUsedLicenseLists = await CommunicationManager.GetApiRequest<List<LicSrvUsedLicenseList>>(ApiUrls.EasyITCenterLicSrvUsedLicenseList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token); } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             try {
                 LicSrvUsedLicenseLists.ForEach(record => {
                     ExtendedLicSrvUsedLicenseList item = new ExtendedLicSrvUsedLicenseList() {

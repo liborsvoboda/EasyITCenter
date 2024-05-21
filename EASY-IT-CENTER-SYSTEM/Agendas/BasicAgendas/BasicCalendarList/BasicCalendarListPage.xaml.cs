@@ -53,7 +53,7 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
             List<Classes.BasicCalendarList> Data = new List<Classes.BasicCalendarList>();
             try {
-                Data = await CommApi.GetApiRequest<List<Classes.BasicCalendarList>>(ApiUrls.EasyITCenterBasicCalendarList, App.UserData.Authentification.Id.ToString(), App.UserData.Authentification.Token);
+                Data = await CommunicationManager.GetApiRequest<List<Classes.BasicCalendarList>>(ApiUrls.EasyITCenterBasicCalendarList, App.UserData.Authentification.Id.ToString(), App.UserData.Authentification.Token);
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             foreach (Classes.BasicCalendarList record in Data) {
@@ -89,7 +89,7 @@ namespace EasyITSystemCenter.Pages {
             string json = JsonConvert.SerializeObject(selectedRecord);
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-            DBResultMessage dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterBasicCalendarList, httpContent, null, App.UserData.Authentification.Token);
+            DBResultMessage dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterBasicCalendarList, httpContent, null, App.UserData.Authentification.Token);
         }
 
         private void SetRecord(bool? showForm = null) {

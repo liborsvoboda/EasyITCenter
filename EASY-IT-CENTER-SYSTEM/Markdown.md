@@ -1,4 +1,8 @@
 
+WPF česky
+https://learn.microsoft.com/cs-cz/dotnet/desktop/wpf/controls/toolbar?view=netframeworkdesktop-4.8
+
+
 APLICATION INSIGHT
 https://learn.microsoft.com/cs-cz/azure/azure-monitor/app/opentelemetry-enable?tabs=aspnetcore
 

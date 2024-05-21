@@ -74,22 +74,22 @@ namespace EasyITSystemCenter.Pages {
             List<ExtendedOutgoingInvoiceList> extendedOutgoingInvoiceList = new List<ExtendedOutgoingInvoiceList>();
             BusinessBranchList defaultAddress = new BusinessBranchList();
             try {
-                defaultAddress = await CommApi.GetApiRequest<BusinessBranchList>(ApiUrls.EasyITCenterBusinessBranchList, "Active", App.UserData.Authentification.Token);
-                DocumentAdviceList = await CommApi.GetApiRequest<SystemDocumentAdviceList>(ApiUrls.EasyITCenterSystemDocumentAdviceList, "outgoingInvoice/" + defaultAddress.Id, App.UserData.Authentification.Token);
+                defaultAddress = await CommunicationManager.GetApiRequest<BusinessBranchList>(ApiUrls.EasyITCenterBusinessBranchList, "Active", App.UserData.Authentification.Token);
+                DocumentAdviceList = await CommunicationManager.GetApiRequest<SystemDocumentAdviceList>(ApiUrls.EasyITCenterSystemDocumentAdviceList, "outgoingInvoice/" + defaultAddress.Id, App.UserData.Authentification.Token);
                 if (DocumentAdviceList == null) { await MainWindow.ShowMessageOnMainWindow(true, await DBOperations.DBTranslation("documentAdviceNotSet"), false); }
-                AddressList = (await CommApi.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token)).Where(a => a.AddressType == "all" || a.AddressType == "supplier").ToList();
-                cb_totalCurrency.ItemsSource = CurrencyList = await CommApi.GetApiRequest<List<BasicCurrencyList>>(ApiUrls.EasyITCenterBasicCurrencyList, null, App.UserData.Authentification.Token);
-                cb_notes.ItemsSource = NotesList = await CommApi.GetApiRequest<List<BusinessNotesList>>(ApiUrls.EasyITCenterBusinessNotesList, null, App.UserData.Authentification.Token);
-                cb_maturity.ItemsSource = MaturityList = await CommApi.GetApiRequest<List<BusinessMaturityList>>(ApiUrls.EasyITCenterBusinessMaturityList, null, App.UserData.Authentification.Token);
-                cb_paymentMethod.ItemsSource = PaymentMethodList = await CommApi.GetApiRequest<List<BusinessPaymentMethodList>>(ApiUrls.EasyITCenterBusinessPaymentMethodList, null, App.UserData.Authentification.Token);
-                cb_paymentStatus.ItemsSource = PaymentStatusList = await CommApi.GetApiRequest<List<BusinessPaymentStatusList>>(ApiUrls.EasyITCenterBusinessPaymentStatusList, null, App.UserData.Authentification.Token);
-                cb_unit.ItemsSource = UnitList = await CommApi.GetApiRequest<List<BasicUnitList>>(ApiUrls.EasyITCenterBasicUnitList, null, App.UserData.Authentification.Token);
-                cb_vat.ItemsSource = VatList = await CommApi.GetApiRequest<List<BasicVatList>>(ApiUrls.EasyITCenterBasicVatList, null, App.UserData.Authentification.Token);
-                ItemList = await CommApi.GetApiRequest<List<BasicItemList>>(ApiUrls.EasyITCenterBasicItemList, null, App.UserData.Authentification.Token);
+                AddressList = (await CommunicationManager.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token)).Where(a => a.AddressType == "all" || a.AddressType == "supplier").ToList();
+                cb_totalCurrency.ItemsSource = CurrencyList = await CommunicationManager.GetApiRequest<List<BasicCurrencyList>>(ApiUrls.EasyITCenterBasicCurrencyList, null, App.UserData.Authentification.Token);
+                cb_notes.ItemsSource = NotesList = await CommunicationManager.GetApiRequest<List<BusinessNotesList>>(ApiUrls.EasyITCenterBusinessNotesList, null, App.UserData.Authentification.Token);
+                cb_maturity.ItemsSource = MaturityList = await CommunicationManager.GetApiRequest<List<BusinessMaturityList>>(ApiUrls.EasyITCenterBusinessMaturityList, null, App.UserData.Authentification.Token);
+                cb_paymentMethod.ItemsSource = PaymentMethodList = await CommunicationManager.GetApiRequest<List<BusinessPaymentMethodList>>(ApiUrls.EasyITCenterBusinessPaymentMethodList, null, App.UserData.Authentification.Token);
+                cb_paymentStatus.ItemsSource = PaymentStatusList = await CommunicationManager.GetApiRequest<List<BusinessPaymentStatusList>>(ApiUrls.EasyITCenterBusinessPaymentStatusList, null, App.UserData.Authentification.Token);
+                cb_unit.ItemsSource = UnitList = await CommunicationManager.GetApiRequest<List<BasicUnitList>>(ApiUrls.EasyITCenterBasicUnitList, null, App.UserData.Authentification.Token);
+                cb_vat.ItemsSource = VatList = await CommunicationManager.GetApiRequest<List<BasicVatList>>(ApiUrls.EasyITCenterBasicVatList, null, App.UserData.Authentification.Token);
+                ItemList = await CommunicationManager.GetApiRequest<List<BasicItemList>>(ApiUrls.EasyITCenterBasicItemList, null, App.UserData.Authentification.Token);
 
                 CurrencyList.ForEach(async currency => {
                     if (!currency.Fixed) {
-                        BusinessExchangeRateList exchangeRate = await CommApi.GetApiRequest<BusinessExchangeRateList>(ApiUrls.EasyITCenterBusinessExchangeRateList, currency.Name, App.UserData.Authentification.Token);
+                        BusinessExchangeRateList exchangeRate = await CommunicationManager.GetApiRequest<BusinessExchangeRateList>(ApiUrls.EasyITCenterBusinessExchangeRateList, currency.Name, App.UserData.Authentification.Token);
                         currency.ExchangeRate = exchangeRate != null ? exchangeRate.Value : 0;
                     }
                 });
@@ -103,7 +103,7 @@ namespace EasyITSystemCenter.Pages {
                             Resources["phone"].ToString() + ": " + defaultAddress.Phone + Environment.NewLine +
                             Resources["email"].ToString() + ": " + defaultAddress.Email;
 
-                outgoingInvoiceList = await CommApi.GetApiRequest<List<BusinessOutgoingInvoiceList>>(ApiUrls.EasyITCenterBusinessOutgoingInvoiceList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                outgoingInvoiceList = await CommunicationManager.GetApiRequest<List<BusinessOutgoingInvoiceList>>(ApiUrls.EasyITCenterBusinessOutgoingInvoiceList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
                 outgoingInvoiceList.ForEach(record => {
                     ExtendedOutgoingInvoiceList item = new ExtendedOutgoingInvoiceList() {
                         Id = record.Id,
@@ -203,7 +203,7 @@ namespace EasyITSystemCenter.Pages {
             dataViewSupport.SelectedRecordId = selectedRecord.Id;
             MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + selectedRecord.Id.ToString(), true);
             if (result == MessageDialogResult.Affirmative) {
-                DBResultMessage dBResult = await CommApi.DeleteApiRequest(ApiUrls.EasyITCenterBusinessOutgoingInvoiceList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
+                DBResultMessage dBResult = await CommunicationManager.DeleteApiRequest(ApiUrls.EasyITCenterBusinessOutgoingInvoiceList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token);
                 if (dBResult.RecordCount == 0) await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage);
                 _ = LoadDataList(); SetRecord(false);
             }
@@ -250,16 +250,16 @@ namespace EasyITSystemCenter.Pages {
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
                 if (selectedRecord.Id == 0) {
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterBusinessOutgoingInvoiceList, httpContent, null, App.UserData.Authentification.Token);
+                    dBResult = await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterBusinessOutgoingInvoiceList, httpContent, null, App.UserData.Authentification.Token);
                 }
-                else { dBResult = await CommApi.PostApiRequest(ApiUrls.EasyITCenterBusinessOutgoingInvoiceList, httpContent, null, App.UserData.Authentification.Token); }
+                else { dBResult = await CommunicationManager.PostApiRequest(ApiUrls.EasyITCenterBusinessOutgoingInvoiceList, httpContent, null, App.UserData.Authentification.Token); }
 
                 if (dBResult.RecordCount > 0) {
                     //Save Items
                     DocumentItemList.ForEach(item => { item.Id = 0; item.DocumentNumber = dBResult.Status; item.UserId = App.UserData.Authentification.Id; });
-                    dBResult = await CommApi.DeleteApiRequest(ApiUrls.EasyITCenterBusinessOutgoingInvoiceSupportList, dBResult.Status, App.UserData.Authentification.Token);
+                    dBResult = await CommunicationManager.DeleteApiRequest(ApiUrls.EasyITCenterBusinessOutgoingInvoiceSupportList, dBResult.Status, App.UserData.Authentification.Token);
                     json = JsonConvert.SerializeObject(DocumentItemList); httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                    dBResult = await CommApi.PutApiRequest(ApiUrls.EasyITCenterBusinessOutgoingInvoiceSupportList, httpContent, null, App.UserData.Authentification.Token);
+                    dBResult = await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterBusinessOutgoingInvoiceSupportList, httpContent, null, App.UserData.Authentification.Token);
                     if (dBResult.RecordCount != DocumentItemList.Count()) {
                         await MainWindow.ShowMessageOnMainWindow(true, Resources["itemsDBError"].ToString() + Environment.NewLine + dBResult.ErrorMessage);
                     }
@@ -313,7 +313,7 @@ namespace EasyITSystemCenter.Pages {
                     //Load Items and Defaults
                     HideTiltButtons();
                     if (App.tiltTargets == TiltTargets.OfferToInvoice.ToString() || App.tiltTargets == TiltTargets.OrderToInvoice.ToString()) { DocumentItemList = App.TiltDocItems; }
-                    else { DocumentItemList = await CommApi.GetApiRequest<List<DocumentItemList>>(ApiUrls.EasyITCenterBusinessOutgoingInvoiceSupportList, originalDocumentNumber, App.UserData.Authentification.Token); }
+                    else { DocumentItemList = await CommunicationManager.GetApiRequest<List<DocumentItemList>>(ApiUrls.EasyITCenterBusinessOutgoingInvoiceSupportList, originalDocumentNumber, App.UserData.Authentification.Token); }
 
                     DgSubListView.ItemsSource = DocumentItemList; DgSubListView.Items.Refresh(); ClearItemsFields(); txt_totalPrice.Text = DocumentItemList.Sum(a => a.TotalPriceWithVat).ToString(documentVatPriceFormat) + ((cb_totalCurrency.SelectedItem != null) ? " " + ((BasicCurrencyList)cb_totalCurrency.SelectedItem).Name : "");
                     if (CurrencyList.Where(a => a.Default).Count() == 1 && string.IsNullOrWhiteSpace(cb_totalCurrency.Text)) { cb_totalCurrency.Text = CurrencyList.First(a => a.Default).Name; }
@@ -548,21 +548,21 @@ namespace EasyITSystemCenter.Pages {
                 List<ExtendedOutgoingInvoiceList> extendedOutgoingInvoiceList = new List<ExtendedOutgoingInvoiceList>();
                 BusinessBranchList defaultAddress = new BusinessBranchList();
 
-                defaultAddress = await CommApi.GetApiRequest<BusinessBranchList>(ApiUrls.EasyITCenterBusinessBranchList, "Active", App.UserData.Authentification.Token);
-                DocumentAdviceList = await CommApi.GetApiRequest<SystemDocumentAdviceList>(ApiUrls.EasyITCenterSystemDocumentAdviceList, "outgoingInvoice/" + defaultAddress.Id, App.UserData.Authentification.Token);
+                defaultAddress = await CommunicationManager.GetApiRequest<BusinessBranchList>(ApiUrls.EasyITCenterBusinessBranchList, "Active", App.UserData.Authentification.Token);
+                DocumentAdviceList = await CommunicationManager.GetApiRequest<SystemDocumentAdviceList>(ApiUrls.EasyITCenterSystemDocumentAdviceList, "outgoingInvoice/" + defaultAddress.Id, App.UserData.Authentification.Token);
                 if (DocumentAdviceList == null) { await MainWindow.ShowMessageOnMainWindow(true, Resources["documentAdviceNotSet"].ToString()); }
-                AddressList = (await CommApi.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token)).Where(a => a.AddressType == "all" || a.AddressType == "supplier").ToList();
-                cb_totalCurrency.ItemsSource = CurrencyList = await CommApi.GetApiRequest<List<BasicCurrencyList>>(ApiUrls.EasyITCenterBasicCurrencyList, null, App.UserData.Authentification.Token);
-                cb_notes.ItemsSource = NotesList = await CommApi.GetApiRequest<List<BusinessNotesList>>(ApiUrls.EasyITCenterBusinessNotesList, null, App.UserData.Authentification.Token);
-                cb_maturity.ItemsSource = MaturityList = await CommApi.GetApiRequest<List<BusinessMaturityList>>(ApiUrls.EasyITCenterBusinessMaturityList, null, App.UserData.Authentification.Token);
-                cb_paymentMethod.ItemsSource = PaymentMethodList = await CommApi.GetApiRequest<List<BusinessPaymentMethodList>>(ApiUrls.EasyITCenterBusinessPaymentMethodList, null, App.UserData.Authentification.Token);
-                cb_paymentStatus.ItemsSource = PaymentStatusList = await CommApi.GetApiRequest<List<BusinessPaymentStatusList>>(ApiUrls.EasyITCenterBusinessPaymentStatusList, null, App.UserData.Authentification.Token);
+                AddressList = (await CommunicationManager.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token)).Where(a => a.AddressType == "all" || a.AddressType == "supplier").ToList();
+                cb_totalCurrency.ItemsSource = CurrencyList = await CommunicationManager.GetApiRequest<List<BasicCurrencyList>>(ApiUrls.EasyITCenterBasicCurrencyList, null, App.UserData.Authentification.Token);
+                cb_notes.ItemsSource = NotesList = await CommunicationManager.GetApiRequest<List<BusinessNotesList>>(ApiUrls.EasyITCenterBusinessNotesList, null, App.UserData.Authentification.Token);
+                cb_maturity.ItemsSource = MaturityList = await CommunicationManager.GetApiRequest<List<BusinessMaturityList>>(ApiUrls.EasyITCenterBusinessMaturityList, null, App.UserData.Authentification.Token);
+                cb_paymentMethod.ItemsSource = PaymentMethodList = await CommunicationManager.GetApiRequest<List<BusinessPaymentMethodList>>(ApiUrls.EasyITCenterBusinessPaymentMethodList, null, App.UserData.Authentification.Token);
+                cb_paymentStatus.ItemsSource = PaymentStatusList = await CommunicationManager.GetApiRequest<List<BusinessPaymentStatusList>>(ApiUrls.EasyITCenterBusinessPaymentStatusList, null, App.UserData.Authentification.Token);
 
                 CurrencyList.ForEach(async currency => {
-                    if (!currency.Fixed) { currency.ExchangeRate = (await CommApi.GetApiRequest<BusinessExchangeRateList>(ApiUrls.EasyITCenterBusinessExchangeRateList, currency.Name, App.UserData.Authentification.Token)).Value; }
+                    if (!currency.Fixed) { currency.ExchangeRate = (await CommunicationManager.GetApiRequest<BusinessExchangeRateList>(ApiUrls.EasyITCenterBusinessExchangeRateList, currency.Name, App.UserData.Authentification.Token)).Value; }
                 });
 
-                OutgoingInvoiceList = await CommApi.GetApiRequest<List<BusinessOutgoingInvoiceList>>(ApiUrls.EasyITCenterBusinessOutgoingInvoiceList, null, App.UserData.Authentification.Token);
+                OutgoingInvoiceList = await CommunicationManager.GetApiRequest<List<BusinessOutgoingInvoiceList>>(ApiUrls.EasyITCenterBusinessOutgoingInvoiceList, null, App.UserData.Authentification.Token);
                 OutgoingInvoiceList.ForEach(record => {
                     ExtendedOutgoingInvoiceList gdItem = new ExtendedOutgoingInvoiceList() {
                         Id = record.Id,
@@ -623,21 +623,21 @@ namespace EasyITSystemCenter.Pages {
                 List<ExtendedOutgoingInvoiceList> extendedOutgoingInvoiceList = new List<ExtendedOutgoingInvoiceList>();
                 BusinessBranchList defaultAddress = new BusinessBranchList();
 
-                defaultAddress = await CommApi.GetApiRequest<BusinessBranchList>(ApiUrls.EasyITCenterBusinessBranchList, "Active", App.UserData.Authentification.Token);
-                DocumentAdviceList = await CommApi.GetApiRequest<SystemDocumentAdviceList>(ApiUrls.EasyITCenterSystemDocumentAdviceList, "outgoingInvoice/" + defaultAddress.Id, App.UserData.Authentification.Token);
+                defaultAddress = await CommunicationManager.GetApiRequest<BusinessBranchList>(ApiUrls.EasyITCenterBusinessBranchList, "Active", App.UserData.Authentification.Token);
+                DocumentAdviceList = await CommunicationManager.GetApiRequest<SystemDocumentAdviceList>(ApiUrls.EasyITCenterSystemDocumentAdviceList, "outgoingInvoice/" + defaultAddress.Id, App.UserData.Authentification.Token);
                 if (DocumentAdviceList == null) { await MainWindow.ShowMessageOnMainWindow(true, Resources["documentAdviceNotSet"].ToString()); }
-                AddressList = (await CommApi.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token)).Where(a => a.AddressType == "all" || a.AddressType == "supplier").ToList();
-                cb_totalCurrency.ItemsSource = CurrencyList = await CommApi.GetApiRequest<List<BasicCurrencyList>>(ApiUrls.EasyITCenterBasicCurrencyList, null, App.UserData.Authentification.Token);
-                cb_notes.ItemsSource = NotesList = await CommApi.GetApiRequest<List<BusinessNotesList>>(ApiUrls.EasyITCenterBusinessNotesList, null, App.UserData.Authentification.Token);
-                cb_maturity.ItemsSource = MaturityList = await CommApi.GetApiRequest<List<BusinessMaturityList>>(ApiUrls.EasyITCenterBusinessMaturityList, null, App.UserData.Authentification.Token);
-                cb_paymentMethod.ItemsSource = PaymentMethodList = await CommApi.GetApiRequest<List<BusinessPaymentMethodList>>(ApiUrls.EasyITCenterBusinessPaymentMethodList, null, App.UserData.Authentification.Token);
-                cb_paymentStatus.ItemsSource = PaymentStatusList = await CommApi.GetApiRequest<List<BusinessPaymentStatusList>>(ApiUrls.EasyITCenterBusinessPaymentStatusList, null, App.UserData.Authentification.Token);
+                AddressList = (await CommunicationManager.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token)).Where(a => a.AddressType == "all" || a.AddressType == "supplier").ToList();
+                cb_totalCurrency.ItemsSource = CurrencyList = await CommunicationManager.GetApiRequest<List<BasicCurrencyList>>(ApiUrls.EasyITCenterBasicCurrencyList, null, App.UserData.Authentification.Token);
+                cb_notes.ItemsSource = NotesList = await CommunicationManager.GetApiRequest<List<BusinessNotesList>>(ApiUrls.EasyITCenterBusinessNotesList, null, App.UserData.Authentification.Token);
+                cb_maturity.ItemsSource = MaturityList = await CommunicationManager.GetApiRequest<List<BusinessMaturityList>>(ApiUrls.EasyITCenterBusinessMaturityList, null, App.UserData.Authentification.Token);
+                cb_paymentMethod.ItemsSource = PaymentMethodList = await CommunicationManager.GetApiRequest<List<BusinessPaymentMethodList>>(ApiUrls.EasyITCenterBusinessPaymentMethodList, null, App.UserData.Authentification.Token);
+                cb_paymentStatus.ItemsSource = PaymentStatusList = await CommunicationManager.GetApiRequest<List<BusinessPaymentStatusList>>(ApiUrls.EasyITCenterBusinessPaymentStatusList, null, App.UserData.Authentification.Token);
 
                 CurrencyList.ForEach(async currency => {
-                    if (!currency.Fixed) { currency.ExchangeRate = (await CommApi.GetApiRequest<BusinessExchangeRateList>(ApiUrls.EasyITCenterBusinessExchangeRateList, currency.Name, App.UserData.Authentification.Token)).Value; }
+                    if (!currency.Fixed) { currency.ExchangeRate = (await CommunicationManager.GetApiRequest<BusinessExchangeRateList>(ApiUrls.EasyITCenterBusinessExchangeRateList, currency.Name, App.UserData.Authentification.Token)).Value; }
                 });
 
-                OutgoingInvoiceList = await CommApi.GetApiRequest<List<BusinessOutgoingInvoiceList>>(ApiUrls.EasyITCenterBusinessOutgoingInvoiceList, null, App.UserData.Authentification.Token);
+                OutgoingInvoiceList = await CommunicationManager.GetApiRequest<List<BusinessOutgoingInvoiceList>>(ApiUrls.EasyITCenterBusinessOutgoingInvoiceList, null, App.UserData.Authentification.Token);
                 OutgoingInvoiceList.ForEach(record => {
                     ExtendedOutgoingInvoiceList gdItem = new ExtendedOutgoingInvoiceList() {
                         Id = record.Id,
@@ -711,7 +711,7 @@ namespace EasyITSystemCenter.Pages {
         }
 
         private async void ShowReceipt_Click(object sender, RoutedEventArgs e) {
-            BusinessReceiptList receiptList = await CommApi.GetApiRequest<BusinessReceiptList>(ApiUrls.EasyITCenterBusinessReceiptList, selectedRecord.ReceiptId.ToString(), App.UserData.Authentification.Token);
+            BusinessReceiptList receiptList = await CommunicationManager.GetApiRequest<BusinessReceiptList>(ApiUrls.EasyITCenterBusinessReceiptList, selectedRecord.ReceiptId.ToString(), App.UserData.Authentification.Token);
             ExtendedReceiptList extendedReceiptList = new ExtendedReceiptList() {
                 Id = receiptList.Id,
                 DocumentNumber = receiptList.DocumentNumber,
@@ -737,7 +737,7 @@ namespace EasyITSystemCenter.Pages {
         }
 
         private async void ShowCreditNote_Click(object sender, RoutedEventArgs e) {
-            BusinessCreditNoteList creditNoteList = await CommApi.GetApiRequest<BusinessCreditNoteList>(ApiUrls.EasyITCenterBusinessCreditNoteList, selectedRecord.CreditNoteId.ToString(), App.UserData.Authentification.Token);
+            BusinessCreditNoteList creditNoteList = await CommunicationManager.GetApiRequest<BusinessCreditNoteList>(ApiUrls.EasyITCenterBusinessCreditNoteList, selectedRecord.CreditNoteId.ToString(), App.UserData.Authentification.Token);
             ExtendedCreditNoteList extendedCreditNoteList = new ExtendedCreditNoteList() {
                 Id = creditNoteList.Id,
                 DocumentNumber = creditNoteList.DocumentNumber,

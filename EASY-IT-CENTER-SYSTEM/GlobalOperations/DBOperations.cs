@@ -22,10 +22,10 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// </summary>
         public static async void LoadStartupDBData() {
             try {
-                App.ServerSetting = await CommApi.GetApiRequest<List<ServerServerSettingList>>(ApiUrls.EasyITCenterServerSettingList, null, null);
-                App.IgnoredExceptionList = await CommApi.GetApiRequest<List<SystemIgnoredExceptionList>>(ApiUrls.EasyITCenterSystemIgnoredExceptionList, null, null);
-                App.LanguageList = await CommApi.GetApiRequest<List<SystemTranslationList>>(ApiUrls.EasyITCenterSystemTranslationList, null, null);
-                App.ParameterList = await CommApi.GetApiRequest<List<SystemParameterList>>(ApiUrls.EasyITCenterSystemParameterList, null, null);
+                App.ServerSetting = await CommunicationManager.GetApiRequest<List<ServerServerSettingList>>(ApiUrls.EasyITCenterServerSettingList, null, null);
+                App.IgnoredExceptionList = await CommunicationManager.GetApiRequest<List<SystemIgnoredExceptionList>>(ApiUrls.EasyITCenterSystemIgnoredExceptionList, null, null);
+                App.LanguageList = await CommunicationManager.GetApiRequest<List<SystemTranslationList>>(ApiUrls.EasyITCenterSystemTranslationList, null, null);
+                App.ParameterList = await CommunicationManager.GetApiRequest<List<SystemParameterList>>(ApiUrls.EasyITCenterSystemParameterList, null, null);
                 App.ReloadLanguageListRequested = false;
             } catch { }
         }
@@ -35,7 +35,7 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// Saving and Reloading with Language List
         /// </summary>
         public static async Task<bool> LoadWaitingDataInSleepMode() {
-            if (App.ReloadLanguageListRequested) { App.LanguageList = await CommApi.GetApiRequest<List<SystemTranslationList>>(ApiUrls.EasyITCenterSystemTranslationList, null, App.UserData.Authentification.Token); }
+            if (App.ReloadLanguageListRequested) { App.LanguageList = await CommunicationManager.GetApiRequest<List<SystemTranslationList>>(ApiUrls.EasyITCenterSystemTranslationList, null, App.UserData.Authentification.Token); }
 
             App.ReloadLanguageListRequested = false;
             return true;
@@ -47,11 +47,11 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// User Login
         /// </summary>
         public static async Task<bool> LoadOrRefreshUserData() {
-            App.ServerSetting = await CommApi.GetApiRequest<List<ServerServerSettingList>>(ApiUrls.EasyITCenterServerSettingList, null, App.UserData.Authentification.Token);
-            App.IgnoredExceptionList = await CommApi.GetApiRequest<List<SystemIgnoredExceptionList>>(ApiUrls.EasyITCenterSystemIgnoredExceptionList, null, App.UserData.Authentification.Token);
-            App.LanguageList = await CommApi.GetApiRequest<List<SystemTranslationList>>(ApiUrls.EasyITCenterSystemTranslationList, null, App.UserData.Authentification.Token);
-            App.ParameterList = await CommApi.GetApiRequest<List<SystemParameterList>>(ApiUrls.EasyITCenterSystemParameterList, App.UserData.Authentification.Id.ToString(), App.UserData.Authentification.Token);
-            App.SystemModuleList = await CommApi.GetApiRequest<List<SystemModuleList>>(ApiUrls.SystemModuleList, null, App.UserData.Authentification.Token);
+            App.ServerSetting = await CommunicationManager.GetApiRequest<List<ServerServerSettingList>>(ApiUrls.EasyITCenterServerSettingList, null, App.UserData.Authentification.Token);
+            App.IgnoredExceptionList = await CommunicationManager.GetApiRequest<List<SystemIgnoredExceptionList>>(ApiUrls.EasyITCenterSystemIgnoredExceptionList, null, App.UserData.Authentification.Token);
+            App.LanguageList = await CommunicationManager.GetApiRequest<List<SystemTranslationList>>(ApiUrls.EasyITCenterSystemTranslationList, null, App.UserData.Authentification.Token);
+            App.ParameterList = await CommunicationManager.GetApiRequest<List<SystemParameterList>>(ApiUrls.EasyITCenterSystemParameterList, App.UserData.Authentification.Id.ToString(), App.UserData.Authentification.Token);
+            App.SystemModuleList = await CommunicationManager.GetApiRequest<List<SystemModuleList>>(ApiUrls.SystemModuleList, null, App.UserData.Authentification.Token);
             SetNonUserDataOnSuccessStartUp();
             return true;
         }
@@ -86,7 +86,7 @@ namespace EasyITSystemCenter.GlobalOperations {
                 SolutionFailList SolutionFailList = new SolutionFailList() { Source = "System", UserId = App.UserData.Authentification.Id, UserName = App.UserData.UserName, LogLevel = logLevel, Message = message, TimeStamp = DateTimeOffset.Now.DateTime };
                 string json = JsonConvert.SerializeObject(SolutionFailList);
                 StringContent httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-                await CommApi.PutApiRequest(ApiUrls.EasyITCenterSolutionFailList, httpContent, null, App.UserData.Authentification.Token);
+                await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterSolutionFailList, httpContent, null, App.UserData.Authentification.Token);
             }
         }
 
@@ -114,7 +114,7 @@ namespace EasyITSystemCenter.GlobalOperations {
                                     SystemTranslationList newWord = new SystemTranslationList() { SystemName = word, DescriptionCz = "", DescriptionEn = "", UserId = 1 };
                                     string json = JsonConvert.SerializeObject(newWord);
                                     StringContent httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-                                    await CommApi.PutApiRequest(ApiUrls.EasyITCenterSystemTranslationList, httpContent, null, App.UserData.Authentification.Token);
+                                    await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterSystemTranslationList, httpContent, null, App.UserData.Authentification.Token);
                                 }
                                 result += word + ",";
                             }
@@ -135,7 +135,7 @@ namespace EasyITSystemCenter.GlobalOperations {
                             SystemTranslationList newWord = new SystemTranslationList() { SystemName = systemName, DescriptionCz = "", DescriptionEn = "", UserId = 1 };
                             string json = JsonConvert.SerializeObject(newWord);
                             StringContent httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-                            await CommApi.PutApiRequest(ApiUrls.EasyITCenterSystemTranslationList, httpContent, null, App.UserData.Authentification.Token);
+                            await CommunicationManager.PutApiRequest(ApiUrls.EasyITCenterSystemTranslationList, httpContent, null, App.UserData.Authentification.Token);
                         }
                         result = systemName;
                     }
@@ -147,7 +147,7 @@ namespace EasyITSystemCenter.GlobalOperations {
             }
 
             if (dictionaryUpdated && !notCreateNew) {
-                App.LanguageList = await CommApi.GetApiRequest<List<SystemTranslationList>>(ApiUrls.EasyITCenterSystemTranslationList, null, App.UserData.Authentification.Token);
+                App.LanguageList = await CommunicationManager.GetApiRequest<List<SystemTranslationList>>(ApiUrls.EasyITCenterSystemTranslationList, null, App.UserData.Authentification.Token);
                 App.ReloadLanguageListRequested = false;
             }
 
