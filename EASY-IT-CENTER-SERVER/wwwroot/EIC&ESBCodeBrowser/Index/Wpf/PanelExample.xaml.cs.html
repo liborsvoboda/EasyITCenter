@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html><head><title>PanelExample.xaml.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(144);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#Wpf/PanelExample.xaml.cs" target="_top">PanelExample.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Examples\Wpf\Wpf.csproj</a> (Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Runtime</span>.<span class="i n">CompilerServices</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>.<span class="i n">Tasks</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">LiveCharts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Defaults</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">Annotations</span>;
+
+<b>namespace</b> <span class="i n">Wpf</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Interaction logic for PanelExample.xaml</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <b>partial</b> <b>class</b> <a id="0b72376e5ed321c0" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">PanelExample</a> : <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a>
+    {
+        <b>public</b> <a id="7a7f04abdc880d04" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">PanelExample</a>()
+        {
+            <span class="i">InitializeComponent</span>();
+        }
+    }
+
+    <b>public class</b> <a id="0e5748b9fbce0446" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">DarkPanelControlVm</a> : <a href="@0@System/A.html#fd4b42d7e29d53e5" class="t t">INotifyPropertyChanged</a>
+    {
+        <b>private double</b> <a id="d16ba3bc42039335" href="R/d16ba3bc42039335.html" target="n" data-glyph="46,1" class="i field">_angularGaugeValue</a>;
+        <b>private</b> <a href="@0@WindowsBase/A.html#85652fc45bd4a61e" class="t t">DispatcherTimer</a> <a id="e48561d47a0afe4f" href="R/e48561d47a0afe4f.html" target="n" data-glyph="46,1" class="i field">_timer</a> = <b>new</b> <a href="@0@WindowsBase/A.html#44f66f3c4d0fdf15" class="t constructor">DispatcherTimer</a>();
+
+        <b>public</b> <a id="62a6fda15b3a1092" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">DarkPanelControlVm</a>()
+        {
+            <a href="#e48561d47a0afe4f" class="i field">_timer</a>.<a href="@0@WindowsBase/A.html#b3c72778b0b80320" class="i property">Interval</a> = <a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@0@mscorlib/A.html#668d91d771bce54b" class="i method">FromMilliseconds</a>(1000);
+            <a href="#e48561d47a0afe4f" class="i field">_timer</a>.<a href="@0@WindowsBase/A.html#ef26184523c318d3" class="i">Tick</a> += <a href="#ce049550ce22e6e4" class="i method">TimerOnTick</a>;
+            <a href="#e48561d47a0afe4f" class="i field">_timer</a>.<a href="@0@WindowsBase/A.html#a3450586a3e54079" class="i method">Start</a>();
+
+            <a href="#cfba95efef78e7cf" class="i property">AngularGaugeValue</a> = 50;
+            <a href="#e0d199383f9d68ff" class="i property">Yes</a> = <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(10);
+            <a href="#abe6ef17eb0eeb9e" class="i property">No</a> = <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(6);
+            <a href="#eb65e873758e4f08" class="i property">Maybe</a> = <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(4);
+            <a href="#0a16798f979a5ad6" class="i property">Line1</a> = <b>new</b> <a href="/LiveCharts/A.html#9dc8c197acdf6c12" class="t constructor">ChartValues</a>&lt;<a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a>&gt;
+            {
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(3),
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(5),
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(1),
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(6),
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(8),
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(3),
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(6),
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(3)
+            };
+            <a href="#b025fd8139b2de73" class="i property">PieSeries</a> = <b>new</b> <a href="/LiveCharts/A.html#e05f0ac3c5ac3613" class="t constructor">SeriesCollection</a>
+            {
+                <b>new</b> <a href="/LiveCharts.Wpf/A.html#5c2d8721172dcf59" class="t constructor">PieSeries</a> {<a href="/LiveCharts.Wpf/A.html#17d624e96dd007c8" class="i property">Title</a> = <span class="s">&quot;Yes&quot;</span>,<a href="/LiveCharts.Wpf/A.html#ba565e37fd8fc84c" class="i property">Values</a> = <b>new</b> <a href="/LiveCharts/A.html#9dc8c197acdf6c12" class="t constructor">ChartValues</a>&lt;<a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a>&gt; {<a href="#e0d199383f9d68ff" class="i property">Yes</a>}},
+                <b>new</b> <a href="/LiveCharts.Wpf/A.html#5c2d8721172dcf59" class="t constructor">PieSeries</a> {<a href="/LiveCharts.Wpf/A.html#17d624e96dd007c8" class="i property">Title</a> = <span class="s">&quot;No&quot;</span>, <a href="/LiveCharts.Wpf/A.html#ba565e37fd8fc84c" class="i property">Values</a> = <b>new</b> <a href="/LiveCharts/A.html#9dc8c197acdf6c12" class="t constructor">ChartValues</a>&lt;<a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a>&gt; {<a href="#eb65e873758e4f08" class="i property">Maybe</a>}},
+                <b>new</b> <a href="/LiveCharts.Wpf/A.html#5c2d8721172dcf59" class="t constructor">PieSeries</a> {<a href="/LiveCharts.Wpf/A.html#17d624e96dd007c8" class="i property">Title</a> = <span class="s">&quot;Maybe&quot;</span>, <a href="/LiveCharts.Wpf/A.html#ba565e37fd8fc84c" class="i property">Values</a> = <b>new</b> <a href="/LiveCharts/A.html#9dc8c197acdf6c12" class="t constructor">ChartValues</a>&lt;<a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a>&gt; {<a href="#eb65e873758e4f08" class="i property">Maybe</a>}}
+            };
+
+            <a href="#d279abce8a61f77d" class="i property">GeoValues</a> = <b>new</b> <a href="@0@mscorlib/A.html#bf6849e410b43c4c" class="t constructor">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <b>double</b>&gt;();
+
+            <a href="@0@mscorlib/A.html#bb77e610694e64ca" class="k">var</a> <span id="r0 rd" class="r0 r">r</span> = <b>new</b> <a href="@0@mscorlib/A.html#5d22f8880fc9f8d9" class="t constructor">Random</a>();
+            <a href="#d279abce8a61f77d" class="i property">GeoValues</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="s">&quot;MX&quot;</span>] = <span class="r0 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100);
+            <a href="#d279abce8a61f77d" class="i property">GeoValues</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="s">&quot;RU&quot;</span>] = <span class="r0 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100);
+            <a href="#d279abce8a61f77d" class="i property">GeoValues</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="s">&quot;CA&quot;</span>] = <span class="r0 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100);
+            <a href="#d279abce8a61f77d" class="i property">GeoValues</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="s">&quot;US&quot;</span>] = <span class="r0 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100);
+            <a href="#d279abce8a61f77d" class="i property">GeoValues</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="s">&quot;IN&quot;</span>] = <span class="r0 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100);
+            <a href="#d279abce8a61f77d" class="i property">GeoValues</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="s">&quot;CN&quot;</span>] = <span class="r0 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100);
+            <a href="#d279abce8a61f77d" class="i property">GeoValues</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="s">&quot;JP&quot;</span>] = <span class="r0 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100);
+            <a href="#d279abce8a61f77d" class="i property">GeoValues</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="s">&quot;BR&quot;</span>] = <span class="r0 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100);
+            <a href="#d279abce8a61f77d" class="i property">GeoValues</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="s">&quot;DE&quot;</span>] = <span class="r0 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100);
+            <a href="#d279abce8a61f77d" class="i property">GeoValues</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="s">&quot;FR&quot;</span>] = <span class="r0 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100);
+            <a href="#d279abce8a61f77d" class="i property">GeoValues</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="s">&quot;GB&quot;</span>] = <span class="r0 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>(0, 100);
+
+            <a href="#28482880d6c33357" class="i property">DynamicValues</a> = <b>new</b> <a href="/LiveCharts/A.html#9dc8c197acdf6c12" class="t constructor">ChartValues</a>&lt;<a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a>&gt;
+            {
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(1),
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(5),
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(4),
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(7),
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(4),
+                <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(8)
+            };
+
+            <a href="#c5b36bca12fcdcb8" class="i property">Formatter</a> = <span id="r1 rd" class="r1 r">x</span> =&gt; <span class="r1 r">x</span>.<a href="@0@mscorlib/A.html#0e003048b54ae390" class="i method">ToString</a>(<span class="s">&quot;P&quot;</span>);
+        }
+
+        <b>public</b> <a href="/LiveCharts/A.html#0a44fd13939b5dc3" class="t t">ChartValues</a>&lt;<a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a>&gt; <a id="0a16798f979a5ad6" href="R/0a16798f979a5ad6.html" target="n" data-glyph="102,1" class="i property">Line1</a> { <b>get</b>; <b>set</b>; }
+        <b>public</b> <a href="/LiveCharts/A.html#0a44fd13939b5dc3" class="t t">ChartValues</a>&lt;<a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a>&gt; <a id="28482880d6c33357" href="R/28482880d6c33357.html" target="n" data-glyph="102,1" class="i property">DynamicValues</a> { <b>get</b>; <b>set</b>; }
+        <b>public</b> <a href="/LiveCharts/A.html#90afae0d66da3706" class="t t">SeriesCollection</a> <a id="b025fd8139b2de73" href="R/b025fd8139b2de73.html" target="n" data-glyph="102,1" class="i property">PieSeries</a> { <b>get</b>; <b>set</b>; }
+        <b>public</b> <a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a> <a id="e0d199383f9d68ff" href="R/e0d199383f9d68ff.html" target="n" data-glyph="102,1" class="i property">Yes</a> { <b>get</b>; <b>set</b>; }
+        <b>public</b> <a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a> <a id="abe6ef17eb0eeb9e" href="R/abe6ef17eb0eeb9e.html" target="n" data-glyph="102,1" class="i property">No</a> { <b>get</b>; <b>set</b>; }
+        <b>public</b> <a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a> <a id="eb65e873758e4f08" href="R/eb65e873758e4f08.html" target="n" data-glyph="102,1" class="i property">Maybe</a> { <b>get</b>; <b>set</b>; }
+        <b>public</b> <a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <b>double</b>&gt; <a id="d279abce8a61f77d" href="R/d279abce8a61f77d.html" target="n" data-glyph="102,1" class="i property">GeoValues</a> { <b>get</b>; <b>set</b>; }
+        <b>public</b> <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<b>double</b>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="c5b36bca12fcdcb8" href="R/c5b36bca12fcdcb8.html" target="n" data-glyph="102,1" class="i property">Formatter</a> { <b>get</b>; <b>set</b>; }
+
+        <b>public double</b> <a id="cfba95efef78e7cf" href="R/cfba95efef78e7cf.html" target="n" data-glyph="102,1" class="i property">AngularGaugeValue</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#d16ba3bc42039335" class="i field">_angularGaugeValue</a>; }
+            <b>set</b>
+            {
+                <a href="#d16ba3bc42039335" class="i field">_angularGaugeValue</a> = <b>value</b>;
+                <a href="#5329f3fbb6fed74b" class="i method">OnPropertyChanged</a>();
+            }
+        }
+
+        <b>public event</b> <a href="@0@System/A.html#670754815f6804ff" class="t t">PropertyChangedEventHandler</a> <a id="b8c83f6f59185886" href="R/b8c83f6f59185886.html" target="n" data-glyph="30,1" class="i">PropertyChanged</a>;
+
+        <b>private void</b> <a id="ce049550ce22e6e4" href="R/ce049550ce22e6e4.html" target="n" data-glyph="76,1" class="i method">TimerOnTick</a>(<b>object</b> <span id="r2 rd" class="r2 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r3 rd" class="r3 r">eventArgs</span>)
+        {
+            <a href="@0@mscorlib/A.html#bb77e610694e64ca" class="k">var</a> <span id="r4 rd" class="r4 r">r</span>  = <b>new</b> <a href="@0@mscorlib/A.html#5d22f8880fc9f8d9" class="t constructor">Random</a>();
+
+            <a href="#cfba95efef78e7cf" class="i property">AngularGaugeValue</a> += <span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>() &gt; 0.5 ? <span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>()*10 : -<span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>()*10;
+            <a href="#e0d199383f9d68ff" class="i property">Yes</a>.<a href="/LiveCharts/A.html#ac007f195730c829" class="i property">Value</a> += <span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>() &gt; 0.5 ? <span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>() * 1 : -<span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>() * 1;
+            <a href="#abe6ef17eb0eeb9e" class="i property">No</a>.<a href="/LiveCharts/A.html#ac007f195730c829" class="i property">Value</a> += <span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>() &gt; 0.5 ? <span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>() * 1 : -<span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>() * 1;
+            <a href="#eb65e873758e4f08" class="i property">Maybe</a>.<a href="/LiveCharts/A.html#ac007f195730c829" class="i property">Value</a> += <span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>() &gt; 0.5 ? <span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>() * 1 : -<span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>() * 1;
+
+            <b>if</b> (<span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>() &gt; .7)
+            {
+                <b>foreach</b> (<a href="/LiveCharts/A.html#28fc9e4279907a1e" class="k">var</a> <span id="r5 rd" class="r5 r">observableValue</span> <b>in</b> <a href="#0a16798f979a5ad6" class="i property">Line1</a>)
+                {
+                    <span class="r5 r">observableValue</span>.<a href="/LiveCharts/A.html#ac007f195730c829" class="i property">Value</a> = <span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>()*10;
+                }
+            }
+
+            <a href="@0@mscorlib/A.html#045a746eb48cbaa9" class="t t">Task</a>.<a href="@0@mscorlib/A.html#bd44cb0241ef993a" class="i property">Factory</a>.<a href="@0@mscorlib/A.html#fb6e45941d931629" class="i method">StartNew</a>(() =&gt;
+            {
+                <a href="@0@mscorlib/A.html#3980e012bae82e96" class="t t">Thread</a>.<a href="@0@mscorlib/A.html#5f1072b92dae1dd8" class="i method">Sleep</a>(500);
+                <a href="#28482880d6c33357" class="i property">DynamicValues</a>.<a href="/LiveCharts/A.html#501ee31de2dd2f3e" class="i method">Add</a>(<b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(<span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>()*10));
+                <a href="#28482880d6c33357" class="i property">DynamicValues</a>.<a href="/LiveCharts/A.html#5d38c15cb2aaf44e" class="i method">RemoveAt</a>(0);
+                <a href="@0@mscorlib/A.html#3980e012bae82e96" class="t t">Thread</a>.<a href="@0@mscorlib/A.html#5f1072b92dae1dd8" class="i method">Sleep</a>(500);
+                <a href="#28482880d6c33357" class="i property">DynamicValues</a>.<a href="/LiveCharts/A.html#501ee31de2dd2f3e" class="i method">Add</a>(<b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(<span class="r4 r">r</span>.<a href="@0@mscorlib/A.html#c467f2953a8d2207" class="i method">NextDouble</a>()*10));
+                <a href="#28482880d6c33357" class="i property">DynamicValues</a>.<a href="/LiveCharts/A.html#5d38c15cb2aaf44e" class="i method">RemoveAt</a>(0);
+            });
+        }
+
+        <b>protected virtual void</b> <a id="5329f3fbb6fed74b" href="R/5329f3fbb6fed74b.html" target="n" data-glyph="75,1" class="i method">OnPropertyChanged</a>( <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r6 rd" class="r6 r">propertyName</span> = <b>null</b>)
+        {
+            <a href="@0@System/A.html#670754815f6804ff" class="k">var</a> <span id="r7 rd" class="r7 r">handler</span> = <a href="#b8c83f6f59185886" class="i">PropertyChanged</a>;
+            <b>if</b> (<span class="r7 r">handler</span> != <b>null</b>) <span class="r7 r">handler</span>(<a href="#0e5748b9fbce0446" class="k">this</a>, <b>new</b> <a href="@0@System/A.html#76958b0a96ed2a2e" class="t constructor">PropertyChangedEventArgs</a>(<span class="r6 r">propertyName</span>));
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

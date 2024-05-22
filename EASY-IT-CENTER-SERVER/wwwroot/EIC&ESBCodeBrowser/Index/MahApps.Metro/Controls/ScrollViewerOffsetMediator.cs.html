@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html><head><title>ScrollViewerOffsetMediator.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(51);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/ScrollViewerOffsetMediator.cs" target="_top">Controls\ScrollViewerOffsetMediator.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <b>public class</b> <a id="35c16a6da368342e" href="../R/35c16a6da368342e.html" target="n" data-glyph="0,0" class="t t"><span id="25e68514b68e385a">ScrollViewerOffsetMediator</span></a> : <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>
+    {
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="dbc992ec880e36dd" href="../R/dbc992ec880e36dd.html" target="n" data-glyph="42,1" class="i field">ScrollViewerProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#704ffe23f8a4b3f3" class="i property">ScrollViewer</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>),
+                                          <b>typeof</b>(<a href="#35c16a6da368342e" class="t t">ScrollViewerOffsetMediator</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>), <a href="#17304dd8edbf82a5" class="i method">OnScrollViewerChanged</a>));
+
+        <b>private static void</b> <a id="17304dd8edbf82a5" href="../R/17304dd8edbf82a5.html" target="n" data-glyph="76,1" class="i method">OnScrollViewerChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">o</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <b>if</b> (<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a> <b>is</b> <a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a> <span id="r2 rd" class="r2 r">scrollViewer</span>)
+            {
+                <a href="#35c16a6da368342e" class="k">var</a> <span id="r3 rd" class="r3 r">mediator</span> = (<a href="#35c16a6da368342e" class="t t">ScrollViewerOffsetMediator</a>)<span class="r0 r">o</span>;
+                <span class="r2 r">scrollViewer</span>.<a href="@0@PresentationFramework/A.html#4b1c163ff50a257d" class="i method">ScrollToHorizontalOffset</a>(<span class="r3 r">mediator</span>.<a href="#2ef4d283b794b685" class="i property">HorizontalOffset</a>);
+            }
+        }
+
+        <b>public</b> <a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>? <a id="704ffe23f8a4b3f3" href="../R/704ffe23f8a4b3f3.html" target="n" data-glyph="102,1" class="i property">ScrollViewer</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>?)<a href="#35c16a6da368342e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#dbc992ec880e36dd" class="i field">ScrollViewerProperty</a>);
+            <b>set</b> =&gt; <a href="#35c16a6da368342e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#dbc992ec880e36dd" class="i field">ScrollViewerProperty</a>, <b>value</b>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="5c60c67e2b43eac2" href="../R/5c60c67e2b43eac2.html" target="n" data-glyph="42,1" class="i field">HorizontalOffsetProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#2ef4d283b794b685" class="i property">HorizontalOffset</a>),
+                                          <b>typeof</b>(<b>double</b>),
+                                          <b>typeof</b>(<a href="#35c16a6da368342e" class="t t">ScrollViewerOffsetMediator</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>double</b>), <a href="#e14db51c3041ca42" class="i method">OnHorizontalOffsetChanged</a>));
+
+        <b>public double</b> <a id="2ef4d283b794b685" href="../R/2ef4d283b794b685.html" target="n" data-glyph="102,1" class="i property">HorizontalOffset</a>
+        {
+            <b>get</b> =&gt; (<b>double</b>)<a href="#35c16a6da368342e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#5c60c67e2b43eac2" class="i field">HorizontalOffsetProperty</a>);
+            <b>set</b> =&gt; <a href="#35c16a6da368342e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#5c60c67e2b43eac2" class="i field">HorizontalOffsetProperty</a>, <b>value</b>);
+        }
+
+        <b>private static void</b> <a id="e14db51c3041ca42" href="../R/e14db51c3041ca42.html" target="n" data-glyph="76,1" class="i method">OnHorizontalOffsetChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r4 rd" class="r4 r">o</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r5 rd" class="r5 r">e</span>)
+        {
+            <a href="#35c16a6da368342e" class="k">var</a> <span id="r6 rd" class="r6 r">mediator</span> = (<a href="#35c16a6da368342e" class="t t">ScrollViewerOffsetMediator</a>)<span class="r4 r">o</span>;
+            <span class="r6 r">mediator</span>.<a href="#704ffe23f8a4b3f3" class="i property">ScrollViewer</a>?.<a href="@0@PresentationFramework/A.html#4b1c163ff50a257d" class="i method">ScrollToHorizontalOffset</a>((<b>double</b>)<span class="r5 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

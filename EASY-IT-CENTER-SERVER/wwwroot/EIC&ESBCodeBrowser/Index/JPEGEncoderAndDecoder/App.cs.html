@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html><head><title>App.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(112);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#JPEGEncoderAndDecoder/App.cs" target="_top">App.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#JPEGEncoderAndDecoder" target="_top">HelpProjects\WPF-MORE\Graphics\JPEGEncoderAndDecoder\JPEGEncoderAndDecoder.csproj</a> (JPEGEncoderAndDecoder)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Security</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+
+[<b>assembly</b>: <a href="@1@System.Runtime/A.html#abf6d10b7a8650e8" class="t constructor">SecurityTransparent</a>]
+
+<b>namespace</b> <span class="i n">JPEGEncoderAndDecoder</span>
+{
+    <b>public class</b> <a id="f76bb9b29ad0cc35" href="R/f76bb9b29ad0cc35.html" target="n" data-glyph="0,0" class="t t"><span id="b49e220468dfb50d">App</span></a> : <a href="@0@PresentationFramework/A.html#cf9c51e402f97b05" class="t t">Application</a>
+    {
+        <b>private</b> <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <a id="2f573a9f50122a12" href="R/2f573a9f50122a12.html" target="n" data-glyph="46,1" class="i field">_mainWindow</a>;
+
+        <b>protected override void</b> <a id="0ec518274f56d22b" href="R/0ec518274f56d22b.html" target="n" data-glyph="75,1" class="i method">OnStartup</a>(<a href="@0@PresentationFramework/A.html#062b94c15f90a8f0" class="t t">StartupEventArgs</a> <span id="r0 rd" class="r0 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#cf9c51e402f97b05" class="k">base</a>.<a href="@0@PresentationFramework/A.html#f2c567e5642bd030" class="i method">OnStartup</a>(<span class="r0 r">e</span>);
+            <a href="#668e305e5a98ec0f" class="i method">CreateAndShowMainWindow</a>();
+        }
+
+        <b>private void</b> <a id="668e305e5a98ec0f" href="R/668e305e5a98ec0f.html" target="n" data-glyph="76,1" class="i method">CreateAndShowMainWindow</a>()
+        {
+            <span class="c">// Create the application&#39;s main window</span>
+            <a href="#2f573a9f50122a12" class="i field">_mainWindow</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#acf2c0e6565540cd" class="t constructor">Window</a> {<a href="@0@PresentationFramework/A.html#5002b3a8c196a7d1" class="i property">Title</a> = <span class="s">&quot;JPEG Imaging Sample&quot;</span>};
+            <a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="k">var</a> <span id="r1 rd" class="r1 r">mySv</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#5df35d643f2daa1b" class="t constructor">ScrollViewer</a>();
+
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r2 rd" class="r2 r">width</span> = 128;
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r3 rd" class="r3 r">height</span> = <span class="r2 r">width</span>;
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r4 rd" class="r4 r">stride</span> = <span class="r2 r">width</span>/8;
+            <b>var</b> <span id="r5 rd" class="r5 r">pixels</span> = <b>new</b> <b>byte</b>[<span class="r3 r">height</span>*<span class="r4 r">stride</span>];
+
+            <span class="c">// Define the image palette</span>
+            <a href="@0@PresentationCore/A.html#639188943a88e467" class="k">var</a> <span id="r6 rd" class="r6 r">myPalette</span> = <a href="@0@PresentationCore/A.html#5e1fae8c1b7e6c68" class="t t">BitmapPalettes</a>.<a href="@0@PresentationCore/A.html#97468ff6d30bf4f2" class="i property">Halftone256</a>;
+
+            <span class="c">// Creates a new empty image with the pre-defined palette</span>
+            <a href="@0@PresentationCore/A.html#0423ed363f952960" class="k">var</a> <span id="r7 rd" class="r7 r">image</span> = <a href="@0@PresentationCore/A.html#0423ed363f952960" class="t t">BitmapSource</a>.<a href="@0@PresentationCore/A.html#773efce8ba35b36e" class="i method">Create</a>(
+                <span class="r2 r">width</span>,
+                <span class="r3 r">height</span>,
+                96,
+                96,
+                <a href="@0@PresentationCore/A.html#8f8a28423b24bd8e" class="t t">PixelFormats</a>.<a href="@0@PresentationCore/A.html#2a73256cf77148f6" class="i property">Indexed1</a>,
+                <span class="r6 r">myPalette</span>,
+                <span class="r5 r">pixels</span>,
+                <span class="r4 r">stride</span>);
+
+            <a href="@1@System.Runtime/A.html#e23a38af5d11ddd3" class="k">var</a> <span id="r8 rd" class="r8 r">stream</span> = <b>new</b> <a href="@1@System.Runtime/A.html#66c00a58470ce47d" class="t constructor">FileStream</a>(<span class="s">&quot;new.jpg&quot;</span>, <a href="@1@System.Runtime/A.html#c0cb6ba6af625b3a" class="t t">FileMode</a>.<a href="@1@System.Runtime/A.html#17684d43e30dc120" class="i field">Create</a>);
+            <a href="@0@PresentationCore/A.html#2bae713de324f23c" class="k">var</a> <span id="r9 rd" class="r9 r">encoder</span> = <b>new</b> <a href="@0@PresentationCore/A.html#050753269b0669bf" class="t constructor">JpegBitmapEncoder</a>();
+            <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="k">var</a> <span id="r10 rd" class="r10 r">myTextBlock</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#450e4175035f484c" class="t constructor">TextBlock</a> {<a href="@0@PresentationFramework/A.html#e77c881b0d6f7e9e" class="i property">Text</a> = <span class="s">&quot;Codec Author is: &quot;</span> + <span class="r9 r">encoder</span>.<a href="@0@PresentationCore/A.html#b574c02698839a9b" class="i property">CodecInfo</a>.<a href="@0@PresentationCore/A.html#61d54edebad88652" class="i property">Author</a>};
+            <span class="r9 r">encoder</span>.<a href="@0@PresentationCore/A.html#4411270ac27ba189" class="i property">FlipHorizontal</a> = <b>true</b>;
+            <span class="r9 r">encoder</span>.<a href="@0@PresentationCore/A.html#335b26076eb682e8" class="i property">FlipVertical</a> = <b>false</b>;
+            <span class="r9 r">encoder</span>.<a href="@0@PresentationCore/A.html#8ee658690a12f806" class="i property">QualityLevel</a> = 30;
+            <span class="r9 r">encoder</span>.<a href="@0@PresentationCore/A.html#135068c88196610d" class="i property">Rotation</a> = <a href="@0@PresentationCore/A.html#2c3a512fdf2ff6dc" class="t t">Rotation</a>.<a href="@0@PresentationCore/A.html#42de96472c8a126c" class="i field">Rotate90</a>;
+            <span class="r9 r">encoder</span>.<a href="@0@PresentationCore/A.html#73a8e458f99154a3" class="i property">Frames</a>.<a href="@1@System.Runtime/A.html#a9319db8c62ae453" class="i method">Add</a>(<a href="@0@PresentationCore/A.html#bad013e46489de54" class="t t">BitmapFrame</a>.<a href="@0@PresentationCore/A.html#249d5611eba74aa4" class="i method">Create</a>(<span class="r7 r">image</span>));
+            <span class="r9 r">encoder</span>.<a href="@0@PresentationCore/A.html#6886df05238e625c" class="i method">Save</a>(<span class="r8 r">stream</span>);
+
+
+            <span class="c">// Open a Stream and decode a JPEG image</span>
+            <a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r11 rd" class="r11 r">imageStreamSource</span> = <b>new</b> <a href="@1@System.Runtime/A.html#756b978acfa47bc7" class="t constructor">FileStream</a>(<span class="s">&quot;tulipfarm.jpg&quot;</span>, <a href="@1@System.Runtime/A.html#c0cb6ba6af625b3a" class="t t">FileMode</a>.<a href="@1@System.Runtime/A.html#f4421e1d202f76fa" class="i field">Open</a>, <a href="@1@System.Runtime/A.html#5cc5644ae3acd24b" class="t t">FileAccess</a>.<a href="@1@System.Runtime/A.html#0f1c68c756d0636b" class="i field">Read</a>, <a href="@1@System.Runtime/A.html#2bfafb4d44a4f126" class="t t">FileShare</a>.<a href="@1@System.Runtime/A.html#581aa2ff4e59056b" class="i field">Read</a>);
+            <a href="@0@PresentationCore/A.html#bd4ece47ff6addc1" class="k">var</a> <span id="r12 rd" class="r12 r">decoder</span> = <b>new</b> <a href="@0@PresentationCore/A.html#163fbb42c34b3678" class="t constructor">JpegBitmapDecoder</a>(<span class="r11 r">imageStreamSource</span>, <a href="@0@PresentationCore/A.html#f16ee6363903c31c" class="t t">BitmapCreateOptions</a>.<a href="@0@PresentationCore/A.html#aa169842360cd57b" class="i field">PreservePixelFormat</a>,
+                <a href="@0@PresentationCore/A.html#2892a7144be883ba" class="t t">BitmapCacheOption</a>.<a href="@0@PresentationCore/A.html#4437d9f8562b28bc" class="i field">Default</a>);
+            <a href="@0@PresentationCore/A.html#0423ed363f952960" class="t t">BitmapSource</a> <span id="r13 rd" class="r13 r">bitmapSource</span> = <span class="r12 r">decoder</span>.<a href="@0@PresentationCore/A.html#ab0f1a0e8cde53f4" class="i property">Frames</a>[0];
+
+            <span class="c">// Draw the Image</span>
+            <a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="k">var</a> <span id="r14 rd" class="r14 r">myImage</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#11dd36f90cfdae62" class="t constructor">Image</a>
+            {
+                <a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> = <span class="r13 r">bitmapSource</span>,
+                <a href="@0@PresentationFramework/A.html#3155867141b29444" class="i property">Stretch</a> = <a href="@0@PresentationCore/A.html#77a7bb60efa6b79e" class="t t">Stretch</a>.<a href="@0@PresentationCore/A.html#27c5c62526d2190d" class="i field">None</a>,
+                <a href="@0@PresentationFramework/A.html#8aedc94268115177" class="i property">Margin</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#f24f92e6dee837d3" class="t constructor">Thickness</a>(20)
+            };
+
+
+            <span class="c">// Open a Uri and decode a JPEG image</span>
+            <a href="@1@System.Runtime/A.html#991565dd25f47c90" class="k">var</a> <span id="r15 rd" class="r15 r">myUri</span> = <b>new</b> <a href="@1@System.Runtime/A.html#d9fc45d783ee73ff" class="t constructor">Uri</a>(<span class="s">&quot;tulipfarm.jpg&quot;</span>, <a href="@1@System.Runtime/A.html#ac43655101ad74be" class="t t">UriKind</a>.<a href="@1@System.Runtime/A.html#2a5de88dbfa86f1b" class="i field">RelativeOrAbsolute</a>);
+            <a href="@0@PresentationCore/A.html#bd4ece47ff6addc1" class="k">var</a> <span id="r16 rd" class="r16 r">decoder2</span> = <b>new</b> <a href="@0@PresentationCore/A.html#30951c404f6c8ecf" class="t constructor">JpegBitmapDecoder</a>(<span class="r15 r">myUri</span>, <a href="@0@PresentationCore/A.html#f16ee6363903c31c" class="t t">BitmapCreateOptions</a>.<a href="@0@PresentationCore/A.html#aa169842360cd57b" class="i field">PreservePixelFormat</a>,
+                <a href="@0@PresentationCore/A.html#2892a7144be883ba" class="t t">BitmapCacheOption</a>.<a href="@0@PresentationCore/A.html#4437d9f8562b28bc" class="i field">Default</a>);
+            <a href="@0@PresentationCore/A.html#0423ed363f952960" class="t t">BitmapSource</a> <span id="r17 rd" class="r17 r">bitmapSource2</span> = <span class="r16 r">decoder2</span>.<a href="@0@PresentationCore/A.html#ab0f1a0e8cde53f4" class="i property">Frames</a>[0];
+
+            <span class="c">// Draw the Image</span>
+            <a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="k">var</a> <span id="r18 rd" class="r18 r">myImage2</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#11dd36f90cfdae62" class="t constructor">Image</a>
+            {
+                <a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> = <span class="r17 r">bitmapSource2</span>,
+                <a href="@0@PresentationFramework/A.html#3155867141b29444" class="i property">Stretch</a> = <a href="@0@PresentationCore/A.html#77a7bb60efa6b79e" class="t t">Stretch</a>.<a href="@0@PresentationCore/A.html#27c5c62526d2190d" class="i field">None</a>,
+                <a href="@0@PresentationFramework/A.html#8aedc94268115177" class="i property">Margin</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#f24f92e6dee837d3" class="t constructor">Thickness</a>(20)
+            };
+
+            <span class="c">// Define a StackPanel to host the decoded JPEG images</span>
+            <a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="k">var</a> <span id="r19 rd" class="r19 r">myStackPanel</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#71baf37380eff816" class="t constructor">StackPanel</a>
+            {
+                <a href="@0@PresentationFramework/A.html#a1bbab4c4a075bad" class="i property">Orientation</a> = <a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a>.<a href="@0@PresentationFramework/A.html#fa09895e0e094750" class="i field">Vertical</a>,
+                <a href="@0@PresentationFramework/A.html#c6fdbbe63a3a42b3" class="i property">VerticalAlignment</a> = <a href="@0@PresentationFramework/A.html#8b1564c617a0b2f5" class="t t">VerticalAlignment</a>.<a href="@0@PresentationFramework/A.html#0a8625ffa5ba03a9" class="i field">Stretch</a>,
+                <a href="@0@PresentationFramework/A.html#af1a9620ef03c2dd" class="i property">HorizontalAlignment</a> = <a href="@0@PresentationFramework/A.html#4adb839fdbe93e93" class="t t">HorizontalAlignment</a>.<a href="@0@PresentationFramework/A.html#6a7c22ea6114ef4d" class="i field">Stretch</a>
+            };
+
+            <span class="c">// Add the Image and TextBlock to the parent Grid</span>
+            <span class="r19 r">myStackPanel</span>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<span class="r14 r">myImage</span>);
+            <span class="r19 r">myStackPanel</span>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<span class="r18 r">myImage2</span>);
+            <span class="r19 r">myStackPanel</span>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<span class="r10 r">myTextBlock</span>);
+
+            <span class="c">// Add the StackPanel as the Content of the Parent Window Object</span>
+            <span class="r1 r">mySv</span>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <span class="r19 r">myStackPanel</span>;
+            <a href="#2f573a9f50122a12" class="i field">_mainWindow</a>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <span class="r1 r">mySv</span>;
+            <a href="#2f573a9f50122a12" class="i field">_mainWindow</a>.<a href="@0@PresentationFramework/A.html#56eda567d5245381" class="i method">Show</a>();
+        }
+    }
+
+    <span class="c">// Define a static entry class</span>
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html><head><title>ExposureTimeConverter.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(37);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#PhotoViewerDemo/ExposureTimeConverter.cs" target="_top">ExposureTimeConverter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#PhotoViewerDemo" target="_top">HelpProjects\WPF-MORE\Sample Applications\PhotoViewerDemo\PhotoViewerDemo.csproj</a> (PhotoViewerDemo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+
+<b>namespace</b> <span class="i n">PhotoViewerDemo</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     Converts an exposure time from a decimal (e.g. 0.0125) into a string (e.g. 1/80)</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="3c5d2e29e6dd2227" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="44f4385ad3f11318">ExposureTimeConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <b>public object</b> <a id="6b4379b3e8d7e489" href="R/6b4379b3e8d7e489.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b> <span id="r0 rd" class="r0 r">value</span>, <a href="@1@System.Runtime/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r1 rd" class="r1 r">targetType</span>, <b>object</b> <span id="r2 rd" class="r2 r">parameter</span>, <a href="@1@System.Runtime/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r3 rd" class="r3 r">culture</span>)
+
+        {
+            <b>try</b>
+            {
+                <a href="@1@System.Runtime/A.html#1b2858baf311cbf9" class="k">var</a> <span id="r4 rd" class="r4 r">exposure</span> = (<b>decimal</b>) <span class="r0 r">value</span>;
+
+                <span class="r4 r">exposure</span> = <b>decimal</b>.<a href="@1@System.Runtime/A.html#415e4040562efa03" class="i method">Round</a>(1/<span class="r4 r">exposure</span>);
+                <b>return</b> <span class="s">$&quot;</span><span class="s">1/</span>{<span class="r4 r">exposure</span>}<span class="s">&quot;</span>;
+            }
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#2d739200b2282eb9" class="t t">NullReferenceException</a>)
+            {
+                <b>return</b> <b>null</b>;
+            }
+        }
+
+        <b>public object</b> <a id="62bb317daf2dda61" href="R/62bb317daf2dda61.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r5 rd" class="r5 r">value</span>, <a href="@1@System.Runtime/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r6 rd" class="r6 r">targetTypes</span>, <b>object</b> <span id="r7 rd" class="r7 r">parameter</span>, <a href="@1@System.Runtime/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r8 rd" class="r8 r">culture</span>)
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r9 rd" class="r9 r">exposure</span> = ((<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>) <span class="r5 r">value</span>).<a href="@1@System.Runtime/A.html#882fa7998d6ca35a" class="i method">Substring</a>(2);
+            <b>return</b> (1/<b>decimal</b>.<a href="@1@System.Runtime/A.html#17d9bd19190be769" class="i method">Parse</a>(<span class="r9 r">exposure</span>));
+        }
+    }
+}</pre></td></tr></table></div></body></html>

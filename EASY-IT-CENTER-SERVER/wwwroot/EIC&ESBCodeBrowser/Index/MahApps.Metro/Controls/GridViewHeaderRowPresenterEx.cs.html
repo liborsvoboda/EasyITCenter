@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html><head><title>GridViewHeaderRowPresenterEx.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(61);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/GridViewHeaderRowPresenterEx.cs" target="_top">Controls\GridViewHeaderRowPresenterEx.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">ControlzEx</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <b>public class</b> <a id="942428725e5537ed" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="110ec4f108a0aa2c">GridViewHeaderRowPresenterEx</span></a> : <a href="@0@PresentationFramework/A.html#2f557c6b07e90e57" class="t t">GridViewHeaderRowPresenter</a>
+    {
+        <b>private</b> <span class="t t">PropertyChangeNotifier</span>? <a id="3d18d3634871cb49" href="../R/3d18d3634871cb49.html" target="n" data-glyph="46,1" class="i field">visibilityPropertyChangeNotifier</a>;
+
+        <b>protected override void</b> <a id="d25d350bb8cc366d" href="../R/d25d350bb8cc366d.html" target="n" data-glyph="75,1" class="i method">OnVisualChildrenChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">visualAdded</span>, <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r1 rd" class="r1 r">visualRemoved</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#2f557c6b07e90e57" class="k">base</a>.<a href="@0@PresentationCore/A.html#b0cb40cfabbcd0c2" class="i method">OnVisualChildrenChanged</a>(<span class="r0 r">visualAdded</span>, <span class="r1 r">visualRemoved</span>);
+
+            <b>if</b> (<span class="r0 r">visualAdded</span> <b>is</b> <a href="@0@PresentationFramework/A.html#e4f7bb78d8bf8015" class="t t">Separator</a> <span id="r2 rd" class="r2 r">addedIndicator</span>)
+            {
+                <a href="#942428725e5537ed" class="k">this</a>.<a href="#3d18d3634871cb49" class="i field">visibilityPropertyChangeNotifier</a> = <b>new</b> <span class="t constructor">PropertyChangeNotifier</span>(<span class="r2 r">addedIndicator</span>, <a href="@0@PresentationFramework/A.html#e4f7bb78d8bf8015" class="t t">Separator</a>.<a href="@0@PresentationCore/A.html#a970d3331b00fe82" class="i field">IsVisibleProperty</a>);
+                <a href="#942428725e5537ed" class="k">this</a>.<a href="#3d18d3634871cb49" class="i field">visibilityPropertyChangeNotifier</a>.<span class="i">ValueChanged</span> += (<span id="r3 rd" class="r3 r">o</span>, <span id="r4 rd" class="r4 r">e</span>) =&gt;
+                    {
+                        <b>if</b> (<span class="r3 r">o</span> <b>is</b> <a href="@0@PresentationFramework/A.html#e4f7bb78d8bf8015" class="t t">Separator</a> { <a href="@0@PresentationCore/A.html#90bc97a020426061" class="i property">IsVisible</a>: <b>true</b> } <span id="r5 rd" class="r5 r">indicator</span>)
+                        {
+                            <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="k">var</a> <span id="r6 rd" class="r6 r">border</span> = <span class="r5 r">indicator</span>.<a href="TreeHelper.cs.html#fd4ef3489442d829" class="i method">FindChild</a>&lt;<a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>&gt;();
+                            <b>if</b> (<span class="r6 r">border</span> <b>is not null</b>)
+                            {
+                                <a href="@0@PresentationFramework/A.html#dee33c98c4dcf3f2" class="k">var</a> <span id="r7 rd" class="r7 r">itemsControl</span> = <a href="#fd59c102e39bbd57" class="i method">FindItemsControlThroughTemplatedParent</a>(<a href="#942428725e5537ed" class="k">this</a>);
+                                <b>if</b> (<span class="r7 r">itemsControl</span> <b>is not null</b>)
+                                {
+                                    <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="k">var</a> <span id="r8 rd" class="r8 r">brush</span> = <a href="Helper/ItemHelper.cs.html#c6247827af1d53e2" class="t t">ItemHelper</a>.<a href="Helper/ItemHelper.cs.html#cd7d208486bb08c0" class="i method">GetGridViewHeaderIndicatorBrush</a>(<span class="r7 r">itemsControl</span>) ?? <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#0e88a9c9dd8ddd8d" class="i property">Navy</a>;
+                                    <span class="r6 r">border</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>.<a href="@0@PresentationFramework/A.html#e5427373f65eb59a" class="i field">BackgroundProperty</a>, <span class="r8 r">brush</span>);
+                                }
+                            }
+                        }
+                    };
+            }
+        }
+
+        <b>private static</b> <a href="@0@PresentationFramework/A.html#dee33c98c4dcf3f2" class="t t">ItemsControl</a>? <a id="fd59c102e39bbd57" href="../R/fd59c102e39bbd57.html" target="n" data-glyph="76,1" class="i method">FindItemsControlThroughTemplatedParent</a>(<a href="@0@PresentationFramework/A.html#2f557c6b07e90e57" class="t t">GridViewHeaderRowPresenter</a> <span id="r9 rd" class="r9 r">presenter</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>? <span id="r10 rd" class="r10 r">fe</span> = <span class="r9 r">presenter</span>.<a href="@0@PresentationFramework/A.html#f4f4a242f96eff32" class="i property">TemplatedParent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+            <a href="@0@PresentationFramework/A.html#dee33c98c4dcf3f2" class="t t">ItemsControl</a>? <span id="r11 rd" class="r11 r">itemsControl</span> = <b>null</b>;
+
+            <b>while</b> (<span class="r10 r">fe</span> != <b>null</b>)
+            {
+                <span class="r11 r">itemsControl</span> = <span class="r10 r">fe</span> <b>as</b> <a href="@0@PresentationFramework/A.html#dee33c98c4dcf3f2" class="t t">ItemsControl</a>;
+                <b>if</b> (<span class="r11 r">itemsControl</span> != <b>null</b>)
+                {
+                    <b>break</b>;
+                }
+
+                <span class="r10 r">fe</span> = <span class="r10 r">fe</span>.<a href="@0@PresentationFramework/A.html#f4f4a242f96eff32" class="i property">TemplatedParent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+            }
+
+            <b>return</b> <span class="r11 r">itemsControl</span>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

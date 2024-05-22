@@ -1,0 +1,287 @@
+﻿<!DOCTYPE html>
+<html><head><title>MetroContentControl.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(278);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/MetroContentControl.cs" target="_top">Controls\MetroContentControl.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> A ContentControl which use a transition to slide in the content.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;AfterLoadedStoryboard&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="t t">Storyboard</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;AfterLoadedReverseStoryboard&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="t t">Storyboard</a>))]
+    <b>public class</b> <a id="ada3b6c67ca804b4" href="../R/ada3b6c67ca804b4.html" target="n" data-glyph="0,0" class="t t">MetroContentControl</a> : <a href="@0@PresentationFramework/A.html#f8ee23c685054e71" class="t t">ContentControl</a>
+    {
+        <b>private</b> <a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="t t">Storyboard</a>? <a id="ae746c373accd996" href="../R/ae746c373accd996.html" target="n" data-glyph="46,1" class="i field">afterLoadedStoryboard</a>;
+        <b>private</b> <a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="t t">Storyboard</a>? <a id="75a79bf8665c778f" href="../R/75a79bf8665c778f.html" target="n" data-glyph="46,1" class="i field">afterLoadedReverseStoryboard</a>;
+        <b>private bool</b> <a id="9b73ca6965ada5b7" href="../R/9b73ca6965ada5b7.html" target="n" data-glyph="46,1" class="i field">transitionLoaded</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#508e24c937a7e771" class="i property">ReverseTransition</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="6c3b2d4456d45155" href="../R/6c3b2d4456d45155.html" target="n" data-glyph="42,1" class="i field">ReverseTransitionProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#508e24c937a7e771" class="i property">ReverseTransition</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#ada3b6c67ca804b4" class="t t">MetroContentControl</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the reverse version of the transition should be used.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="508e24c937a7e771" href="../R/508e24c937a7e771.html" target="n" data-glyph="102,1" class="i property">ReverseTransition</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#6c3b2d4456d45155" class="i field">ReverseTransitionProperty</a>);
+            <b>set</b> =&gt; <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#6c3b2d4456d45155" class="i field">ReverseTransitionProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#778fb3e75478609c" class="i property">TransitionsEnabled</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="644eabd74be5620a" href="../R/644eabd74be5620a.html" target="n" data-glyph="42,1" class="i field">TransitionsEnabledProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#778fb3e75478609c" class="i property">TransitionsEnabled</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#ada3b6c67ca804b4" class="t t">MetroContentControl</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the value if a transition should be used or not.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="778fb3e75478609c" href="../R/778fb3e75478609c.html" target="n" data-glyph="102,1" class="i property">TransitionsEnabled</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#644eabd74be5620a" class="i field">TransitionsEnabledProperty</a>);
+            <b>set</b> =&gt; <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#644eabd74be5620a" class="i field">TransitionsEnabledProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#f82157493bdaa857" class="i property">OnlyLoadTransition</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="e9f8ef5891afc112" href="../R/e9f8ef5891afc112.html" target="n" data-glyph="42,1" class="i field">OnlyLoadTransitionProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#f82157493bdaa857" class="i property">OnlyLoadTransition</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#ada3b6c67ca804b4" class="t t">MetroContentControl</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the transition should be used only at the loaded event of the control.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="f82157493bdaa857" href="../R/f82157493bdaa857.html" target="n" data-glyph="102,1" class="i property">OnlyLoadTransition</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#e9f8ef5891afc112" class="i field">OnlyLoadTransitionProperty</a>);
+            <b>set</b> =&gt; <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#e9f8ef5891afc112" class="i field">OnlyLoadTransitionProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#88d8a4ccf447cb30" class="i">TransitionStarted</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> routed event.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@PresentationCore/A.html#1494cfe9a0c5ee74" class="t t">RoutedEvent</a> <a id="50d26ab786d1aa37" href="../R/50d26ab786d1aa37.html" target="n" data-glyph="42,1" class="i field">TransitionStartedEvent</a>
+            = <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#a5460796900a6473" class="i method">RegisterRoutedEvent</a>(<b>nameof</b>(<a href="#88d8a4ccf447cb30" class="i">TransitionStarted</a>),
+                                               <a href="@0@PresentationCore/A.html#2144a30d9ece7dfe" class="t t">RoutingStrategy</a>.<a href="@0@PresentationCore/A.html#43b9d70d58d66c4c" class="i field">Bubble</a>,
+                                               <b>typeof</b>(<a href="@0@PresentationCore/A.html#af107ecb60427a17" class="t t">RoutedEventHandler</a>),
+                                               <b>typeof</b>(<a href="#ada3b6c67ca804b4" class="t t">MetroContentControl</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The event which will be fired when the transition starts.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@PresentationCore/A.html#af107ecb60427a17" class="t t">RoutedEventHandler</a> <a id="88d8a4ccf447cb30" href="../R/88d8a4ccf447cb30.html" target="n" data-glyph="30,1" class="i">TransitionStarted</a>
+        {
+            <b>add</b> =&gt; <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#18cd7adc001fa956" class="i method">AddHandler</a>(<a href="#50d26ab786d1aa37" class="i field">TransitionStartedEvent</a>, <b>value</b>);
+            <b>remove</b> =&gt; <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#221a746a1b193eb1" class="i method">RemoveHandler</a>(<a href="#50d26ab786d1aa37" class="i field">TransitionStartedEvent</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#ba6819049512cd60" class="i">TransitionCompleted</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> routed event.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@PresentationCore/A.html#1494cfe9a0c5ee74" class="t t">RoutedEvent</a> <a id="651715e570bbea37" href="../R/651715e570bbea37.html" target="n" data-glyph="42,1" class="i field">TransitionCompletedEvent</a>
+            = <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#a5460796900a6473" class="i method">RegisterRoutedEvent</a>(<b>nameof</b>(<a href="#ba6819049512cd60" class="i">TransitionCompleted</a>),
+                                               <a href="@0@PresentationCore/A.html#2144a30d9ece7dfe" class="t t">RoutingStrategy</a>.<a href="@0@PresentationCore/A.html#43b9d70d58d66c4c" class="i field">Bubble</a>,
+                                               <b>typeof</b>(<a href="@0@PresentationCore/A.html#af107ecb60427a17" class="t t">RoutedEventHandler</a>),
+                                               <b>typeof</b>(<a href="#ada3b6c67ca804b4" class="t t">MetroContentControl</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The event which will be fired when the transition ends.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@PresentationCore/A.html#af107ecb60427a17" class="t t">RoutedEventHandler</a> <a id="ba6819049512cd60" href="../R/ba6819049512cd60.html" target="n" data-glyph="30,1" class="i">TransitionCompleted</a>
+        {
+            <b>add</b> =&gt; <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#18cd7adc001fa956" class="i method">AddHandler</a>(<a href="#651715e570bbea37" class="i field">TransitionCompletedEvent</a>, <b>value</b>);
+            <b>remove</b> =&gt; <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#221a746a1b193eb1" class="i method">RemoveHandler</a>(<a href="#651715e570bbea37" class="i field">TransitionCompletedEvent</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#3e0e1f8712488001" class="i property">IsTransitioning</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static readonly</b> <a href="@0@WindowsBase/A.html#380f95e0ba8ab2a0" class="t t">DependencyPropertyKey</a> <a id="4cc4b10aa99f38ea" href="../R/4cc4b10aa99f38ea.html" target="n" data-glyph="46,1" class="i field">IsTransitioningPropertyKey</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#25c0b2e1e0148e79" class="i method">RegisterReadOnly</a>(<b>nameof</b>(<a href="#3e0e1f8712488001" class="i property">IsTransitioning</a>),
+                                                  <b>typeof</b>(<b>bool</b>),
+                                                  <b>typeof</b>(<a href="#ada3b6c67ca804b4" class="t t">MetroContentControl</a>),
+                                                  <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#3e0e1f8712488001" class="i property">IsTransitioning</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="75ab755bc02203b4" href="../R/75ab755bc02203b4.html" target="n" data-glyph="42,1" class="i field">IsTransitioningProperty</a> = <a href="#4cc4b10aa99f38ea" class="i field">IsTransitioningPropertyKey</a>.<a href="@0@WindowsBase/A.html#d39196af37a6f1cf" class="i property">DependencyProperty</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets whether if the content is transitioning.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="3e0e1f8712488001" href="../R/3e0e1f8712488001.html" target="n" data-glyph="102,1" class="i property">IsTransitioning</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#75ab755bc02203b4" class="i field">IsTransitioningProperty</a>);
+            <b>protected set</b> =&gt; <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#4cc4b10aa99f38ea" class="i field">IsTransitioningPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <b>public</b> <a id="c2d70c14ac128b38" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MetroContentControl</a>()
+        {
+            <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#0e8d4368ccf352bb" class="i property">DefaultStyleKey</a> = <b>typeof</b>(<a href="#ada3b6c67ca804b4" class="t t">MetroContentControl</a>);
+
+            <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#c282b6e4e083ba85" class="i method">MetroContentControlLoaded</a>;
+            <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#139f238b2a895570" class="i">Unloaded</a> += <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#84ca53ee52f598cf" class="i method">MetroContentControlUnloaded</a>;
+        }
+
+        <b>private void</b> <a id="1de43e67af9a1898" href="../R/1de43e67af9a1898.html" target="n" data-glyph="76,1" class="i method">MetroContentControlIsVisibleChanged</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <b>if</b> (<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#778fb3e75478609c" class="i property">TransitionsEnabled</a> &amp;&amp; !<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#9b73ca6965ada5b7" class="i field">transitionLoaded</a>)
+            {
+                <b>if</b> (!<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#90bc97a020426061" class="i property">IsVisible</a>)
+                {
+                    <a href="@0@PresentationFramework/A.html#5c12561bc99f678d" class="t t">VisualStateManager</a>.<a href="@0@PresentationFramework/A.html#3e5f3965086c190b" class="i method">GoToState</a>(<a href="#ada3b6c67ca804b4" class="k">this</a>, <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#508e24c937a7e771" class="i property">ReverseTransition</a> ? <span class="s">&quot;AfterUnLoadedReverse&quot;</span> : <span class="s">&quot;AfterUnLoaded&quot;</span>, <b>false</b>);
+                }
+                <b>else</b>
+                {
+                    <a href="@0@PresentationFramework/A.html#5c12561bc99f678d" class="t t">VisualStateManager</a>.<a href="@0@PresentationFramework/A.html#3e5f3965086c190b" class="i method">GoToState</a>(<a href="#ada3b6c67ca804b4" class="k">this</a>, <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#508e24c937a7e771" class="i property">ReverseTransition</a> ? <span class="s">&quot;AfterLoadedReverse&quot;</span> : <span class="s">&quot;AfterLoaded&quot;</span>, <b>true</b>);
+                }
+            }
+        }
+
+        <b>private void</b> <a id="84ca53ee52f598cf" href="../R/84ca53ee52f598cf.html" target="n" data-glyph="76,1" class="i method">MetroContentControlUnloaded</a>(<b>object</b> <span id="r2 rd" class="r2 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r3 rd" class="r3 r">e</span>)
+        {
+            <b>if</b> (<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#778fb3e75478609c" class="i property">TransitionsEnabled</a>)
+            {
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#bcef278a9e3037ec" class="i method">UnsetStoryboardEvents</a>();
+                <b>if</b> (<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#9b73ca6965ada5b7" class="i field">transitionLoaded</a>)
+                {
+                    <a href="@0@PresentationFramework/A.html#5c12561bc99f678d" class="t t">VisualStateManager</a>.<a href="@0@PresentationFramework/A.html#3e5f3965086c190b" class="i method">GoToState</a>(<a href="#ada3b6c67ca804b4" class="k">this</a>, <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#508e24c937a7e771" class="i property">ReverseTransition</a> ? <span class="s">&quot;AfterUnLoadedReverse&quot;</span> : <span class="s">&quot;AfterUnLoaded&quot;</span>, <b>false</b>);
+                }
+
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#798084dd6c266279" class="i">IsVisibleChanged</a> -= <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#1de43e67af9a1898" class="i method">MetroContentControlIsVisibleChanged</a>;
+            }
+        }
+
+        <b>private void</b> <a id="c282b6e4e083ba85" href="../R/c282b6e4e083ba85.html" target="n" data-glyph="76,1" class="i method">MetroContentControlLoaded</a>(<b>object</b> <span id="r4 rd" class="r4 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r5 rd" class="r5 r">e</span>)
+        {
+            <b>if</b> (<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#778fb3e75478609c" class="i property">TransitionsEnabled</a>)
+            {
+                <b>if</b> (!<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#9b73ca6965ada5b7" class="i field">transitionLoaded</a>)
+                {
+                    <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#d4d1f94cfc8bd454" class="i method">SetStoryboardEvents</a>();
+                    <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#9b73ca6965ada5b7" class="i field">transitionLoaded</a> = <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#f82157493bdaa857" class="i property">OnlyLoadTransition</a>;
+                    <a href="@0@PresentationFramework/A.html#5c12561bc99f678d" class="t t">VisualStateManager</a>.<a href="@0@PresentationFramework/A.html#3e5f3965086c190b" class="i method">GoToState</a>(<a href="#ada3b6c67ca804b4" class="k">this</a>, <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#508e24c937a7e771" class="i property">ReverseTransition</a> ? <span class="s">&quot;AfterLoadedReverse&quot;</span> : <span class="s">&quot;AfterLoaded&quot;</span>, <b>true</b>);
+                }
+
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#798084dd6c266279" class="i">IsVisibleChanged</a> -= <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#1de43e67af9a1898" class="i method">MetroContentControlIsVisibleChanged</a>;
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#798084dd6c266279" class="i">IsVisibleChanged</a> += <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#1de43e67af9a1898" class="i method">MetroContentControlIsVisibleChanged</a>;
+            }
+            <b>else</b>
+            {
+                <b>if</b> (<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;RootGrid&quot;</span>) <b>is</b> <a href="@0@PresentationFramework/A.html#f9ce1d6be154348a" class="t t">Grid</a> <span id="r6 rd" class="r6 r">rootGrid</span>)
+                {
+                    <span class="r6 r">rootGrid</span>.<a href="@0@PresentationCore/A.html#7ca23bf037950fa0" class="i property">Opacity</a> = 1.0;
+                    <a href="@0@PresentationCore/A.html#d575b26d9ec0d77d" class="k">var</a> <span id="r7 rd" class="r7 r">transform</span> = ((<span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#d575b26d9ec0d77d" class="t t">TranslateTransform</a>)<span class="r6 r">rootGrid</span>.<a href="@0@PresentationCore/A.html#291370cc1b2ddda6" class="i property">RenderTransform</a>);
+                    <b>if</b> (<span class="r7 r">transform</span>.<a href="@0@WindowsBase/A.html#719e0ff6b1e5c1b6" class="i property">IsFrozen</a>)
+                    {
+                        <a href="@0@PresentationCore/A.html#d575b26d9ec0d77d" class="k">var</a> <span id="r8 rd" class="r8 r">modifiedTransform</span> = <span class="r7 r">transform</span>.<a href="@0@PresentationCore/A.html#7210e72665a23d93" class="i method">Clone</a>();
+                        <span class="r8 r">modifiedTransform</span>.<a href="@0@PresentationCore/A.html#76821051a9a35f26" class="i property">X</a> = 0;
+                        <span class="r6 r">rootGrid</span>.<a href="@0@PresentationCore/A.html#291370cc1b2ddda6" class="i property">RenderTransform</a> = <span class="r8 r">modifiedTransform</span>;
+                    }
+                    <b>else</b>
+                    {
+                        <span class="r7 r">transform</span>.<a href="@0@PresentationCore/A.html#76821051a9a35f26" class="i property">X</a> = 0;
+                    }
+                }
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Execute the transition again.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="4259d4ea033c9756" href="../R/4259d4ea033c9756.html" target="n" data-glyph="72,1" class="i method">Reload</a>()
+        {
+            <b>if</b> (!<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#778fb3e75478609c" class="i property">TransitionsEnabled</a> || <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#9b73ca6965ada5b7" class="i field">transitionLoaded</a>)
+            {
+                <b>return</b>;
+            }
+
+            <b>if</b> (<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#508e24c937a7e771" class="i property">ReverseTransition</a>)
+            {
+                <a href="@0@PresentationFramework/A.html#5c12561bc99f678d" class="t t">VisualStateManager</a>.<a href="@0@PresentationFramework/A.html#3e5f3965086c190b" class="i method">GoToState</a>(<a href="#ada3b6c67ca804b4" class="k">this</a>, <span class="s">&quot;BeforeLoaded&quot;</span>, <b>true</b>);
+                <a href="@0@PresentationFramework/A.html#5c12561bc99f678d" class="t t">VisualStateManager</a>.<a href="@0@PresentationFramework/A.html#3e5f3965086c190b" class="i method">GoToState</a>(<a href="#ada3b6c67ca804b4" class="k">this</a>, <span class="s">&quot;AfterUnLoadedReverse&quot;</span>, <b>true</b>);
+            }
+            <b>else</b>
+            {
+                <a href="@0@PresentationFramework/A.html#5c12561bc99f678d" class="t t">VisualStateManager</a>.<a href="@0@PresentationFramework/A.html#3e5f3965086c190b" class="i method">GoToState</a>(<a href="#ada3b6c67ca804b4" class="k">this</a>, <span class="s">&quot;BeforeLoaded&quot;</span>, <b>true</b>);
+                <a href="@0@PresentationFramework/A.html#5c12561bc99f678d" class="t t">VisualStateManager</a>.<a href="@0@PresentationFramework/A.html#3e5f3965086c190b" class="i method">GoToState</a>(<a href="#ada3b6c67ca804b4" class="k">this</a>, <span class="s">&quot;AfterLoaded&quot;</span>, <b>true</b>);
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span> <span class="c">/&gt;</span>
+        <b>public override void</b> <a id="357de6c66587f466" href="../R/357de6c66587f466.html" target="n" data-glyph="72,1" class="i method">OnApplyTemplate</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#f8ee23c685054e71" class="k">base</a>.<a href="@0@PresentationFramework/A.html#0c1b13beb625a4a2" class="i method">OnApplyTemplate</a>();
+
+            <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#ae746c373accd996" class="i field">afterLoadedStoryboard</a> = <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;AfterLoadedStoryboard&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="t t">Storyboard</a>;
+            <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#75a79bf8665c778f" class="i field">afterLoadedReverseStoryboard</a> = <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;AfterLoadedReverseStoryboard&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#ccdf3751fb4ab867" class="t t">Storyboard</a>;
+        }
+
+        <b>private void</b> <a id="9d072a4bc580c69d" href="../R/9d072a4bc580c69d.html" target="n" data-glyph="76,1" class="i method">AfterLoadedStoryboardCurrentTimeInvalidated</a>(<b>object</b>? <span id="r9 rd" class="r9 r">sender</span>, <span class="i n">System</span>.<a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r10 rd" class="r10 r">e</span>)
+        {
+            <b>if</b> (<span class="r9 r">sender</span> <b>is</b> <a href="@0@PresentationCore/A.html#f5f0511dd8430132" class="t t">Clock</a> <span id="r11 rd" class="r11 r">clock</span>)
+            {
+                <b>if</b> (<span class="r11 r">clock</span>.<a href="@0@PresentationCore/A.html#4e06962877c5780d" class="i property">CurrentState</a> == <a href="@0@PresentationCore/A.html#74a9f6ae0f6c3699" class="t t">ClockState</a>.<a href="@0@PresentationCore/A.html#dc9fc20437069642" class="i field">Active</a>)
+                {
+                    <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#4cc4b10aa99f38ea" class="i field">IsTransitioningPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>);
+                    <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<b>new</b> <a href="@0@PresentationCore/A.html#ee90c9b45d5a95f4" class="t constructor">RoutedEventArgs</a>(<a href="#50d26ab786d1aa37" class="i field">TransitionStartedEvent</a>));
+                }
+            }
+        }
+
+        <b>private void</b> <a id="b16edc0ff65ea436" href="../R/b16edc0ff65ea436.html" target="n" data-glyph="76,1" class="i method">AfterLoadedStoryboardCompleted</a>(<b>object</b>? <span id="r12 rd" class="r12 r">sender</span>, <span class="i n">System</span>.<a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r13 rd" class="r13 r">e</span>)
+        {
+            <b>if</b> (<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#9b73ca6965ada5b7" class="i field">transitionLoaded</a>)
+            {
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#bcef278a9e3037ec" class="i method">UnsetStoryboardEvents</a>();
+            }
+
+            <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#fdda546b8cd3480c" class="i method">InvalidateVisual</a>();
+            <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#4cc4b10aa99f38ea" class="i field">IsTransitioningPropertyKey</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>);
+            <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<b>new</b> <a href="@0@PresentationCore/A.html#ee90c9b45d5a95f4" class="t constructor">RoutedEventArgs</a>(<a href="#651715e570bbea37" class="i field">TransitionCompletedEvent</a>));
+        }
+
+        <b>private void</b> <a id="d4d1f94cfc8bd454" href="../R/d4d1f94cfc8bd454.html" target="n" data-glyph="76,1" class="i method">SetStoryboardEvents</a>()
+        {
+            <b>if</b> (<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#ae746c373accd996" class="i field">afterLoadedStoryboard</a> != <b>null</b>)
+            {
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#ae746c373accd996" class="i field">afterLoadedStoryboard</a>.<a href="@0@PresentationCore/A.html#07b5523a772b76b8" class="i">CurrentTimeInvalidated</a> += <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#9d072a4bc580c69d" class="i method">AfterLoadedStoryboardCurrentTimeInvalidated</a>;
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#ae746c373accd996" class="i field">afterLoadedStoryboard</a>.<a href="@0@PresentationCore/A.html#3dc81828027c69bc" class="i">Completed</a> += <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#b16edc0ff65ea436" class="i method">AfterLoadedStoryboardCompleted</a>;
+            }
+
+            <b>if</b> (<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#75a79bf8665c778f" class="i field">afterLoadedReverseStoryboard</a> != <b>null</b>)
+            {
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#75a79bf8665c778f" class="i field">afterLoadedReverseStoryboard</a>.<a href="@0@PresentationCore/A.html#07b5523a772b76b8" class="i">CurrentTimeInvalidated</a> += <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#9d072a4bc580c69d" class="i method">AfterLoadedStoryboardCurrentTimeInvalidated</a>;
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#75a79bf8665c778f" class="i field">afterLoadedReverseStoryboard</a>.<a href="@0@PresentationCore/A.html#3dc81828027c69bc" class="i">Completed</a> += <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#b16edc0ff65ea436" class="i method">AfterLoadedStoryboardCompleted</a>;
+            }
+        }
+
+        <b>private void</b> <a id="bcef278a9e3037ec" href="../R/bcef278a9e3037ec.html" target="n" data-glyph="76,1" class="i method">UnsetStoryboardEvents</a>()
+        {
+            <b>if</b> (<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#ae746c373accd996" class="i field">afterLoadedStoryboard</a> != <b>null</b>)
+            {
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#ae746c373accd996" class="i field">afterLoadedStoryboard</a>.<a href="@0@PresentationCore/A.html#07b5523a772b76b8" class="i">CurrentTimeInvalidated</a> -= <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#9d072a4bc580c69d" class="i method">AfterLoadedStoryboardCurrentTimeInvalidated</a>;
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#ae746c373accd996" class="i field">afterLoadedStoryboard</a>.<a href="@0@PresentationCore/A.html#3dc81828027c69bc" class="i">Completed</a> -= <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#b16edc0ff65ea436" class="i method">AfterLoadedStoryboardCompleted</a>;
+            }
+
+            <b>if</b> (<a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#75a79bf8665c778f" class="i field">afterLoadedReverseStoryboard</a> != <b>null</b>)
+            {
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#75a79bf8665c778f" class="i field">afterLoadedReverseStoryboard</a>.<a href="@0@PresentationCore/A.html#07b5523a772b76b8" class="i">CurrentTimeInvalidated</a> -= <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#9d072a4bc580c69d" class="i method">AfterLoadedStoryboardCurrentTimeInvalidated</a>;
+                <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#75a79bf8665c778f" class="i field">afterLoadedReverseStoryboard</a>.<a href="@0@PresentationCore/A.html#3dc81828027c69bc" class="i">Completed</a> -= <a href="#ada3b6c67ca804b4" class="k">this</a>.<a href="#b16edc0ff65ea436" class="i method">AfterLoadedStoryboardCompleted</a>;
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

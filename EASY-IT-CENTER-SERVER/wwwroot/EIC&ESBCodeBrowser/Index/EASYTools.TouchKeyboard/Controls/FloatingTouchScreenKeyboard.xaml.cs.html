@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html><head><title>FloatingTouchScreenKeyboard.xaml.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(181);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.TouchKeyboard/Controls/FloatingTouchScreenKeyboard.xaml.cs" target="_top">Controls\FloatingTouchScreenKeyboard.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.TouchKeyboard" target="_top">..\..\..\EASY-TOOLS\EASYTools.TouchKeyboard\EASYTools.TouchKeyboard.csproj</a> (EASYTools.TouchKeyboard)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">Controls</span>
+{
+    <b>public</b> <a href="../P/01c142835bced450.html" target="s" class="k">partial</a> <b>class</b> <a id="01c142835bced450" href="../R/01c142835bced450.html" target="n" data-glyph="0,0" class="t t">FloatingTouchScreenKeyboard</a>
+    {
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="d45d14671376ed9f" href="../R/d45d14671376ed9f.html" target="n" data-glyph="42,1" class="i field">AreAnimationsEnabledProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;AreAnimationsEnabled&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="../P/01c142835bced450.html#01c142835bced450" class="t t">FloatingTouchScreenKeyboard</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(<b>true</b>));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="837056f5048a12aa" href="../R/837056f5048a12aa.html" target="n" data-glyph="42,1" class="i field">IsAllowedToFadeProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;IsAllowedToFade&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="../P/01c142835bced450.html#01c142835bced450" class="t t">FloatingTouchScreenKeyboard</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(<b>true</b>));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f4eac106b1ecdfad" href="../R/f4eac106b1ecdfad.html" target="n" data-glyph="42,1" class="i field">IsDraggingProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;IsDragging&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="../P/01c142835bced450.html#01c142835bced450" class="t t">FloatingTouchScreenKeyboard</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(<b>false</b>));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="bb47fb6d4046fdea" href="../R/bb47fb6d4046fdea.html" target="n" data-glyph="42,1" class="i field">IsDragHelperAllowedToHideProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;IsDragHelperAllowedToHide&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="../P/01c142835bced450.html#01c142835bced450" class="t t">FloatingTouchScreenKeyboard</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(<b>false</b>));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="9e59eb32b69a3d4c" href="../R/9e59eb32b69a3d4c.html" target="n" data-glyph="42,1" class="i field">IsKeyboardShownProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;IsKeyboardShown&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="../P/01c142835bced450.html#01c142835bced450" class="t t">FloatingTouchScreenKeyboard</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(<b>true</b>));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="13844eb691cb3ca1" href="../R/13844eb691cb3ca1.html" target="n" data-glyph="42,1" class="i field">MaximumKeyboardOpacityProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;MaximumKeyboardOpacity&quot;</span>, <b>typeof</b>(<b>double</b>), <b>typeof</b>(<a href="../P/01c142835bced450.html#01c142835bced450" class="t t">FloatingTouchScreenKeyboard</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(0.9d));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="1dedbf89a8cc30ab" href="../R/1dedbf89a8cc30ab.html" target="n" data-glyph="42,1" class="i field">MinimumKeyboardOpacityProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;MinimumKeyboardOpacity&quot;</span>, <b>typeof</b>(<b>double</b>), <b>typeof</b>(<a href="../P/01c142835bced450.html#01c142835bced450" class="t t">FloatingTouchScreenKeyboard</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(0.2d));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="79567d7b6e9ddc02" href="../R/79567d7b6e9ddc02.html" target="n" data-glyph="42,1" class="i field">KeyboardHideDelayProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;KeyboardHideDelay&quot;</span>, <b>typeof</b>(<b>double</b>), <b>typeof</b>(<a href="../P/01c142835bced450.html#01c142835bced450" class="t t">FloatingTouchScreenKeyboard</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(5d));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="49270dfaa764184c" href="../R/49270dfaa764184c.html" target="n" data-glyph="42,1" class="i field">KeyboardHideAnimationDurationProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;KeyboardHideAnimationDuration&quot;</span>, <b>typeof</b>(<b>double</b>), <b>typeof</b>(<a href="../P/01c142835bced450.html#01c142835bced450" class="t t">FloatingTouchScreenKeyboard</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(0.5d));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="8a03bc56ae7b92d2" href="../R/8a03bc56ae7b92d2.html" target="n" data-glyph="42,1" class="i field">KeyboardShowAnimationDurationProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;KeyboardShowAnimationDuration&quot;</span>, <b>typeof</b>(<b>double</b>), <b>typeof</b>(<a href="../P/01c142835bced450.html#01c142835bced450" class="t t">FloatingTouchScreenKeyboard</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(0.5d));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="03ea6220ee896736" href="../R/03ea6220ee896736.html" target="n" data-glyph="42,1" class="i field">DeadZoneProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;DeadZone&quot;</span>, <b>typeof</b>(<b>double</b>), <b>typeof</b>(<a href="../P/01c142835bced450.html#01c142835bced450" class="t t">FloatingTouchScreenKeyboard</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(5d));
+ 
+        <b>private</b> <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <a id="1659d6ab50d89502" href="../R/1659d6ab50d89502.html" target="n" data-glyph="46,1" class="i field">_mouseDownPosition</a>;
+        <b>private</b> <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <a id="1d12a74d59f9620d" href="../R/1d12a74d59f9620d.html" target="n" data-glyph="46,1" class="i field">_mouseDownOffset</a>;
+        <b>private bool</b> <a id="823d5ece60e17753" href="../R/823d5ece60e17753.html" target="n" data-glyph="46,1" class="i field">_isAllowedToFadeValueBeforeDrag</a>;
+ 
+        <b>public</b> <a id="9bca30d9acdac932" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">FloatingTouchScreenKeyboard</a>()
+        {
+            <a href="../obj/Debug/Controls/FloatingTouchScreenKeyboard.g.cs.html#fccee5c288a119ae" class="i method">InitializeComponent</a>();
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a value indicating whether animations are enabled.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 	</span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">true</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> if animations are enabled; otherwise, </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">false</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="5719de6fb9cef544" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">AreAnimationsEnabled</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#d45d14671376ed9f" class="i field">AreAnimationsEnabledProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#d45d14671376ed9f" class="i field">AreAnimationsEnabledProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a value that indicates whether the Keyboard is allowed to fade. This is a dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="b839e6bafb43efd3" href="../R/b839e6bafb43efd3.html" target="n" data-glyph="102,1" class="i property">IsAllowedToFade</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#837056f5048a12aa" class="i field">IsAllowedToFadeProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#837056f5048a12aa" class="i field">IsAllowedToFadeProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets a value that indicates if the keyboard is currently being dragged. This is a dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="ea470344a814bd47" href="../R/ea470344a814bd47.html" target="n" data-glyph="102,1" class="i property">IsDragging</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f4eac106b1ecdfad" class="i field">IsDraggingProperty</a>); }
+            <b>private set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f4eac106b1ecdfad" class="i field">IsDraggingProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a value that indicates if the drag helper text is allowed to hide. This is a dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="00532bb9ce06d42a" href="../R/00532bb9ce06d42a.html" target="n" data-glyph="102,1" class="i property">IsDragHelperAllowedToHide</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#bb47fb6d4046fdea" class="i field">IsDragHelperAllowedToHideProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#bb47fb6d4046fdea" class="i field">IsDragHelperAllowedToHideProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets a value that indicates that the keyboard is shown (not faded). This is a dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="0bb171f127cb6eb9" href="../R/0bb171f127cb6eb9.html" target="n" data-glyph="102,1" class="i property">IsKeyboardShown</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#9e59eb32b69a3d4c" class="i field">IsKeyboardShownProperty</a>); }
+            <b>private set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#9e59eb32b69a3d4c" class="i field">IsKeyboardShownProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the maximum opacity for a fully displayed keyboard. This is a dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="9e7d5f5d0b811da8" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">MaximumKeyboardOpacity</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#13844eb691cb3ca1" class="i field">MaximumKeyboardOpacityProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#13844eb691cb3ca1" class="i field">MaximumKeyboardOpacityProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the opacity to use for a partially hidden keyboard. This is a dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="d628910d1079cc51" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">MinimumKeyboardOpacity</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#1dedbf89a8cc30ab" class="i field">MinimumKeyboardOpacityProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#1dedbf89a8cc30ab" class="i field">MinimumKeyboardOpacityProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the number of seconds to wait after the last keyboard activity before hiding the keyboard. This is a dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="ca386553b3a59022" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">KeyboardHideDelay</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#79567d7b6e9ddc02" class="i field">KeyboardHideDelayProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#79567d7b6e9ddc02" class="i field">KeyboardHideDelayProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the duration in seconds for the keyboard hide animation. This is a dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="d9d928c30e95edb4" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">KeyboardHideAnimationDuration</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#49270dfaa764184c" class="i field">KeyboardHideAnimationDurationProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#49270dfaa764184c" class="i field">KeyboardHideAnimationDurationProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the duration in seconds for the keyboard show animation. This is a dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="d883330565cb6708" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">KeyboardShowAnimationDuration</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#8a03bc56ae7b92d2" class="i field">KeyboardShowAnimationDurationProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#8a03bc56ae7b92d2" class="i field">KeyboardShowAnimationDurationProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the maximum opacity for a fully displayed keyboard. This is a dependency property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="e4230ca0d0cb53a1" href="../R/e4230ca0d0cb53a1.html" target="n" data-glyph="102,1" class="i property">DeadZone</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#03ea6220ee896736" class="i field">DeadZoneProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#03ea6220ee896736" class="i field">DeadZoneProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>protected override void</b> <a id="5a89e73cd30dbd89" href="../R/5a89e73cd30dbd89.html" target="n" data-glyph="75,1" class="i method">OnOpened</a>(<a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r0 rd" class="r0 r">e</span>)
+        {
+            <a href="#0bb171f127cb6eb9" class="i property">IsKeyboardShown</a> = <b>true</b>;
+            <a href="@0@PresentationFramework/A.html#40ab7810a8f8c8f6" class="k">base</a>.<a href="@0@PresentationFramework/A.html#9a288546e02169be" class="i method">OnOpened</a>(<span class="r0 r">e</span>);
+        }
+ 
+        <b>protected override void</b> <a id="aaf310ad36bb11fd" href="../R/aaf310ad36bb11fd.html" target="n" data-glyph="75,1" class="i method">OnClosed</a>(<a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <a href="#0bb171f127cb6eb9" class="i property">IsKeyboardShown</a> = <b>false</b>;
+            <a href="@0@PresentationFramework/A.html#40ab7810a8f8c8f6" class="k">base</a>.<a href="@0@PresentationFramework/A.html#c3a946784df9b6a0" class="i method">OnClosed</a>(<span class="r1 r">e</span>);
+        }
+ 
+        <b>private void</b> <a id="83fc8e9c4131229d" href="../R/83fc8e9c4131229d.html" target="n" data-glyph="76,1" class="i method">DragHandle_PreviewMouseDown</a>(<b>object</b> <span id="r2 rd" class="r2 r">sender</span>, <a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r3 rd" class="r3 r">e</span>)
+        {
+            <a href="#1659d6ab50d89502" class="i field">_mouseDownPosition</a> = <span class="r3 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="@0@PresentationFramework/A.html#6710517f0af5ce90" class="i property">PlacementTarget</a>);
+            <a href="#1d12a74d59f9620d" class="i field">_mouseDownOffset</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<a href="@0@PresentationFramework/A.html#dfcffd974f074dfa" class="i property">HorizontalOffset</a>, <a href="@0@PresentationFramework/A.html#cc41dbea1951af9e" class="i property">VerticalOffset</a>);
+        }
+ 
+        <b>private void</b> <a id="628b2086d9a4fb94" href="../R/628b2086d9a4fb94.html" target="n" data-glyph="76,1" class="i method">DragHandle_PreviewMouseMove</a>(<b>object</b> <span id="r4 rd" class="r4 r">sender</span>, <a href="@0@PresentationCore/A.html#2bd9049c90bfe71a" class="t t">MouseEventArgs</a> <span id="r5 rd" class="r5 r">e</span>)
+        {
+            <b>if</b> (<span class="r5 r">e</span>.<a href="@0@PresentationCore/A.html#325207ca856ea87d" class="i property">LeftButton</a> == <a href="@0@PresentationCore/A.html#c49fee26f1f7a30c" class="t t">MouseButtonState</a>.<a href="@0@PresentationCore/A.html#84ab65d095fc0025" class="i field">Pressed</a>)
+            {
+                <a href="@0@WindowsBase/A.html#43edd1f4217470d4" class="k">var</a> <span id="r6 rd" class="r6 r">delta</span> = <span class="r5 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>(<a href="@0@PresentationFramework/A.html#6710517f0af5ce90" class="i property">PlacementTarget</a>) - <a href="#1659d6ab50d89502" class="i field">_mouseDownPosition</a>;
+                <b>if</b> (!<a href="#ea470344a814bd47" class="i property">IsDragging</a> &amp;&amp; <span class="r6 r">delta</span>.<a href="@0@WindowsBase/A.html#0a9ce311ec789177" class="i property">Length</a> &gt; <a href="#e4230ca0d0cb53a1" class="i property">DeadZone</a>)
+                {
+                    <a href="#ea470344a814bd47" class="i property">IsDragging</a> = <b>true</b>;
+                    <a href="#00532bb9ce06d42a" class="i property">IsDragHelperAllowedToHide</a> = <b>true</b>;
+                    <a href="#823d5ece60e17753" class="i field">_isAllowedToFadeValueBeforeDrag</a> = <a href="#b839e6bafb43efd3" class="i property">IsAllowedToFade</a>;
+                    <a href="#b839e6bafb43efd3" class="i property">IsAllowedToFade</a> = <b>false</b>;
+                    <a href="../obj/Debug/Controls/FloatingTouchScreenKeyboard.g.cs.html#b5dea259ef739184" class="i field">DragHandle</a>.<a href="@0@PresentationCore/A.html#466850becfc3b224" class="i method">CaptureMouse</a>();
+                }
+ 
+                <b>if</b> (<a href="#ea470344a814bd47" class="i property">IsDragging</a>)
+                {
+                    <a href="@0@PresentationFramework/A.html#dfcffd974f074dfa" class="i property">HorizontalOffset</a> = <a href="#1d12a74d59f9620d" class="i field">_mouseDownOffset</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> + <span class="r6 r">delta</span>.<a href="@0@WindowsBase/A.html#ada781eade493970" class="i property">X</a>;
+                    <a href="@0@PresentationFramework/A.html#cc41dbea1951af9e" class="i property">VerticalOffset</a> = <a href="#1d12a74d59f9620d" class="i field">_mouseDownOffset</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> + <span class="r6 r">delta</span>.<a href="@0@WindowsBase/A.html#c4c0a4e2f34505db" class="i property">Y</a>;
+                }
+            }
+        }
+ 
+        <b>private void</b> <a id="85d6e0fa6dbba5ff" href="../R/85d6e0fa6dbba5ff.html" target="n" data-glyph="76,1" class="i method">DragHandle_PreviewMouseUp</a>(<b>object</b> <span id="r7 rd" class="r7 r">sender</span>, <a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r8 rd" class="r8 r">e</span>)
+        {
+            <a href="../obj/Debug/Controls/FloatingTouchScreenKeyboard.g.cs.html#b5dea259ef739184" class="i field">DragHandle</a>.<a href="@0@PresentationCore/A.html#d6873c5315db5dbb" class="i method">ReleaseMouseCapture</a>();
+            <a href="#ea470344a814bd47" class="i property">IsDragging</a> = <b>false</b>;
+            <a href="#b839e6bafb43efd3" class="i property">IsAllowedToFade</a> = <a href="#823d5ece60e17753" class="i field">_isAllowedToFadeValueBeforeDrag</a>;
+        }
+ 
+    }
+}</pre></td></tr></table></div></body></html>

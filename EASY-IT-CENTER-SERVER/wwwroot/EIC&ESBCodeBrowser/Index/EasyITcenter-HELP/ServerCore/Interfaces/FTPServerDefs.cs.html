@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html><head><title>FTPServerDefs.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(97);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasyITcenter-HELP/ServerCore/Interfaces/FTPServerDefs.cs" target="_top">ServerCore\Interfaces\FTPServerDefs.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasyITcenter-HELP" target="_top">HelpProjects\EasyITcenter-HELP\EasyITcenter-HELP.csproj</a> (EasyITcenter-HELP)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i">FubarDev</span>.<span class="i">FtpServer</span>;
+<b>using</b> <span class="i">FubarDev</span>.<span class="i">FtpServer</span>.<span class="i">AccountManagement</span>;
+ 
+<b>namespace</b> <span class="i n">EasyITCenter</span>.<span class="i n">ServerCoreServers</span> {
+ 
+    <b>internal class</b> <a id="76fae6e4db7c2e53" href="../../R/76fae6e4db7c2e53.html" target="n" data-glyph="2,0" class="t t">HostedFtpServer</a> : <span class="t t">IHostedService</span> {
+        <b>private readonly</b> <span class="i">IFtpServerHost</span> <a id="90eb82976680b4b2" href="../../R/90eb82976680b4b2.html" target="n" data-glyph="46,1" class="i field">_ftpServerHost</a>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#76fae6e4db7c2e53" class="t t">HostedFtpServer</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> class.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">ftpServerHost</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The FTP server host that gets wrapped as a hosted service.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public</b> <a id="ea55b95b9523b115" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">HostedFtpServer</a>(
+            <span class="i">IFtpServerHost</span> <span id="r0 rd" class="r0 r">ftpServerHost</span>) {
+            <a href="#90eb82976680b4b2" class="i field">_ftpServerHost</a> = <span class="r0 r">ftpServerHost</span>;
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span><span class="c">/&gt;</span>
+        <b>public</b> <a href="@1@System.Runtime/A.html#045a746eb48cbaa9" class="t t">Task</a> <a id="9b1cc325358bd611" href="../../R/9b1cc325358bd611.html" target="n" data-glyph="72,1" class="i method">StartAsync</a>(<a href="@1@System.Runtime/A.html#36b17ded8b1a228c" class="t t">CancellationToken</a> <span id="r1 rd" class="r1 r">cancellationToken</span>) {
+            <b>return</b> <a href="#90eb82976680b4b2" class="i field">_ftpServerHost</a>.<span class="i">StartAsync</span>(<span class="r1 r">cancellationToken</span>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span><span class="c">/&gt;</span>
+        <b>public</b> <a href="@1@System.Runtime/A.html#045a746eb48cbaa9" class="t t">Task</a> <a id="18e78918310f4d44" href="../../R/18e78918310f4d44.html" target="n" data-glyph="72,1" class="i method">StopAsync</a>(<a href="@1@System.Runtime/A.html#36b17ded8b1a228c" class="t t">CancellationToken</a> <span id="r2 rd" class="r2 r">cancellationToken</span>) {
+            <b>return</b> <a href="#90eb82976680b4b2" class="i field">_ftpServerHost</a>.<span class="i">StopAsync</span>(<span class="r2 r">cancellationToken</span>);
+        }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Custom membership provider for Authentication Validation Actual is Set by UserName and</span>
+    <span class="c">///</span><span class="c"> Password in Database</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="511c39dd5bac0f3b" href="../../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="f3d4c16c800ef2de">HostedFtpServerMembershipProvider</span></a> : <span class="i">IMembershipProvider</span> {
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> FTP User Validation Its for Open FTP and User Validation</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r3 r">username</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The username.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r4 r">password</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The password.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <span class="i">MemberValidationResult</span> <a id="a4b52999d9f99548" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">ValidateUser</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r3 rd" class="r3 r">username</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r4 rd" class="r4 r">password</span>) {
+            <b>if</b> (!<span class="i">ServerConfigSettings</span>.<span class="i">ServerFtpSecurityEnabled</span>) {
+                <b>return</b> <b>new</b> <span class="i">MemberValidationResult</span>(<span class="i">MemberValidationStatus</span>.<span class="i">Anonymous</span>, <b>new</b> <a href="#c7d2400b53f8d3f0" class="t constructor">CustomFtpUser</a>(<span class="s">&quot;anonymous&quot;</span>));
+            }
+            <b>else</b> <b>if</b> (!<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r3 r">username</span>) &amp;&amp; !<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r4 r">password</span>)) {
+                <b>var</b> <span id="r5 rd" class="r5 r">user</span> = <b>new</b> <span class="i">EasyITCenterContext</span>()
+                    .<span class="i">SolutionUserLists</span>.<span class="i">Include</span>(<span id="r6 rd" class="r6 r">a</span> =&gt; <span class="r6 r">a</span>.<span class="i">Role</span>).<span class="i">Where</span>(<span id="r7 rd" class="r7 r">a</span> =&gt; <span class="r7 r">a</span>.<span class="i">Active</span> == <b>true</b> &amp;&amp; <span class="r7 r">a</span>.<span class="i">UserName</span> == <span class="r3 r">username</span> &amp;&amp; <span class="r7 r">a</span>.<span class="i">Password</span> == <span class="r4 r">password</span>)
+                    .<span class="i">First</span>();
+                <b>if</b> (<span class="r5 r">user</span> != <b>null</b>) { <b>return</b> <b>new</b> <span class="i">MemberValidationResult</span>(<span class="i">MemberValidationStatus</span>.<span class="i">AuthenticatedUser</span>, <b>new</b> <a href="#c7d2400b53f8d3f0" class="t constructor">CustomFtpUser</a>(<span class="r3 r">username</span>)); }
+            }
+            <b>return</b> <b>new</b> <span class="i">MemberValidationResult</span>(<span class="i">MemberValidationStatus</span>.<span class="i">InvalidLogin</span>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> FTP User Validation Async Its for Open FTP and User Validation</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">username</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The user name.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">password</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The password.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">The result of the validation.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<span class="i">MemberValidationResult</span>&gt; <a id="f0850a255f8a6f16" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">ValidateUserAsync</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r8 rd" class="r8 r">username</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r9 rd" class="r9 r">password</span>) {
+            <b>if</b> (!<span class="i">ServerConfigSettings</span>.<span class="i">ServerFtpSecurityEnabled</span>) {
+                <b>return</b> <b>new</b> <span class="i">MemberValidationResult</span>(<span class="i">MemberValidationStatus</span>.<span class="i">Anonymous</span>, <b>new</b> <a href="#c7d2400b53f8d3f0" class="t constructor">CustomFtpUser</a>(<span class="s">&quot;anonymous&quot;</span>));
+            }
+            <b>else</b> <b>if</b> (!<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r8 r">username</span>) &amp;&amp; !<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r9 r">password</span>)) {
+                <b>var</b> <span id="r10 rd" class="r10 r">user</span> = <b>new</b> <span class="i">EasyITCenterContext</span>()
+                    .<span class="i">SolutionUserLists</span>.<span class="i">Include</span>(<span id="r11 rd" class="r11 r">a</span> =&gt; <span class="r11 r">a</span>.<span class="i">Role</span>).<span class="i">Where</span>(<span id="r12 rd" class="r12 r">a</span> =&gt; <span class="r12 r">a</span>.<span class="i">Active</span> == <b>true</b> &amp;&amp; <span class="r12 r">a</span>.<span class="i">UserName</span> == <span class="r8 r">username</span> &amp;&amp; <span class="r12 r">a</span>.<span class="i">Password</span> == <span class="r9 r">password</span>)
+                    .<span class="i">First</span>();
+                <b>if</b> (<span class="r10 r">user</span> != <b>null</b>) { <b>return</b> <b>new</b> <span class="i">MemberValidationResult</span>(<span class="i">MemberValidationStatus</span>.<span class="i">AuthenticatedUser</span>, <b>new</b> <a href="#c7d2400b53f8d3f0" class="t constructor">CustomFtpUser</a>(<span class="r8 r">username</span>)); }
+            }
+            <b>return</b> <b>new</b> <span class="i">MemberValidationResult</span>(<span class="i">MemberValidationStatus</span>.<span class="i">InvalidLogin</span>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Custom FTP user implementation</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private class</b> <a id="a13db6e47724aa2b" href="../../R/a13db6e47724aa2b.html" target="n" data-glyph="4,1" class="t t">CustomFtpUser</a> : <span class="i">IFtpUser</span> {
+ 
+            <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+            <span class="c">///</span><span class="c"> Initializes a new instance of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#a13db6e47724aa2b" class="t t">CustomFtpUser</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> instance.</span>
+            <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+            <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r13 r">name</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The user name</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+            <b>public</b> <a id="c7d2400b53f8d3f0" href="../../R/c7d2400b53f8d3f0.html" target="n" data-glyph="72,2" class="t constructor">CustomFtpUser</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r13 rd" class="r13 r">name</span>) {
+                <a href="#400bd4e2af80d068" class="i property">Name</a> = <span class="r13 r">name</span>;
+            }
+ 
+            <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span><span class="c">/&gt;</span>
+            <b>public string</b> <a id="400bd4e2af80d068" href="../../R/400bd4e2af80d068.html" target="n" data-glyph="102,2" class="i property">Name</a> { <b>get</b>; }
+ 
+            <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span><span class="c">/&gt;</span>
+            <b>public bool</b> <a id="d29fbac764263715" href="../../R/../../0000000000.html" target="n" data-glyph="72,2" class="i method">IsInGroup</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r14 rd" class="r14 r">groupName</span>) {
+                <span class="c">// We claim that the user is in both the &quot;user&quot; group and in the a group with the</span>
+                <span class="c">// same name as the user name.</span>
+                <b>return</b> <span class="r14 r">groupName</span> == <span class="s">&quot;user&quot;</span> || <span class="r14 r">groupName</span> == <a href="#400bd4e2af80d068" class="i property">Name</a>;
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

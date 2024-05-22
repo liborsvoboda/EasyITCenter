@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html><head><title>TiltBehavior.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(199);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Behaviors/TiltBehavior.cs" target="_top">Behaviors\TiltBehavior.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">ControlzEx</span>.<span class="i n">Theming</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Xaml</span>.<span class="i n">Behaviors</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Behaviors</span>
+{
+    <b>public class</b> <a id="24c8e7e254b990d0" href="../R/24c8e7e254b990d0.html" target="n" data-glyph="0,0" class="t t"><span id="b0b9706d0a589c82">TiltBehavior</span></a> : <span class="t t">Behavior</span>&lt;<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>&gt;
+    {
+        <b>private bool</b> <a id="44a4871c31e822d5" href="../R/44a4871c31e822d5.html" target="n" data-glyph="46,1" class="i field">isPressed</a>;
+        <b>private</b> <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a> <a id="e094271e77fc0f35" href="../R/e094271e77fc0f35.html" target="n" data-glyph="46,1" class="i field">originalMargin</a>;
+        <b>private</b> <a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a>? <a id="8b456fcc7168bede" href="../R/8b456fcc7168bede.html" target="n" data-glyph="46,1" class="i field">originalPanel</a>;
+        <b>private</b> <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="t t">Size</a> <a id="fb719df1f42ba0de" href="../R/fb719df1f42ba0de.html" target="n" data-glyph="46,1" class="i field">originalSize</a>;
+        <b>private</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>? <a id="7bdd881242cd593f" href="../R/7bdd881242cd593f.html" target="n" data-glyph="46,1" class="i field">attachedElement</a>;
+        <b>private</b> <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <a id="a42c61c7a890152c" href="../R/a42c61c7a890152c.html" target="n" data-glyph="46,1" class="i field">current</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(-99, -99);
+        <b>private int</b> <a id="42e677b092cc2e98" href="../R/42e677b092cc2e98.html" target="n" data-glyph="46,1" class="i field">times</a> = -1;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#73a9b18ac1dbd93f" class="i property">KeepDragging</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f17b03003bec5100" href="../R/f17b03003bec5100.html" target="n" data-glyph="42,1" class="i field">KeepDraggingProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <b>nameof</b>(<a href="#73a9b18ac1dbd93f" class="i property">KeepDragging</a>),
+                <b>typeof</b>(<b>bool</b>),
+                <b>typeof</b>(<a href="#24c8e7e254b990d0" class="t t">TiltBehavior</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>));
+
+        <b>public bool</b> <a id="73a9b18ac1dbd93f" href="../R/73a9b18ac1dbd93f.html" target="n" data-glyph="102,1" class="i property">KeepDragging</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f17b03003bec5100" class="i field">KeepDraggingProperty</a>);
+            <b>set</b> =&gt; <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f17b03003bec5100" class="i field">KeepDraggingProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#5b6516a1bd093f03" class="i property">TiltFactor</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="c15c49e25594a787" href="../R/c15c49e25594a787.html" target="n" data-glyph="42,1" class="i field">TiltFactorProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <b>nameof</b>(<a href="#5b6516a1bd093f03" class="i property">TiltFactor</a>),
+                <b>typeof</b>(<b>int</b>),
+                <b>typeof</b>(<a href="#24c8e7e254b990d0" class="t t">TiltBehavior</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(20));
+
+        <b>public int</b> <a id="5b6516a1bd093f03" href="../R/5b6516a1bd093f03.html" target="n" data-glyph="102,1" class="i property">TiltFactor</a>
+        {
+            <b>get</b> =&gt; (<b>int</b>)<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#c15c49e25594a787" class="i field">TiltFactorProperty</a>);
+            <b>set</b> =&gt; <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#c15c49e25594a787" class="i field">TiltFactorProperty</a>, <b>value</b>);
+        }
+
+        <b>public</b> <a href="../Controls/Planerator.cs.html#c4eceb3b06f5ed9e" class="t t">Planerator</a>? <a id="e918b58b00a7015c" href="../R/e918b58b00a7015c.html" target="n" data-glyph="102,1" class="i property">RotatorParent</a> { <b>get</b>; <b>private set</b>; }
+
+        <b>protected override void</b> <a id="0de37b91fd6612ce" href="../R/0de37b91fd6612ce.html" target="n" data-glyph="75,1" class="i method">OnAttached</a>()
+        {
+            <b>base</b>.<span class="i method">OnAttached</span>();
+
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<span class="i property">AssociatedObject</span>;
+            <b>if</b> (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a> <b>is</b> <a href="@0@PresentationFramework/A.html#fef199e8c0e96177" class="t t">ListBox</a>)
+            {
+                <b>return</b>;
+            }
+
+            <b>if</b> (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a> <b>is</b> <a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a> <span id="r0 rd" class="r0 r">panel</span>)
+            {
+                <span class="r0 r">panel</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += (<span id="r1 rd" class="r1 r">sl</span>, <span id="r2 rd" class="r2 r">el</span>) =&gt;
+                    {
+                        <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="k">var</a> <span id="r3 rd" class="r3 r">elements</span> = <span class="r0 r">panel</span>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@System.Core/A.html#4ba4a3f8a5530e33" class="i method">OfType</a>&lt;<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>&gt;().<a href="@0@System.Core/A.html#e276d6892241255b" class="i method">ToList</a>();
+
+                        <span class="r3 r">elements</span>.<a href="@0@mscorlib/A.html#0e5a9cf0a310b9e5" class="i method">ForEach</a>(<span id="r4 rd" class="r4 r">element</span> =&gt;
+                                             <span class="t t">Interaction</span>.<span class="i method">GetBehaviors</span>(<span class="r4 r">element</span>).<a href="@0@PresentationCore/A.html#a32a2fccc1f526e2" class="i method">Add</a>(
+                                                 <b>new</b> <a href="#24c8e7e254b990d0" class="t constructor">TiltBehavior</a>
+                                                 {
+                                                     <a href="#73a9b18ac1dbd93f" class="i property">KeepDragging</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#73a9b18ac1dbd93f" class="i property">KeepDragging</a>,
+                                                     <a href="#5b6516a1bd093f03" class="i property">TiltFactor</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#5b6516a1bd093f03" class="i property">TiltFactor</a>
+                                                 }));
+                    };
+
+                <b>return</b>;
+            }
+
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#8b456fcc7168bede" class="i field">originalPanel</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>.<a href="@0@PresentationFramework/A.html#f649907cbc82d1a0" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a> ?? <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>.<a href="../Controls/TreeHelper.cs.html#cbbe3a66a5b55955" class="i method">TryFindParent</a>&lt;<a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a>&gt;();
+
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e094271e77fc0f35" class="i field">originalMargin</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>.<a href="@0@PresentationFramework/A.html#8aedc94268115177" class="i property">Margin</a>;
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#fb719df1f42ba0de" class="i field">originalSize</a> = <b>new</b> <a href="@0@WindowsBase/A.html#a9e92f9d82abccc2" class="t constructor">Size</a>(<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a>, <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a>);
+            <b>double</b> <span id="r5 rd" class="r5 r">left</span> = <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#c65916be9b322dda" class="i method">GetLeft</a>(<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>);
+            <b>double</b> <span id="r6 rd" class="r6 r">right</span> = <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#feec3484432f881d" class="i method">GetRight</a>(<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>);
+            <b>double</b> <span id="r7 rd" class="r7 r">top</span> = <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#bbf3dfbfc3a60d1b" class="i method">GetTop</a>(<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>);
+            <b>double</b> <span id="r8 rd" class="r8 r">bottom</span> = <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#c264253177883e03" class="i method">GetBottom</a>(<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>);
+            <b>int</b> <span id="r9 rd" class="r9 r">z</span> = <a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a>.<a href="@0@PresentationFramework/A.html#9871035e9c68bed4" class="i method">GetZIndex</a>(<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>);
+            <a href="@0@PresentationFramework/A.html#8b1564c617a0b2f5" class="t t">VerticalAlignment</a> <span id="r10 rd" class="r10 r">va</span> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>.<a href="@0@PresentationFramework/A.html#c6fdbbe63a3a42b3" class="i property">VerticalAlignment</a>;
+            <a href="@0@PresentationFramework/A.html#4adb839fdbe93e93" class="t t">HorizontalAlignment</a> <span id="r11 rd" class="r11 r">ha</span> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>.<a href="@0@PresentationFramework/A.html#af1a9620ef03c2dd" class="i property">HorizontalAlignment</a>;
+
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a> = <b>new</b> <a href="../Controls/Planerator.cs.html#c4eceb3b06f5ed9e" class="t constructor">Planerator</a>
+                                 {
+                                     <a href="@0@PresentationFramework/A.html#8aedc94268115177" class="i property">Margin</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e094271e77fc0f35" class="i field">originalMargin</a>,
+                                     <a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#fb719df1f42ba0de" class="i field">originalSize</a>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>,
+                                     <a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#fb719df1f42ba0de" class="i field">originalSize</a>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>,
+                                     <a href="@0@PresentationFramework/A.html#c6fdbbe63a3a42b3" class="i property">VerticalAlignment</a> = <span class="r10 r">va</span>,
+                                     <a href="@0@PresentationFramework/A.html#af1a9620ef03c2dd" class="i property">HorizontalAlignment</a> = <span class="r11 r">ha</span>
+                                 };
+
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#eb349db243881914" class="i field">LeftProperty</a>, <span class="r5 r">left</span>);
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#c270b507bf364674" class="i field">RightProperty</a>, <span class="r6 r">right</span>);
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#a76de5a09fc0753e" class="i field">TopProperty</a>, <span class="r7 r">top</span>);
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>.<a href="@0@PresentationFramework/A.html#b79c678eb325baa2" class="i field">BottomProperty</a>, <span class="r8 r">bottom</span>);
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a>.<a href="@0@PresentationFramework/A.html#f9fcf878f6f833da" class="i field">ZIndexProperty</a>, <span class="r9 r">z</span>);
+
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#8b456fcc7168bede" class="i field">originalPanel</a>?.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#62e60fbcbfe44bc8" class="i method">Remove</a>(<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>);
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>.<a href="@0@PresentationFramework/A.html#8aedc94268115177" class="i property">Margin</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t constructor">Thickness</a>();
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <b>double</b>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>;
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <b>double</b>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>;
+
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#8b456fcc7168bede" class="i field">originalPanel</a>?.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>);
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#b23f9c225bebbe7f" class="i property">Child</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>;
+
+            <a href="@0@PresentationCore/A.html#aef94c5837d0b18b" class="t t">CompositionTarget</a>.<a href="@0@PresentationCore/A.html#012389a205c19313" class="i">Rendering</a> += <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#d240c18034c97eee" class="i method">CompositionTargetRendering</a>;
+            <span class="t t">ThemeManager</span>.<span class="i property">Current</span>.<span class="i">ThemeChanged</span> += <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#f79a434f31060c11" class="i method">HandleThemeManagerThemeChanged</a>;
+        }
+
+        <b>private void</b> <a id="f79a434f31060c11" href="../R/f79a434f31060c11.html" target="n" data-glyph="76,1" class="i method">HandleThemeManagerThemeChanged</a>(<b>object</b>? <span id="r12 rd" class="r12 r">sender</span>, <span class="t t">ThemeChangedEventArgs</span> <span id="r13 rd" class="r13 r">e</span>)
+        {
+            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="../Controls/Extensions.cs.html#a03707fe13ce3664" class="i method">Invoke</a>(() =&gt; { <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>?.<a href="../Controls/Planerator.cs.html#1a09d567b2eba170" class="i method">Refresh</a>(); });
+        }
+
+        <b>protected override void</b> <a id="9b1b86b5256824b8" href="../R/9b1b86b5256824b8.html" target="n" data-glyph="75,1" class="i method">OnDetaching</a>()
+        {
+            <a href="@0@PresentationCore/A.html#aef94c5837d0b18b" class="t t">CompositionTarget</a>.<a href="@0@PresentationCore/A.html#012389a205c19313" class="i">Rendering</a> -= <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#d240c18034c97eee" class="i method">CompositionTargetRendering</a>;
+            <span class="t t">ThemeManager</span>.<span class="i property">Current</span>.<span class="i">ThemeChanged</span> -= <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#f79a434f31060c11" class="i method">HandleThemeManagerThemeChanged</a>;
+
+            <b>base</b>.<span class="i method">OnDetaching</span>();
+        }
+
+        <b>private void</b> <a id="d240c18034c97eee" href="../R/d240c18034c97eee.html" target="n" data-glyph="76,1" class="i method">CompositionTargetRendering</a>(<b>object</b>? <span id="r14 rd" class="r14 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r15 rd" class="r15 r">e</span>)
+        {
+            <b>if</b> (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a> <b>is null</b>
+                || <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a> <b>is null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <b>if</b> (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#73a9b18ac1dbd93f" class="i property">KeepDragging</a>)
+            {
+                <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a> = <a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#dc1b085c3b16ebf0" class="i method">GetPosition</a>(<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#b23f9c225bebbe7f" class="i property">Child</a>);
+                <b>if</b> (<a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#e044117979eb1463" class="i property">LeftButton</a> == <a href="@0@PresentationCore/A.html#c49fee26f1f7a30c" class="t t">MouseButtonState</a>.<a href="@0@PresentationCore/A.html#84ab65d095fc0025" class="i field">Pressed</a>)
+                {
+                    <b>if</b> (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> &gt; 0 &amp;&amp; <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> &lt; (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>).<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a> &amp;&amp; <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> &gt; 0 &amp;&amp; <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> &lt; (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>).<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>)
+                    {
+                        <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#9bf83566125ba1e1" class="i property">RotationY</a> = -1 * <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#5b6516a1bd093f03" class="i property">TiltFactor</a> + <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> * 2 * <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#5b6516a1bd093f03" class="i property">TiltFactor</a> / (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>).<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>;
+                        <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#4f46408cc3ec49a6" class="i property">RotationX</a> = -1 * <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#5b6516a1bd093f03" class="i property">TiltFactor</a> + <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> * 2 * <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#5b6516a1bd093f03" class="i property">TiltFactor</a> / (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>).<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>;
+                    }
+                }
+                <b>else</b>
+                {
+                    <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#9bf83566125ba1e1" class="i property">RotationY</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#9bf83566125ba1e1" class="i property">RotationY</a> - 5 &lt; 0 ? 0 : <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#9bf83566125ba1e1" class="i property">RotationY</a> - 5;
+                    <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#4f46408cc3ec49a6" class="i property">RotationX</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#4f46408cc3ec49a6" class="i property">RotationX</a> - 5 &lt; 0 ? 0 : <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#4f46408cc3ec49a6" class="i property">RotationX</a> - 5;
+                }
+            }
+            <b>else</b>
+            {
+                <b>if</b> (<a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#e044117979eb1463" class="i property">LeftButton</a> == <a href="@0@PresentationCore/A.html#c49fee26f1f7a30c" class="t t">MouseButtonState</a>.<a href="@0@PresentationCore/A.html#84ab65d095fc0025" class="i field">Pressed</a>)
+                {
+                    <b>if</b> (!<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#44a4871c31e822d5" class="i field">isPressed</a>)
+                    {
+                        <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a> = <a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#dc1b085c3b16ebf0" class="i method">GetPosition</a>(<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#b23f9c225bebbe7f" class="i property">Child</a>);
+                        <b>if</b> (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> &gt; 0 &amp;&amp; <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> &lt; (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>).<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a> &amp;&amp; <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> &gt; 0 &amp;&amp; <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> &lt; (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>).<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>)
+                        {
+                            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#9bf83566125ba1e1" class="i property">RotationY</a> = -1 * <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#5b6516a1bd093f03" class="i property">TiltFactor</a> + <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> * 2 * <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#5b6516a1bd093f03" class="i property">TiltFactor</a> / (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>).<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>;
+                            <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#4f46408cc3ec49a6" class="i property">RotationX</a> = -1 * <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#5b6516a1bd093f03" class="i property">TiltFactor</a> + <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#a42c61c7a890152c" class="i field">current</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> * 2 * <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#5b6516a1bd093f03" class="i property">TiltFactor</a> / (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#7bdd881242cd593f" class="i field">attachedElement</a>).<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>;
+                        }
+
+                        <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#44a4871c31e822d5" class="i field">isPressed</a> = <b>true</b>;
+                    }
+
+                    <b>if</b> (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#42e677b092cc2e98" class="i field">times</a> == 7)
+                    {
+                        <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#9bf83566125ba1e1" class="i property">RotationY</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#9bf83566125ba1e1" class="i property">RotationY</a> - 5 &lt; 0 ? 0 : <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#9bf83566125ba1e1" class="i property">RotationY</a> - 5;
+                        <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#4f46408cc3ec49a6" class="i property">RotationX</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#4f46408cc3ec49a6" class="i property">RotationX</a> - 5 &lt; 0 ? 0 : <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#4f46408cc3ec49a6" class="i property">RotationX</a> - 5;
+                    }
+                    <b>else</b> <b>if</b> (<a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#42e677b092cc2e98" class="i field">times</a> &lt; 7)
+                    {
+                        <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#42e677b092cc2e98" class="i field">times</a>++;
+                    }
+                }
+                <b>else</b>
+                {
+                    <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#44a4871c31e822d5" class="i field">isPressed</a> = <b>false</b>;
+                    <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#42e677b092cc2e98" class="i field">times</a> = -1;
+                    <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#9bf83566125ba1e1" class="i property">RotationY</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#9bf83566125ba1e1" class="i property">RotationY</a> - 5 &lt; 0 ? 0 : <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#9bf83566125ba1e1" class="i property">RotationY</a> - 5;
+                    <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#4f46408cc3ec49a6" class="i property">RotationX</a> = <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#4f46408cc3ec49a6" class="i property">RotationX</a> - 5 &lt; 0 ? 0 : <a href="#24c8e7e254b990d0" class="k">this</a>.<a href="#e918b58b00a7015c" class="i property">RotatorParent</a>.<a href="../Controls/Planerator.cs.html#4f46408cc3ec49a6" class="i property">RotationX</a> - 5;
+                }
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html><head><title>DpiAwareImage.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(80);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#ImageScaling/DpiAwareImage.cs" target="_top">DpiAwareImage.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#ImageScaling" target="_top">HelpProjects\WPF-MORE\PerMonitorDPI\ImageScaling\ImageScaling.csproj</a> (ImageScaling)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+
+<b>namespace</b> <span class="i n">ImageScaling</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Image that has built in Dpi awareness to load appropriate scale image, and sets default size appropriately.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="9829f7915fcfc966" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">DpiAwareImage</a> : <a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="t t">Image</a>
+    {
+        <b>double</b> <a id="ae05860bc89a9f5c" href="R/ae05860bc89a9f5c.html" target="n" data-glyph="46,1" class="i field">bestScale</a>; <span class="c">// used in calculating default size</span>
+
+        <b>public</b> <a id="00b53215f67930b9" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">DpiAwareImage</a>() : <a href="@0@PresentationFramework/A.html#11dd36f90cfdae62" class="k">base</a>()
+        {
+            <a href="#9829f7915fcfc966" class="k">this</a>.<a href="@0@PresentationFramework/A.html#9574e82d04fd685b" class="i">Initialized</a> += <a href="#aca388dac9616b01" class="i method">DpiAwareImage_Initialized</a>;
+        }
+
+        <span class="c">// on initial load, ensure we are using the right scaled image, based on the DPI.</span>
+        <b>private void</b> <a id="aca388dac9616b01" href="R/aca388dac9616b01.html" target="n" data-glyph="76,1" class="i method">DpiAwareImage_Initialized</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <a href="@0@PresentationCore/A.html#92012d9b324abb89" class="t t">DpiScale</a> <span id="r2 rd" class="r2 r">newDpi</span> = <a href="@0@PresentationCore/A.html#7f1e2538afba01e7" class="t t">VisualTreeHelper</a>.<a href="@0@PresentationCore/A.html#6018c348adaeec6c" class="i method">GetDpi</a>(<span class="r0 r">sender</span> <b>as</b> <a href="@0@PresentationCore/A.html#5dae7b267e6db0d6" class="t t">Visual</a>);
+            <a href="#9bbb6bc189deb78a" class="i method">ScaleRightImage</a>(<span class="r2 r">newDpi</span>);
+        }
+        
+        <span class="c">// when DPI changes, ensure we are using the right scaled image, based on the DPI.</span>
+        <b>protected override void</b> <a id="31260f1b7b3452cb" href="R/31260f1b7b3452cb.html" target="n" data-glyph="75,1" class="i method">OnDpiChanged</a>(<a href="@0@PresentationCore/A.html#92012d9b324abb89" class="t t">DpiScale</a> <span id="r3 rd" class="r3 r">oldDpi</span>, <a href="@0@PresentationCore/A.html#92012d9b324abb89" class="t t">DpiScale</a> <span id="r4 rd" class="r4 r">newDpi</span>)
+        {
+            <a href="#9bbb6bc189deb78a" class="i method">ScaleRightImage</a>(<span class="r4 r">newDpi</span>);
+        }
+
+        <b>private void</b> <a id="9bbb6bc189deb78a" href="R/9bbb6bc189deb78a.html" target="n" data-glyph="76,1" class="i method">ScaleRightImage</a>(<a href="@0@PresentationCore/A.html#92012d9b324abb89" class="t t">DpiScale</a> <span id="r5 rd" class="r5 r">newDpi</span>)
+        {
+            <span class="c">// update bestScale</span>
+            <a href="#ae05860bc89a9f5c" class="i field">bestScale</a> = <a href="ImageDpiHelper.cs.html#ea5164a972322278" class="t t">ImageDpiHelper</a>.<a href="ImageDpiHelper.cs.html#89b778706003e7f7" class="i method">GetBestScale</a>(<span class="r5 r">newDpi</span>.<a href="@0@PresentationCore/A.html#8c0e9d6735d8e200" class="i property">PixelsPerDip</a>);
+
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r6 rd" class="r6 r">imageUrl</span> = <a href="ImageDpiHelper.cs.html#ea5164a972322278" class="t t">ImageDpiHelper</a>.<a href="ImageDpiHelper.cs.html#57cd9bc3a203f35d" class="i method">GetDesiredImageUrlForDpi</a>(<a href="#9829f7915fcfc966" class="k">this</a>);
+            <a href="#d6f8bcd2869398f5" class="i method">UpdateImageSource</a>(<a href="#9829f7915fcfc966" class="k">this</a>, <span class="r6 r">imageUrl</span>);
+        }
+
+        <b>public void</b> <a id="d6f8bcd2869398f5" href="R/d6f8bcd2869398f5.html" target="n" data-glyph="72,1" class="i method">UpdateImageSource</a>(<a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="t t">Image</a> <span id="r7 rd" class="r7 r">image</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r8 rd" class="r8 r">newImagePath</span>)
+        {
+            <a href="@1@System.Runtime/A.html#991565dd25f47c90" class="t t">Uri</a> <span id="r9 rd" class="r9 r">uri</span> = <b>new</b> <a href="@1@System.Runtime/A.html#d9fc45d783ee73ff" class="t constructor">Uri</a>(<span class="r8 r">newImagePath</span>, <a href="@1@System.Runtime/A.html#ac43655101ad74be" class="t t">UriKind</a>.<a href="@1@System.Runtime/A.html#2a5de88dbfa86f1b" class="i field">RelativeOrAbsolute</a>);
+            <a href="@0@PresentationCore/A.html#ee8d0deab0e263b7" class="t t">BitmapImage</a> <span id="r10 rd" class="r10 r">bitmapImage</span> = <b>new</b> <a href="@0@PresentationCore/A.html#940e003698ec4c39" class="t constructor">BitmapImage</a>();
+            
+            <span class="r10 r">bitmapImage</span>.<a href="@0@PresentationCore/A.html#ff48844d9c3da581" class="i method">BeginInit</a>();
+            <span class="r10 r">bitmapImage</span>.<a href="@0@PresentationCore/A.html#54d23d015e762014" class="i property">UriSource</a> = <span class="r9 r">uri</span>;
+            <span class="r10 r">bitmapImage</span>.<a href="@0@PresentationCore/A.html#f13ebd618e2e92dd" class="i method">EndInit</a>();
+
+            <span class="r7 r">image</span>.<a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> = <span class="r10 r">bitmapImage</span>;
+
+            <b>if</b> (!<span class="r10 r">bitmapImage</span>.<a href="@0@PresentationCore/A.html#db12f08a6ee241c8" class="i property">IsDownloading</a>)
+            {
+                <a href="#5794b38af9a35ba0" class="i method">SetScaledSizeForImageElement</a>(<span class="r10 r">bitmapImage</span>);
+            }
+            <b>else</b>
+            {
+                <span class="r10 r">bitmapImage</span>.<a href="@0@PresentationCore/A.html#cdb89cfecbc93f50" class="i">DownloadCompleted</a> += <a href="#fc1805436b993806" class="i method">BitmapImage_DownloadCompleted</a>;
+            }
+        }
+
+        <b>private void</b> <a id="fc1805436b993806" href="R/fc1805436b993806.html" target="n" data-glyph="76,1" class="i method">BitmapImage_DownloadCompleted</a>(<b>object</b> <span id="r11 rd" class="r11 r">sender</span>, <a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r12 rd" class="r12 r">e</span>)
+        {
+            <a href="@0@PresentationCore/A.html#ee8d0deab0e263b7" class="t t">BitmapImage</a> <span id="r13 rd" class="r13 r">bitmapImage</span> = <span class="r11 r">sender</span> <b>as</b> <a href="@0@PresentationCore/A.html#ee8d0deab0e263b7" class="t t">BitmapImage</a>;
+            <a href="#5794b38af9a35ba0" class="i method">SetScaledSizeForImageElement</a>(<span class="r13 r">bitmapImage</span>);
+            <span class="r13 r">bitmapImage</span>.<a href="@0@PresentationCore/A.html#cdb89cfecbc93f50" class="i">DownloadCompleted</a> -= <a href="#fc1805436b993806" class="i method">BitmapImage_DownloadCompleted</a>;
+        }
+
+        <span class="c">// based on the scale of the image used, adjust the default value of width/height.</span>
+        <b>private void</b> <a id="5794b38af9a35ba0" href="R/5794b38af9a35ba0.html" target="n" data-glyph="76,1" class="i method">SetScaledSizeForImageElement</a>(<a href="@0@PresentationCore/A.html#ee8d0deab0e263b7" class="t t">BitmapImage</a> <span id="r14 rd" class="r14 r">bitmapImage</span>)
+        {
+            <a href="#9829f7915fcfc966" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="t t">Image</a>.<a href="@0@PresentationFramework/A.html#eab43ecf1e67f8ba" class="i field">WidthProperty</a>, <span class="r14 r">bitmapImage</span>.<a href="@0@PresentationCore/A.html#e88eaeb82217cab6" class="i property">PixelWidth</a> * 100 / <a href="#ae05860bc89a9f5c" class="i field">bestScale</a>);
+            <a href="#9829f7915fcfc966" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="t t">Image</a>.<a href="@0@PresentationFramework/A.html#2d42566e5f9dbe0e" class="i field">HeightProperty</a>, <span class="r14 r">bitmapImage</span>.<a href="@0@PresentationCore/A.html#0807be1f18d7aeef" class="i property">PixelHeight</a> * 100 / <a href="#ae05860bc89a9f5c" class="i field">bestScale</a>);
+        }
+    }
+}
+
+</pre></td></tr></table></div></body></html>

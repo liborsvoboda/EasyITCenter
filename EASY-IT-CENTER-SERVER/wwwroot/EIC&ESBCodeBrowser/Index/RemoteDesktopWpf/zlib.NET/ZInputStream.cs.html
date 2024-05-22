@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html><head><title>ZInputStream.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(181);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RemoteDesktopWpf/zlib.NET/ZInputStream.cs" target="_top">zlib.NET\ZInputStream.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RemoteDesktopWpf" target="_top">..\..\..\EASY-TOOLS\EASYTools.VNCLib\EASYTools.VNCLib.csproj</a> (RemoteDesktopWpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Copyright (c) 2006, ComponentAce</span>
+<span class="c">// http://www.componentace.com</span>
+<span class="c">// All rights reserved.</span>
+ 
+<span class="c">// Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</span>
+ 
+<span class="c">// Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. </span>
+<span class="c">// Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. </span>
+<span class="c">// Neither the name of ComponentAce nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. </span>
+<span class="c">// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+ 
+<span class="c">/*
+Copyright (c) 2001 Lapo Luchini.
+ 
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+ 
+1. Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
+ 
+2. Redistributions in binary form must reproduce the above copyright 
+notice, this list of conditions and the following disclaimer in 
+the documentation and/or other materials provided with the distribution.
+ 
+3. The names of the authors may not be used to endorse or promote products
+derived from this software without specific prior written permission.
+ 
+THIS SOFTWARE IS PROVIDED ``AS IS&#39;&#39; AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS
+OR ANY CONTRIBUTORS TO THIS SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/</span>
+<span class="c">/*
+* This program is based on zlib-1.1.3, so all credit should go authors
+* Jean-loup Gailly(jloup@gzip.org) and Mark Adler(madler@alumni.caltech.edu)
+* and contributors of zlib.
+*/</span>
+<b>using</b> <span class="i n">System</span>;
+<b>namespace</b> <span class="i n">ComponentAce</span>.<span class="i n">Compression</span>.<span class="i n">Libs</span>.<span class="i n">zlib</span>
+{
+	
+	<b>public class</b> <a id="b8043ad39bff1f23" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">ZInputStream</a>:<span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#4f6cad84482876ff" class="t t">BinaryReader</a>
+	{
+		<b>internal void</b>  <a id="a1f20ba7621d80c2" href="../R/a1f20ba7621d80c2.html" target="n" data-glyph="74,1" class="i method">InitBlock</a>()
+		{
+			<a href="#492719e14745b36f" class="i field">flush</a> = <a href="Zlib.cs.html#96afced971db530b" class="t t">zlibConst</a>.<a href="Zlib.cs.html#1df0c9b3fcd5fa43" class="i field">Z_NO_FLUSH</a>;
+			<a href="#c787dc5d3e41fd5d" class="i field">buf</a> = <b>new</b> <b>byte</b>[<a href="#738a0d9869703db5" class="i field">bufsize</a>];
+		}
+		<b>virtual public int</b> <a id="5d72925201c963d9" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">FlushMode</a>
+		{
+			<b>get</b>
+			{
+				<b>return</b> (<a href="#492719e14745b36f" class="i field">flush</a>);
+			}
+			
+			<b>set</b>
+			{
+				<a href="#b8043ad39bff1f23" class="k">this</a>.<a href="#492719e14745b36f" class="i field">flush</a> = <b>value</b>;
+			}
+			
+		}
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c"> Returns the total number of bytes input so far.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>virtual public long</b> <a id="5e3859e9db97021d" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">TotalIn</a>
+		{
+			<b>get</b>
+			{
+				<b>return</b> <a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#83fcde1b9cc10f8c" class="i field">total_in</a>;
+			}
+			
+		}
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c"> Returns the total number of bytes output so far.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>virtual public long</b> <a id="ad2475a69907689d" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">TotalOut</a>
+		{
+			<b>get</b>
+			{
+				<b>return</b> <a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#cbbe8a5a89555d7d" class="i field">total_out</a>;
+			}
+			
+		}
+		
+		<b>protected</b> <a href="ZStream.cs.html#365c5b87c76eccc4" class="t t">ZStream</a> <a id="48d95bd11ea1985c" href="../R/48d95bd11ea1985c.html" target="n" data-glyph="45,1" class="i field">z</a> = <b>new</b> <a href="ZStream.cs.html#365c5b87c76eccc4" class="t constructor">ZStream</a>();
+		<b>protected int</b> <a id="738a0d9869703db5" href="../R/738a0d9869703db5.html" target="n" data-glyph="45,1" class="i field">bufsize</a> = 512;		
+		<b>protected int</b> <a id="492719e14745b36f" href="../R/492719e14745b36f.html" target="n" data-glyph="45,1" class="i field">flush</a>;		
+		<b>protected byte</b>[] <a id="c787dc5d3e41fd5d" href="../R/c787dc5d3e41fd5d.html" target="n" data-glyph="45,1" class="i field">buf</a>, <a id="640ed31b2bd7cf5f" href="../R/640ed31b2bd7cf5f.html" target="n" data-glyph="45,1" class="i field">buf1</a> = <b>new</b> <b>byte</b>[1];
+		<b>protected bool</b> <a id="e2c9e19fc06b5d9a" href="../R/e2c9e19fc06b5d9a.html" target="n" data-glyph="45,1" class="i field">compress</a>;
+		
+		<b>internal</b> <span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#f956b0c07e86df64" class="t t">Stream</a> <a id="958fe15a3af5994d" href="../R/958fe15a3af5994d.html" target="n" data-glyph="44,1" class="i field">in_Renamed</a> = <b>null</b>;
+		
+		<b>public</b> <a id="4791b893bc2075d8" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ZInputStream</a>(<span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r0 rd" class="r0 r">in_Renamed</span>):<a href="@0@mscorlib/A.html#6fcf6f88785c9632" class="k">base</a>(<span class="r0 r">in_Renamed</span>)
+		{
+			<a href="#a1f20ba7621d80c2" class="i method">InitBlock</a>();
+			<a href="#b8043ad39bff1f23" class="k">this</a>.<a href="#958fe15a3af5994d" class="i field">in_Renamed</a> = <span class="r0 r">in_Renamed</span>;
+			<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#8b78347d18610711" class="i method">inflateInit</a>();
+			<a href="#e2c9e19fc06b5d9a" class="i field">compress</a> = <b>false</b>;
+			<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a> = <a href="#c787dc5d3e41fd5d" class="i field">buf</a>;
+			<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = 0;
+			<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = 0;
+		}
+		
+		<b>public</b> <a id="550f1f2d7d349722" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ZInputStream</a>(<span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r1 rd" class="r1 r">in_Renamed</span>, <b>int</b> <span id="r2 rd" class="r2 r">level</span>):<a href="@0@mscorlib/A.html#6fcf6f88785c9632" class="k">base</a>(<span class="r1 r">in_Renamed</span>)
+		{
+			<a href="#a1f20ba7621d80c2" class="i method">InitBlock</a>();
+			<a href="#b8043ad39bff1f23" class="k">this</a>.<a href="#958fe15a3af5994d" class="i field">in_Renamed</a> = <span class="r1 r">in_Renamed</span>;
+			<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#0b9934b62e68e43c" class="i method">deflateInit</a>(<span class="r2 r">level</span>);
+			<a href="#e2c9e19fc06b5d9a" class="i field">compress</a> = <b>true</b>;
+			<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#cbc91141f69d3d83" class="i field">next_in</a> = <a href="#c787dc5d3e41fd5d" class="i field">buf</a>;
+			<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = 0;
+			<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = 0;
+		}
+		
+		<span class="c">/*public int available() throws IOException {
+		return inf.finished() ? 0 : 1;
+		}*/</span>
+		
+		<b>public  override int</b> <a id="e27acfaf1a1bdb9c" href="../R/e27acfaf1a1bdb9c.html" target="n" data-glyph="72,1" class="i method">Read</a>()
+		{
+			<b>if</b> (<a href="#e81546f095802db0" class="i method">read</a>(<a href="#640ed31b2bd7cf5f" class="i field">buf1</a>, 0, 1) == - 1)
+				<b>return</b> (- 1);
+			<b>return</b> (<a href="#640ed31b2bd7cf5f" class="i field">buf1</a>[0] &amp; 0xFF);
+		}
+		
+		<b>internal bool</b> <a id="c8a51fcf73d11b33" href="../R/c8a51fcf73d11b33.html" target="n" data-glyph="44,1" class="i field">nomoreinput</a> = <b>false</b>;
+				
+		<b>public int</b> <a id="e81546f095802db0" href="../R/e81546f095802db0.html" target="n" data-glyph="72,1" class="i method">read</a>(<b>byte</b>[] <span id="r3 rd" class="r3 r">b</span>, <b>int</b> <span id="r4 rd" class="r4 r">off</span>, <b>int</b> <span id="r5 rd" class="r5 r">len</span>)
+		{
+			<b>if</b> (<span class="r5 r">len</span> == 0)
+				<b>return</b> (0);
+			<b>int</b> <span id="r6 rd" class="r6 r">err</span>;
+			<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#74fa8b4826c731d2" class="i field">next_out</a> = <span class="r3 r">b</span>;
+			<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#a10769e24d50abed" class="i field">next_out_index</a> = <span class="r4 r">off</span>;
+			<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#41bbdb79e61b8518" class="i field">avail_out</a> = <span class="r5 r">len</span>;
+			<b>do</b> 
+			{
+				<b>if</b> ((<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> == 0) &amp;&amp; (!<a href="#c8a51fcf73d11b33" class="i field">nomoreinput</a>))
+				{
+					<span class="c">// if buffer is empty and more input is avaiable, refill it</span>
+					<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#248a6719ea8874c2" class="i field">next_in_index</a> = 0;
+					<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#f96879953fb60ea1" class="i method">ReadInput</a>(<a href="#958fe15a3af5994d" class="i field">in_Renamed</a>, <a href="#c787dc5d3e41fd5d" class="i field">buf</a>, 0, <a href="#738a0d9869703db5" class="i field">bufsize</a>); <span class="c">//(bufsize&lt;z.avail_out ? bufsize : z.avail_out));</span>
+					<b>if</b> (<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> == - 1)
+					{
+						<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#5d97a818af214217" class="i field">avail_in</a> = 0;
+						<a href="#c8a51fcf73d11b33" class="i field">nomoreinput</a> = <b>true</b>;
+					}
+				}
+				<b>if</b> (<a href="#e2c9e19fc06b5d9a" class="i field">compress</a>)
+					<span class="r6 r">err</span> = <a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#252377b3a0423514" class="i method">deflate</a>(<a href="#492719e14745b36f" class="i field">flush</a>);
+				<b>else</b>
+					<span class="r6 r">err</span> = <a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#60795c173c407b8e" class="i method">inflate</a>(<a href="#492719e14745b36f" class="i field">flush</a>);
+				<b>if</b> (<a href="#c8a51fcf73d11b33" class="i field">nomoreinput</a> &amp;&amp; (<span class="r6 r">err</span> == <a href="Zlib.cs.html#96afced971db530b" class="t t">zlibConst</a>.<a href="Zlib.cs.html#15915a252265618b" class="i field">Z_BUF_ERROR</a>))
+					<b>return</b> (- 1);
+				<b>if</b> (<span class="r6 r">err</span> != <a href="Zlib.cs.html#96afced971db530b" class="t t">zlibConst</a>.<a href="Zlib.cs.html#f4fd1b0fe89f2cf9" class="i field">Z_OK</a> &amp;&amp; <span class="r6 r">err</span> != <a href="Zlib.cs.html#96afced971db530b" class="t t">zlibConst</a>.<a href="Zlib.cs.html#84e55d3228016c4e" class="i field">Z_STREAM_END</a>)
+					<b>throw</b> <b>new</b> <a href="ZStreamException.cs.html#a740831f1cec7cbd" class="t constructor">ZStreamException</a>((<a href="#e2c9e19fc06b5d9a" class="i field">compress</a>?<span class="s">&quot;de&quot;</span>:<span class="s">&quot;in&quot;</span>) + <span class="s">&quot;flating: &quot;</span> + <a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#5fca80ad93aac623" class="i field">msg</a>);
+				<b>if</b> (<a href="#c8a51fcf73d11b33" class="i field">nomoreinput</a> &amp;&amp; (<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#41bbdb79e61b8518" class="i field">avail_out</a> == <span class="r5 r">len</span>))
+					<b>return</b> (- 1);
+			}
+			<b>while</b> (<a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#41bbdb79e61b8518" class="i field">avail_out</a> == <span class="r5 r">len</span> &amp;&amp; <span class="r6 r">err</span> == <a href="Zlib.cs.html#96afced971db530b" class="t t">zlibConst</a>.<a href="Zlib.cs.html#f4fd1b0fe89f2cf9" class="i field">Z_OK</a>);
+			<span class="c">//System.err.print(&quot;(&quot;+(len-z.avail_out)+&quot;)&quot;);</span>
+			<b>return</b> (<span class="r5 r">len</span> - <a href="#48d95bd11ea1985c" class="i field">z</a>.<a href="ZStream.cs.html#41bbdb79e61b8518" class="i field">avail_out</a>);
+		}
+				
+		<b>public long</b> <a id="754b872894229fd9" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">skip</a>(<b>long</b> <span id="r7 rd" class="r7 r">n</span>)
+		{
+			<b>int</b> <span id="r8 rd" class="r8 r">len</span> = 512;
+			<b>if</b> (<span class="r7 r">n</span> &lt; <span class="r8 r">len</span>)
+				<span class="r8 r">len</span> = (<b>int</b>) <span class="r7 r">n</span>;
+			<b>byte</b>[] <span id="r9 rd" class="r9 r">tmp</span> = <b>new</b> <b>byte</b>[<span class="r8 r">len</span>];
+			<b>return</b> ((<b>long</b>) <a href="SupportClass.cs.html#c4a67d5e99725190" class="t t">SupportClass</a>.<a href="SupportClass.cs.html#f96879953fb60ea1" class="i method">ReadInput</a>(<a href="@0@mscorlib/A.html#13c2126079760870" class="i property">BaseStream</a>, <span class="r9 r">tmp</span>, 0, <span class="r9 r">tmp</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>));
+		}
+		
+		<b>public override void</b>  <a id="2286f01629fb73de" href="../R/2286f01629fb73de.html" target="n" data-glyph="72,1" class="i method">Close</a>()
+		{
+			<a href="#958fe15a3af5994d" class="i field">in_Renamed</a>.<a href="@0@mscorlib/A.html#dc4ffe046b847b84" class="i method">Close</a>();
+		}
+	}
+}</pre></td></tr></table></div></body></html>

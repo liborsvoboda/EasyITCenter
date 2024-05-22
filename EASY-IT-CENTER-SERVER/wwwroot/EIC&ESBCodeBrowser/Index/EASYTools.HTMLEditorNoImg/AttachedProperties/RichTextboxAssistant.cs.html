@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html><head><title>RichTextboxAssistant.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(161);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.HTMLEditorNoImg/AttachedProperties/RichTextboxAssistant.cs" target="_top">AttachedProperties\RichTextboxAssistant.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.HTMLEditorNoImg" target="_top">..\..\..\EASY-TOOLS\EASYTools.HTMLEditorNoImg\EASYTools.HTMLEditorNoImg.csproj</a> (EASYTools.HTMLEditorNoImg)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Markup</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLEditorNoImg</span>
+{
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+	<b>public static class</b> <a id="ee35875f2bf06e49" href="../R/ee35875f2bf06e49.html" target="n" data-glyph="0,0" class="t t">RichTextBoxAssistant</a>
+    {
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="7a6e9dbefe03ad37" href="../R/7a6e9dbefe03ad37.html" target="n" data-glyph="42,1" class="i field">BoundDocument</a> =
+           <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(<span class="s">&quot;BoundDocument&quot;</span>, <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>), <b>typeof</b>(<a href="#ee35875f2bf06e49" class="t t">RichTextBoxAssistant</a>),
+           <b>new</b> <a href="@0@PresentationFramework/A.html#cfed8906a2f8b7f6" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>,
+               <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>,
+               <a href="#f1d01161ee4cb30c" class="i method">OnBoundDocumentChanged</a>)
+               );
+ 
+        <b>private static void</b> <a id="f1d01161ee4cb30c" href="../R/f1d01161ee4cb30c.html" target="n" data-glyph="76,1" class="i method">OnBoundDocumentChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a> <span id="r2 rd" class="r2 r">box</span> = <span class="r0 r">d</span> <b>as</b> <a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a>;
+ 
+            <b>if</b> (<span class="r2 r">box</span> == <b>null</b>)
+                <b>return</b>;
+ 
+            <a href="#dc9f93281b986161" class="i method">RemoveEventHandler</a>(<span class="r2 r">box</span>);
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r3 rd" class="r3 r">newXAML</span> = <a href="#42371607142110ed" class="i method">GetBoundDocument</a>(<span class="r0 r">d</span>);
+ 
+            <span class="r2 r">box</span>.<a href="@0@PresentationFramework/A.html#15f250b3ed9878d6" class="i property">Document</a>.<a href="@0@PresentationFramework/A.html#4d1bf7b5451a11f8" class="i property">Blocks</a>.<a href="@0@PresentationFramework/A.html#3c8da4f43a4659e9" class="i method">Clear</a>();
+ 
+            <b>if</b> (!<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<span class="r3 r">newXAML</span>))
+            {
+                <b>using</b> (<a href="@0@mscorlib/A.html#1a4dcb744a23ba6f" class="t t">MemoryStream</a> <span id="r4 rd" class="r4 r">xamlMemoryStream</span> = <b>new</b> <a href="@0@mscorlib/A.html#f92fa270fda9a82b" class="t constructor">MemoryStream</a>(<a href="@0@mscorlib/A.html#3b6090c501893c25" class="t t">Encoding</a>.<a href="@0@mscorlib/A.html#a10eb90a3d884500" class="i property">UTF8</a>.<a href="@0@mscorlib/A.html#83f2d2c6f22db1a9" class="i method">GetBytes</a>(<span class="r3 r">newXAML</span>)))
+                {
+                    <a href="@0@PresentationFramework/A.html#ea31b6428ed12199" class="t t">ParserContext</a> <span id="r5 rd" class="r5 r">parser</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#b6d0ea91411904f5" class="t constructor">ParserContext</a>();
+                    <span class="r5 r">parser</span>.<a href="@0@PresentationFramework/A.html#438f3cb859f46da0" class="i property">XmlnsDictionary</a>.<a href="@0@PresentationFramework/A.html#6a567dbe68871c16" class="i method">Add</a>(<span class="s">&quot;&quot;</span>, <span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;</span>);
+                    <span class="r5 r">parser</span>.<a href="@0@PresentationFramework/A.html#438f3cb859f46da0" class="i property">XmlnsDictionary</a>.<a href="@0@PresentationFramework/A.html#6a567dbe68871c16" class="i method">Add</a>(<span class="s">&quot;x&quot;</span>, <span class="s">&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;</span>);
+                    <span class="c">//FlowDocument doc = new FlowDocument();</span>
+                    <a href="@0@PresentationFramework/A.html#013f94ab170549fe" class="t t">Section</a> <span id="r6 rd" class="r6 r">section</span> = <a href="@0@PresentationFramework/A.html#7449eaf937932294" class="t t">XamlReader</a>.<a href="@0@PresentationFramework/A.html#39ebc10136a0393f" class="i method">Load</a>(<span class="r4 r">xamlMemoryStream</span>, <span class="r5 r">parser</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#013f94ab170549fe" class="t t">Section</a>;
+ 
+                    <span class="r2 r">box</span>.<a href="@0@PresentationFramework/A.html#15f250b3ed9878d6" class="i property">Document</a>.<a href="@0@PresentationFramework/A.html#4d1bf7b5451a11f8" class="i property">Blocks</a>.<a href="@0@PresentationFramework/A.html#4137d7b316f7d0b0" class="i method">Add</a>(<span class="r6 r">section</span>);
+ 
+                }
+            }
+ 
+            <a href="#b5ebb5a3ed26ed1f" class="i method">AttachEventHandler</a>(<span class="r2 r">box</span>);
+ 
+        }
+ 
+        <b>private static void</b> <a id="dc9f93281b986161" href="../R/dc9f93281b986161.html" target="n" data-glyph="76,1" class="i method">RemoveEventHandler</a>(<a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a> <span id="r7 rd" class="r7 r">box</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a> <span id="r8 rd" class="r8 r">binding</span> = <a href="@0@PresentationFramework/A.html#1630c30289beaec7" class="t t">BindingOperations</a>.<a href="@0@PresentationFramework/A.html#2b73db678891acf5" class="i method">GetBinding</a>(<span class="r7 r">box</span>, <a href="#7a6e9dbefe03ad37" class="i field">BoundDocument</a>);
+ 
+            <b>if</b> (<span class="r8 r">binding</span> != <b>null</b>)
+            {
+                <b>if</b> (<span class="r8 r">binding</span>.<a href="@0@PresentationFramework/A.html#03a724ae3d498e04" class="i property">UpdateSourceTrigger</a> == <a href="@0@PresentationFramework/A.html#2583ca7b3f48de8e" class="t t">UpdateSourceTrigger</a>.<a href="@0@PresentationFramework/A.html#e12712d5f7d8322d" class="i field">Default</a> ||
+                    <span class="r8 r">binding</span>.<a href="@0@PresentationFramework/A.html#03a724ae3d498e04" class="i property">UpdateSourceTrigger</a> == <a href="@0@PresentationFramework/A.html#2583ca7b3f48de8e" class="t t">UpdateSourceTrigger</a>.<a href="@0@PresentationFramework/A.html#f31fad633db16c15" class="i field">LostFocus</a>)
+                {
+ 
+                    <span class="r7 r">box</span>.<a href="@0@PresentationCore/A.html#251395f35bbcd55f" class="i">LostFocus</a> -= <a href="#1a87e3b7adf573e4" class="i method">HandleLostFocus</a>;
+                }
+                <b>else</b>
+                {
+                    <span class="r7 r">box</span>.<a href="@0@PresentationFramework/A.html#22cd61fb3203047e" class="i">TextChanged</a> -= <a href="#212ffea20210d2ba" class="i method">HandleTextChanged</a>;
+                }
+            }
+        }
+ 
+        <b>private static void</b> <a id="b5ebb5a3ed26ed1f" href="../R/b5ebb5a3ed26ed1f.html" target="n" data-glyph="76,1" class="i method">AttachEventHandler</a>(<a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a> <span id="r9 rd" class="r9 r">box</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a> <span id="r10 rd" class="r10 r">binding</span> = <a href="@0@PresentationFramework/A.html#1630c30289beaec7" class="t t">BindingOperations</a>.<a href="@0@PresentationFramework/A.html#2b73db678891acf5" class="i method">GetBinding</a>(<span class="r9 r">box</span>, <a href="#7a6e9dbefe03ad37" class="i field">BoundDocument</a>);
+ 
+            <b>if</b> (<span class="r10 r">binding</span> != <b>null</b>)
+            {
+                <b>if</b> (<span class="r10 r">binding</span>.<a href="@0@PresentationFramework/A.html#03a724ae3d498e04" class="i property">UpdateSourceTrigger</a> == <a href="@0@PresentationFramework/A.html#2583ca7b3f48de8e" class="t t">UpdateSourceTrigger</a>.<a href="@0@PresentationFramework/A.html#e12712d5f7d8322d" class="i field">Default</a> ||
+                    <span class="r10 r">binding</span>.<a href="@0@PresentationFramework/A.html#03a724ae3d498e04" class="i property">UpdateSourceTrigger</a> == <a href="@0@PresentationFramework/A.html#2583ca7b3f48de8e" class="t t">UpdateSourceTrigger</a>.<a href="@0@PresentationFramework/A.html#f31fad633db16c15" class="i field">LostFocus</a>)
+                {
+ 
+                    <span class="r9 r">box</span>.<a href="@0@PresentationCore/A.html#251395f35bbcd55f" class="i">LostFocus</a> += <a href="#1a87e3b7adf573e4" class="i method">HandleLostFocus</a>;
+                }
+                <b>else</b>
+                {
+                    <span class="r9 r">box</span>.<a href="@0@PresentationFramework/A.html#22cd61fb3203047e" class="i">TextChanged</a> += <a href="#212ffea20210d2ba" class="i method">HandleTextChanged</a>;
+                }
+            }
+        }
+ 
+        <b>private static void</b> <a id="1a87e3b7adf573e4" href="../R/1a87e3b7adf573e4.html" target="n" data-glyph="76,1" class="i method">HandleLostFocus</a>(<b>object</b> <span id="r11 rd" class="r11 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r12 rd" class="r12 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a> <span id="r13 rd" class="r13 r">box</span> = <span class="r11 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a>;
+ 
+            <a href="@0@PresentationFramework/A.html#6c113c5cdd5b9976" class="t t">TextRange</a> <span id="r14 rd" class="r14 r">tr</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#89b123297a8cd9e8" class="t constructor">TextRange</a>(<span class="r13 r">box</span>.<a href="@0@PresentationFramework/A.html#15f250b3ed9878d6" class="i property">Document</a>.<a href="@0@PresentationFramework/A.html#038ddae1a0bc6cc1" class="i property">ContentStart</a>, <span class="r13 r">box</span>.<a href="@0@PresentationFramework/A.html#15f250b3ed9878d6" class="i property">Document</a>.<a href="@0@PresentationFramework/A.html#2a6aa9d9cfdb57cd" class="i property">ContentEnd</a>);
+ 
+            <b>using</b> (<a href="@0@mscorlib/A.html#1a4dcb744a23ba6f" class="t t">MemoryStream</a> <span id="r15 rd" class="r15 r">ms</span> = <b>new</b> <a href="@0@mscorlib/A.html#d308091cc690e78d" class="t constructor">MemoryStream</a>())
+            {
+                <span class="r14 r">tr</span>.<a href="@0@PresentationFramework/A.html#4ba66959a951c0a6" class="i method">Save</a>(<span class="r15 r">ms</span>, <a href="@0@PresentationCore/A.html#4a697a81da288477" class="t t">DataFormats</a>.<a href="@0@PresentationCore/A.html#9150e741152a1230" class="i field">Xaml</a>);
+				<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r16 rd" class="r16 r">xamlText</span> = <a href="@0@mscorlib/A.html#3b6090c501893c25" class="t t">Encoding</a>.<a href="@0@mscorlib/A.html#a10eb90a3d884500" class="i property">UTF8</a>.<a href="@0@mscorlib/A.html#7310c9cccfaecd17" class="i method">GetString</a>(<span class="r15 r">ms</span>.<a href="@0@mscorlib/A.html#5df5fc757781f05e" class="i method">ToArray</a>());
+                <a href="#5e9f3885ca4586f1" class="i method">SetBoundDocument</a>(<span class="r13 r">box</span>, <span class="r16 r">xamlText</span>);
+            }
+        }
+ 
+        <b>private static void</b> <a id="212ffea20210d2ba" href="../R/212ffea20210d2ba.html" target="n" data-glyph="76,1" class="i method">HandleTextChanged</a>(<b>object</b> <span id="r17 rd" class="r17 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r18 rd" class="r18 r">e</span>)
+        {
+            <span class="c">// TODO: TextChanged is currently not working!</span>
+            <a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a> <span id="r19 rd" class="r19 r">box</span> = <span class="r17 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a>;
+ 
+            <a href="@0@PresentationFramework/A.html#6c113c5cdd5b9976" class="t t">TextRange</a> <span id="r20 rd" class="r20 r">tr</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#89b123297a8cd9e8" class="t constructor">TextRange</a>(<span class="r19 r">box</span>.<a href="@0@PresentationFramework/A.html#15f250b3ed9878d6" class="i property">Document</a>.<a href="@0@PresentationFramework/A.html#038ddae1a0bc6cc1" class="i property">ContentStart</a>,
+                               <span class="r19 r">box</span>.<a href="@0@PresentationFramework/A.html#15f250b3ed9878d6" class="i property">Document</a>.<a href="@0@PresentationFramework/A.html#2a6aa9d9cfdb57cd" class="i property">ContentEnd</a>);
+ 
+            <b>using</b> (<a href="@0@mscorlib/A.html#1a4dcb744a23ba6f" class="t t">MemoryStream</a> <span id="r21 rd" class="r21 r">ms</span> = <b>new</b> <a href="@0@mscorlib/A.html#d308091cc690e78d" class="t constructor">MemoryStream</a>())
+            {
+                <span class="r20 r">tr</span>.<a href="@0@PresentationFramework/A.html#4ba66959a951c0a6" class="i method">Save</a>(<span class="r21 r">ms</span>, <a href="@0@PresentationCore/A.html#4a697a81da288477" class="t t">DataFormats</a>.<a href="@0@PresentationCore/A.html#9150e741152a1230" class="i field">Xaml</a>);
+				<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r22 rd" class="r22 r">xamlText</span> = <a href="@0@mscorlib/A.html#3b6090c501893c25" class="t t">Encoding</a>.<a href="@0@mscorlib/A.html#a10eb90a3d884500" class="i property">UTF8</a>.<a href="@0@mscorlib/A.html#7310c9cccfaecd17" class="i method">GetString</a>(<span class="r21 r">ms</span>.<a href="@0@mscorlib/A.html#5df5fc757781f05e" class="i method">ToArray</a>());
+                <a href="#5e9f3885ca4586f1" class="i method">SetBoundDocument</a>(<span class="r19 r">box</span>, <span class="r22 r">xamlText</span>);
+            }
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r23 r">dependencyObject</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public static string</b> <a id="42371607142110ed" href="../R/42371607142110ed.html" target="n" data-glyph="72,1" class="i method">GetBoundDocument</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r23 rd" class="r23 r">dependencyObject</span>)
+        {
+			<b>if</b> (<span class="r23 r">dependencyObject</span> != <b>null</b>)
+			{
+				<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r24 rd" class="r24 r">html</span> = <span class="r23 r">dependencyObject</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#7a6e9dbefe03ad37" class="i field">BoundDocument</a>) <b>as string</b>;
+				<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r25 rd" class="r25 r">xaml</span> = <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+ 
+				<b>if</b> (!<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<span class="r24 r">html</span>))
+					<span class="r25 r">xaml</span> = <a href="../XamlToHtmlParser/HtmlToXamlConverter.cs.html#158b9827bfdab150" class="t t">HtmlToXamlConverter</a>.<a href="../XamlToHtmlParser/HtmlToXamlConverter.cs.html#6630db8e8e382a71" class="i method">ConvertHtmlToXaml</a>(<span class="r24 r">html</span>, <b>false</b>);
+ 
+				<b>return</b> <span class="r25 r">xaml</span>;
+			}
+			<b>return</b> <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+        }
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r26 r">dependencyObject</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r27 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public static void</b> <a id="5e9f3885ca4586f1" href="../R/5e9f3885ca4586f1.html" target="n" data-glyph="72,1" class="i method">SetBoundDocument</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r26 rd" class="r26 r">dependencyObject</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r27 rd" class="r27 r">value</span>)
+        {
+			<b>if</b> (<span class="r26 r">dependencyObject</span> != <b>null</b>)
+			{
+				<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r28 rd" class="r28 r">xaml</span> = <span class="r27 r">value</span>;
+				<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r29 rd" class="r29 r">html</span> = <a href="../XamlToHtmlParser/HtmlFromXamlConverter.cs.html#eb103014d2cca080" class="t t">HtmlFromXamlConverter</a>.<a href="../XamlToHtmlParser/HtmlFromXamlConverter.cs.html#4df240066f8447ea" class="i method">ConvertXamlToHtml</a>(<span class="r28 r">xaml</span>, <b>false</b>);
+				<span class="r26 r">dependencyObject</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#7a6e9dbefe03ad37" class="i field">BoundDocument</a>, <span class="r29 r">html</span>);
+			}
+        }
+    }
+ 
+ 
+}</pre></td></tr></table></div></body></html>

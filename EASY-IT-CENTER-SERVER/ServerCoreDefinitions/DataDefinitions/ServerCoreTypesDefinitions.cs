@@ -51,6 +51,7 @@
         Md,
         Html,
         Docx,
+        Png
     }
 
 

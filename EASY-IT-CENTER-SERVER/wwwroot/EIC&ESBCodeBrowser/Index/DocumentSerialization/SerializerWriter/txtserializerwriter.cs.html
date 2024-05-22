@@ -1,0 +1,448 @@
+﻿<!DOCTYPE html>
+<html><head><title>txtserializerwriter.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(439);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#DocumentSerialization/SerializerWriter/txtserializerwriter.cs" target="_top">SerializerWriter\txtserializerwriter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#DocumentSerialization" target="_top">HelpProjects\WPF-MORE\Documents\Fixed Documents\DocumentSerialization\DocumentSerialization.csproj</a> (DocumentSerialization)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Printing</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>.<span class="i n">Serialization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+
+<b>namespace</b> <span class="i n">DocumentSerialization</span>
+{
+    <b>class</b> <a id="20404aab20b3cec5" href="../R/20404aab20b3cec5.html" target="n" data-glyph="2,0" class="t t">TxtSerializerWriter</a>:<a href="@0@PresentationFramework/A.html#fb4efa51650c717d" class="t t">SerializerWriter</a>
+    {
+        <b>public</b> <a id="1ba045b0a4712d4f" href="../R/1ba045b0a4712d4f.html" target="n" data-glyph="72,1" class="t constructor">TxtSerializerWriter</a>(<a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r0 rd" class="r0 r">stream</span>)
+        {
+            <a href="#b140b321caf24f4a" class="i field">_stream</a> = <span class="r0 r">stream</span>;
+            <a href="#dd5509c7db3870cc" class="i field">_writer</a> = <b>new</b> <span class="t constructor">StreamWriter</span>(<a href="#b140b321caf24f4a" class="i field">_stream</a>);
+        }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Write a single DependencyObject and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="db17fa7a8824a21a" href="../R/db17fa7a8824a21a.html" target="n" data-glyph="72,1" class="i method">Write</a>(<a href="@0@PresentationCore/A.html#5dae7b267e6db0d6" class="t t">Visual</a> <span id="r1 rd" class="r1 r">visual</span>)
+        {
+            <a href="#68d163e29b837417" class="i method">Write</a>(<span class="r1 r">visual</span>, <b>null</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Write a single DependencyObject and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="68d163e29b837417" href="../R/68d163e29b837417.html" target="n" data-glyph="72,1" class="i method">Write</a>(<a href="@0@PresentationCore/A.html#5dae7b267e6db0d6" class="t t">Visual</a> <span id="r2 rd" class="r2 r">visual</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r3 rd" class="r3 r">printTicket</span>)
+        {
+            <a href="#bb0d61291f6c5635" class="i method">SerializeVisualTree</a>(<span class="r2 r">visual</span>);
+            <a href="#dd5509c7db3870cc" class="i field">_writer</a>.<span class="i method">Close</span>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single DependencyObject and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="7bdf8aa86f0310ed" href="../R/7bdf8aa86f0310ed.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationCore/A.html#5dae7b267e6db0d6" class="t t">Visual</a> <span id="r4 rd" class="r4 r">visual</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single DependencyObject and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="098f5484a56ddad2" href="../R/098f5484a56ddad2.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationCore/A.html#5dae7b267e6db0d6" class="t t">Visual</a> <span id="r5 rd" class="r5 r">visual</span>, <b>object</b> <span id="r6 rd" class="r6 r">userState</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single DependencyObject and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="14adac053b12eedf" href="../R/14adac053b12eedf.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationCore/A.html#5dae7b267e6db0d6" class="t t">Visual</a> <span id="r7 rd" class="r7 r">visual</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r8 rd" class="r8 r">printTicket</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single DependencyObject and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="e87280625cda7668" href="../R/e87280625cda7668.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationCore/A.html#5dae7b267e6db0d6" class="t t">Visual</a> <span id="r9 rd" class="r9 r">visual</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r10 rd" class="r10 r">printTicket</span>, <b>object</b> <span id="r11 rd" class="r11 r">userState</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Write a single DocumentPaginator and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="0de6c6fbc3adf795" href="../R/0de6c6fbc3adf795.html" target="n" data-glyph="72,1" class="i method">Write</a>(<a href="@0@PresentationCore/A.html#336af0786254fdbd" class="t t">DocumentPaginator</a> <span id="r12 rd" class="r12 r">documentPaginator</span>)
+        {
+            <a href="#ee10cd3f54359604" class="i method">Write</a>(<span class="r12 r">documentPaginator</span>, <b>null</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Write a single DocumentPaginator and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="ee10cd3f54359604" href="../R/ee10cd3f54359604.html" target="n" data-glyph="72,1" class="i method">Write</a>(<a href="@0@PresentationCore/A.html#336af0786254fdbd" class="t t">DocumentPaginator</a> <span id="r13 rd" class="r13 r">documentPaginator</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r14 rd" class="r14 r">printTicket</span>)
+        {
+            <span class="c">//SerializeVisualTree(documentPaginator.Source as DependencyObject);</span>
+            <b>for</b>( <b>int</b> <span id="r15 rd" class="r15 r">i</span> = 0; <span class="r15 r">i</span> &lt; <span class="r13 r">documentPaginator</span>.<a href="@0@PresentationCore/A.html#3f04b6da1185b890" class="i property">PageCount</a>; <span class="r15 r">i</span>++ )
+            {
+                <a href="@0@PresentationCore/A.html#d3e2b9e14bb725a3" class="t t">DocumentPage</a> <span id="r16 rd" class="r16 r">page</span> = <span class="r13 r">documentPaginator</span>.<a href="@0@PresentationCore/A.html#e7a0e0ce6e6c1859" class="i method">GetPage</a>(<span class="r15 r">i</span>);
+                 <a href="#bb0d61291f6c5635" class="i method">SerializeVisualTree</a>(<span class="r16 r">page</span>.<a href="@0@PresentationCore/A.html#0a90d7a3639ec023" class="i property">Visual</a>);
+            }
+            <a href="#dd5509c7db3870cc" class="i field">_writer</a>.<span class="i method">Close</span>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single DocumentPaginator and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="81d1ae06ff497b70" href="../R/81d1ae06ff497b70.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationCore/A.html#336af0786254fdbd" class="t t">DocumentPaginator</a> <span id="r17 rd" class="r17 r">documentPaginator</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single DocumentPaginator and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="f0fdd8595ace41e4" href="../R/f0fdd8595ace41e4.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationCore/A.html#336af0786254fdbd" class="t t">DocumentPaginator</a> <span id="r18 rd" class="r18 r">documentPaginator</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r19 rd" class="r19 r">printTicket</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single DocumentPaginator and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="87c380304d671b3b" href="../R/87c380304d671b3b.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationCore/A.html#336af0786254fdbd" class="t t">DocumentPaginator</a> <span id="r20 rd" class="r20 r">documentPaginator</span>, <b>object</b> <span id="r21 rd" class="r21 r">userState</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single DocumentPaginator and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="3d8749bbb70e4603" href="../R/3d8749bbb70e4603.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationCore/A.html#336af0786254fdbd" class="t t">DocumentPaginator</a> <span id="r22 rd" class="r22 r">documentPaginator</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r23 rd" class="r23 r">printTicket</span>, <b>object</b> <span id="r24 rd" class="r24 r">userState</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Write a single FixedPage and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="ae0c8ffeebe66de9" href="../R/ae0c8ffeebe66de9.html" target="n" data-glyph="72,1" class="i method">Write</a>(<a href="@0@PresentationFramework/A.html#8c398267b5384a2b" class="t t">FixedPage</a> <span id="r25 rd" class="r25 r">fixedPage</span>)
+        {
+            <a href="#19c8f46fd1b50a64" class="i method">Write</a>(<span class="r25 r">fixedPage</span>, <b>null</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Write a single FixedPage and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="19c8f46fd1b50a64" href="../R/19c8f46fd1b50a64.html" target="n" data-glyph="72,1" class="i method">Write</a>(<a href="@0@PresentationFramework/A.html#8c398267b5384a2b" class="t t">FixedPage</a> <span id="r26 rd" class="r26 r">fixedPage</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r27 rd" class="r27 r">printTicket</span>)
+        {
+            <a href="#bb0d61291f6c5635" class="i method">SerializeVisualTree</a>(<span class="r26 r">fixedPage</span>);
+            <a href="#dd5509c7db3870cc" class="i field">_writer</a>.<span class="i method">Close</span>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single FixedPage and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="c94460ff5872a613" href="../R/c94460ff5872a613.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationFramework/A.html#8c398267b5384a2b" class="t t">FixedPage</a> <span id="r28 rd" class="r28 r">fixedPage</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single FixedPage and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="4c250062a7b6810a" href="../R/4c250062a7b6810a.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationFramework/A.html#8c398267b5384a2b" class="t t">FixedPage</a> <span id="r29 rd" class="r29 r">fixedPage</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r30 rd" class="r30 r">printTicket</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single FixedPage and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="5dfdb378c51042e7" href="../R/5dfdb378c51042e7.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationFramework/A.html#8c398267b5384a2b" class="t t">FixedPage</a> <span id="r31 rd" class="r31 r">fixedPage</span>, <b>object</b> <span id="r32 rd" class="r32 r">userState</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single FixedPage and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="9f02a0138fd4993c" href="../R/9f02a0138fd4993c.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationFramework/A.html#8c398267b5384a2b" class="t t">FixedPage</a> <span id="r33 rd" class="r33 r">fixedPage</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r34 rd" class="r34 r">printTicket</span>, <b>object</b> <span id="r35 rd" class="r35 r">userState</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Write a single FixedDocument and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="8ce16e5b7805d2b8" href="../R/8ce16e5b7805d2b8.html" target="n" data-glyph="72,1" class="i method">Write</a>(<a href="@0@PresentationFramework/A.html#69e87ccefd28700c" class="t t">FixedDocument</a> <span id="r36 rd" class="r36 r">fixedDocument</span>)
+        {
+            <a href="#f4e2e0ef8d137fc1" class="i method">Write</a>(<span class="r36 r">fixedDocument</span>, <b>null</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Write a single FixedDocument and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="f4e2e0ef8d137fc1" href="../R/f4e2e0ef8d137fc1.html" target="n" data-glyph="72,1" class="i method">Write</a>(<a href="@0@PresentationFramework/A.html#69e87ccefd28700c" class="t t">FixedDocument</a> <span id="r37 rd" class="r37 r">fixedDocument</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r38 rd" class="r38 r">printTicket</span>)
+        {
+            <a href="#ee10cd3f54359604" class="i method">Write</a>(<span class="r37 r">fixedDocument</span>.<a href="@0@PresentationFramework/A.html#6556832830aae6ad" class="i property">DocumentPaginator</a>, <span class="r38 r">printTicket</span>);
+         }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single FixedDocument and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="f83e6c9c34a8e1d8" href="../R/f83e6c9c34a8e1d8.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationFramework/A.html#69e87ccefd28700c" class="t t">FixedDocument</a> <span id="r39 rd" class="r39 r">fixedDocument</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single FixedDocument and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="ec71a14c3c3db00d" href="../R/ec71a14c3c3db00d.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationFramework/A.html#69e87ccefd28700c" class="t t">FixedDocument</a> <span id="r40 rd" class="r40 r">fixedDocument</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r41 rd" class="r41 r">printTicket</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single FixedDocument and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="53e0d19d48119278" href="../R/53e0d19d48119278.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationFramework/A.html#69e87ccefd28700c" class="t t">FixedDocument</a> <span id="r42 rd" class="r42 r">fixedDocument</span>, <b>object</b> <span id="r43 rd" class="r43 r">userState</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single FixedDocument and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="e8403866ec7e52de" href="../R/e8403866ec7e52de.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationFramework/A.html#69e87ccefd28700c" class="t t">FixedDocument</a> <span id="r44 rd" class="r44 r">fixedDocument</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r45 rd" class="r45 r">printTicket</span>, <b>object</b> <span id="r46 rd" class="r46 r">userState</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Write a single FixedDocumentSequence and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="10217d51fde35b82" href="../R/10217d51fde35b82.html" target="n" data-glyph="72,1" class="i method">Write</a>(<a href="@0@PresentationFramework/A.html#fe2e5e3d13cc140d" class="t t">FixedDocumentSequence</a> <span id="r47 rd" class="r47 r">fixedDocumentSequence</span>)
+        {
+            <a href="#61421816291eb005" class="i method">Write</a>(<span class="r47 r">fixedDocumentSequence</span>, <b>null</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Write a single FixedDocumentSequence and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="61421816291eb005" href="../R/61421816291eb005.html" target="n" data-glyph="72,1" class="i method">Write</a>(<a href="@0@PresentationFramework/A.html#fe2e5e3d13cc140d" class="t t">FixedDocumentSequence</a> <span id="r48 rd" class="r48 r">fixedDocumentSequence</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r49 rd" class="r49 r">printTicket</span>)
+        {
+            <a href="#ee10cd3f54359604" class="i method">Write</a>(<span class="r48 r">fixedDocumentSequence</span>.<a href="@0@PresentationFramework/A.html#38fe5878e53c2b38" class="i property">DocumentPaginator</a>, <span class="r49 r">printTicket</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single FixedDocumentSequence and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="54305112547cb5af" href="../R/54305112547cb5af.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationFramework/A.html#fe2e5e3d13cc140d" class="t t">FixedDocumentSequence</a> <span id="r50 rd" class="r50 r">fixedDocumentSequence</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single FixedDocumentSequence and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="4ef22ca106ebfaa2" href="../R/4ef22ca106ebfaa2.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationFramework/A.html#fe2e5e3d13cc140d" class="t t">FixedDocumentSequence</a> <span id="r51 rd" class="r51 r">fixedDocumentSequence</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r52 rd" class="r52 r">printTicket</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single FixedDocumentSequence and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="1e85443fe48a06f6" href="../R/1e85443fe48a06f6.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationFramework/A.html#fe2e5e3d13cc140d" class="t t">FixedDocumentSequence</a> <span id="r53 rd" class="r53 r">fixedDocumentSequence</span>, <b>object</b> <span id="r54 rd" class="r54 r">userState</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Asynchronous Write a single FixedDocumentSequence and close package</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="b00720677ed63556" href="../R/b00720677ed63556.html" target="n" data-glyph="72,1" class="i method">WriteAsync</a>(<a href="@0@PresentationFramework/A.html#fe2e5e3d13cc140d" class="t t">FixedDocumentSequence</a> <span id="r55 rd" class="r55 r">fixedDocumentSequence</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r56 rd" class="r56 r">printTicket</span>, <b>object</b> <span id="r57 rd" class="r57 r">userState</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Cancel Asynchronous Write</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override void</b> <a id="3dad0d183e43bb4d" href="../R/3dad0d183e43bb4d.html" target="n" data-glyph="72,1" class="i method">CancelAsync</a>()
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Create a SerializerWriterCollator to gobble up multiple Visuals</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override</b> <a href="@0@PresentationFramework/A.html#c1da22c39e2d5941" class="t t">SerializerWriterCollator</a> <a id="0b7599543accbc3a" href="../R/0b7599543accbc3a.html" target="n" data-glyph="72,1" class="i method">CreateVisualsCollator</a>()
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Create a SerializerWriterCollator to gobble up multiple Visuals</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override</b> <a href="@0@PresentationFramework/A.html#c1da22c39e2d5941" class="t t">SerializerWriterCollator</a> <a id="b248d8677e9453ea" href="../R/b248d8677e9453ea.html" target="n" data-glyph="72,1" class="i method">CreateVisualsCollator</a>(<a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r58 rd" class="r58 r">documentSequencePT</span>, <a href="@0@ReachFramework/A.html#5aea87f770c480c2" class="t t">PrintTicket</a> <span id="r59 rd" class="r59 r">documentPT</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#ab0acd5f99886747" class="t constructor">NotSupportedException</a>();
+        }
+
+<span class="k preprocess">#</span><span class="k preprocess">pragma</span> <span class="k preprocess">warning</span> <span class="k preprocess">disable</span> 0067
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This event will be invoked if the writer wants a PrintTicker</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override event</b> <a href="@0@PresentationFramework/A.html#97778c55f5d20cb7" class="t t">WritingPrintTicketRequiredEventHandler</a> <a id="250a94acf019f151" href="../R/250a94acf019f151.html" target="n" data-glyph="30,1" class="i">WritingPrintTicketRequired</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This event will be invoked if the writer progress changes</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override event</b> <a href="@0@PresentationFramework/A.html#981f6438dabb16fb" class="t t">WritingProgressChangedEventHandler</a> <a id="de1f0c9e10ba79bc" href="../R/de1f0c9e10ba79bc.html" target="n" data-glyph="30,1" class="i">WritingProgressChanged</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This event will be invoked if the writer is done</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override event</b> <a href="@0@PresentationFramework/A.html#359ceea8f4eba6d8" class="t t">WritingCompletedEventHandler</a> <a id="f0e269b1dce7672f" href="../R/f0e269b1dce7672f.html" target="n" data-glyph="30,1" class="i">WritingCompleted</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This event will be invoked if the writer has been cancelled</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public override event</b> <a href="@0@PresentationFramework/A.html#2e6ba09e49792517" class="t t">WritingCancelledEventHandler</a> <a id="7631f4e4fcc9d403" href="../R/7631f4e4fcc9d403.html" target="n" data-glyph="30,1" class="i">WritingCancelled</a>;
+
+<span class="k preprocess">#</span><span class="k preprocess">pragma</span> <span class="k preprocess">warning</span> <span class="k preprocess">restore</span> 0067
+
+        <b>private void</b> <a id="bb0d61291f6c5635" href="../R/bb0d61291f6c5635.html" target="n" data-glyph="76,1" class="i method">SerializeVisualTree</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r60 rd" class="r60 r">objectTree</span>)
+        {
+            <span class="t t">List</span>&lt;<a href="@0@PresentationCore/A.html#13c3433f12380da9" class="t t">GlyphRun</a>&gt; <span id="r61 rd" class="r61 r">glyphrunList</span> = <b>new</b> <span class="t constructor">List</span>&lt;<a href="@0@PresentationCore/A.html#13c3433f12380da9" class="t t">GlyphRun</a>&gt;();
+            <a href="#3457c48203e8f1d2" class="i method">WalkVisualTree</a>(<span class="r61 r">glyphrunList</span>, <span class="r60 r">objectTree</span>);
+
+  
+            <b>try</b>
+            {
+                <span class="c">// NOTE:  this is not gaurenteed to get the text in any reasonable order</span>
+                <span class="c">// To correct this the transforms associated with the parent drawing groups</span>
+                <span class="c">// can be collected and the glyph runs sorted into text blocks</span>
+                <span class="c">// This is a complex algorythem out side the scope of this sampel</span>
+                <b>foreach</b> (<a href="@0@PresentationCore/A.html#13c3433f12380da9" class="t t">GlyphRun</a> <span id="r62 rd" class="r62 r">glyphRun</span> <b>in</b> <span class="r61 r">glyphrunList</span>)
+                {
+                    <a href="@1@System.Runtime/A.html#adf60ee46ebd299f" class="t t">StringBuilder</a> <span id="r63 rd" class="r63 r">builder</span> = <b>new</b> <a href="@1@System.Runtime/A.html#ec674e2123a44860" class="t constructor">StringBuilder</a>(<span class="r62 r">glyphRun</span>.<a href="@0@PresentationCore/A.html#3d2f1709e8d31182" class="i property">Characters</a>.<a href="@1@System.Runtime/A.html#3d6c21c4e9bd5f63" class="i property">Count</a>);
+                    <b>foreach</b> (<b>char</b> <span id="r64 rd" class="r64 r">ch</span> <b>in</b> <span class="r62 r">glyphRun</span>.<a href="@0@PresentationCore/A.html#3d2f1709e8d31182" class="i property">Characters</a>)
+                    {
+                        <span class="r63 r">builder</span>.<a href="@1@System.Runtime/A.html#a2e7c78d85807da5" class="i method">Append</a>(<span class="r64 r">ch</span>);
+                    }
+
+                    <a href="#dd5509c7db3870cc" class="i field">_writer</a>.<span class="i method">Write</span>(<span class="r63 r">builder</span>.<a href="@1@System.Runtime/A.html#5a97da49a158a3c9" class="i method">ToString</a>());
+                    <a href="#dd5509c7db3870cc" class="i field">_writer</a>.<span class="i method">Write</span>(<span class="s">&quot; &quot;</span>);
+                }
+            }
+            <b>finally</b>
+            {
+            }
+
+        }
+
+        <b>private void</b> <a id="3457c48203e8f1d2" href="../R/3457c48203e8f1d2.html" target="n" data-glyph="76,1" class="i method">WalkVisualTree</a>(<span class="t t">List</span>&lt;<a href="@0@PresentationCore/A.html#13c3433f12380da9" class="t t">GlyphRun</a>&gt; <span id="r65 rd" class="r65 r">textObjects</span>, <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r66 rd" class="r66 r">treeObject</span>)
+        {
+            <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#1ff39c4b660ff049" class="t t">Drawing</a> <span id="r67 rd" class="r67 r">content</span> = <a href="@0@PresentationCore/A.html#7f1e2538afba01e7" class="t t">VisualTreeHelper</a>.<a href="@0@PresentationCore/A.html#8d2e63c30598021d" class="i method">GetDrawing</a>(<span class="r66 r">treeObject</span> <b>as</b> <a href="@0@PresentationCore/A.html#5dae7b267e6db0d6" class="t t">Visual</a>);
+            <a href="#8a75bd9d11b37177" class="i method">BuildGlypeTree</a>(<span class="r65 r">textObjects</span>, <span class="r67 r">content</span>);
+            <b>int</b> <span id="r68 rd" class="r68 r">childCount</span> = <a href="@0@PresentationCore/A.html#7f1e2538afba01e7" class="t t">VisualTreeHelper</a>.<a href="@0@PresentationCore/A.html#d74c0832c61e07fb" class="i method">GetChildrenCount</a>( <span class="r66 r">treeObject</span> );
+            <b>for</b> (<b>int</b> <span id="r69 rd" class="r69 r">i</span> = 0; <span class="r69 r">i</span> &lt; <span class="r68 r">childCount</span>; <span class="r69 r">i</span>++)
+            {
+                <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r70 rd" class="r70 r">child</span> = <a href="@0@PresentationCore/A.html#7f1e2538afba01e7" class="t t">VisualTreeHelper</a>.<a href="@0@PresentationCore/A.html#30089fb0c0679121" class="i method">GetChild</a>(<span class="r66 r">treeObject</span>, <span class="r69 r">i</span>);
+                <a href="#3457c48203e8f1d2" class="i method">WalkVisualTree</a>(<span class="r65 r">textObjects</span>, <span class="r70 r">child</span>);
+            }
+
+        }
+        <b>private void</b> <a id="8a75bd9d11b37177" href="../R/8a75bd9d11b37177.html" target="n" data-glyph="76,1" class="i method">BuildGlypeTree</a>(<span class="t t">List</span>&lt;<a href="@0@PresentationCore/A.html#13c3433f12380da9" class="t t">GlyphRun</a>&gt; <span id="r71 rd" class="r71 r">textObjects</span>, <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#1ff39c4b660ff049" class="t t">Drawing</a> <span id="r72 rd" class="r72 r">drawing</span>)
+        {
+            <b>if</b> (<span class="r72 r">drawing</span> <b>is</b> <a href="@0@PresentationCore/A.html#b52d2d71123f1044" class="t t">GlyphRunDrawing</a>)
+            {
+                <span class="r71 r">textObjects</span>.<span class="i method">Add</span>((<span class="r72 r">drawing</span> <b>as</b> <a href="@0@PresentationCore/A.html#b52d2d71123f1044" class="t t">GlyphRunDrawing</a>).<a href="@0@PresentationCore/A.html#46407d2d04296acb" class="i property">GlyphRun</a>);
+            }
+            <b>else</b> <b>if</b> (<span class="r72 r">drawing</span> <b>is</b> <a href="@0@PresentationCore/A.html#9cd529801a50da46" class="t t">DrawingGroup</a>)
+            {
+                <a href="@0@PresentationCore/A.html#1b2abcda893981e2" class="t t">DrawingCollection</a> <span id="r73 rd" class="r73 r">children</span> = (<span class="r72 r">drawing</span> <b>as</b> <a href="@0@PresentationCore/A.html#9cd529801a50da46" class="t t">DrawingGroup</a>).<a href="@0@PresentationCore/A.html#811b8ebc67a0a3ae" class="i property">Children</a>;
+                <b>for</b> (<b>int</b> <span id="r74 rd" class="r74 r">i</span> = 0; <span class="r74 r">i</span> &lt; <span class="r73 r">children</span>.<a href="@0@PresentationCore/A.html#5ad927c6db812576" class="i property">Count</a>; <span class="r74 r">i</span>++)
+                {
+                    <a href="#8a75bd9d11b37177" class="i method">BuildGlypeTree</a>(<span class="r71 r">textObjects</span>, <span class="r73 r">children</span><a href="@0@PresentationCore/A.html#33301cd530b396ab">[</a><span class="r74 r">i</span>]);
+                }
+
+            }
+        }
+
+ 
+        <b>private string</b> <a id="81ea13f82a538ad6" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">GetTextFromVisual</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r75 rd" class="r75 r">visual</span>)
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r76 rd" class="r76 r">result</span> = <span class="s">&quot;&quot;</span>;
+
+            <b>if</b> (<span class="r75 r">visual</span> <b>is</b> <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>)
+            {
+                <span class="r76 r">result</span> = (<span class="r75 r">visual</span> <b>as</b> <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>).<a href="@0@PresentationFramework/A.html#e77c881b0d6f7e9e" class="i property">Text</a>;
+            }
+            <b>else</b> <b>if</b> (<span class="r75 r">visual</span> <b>is</b> <a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a>)
+            {
+                <span class="r76 r">result</span> = (<span class="r75 r">visual</span> <b>as</b> <a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a>).<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>;
+            }
+            <b>else</b> <b>if</b> (<span class="r75 r">visual</span> <b>is</b> <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a>)
+            {
+                <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a> <span id="r77 rd" class="r77 r">flowDocument</span> = (<span class="r75 r">visual</span> <b>as</b> <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a>);
+                <span class="r76 r">result</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#89b123297a8cd9e8" class="t constructor">TextRange</a>(<span class="r77 r">flowDocument</span>.<a href="@0@PresentationFramework/A.html#038ddae1a0bc6cc1" class="i property">ContentStart</a>,
+                                                <span class="r77 r">flowDocument</span>.<a href="@0@PresentationFramework/A.html#2a6aa9d9cfdb57cd" class="i property">ContentEnd</a>).<a href="@0@PresentationFramework/A.html#9bc40088b9689560" class="i property">Text</a>;;
+            }
+            <b>else</b> <b>if</b> (<span class="r75 r">visual</span> <b>is</b> <a href="@0@PresentationFramework/A.html#f4f672baea983677" class="t t">Glyphs</a>)
+            {
+                <span class="r76 r">result</span> = (<span class="r75 r">visual</span> <b>as</b> <a href="@0@PresentationFramework/A.html#f4f672baea983677" class="t t">Glyphs</a>).<a href="@0@PresentationFramework/A.html#d916d4b92527818d" class="i property">UnicodeString</a>;
+            }
+            <b>return</b> <span class="r76 r">result</span>;
+        }
+ 
+            
+        <b>private</b> <a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <a id="b140b321caf24f4a" href="../R/b140b321caf24f4a.html" target="n" data-glyph="46,1" class="i field">_stream</a>;
+        <b>private</b> <span class="t t">TextWriter</span> <a id="dd5509c7db3870cc" href="../R/dd5509c7db3870cc.html" target="n" data-glyph="46,1" class="i field">_writer</a>;
+    }
+
+    <b>class</b> <a id="d03fe9af2ac6eb48" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="346c331e5e32f98a">CompareByLocation</span></a> : <a href="@1@System.Runtime/A.html#6bf8828f51320498" class="t t">IComparer</a>&lt;<a href="@0@PresentationCore/A.html#13c3433f12380da9" class="t t">GlyphRun</a>&gt;
+    {
+        <b>public int</b> <a id="974aad47ebea5daa" href="../R/974aad47ebea5daa.html" target="n" data-glyph="72,1" class="i method">Compare</a>(<a href="@0@PresentationCore/A.html#13c3433f12380da9" class="t t">GlyphRun</a> <span id="r78 rd" class="r78 r">a</span>, <a href="@0@PresentationCore/A.html#13c3433f12380da9" class="t t">GlyphRun</a> <span id="r79 rd" class="r79 r">b</span>)
+        {
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <span id="r80 rd" class="r80 r">aPoint</span> = <span class="r78 r">a</span>.<a href="@0@PresentationCore/A.html#48ce30fb01b888b9" class="i property">BaselineOrigin</a>;
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <span id="r81 rd" class="r81 r">bPoint</span> = <span class="r79 r">b</span>.<a href="@0@PresentationCore/A.html#48ce30fb01b888b9" class="i property">BaselineOrigin</a>;
+            <b>int</b> <span id="r82 rd" class="r82 r">result</span> = 0;
+            <span class="c">//Vertical takes priorty over horizontal</span>
+            <b>if</b> (<span class="r80 r">aPoint</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> &gt; <span class="r81 r">bPoint</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>)
+            {
+                <b>return</b> -1;
+            }
+            <b>else</b> <b>if</b> (<span class="r80 r">aPoint</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> &gt; <span class="r81 r">bPoint</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>)
+            {
+                <span class="r82 r">result</span> = 1;
+            }
+            <b>else</b> <b>if</b> (<span class="r80 r">aPoint</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> &lt; <span class="r81 r">bPoint</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>)
+            {
+                <span class="r82 r">result</span> = -1;
+            }
+            <b>else</b> <b>if</b> (<span class="r80 r">aPoint</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> &gt; <span class="r81 r">bPoint</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>)
+            {
+                <span class="r82 r">result</span> = 1;
+            }
+             <b>return</b> <span class="r82 r">result</span>;
+        }
+        
+    }
+}
+</pre></td></tr></table></div></body></html>

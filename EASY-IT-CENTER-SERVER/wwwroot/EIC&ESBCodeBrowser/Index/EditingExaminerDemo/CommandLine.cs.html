@@ -1,0 +1,336 @@
+﻿<!DOCTYPE html>
+<html><head><title>CommandLine.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(327);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EditingExaminerDemo/CommandLine.cs" target="_top">CommandLine.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EditingExaminerDemo" target="_top">HelpProjects\WPF-MORE\Sample Applications\EditingExaminerDemo\EditingExaminerDemo.csproj</a> (EditingExaminerDemo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+
+<b>namespace</b> <span class="i n">EditingExaminerDemo</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     This class parses the command line commands.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="bcdbeb414546db82" href="R/bcdbeb414546db82.html" target="n" data-glyph="0,0" class="t t">CommandLine</a>
+    {
+        <b>private readonly</b> <span class="t t">Hashtable</span> <a id="597e85ce2f23c9e6" href="R/597e85ce2f23c9e6.html" target="n" data-glyph="46,1" class="i field">_table</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     constructor</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">commandLine</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">table</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public</b> <a id="a3d4b7b3c7c506d4" href="R/a3d4b7b3c7c506d4.html" target="n" data-glyph="72,1" class="t constructor">CommandLine</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">commandLine</span>, <span class="t t">Hashtable</span> <span id="r1 rd" class="r1 r">table</span>)
+        {
+            <a href="#597e85ce2f23c9e6" class="i field">_table</a> = <span class="r1 r">table</span>;
+            <a href="#dd529f6a85d5170e" class="i property">Result</a> = <b>new</b> <a href="ObjectItem.cs.html#d09a71553af96b54" class="t constructor">ObjectItem</a>(<b>null</b>, <b>null</b>);
+            <a href="#ed0b9cce13d0b1f7" class="i method">DoParse</a>(<span class="r0 r">commandLine</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Retrieve the parsed object.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="ObjectItem.cs.html#b5749a181bdb9ab4" class="t t">ObjectItem</a> <a id="dd529f6a85d5170e" href="R/dd529f6a85d5170e.html" target="n" data-glyph="102,1" class="i property">Result</a> { <b>get</b>; <b>private set</b>; }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Recursively parse the command line content</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">commandLine</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="ed0b9cce13d0b1f7" href="R/ed0b9cce13d0b1f7.html" target="n" data-glyph="76,1" class="i method">DoParse</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r2 rd" class="r2 r">commandLine</span>)
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r3 rd" class="r3 r">strLeft</span>;
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r4 rd" class="r4 r">strRight</span>;
+            <b>object</b> <span id="r5 rd" class="r5 r">left</span>;
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r6 rd" class="r6 r">str</span> = <span class="r2 r">commandLine</span>.<a href="@1@System.Runtime/A.html#69fc1d0aa6df8a90" class="i method">Replace</a>(<span class="s">&quot;  &quot;</span>, <span class="s">&quot; &quot;</span>);
+            <span class="r6 r">str</span> = <span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+            <span class="c">//Asignment</span>
+            <b>if</b> (<span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#428c5c9954dea844" class="i method">Contains</a>(<span class="s">&quot;=&quot;</span>))
+            {
+                <b>var</b> <span id="r7 rd" class="r7 r">strs</span> = <span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#b06c6275ef677846" class="i method">Split</a>(<span class="s">&#39;=&#39;</span>);
+                <b>if</b> (<span class="r7 r">strs</span>.<a href="@1@System.Runtime/A.html#42e9b7616956cf94" class="i property">Length</a> != 2 || <span class="r7 r">strs</span>[0].<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> == 0 || <span class="r6 r">str</span>[1] == 0)
+                {
+                    <a href="#dd529f6a85d5170e" class="i property">Result</a>.<a href="ObjectItem.cs.html#00f3284f68d5987c" class="i property">Error</a> = <span class="s">&quot;syntax error: Don&#39;t know how to do Assignment!&quot;</span>;
+                    <b>return</b>;
+                }
+                <span class="r3 r">strLeft</span> = <span class="r4 r">strRight</span> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+                <span class="r3 r">strLeft</span> = <span class="r7 r">strs</span>[0];
+                <span class="r4 r">strRight</span> = <span class="r7 r">strs</span>[1];
+                <span class="r3 r">strLeft</span> = <span class="r3 r">strLeft</span>.<a href="@1@System.Runtime/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+                <span class="r4 r">strRight</span> = <span class="r4 r">strRight</span>.<a href="@1@System.Runtime/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+                <a href="#dd529f6a85d5170e" class="i property">Result</a> = <b>new</b> <a href="#a3d4b7b3c7c506d4" class="t constructor">CommandLine</a>(<span class="r4 r">strRight</span>, <a href="#597e85ce2f23c9e6" class="i field">_table</a>).<a href="#dd529f6a85d5170e" class="i property">Result</a>;
+
+                <span class="c">//Set a value to a variable in the Table.</span>
+                <b>if</b> (<a href="#597e85ce2f23c9e6" class="i field">_table</a>.<span class="i method">Contains</span>(<span class="r3 r">strLeft</span>))
+                {
+                    <a href="#597e85ce2f23c9e6" class="i field">_table</a>.<span class="i method">Remove</span>(<span class="r3 r">strLeft</span>);
+                    <a href="#597e85ce2f23c9e6" class="i field">_table</a>.<span class="i method">Add</span>(<span class="r3 r">strLeft</span>, <a href="#dd529f6a85d5170e" class="i property">Result</a>.<a href="ObjectItem.cs.html#41cd2f1c4bbcfaec" class="i property">Value</a>);
+                }
+                <span class="c">//Assign a value to a property.</span>
+                <b>else</b> <b>if</b> (<span class="r3 r">strLeft</span>.<a href="@1@System.Runtime/A.html#428c5c9954dea844" class="i method">Contains</a>(<span class="s">&quot;.&quot;</span>))
+                {
+                    <span class="r5 r">left</span> =
+                        <b>new</b> <a href="#a3d4b7b3c7c506d4" class="t constructor">CommandLine</a>(<span class="r3 r">strLeft</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(0, <span class="r3 r">strLeft</span>.<a href="@1@System.Runtime/A.html#31af6d0e11b2dbd3" class="i method">LastIndexOf</a>(<span class="s">&quot;.&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>)), <a href="#597e85ce2f23c9e6" class="i field">_table</a>)
+                            .<a href="#dd529f6a85d5170e" class="i property">Result</a>.<a href="ObjectItem.cs.html#41cd2f1c4bbcfaec" class="i property">Value</a>;
+                    <b>if</b> (<span class="r5 r">left</span> != <b>null</b>)
+                    {
+                        <a href="ReflectionUtils.cs.html#a9a0b4fabf55f3fe" class="t t">ReflectionUtils</a>.<a href="ReflectionUtils.cs.html#ebcc3140332c612d" class="i method">SetProperty</a>(<span class="r5 r">left</span>,
+                            <span class="r3 r">strLeft</span>.<a href="@1@System.Runtime/A.html#882fa7998d6ca35a" class="i method">Substring</a>(<span class="r3 r">strLeft</span>.<a href="@1@System.Runtime/A.html#31af6d0e11b2dbd3" class="i method">LastIndexOf</a>(<span class="s">&quot;.&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>) + 1),
+                            <a href="#dd529f6a85d5170e" class="i property">Result</a>.<a href="ObjectItem.cs.html#41cd2f1c4bbcfaec" class="i property">Value</a>);
+                    }
+                    <b>else</b>
+                    {
+                        <a href="#dd529f6a85d5170e" class="i property">Result</a>.<a href="ObjectItem.cs.html#00f3284f68d5987c" class="i property">Error</a> = <span class="s">&quot;Failed: can&#39;t set value to &quot;</span> + <span class="r3 r">strLeft</span> + <span class="s">&quot;!&quot;</span>;
+                    }
+                }
+                <span class="c">//Make a declaration</span>
+                <b>else</b>
+                {
+                    <a href="#597e85ce2f23c9e6" class="i field">_table</a>.<span class="i method">Add</span>(<span class="r3 r">strLeft</span>, <a href="#dd529f6a85d5170e" class="i property">Result</a>.<a href="ObjectItem.cs.html#41cd2f1c4bbcfaec" class="i property">Value</a>);
+                }
+            }
+            <span class="c">//Invoke a method, Creating a object.</span>
+            <b>else</b> <b>if</b> (<span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#cb74053b3f2d03f4" class="i method">EndsWith</a>(<span class="s">&quot;)&quot;</span>))
+            {
+                <b>if</b> (<span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#23804789ea4c9c0e" class="i method">StartsWith</a>(<span class="s">&quot;new &quot;</span>))
+                {
+                    <span class="r6 r">str</span> = <span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#882fa7998d6ca35a" class="i method">Substring</a>(4).<a href="@1@System.Runtime/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+                }
+                <span class="r5 r">left</span> = <b>null</b>;
+                <span class="r4 r">strRight</span> = <span class="r3 r">strLeft</span> = <span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(0, <span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#7d6aed52d875ec59" class="i method">IndexOf</a>(<span class="s">&quot;(&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>));
+
+                <span class="c">//If there is a dot, invoke a method from an object</span>
+                <b>if</b> (<span class="r3 r">strLeft</span>.<a href="@1@System.Runtime/A.html#31af6d0e11b2dbd3" class="i method">LastIndexOf</a>(<span class="s">&quot;.&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>) &gt;= 0)
+                {
+                    <span class="r3 r">strLeft</span> = <span class="r3 r">strLeft</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(0, <span class="r3 r">strLeft</span>.<a href="@1@System.Runtime/A.html#31af6d0e11b2dbd3" class="i method">LastIndexOf</a>(<span class="s">&quot;.&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>));
+                    <span class="r5 r">left</span> = <b>new</b> <a href="#a3d4b7b3c7c506d4" class="t constructor">CommandLine</a>(<span class="r3 r">strLeft</span>, <a href="#597e85ce2f23c9e6" class="i field">_table</a>).<a href="#dd529f6a85d5170e" class="i property">Result</a>.<a href="ObjectItem.cs.html#41cd2f1c4bbcfaec" class="i property">Value</a>;
+                }
+
+                <span class="c">//When left is null, invoke a constructor, otherwise invoke a method.</span>
+                <b>if</b> (<span class="r5 r">left</span> != <b>null</b>)
+                {
+                    <span class="c">//Get the command line start from the method name</span>
+                    <span class="c">//this will get the argument list.</span>
+                    <span class="r6 r">str</span> = <span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#882fa7998d6ca35a" class="i method">Substring</a>(<span class="r4 r">strRight</span>.<a href="@1@System.Runtime/A.html#31af6d0e11b2dbd3" class="i method">LastIndexOf</a>(<span class="s">&quot;.&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>) + 1);
+                }
+
+                <a href="#dd529f6a85d5170e" class="i property">Result</a>.<a href="ObjectItem.cs.html#41cd2f1c4bbcfaec" class="i property">Value</a> = <a href="#2cb3b9a82570bc9a" class="i method">InvokMethod</a>(<span class="r6 r">str</span>, <span class="r5 r">left</span>);
+            }
+
+            <span class="c">//Retrive data</span>
+            <b>else</b>
+            {
+                <b>if</b> (<a href="#597e85ce2f23c9e6" class="i field">_table</a>.<span class="i method">Contains</span>(<span class="r6 r">str</span>))
+                {
+                    <a href="#dd529f6a85d5170e" class="i property">Result</a>.<a href="ObjectItem.cs.html#41cd2f1c4bbcfaec" class="i property">Value</a> = <a href="#597e85ce2f23c9e6" class="i field">_table</a>[<span class="r6 r">str</span>];
+                    <b>return</b>;
+                }
+                <span class="r5 r">left</span> = <b>null</b>;
+                <span class="r4 r">strRight</span> = <span class="r6 r">str</span>;
+
+                <b>if</b> (<span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#428c5c9954dea844" class="i method">Contains</a>(<span class="s">&quot;.&quot;</span>))
+                {
+                    <span class="r3 r">strLeft</span> = <span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(0, <span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#7d6aed52d875ec59" class="i method">IndexOf</a>(<span class="s">&quot;.&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>));
+                    <span class="r5 r">left</span> = <a href="#597e85ce2f23c9e6" class="i field">_table</a>[<span class="r3 r">strLeft</span>];
+
+                    <span class="c">//If an object is found in a Table, the property name is needed in order to retrieve the value.</span>
+                    <b>if</b> (<span class="r5 r">left</span> != <b>null</b> &amp;&amp; <span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> - (<span class="r3 r">strLeft</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> + 1) &gt; 0)
+                    {
+                        <span class="r4 r">strRight</span> = <span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(<span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#7d6aed52d875ec59" class="i method">IndexOf</a>(<span class="s">&quot;.&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>) + 1,
+                            <span class="r6 r">str</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> - (<span class="r3 r">strLeft</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> + 1));
+                    }
+                }
+
+                <a href="#dd529f6a85d5170e" class="i property">Result</a> = <a href="#4b16f19a23bcd69e" class="i method">Get_Value</a>(<span class="r5 r">left</span>, <span class="r4 r">strRight</span>);
+
+                <b>if</b> (!<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<a href="#dd529f6a85d5170e" class="i property">Result</a>.<a href="ObjectItem.cs.html#00f3284f68d5987c" class="i property">Error</a>))
+                {
+                    <span class="c">//If the expression is just for a static member of a class</span>
+                    <a href="#dd529f6a85d5170e" class="i property">Result</a> = <a href="#fc4580c27ae016bc" class="i method">GetProperty</a>(<b>null</b>, <span class="r4 r">strRight</span>);
+                }
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Create an object.</span>
+        <span class="c">///</span><span class="c">     1. new a object: new abc(p1, p2, p3...)</span>
+        <span class="c">///</span><span class="c">     2. Create a instance for a primative values. for example</span>
+        <span class="c">///</span><span class="c">     3. Create instance for Enum.</span>
+        <span class="c">///</span><span class="c">     4. create a instance for struct.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">commandLine</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">objectInstance</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private object</b> <a id="2cb3b9a82570bc9a" href="R/2cb3b9a82570bc9a.html" target="n" data-glyph="76,1" class="i method">InvokMethod</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r8 rd" class="r8 r">commandLine</span>, <b>object</b> <span id="r9 rd" class="r9 r">objectInstance</span>)
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r10 rd" class="r10 r">name</span>;
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r11 rd" class="r11 r">arg</span>;
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>[] <span id="r12 rd" class="r12 r">args</span>;
+            <b>object</b>[] <span id="r13 rd" class="r13 r">objs</span>;
+            <b>object</b> <span id="r14 rd" class="r14 r">returnValue</span>;
+            <span class="r8 r">commandLine</span> = <span class="r8 r">commandLine</span>.<a href="@1@System.Runtime/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+            <span class="r13 r">objs</span> = <b>null</b>;
+            <span class="r14 r">returnValue</span> = <b>false</b>;
+            <span class="r10 r">name</span> = <span class="r8 r">commandLine</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(0, <span class="r8 r">commandLine</span>.<a href="@1@System.Runtime/A.html#7d6aed52d875ec59" class="i method">IndexOf</a>(<span class="s">&quot;(&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>));
+            <span class="r11 r">arg</span> = <span class="r8 r">commandLine</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(<span class="r8 r">commandLine</span>.<a href="@1@System.Runtime/A.html#7d6aed52d875ec59" class="i method">IndexOf</a>(<span class="s">&quot;(&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>) + 1,
+                <span class="r8 r">commandLine</span>.<a href="@1@System.Runtime/A.html#7d6aed52d875ec59" class="i method">IndexOf</a>(<span class="s">&quot;)&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>) -
+                (<span class="r8 r">commandLine</span>.<a href="@1@System.Runtime/A.html#7d6aed52d875ec59" class="i method">IndexOf</a>(<span class="s">&quot;(&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>) + 1));
+            <span class="r11 r">arg</span> = <span class="r8 r">commandLine</span>.<a href="@1@System.Runtime/A.html#882fa7998d6ca35a" class="i method">Substring</a>(<span class="r8 r">commandLine</span>.<a href="@1@System.Runtime/A.html#7d6aed52d875ec59" class="i method">IndexOf</a>(<span class="s">&quot;(&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>) + 1);
+            <span class="r11 r">arg</span> = <span class="r11 r">arg</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(0, <span class="r11 r">arg</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> - 1);
+            <b>if</b> (<span class="r11 r">arg</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> &gt; 0)
+            {
+                <span class="r12 r">args</span> = <span class="r11 r">arg</span>.<a href="@1@System.Runtime/A.html#06a5f7c688e69307" class="i method">Trim</a>().<a href="@1@System.Runtime/A.html#b06c6275ef677846" class="i method">Split</a>(<span class="s">&#39;,&#39;</span>);
+                <span class="r13 r">objs</span> = <b>new</b> <b>object</b>[<span class="r12 r">args</span>.<a href="@1@System.Runtime/A.html#42e9b7616956cf94" class="i property">Length</a>];
+
+                <b>for</b> (<a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r15 rd" class="r15 r">i</span> = 0; <span class="r15 r">i</span> &lt; <span class="r12 r">args</span>.<a href="@1@System.Runtime/A.html#42e9b7616956cf94" class="i property">Length</a>; <span class="r15 r">i</span>++)
+                {
+                    <span class="r13 r">objs</span>[<span class="r15 r">i</span>] = <b>new</b> <a href="#a3d4b7b3c7c506d4" class="t constructor">CommandLine</a>(<span class="r12 r">args</span>[<span class="r15 r">i</span>], <a href="#597e85ce2f23c9e6" class="i field">_table</a>).<a href="#dd529f6a85d5170e" class="i property">Result</a>.<a href="ObjectItem.cs.html#41cd2f1c4bbcfaec" class="i property">Value</a>;
+                }
+            }
+            <b>else</b>
+            {
+                <span class="r13 r">objs</span> = <b>new</b> <b>object</b>[0];
+            }
+            <span class="c">//If there is an instance, we should invoke a instance methods. </span>
+            <b>if</b> (<span class="r9 r">objectInstance</span> != <b>null</b>)
+            {
+                <b>try</b>
+                {
+                    <span class="c">//Try the instance methods first.</span>
+                    <span class="r14 r">returnValue</span> = <a href="ReflectionUtils.cs.html#a9a0b4fabf55f3fe" class="t t">ReflectionUtils</a>.<a href="ReflectionUtils.cs.html#a54873ae865789ec" class="i method">InvokeInstanceMethod</a>(<span class="r9 r">objectInstance</span>, <span class="r10 r">name</span>, <span class="r13 r">objs</span>);
+                }
+                <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r16 rd" class="r16 r">ex</span>)
+                {
+                    <span class="c">//Try the static methods.</span>
+                    <span class="c">//If there the invoking failures here, the Exception message is sent to the Error box.</span>
+                    <span class="r14 r">returnValue</span> = <a href="ReflectionUtils.cs.html#a9a0b4fabf55f3fe" class="t t">ReflectionUtils</a>.<a href="ReflectionUtils.cs.html#66a695df3c80df6c" class="i method">InvokeStaticMethod</a>(<span class="r9 r">objectInstance</span> <b>as</b> <a href="@1@System.Runtime/A.html#3d00eeab9feb80f3" class="t t">Type</a>, <span class="r10 r">name</span>, <span class="r13 r">objs</span>);
+                    <span class="t t">Debug</span>.<span class="i method">Write</span>(<span class="r16 r">ex</span>.<a href="@1@System.Runtime/A.html#e2e19f4ed8da81aa" class="i method">ToString</a>());
+                }
+            }
+            <span class="c">//Create the object. </span>
+            <b>else</b>
+            {
+                <span class="r14 r">returnValue</span> = <a href="ReflectionUtils.cs.html#a9a0b4fabf55f3fe" class="t t">ReflectionUtils</a>.<a href="ReflectionUtils.cs.html#b34a648e2f69bde6" class="i method">CreateInstanceOfType</a>(<span class="r10 r">name</span>, <span class="r13 r">objs</span>);
+            }
+
+            <b>return</b> <span class="r14 r">returnValue</span>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     This method helps recursivly retrieve propeties.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r17 r">o</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r18 r">name</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private</b> <a href="ObjectItem.cs.html#b5749a181bdb9ab4" class="t t">ObjectItem</a> <a id="4b16f19a23bcd69e" href="R/4b16f19a23bcd69e.html" target="n" data-glyph="76,1" class="i method">Get_Value</a>(<b>object</b> <span id="r17 rd" class="r17 r">o</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r18 rd" class="r18 r">name</span>)
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r19 rd" class="r19 r">parseError</span> = <span class="s">&quot;Parser error: the command line can&#39;t be evaluated!&quot;</span>;
+
+            <a href="ObjectItem.cs.html#b5749a181bdb9ab4" class="k">var</a> <span id="r20 rd" class="r20 r">result</span> = <b>new</b> <a href="ObjectItem.cs.html#d09a71553af96b54" class="t constructor">ObjectItem</a>(<b>null</b>, <b>null</b>);
+            <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<span class="r18 r">name</span>))
+            {
+                <b>return</b> <span class="r20 r">result</span>;
+            }
+
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r21 rd" class="r21 r">index</span> = <span class="r18 r">name</span>.<a href="@1@System.Runtime/A.html#eb06d6d166f6a3d9" class="i method">IndexOf</a>(<span class="s">&#39;.&#39;</span>);
+            <span class="r21 r">index</span> = (<span class="r21 r">index</span> &gt; 0) ? <span class="r21 r">index</span> : <span class="r18 r">name</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>;
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r22 rd" class="r22 r">left</span> = <span class="r18 r">name</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(0, <span class="r21 r">index</span>);
+
+            <span class="r20 r">result</span> = <a href="#fc4580c27ae016bc" class="i method">GetProperty</a>(<span class="r17 r">o</span>, <span class="r22 r">left</span>);
+
+            <b>if</b> (!<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<span class="r20 r">result</span>.<a href="ObjectItem.cs.html#00f3284f68d5987c" class="i property">Error</a>))
+            {
+                <span class="r20 r">result</span>.<a href="ObjectItem.cs.html#00f3284f68d5987c" class="i property">Error</a> = <span class="r19 r">parseError</span>;
+            }
+
+            <b>if</b> (<span class="r22 r">left</span> != <span class="r18 r">name</span>)
+            {
+                <b>if</b> (<span class="r20 r">result</span>.<a href="ObjectItem.cs.html#41cd2f1c4bbcfaec" class="i property">Value</a> == <b>null</b>)
+                {
+                    <span class="r20 r">result</span>.<a href="ObjectItem.cs.html#00f3284f68d5987c" class="i property">Error</a> = <span class="r19 r">parseError</span>;
+                }
+                <b>else</b>
+                {
+                    <span class="r20 r">result</span> = <a href="#4b16f19a23bcd69e" class="i method">Get_Value</a>(<span class="r20 r">result</span>.<a href="ObjectItem.cs.html#41cd2f1c4bbcfaec" class="i property">Value</a>, <span class="r18 r">name</span>.<a href="@1@System.Runtime/A.html#882fa7998d6ca35a" class="i method">Substring</a>(<span class="r21 r">index</span> + 1));
+                }
+            }
+
+            <b>return</b> <span class="r20 r">result</span>;
+        }
+
+        <b>private</b> <a href="ObjectItem.cs.html#b5749a181bdb9ab4" class="t t">ObjectItem</a> <a id="fc4580c27ae016bc" href="R/fc4580c27ae016bc.html" target="n" data-glyph="76,1" class="i method">GetProperty</a>(<b>object</b> <span id="r23 rd" class="r23 r">objectInstance</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r24 rd" class="r24 r">propertyName</span>)
+        {
+            <b>object</b> <span id="r25 rd" class="r25 r">returnValue</span> = <b>null</b>;
+            <b>for</b> (<a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r26 rd" class="r26 r">i</span> = 0; <span class="r26 r">i</span> &lt;= 8; <span class="r26 r">i</span>++)
+            {
+                <b>try</b>
+                {
+                    <b>switch</b> (<span class="r26 r">i</span>)
+                    {
+                        <b>case</b> 0:
+                            <span class="r25 r">returnValue</span> = <a href="ReflectionUtils.cs.html#a9a0b4fabf55f3fe" class="t t">ReflectionUtils</a>.<a href="ReflectionUtils.cs.html#7cae70de889c76ac" class="i method">GetField</a>(<span class="r23 r">objectInstance</span>, <span class="r24 r">propertyName</span>);
+                            <b>break</b>;
+                        <b>case</b> 1:
+
+                            <span class="r25 r">returnValue</span> = <a href="ReflectionUtils.cs.html#a9a0b4fabf55f3fe" class="t t">ReflectionUtils</a>.<a href="ReflectionUtils.cs.html#ff56fe025a77cb69" class="i method">GetProperty</a>(<span class="r23 r">objectInstance</span>, <span class="r24 r">propertyName</span>);
+                            <b>break</b>;
+                        <b>case</b> 2:
+                            <span class="r25 r">returnValue</span> = <a href="ReflectionUtils.cs.html#a9a0b4fabf55f3fe" class="t t">ReflectionUtils</a>.<a href="ReflectionUtils.cs.html#1300f77dba1dab12" class="i method">GetStaticField</a>(<span class="r23 r">objectInstance</span> <b>as</b> <a href="@1@System.Runtime/A.html#3d00eeab9feb80f3" class="t t">Type</a>, <span class="r24 r">propertyName</span>);
+                            <b>break</b>;
+                        <b>case</b> 3:
+                            <span class="r25 r">returnValue</span> = <a href="ReflectionUtils.cs.html#a9a0b4fabf55f3fe" class="t t">ReflectionUtils</a>.<a href="ReflectionUtils.cs.html#48b7f3bb48994fc6" class="i method">GetInterfaceProperty</a>(<span class="r23 r">objectInstance</span>, <span class="r24 r">propertyName</span>,
+                                <span class="r24 r">propertyName</span>);
+                            <b>break</b>;
+                        <b>case</b> 4:
+                            <span class="r25 r">returnValue</span> = <span class="t t">Convert</span>.<span class="i method">ToInt32</span>(<span class="r24 r">propertyName</span>);
+                            <b>break</b>;
+                        <b>case</b> 5:
+                            <span class="r25 r">returnValue</span> = <span class="t t">Convert</span>.<span class="i method">ToDouble</span>(<span class="r24 r">propertyName</span>);
+                            <b>break</b>;
+                        <b>case</b> 6:
+                            <b>if</b> (<span class="r24 r">propertyName</span>.<a href="@1@System.Runtime/A.html#23804789ea4c9c0e" class="i method">StartsWith</a>(<span class="s">&quot;\&quot;&quot;</span>) &amp;&amp; <span class="r24 r">propertyName</span>.<a href="@1@System.Runtime/A.html#cb74053b3f2d03f4" class="i method">EndsWith</a>(<span class="s">&quot;\&quot;&quot;</span>))
+                            {
+                                <span class="r25 r">returnValue</span> = <span class="r24 r">propertyName</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(1, <span class="r24 r">propertyName</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> - 2);
+                            }
+                            <b>else</b>
+                            {
+                                <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#df2d82d91ca29e40" class="t constructor">Exception</a>(<span class="s">&quot;error&quot;</span>);
+                            }
+                            <b>break</b>;
+                        <b>case</b> 7:
+
+                            <span class="r25 r">returnValue</span> = <a href="ReflectionUtils.cs.html#a9a0b4fabf55f3fe" class="t t">ReflectionUtils</a>.<a href="ReflectionUtils.cs.html#f72094f821c17009" class="i method">GetStaticProperty</a>(<span class="r23 r">objectInstance</span> <b>as</b> <a href="@1@System.Runtime/A.html#3d00eeab9feb80f3" class="t t">Type</a>, <span class="r24 r">propertyName</span>);
+                            <b>break</b>;
+                        <b>case</b> 8:
+                            <b>if</b> (<span class="r23 r">objectInstance</span> == <b>null</b>)
+                            {
+                                <span class="r25 r">returnValue</span> = <a href="ReflectionUtils.cs.html#a9a0b4fabf55f3fe" class="t t">ReflectionUtils</a>.<a href="ReflectionUtils.cs.html#9d4e40f18fd7dfac" class="i method">FindType</a>(<span class="r24 r">propertyName</span>);
+                            }
+                            <b>else</b>
+                            {
+                                <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#df2d82d91ca29e40" class="t constructor">Exception</a>(<span class="s">&quot;&quot;</span>);
+                            }
+                            <b>break</b>;
+                    }
+                    <b>return</b> <b>new</b> <a href="ObjectItem.cs.html#d09a71553af96b54" class="t constructor">ObjectItem</a>(<span class="r25 r">returnValue</span>, <span class="s">&quot;&quot;</span>);
+                }
+                <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r27 rd" class="r27 r">ex</span>)
+                {
+                    <span class="t t">Debug</span>.<span class="i method">Write</span>(<span class="r27 r">ex</span>.<a href="@1@System.Runtime/A.html#e2e19f4ed8da81aa" class="i method">ToString</a>());
+                }
+                <b>if</b> (<span class="r25 r">returnValue</span> != <b>null</b>)
+                {
+                    <b>break</b>;
+                }
+            }
+            <b>return</b> <b>new</b> <a href="ObjectItem.cs.html#d09a71553af96b54" class="t constructor">ObjectItem</a>(<b>null</b>, <span class="s">&quot;Parser error: the command line can&#39;t be evaluated!&quot;</span>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

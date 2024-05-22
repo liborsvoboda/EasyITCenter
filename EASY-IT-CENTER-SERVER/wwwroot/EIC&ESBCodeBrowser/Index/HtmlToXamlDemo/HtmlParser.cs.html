@@ -1,0 +1,548 @@
+﻿<!DOCTYPE html>
+<html><head><title>HtmlParser.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(539);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#HtmlToXamlDemo/HtmlParser.cs" target="_top">HtmlParser.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#HtmlToXamlDemo" target="_top">HelpProjects\WPF-MORE\Sample Applications\HtmlToXamlDemo\HtmlToXamlDemo.csproj</a> (HtmlToXamlDemo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Xml</span>;
+
+<span class="c">// StringBuilder</span>
+
+<span class="c">// important TODOS: </span>
+<span class="c">// TODO 1. Start tags: The ParseXmlElement function has been modified to be called after both the </span>
+<span class="c">// angle bracket &lt; and element name have been read, instead of just the &lt; bracket and some valid name character, </span>
+<span class="c">// previously the case. This change was made so that elements with optional closing tags could read a new</span>
+<span class="c">// element&#39;s start tag and decide whether they were required to close. However, there is a question of whether to</span>
+<span class="c">// handle this in the parser or lexical analyzer. It is currently handled in the parser - the lexical analyzer still</span>
+<span class="c">// recognizes a start tag opener as a &#39;&lt;&#39; + valid name start char; it is the parser that reads the actual name. </span>
+<span class="c">// this is correct behavior assuming that the name is a valid html name, because the lexical analyzer should not know anything</span>
+<span class="c">// about optional closing tags, etc. UPDATED: 10/13/2004: I am updating this to read the whole start tag of something </span>
+<span class="c">// that is not an HTML, treat it as empty, and add it to the tree. That way the converter will know it&#39;s there, but</span>
+<span class="c">// it will hvae no content. We could also partially recover by trying to look up and match names if they are similar</span>
+<span class="c">// TODO 2. Invalid element names: However, it might make sense to give the lexical analyzer the ability to identify</span>
+<span class="c">// a valid html element name and not return something as a start tag otherwise. For example, if we type &lt;good&gt;, should</span>
+<span class="c">// the lexical analyzer return that it has found the start of an element when this is not the case in HTML? But this will</span>
+<span class="c">// require implementing a lookahead token in the lexical analyzer so that it can treat an invalid element name as text. One </span>
+<span class="c">// character of lookahead will not be enough.</span>
+<span class="c">// TODO 3. Attributes: The attribute recovery is poor when reading attribute values in quotes - if no closing quotes are found,</span>
+<span class="c">// the lexical analyzer just keeps reading and if it eventually reaches the end of file, it would have just skipped everything.</span>
+<span class="c">// There are a couple of ways to deal with this: 1) stop reading attributes when we encounter a &#39;&gt;&#39; character - this doesn&#39;t allow</span>
+<span class="c">// the &#39;&gt;&#39; character to be used in attribute values, but it can still be used as an entity. 2) Maintain a HTML-specific list</span>
+<span class="c">// of attributes and their values that each html element can take, and if we find correct attribute namesand values for an</span>
+<span class="c">// element we use them regardless of the quotes, this way we could just ignore something invalid. One more option: 3) Read ahead</span>
+<span class="c">// in the quoted value and if we find an end of file, we can return to where we were and process as text. However this requires</span>
+<span class="c">// a lot of lookahead and a resettable reader.</span>
+<span class="c">// TODO 4: elements with optional closing tags: For elements with optional closing tags, we always close the element if we find</span>
+<span class="c">// that one of it&#39;s ancestors has closed. This condition may be too broad and we should develop a better heuristic. We should also</span>
+<span class="c">// improve the heuristics for closing certain elements when the next element starts</span>
+<span class="c">// TODO 5. Nesting: Support for unbalanced nesting, e.g. &lt;b&gt; &lt;i&gt; &lt;/b&gt; &lt;/i&gt;: this is not presently supported. To support it we may need</span>
+<span class="c">// to maintain two xml elements, one the element that represents what has already been read and another represents what we are presently reading.</span>
+<span class="c">// Then if we encounter an unbalanced nesting tag we could close the element that was supposed to close, save the current element</span>
+<span class="c">// and store it in the list of already-read content, and then open a new element to which all tags that are currently open</span>
+<span class="c">// can be applied. Is there a better way to do this? Should we do it at all?</span>
+<span class="c">// TODO 6. Elements with optional starting tags: there are 4 such elements in the HTML 4 specification - html, tbody, body and head.</span>
+<span class="c">// The current recovery doesn;t do anything for any of these elements except the html element, because it&#39;s not critical - head</span>
+<span class="c">// and body elementscan be contained within html element, and tbody is contained within table. To extend this for XHTML </span>
+<span class="c">// extensions, and to recover in case other elements are missing start tags, we would need to insert an extra recursive call</span>
+<span class="c">// to ParseXmlElement for the missing start tag. It is suggested to do this by giving ParseXmlElement an argument that specifies</span>
+<span class="c">// a name to use. If this argument is null, it  assumes its name is the next token from the lexical analyzer and continues</span>
+<span class="c">// exactly as it does now. However, if the argument contains a valid html element name then it takes that value as its name</span>
+<span class="c">// and continues as before. This way, if the next token is the element that should actually be its child, it will see</span>
+<span class="c">// the name in the next step and initiate a recursive call. We would also need to add some logic in the loop for when a start tag</span>
+<span class="c">// is found - if the start tag is not compatible with current context and indicates that a start tag has been missed, then we</span>
+<span class="c">// can initiate the extra recursive call and give it the name of the missed start tag. The issues are when to insert this logic,</span>
+<span class="c">// and if we want to support it over multiple missing start tags. If we insert it at the time a start tag is read in element</span>
+<span class="c">// text,  then we can support only one missing start tag, since the extra call will read the next start tag and make a recursive</span>
+<span class="c">// call without checking the context. This is a conceptual problem, and the check should be made just before a recursive call,</span>
+<span class="c">// with the choice being whether we should supply an element name as argument, or leave it as NULL and read from the input</span>
+<span class="c">// TODO 7: Context: Is it appropriate to keep track of context here? For example, should we only expect td, tr elements when</span>
+<span class="c">// reading a table and ignore them otherwise? This may be too much of a load on the parser, I think it&#39;s better if the converter</span>
+<span class="c">// deals with it</span>
+
+<b>namespace</b> <span class="i n">HtmlToXamlDemo</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     HtmlParser class accepts a string of possibly badly formed Html, parses it and returns a string</span>
+    <span class="c">///</span><span class="c">     of well-formed Html that is as close to the original string in content as possible</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>internal class</b> <a id="4266efe2bed168a1" href="R/4266efe2bed168a1.html" target="n" data-glyph="2,0" class="t t">HtmlParser</a>
+    {
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Constructors</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructors
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Constructor. Initializes the _htmlLexicalAnalayzer element with the given input string</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">inputString</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     string to parsed into well-formed Html</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private</b> <a id="b7bd1ee849429956" href="R/b7bd1ee849429956.html" target="n" data-glyph="76,1" class="t constructor">HtmlParser</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">inputString</span>)
+        {
+            <span class="c">// Create an output xml document</span>
+            <a href="#d4aeebd5ac7e4d37" class="i field">_document</a> = <b>new</b> <span class="t constructor">XmlDocument</span>();
+
+            <span class="c">// initialize open tag stack</span>
+            <a href="#6830175fa880e7a5" class="i field">_openedElements</a> = <b>new</b> <span class="t constructor">Stack</span>&lt;<span class="t t">XmlElement</span>&gt;();
+
+            <a href="#b5c510c0d7c0e80b" class="i field">_pendingInlineElements</a> = <b>new</b> <span class="t constructor">Stack</span>&lt;<span class="t t">XmlElement</span>&gt;();
+
+            <span class="c">// initialize lexical analyzer</span>
+            <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a> = <b>new</b> <a href="HtmlLexicalAnalyzer.cs.html#950f6db5d11be37b" class="t constructor">HtmlLexicalAnalyzer</a>(<span class="r0 r">inputString</span>);
+
+            <span class="c">// get first token from input, expecting text</span>
+            <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#61b1fb96dfa18c03" class="i method">GetNextContentToken</a>();
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Constructors
+
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Internal Methods</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Internal Methods
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Instantiates an HtmlParser element and calls the parsing function on the given input string</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">htmlString</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Input string of pssibly badly-formed Html to be parsed into well-formed Html</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     XmlElement rep</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>internal static</b> <span class="t t">XmlElement</span> <a id="ba55482ed64d30eb" href="R/ba55482ed64d30eb.html" target="n" data-glyph="74,1" class="i method">ParseHtml</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r1 rd" class="r1 r">htmlString</span>)
+        {
+            <a href="#4266efe2bed168a1" class="k">var</a> <span id="r2 rd" class="r2 r">htmlParser</span> = <b>new</b> <a href="#b7bd1ee849429956" class="t constructor">HtmlParser</a>(<span class="r1 r">htmlString</span>);
+
+            <b>var</b> <span id="r3 rd" class="r3 r">htmlRootElement</span> = <span class="r2 r">htmlParser</span>.<a href="#69cf13e3a4e3e326" class="i method">ParseHtmlContent</a>();
+
+            <b>return</b> <span class="r3 r">htmlRootElement</span>;
+        }
+
+        <span class="c">// .....................................................................</span>
+        <span class="c">//</span>
+        <span class="c">// Html Header on Clipboard</span>
+        <span class="c">//</span>
+        <span class="c">// .....................................................................</span>
+
+        <span class="c">// Html header structure.</span>
+        <span class="c">//      Version:1.0</span>
+        <span class="c">//      StartHTML:000000000</span>
+        <span class="c">//      EndHTML:000000000</span>
+        <span class="c">//      StartFragment:000000000</span>
+        <span class="c">//      EndFragment:000000000</span>
+        <span class="c">//      StartSelection:000000000</span>
+        <span class="c">//      EndSelection:000000000</span>
+        <b>internal const string</b> <a id="6e927a4ba616e6c2" href="R/6e927a4ba616e6c2.html" target="n" data-glyph="8,1" class="i field">HtmlHeader</a> =
+            <span class="s">&quot;Version:1.0\r\nStartHTML:{0:D10}\r\nEndHTML:{1:D10}\r\nStartFragment:{2:D10}\r\nEndFragment:{3:D10}\r\nStartSelection:{4:D10}\r\nEndSelection:{5:D10}\r\n&quot;</span>;
+
+        <b>internal const string</b> <a id="6c59f2ec6ea67c8a" href="R/6c59f2ec6ea67c8a.html" target="n" data-glyph="8,1" class="i field">HtmlStartFragmentComment</a> = <span class="s">&quot;&lt;!--StartFragment--&gt;&quot;</span>;
+        <b>internal const string</b> <a id="c0e3ca1ed049b049" href="R/c0e3ca1ed049b049.html" target="n" data-glyph="8,1" class="i field">HtmlEndFragmentComment</a> = <span class="s">&quot;&lt;!--EndFragment--&gt;&quot;</span>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Extracts Html string from clipboard data by parsing header information in htmlDataString</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r4 r">htmlDataString</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     String representing Html clipboard data. This includes Html header</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     String containing only the Html data part of htmlDataString, without header</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>internal static string</b> <a id="6f7b4158ba0346d6" href="R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ExtractHtmlFromClipboardData</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r4 rd" class="r4 r">htmlDataString</span>)
+        {
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r5 rd" class="r5 r">startHtmlIndex</span> = <span class="r4 r">htmlDataString</span>.<a href="@1@System.Runtime/A.html#7d6aed52d875ec59" class="i method">IndexOf</a>(<span class="s">&quot;StartHTML:&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>);
+            <b>if</b> (<span class="r5 r">startHtmlIndex</span> &lt; 0)
+            {
+                <b>return</b> <span class="s">&quot;ERROR: Urecognized html header&quot;</span>;
+            }
+            <span class="c">// TODO: We assume that indices represented by strictly 10 zeros (&quot;0123456789&quot;.Length),</span>
+            <span class="c">// which could be wrong assumption. We need to implement more flrxible parsing here</span>
+            <span class="r5 r">startHtmlIndex</span> =
+                <b>int</b>.<a href="@1@System.Runtime/A.html#a438016f815a35c3" class="i method">Parse</a>(<span class="r4 r">htmlDataString</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(<span class="r5 r">startHtmlIndex</span> + <span class="s">&quot;StartHTML:&quot;</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>, <span class="s">&quot;0123456789&quot;</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>));
+            <b>if</b> (<span class="r5 r">startHtmlIndex</span> &lt; 0 || <span class="r5 r">startHtmlIndex</span> &gt; <span class="r4 r">htmlDataString</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>)
+            {
+                <b>return</b> <span class="s">&quot;ERROR: Urecognized html header&quot;</span>;
+            }
+
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r6 rd" class="r6 r">endHtmlIndex</span> = <span class="r4 r">htmlDataString</span>.<a href="@1@System.Runtime/A.html#7d6aed52d875ec59" class="i method">IndexOf</a>(<span class="s">&quot;EndHTML:&quot;</span>, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>);
+            <b>if</b> (<span class="r6 r">endHtmlIndex</span> &lt; 0)
+            {
+                <b>return</b> <span class="s">&quot;ERROR: Urecognized html header&quot;</span>;
+            }
+            <span class="c">// TODO: We assume that indices represented by strictly 10 zeros (&quot;0123456789&quot;.Length),</span>
+            <span class="c">// which could be wrong assumption. We need to implement more flrxible parsing here</span>
+            <span class="r6 r">endHtmlIndex</span> = <b>int</b>.<a href="@1@System.Runtime/A.html#a438016f815a35c3" class="i method">Parse</a>(<span class="r4 r">htmlDataString</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(<span class="r6 r">endHtmlIndex</span> + <span class="s">&quot;EndHTML:&quot;</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>, <span class="s">&quot;0123456789&quot;</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>));
+            <b>if</b> (<span class="r6 r">endHtmlIndex</span> &gt; <span class="r4 r">htmlDataString</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>)
+            {
+                <span class="r6 r">endHtmlIndex</span> = <span class="r4 r">htmlDataString</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>;
+            }
+
+            <b>return</b> <span class="r4 r">htmlDataString</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>(<span class="r5 r">startHtmlIndex</span>, <span class="r6 r">endHtmlIndex</span> - <span class="r5 r">startHtmlIndex</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Adds Xhtml header information to Html data string so that it can be placed on clipboard</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">htmlString</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Html string to be placed on clipboard with appropriate header</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     String wrapping htmlString with appropriate Html header</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>internal static string</b> <a id="1db7900e4a152112" href="R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">AddHtmlClipboardHeader</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r7 rd" class="r7 r">htmlString</span>)
+        {
+            <a href="@1@System.Runtime/A.html#adf60ee46ebd299f" class="k">var</a> <span id="r8 rd" class="r8 r">stringBuilder</span> = <b>new</b> <a href="@1@System.Runtime/A.html#6e631639c1e2746b" class="t constructor">StringBuilder</a>();
+
+            <span class="c">// each of 6 numbers is represented by &quot;{0:D10}&quot; in the format string</span>
+            <span class="c">// must actually occupy 10 digit positions (&quot;0123456789&quot;)</span>
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r9 rd" class="r9 r">startHtml</span> = <a href="#6e927a4ba616e6c2" class="i field">HtmlHeader</a>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> + 6*(<span class="s">&quot;0123456789&quot;</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> - <span class="s">&quot;{0:D10}&quot;</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>);
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r10 rd" class="r10 r">endHtml</span> = <span class="r9 r">startHtml</span> + <span class="r7 r">htmlString</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>;
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r11 rd" class="r11 r">startFragment</span> = <span class="r7 r">htmlString</span>.<a href="@1@System.Runtime/A.html#3b7fbc076e08ccb8" class="i method">IndexOf</a>(<a href="#6c59f2ec6ea67c8a" class="i field">HtmlStartFragmentComment</a>, 0, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>);
+            <b>if</b> (<span class="r11 r">startFragment</span> &gt;= 0)
+            {
+                <span class="r11 r">startFragment</span> = <span class="r9 r">startHtml</span> + <span class="r11 r">startFragment</span> + <a href="#6c59f2ec6ea67c8a" class="i field">HtmlStartFragmentComment</a>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>;
+            }
+            <b>else</b>
+            {
+                <span class="r11 r">startFragment</span> = <span class="r9 r">startHtml</span>;
+            }
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r12 rd" class="r12 r">endFragment</span> = <span class="r7 r">htmlString</span>.<a href="@1@System.Runtime/A.html#3b7fbc076e08ccb8" class="i method">IndexOf</a>(<a href="#c0e3ca1ed049b049" class="i field">HtmlEndFragmentComment</a>, 0, <a href="@1@System.Runtime/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@1@System.Runtime/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>);
+            <b>if</b> (<span class="r12 r">endFragment</span> &gt;= 0)
+            {
+                <span class="r12 r">endFragment</span> = <span class="r9 r">startHtml</span> + <span class="r12 r">endFragment</span>;
+            }
+            <b>else</b>
+            {
+                <span class="r12 r">endFragment</span> = <span class="r10 r">endHtml</span>;
+            }
+
+            <span class="c">// Create HTML clipboard header string</span>
+            <span class="r8 r">stringBuilder</span>.<a href="@1@System.Runtime/A.html#a7675b19098e0787" class="i method">AppendFormat</a>(<a href="#6e927a4ba616e6c2" class="i field">HtmlHeader</a>, <span class="r9 r">startHtml</span>, <span class="r10 r">endHtml</span>, <span class="r11 r">startFragment</span>, <span class="r12 r">endFragment</span>, <span class="r11 r">startFragment</span>,
+                <span class="r12 r">endFragment</span>);
+
+            <span class="c">// Append HTML body.</span>
+            <span class="r8 r">stringBuilder</span>.<a href="@1@System.Runtime/A.html#e8eaef3c361184bc" class="i method">Append</a>(<span class="r7 r">htmlString</span>);
+
+            <b>return</b> <span class="r8 r">stringBuilder</span>.<a href="@1@System.Runtime/A.html#5a97da49a158a3c9" class="i method">ToString</a>();
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Internal Methods
+
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Private methods</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Methods
+
+        <b>private void</b> <a id="2c656eccb58094e8" href="R/2c656eccb58094e8.html" target="n" data-glyph="76,1" class="i method">InvariantAssert</a>(<b>bool</b> <span id="r13 rd" class="r13 r">condition</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r14 rd" class="r14 r">message</span>)
+        {
+            <b>if</b> (!<span class="r13 r">condition</span>)
+            {
+                <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#df2d82d91ca29e40" class="t constructor">Exception</a>(<span class="s">&quot;Assertion error: &quot;</span> + <span class="r14 r">message</span>);
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Parses the stream of html tokens starting</span>
+        <span class="c">///</span><span class="c">     from the name of top-level element.</span>
+        <span class="c">///</span><span class="c">     Returns XmlElement representing the top-level</span>
+        <span class="c">///</span><span class="c">     html element</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <span class="t t">XmlElement</span> <a id="69cf13e3a4e3e326" href="R/69cf13e3a4e3e326.html" target="n" data-glyph="76,1" class="i method">ParseHtmlContent</a>()
+        {
+            <span class="c">// Create artificial root elelemt to be able to group multiple top-level elements</span>
+            <span class="c">// We create &quot;html&quot; element which may be a duplicate of real HTML element, which is ok, as HtmlConverter will swallow it painlessly..</span>
+            <b>var</b> <span id="r15 rd" class="r15 r">htmlRootElement</span> = <a href="#d4aeebd5ac7e4d37" class="i field">_document</a>.<span class="i method">CreateElement</span>(<span class="s">&quot;html&quot;</span>, <a href="#77eab4c3778cf47c" class="i field">XhtmlNamespace</a>);
+            <a href="#69df6b9a72bbf8d1" class="i method">OpenStructuringElement</a>(<span class="r15 r">htmlRootElement</span>);
+
+            <b>while</b> (<a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#1d0c0a853fbd0488" class="i property">NextTokenType</a> != <a href="HtmlTokenType.cs.html#944cc32beb6ea00c" class="t t">HtmlTokenType</a>.<a href="HtmlTokenType.cs.html#929d1b7d5450303b" class="i field">Eof</a>)
+            {
+                <b>if</b> (<a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#1d0c0a853fbd0488" class="i property">NextTokenType</a> == <a href="HtmlTokenType.cs.html#944cc32beb6ea00c" class="t t">HtmlTokenType</a>.<a href="HtmlTokenType.cs.html#7e6677e222fa8666" class="i field">OpeningTagStart</a>)
+                {
+                    <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#bd57ecd2b002840b" class="i method">GetNextTagToken</a>();
+                    <b>if</b> (<a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#1d0c0a853fbd0488" class="i property">NextTokenType</a> == <a href="HtmlTokenType.cs.html#944cc32beb6ea00c" class="t t">HtmlTokenType</a>.<a href="HtmlTokenType.cs.html#dad1c1b65f1185cf" class="i field">Name</a>)
+                    {
+                        <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r16 rd" class="r16 r">htmlElementName</span> = <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#c9340dc296c154d5" class="i property">NextToken</a>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>();
+                        <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#bd57ecd2b002840b" class="i method">GetNextTagToken</a>();
+
+                        <span class="c">// Create an element</span>
+                        <b>var</b> <span id="r17 rd" class="r17 r">htmlElement</span> = <a href="#d4aeebd5ac7e4d37" class="i field">_document</a>.<span class="i method">CreateElement</span>(<span class="r16 r">htmlElementName</span>, <a href="#77eab4c3778cf47c" class="i field">XhtmlNamespace</a>);
+
+                        <span class="c">// Parse element attributes</span>
+                        <a href="#9b1e39f6604f5589" class="i method">ParseAttributes</a>(<span class="r17 r">htmlElement</span>);
+
+                        <b>if</b> (<a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#1d0c0a853fbd0488" class="i property">NextTokenType</a> == <a href="HtmlTokenType.cs.html#944cc32beb6ea00c" class="t t">HtmlTokenType</a>.<a href="HtmlTokenType.cs.html#de97da5767e89e87" class="i field">EmptyTagEnd</a> ||
+                            <a href="HtmlSchema.cs.html#41ad703b42e0f15f" class="t t">HtmlSchema</a>.<a href="HtmlSchema.cs.html#6c4565a18744627c" class="i method">IsEmptyElement</a>(<span class="r16 r">htmlElementName</span>))
+                        {
+                            <span class="c">// It is an element without content (because of explicit slash or based on implicit knowledge aboout html)</span>
+                            <a href="#be97b9ad520644bf" class="i method">AddEmptyElement</a>(<span class="r17 r">htmlElement</span>);
+                        }
+                        <b>else</b> <b>if</b> (<a href="HtmlSchema.cs.html#41ad703b42e0f15f" class="t t">HtmlSchema</a>.<a href="HtmlSchema.cs.html#66af7814be09a83a" class="i method">IsInlineElement</a>(<span class="r16 r">htmlElementName</span>))
+                        {
+                            <span class="c">// Elements known as formatting are pushed to some special</span>
+                            <span class="c">// pending stack, which allows them to be transferred</span>
+                            <span class="c">// over block tags - by doing this we convert</span>
+                            <span class="c">// overlapping tags into normal heirarchical element structure.</span>
+                            <a href="#807e9fd80182bc37" class="i method">OpenInlineElement</a>(<span class="r17 r">htmlElement</span>);
+                        }
+                        <b>else</b> <b>if</b> (<a href="HtmlSchema.cs.html#41ad703b42e0f15f" class="t t">HtmlSchema</a>.<a href="HtmlSchema.cs.html#6d31aa47e7b94d04" class="i method">IsBlockElement</a>(<span class="r16 r">htmlElementName</span>) ||
+                                 <a href="HtmlSchema.cs.html#41ad703b42e0f15f" class="t t">HtmlSchema</a>.<a href="HtmlSchema.cs.html#3e8d29ca3dbfe017" class="i method">IsKnownOpenableElement</a>(<span class="r16 r">htmlElementName</span>))
+                        {
+                            <span class="c">// This includes no-scope elements</span>
+                            <a href="#69df6b9a72bbf8d1" class="i method">OpenStructuringElement</a>(<span class="r17 r">htmlElement</span>);
+                        }
+                    }
+                }
+                <b>else</b> <b>if</b> (<a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#1d0c0a853fbd0488" class="i property">NextTokenType</a> == <a href="HtmlTokenType.cs.html#944cc32beb6ea00c" class="t t">HtmlTokenType</a>.<a href="HtmlTokenType.cs.html#84f765d19a0ff476" class="i field">ClosingTagStart</a>)
+                {
+                    <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#bd57ecd2b002840b" class="i method">GetNextTagToken</a>();
+                    <b>if</b> (<a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#1d0c0a853fbd0488" class="i property">NextTokenType</a> == <a href="HtmlTokenType.cs.html#944cc32beb6ea00c" class="t t">HtmlTokenType</a>.<a href="HtmlTokenType.cs.html#dad1c1b65f1185cf" class="i field">Name</a>)
+                    {
+                        <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r18 rd" class="r18 r">htmlElementName</span> = <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#c9340dc296c154d5" class="i property">NextToken</a>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>();
+
+                        <span class="c">// Skip the name token. Assume that the following token is end of tag,</span>
+                        <span class="c">// but do not check this. If it is not true, we simply ignore one token</span>
+                        <span class="c">// - this is our recovery from bad xml in this case.</span>
+                        <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#bd57ecd2b002840b" class="i method">GetNextTagToken</a>();
+
+                        <a href="#e8a56f1d1c33d074" class="i method">CloseElement</a>(<span class="r18 r">htmlElementName</span>);
+                    }
+                }
+                <b>else</b> <b>if</b> (<a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#1d0c0a853fbd0488" class="i property">NextTokenType</a> == <a href="HtmlTokenType.cs.html#944cc32beb6ea00c" class="t t">HtmlTokenType</a>.<a href="HtmlTokenType.cs.html#cabe124dfa22d82f" class="i field">Text</a>)
+                {
+                    <a href="#039da82400b95d45" class="i method">AddTextContent</a>(<a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#c9340dc296c154d5" class="i property">NextToken</a>);
+                }
+                <b>else</b> <b>if</b> (<a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#1d0c0a853fbd0488" class="i property">NextTokenType</a> == <a href="HtmlTokenType.cs.html#944cc32beb6ea00c" class="t t">HtmlTokenType</a>.<a href="HtmlTokenType.cs.html#4f366d4e7b88b980" class="i field">Comment</a>)
+                {
+                    <a href="#58221faaabdc1ffe" class="i method">AddComment</a>(<a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#c9340dc296c154d5" class="i property">NextToken</a>);
+                }
+
+                <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#61b1fb96dfa18c03" class="i method">GetNextContentToken</a>();
+            }
+
+            <span class="c">// Get rid of the artificial root element</span>
+            <b>if</b> (<span class="r15 r">htmlRootElement</span>.<span class="i property">FirstChild</span> <b>is</b> <span class="t t">XmlElement</span> &amp;&amp;
+                <span class="r15 r">htmlRootElement</span>.<span class="i property">FirstChild</span> == <span class="r15 r">htmlRootElement</span>.<span class="i property">LastChild</span> &amp;&amp;
+                <span class="r15 r">htmlRootElement</span>.<span class="i property">FirstChild</span>.<span class="i property">LocalName</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>() == <span class="s">&quot;html&quot;</span>)
+            {
+                <span class="r15 r">htmlRootElement</span> = (<span class="t t">XmlElement</span>) <span class="r15 r">htmlRootElement</span>.<span class="i property">FirstChild</span>;
+            }
+
+            <b>return</b> <span class="r15 r">htmlRootElement</span>;
+        }
+
+        <b>private</b> <span class="t t">XmlElement</span> <a id="50b3b50b39ca9056" href="R/50b3b50b39ca9056.html" target="n" data-glyph="76,1" class="i method">CreateElementCopy</a>(<span class="t t">XmlElement</span> <span id="r19 rd" class="r19 r">htmlElement</span>)
+        {
+            <b>var</b> <span id="r20 rd" class="r20 r">htmlElementCopy</span> = <a href="#d4aeebd5ac7e4d37" class="i field">_document</a>.<span class="i method">CreateElement</span>(<span class="r19 r">htmlElement</span>.<span class="i property">LocalName</span>, <a href="#77eab4c3778cf47c" class="i field">XhtmlNamespace</a>);
+            <b>for</b> (<a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r21 rd" class="r21 r">i</span> = 0; <span class="r21 r">i</span> &lt; <span class="r19 r">htmlElement</span>.<span class="i property">Attributes</span>.<span class="i property">Count</span>; <span class="r21 r">i</span>++)
+            {
+                <b>var</b> <span id="r22 rd" class="r22 r">attribute</span> = <span class="r19 r">htmlElement</span>.<span class="i property">Attributes</span>[<span class="r21 r">i</span>];
+                <span class="r20 r">htmlElementCopy</span>.<span class="i method">SetAttribute</span>(<span class="r22 r">attribute</span>.<span class="i property">Name</span>, <span class="r22 r">attribute</span>.<span class="i property">Value</span>);
+            }
+            <b>return</b> <span class="r20 r">htmlElementCopy</span>;
+        }
+
+        <b>private void</b> <a id="be97b9ad520644bf" href="R/be97b9ad520644bf.html" target="n" data-glyph="76,1" class="i method">AddEmptyElement</a>(<span class="t t">XmlElement</span> <span id="r23 rd" class="r23 r">htmlEmptyElement</span>)
+        {
+            <a href="#2c656eccb58094e8" class="i method">InvariantAssert</a>(<a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i property">Count</span> &gt; 0,
+                <span class="s">&quot;AddEmptyElement: Stack of opened elements cannot be empty, as we have at least one artificial root element&quot;</span>);
+            <b>var</b> <span id="r24 rd" class="r24 r">htmlParent</span> = <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Peek</span>();
+            <span class="r24 r">htmlParent</span>.<span class="i method">AppendChild</span>(<span class="r23 r">htmlEmptyElement</span>);
+        }
+
+        <b>private void</b> <a id="807e9fd80182bc37" href="R/807e9fd80182bc37.html" target="n" data-glyph="76,1" class="i method">OpenInlineElement</a>(<span class="t t">XmlElement</span> <span id="r25 rd" class="r25 r">htmlInlineElement</span>)
+        {
+            <a href="#b5c510c0d7c0e80b" class="i field">_pendingInlineElements</a>.<span class="i method">Push</span>(<span class="r25 r">htmlInlineElement</span>);
+        }
+
+        <span class="c">// Opens structurig element such as Div or Table etc.</span>
+        <b>private void</b> <a id="69df6b9a72bbf8d1" href="R/69df6b9a72bbf8d1.html" target="n" data-glyph="76,1" class="i method">OpenStructuringElement</a>(<span class="t t">XmlElement</span> <span id="r26 rd" class="r26 r">htmlElement</span>)
+        {
+            <span class="c">// Close all pending inline elements</span>
+            <span class="c">// All block elements are considered as delimiters for inline elements</span>
+            <span class="c">// which forces all inline elements to be closed and re-opened in the following</span>
+            <span class="c">// structural element (if any).</span>
+            <span class="c">// By doing that we guarantee that all inline elements appear only within most nested blocks</span>
+            <b>if</b> (<a href="HtmlSchema.cs.html#41ad703b42e0f15f" class="t t">HtmlSchema</a>.<a href="HtmlSchema.cs.html#6d31aa47e7b94d04" class="i method">IsBlockElement</a>(<span class="r26 r">htmlElement</span>.<span class="i property">LocalName</span>))
+            {
+                <b>while</b> (<a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i property">Count</span> &gt; 0 &amp;&amp; <a href="HtmlSchema.cs.html#41ad703b42e0f15f" class="t t">HtmlSchema</a>.<a href="HtmlSchema.cs.html#66af7814be09a83a" class="i method">IsInlineElement</a>(<a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Peek</span>().<span class="i property">LocalName</span>))
+                {
+                    <b>var</b> <span id="r27 rd" class="r27 r">htmlInlineElement</span> = <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Pop</span>();
+                    <a href="#2c656eccb58094e8" class="i method">InvariantAssert</a>(<a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i property">Count</span> &gt; 0,
+                        <span class="s">&quot;OpenStructuringElement: stack of opened elements cannot become empty here&quot;</span>);
+
+                    <a href="#b5c510c0d7c0e80b" class="i field">_pendingInlineElements</a>.<span class="i method">Push</span>(<a href="#50b3b50b39ca9056" class="i method">CreateElementCopy</a>(<span class="r27 r">htmlInlineElement</span>));
+                }
+            }
+
+            <span class="c">// Add this block element to its parent</span>
+            <b>if</b> (<a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i property">Count</span> &gt; 0)
+            {
+                <b>var</b> <span id="r28 rd" class="r28 r">htmlParent</span> = <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Peek</span>();
+
+                <span class="c">// Check some known block elements for auto-closing (LI and P)</span>
+                <b>if</b> (<a href="HtmlSchema.cs.html#41ad703b42e0f15f" class="t t">HtmlSchema</a>.<a href="HtmlSchema.cs.html#be124105b30b2b40" class="i method">ClosesOnNextElementStart</a>(<span class="r28 r">htmlParent</span>.<span class="i property">LocalName</span>, <span class="r26 r">htmlElement</span>.<span class="i property">LocalName</span>))
+                {
+                    <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Pop</span>();
+                    <span class="r28 r">htmlParent</span> = <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i property">Count</span> &gt; 0 ? <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Peek</span>() : <b>null</b>;
+                }
+
+                <span class="c">// NOTE:</span>
+                <span class="c">// Actually we never expect null - it would mean two top-level P or LI (without a parent).</span>
+                <span class="c">// In such weird case we will loose all paragraphs except the first one...</span>
+                <span class="r28 r">htmlParent</span>?.<span class="i method">AppendChild</span>(<span class="r26 r">htmlElement</span>);
+            }
+
+            <span class="c">// Push it onto a stack</span>
+            <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Push</span>(<span class="r26 r">htmlElement</span>);
+        }
+
+        <b>private bool</b> <a id="83f6efa3824de2dd" href="R/83f6efa3824de2dd.html" target="n" data-glyph="76,1" class="i method">IsElementOpened</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r29 rd" class="r29 r">htmlElementName</span>) =&gt; <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Any</span>(<span id="r30 rd" class="r30 r">openedElement</span> =&gt; <span class="r30 r">openedElement</span>.<span class="i property">LocalName</span> == <span class="r29 r">htmlElementName</span>);
+
+        <b>private void</b> <a id="e8a56f1d1c33d074" href="R/e8a56f1d1c33d074.html" target="n" data-glyph="76,1" class="i method">CloseElement</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r31 rd" class="r31 r">htmlElementName</span>)
+        {
+            <span class="c">// Check if the element is opened and already added to the parent</span>
+            <a href="#2c656eccb58094e8" class="i method">InvariantAssert</a>(<a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i property">Count</span> &gt; 0,
+                <span class="s">&quot;CloseElement: Stack of opened elements cannot be empty, as we have at least one artificial root element&quot;</span>);
+
+            <span class="c">// Check if the element is opened and still waiting to be added to the parent</span>
+            <b>if</b> (<a href="#b5c510c0d7c0e80b" class="i field">_pendingInlineElements</a>.<span class="i property">Count</span> &gt; 0 &amp;&amp; <a href="#b5c510c0d7c0e80b" class="i field">_pendingInlineElements</a>.<span class="i method">Peek</span>().<span class="i property">LocalName</span> == <span class="r31 r">htmlElementName</span>)
+            {
+                <span class="c">// Closing an empty inline element.</span>
+                <span class="c">// Note that HtmlConverter will skip empty inlines, but for completeness we keep them here on parser level.</span>
+                <b>var</b> <span id="r32 rd" class="r32 r">htmlInlineElement</span> = <a href="#b5c510c0d7c0e80b" class="i field">_pendingInlineElements</a>.<span class="i method">Pop</span>();
+                <a href="#2c656eccb58094e8" class="i method">InvariantAssert</a>(<a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i property">Count</span> &gt; 0,
+                    <span class="s">&quot;CloseElement: Stack of opened elements cannot be empty, as we have at least one artificial root element&quot;</span>);
+                <b>var</b> <span id="r33 rd" class="r33 r">htmlParent</span> = <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Peek</span>();
+                <span class="r33 r">htmlParent</span>.<span class="i method">AppendChild</span>(<span class="r32 r">htmlInlineElement</span>);
+            }
+            <b>else</b> <b>if</b> (<a href="#83f6efa3824de2dd" class="i method">IsElementOpened</a>(<span class="r31 r">htmlElementName</span>))
+            {
+                <b>while</b> (<a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i property">Count</span> &gt; 1) <span class="c">// we never pop the last element - the artificial root</span>
+                {
+                    <span class="c">// Close all unbalanced elements.</span>
+                    <b>var</b> <span id="r34 rd" class="r34 r">htmlOpenedElement</span> = <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Pop</span>();
+
+                    <b>if</b> (<span class="r34 r">htmlOpenedElement</span>.<span class="i property">LocalName</span> == <span class="r31 r">htmlElementName</span>)
+                    {
+                        <b>return</b>;
+                    }
+
+                    <b>if</b> (<a href="HtmlSchema.cs.html#41ad703b42e0f15f" class="t t">HtmlSchema</a>.<a href="HtmlSchema.cs.html#66af7814be09a83a" class="i method">IsInlineElement</a>(<span class="r34 r">htmlOpenedElement</span>.<span class="i property">LocalName</span>))
+                    {
+                        <span class="c">// Unbalances Inlines will be transfered to the next element content</span>
+                        <a href="#b5c510c0d7c0e80b" class="i field">_pendingInlineElements</a>.<span class="i method">Push</span>(<a href="#50b3b50b39ca9056" class="i method">CreateElementCopy</a>(<span class="r34 r">htmlOpenedElement</span>));
+                    }
+                }
+            }
+
+            <span class="c">// If element was not opened, we simply ignore the unbalanced closing tag</span>
+        }
+
+        <b>private void</b> <a id="039da82400b95d45" href="R/039da82400b95d45.html" target="n" data-glyph="76,1" class="i method">AddTextContent</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r35 rd" class="r35 r">textContent</span>)
+        {
+            <a href="#ad2973d4919a2811" class="i method">OpenPendingInlineElements</a>();
+
+            <a href="#2c656eccb58094e8" class="i method">InvariantAssert</a>(<a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i property">Count</span> &gt; 0,
+                <span class="s">&quot;AddTextContent: Stack of opened elements cannot be empty, as we have at least one artificial root element&quot;</span>);
+
+            <b>var</b> <span id="r36 rd" class="r36 r">htmlParent</span> = <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Peek</span>();
+            <b>var</b> <span id="r37 rd" class="r37 r">textNode</span> = <a href="#d4aeebd5ac7e4d37" class="i field">_document</a>.<span class="i method">CreateTextNode</span>(<span class="r35 r">textContent</span>);
+            <span class="r36 r">htmlParent</span>.<span class="i method">AppendChild</span>(<span class="r37 r">textNode</span>);
+        }
+
+        <b>private void</b> <a id="58221faaabdc1ffe" href="R/58221faaabdc1ffe.html" target="n" data-glyph="76,1" class="i method">AddComment</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r38 rd" class="r38 r">comment</span>)
+        {
+            <a href="#ad2973d4919a2811" class="i method">OpenPendingInlineElements</a>();
+
+            <a href="#2c656eccb58094e8" class="i method">InvariantAssert</a>(<a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i property">Count</span> &gt; 0,
+                <span class="s">&quot;AddComment: Stack of opened elements cannot be empty, as we have at least one artificial root element&quot;</span>);
+
+            <b>var</b> <span id="r39 rd" class="r39 r">htmlParent</span> = <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Peek</span>();
+            <b>var</b> <span id="r40 rd" class="r40 r">xmlComment</span> = <a href="#d4aeebd5ac7e4d37" class="i field">_document</a>.<span class="i method">CreateComment</span>(<span class="r38 r">comment</span>);
+            <span class="r39 r">htmlParent</span>.<span class="i method">AppendChild</span>(<span class="r40 r">xmlComment</span>);
+        }
+
+        <span class="c">// Moves all inline elements pending for opening to actual document</span>
+        <span class="c">// and adds them to current open stack.</span>
+        <b>private void</b> <a id="ad2973d4919a2811" href="R/ad2973d4919a2811.html" target="n" data-glyph="76,1" class="i method">OpenPendingInlineElements</a>()
+        {
+            <b>if</b> (<a href="#b5c510c0d7c0e80b" class="i field">_pendingInlineElements</a>.<span class="i property">Count</span> &gt; 0)
+            {
+                <b>var</b> <span id="r41 rd" class="r41 r">htmlInlineElement</span> = <a href="#b5c510c0d7c0e80b" class="i field">_pendingInlineElements</a>.<span class="i method">Pop</span>();
+
+                <a href="#ad2973d4919a2811" class="i method">OpenPendingInlineElements</a>();
+
+                <a href="#2c656eccb58094e8" class="i method">InvariantAssert</a>(<a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i property">Count</span> &gt; 0,
+                    <span class="s">&quot;OpenPendingInlineElements: Stack of opened elements cannot be empty, as we have at least one artificial root element&quot;</span>);
+
+                <b>var</b> <span id="r42 rd" class="r42 r">htmlParent</span> = <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Peek</span>();
+                <span class="r42 r">htmlParent</span>.<span class="i method">AppendChild</span>(<span class="r41 r">htmlInlineElement</span>);
+                <a href="#6830175fa880e7a5" class="i field">_openedElements</a>.<span class="i method">Push</span>(<span class="r41 r">htmlInlineElement</span>);
+            }
+        }
+
+        <b>private void</b> <a id="9b1e39f6604f5589" href="R/9b1e39f6604f5589.html" target="n" data-glyph="76,1" class="i method">ParseAttributes</a>(<span class="t t">XmlElement</span> <span id="r43 rd" class="r43 r">xmlElement</span>)
+        {
+            <b>while</b> (<a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#1d0c0a853fbd0488" class="i property">NextTokenType</a> != <a href="HtmlTokenType.cs.html#944cc32beb6ea00c" class="t t">HtmlTokenType</a>.<a href="HtmlTokenType.cs.html#929d1b7d5450303b" class="i field">Eof</a> &amp;&amp; <span class="c">//</span>
+                   <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#1d0c0a853fbd0488" class="i property">NextTokenType</a> != <a href="HtmlTokenType.cs.html#944cc32beb6ea00c" class="t t">HtmlTokenType</a>.<a href="HtmlTokenType.cs.html#d4b67e69e6c5a721" class="i field">TagEnd</a> &amp;&amp; <span class="c">//</span>
+                   <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#1d0c0a853fbd0488" class="i property">NextTokenType</a> != <a href="HtmlTokenType.cs.html#944cc32beb6ea00c" class="t t">HtmlTokenType</a>.<a href="HtmlTokenType.cs.html#de97da5767e89e87" class="i field">EmptyTagEnd</a>)
+            {
+                <span class="c">// read next attribute (name=value)</span>
+                <b>if</b> (<a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#1d0c0a853fbd0488" class="i property">NextTokenType</a> == <a href="HtmlTokenType.cs.html#944cc32beb6ea00c" class="t t">HtmlTokenType</a>.<a href="HtmlTokenType.cs.html#dad1c1b65f1185cf" class="i field">Name</a>)
+                {
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r44 rd" class="r44 r">attributeName</span> = <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#c9340dc296c154d5" class="i property">NextToken</a>;
+                    <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#620ae4f8a7a6d7a1" class="i method">GetNextEqualSignToken</a>();
+
+                    <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#7dc4cba8be6edd96" class="i method">GetNextAtomToken</a>();
+
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r45 rd" class="r45 r">attributeValue</span> = <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#c9340dc296c154d5" class="i property">NextToken</a>;
+                    <span class="r43 r">xmlElement</span>.<span class="i method">SetAttribute</span>(<span class="r44 r">attributeName</span>, <span class="r45 r">attributeValue</span>);
+                }
+                <a href="#d622c978db5ca374" class="i field">_htmlLexicalAnalyzer</a>.<a href="HtmlLexicalAnalyzer.cs.html#bd57ecd2b002840b" class="i method">GetNextTagToken</a>();
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Private Methods
+
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Private Fields</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Fields
+
+        <b>internal const string</b> <a id="77eab4c3778cf47c" href="R/77eab4c3778cf47c.html" target="n" data-glyph="8,1" class="i field">XhtmlNamespace</a> = <span class="s">&quot;http://www.w3.org/1999/xhtml&quot;</span>;
+
+        <b>private readonly</b> <a href="HtmlLexicalAnalyzer.cs.html#1a857bac1d90f4aa" class="t t">HtmlLexicalAnalyzer</a> <a id="d622c978db5ca374" href="R/d622c978db5ca374.html" target="n" data-glyph="46,1" class="i field">_htmlLexicalAnalyzer</a>;
+
+        <span class="c">// document from which all elements are created</span>
+        <b>private readonly</b> <span class="t t">XmlDocument</span> <a id="d4aeebd5ac7e4d37" href="R/d4aeebd5ac7e4d37.html" target="n" data-glyph="46,1" class="i field">_document</a>;
+
+        <span class="c">// stack for open elements</span>
+        <b>private readonly</b> <span class="t t">Stack</span>&lt;<span class="t t">XmlElement</span>&gt; <a id="6830175fa880e7a5" href="R/6830175fa880e7a5.html" target="n" data-glyph="46,1" class="i field">_openedElements</a>;
+        <b>private readonly</b> <span class="t t">Stack</span>&lt;<span class="t t">XmlElement</span>&gt; <a id="b5c510c0d7c0e80b" href="R/b5c510c0d7c0e80b.html" target="n" data-glyph="46,1" class="i field">_pendingInlineElements</a>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Private Fields
+    }
+}</pre></td></tr></table></div></body></html>

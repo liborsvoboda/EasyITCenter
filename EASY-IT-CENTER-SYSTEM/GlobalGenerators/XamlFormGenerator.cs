@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -45,8 +46,7 @@ namespace EasyITSystemCenter.GlobalGenerators {
 
                     foreach (var item in dataset.Columns) {
                         //Detect Field Type
-                        var fieldTypeResult = ProgrammaticOperations.DetectTypeValueFromObject(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber]);
-                        bool columnDefined = false;
+                        var fieldTypeResult = ProgrammaticOperations.DetectTypeValueFromObject(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber]); bool columnDefined = false;
 
                         //DIAL TYPE 
                         if (dataset.Columns[columnNumber].ToString().ToLower().Contains("inherited")) {
@@ -58,7 +58,6 @@ namespace EasyITSystemCenter.GlobalGenerators {
 
                         if (fieldTypeResult.Item2 == "string" && !columnDefined
                             && dataset.Columns[columnNumber].ToString().ToLower() != systemCustomPageList.ColumnName.ToLower()
-                            && dataset.Columns[columnNumber].ToString().ToLower() != "userid"
                             && !dataset.Columns[columnNumber].ToString().ToLower().Contains("inherited")
                             ) {
                             TextBox textbox = new TextBox() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2), IsReadOnly = dataset.Columns[columnNumber].ToString().ToLower() == "id".ToLower() ? true : false, /*Text = dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber].ToString()*/ };
@@ -75,13 +74,17 @@ namespace EasyITSystemCenter.GlobalGenerators {
                             rootGrid.Children.Add(checkBox);
                             columnDefined = true;
                         }
-                        if (fieldTypeResult.Item2 == "int" && !columnDefined) {
+                        if (fieldTypeResult.Item2 == "int"
+                             && dataset.Columns[columnNumber].ToString().ToLower() != "userid"
+                            && !columnDefined) {
                             NumericUpDown numeric = new NumericUpDown() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2), IsReadOnly = dataset.Columns[columnNumber].ToString().ToLower() == "id".ToLower() ? true : false, /*Value = int.Parse(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber].ToString())*/ };
                             numeric.SetValue(Grid.RowProperty, columnNumber + 1); numeric.SetValue(Grid.ColumnProperty, 1);
                             rootGrid.Children.Add(numeric);
                             columnDefined = true;
                         }
-                        if (fieldTypeResult.Item2 == "double" && !columnDefined) {
+                        if (fieldTypeResult.Item2 == "double"
+                            && dataset.Columns[columnNumber].ToString().ToLower() != "userid"
+                            && !columnDefined) {
                             NumericUpDown numeric = new NumericUpDown() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2), IsReadOnly = dataset.Columns[columnNumber].ToString().ToLower() == "id".ToLower() ? true : false, /*Value = double.Parse(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber].ToString())*/ };
                             numeric.SetValue(Grid.RowProperty, columnNumber + 1); numeric.SetValue(Grid.ColumnProperty, 1);
                             rootGrid.Children.Add(numeric);
@@ -136,24 +139,30 @@ namespace EasyITSystemCenter.GlobalGenerators {
         /// <param name="formConfiguration"></param>
         /// <returns></returns>
         public static string StandardXamlDataFormController(ref Grid userForm, ref DataRowView selectedRecord, ref List<Dictionary<string, string>> recordForSave, bool dataToForm, SystemCustomPageList formConfiguration) {
-            int columnNo = 0; string dataForBrowser = null; recordForSave.Clear();
+            int index = 0; string dataForBrowser = null; recordForSave.Clear();
 
+            // DATA TO FORM
             if (dataToForm) {
-                List<object> columnList = selectedRecord.Row.ItemArray.ToList();
+                var columnList = selectedRecord.Row.Table.Columns;//.Item.ToList();
                 foreach (object prop in columnList) {
-                    
-                        bool setDone = false;
-                        string fieldName = selectedRecord.Row.Table.Columns[columnNo].ToString();
-                        string fieldValue = selectedRecord.Row[columnNo].ToString();
-                        var fieldTypeResult = ProgrammaticOperations.DetectTypeValueFromObject(selectedRecord.Row[columnNo]);
+
+                    bool setDone = false;
+                    string fieldName = ((DataColumn)prop).ColumnName;
+                    string fieldValue = selectedRecord.Row.ItemArray[index].ToString();
+                    var fieldTypeResult = ProgrammaticOperations.DetectTypeValueFromObject(selectedRecord.Row.ItemArray[index]);
 
                     try {
                         //SPECIFIC CONDITION MUST BE FIRST
-                        if (!setDone && fieldName == formConfiguration.ColumnName.ToLower()) {
+                        if (!setDone && formConfiguration.ColumnName != null && fieldName == formConfiguration.ColumnName.ToLower()) {
                             dataForBrowser = fieldValue; setDone = true;
                         }
                         if (!setDone && fieldName.Contains("inherited")) { //Combobox
-                            try { userForm.FindChild<ComboBox>($"frm_{fieldName}").SelectedValue = fieldValue; setDone = true; } catch { }
+                            try {
+                                    if (userForm.FindChild<NumericUpDown>($"frm_{fieldName}") != null) {
+                                        userForm.FindChild<ComboBox>($"frm_{fieldName}").SelectedValue = fieldValue; setDone = true;
+                                    }
+                                } 
+                            catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
                         }
                         if (!setDone && fieldName == "timestamp") { setDone = true; }
                         //userForm.Children.AsParallel().OfType<DateTimePicker>().Where(a => a.Name.ToLower().Split('_')[1] == fieldName).
@@ -167,96 +176,167 @@ namespace EasyITSystemCenter.GlobalGenerators {
 
                         //STANDARD GENERATION PART
                         if (!setDone && new string[] { "int", "float", "double", "int32", "int64" }.Contains(fieldTypeResult.Item2)) {
-                            try { userForm.FindChild<NumericUpDown>($"frm_{fieldName}").Value = double.TryParse(fieldValue, out double tmpdouble) ? double.Parse(fieldValue) as double? : null;
-                                  setDone = true; } catch { }
+                            try {
+                                if (userForm.FindChild<NumericUpDown>($"frm_{fieldName}") != null) {
+                                    userForm.FindChild<NumericUpDown>($"frm_{fieldName}").Value = fieldValue == null ? null : double.Parse(fieldValue) as double?;
+                                    setDone = true;
+                                }
+                            } 
+                            catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
                         }
                         else if (!setDone && new string[] { "date", "time", "datetime" }.Contains(fieldTypeResult.Item2)) {
-                            try { if (userForm.FindChild<DateTimePicker>($"frm_{fieldName}") != null) {
-                                    userForm.FindChild<DateTimePicker>($"frm_{fieldName}").SelectedDate = DateTime.TryParse(fieldValue, out DateTime tmpdate) ? DateTime.Parse(fieldValue) as DateTime? : null;
-                                  }
-                                  setDone = true; } catch { }
+                            try {
+                                if (userForm.FindChild<DateTimePicker>($"frm_{fieldName}") != null) {
+                                    userForm.FindChild<DateTimePicker>($"frm_{fieldName}").SelectedDate = fieldValue == null ? null : DateTime.Parse(fieldValue) as DateTime?;
+                                }
+                                setDone = true;
+                            } 
+                            catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
                         }
                         else if (!setDone && new string[] { "bool" }.Contains(fieldTypeResult.Item2)) {
-                            try { userForm.FindChild<CheckBox>($"frm_{fieldName}").IsChecked = bool.Parse(fieldValue);
-                                  setDone = true; } catch { }
-                        }
-                        else if (!setDone && new string[] { "string" }.Contains(fieldTypeResult.Item2)) {
-                            try { userForm.FindChild<TextBox>($"frm_{fieldName}").Text = fieldValue;
-                                  setDone = true; } catch { }
-                        }
-                    } 
+                            try {
+                                if (userForm.FindChild<CheckBox>($"frm_{fieldName}") != null) {
+                                    userForm.FindChild<CheckBox>($"frm_{fieldName}").IsChecked = fieldValue == null ? false : bool.Parse(fieldValue);
+                                    setDone = true;
+                                }
+                            } 
+                            catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+                        } else if (!setDone && new string[] { "string" }.Contains(fieldTypeResult.Item2)) {
+                            try {
+                                    if (userForm.FindChild<TextBox>($"frm_{fieldName}") != null) {
+                                        userForm.FindChild<TextBox>($"frm_{fieldName}").Text = fieldValue;
+                                        setDone = true;
+                                    }
+                                }
+                            catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                            }
+                        } 
                     catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
-                    recordForSave.Add(new Dictionary<string, string>() { { fieldName, fieldValue } });
-                    columnNo += 1;
-                }
-            }
-
-            //FORM TO DATA For Save BROWSER DATA NOD ADDED TO RecordForSave COLLECTION
-            if (!dataToForm) {
-                List<object> columnList = selectedRecord.Row.ItemArray.ToList();
-                foreach (object prop in columnList) {
-                    bool setDone = false;
-                    string fieldName = selectedRecord.Row.Table.Columns[columnNo].ToString();
-                    string fieldValue = selectedRecord.Row[columnNo].ToString();
-                    var fieldTypeResult = ProgrammaticOperations.DetectTypeValueFromObject(selectedRecord.Row[columnNo]);
-
-                    //SPECIFIC CONDITION MUST BE FIRST
-                    if (!setDone && fieldName == formConfiguration.ColumnName.ToLower()) {
-                        fieldValue = null; //selectedRecord.Row[columnNo].ToString();dataForBrowser = fieldValue; 
-                        setDone = true;
-                    }
-                    if (!setDone && fieldName.Contains("inherited")) { //Combobox
-                        try { selectedRecord.Row[columnNo] = userForm.FindChild<ComboBox>($"frm_{fieldName}").SelectedValue; setDone = true; } catch { }
-                        fieldValue = userForm.FindChild<ComboBox>($"frm_{fieldName}").SelectedValue.ToString();
-                    }
-                    if (!setDone && fieldName == "timestamp") {
-                        try { selectedRecord.Row[columnNo] = DateTimeOffset.Now.DateTime;} catch { }
-                        fieldValue = DateTimeOffset.Now.DateTime.ToString();
-                        //userForm.Children.AsParallel().OfType<DateTimePicker>().Where(a => a.Name.ToLower().Split('_')[1] == fieldName).
-                        //First().SetCurrentValue(DateTimePicker.SelectedDateProperty, DateTime.Parse(fieldValue));
-                        setDone = true;
-                    }
-                    if (fieldName == "userid") {
-                        try { selectedRecord.Row[columnNo] = App.UserData.Authentification.Id; } catch { }
-                        fieldValue = App.UserData.Authentification.Id.ToString();
-                        setDone = true;
-                    }
-                    //userForm.Children.AsParallel().OfType<NumericUpDown>().Where(a => a.Name.ToLower().Split('_')[1] == fieldName).
-                    //      First().SetCurrentValue(NumericUpDown.ValueProperty, double.Parse(fieldValue));
-
-
-
-                    //STANDARD GENERATION PART
-                    if (!setDone && new string[] { "int", "float", "double", "int32", "int64" }.Contains(fieldTypeResult.Item2)) {
-                        try {
-                            selectedRecord.Row[columnNo] = userForm.FindChild<NumericUpDown>($"frm_{fieldName}").Value;
-                            fieldValue = selectedRecord.Row[columnNo].ToString();
-                            setDone = true; } catch { }
-                    } else if (!setDone && new string[] { "date", "time", "datetime" }.Contains(fieldTypeResult.Item2)) {
-                        try {
-                            selectedRecord.Row[columnNo] = userForm.FindChild<DatePicker>($"frm_{fieldName}").SelectedDate;
-                            fieldValue = selectedRecord.Row[columnNo].ToString();
-                            setDone = true; } catch { }
-                    } else if (!setDone && new string[] { "bool" }.Contains(fieldTypeResult.Item2)) {
-                        try { selectedRecord.Row[columnNo] = userForm.FindChild<CheckBox>($"frm_{fieldName}").IsChecked;
-                            fieldValue = selectedRecord.Row[columnNo].ToString();
-                            setDone = true; } catch { }
-                    } else if (!setDone && new string[] { "string" }.Contains(fieldTypeResult.Item2)) {
-                        try { selectedRecord.Row[columnNo] = userForm.FindChild<TextBox>($"frm_{fieldName}").Text;
-                            fieldValue = selectedRecord.Row[columnNo].ToString();
-                            setDone = true; } catch { }
-                    }
-
-                    if (fieldName != formConfiguration.ColumnName.ToLower()) { //Browser DATA ARE INSERTED IN SAVEFORM METHOD
                         recordForSave.Add(new Dictionary<string, string>() { { fieldName, fieldValue } });
+                        index += 1;
                     }
-                    columnNo += 1;
                 }
-            }
+
+                //FORM TO DATA For Save BROWSER DATA NOD ADDED TO RecordForSave COLLECTION
+                //if (!dataToForm) {
+                    /*List<object> columnList = selectedRecord.ItemArray.ToList();
+                    foreach (object prop in columnList) {
+                        bool setDone = false;
+                        string fieldName = selectedRecord.Table.Columns[columnNo].ToString();
+                        string fieldValue = selectedRecord[columnNo].ToString();
+                        var fieldTypeResult = ProgrammaticOperations.DetectTypeValueFromObject(selectedRecord[columnNo]);
+
+                        //SPECIFIC CONDITION MUST BE FIRST
+                        if (!setDone && fieldName == formConfiguration.ColumnName.ToLower()) {
+                            fieldValue = null; //selectedRecord[columnNo].ToString();dataForBrowser = fieldValue; 
+                            setDone = true;
+                        }
+                        if (!setDone && fieldName.Contains("inherited")) { //Combobox
+                            try { selectedRecord[columnNo] = userForm.FindChild<ComboBox>($"frm_{fieldName}").SelectedValue; setDone = true; } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                            fieldValue = userForm.FindChild<ComboBox>($"frm_{fieldName}").SelectedValue.ToString();
+                        }
+                        if (!setDone && fieldName == "timestamp") {
+                            try { selectedRecord[columnNo] = DateTimeOffset.Now.DateTime; } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                            fieldValue = DateTimeOffset.Now.DateTime.ToString();
+                            //userForm.Children.AsParallel().OfType<DateTimePicker>().Where(a => a.Name.ToLower().Split('_')[1] == fieldName).
+                            //First().SetCurrentValue(DateTimePicker.SelectedDateProperty, DateTime.Parse(fieldValue));
+                            setDone = true;
+                        }
+                        if (fieldName == "userid") {
+                            try { selectedRecord[columnNo] = App.UserData.Authentification.Id; } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                            fieldValue = App.UserData.Authentification.Id.ToString();
+                            setDone = true;
+                        }
+                        //userForm.Children.AsParallel().OfType<NumericUpDown>().Where(a => a.Name.ToLower().Split('_')[1] == fieldName).
+                        //      First().SetCurrentValue(NumericUpDown.ValueProperty, double.Parse(fieldValue));
+
+
+
+                        //STANDARD GENERATION PART
+                        if (!setDone && new string[] { "int", "float", "double", "int32", "int64" }.Contains(fieldTypeResult.Item2)) {
+                            try {
+                                selectedRecord[columnNo] = userForm.FindChild<NumericUpDown>($"frm_{fieldName}").Value;
+                                fieldValue = selectedRecord[columnNo].ToString();
+                                setDone = true;
+                            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                        }
+                        else if (!setDone && new string[] { "date", "time", "datetime" }.Contains(fieldTypeResult.Item2)) {
+                            try {
+                                selectedRecord[columnNo] = userForm.FindChild<DatePicker>($"frm_{fieldName}").SelectedDate;
+                                fieldValue = selectedRecord[columnNo].ToString();
+                                setDone = true;
+                            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                        }
+                        else if (!setDone && new string[] { "bool" }.Contains(fieldTypeResult.Item2)) {
+                            try {
+                                selectedRecord[columnNo] = userForm.FindChild<CheckBox>($"frm_{fieldName}").IsChecked;
+                                fieldValue = selectedRecord[columnNo].ToString();
+                                setDone = true;
+                            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                        }
+                        else if (!setDone && new string[] { "string" }.Contains(fieldTypeResult.Item2)) {
+                            try {
+                                selectedRecord[columnNo] = userForm.FindChild<TextBox>($"frm_{fieldName}").Text;
+                                fieldValue = selectedRecord[columnNo].ToString();
+                                setDone = true;
+                            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                        }
+
+                        if (fieldName != formConfiguration.ColumnName.ToLower()) { //Browser DATA ARE INSERTED IN SAVEFORM METHOD
+                            recordForSave.Add(new Dictionary<string, string>() { { fieldName, fieldValue } });
+                        }*/
+                        index += 1;
+            // }
+            // }
 
             return dataForBrowser;
         }
+           
+
+        //FORM + DATA RESET FOR NEW RECORD
+        public static bool DataFormNewRecordReset(ref DataRow newRecord, ref Grid userForm,ref DataRowView selectedRecord) {
+
+            int index = 0;
+            foreach (var item in newRecord.ItemArray) {
+
+                var fieldTypeResult = ProgrammaticOperations.DetectTypeValueFromObject(item);
+
+                if (new string[] { "int", "float", "double", "int32", "int64" }.Contains(fieldTypeResult.Item2)) {
+                    try {
+                        newRecord.ItemArray[index] = 0;
+                        userForm.FindChild<NumericUpDown>($"frm_{newRecord.Table.Columns[index].ColumnName}").Value = double.Parse(newRecord.ItemArray[index].ToString());
+                        selectedRecord.Row.ItemArray[index] = newRecord.ItemArray[index];
+                     } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                }
+                else if (new string[] { "date", "time", "datetime" }.Contains(fieldTypeResult.Item2)) {
+                    try {
+                        newRecord.ItemArray[index] = null;
+                        userForm.FindChild<DateTimePicker>($"frm_{newRecord.Table.Columns[index].ColumnName}").SelectedDate = null;
+                        selectedRecord.Row.ItemArray[index] = newRecord.ItemArray[index];
+                    } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                }
+                else if (new string[] { "bool" }.Contains(fieldTypeResult.Item2)) {
+                    try {
+                        newRecord.ItemArray[index] = null;
+                        userForm.FindChild<CheckBox>($"frm_{newRecord.Table.Columns[index].ColumnName}").IsChecked = bool.Parse(newRecord.ItemArray[index].ToString());
+                        selectedRecord.Row.ItemArray[index] = newRecord.ItemArray[index];
+                    } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                }
+                else if (new string[] { "string" }.Contains(fieldTypeResult.Item2)) {
+                    try {
+                        newRecord.ItemArray[index] = null;
+                        userForm.FindChild<TextBox>($"frm_{newRecord.Table.Columns[index].ColumnName}").Text = newRecord.ItemArray[index].ToString();
+                        selectedRecord.Row.ItemArray[index] = newRecord.ItemArray[index];
+                    } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                }
+
+                index += 1;
+            }
+            return true;
+        }
+
 
     }
 }

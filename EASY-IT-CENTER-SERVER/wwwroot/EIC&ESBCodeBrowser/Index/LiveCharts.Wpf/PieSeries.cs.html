@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html><head><title>PieSeries.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(204);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts.Wpf/PieSeries.cs" target="_top">PieSeries.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts.Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\WpfView\WpfView.csproj</a> (LiveCharts.Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Points</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Series</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">SeriesAlgorithms</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<span class="i n">Charts</span>.<span class="i n">Base</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>.<span class="i n">Points</span>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> The pie series should be added only in a pie chart.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="3640f7dc24676fc5" href="R/3640f7dc24676fc5.html" target="n" data-glyph="0,0" class="t t">PieSeries</a> : <a href="Series.cs.html#424fba5494c39d40" class="t t">Series</a>, <a href="/LiveCharts/A.html#e6d1ff9825a3e29d" class="t t">IPieSeriesView</a>
+    {
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructors
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of PieSeries class</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a id="5c2d8721172dcf59" href="R/5c2d8721172dcf59.html" target="n" data-glyph="72,1" class="t constructor">PieSeries</a>()
+        {
+            <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a> = <b>new</b> <a href="/LiveCharts/A.html#1e6f929487aaa42b" class="t constructor">PieAlgorithm</a>(<a href="#3640f7dc24676fc5" class="k">this</a>);
+            <a href="#df66bfcb2f88cc37" class="i method">InitializeDefuaults</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of PieSeries class with a given mapper.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">configuration</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public</b> <a id="325a9ec13a555402" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">PieSeries</a>(<b>object</b> <span id="r0 rd" class="r0 r">configuration</span>)
+        {
+            <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a> = <b>new</b> <a href="/LiveCharts/A.html#1e6f929487aaa42b" class="t constructor">PieAlgorithm</a>(<a href="#3640f7dc24676fc5" class="k">this</a>);
+            <a href="Series.cs.html#ed9bc5ca9279eeb2" class="i property">Configuration</a> = <span class="r0 r">configuration</span>;
+            <a href="#df66bfcb2f88cc37" class="i method">InitializeDefuaults</a>();
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Properties
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Properties
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The push out property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="c093a7c067f17626" href="R/c093a7c067f17626.html" target="n" data-glyph="42,1" class="i field">PushOutProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;PushOut&quot;</span>, <b>typeof</b> (<b>double</b>), <b>typeof</b> (<a href="#3640f7dc24676fc5" class="t t">PieSeries</a>), <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<b>double</b>), <a href="Series.cs.html#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the slice push out, this property highlights the slice</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="edae27e23bdad165" href="R/edae27e23bdad165.html" target="n" data-glyph="102,1" class="i property">PushOut</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#c093a7c067f17626" class="i field">PushOutProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#c093a7c067f17626" class="i field">PushOutProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The label position property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="33f35ed55a1060c7" href="R/33f35ed55a1060c7.html" target="n" data-glyph="42,1" class="i field">LabelPositionProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;LabelPosition&quot;</span>, <b>typeof</b>(<a href="/LiveCharts/A.html#4de8c18b06bfdd92" class="t t">PieLabelPosition</a>), <b>typeof</b>(<a href="#3640f7dc24676fc5" class="t t">PieSeries</a>), 
+            <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<a href="/LiveCharts/A.html#4de8c18b06bfdd92" class="t t">PieLabelPosition</a>.<a href="/LiveCharts/A.html#c993f99ad17f2664" class="i field">InsideSlice</a>, <a href="Series.cs.html#bb9c80111791aeeb" class="i method">CallChartUpdater</a>()));
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the label position.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The label position.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public</b> <a href="/LiveCharts/A.html#4de8c18b06bfdd92" class="t t">PieLabelPosition</a> <a id="01d23ba110511049" href="R/01d23ba110511049.html" target="n" data-glyph="102,1" class="i property">LabelPosition</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="/LiveCharts/A.html#4de8c18b06bfdd92" class="t t">PieLabelPosition</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#33f35ed55a1060c7" class="i field">LabelPositionProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#33f35ed55a1060c7" class="i field">LabelPositionProperty</a>, <b>value</b>); }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Overridden Methods
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the view of a given point</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">point</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">label</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public override</b> <a href="/LiveCharts/A.html#6c110e29a0f85e1f" class="t t">IChartPointView</a> <a id="939ce1fa61f2457e" href="R/939ce1fa61f2457e.html" target="n" data-glyph="72,1" class="i method">GetPointView</a>(<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a> <span id="r1 rd" class="r1 r">point</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r2 rd" class="r2 r">label</span>)
+        {
+            <a href="Points/PiePointView.cs.html#35aaf0a8df08f9db" class="k">var</a> <span id="r3 rd" class="r3 r">pbv</span> = (<a href="Points/PiePointView.cs.html#35aaf0a8df08f9db" class="t t">PiePointView</a>) <span class="r1 r">point</span>.<a href="/LiveCharts/A.html#47cca818cf851bef" class="i property">View</a>;
+
+            <b>if</b> (<span class="r3 r">pbv</span> == <b>null</b>)
+            {
+                <span class="r3 r">pbv</span> = <b>new</b> <a href="Points/PiePointView.cs.html#35aaf0a8df08f9db" class="t constructor">PiePointView</a>
+                {
+                    <a href="Points/PointView.cs.html#1be038d2f73e5249" class="i property">IsNew</a> = <b>true</b>,
+                    <a href="Points/PiePointView.cs.html#d169718e48e899a1" class="i property">Slice</a> = <b>new</b> <a href="Points/PieSlice.cs.html#3cd2eefd36960a70" class="t constructor">PieSlice</a>()
+                };
+                <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#6f2e18aba4eb4b6e" class="i method">AddToDrawMargin</a>(<span class="r3 r">pbv</span>.<a href="Points/PiePointView.cs.html#d169718e48e899a1" class="i property">Slice</a>);
+            }
+            <b>else</b>
+            {
+                <span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#1be038d2f73e5249" class="i property">IsNew</a> = <b>false</b>;
+                <span class="r1 r">point</span>.<a href="/LiveCharts/A.html#c90f7635ddd134a4" class="i property">SeriesView</a>.<a href="/LiveCharts/A.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>
+                    .<a href="/LiveCharts/A.html#c4139086437826c3" class="i method">EnsureElementBelongsToCurrentDrawMargin</a>(<span class="r3 r">pbv</span>.<a href="Points/PiePointView.cs.html#d169718e48e899a1" class="i property">Slice</a>);
+                <span class="r1 r">point</span>.<a href="/LiveCharts/A.html#c90f7635ddd134a4" class="i property">SeriesView</a>.<a href="/LiveCharts/A.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>
+                    .<a href="/LiveCharts/A.html#c4139086437826c3" class="i method">EnsureElementBelongsToCurrentDrawMargin</a>(<span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>);
+                <span class="r1 r">point</span>.<a href="/LiveCharts/A.html#c90f7635ddd134a4" class="i property">SeriesView</a>.<a href="/LiveCharts/A.html#5d3e0be2b98733c6" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>
+                    .<a href="/LiveCharts/A.html#c4139086437826c3" class="i method">EnsureElementBelongsToCurrentDrawMargin</a>(<span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>);
+            }
+
+            <span class="r3 r">pbv</span>.<a href="Points/PiePointView.cs.html#d169718e48e899a1" class="i property">Slice</a>.<a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a> = <a href="Series.cs.html#a6f44874beaa1a39" class="i property">Fill</a>;
+            <span class="r3 r">pbv</span>.<a href="Points/PiePointView.cs.html#d169718e48e899a1" class="i property">Slice</a>.<a href="@0@PresentationFramework/A.html#d85a4c1753b567bd" class="i property">Stroke</a> = <a href="Series.cs.html#c6f433c3f4390a52" class="i property">Stroke</a>;
+            <span class="r3 r">pbv</span>.<a href="Points/PiePointView.cs.html#d169718e48e899a1" class="i property">Slice</a>.<a href="@0@PresentationFramework/A.html#d817035f3a94e272" class="i property">StrokeThickness</a> = <a href="Series.cs.html#8092434fd2c35445" class="i property">StrokeThickness</a>;
+            <span class="r3 r">pbv</span>.<a href="Points/PiePointView.cs.html#d169718e48e899a1" class="i property">Slice</a>.<a href="@0@PresentationFramework/A.html#f1e389b97df5de96" class="i property">StrokeDashArray</a> = <a href="Series.cs.html#6b5479cbfd67bae7" class="i property">StrokeDashArray</a>;
+            <span class="r3 r">pbv</span>.<a href="Points/PiePointView.cs.html#d169718e48e899a1" class="i property">Slice</a>.<a href="Points/PieSlice.cs.html#e690c96db14b8ea4" class="i property">PushOut</a> = <a href="#edae27e23bdad165" class="i property">PushOut</a>;
+            <span class="r3 r">pbv</span>.<a href="Points/PiePointView.cs.html#d169718e48e899a1" class="i property">Slice</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a>;
+            <a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a>.<a href="@0@PresentationFramework/A.html#2bc57b630c6082fd" class="i method">SetZIndex</a>(<span class="r3 r">pbv</span>.<a href="Points/PiePointView.cs.html#d169718e48e899a1" class="i property">Slice</a>, <a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a>.<a href="@0@PresentationFramework/A.html#9871035e9c68bed4" class="i method">GetZIndex</a>(<a href="#3640f7dc24676fc5" class="k">this</a>));
+            
+            <b>if</b> (<a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#a3a29afbd3687ede" class="i property">RequiresHoverShape</a> &amp;&amp; <span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a> == <b>null</b>)
+            {
+                <span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a> = <b>new</b> <a href="Points/PieSlice.cs.html#3cd2eefd36960a70" class="t constructor">PieSlice</a>
+                {
+                    <a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a> = <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#8131d3ac109ee20d" class="i property">Transparent</a>,
+                    <a href="@0@PresentationFramework/A.html#d817035f3a94e272" class="i property">StrokeThickness</a> = 0
+                };
+
+                <a href="@0@PresentationFramework/A.html#b65316d8b92f4b13" class="t t">Panel</a>.<a href="@0@PresentationFramework/A.html#2bc57b630c6082fd" class="i method">SetZIndex</a>(<span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>, <b>int</b>.<a href="@0@mscorlib/A.html#c45153c0501d7122" class="i field">MaxValue</a>);
+
+                <a href="Charts/Base/Chart.cs.html#8bbad405b4592476" class="k">var</a> <span id="r4 rd" class="r4 r">wpfChart</span> = (<a href="Charts/Base/Chart.cs.html#8bbad405b4592476" class="t t">Chart</a>)<a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>;
+                <span class="r4 r">wpfChart</span>.<a href="Charts/Base/Chart.cs.html#63fc3b716f586fb7" class="i method">AttachHoverableEventTo</a>(<span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>);
+
+                <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#6f2e18aba4eb4b6e" class="i method">AddToDrawMargin</a>(<span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>);
+            }
+
+            <b>if</b> (<span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a> != <b>null</b>) <span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#2d4fe04daa552579" class="i property">HoverShape</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a>;
+
+            <b>if</b> (<a href="Series.cs.html#55aa4a52af40d36c" class="i property">DataLabels</a>)
+            {
+                <span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a> = <a href="Series.cs.html#332a27a2aec725d6" class="i method">UpdateLabelContent</a>(<b>new</b> <a href="/LiveCharts/A.html#0fb329b411e4bbed" class="t constructor">DataLabelViewModel</a>
+                {
+                    <a href="/LiveCharts/A.html#116289d6910ddd64" class="i property">FormattedText</a> = <span class="r2 r">label</span>,
+                    <span class="i">Point</span> = <span class="r1 r">point</span>
+                }, <span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>);
+            }
+
+            <b>if</b> (!<a href="Series.cs.html#55aa4a52af40d36c" class="i property">DataLabels</a> &amp;&amp; <span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a> != <b>null</b>)
+            {
+                <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#515df27c35ed593e" class="i property">Chart</a>.<a href="/LiveCharts/A.html#bb800ed07061e7e7" class="i property">View</a>.<a href="/LiveCharts/A.html#22ce649969a42257" class="i method">RemoveFromDrawMargin</a>(<span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a>);
+                <span class="r3 r">pbv</span>.<a href="Points/PointView.cs.html#31fac78a9aa8bc36" class="i property">DataLabel</a> = <b>null</b>;
+            }
+
+            <b>if</b> (<span class="r1 r">point</span>.<a href="/LiveCharts/A.html#82d29d494b5086da" class="i property">Stroke</a> != <b>null</b>) <span class="r3 r">pbv</span>.<a href="Points/PiePointView.cs.html#d169718e48e899a1" class="i property">Slice</a>.<a href="@0@PresentationFramework/A.html#d85a4c1753b567bd" class="i property">Stroke</a> = (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>)<span class="r1 r">point</span>.<a href="/LiveCharts/A.html#82d29d494b5086da" class="i property">Stroke</a>;
+            <b>if</b> (<span class="r1 r">point</span>.<a href="/LiveCharts/A.html#dbf598f81e51de2d" class="i property">Fill</a> != <b>null</b>) <span class="r3 r">pbv</span>.<a href="Points/PiePointView.cs.html#d169718e48e899a1" class="i property">Slice</a>.<a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a> = (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>)<span class="r1 r">point</span>.<a href="/LiveCharts/A.html#dbf598f81e51de2d" class="i property">Fill</a>;
+
+            <span class="r3 r">pbv</span>.<a href="Points/PiePointView.cs.html#2f595d623e408277" class="i property">OriginalPushOut</a>  = <a href="#edae27e23bdad165" class="i property">PushOut</a>;
+
+            <b>return</b> <span class="r3 r">pbv</span>;
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Methods
+
+        <b>private void</b> <a id="df66bfcb2f88cc37" href="R/df66bfcb2f88cc37.html" target="n" data-glyph="76,1" class="i method">InitializeDefuaults</a>()
+        {
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="Series.cs.html#c59484df87c33afa" class="i field">StrokeThicknessProperty</a>, 2d);
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="Series.cs.html#0727b76cb15d111b" class="i field">StrokeProperty</a>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#11eb50ba6c5ef1c6" class="i property">White</a>);
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="Series.cs.html#f9ab0fc34115d160" class="i field">ForegroundProperty</a>, <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#11eb50ba6c5ef1c6" class="i property">White</a>);
+
+            <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="/LiveCharts/A.html#a7b99b1eebb29334" class="t t">ChartPoint</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <span id="r5 rd" class="r5 r">defaultLabel</span> = <span id="r6 rd" class="r6 r">x</span> =&gt; <a href="Series.cs.html#abb1aa0d36b7e0f2" class="i property">Model</a>.<a href="/LiveCharts/A.html#4508d1feaed73766" class="i property">CurrentYAxis</a>.<a href="/LiveCharts/A.html#36c576d4ea7a4fb0" class="i method">GetFormatter</a>()(<span class="r6 r">x</span>.<a href="/LiveCharts/A.html#2647768eb1eb41f6" class="i property">Y</a>);
+
+            <a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="Series.cs.html#1c319daa21899823" class="i field">LabelPointProperty</a>, <span class="r5 r">defaultLabel</span>);
+
+            <a href="Series.cs.html#71a8d04613e4ecee" class="i property">DefaultFillOpacity</a> = 1;
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}
+</pre></td></tr></table></div></body></html>

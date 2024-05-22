@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html><head><title>ReportEx.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(201);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.CrashReporter/ReportEx.cs" target="_top">ReportEx.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.CrashReporter" target="_top">..\..\..\EASY-TOOLS\EASYTools.CrashReporter\EASYTools.CrashReporter.csproj</a> (EASYTools.CrashReporter)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Xml</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Xml</span>.<span class="i n">Serialization</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">CrashReporter</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ReportEx</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="10ac1ef30451420e" href="R/10ac1ef30451420e.html" target="n" data-glyph="0,0" class="t t"><span id="f1f886d41c5fd9dd">ReportEx</span></a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Reads from XML file.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">pFileName</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Name of the p file.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+       <b>public static</b> <a href="#10ac1ef30451420e" class="t t">ReportEx</a> <a id="6c92ef1117a0eefe" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">ReadFromXMLFile</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">pFileName</span>)
+        {
+            <b>try</b>
+            {
+                <a href="#10ac1ef30451420e" class="t t">ReportEx</a> <span id="r1 rd" class="r1 r">rito</span> = <b>new</b> <a href="#10ac1ef30451420e" class="t constructor">ReportEx</a>();
+                <b>if</b> (<a href="@0@mscorlib/A.html#1c7421e464f67b7e" class="t t">File</a>.<a href="@0@mscorlib/A.html#3360368484a9f131" class="i method">Exists</a>(<span class="r0 r">pFileName</span>))
+                {
+                    <b>using</b> (<a href="@0@System.Xml/A.html#086471e5cca0825f" class="t t">XmlReader</a> <span id="r2 rd" class="r2 r">reader</span> = <a href="@0@System.Xml/A.html#086471e5cca0825f" class="t t">XmlReader</a>.<a href="@0@System.Xml/A.html#7234b3e6a37c0666" class="i method">Create</a>(<span class="r0 r">pFileName</span>))
+                    {
+                        <a href="@0@System.Xml/A.html#292c7197dcb706a1" class="t t">XmlSerializer</a> <span id="r3 rd" class="r3 r">deserializer</span> = <b>new</b> <a href="@0@System.Xml/A.html#e4dd8c92b16a8f39" class="t constructor">XmlSerializer</a>(<b>typeof</b>(<a href="#10ac1ef30451420e" class="t t">ReportEx</a>));
+                        <span class="r1 r">rito</span> = (<a href="#10ac1ef30451420e" class="t t">ReportEx</a>)<span class="r3 r">deserializer</span>.<a href="@0@System.Xml/A.html#493145bac69ccaaa" class="i method">Deserialize</a>(<span class="r2 r">reader</span>);
+                        <span class="r2 r">reader</span>.<a href="@0@System.Xml/A.html#39801b8c2350cf5c" class="i method">Close</a>();
+                    }
+                }
+                <b>else</b>
+                {
+                    <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#15a723847ffcc0c8" class="t constructor">FileNotFoundException</a>(<span class="r0 r">pFileName</span>);
+                }
+                <b>return</b> (<span class="r1 r">rito</span>);
+            }
+            <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r4 rd" class="r4 r">ex</span>)
+            {
+                <b>throw</b> (<span class="r4 r">ex</span>);
+            }
+        }
+ 
+       <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+       <span class="c">///</span><span class="c"> Saves to XML file.</span>
+       <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+       <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r5 r">pFileName</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Name of the p file.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="7d5e5cde5fa8cb0d" href="R/7d5e5cde5fa8cb0d.html" target="n" data-glyph="72,1" class="i method">SaveToXMLFile</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r5 rd" class="r5 r">pFileName</span>)
+        {
+            <b>try</b>
+            {
+                <a href="@0@System.Xml/A.html#ff9751984c5b1c38" class="t t">XmlWriterSettings</a> <span id="r6 rd" class="r6 r">xstt</span> = <b>new</b> <a href="@0@System.Xml/A.html#96950c56b2bdec04" class="t constructor">XmlWriterSettings</a>()
+                {
+                    <a href="@0@System.Xml/A.html#c43c9956421690c6" class="i property">ConformanceLevel</a> = <a href="@0@System.Xml/A.html#9282f93eb4403e2b" class="t t">ConformanceLevel</a>.<a href="@0@System.Xml/A.html#6e000660308e6ef1" class="i field">Document</a>,
+                    <a href="@0@System.Xml/A.html#3c386fe0247eaa39" class="i property">Encoding</a> = <a href="@0@mscorlib/A.html#3b6090c501893c25" class="t t">Encoding</a>.<a href="@0@mscorlib/A.html#a10eb90a3d884500" class="i property">UTF8</a>,
+                    <a href="@0@System.Xml/A.html#c4e42ce39c94b61b" class="i property">Indent</a> = <b>true</b>,
+                    <a href="@0@System.Xml/A.html#6f8eb329cb8c2278" class="i property">IndentChars</a> = <b>new</b> <a href="@0@mscorlib/A.html#a9c0ed613ffbd8ee" class="k">string</a>(<span class="s">&#39; &#39;</span>, 4),
+                    <a href="@0@System.Xml/A.html#63a026b7032fc432" class="i property">NewLineChars</a> = <span class="s">&quot;\r\n&quot;</span>,
+                    <a href="@0@System.Xml/A.html#add9c73d792277ab" class="i property">NewLineHandling</a> = <a href="@0@System.Xml/A.html#11fa3734ab3fecb1" class="t t">NewLineHandling</a>.<a href="@0@System.Xml/A.html#2807e219cf59ea42" class="i field">None</a>,
+                    <a href="@0@System.Xml/A.html#8ad3bcc50da72462" class="i property">NewLineOnAttributes</a> = <b>false</b>,
+                    <a href="@0@System.Xml/A.html#1a3193a2a0a1807b" class="i property">OmitXmlDeclaration</a> = <b>false</b>
+                };
+ 
+                <b>using</b> (<a href="@0@System.Xml/A.html#e5032b905808fabc" class="t t">XmlWriter</a> <span id="r7 rd" class="r7 r">writer</span> = <a href="@0@System.Xml/A.html#e5032b905808fabc" class="t t">XmlWriter</a>.<a href="@0@System.Xml/A.html#7392d81a3f92ad38" class="i method">Create</a>(<span class="r5 r">pFileName</span>, <span class="r6 r">xstt</span>))
+                {
+                    <a href="@0@System.Xml/A.html#292c7197dcb706a1" class="t t">XmlSerializer</a> <span id="r8 rd" class="r8 r">serializer</span> = <b>new</b> <a href="@0@System.Xml/A.html#e4dd8c92b16a8f39" class="t constructor">XmlSerializer</a>(<b>typeof</b>(<a href="#10ac1ef30451420e" class="t t">ReportEx</a>));
+                    <span class="r8 r">serializer</span>.<a href="@0@System.Xml/A.html#baa513d2e671319f" class="i method">Serialize</a>(<span class="r7 r">writer</span>, <a href="#10ac1ef30451420e" class="k">this</a>);
+                    <span class="r7 r">writer</span>.<a href="@0@System.Xml/A.html#3bb828dd31fe22a3" class="i method">Close</a>();
+                }
+            }
+            <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r9 rd" class="r9 r">ex</span>)
+            {
+                <b>throw</b> (<span class="r9 r">ex</span>);
+            }
+        }
+        
+        <b>private string</b> <a id="c22ed4cf7db43690" href="R/c22ed4cf7db43690.html" target="n" data-glyph="46,1" class="i field">mMessageForUser</a>;
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Property MessageForUser.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">The Property MessageForUser.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="04d116a29a2c8f43" href="R/04d116a29a2c8f43.html" target="n" data-glyph="102,1" class="i property">MessageForUser</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#c22ed4cf7db43690" class="i field">mMessageForUser</a>; }
+            <b>set</b> { <a href="#c22ed4cf7db43690" class="i field">mMessageForUser</a> = <b>value</b>; }
+        }
+ 
+              
+        <b>private string</b> <a id="76ba0b38f2495242" href="R/76ba0b38f2495242.html" target="n" data-glyph="46,1" class="i field">mWindows_Version</a>;
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Property Windows_Version.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">The Property Windows_Version.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="e2d3a86223ef56a6" href="R/e2d3a86223ef56a6.html" target="n" data-glyph="102,1" class="i property">Windows_Version</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#76ba0b38f2495242" class="i field">mWindows_Version</a>; }
+            <b>set</b> { <a href="#76ba0b38f2495242" class="i field">mWindows_Version</a> = <b>value</b>; }
+        }
+        <b>private string</b> <a id="cff07d9689e1f237" href="R/cff07d9689e1f237.html" target="n" data-glyph="46,1" class="i field">mError_Message</a>;
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Property Error_Message.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">The Property Error_Message.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="8e2c1221eda8dfb3" href="R/8e2c1221eda8dfb3.html" target="n" data-glyph="102,1" class="i property">Error_Message</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#cff07d9689e1f237" class="i field">mError_Message</a>; }
+            <b>set</b> { <a href="#cff07d9689e1f237" class="i field">mError_Message</a> = <b>value</b>; }
+        }
+        <b>private string</b> <a id="983e5d9324fbb67d" href="R/983e5d9324fbb67d.html" target="n" data-glyph="46,1" class="i field">mInnerException</a>;
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Property InnerException.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">The Property InnerException.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="eca786e00bcd2d93" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">InnerException</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#983e5d9324fbb67d" class="i field">mInnerException</a>; }
+            <b>set</b> { <a href="#983e5d9324fbb67d" class="i field">mInnerException</a> = <b>value</b>; }
+        }
+ 
+ 
+        <b>private string</b> <a id="f5e37ad9da3acf58" href="R/f5e37ad9da3acf58.html" target="n" data-glyph="46,1" class="i field">mApplicationVersione</a>;
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Property ApplicationVersione.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">The Property ApplicationVersione.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="17ab574d54ebb678" href="R/17ab574d54ebb678.html" target="n" data-glyph="102,1" class="i property">ApplicationVersione</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#f5e37ad9da3acf58" class="i field">mApplicationVersione</a>; }
+            <b>set</b> { <a href="#f5e37ad9da3acf58" class="i field">mApplicationVersione</a> = <b>value</b>; }
+        }
+        <b>private string</b> <a id="f6addd56daa9e0de" href="R/f6addd56daa9e0de.html" target="n" data-glyph="46,1" class="i field">mApplicationName</a>;
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Property ApplicationName.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">The Property ApplicationName.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="ce8363fb2f5e761c" href="R/ce8363fb2f5e761c.html" target="n" data-glyph="102,1" class="i property">ApplicationName</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#f6addd56daa9e0de" class="i field">mApplicationName</a>; }
+            <b>set</b> { <a href="#f6addd56daa9e0de" class="i field">mApplicationName</a> = <b>value</b>; }
+        }
+ 
+ 
+        <b>private</b> <a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a> <a id="01cf018e3b826806" href="R/01cf018e3b826806.html" target="n" data-glyph="46,1" class="i field">mDataEx</a>;
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Property DataEx.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">The Property DataEx.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a> <a id="4ee9787bee3390ab" href="R/4ee9787bee3390ab.html" target="n" data-glyph="102,1" class="i property">DataEx</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#01cf018e3b826806" class="i field">mDataEx</a>; }
+            <b>set</b> { <a href="#01cf018e3b826806" class="i field">mDataEx</a> = <b>value</b>; }
+        }
+        <b>private string</b> <a id="654ba008badaf277" href="R/654ba008badaf277.html" target="n" data-glyph="46,1" class="i field">mSource</a>;
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Property Source.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">The Property Source.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="a8bd48210ae3a416" href="R/a8bd48210ae3a416.html" target="n" data-glyph="102,1" class="i property">Source</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#654ba008badaf277" class="i field">mSource</a>; }
+            <b>set</b> { <a href="#654ba008badaf277" class="i field">mSource</a> = <b>value</b>; }
+        }
+        <b>private string</b> <a id="9e68e567151939b0" href="R/9e68e567151939b0.html" target="n" data-glyph="46,1" class="i field">mStack_Trace</a>;
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Property Stack_Trace.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">The Property Stack_Trace.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="8f2e4c070fb3922f" href="R/8f2e4c070fb3922f.html" target="n" data-glyph="102,1" class="i property">Stack_Trace</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#9e68e567151939b0" class="i field">mStack_Trace</a>; }
+            <b>set</b> { <a href="#9e68e567151939b0" class="i field">mStack_Trace</a> = <b>value</b>; }
+        }
+ 
+ 
+        <b>private string</b> <a id="c8f025dee3f944f0" href="R/c8f025dee3f944f0.html" target="n" data-glyph="46,1" class="i field">mImagePath</a>;
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Property ImagePath.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">The Property ImagePath.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        [<a href="@0@System.Xml/A.html#51a025811fed9e1a" class="t constructor">XmlIgnore</a>]
+        <b>public string</b> <a id="460ae3fcb9cc641f" href="R/460ae3fcb9cc641f.html" target="n" data-glyph="102,1" class="i property">ImagePath</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#c8f025dee3f944f0" class="i field">mImagePath</a>; }
+            <b>set</b> { <a href="#c8f025dee3f944f0" class="i field">mImagePath</a> = <b>value</b>; }
+        }
+        <b>private string</b> <a id="1ef82c185f6304aa" href="R/1ef82c185f6304aa.html" target="n" data-glyph="46,1" class="i field">mException_Type</a>;
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Property Exception_Type.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">The Property Exception_Type.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="7cdcdc0bf750d8bb" href="R/7cdcdc0bf750d8bb.html" target="n" data-glyph="102,1" class="i property">Exception_Type</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#1ef82c185f6304aa" class="i field">mException_Type</a>; }
+            <b>set</b> { <a href="#1ef82c185f6304aa" class="i field">mException_Type</a> = <b>value</b>; }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html><head><title>ColorChannelMinMaxConverter.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(138);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Converters/ColorChannelMinMaxConverter.cs" target="_top">Converters\ColorChannelMinMaxConverter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Converters</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Channel type for ColorChannelMinMaxConverter to pass in in as parameter.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public enum</b> <a id="acc3b4a3c22cdaab" href="../R/acc3b4a3c22cdaab.html" target="n" data-glyph="18,0" class="t t"><span id="49c3edd3e2c0203a">ColorChannelType</span></a>
+    {
+        <a id="91f74bfb277003be" href="../R/91f74bfb277003be.html" target="n" data-glyph="24,1" class="i field">RMin</a>,
+        <a id="0c4f0ee0f83c7179" href="../R/0c4f0ee0f83c7179.html" target="n" data-glyph="24,1" class="i field">RMax</a>,
+        <a id="8600c43a6c56f358" href="../R/8600c43a6c56f358.html" target="n" data-glyph="24,1" class="i field">R</a>,
+        <a id="0a2e0d12585e0c0d" href="../R/0a2e0d12585e0c0d.html" target="n" data-glyph="24,1" class="i field">GMin</a>,
+        <a id="4759908bcb7777b4" href="../R/4759908bcb7777b4.html" target="n" data-glyph="24,1" class="i field">GMax</a>,
+        <a id="1eef3e0eede67d13" href="../R/1eef3e0eede67d13.html" target="n" data-glyph="24,1" class="i field">G</a>,
+        <a id="72bc4f7d96d031f5" href="../R/72bc4f7d96d031f5.html" target="n" data-glyph="24,1" class="i field">BMin</a>,
+        <a id="696c3ba3e3bb886b" href="../R/696c3ba3e3bb886b.html" target="n" data-glyph="24,1" class="i field">BMax</a>,
+        <a id="dd1206740811cdb7" href="../R/dd1206740811cdb7.html" target="n" data-glyph="24,1" class="i field">B</a>,
+        <a id="7274b4985cb4b69c" href="../R/7274b4985cb4b69c.html" target="n" data-glyph="24,1" class="i field">AMin</a>,
+        <a id="62e4f25dd4964648" href="../R/62e4f25dd4964648.html" target="n" data-glyph="24,1" class="i field">AMax</a>,
+        <a id="60bea5730e9030da" href="../R/60bea5730e9030da.html" target="n" data-glyph="24,1" class="i field">A</a>
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Converts a given Color to a new Color with the specified Channel turned to the Min or Max Value</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@PresentationFramework/A.html#ddd8a157949fec4d" class="t constructor">ValueConversion</a>(<b>typeof</b>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>), <b>typeof</b>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>), <a href="@0@PresentationFramework/A.html#971265abb4b824aa" class="i property">ParameterType</a> = <b>typeof</b>(<a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>))]
+    <b>public sealed class</b> <a id="0ea971b6894e5272" href="../R/0ea971b6894e5272.html" target="n" data-glyph="0,0" class="t t"><span id="9103238b03d42ff7">ColorChannelMinMaxConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets a static default instance of </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#0ea971b6894e5272" class="t t">ColorChannelMinMaxConverter</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="#0ea971b6894e5272" class="t t">ColorChannelMinMaxConverter</a> <a id="56b72ed43782b76a" href="../R/56b72ed43782b76a.html" target="n" data-glyph="42,1" class="i field">Default</a> = <a href="#0ea971b6894e5272" class="k">new</a>();
+
+        <b>public object</b>? <a id="4b3b677bd6d61557" href="../R/4b3b677bd6d61557.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b>? <span id="r0 rd" class="r0 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r1 rd" class="r1 r">targetType</span>, <b>object</b>? <span id="r2 rd" class="r2 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r3 rd" class="r3 r">culture</span>)
+        {
+            <b>if</b> (<span class="r0 r">value</span> <b>is</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a> <span id="r4 rd" class="r4 r">color</span> &amp;&amp; <span class="r2 r">parameter</span> <b>is</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a> <span id="r5 rd" class="r5 r">channel</span>)
+            {
+                <b>switch</b> (<span class="r5 r">channel</span>)
+                {
+                    <b>case</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#91f74bfb277003be" class="i field">RMin</a>: <b>return</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(0, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>);
+                    <b>case</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#0c4f0ee0f83c7179" class="i field">RMax</a>: <b>return</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(255, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>);
+                    <b>case</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#0a2e0d12585e0c0d" class="i field">GMin</a>: <b>return</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(<span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>, 0, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>);
+                    <b>case</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#4759908bcb7777b4" class="i field">GMax</a>: <b>return</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(<span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>, 255, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>);
+                    <b>case</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#72bc4f7d96d031f5" class="i field">BMin</a>: <b>return</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(<span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>, 0);
+                    <b>case</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#696c3ba3e3bb886b" class="i field">BMax</a>: <b>return</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(<span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>, 255);
+                    <b>case</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#7274b4985cb4b69c" class="i field">AMin</a>: <b>return</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#9289c34fb9030bfd" class="i method">FromArgb</a>(0, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>);
+                    <b>case</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#62e4f25dd4964648" class="i field">AMax</a>: <b>return</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#9289c34fb9030bfd" class="i method">FromArgb</a>(255, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>, <span class="r4 r">color</span>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>);
+                    <b>default</b>:
+                    {
+                        <a href="@0@System/A.html#c63a0f19b2d4db69" class="t t">Trace</a>.<a href="@0@System/A.html#ed0a145461a37c94" class="i method">TraceWarning</a>(<span class="s">$&quot;</span><span class="s">Unexpected value </span>{<b>nameof</b>(<span class="r2 r">parameter</span>)}<span class="s"> = </span>{<span class="r5 r">channel</span>}<span class="s">&quot;</span>);
+                        <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+                    }
+                }
+            }
+
+            <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+        }
+
+        <b>public object</b>? <a id="cf493715a9592b1c" href="../R/cf493715a9592b1c.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b>? <span id="r6 rd" class="r6 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r7 rd" class="r7 r">targetType</span>, <b>object</b>? <span id="r8 rd" class="r8 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r9 rd" class="r9 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Converts a given Color to a new LinearGradientBrush with the specified Channel.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@PresentationFramework/A.html#ddd8a157949fec4d" class="t constructor">ValueConversion</a>(<b>typeof</b>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>), <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>))]
+    <b>public sealed class</b> <a id="2ee8a0c801734296" href="../R/2ee8a0c801734296.html" target="n" data-glyph="0,0" class="t t"><span id="0a96b0a7ba4d468c">ColorChannel2GradientBrushConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c"> Gets the default instance </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static</b> <a href="#2ee8a0c801734296" class="t t">ColorChannel2GradientBrushConverter</a> <a id="2ced0b9b406af153" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Default</a> { <b>get</b>; } = <a href="#2ee8a0c801734296" class="k">new</a>();
+
+        <b>public object</b> <a id="9b1e119a3c324caf" href="../R/9b1e119a3c324caf.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b> <span id="r10 rd" class="r10 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r11 rd" class="r11 r">targetType</span>, <b>object</b> <span id="r12 rd" class="r12 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r13 rd" class="r13 r">culture</span>)
+        {
+            <b>if</b> (<span class="r12 r">parameter</span> <b>is</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a> <span id="r14 rd" class="r14 r">channel</span>)
+            {
+                <b>object</b>? <span id="r15 rd" class="r15 r">minResult</span>;
+                <b>object</b>? <span id="r16 rd" class="r16 r">maxResult</span>;
+
+                <b>switch</b> (<span class="r14 r">channel</span>)
+                {
+                    <b>case</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#8600c43a6c56f358" class="i field">R</a>:
+                        <span class="r15 r">minResult</span> = <a href="#0ea971b6894e5272" class="t t">ColorChannelMinMaxConverter</a>.<a href="#56b72ed43782b76a" class="i field">Default</a>.<a href="#4b3b677bd6d61557" class="i method">Convert</a>(<span class="r10 r">value</span>, <span class="r11 r">targetType</span>, <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#91f74bfb277003be" class="i field">RMin</a>, <span class="r13 r">culture</span>);
+                        <span class="r16 r">maxResult</span> = <a href="#0ea971b6894e5272" class="t t">ColorChannelMinMaxConverter</a>.<a href="#56b72ed43782b76a" class="i field">Default</a>.<a href="#4b3b677bd6d61557" class="i method">Convert</a>(<span class="r10 r">value</span>, <span class="r11 r">targetType</span>, <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#0c4f0ee0f83c7179" class="i field">RMax</a>, <span class="r13 r">culture</span>);
+                        <b>break</b>;
+                    <b>case</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#1eef3e0eede67d13" class="i field">G</a>:
+                        <span class="r15 r">minResult</span> = <a href="#0ea971b6894e5272" class="t t">ColorChannelMinMaxConverter</a>.<a href="#56b72ed43782b76a" class="i field">Default</a>.<a href="#4b3b677bd6d61557" class="i method">Convert</a>(<span class="r10 r">value</span>, <span class="r11 r">targetType</span>, <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#0a2e0d12585e0c0d" class="i field">GMin</a>, <span class="r13 r">culture</span>);
+                        <span class="r16 r">maxResult</span> = <a href="#0ea971b6894e5272" class="t t">ColorChannelMinMaxConverter</a>.<a href="#56b72ed43782b76a" class="i field">Default</a>.<a href="#4b3b677bd6d61557" class="i method">Convert</a>(<span class="r10 r">value</span>, <span class="r11 r">targetType</span>, <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#4759908bcb7777b4" class="i field">GMax</a>, <span class="r13 r">culture</span>);
+                        <b>break</b>;
+                    <b>case</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#dd1206740811cdb7" class="i field">B</a>:
+                        <span class="r15 r">minResult</span> = <a href="#0ea971b6894e5272" class="t t">ColorChannelMinMaxConverter</a>.<a href="#56b72ed43782b76a" class="i field">Default</a>.<a href="#4b3b677bd6d61557" class="i method">Convert</a>(<span class="r10 r">value</span>, <span class="r11 r">targetType</span>, <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#72bc4f7d96d031f5" class="i field">BMin</a>, <span class="r13 r">culture</span>);
+                        <span class="r16 r">maxResult</span> = <a href="#0ea971b6894e5272" class="t t">ColorChannelMinMaxConverter</a>.<a href="#56b72ed43782b76a" class="i field">Default</a>.<a href="#4b3b677bd6d61557" class="i method">Convert</a>(<span class="r10 r">value</span>, <span class="r11 r">targetType</span>, <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#696c3ba3e3bb886b" class="i field">BMax</a>, <span class="r13 r">culture</span>);
+                        <b>break</b>;
+                    <b>case</b> <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#60bea5730e9030da" class="i field">A</a>:
+                        <span class="r15 r">minResult</span> = <a href="#0ea971b6894e5272" class="t t">ColorChannelMinMaxConverter</a>.<a href="#56b72ed43782b76a" class="i field">Default</a>.<a href="#4b3b677bd6d61557" class="i method">Convert</a>(<span class="r10 r">value</span>, <span class="r11 r">targetType</span>, <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#7274b4985cb4b69c" class="i field">AMin</a>, <span class="r13 r">culture</span>);
+                        <span class="r16 r">maxResult</span> = <a href="#0ea971b6894e5272" class="t t">ColorChannelMinMaxConverter</a>.<a href="#56b72ed43782b76a" class="i field">Default</a>.<a href="#4b3b677bd6d61557" class="i method">Convert</a>(<span class="r10 r">value</span>, <span class="r11 r">targetType</span>, <a href="#acc3b4a3c22cdaab" class="t t">ColorChannelType</a>.<a href="#62e4f25dd4964648" class="i field">AMax</a>, <span class="r13 r">culture</span>);
+                        <b>break</b>;
+                    <b>default</b>:
+                    {
+                        <a href="@0@System/A.html#c63a0f19b2d4db69" class="t t">Trace</a>.<a href="@0@System/A.html#ed0a145461a37c94" class="i method">TraceWarning</a>(<span class="s">$&quot;</span><span class="s">Unexpected value </span>{<b>nameof</b>(<span class="r12 r">parameter</span>)}<span class="s"> = </span>{<span class="r14 r">channel</span>}<span class="s">&quot;</span>);
+                        <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+                    }
+                }
+
+                <b>if</b> (<span class="r15 r">minResult</span> <b>is</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a> <span id="r17 rd" class="r17 r">minColor</span> &amp;&amp; <span class="r16 r">maxResult</span> <b>is</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a> <span id="r18 rd" class="r18 r">maxColor</span>)
+                {
+                    <a href="@0@PresentationCore/A.html#95e063a8a6c98a51" class="k">var</a> <span id="r19 rd" class="r19 r">brush</span> = <b>new</b> <a href="@0@PresentationCore/A.html#cab8ccfc27cff4b9" class="t constructor">LinearGradientBrush</a>
+                                {
+                                    <a href="@0@PresentationCore/A.html#b1eee9a6882b4bcd" class="i property">StartPoint</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, 0.5),
+                                    <a href="@0@PresentationCore/A.html#f263c2997c4cfda3" class="i property">EndPoint</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(1, 0.5)
+                                };
+                    <span class="r19 r">brush</span>.<a href="@0@PresentationCore/A.html#0392ede480e9384d" class="i property">GradientStops</a>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>(<span class="r17 r">minColor</span>, 0));
+                    <span class="r19 r">brush</span>.<a href="@0@PresentationCore/A.html#0392ede480e9384d" class="i property">GradientStops</a>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>(<span class="r18 r">maxColor</span>, 1));
+                    <span class="r19 r">brush</span>.<a href="@0@WindowsBase/A.html#75947ff41474f34b" class="i method">Freeze</a>();
+                    <b>return</b> <span class="r19 r">brush</span>;
+                }
+            }
+
+            <b>return</b> <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>.<a href="@0@PresentationFramework/A.html#0f3cb94742d019e1" class="i field">DoNothing</a>;
+        }
+
+        <b>public object</b> <a id="15c0cad08d0773e6" href="../R/15c0cad08d0773e6.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r20 rd" class="r20 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r21 rd" class="r21 r">targetType</span>, <b>object</b> <span id="r22 rd" class="r22 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r23 rd" class="r23 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+    }
+}</pre></td></tr></table></div></body></html>

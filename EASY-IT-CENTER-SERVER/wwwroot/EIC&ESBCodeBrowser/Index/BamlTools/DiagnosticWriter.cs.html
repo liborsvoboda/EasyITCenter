@@ -1,0 +1,303 @@
+﻿<!DOCTYPE html>
+<html><head><title>DiagnosticWriter.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(294);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#BamlTools/DiagnosticWriter.cs" target="_top">DiagnosticWriter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#BamlTools" target="_top">HelpProjects\WPF-MORE\Tools\BamlReflector\BamlTools\BamlTools.csproj</a> (BamlTools)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Xaml</span>;
+
+<b>namespace</b> <span class="i n">BamlTools</span>
+{
+    <b>public class</b> <a id="089505de1cec81ce" href="R/089505de1cec81ce.html" target="n" data-glyph="0,0" class="t t">DiagnosticWriter</a> : <a href="@0@System.Xaml/A.html#065b53f6ef7eed1b" class="t t">XamlWriter</a>, <a href="@0@System.Xaml/A.html#ab29cdf0de43ff3a" class="t t">IXamlLineInfoConsumer</a>
+    {
+        <b>const string</b> <a id="a7ae8e70fc1d5cc9" href="R/a7ae8e70fc1d5cc9.html" target="n" data-glyph="10,1" class="i field">_nullString</a> = <span class="s">&quot;*null*&quot;</span>;
+
+        <a href="@0@System.Xaml/A.html#3a99ac8e981cd5e1" class="t t">XamlSchemaContext</a> <a id="23410e9f0afd95aa" href="R/23410e9f0afd95aa.html" target="n" data-glyph="46,1" class="i field">_schemaContext</a>;
+        <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a> <a id="866340aef6bd0a50" href="R/866340aef6bd0a50.html" target="n" data-glyph="46,1" class="i field">_nodeText</a>;
+        <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a> <a id="b3a23f9cb97516e1" href="R/b3a23f9cb97516e1.html" target="n" data-glyph="46,1" class="i field">_indentedNodeText</a>;
+        <b>int</b> <a id="c61b3b513e4f0290" href="R/c61b3b513e4f0290.html" target="n" data-glyph="46,1" class="i field">_indent</a>;
+        <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <a id="67707b2a20922ba4" href="R/67707b2a20922ba4.html" target="n" data-glyph="46,1" class="i field">_indentUnit</a> = <span class="s">&quot; . &quot;</span>;
+        <a href="@1@System.Runtime/A.html#adf60ee46ebd299f" class="t t">StringBuilder</a> <a id="c803d3142b59c565" href="R/c803d3142b59c565.html" target="n" data-glyph="46,1" class="i field">_stringbuilder</a>;
+        <a href="@0@System.Xaml/A.html#065b53f6ef7eed1b" class="t t">XamlWriter</a> <a id="82fd515fdfd3d9e9" href="R/82fd515fdfd3d9e9.html" target="n" data-glyph="46,1" class="i field">_wrappedWriter</a> = <b>null</b>;
+
+        <a href="@0@System.Xaml/A.html#ab29cdf0de43ff3a" class="t t">IXamlLineInfoConsumer</a> <a id="76cb4ca72ec9ef5f" href="R/76cb4ca72ec9ef5f.html" target="n" data-glyph="46,1" class="i field">_wrappedWriterLineInfoConsumer</a> = <b>null</b>;
+        <b>int</b> <a id="69d68001689b64e4" href="R/69d68001689b64e4.html" target="n" data-glyph="46,1" class="i field">_lineNumber</a>;
+        <b>int</b> <a id="1f7ca48e365726d7" href="R/1f7ca48e365726d7.html" target="n" data-glyph="46,1" class="i field">_linePosition</a>;
+        <b>bool</b> <a id="ea72bcaa5e237069" href="R/ea72bcaa5e237069.html" target="n" data-glyph="46,1" class="i field">_lineInfoIsNew</a>;
+
+        <b>public</b> <a id="3387c208fe9c64b2" href="R/3387c208fe9c64b2.html" target="n" data-glyph="72,1" class="t constructor">DiagnosticWriter</a>(<a href="@0@System.Xaml/A.html#3a99ac8e981cd5e1" class="t t">XamlSchemaContext</a> <span id="r0 rd" class="r0 r">schemaContext</span>)
+        {
+            <a href="#23410e9f0afd95aa" class="i field">_schemaContext</a> = <span class="r0 r">schemaContext</span>;
+            <a href="#866340aef6bd0a50" class="i field">_nodeText</a> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+            <a href="#c61b3b513e4f0290" class="i field">_indent</a> = 0;
+
+            <a href="#c803d3142b59c565" class="i field">_stringbuilder</a> = <b>null</b>;
+            <a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a> = <b>null</b>;
+            <a href="#76cb4ca72ec9ef5f" class="i field">_wrappedWriterLineInfoConsumer</a> = <b>null</b>;
+        }
+
+        <b>public</b> <a id="645e14e761b2267d" href="R/645e14e761b2267d.html" target="n" data-glyph="72,1" class="t constructor">DiagnosticWriter</a>(<a href="@1@System.Runtime/A.html#adf60ee46ebd299f" class="t t">StringBuilder</a> <span id="r1 rd" class="r1 r">stringbuilder</span>, <a href="@0@System.Xaml/A.html#3a99ac8e981cd5e1" class="t t">XamlSchemaContext</a> <span id="r2 rd" class="r2 r">schemaContext</span>)
+            : <a href="#3387c208fe9c64b2" class="k">this</a>(<span class="r2 r">schemaContext</span>)
+        {
+            <a href="#c803d3142b59c565" class="i field">_stringbuilder</a> = <span class="r1 r">stringbuilder</span>;
+        }
+
+        <b>public</b> <a id="e8a90a6ef6c0431c" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">DiagnosticWriter</a>(<a href="@1@System.Runtime/A.html#adf60ee46ebd299f" class="t t">StringBuilder</a> <span id="r3 rd" class="r3 r">stringbuilder</span>, <a href="@0@System.Xaml/A.html#065b53f6ef7eed1b" class="t t">XamlWriter</a> <span id="r4 rd" class="r4 r">wrappedWriter</span>, <a href="@0@System.Xaml/A.html#3a99ac8e981cd5e1" class="t t">XamlSchemaContext</a> <span id="r5 rd" class="r5 r">xamlSchemaContext</span>)
+            : <a href="#645e14e761b2267d" class="k">this</a>(<span class="r3 r">stringbuilder</span>, <span class="r5 r">xamlSchemaContext</span>)
+        {
+            <a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a> = <span class="r4 r">wrappedWriter</span>;
+            <a href="#76cb4ca72ec9ef5f" class="i field">_wrappedWriterLineInfoConsumer</a> = <a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a> <b>as</b> <a href="@0@System.Xaml/A.html#ab29cdf0de43ff3a" class="t t">IXamlLineInfoConsumer</a>;
+        }
+
+        <b>public</b> <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a> <a id="e05c25bb8cc9d78f" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">IndentUnit</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#67707b2a20922ba4" class="i field">_indentUnit</a>; }
+            <b>set</b> { <a href="#67707b2a20922ba4" class="i field">_indentUnit</a> = <b>value</b>; }
+        }
+
+        <span class="c">// ------ XamlWriter implementation  -------------</span>
+
+        <b>public override</b> <a href="@0@System.Xaml/A.html#3a99ac8e981cd5e1" class="t t">XamlSchemaContext</a> <a id="2ba56ca44bd7b436" href="R/2ba56ca44bd7b436.html" target="n" data-glyph="102,1" class="i property">SchemaContext</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#23410e9f0afd95aa" class="i field">_schemaContext</a>; }
+        }
+
+        <b>public override void</b> <a id="e0dcba2c4af9efca" href="R/e0dcba2c4af9efca.html" target="n" data-glyph="72,1" class="i method">WriteNamespace</a>(<a href="@0@System.Xaml/A.html#cdd83fa3adde4afc" class="t t">NamespaceDeclaration</a> <span id="r6 rd" class="r6 r">namespaceDeclaration</span>)
+        {
+            <a href="#90ee1422368d6d3b" class="i property">CurrentNodeText</a> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a>.<a href="@1@System.Runtime/A.html#7432dab173fae5fc" class="i method">Format</a>(<span class="s">&quot;NS prefix={0} Uri={1}&quot;</span>, <span class="r6 r">namespaceDeclaration</span>.<a href="@0@System.Xaml/A.html#d3cff1e75e3cce90" class="i property">Prefix</a>, <span class="r6 r">namespaceDeclaration</span>.<a href="@0@System.Xaml/A.html#32ecf72407f1c0fb" class="i property">Namespace</a>);
+            <a href="#1f09e61755314516" class="i method">BuildString</a>();
+
+            <b>if</b> (<a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a> != <b>null</b>)
+            {
+                <a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a>.<a href="@0@System.Xaml/A.html#4e9eaa47c9746df5" class="i method">WriteNamespace</a>(<span class="r6 r">namespaceDeclaration</span>);
+            }
+        }
+
+        <b>public override void</b> <a id="b291e53d0bf51462" href="R/b291e53d0bf51462.html" target="n" data-glyph="72,1" class="i method">WriteStartObject</a>(<a href="@0@System.Xaml/A.html#8be9a48c64bfb50d" class="t t">XamlType</a> <span id="r7 rd" class="r7 r">type</span>)
+        {
+            <a href="#90ee1422368d6d3b" class="i property">CurrentNodeText</a> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a>.<a href="@1@System.Runtime/A.html#9d5604d4425b216f" class="i method">Format</a>(<span class="s">&quot;SO {0}&quot;</span>, <span class="r7 r">type</span>.<a href="@0@System.Xaml/A.html#422f72a69aec9b00" class="i property">Name</a>);
+            <a href="#1f09e61755314516" class="i method">BuildString</a>();
+            <a href="#c61b3b513e4f0290" class="i field">_indent</a> += 1;
+
+            <b>if</b> (<a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a> != <b>null</b>)
+            {
+                <a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a>.<a href="@0@System.Xaml/A.html#b3bb126102b5d779" class="i method">WriteStartObject</a>(<span class="r7 r">type</span>);
+            }
+        }
+
+        <b>public override void</b> <a id="57322326d22615ab" href="R/57322326d22615ab.html" target="n" data-glyph="72,1" class="i method">WriteGetObject</a>()
+        {
+            <a href="#90ee1422368d6d3b" class="i property">CurrentNodeText</a> = <span class="s">&quot;GO&quot;</span>;
+            <a href="#1f09e61755314516" class="i method">BuildString</a>();
+            <a href="#c61b3b513e4f0290" class="i field">_indent</a> += 1;
+
+            <b>if</b> (<a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a> != <b>null</b>)
+            {
+                <a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a>.<a href="@0@System.Xaml/A.html#7300f57911af154a" class="i method">WriteGetObject</a>();
+            }
+        }
+
+        <b>public override void</b> <a id="8429076a8294cb41" href="R/8429076a8294cb41.html" target="n" data-glyph="72,1" class="i method">WriteEndObject</a>()
+        {
+            <a href="#c61b3b513e4f0290" class="i field">_indent</a> -= 1;
+            <a href="#90ee1422368d6d3b" class="i property">CurrentNodeText</a> = <span class="s">&quot;EO&quot;</span>;
+            <a href="#1f09e61755314516" class="i method">BuildString</a>();
+
+            <b>if</b> (<a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a> != <b>null</b>)
+            {
+                <a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a>.<a href="@0@System.Xaml/A.html#320ae56860df649e" class="i method">WriteEndObject</a>();
+            }
+        }
+
+        <b>public override void</b> <a id="1bc7accfc81205b3" href="R/1bc7accfc81205b3.html" target="n" data-glyph="72,1" class="i method">WriteStartMember</a>(<a href="@0@System.Xaml/A.html#2cf2cd8e7beb6a15" class="t t">XamlMember</a> <span id="r8 rd" class="r8 r">xamlMember</span>)
+        {
+            <a href="#90ee1422368d6d3b" class="i property">CurrentNodeText</a> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a>.<a href="@1@System.Runtime/A.html#9d5604d4425b216f" class="i method">Format</a>(<span class="s">&quot;SM {0}&quot;</span>, <span class="r8 r">xamlMember</span>.<a href="@0@System.Xaml/A.html#a54271e73b9b3939" class="i property">Name</a>);
+            <a href="#1f09e61755314516" class="i method">BuildString</a>();
+            <a href="#c61b3b513e4f0290" class="i field">_indent</a> += 1;
+
+            <b>if</b> (<a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a> != <b>null</b>)
+            {
+                <a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a>.<a href="@0@System.Xaml/A.html#1b0f2dad5a65dc9a" class="i method">WriteStartMember</a>(<span class="r8 r">xamlMember</span>);
+            }
+        }
+
+        <b>public override void</b> <a id="7edd2a22ca2375b9" href="R/7edd2a22ca2375b9.html" target="n" data-glyph="72,1" class="i method">WriteEndMember</a>()
+        {
+            <a href="#c61b3b513e4f0290" class="i field">_indent</a> -= 1;
+            <a href="#90ee1422368d6d3b" class="i property">CurrentNodeText</a> = <span class="s">&quot;EM&quot;</span>;
+            <a href="#1f09e61755314516" class="i method">BuildString</a>();
+
+            <b>if</b> (<a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a> != <b>null</b>)
+            {
+                <a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a>.<a href="@0@System.Xaml/A.html#cd03c70c855c3fee" class="i method">WriteEndMember</a>();
+            }
+        }
+
+        <b>public override void</b> <a id="510d18d90c47d911" href="R/510d18d90c47d911.html" target="n" data-glyph="72,1" class="i method">WriteValue</a>(<b>object</b> <span id="r9 rd" class="r9 r">value</span>)
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r10 rd" class="r10 r">valueString</span> = <span class="r9 r">value</span> <b>as string</b>;
+            <b>if</b> (<span class="r9 r">value</span> == <b>null</b>)  <span class="c">// null values</span>
+            {
+                <span class="r10 r">valueString</span> = <a href="#a7ae8e70fc1d5cc9" class="i field">_nullString</a>;
+            }
+            <b>else</b> <b>if</b> (<span class="r10 r">valueString</span> != <b>null</b>)  <span class="c">// string values</span>
+            {
+                <b>if</b> (<a href="#af51208ee817b83f" class="i property">ShowLinebreaks</a>)
+                {
+                    <span class="r10 r">valueString</span> = <span class="r10 r">valueString</span>.<a href="@1@System.Runtime/A.html#69fc1d0aa6df8a90" class="i method">Replace</a>(<span class="s">&quot;\n&quot;</span>, <span class="s">&quot;\\n&quot;</span>);
+                }
+            }
+            <b>else</b>  <span class="c">// Non-string Values</span>
+            {
+                <span class="r10 r">valueString</span> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a>.<a href="@1@System.Runtime/A.html#7432dab173fae5fc" class="i method">Format</a>(<span class="s">&quot;({0}) [{1}]&quot;</span>, <span class="r9 r">value</span>.<a href="@1@System.Runtime/A.html#ff31a6bf27c58f89" class="i method">ToString</a>(), <span class="r9 r">value</span>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@1@System.Runtime/A.html#aa4f112f79364b6e" class="i property">Name</a>);
+            }
+
+            <a href="#90ee1422368d6d3b" class="i property">CurrentNodeText</a> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a>.<a href="@1@System.Runtime/A.html#9d5604d4425b216f" class="i method">Format</a>(<span class="s">&quot;V &#39;{0}&#39;&quot;</span>, <span class="r10 r">valueString</span>);
+            <a href="#1f09e61755314516" class="i method">BuildString</a>();
+
+            <b>if</b> (<a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a> != <b>null</b>)
+            {
+                <a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a>.<a href="@0@System.Xaml/A.html#1db6e0a1ffc8b23b" class="i method">WriteValue</a>(<span class="r9 r">value</span>);
+            }
+        }
+
+        <span class="c">// --------------------------</span>
+
+        <b>protected override void</b> <a id="4edc5037aeaccddf" href="R/4edc5037aeaccddf.html" target="n" data-glyph="75,1" class="i method">Dispose</a>(<b>bool</b> <span id="r11 rd" class="r11 r">disposing</span>)
+        {
+            <b>try</b>
+            {
+                <b>if</b> (<span class="r11 r">disposing</span> &amp;&amp; !<a href="@0@System.Xaml/A.html#30874fe11681d7f4" class="i property">IsDisposed</a>)
+                {
+                    <a href="#90ee1422368d6d3b" class="i property">CurrentNodeText</a> = <span class="s">&quot;Closed.&quot;</span>;
+                    <a href="#1f09e61755314516" class="i method">BuildString</a>();
+
+                    <b>if</b> (<a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a> != <b>null</b>)
+                    {
+                        <a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a>.<a href="@0@System.Xaml/A.html#aaf7b542b16c176e" class="i method">Close</a>();
+                    }
+                }
+            }
+            <b>finally</b>
+            {
+                <a href="@0@System.Xaml/A.html#065b53f6ef7eed1b" class="k">base</a>.<a href="@0@System.Xaml/A.html#d8e7e4709eee78d0" class="i method">Dispose</a>(<span class="r11 r">disposing</span>);
+            }
+        }
+
+        <b>public object</b> <a id="7affa9a0ea3f4b23" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Result</a>
+        {
+            <b>get</b>
+            {
+                <a href="@0@System.Xaml/A.html#682b3d4acaf43b88" class="t t">XamlObjectWriter</a> <span id="r12 rd" class="r12 r">objectWriter</span> = <a href="#82fd515fdfd3d9e9" class="i field">_wrappedWriter</a> <b>as</b> <a href="@0@System.Xaml/A.html#682b3d4acaf43b88" class="t t">XamlObjectWriter</a>;
+                <b>if</b> (<span class="r12 r">objectWriter</span> != <b>null</b>)
+                {
+                    <b>return</b> <span class="r12 r">objectWriter</span>.<a href="@0@System.Xaml/A.html#f9d2689047c72364" class="i property">Result</a>;
+                }
+                <b>else</b>
+                {
+                    <b>return</b> <b>null</b>;
+                }
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> IXamlLineInfoConsumer Members
+
+        <b>public void</b> <a id="33ad3dd9bde23b5f" href="R/33ad3dd9bde23b5f.html" target="n" data-glyph="72,1" class="i method">SetLineInfo</a>(<b>int</b> <span id="r13 rd" class="r13 r">lineNumber</span>, <b>int</b> <span id="r14 rd" class="r14 r">linePosition</span>)
+        {
+            {
+                <a href="#69d68001689b64e4" class="i field">_lineNumber</a> = <span class="r13 r">lineNumber</span>;
+                <a href="#1f7ca48e365726d7" class="i field">_linePosition</a> = <span class="r14 r">linePosition</span>;
+                <a href="#ea72bcaa5e237069" class="i field">_lineInfoIsNew</a> = <b>true</b>;
+
+                <b>if</b> (<a href="#76cb4ca72ec9ef5f" class="i field">_wrappedWriterLineInfoConsumer</a> != <b>null</b> &amp;&amp; <a href="#76cb4ca72ec9ef5f" class="i field">_wrappedWriterLineInfoConsumer</a>.<a href="@0@System.Xaml/A.html#fb6799373f2ef5cd" class="i property">ShouldProvideLineInfo</a>)
+                {
+                    <a href="#76cb4ca72ec9ef5f" class="i field">_wrappedWriterLineInfoConsumer</a>.<a href="@0@System.Xaml/A.html#c2fd815e48f369e5" class="i method">SetLineInfo</a>(<span class="r13 r">lineNumber</span>, <span class="r14 r">linePosition</span>);
+                }
+            }
+        }
+
+        <b>public bool</b> <a id="7e5b2b442933955b" href="R/7e5b2b442933955b.html" target="n" data-glyph="102,1" class="i property">ShouldProvideLineInfo</a>
+        {
+            <b>get</b> { <b>return</b> <b>true</b>; }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <b>public string</b> <a id="c9332d27aa1d7b32" href="R/c9332d27aa1d7b32.html" target="n" data-glyph="102,1" class="i property">LineInfoString</a>
+        {
+            <b>get</b>
+            {
+                <b>if</b> (<a href="#ea72bcaa5e237069" class="i field">_lineInfoIsNew</a>)
+                {
+                    <a href="#ea72bcaa5e237069" class="i field">_lineInfoIsNew</a> = <b>false</b>;
+                    <b>return</b> <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a>.<a href="@1@System.Runtime/A.html#7432dab173fae5fc" class="i method">Format</a>(<span class="s">&quot;   ({0},{1})&quot;</span>, <a href="#69d68001689b64e4" class="i field">_lineNumber</a>, <a href="#1f7ca48e365726d7" class="i field">_linePosition</a>);
+                }
+                <b>return</b> <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+            }
+        }
+
+        <span class="c">// -----------------------------</span>
+
+        <b>public</b> <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a> <a id="90ee1422368d6d3b" href="R/90ee1422368d6d3b.html" target="n" data-glyph="102,1" class="i property">CurrentNodeText</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#866340aef6bd0a50" class="i field">_nodeText</a>; }
+
+            <b>private set</b>
+            {
+                <a href="#866340aef6bd0a50" class="i field">_nodeText</a> = <b>value</b>;
+                <b>if</b> (<a href="#ea72bcaa5e237069" class="i field">_lineInfoIsNew</a>)
+                {
+                    <a href="#866340aef6bd0a50" class="i field">_nodeText</a> += <a href="#c9332d27aa1d7b32" class="i property">LineInfoString</a>;
+                }
+            }
+        }
+
+        <b>public int</b> <a id="ff3b234a4f2d2360" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">IndentLevel</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#c61b3b513e4f0290" class="i field">_indent</a>; }
+        }
+
+        <b>public</b> <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a> <a id="bb4c9ee6eaee2c90" href="R/bb4c9ee6eaee2c90.html" target="n" data-glyph="102,1" class="i property">CurrentIndentedNodeText</a>
+        {
+            <b>get</b>
+            {
+                <b>return</b> <a href="#b3a23f9cb97516e1" class="i field">_indentedNodeText</a>;
+            }
+        }
+
+        <b>public bool</b> <a id="af51208ee817b83f" href="R/af51208ee817b83f.html" target="n" data-glyph="102,1" class="i property">ShowLinebreaks</a> { <b>set</b>; <b>get</b>; }
+
+        <b>private string</b> <a id="ecf3483a5bd464a8" href="R/ecf3483a5bd464a8.html" target="n" data-glyph="106,1" class="i property">CurrentIndentString</a>
+        {
+            <b>get</b>
+            {
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r15 rd" class="r15 r">indent</span> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="t t">String</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+                <b>for</b> (<b>int</b> <span id="r16 rd" class="r16 r">i</span> = 0; <span class="r16 r">i</span> &lt; <a href="#c61b3b513e4f0290" class="i field">_indent</a>; <span class="r16 r">i</span> += 1)
+                {
+                    <span class="r15 r">indent</span> += <a href="#67707b2a20922ba4" class="i field">_indentUnit</a>;
+                }
+                <b>return</b> <span class="r15 r">indent</span>;
+            }
+        }
+
+        <b>private void</b> <a id="1f09e61755314516" href="R/1f09e61755314516.html" target="n" data-glyph="76,1" class="i method">BuildString</a>()
+        {
+            <a href="#b3a23f9cb97516e1" class="i field">_indentedNodeText</a> = <a href="#ecf3483a5bd464a8" class="i property">CurrentIndentString</a> + <a href="#90ee1422368d6d3b" class="i property">CurrentNodeText</a>;
+            <b>if</b> (<a href="#c803d3142b59c565" class="i field">_stringbuilder</a> != <b>null</b>)
+            {
+                <a href="#c803d3142b59c565" class="i field">_stringbuilder</a>.<a href="@1@System.Runtime/A.html#73bc75596acbac77" class="i method">AppendLine</a>(<a href="#b3a23f9cb97516e1" class="i field">_indentedNodeText</a>);
+            }
+        }
+
+    }
+}
+</pre></td></tr></table></div></body></html>

@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html><head><title>ExponentialDoubleAnimation.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(147);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#AnimationExamples/ExponentialDoubleAnimation.cs" target="_top">ExponentialDoubleAnimation.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#AnimationExamples" target="_top">HelpProjects\WPF-MORE\Animation\AnimationExamples\AnimationExamples.csproj</a> (AnimationExamples)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+
+<b>namespace</b> <span class="i n">AnimationExamples</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     ExponentialDoubleAnimation - gets exponentially faster / slower</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="43f4c9412e7635b0" href="R/43f4c9412e7635b0.html" target="n" data-glyph="0,0" class="t t"><span id="5a26edb3c266b6a9">ExponentialDoubleAnimation</span></a> : <a href="@0@PresentationCore/A.html#927191f9c491cb33" class="t t">DoubleAnimationBase</a>
+    {
+        <b>public enum</b> <a id="e93e6b403279cf33" href="R/e93e6b403279cf33.html" target="n" data-glyph="18,1" class="t t"><span id="f06ed2d7b6627170">EdgeBehaviorEnum</span></a>
+        {
+            <a id="894d11b95cd2902b" href="R/894d11b95cd2902b.html" target="n" data-glyph="24,2" class="i field">EaseIn</a>,
+            <a id="79c492a39778b70a" href="R/79c492a39778b70a.html" target="n" data-glyph="24,2" class="i field">EaseOut</a>,
+            <a id="f0387cd5f5f3b2bb" href="R/../../0000000000.html" target="n" data-glyph="24,2" class="i field">EaseInOut</a>
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="d17cc9e7adea0761" href="R/d17cc9e7adea0761.html" target="n" data-glyph="42,1" class="i field">EdgeBehaviorProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;EdgeBehavior&quot;</span>, <b>typeof</b> (<a href="#e93e6b403279cf33" class="t t">EdgeBehaviorEnum</a>), <b>typeof</b> (<a href="#43f4c9412e7635b0" class="t t">ExponentialDoubleAnimation</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="#e93e6b403279cf33" class="t t">EdgeBehaviorEnum</a>.<a href="#894d11b95cd2902b" class="i field">EaseIn</a>));
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="e295d3732582a3f4" href="R/e295d3732582a3f4.html" target="n" data-glyph="42,1" class="i field">PowerProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;Power&quot;</span>, <b>typeof</b> (<b>double</b>), <b>typeof</b> (<a href="#43f4c9412e7635b0" class="t t">ExponentialDoubleAnimation</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(2.0));
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="c626455712557c18" href="R/c626455712557c18.html" target="n" data-glyph="42,1" class="i field">FromProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;From&quot;</span>,
+                <b>typeof</b> (<b>double</b>?),
+                <b>typeof</b> (<a href="#43f4c9412e7635b0" class="t t">ExponentialDoubleAnimation</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b0e96d99eea9f9ad" href="R/b0e96d99eea9f9ad.html" target="n" data-glyph="42,1" class="i field">ToProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;To&quot;</span>,
+                <b>typeof</b> (<b>double</b>?),
+                <b>typeof</b> (<a href="#43f4c9412e7635b0" class="t t">ExponentialDoubleAnimation</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     which side gets the effect</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#e93e6b403279cf33" class="t t">EdgeBehaviorEnum</a> <a id="4638d012efdb8811" href="R/4638d012efdb8811.html" target="n" data-glyph="102,1" class="i property">EdgeBehavior</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="#e93e6b403279cf33" class="t t">EdgeBehaviorEnum</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#d17cc9e7adea0761" class="i field">EdgeBehaviorProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#d17cc9e7adea0761" class="i field">EdgeBehaviorProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     exponential rate of growth</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="3e7d11e479455177" href="R/3e7d11e479455177.html" target="n" data-glyph="102,1" class="i property">Power</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#e295d3732582a3f4" class="i field">PowerProperty</a>); }
+            <b>set</b>
+            {
+                <b>if</b> (<b>value</b> &gt; 0.0)
+                {
+                    <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#e295d3732582a3f4" class="i field">PowerProperty</a>, <b>value</b>);
+                }
+                <b>else</b>
+                {
+                    <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#eb98012a74461437" class="t constructor">ArgumentException</a>(<span class="s">&quot;cannot set power to less than 0.0. Value: &quot;</span> + <b>value</b>);
+                }
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Specifies the starting value of the animation.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b>? <a id="1b8a839ab79e05b7" href="R/1b8a839ab79e05b7.html" target="n" data-glyph="102,1" class="i property">From</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>?) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#c626455712557c18" class="i field">FromProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#c626455712557c18" class="i field">FromProperty</a>, <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Specifies the ending value of the animation.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b>? <a id="1b8182210f52e7b9" href="R/1b8182210f52e7b9.html" target="n" data-glyph="102,1" class="i property">To</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>?) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b0e96d99eea9f9ad" class="i field">ToProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b0e96d99eea9f9ad" class="i field">ToProperty</a>, <b>value</b>); }
+        }
+
+        <b>protected override double</b> <a id="96de2559630599e8" href="R/96de2559630599e8.html" target="n" data-glyph="75,1" class="i method">GetCurrentValueCore</a>(<b>double</b> <span id="r0 rd" class="r0 r">defaultOriginValue</span>, <b>double</b> <span id="r1 rd" class="r1 r">defaultDestinationValue</span>,
+            <a href="@0@PresentationCore/A.html#f99966d8ba714770" class="t t">AnimationClock</a> <span id="r2 rd" class="r2 r">clock</span>)
+        {
+            <b>double</b> <span id="r3 rd" class="r3 r">returnValue</span>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r4 rd" class="r4 r">start</span> = <a href="#1b8a839ab79e05b7" class="i property">From</a> ?? <span class="r0 r">defaultOriginValue</span>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r5 rd" class="r5 r">delta</span> = <a href="#1b8182210f52e7b9" class="i property">To</a> - <span class="r4 r">start</span> ?? <span class="r0 r">defaultOriginValue</span> - <span class="r4 r">start</span>;
+
+            <b>switch</b> (<a href="#4638d012efdb8811" class="i property">EdgeBehavior</a>)
+            {
+                <b>case</b> <a href="#e93e6b403279cf33" class="t t">EdgeBehaviorEnum</a>.<a href="#894d11b95cd2902b" class="i field">EaseIn</a>:
+                    <span class="r3 r">returnValue</span> = <a href="#70e3940ac0d24e92" class="i method">EaseIn</a>(<span class="r2 r">clock</span>.<a href="@0@PresentationCore/A.html#1de4092dfea8fec6" class="i property">CurrentProgress</a>.<a href="@1@System.Runtime/A.html#7b38d1fa76071c95" class="i property">Value</a>, <span class="r4 r">start</span>, <span class="r5 r">delta</span>, <a href="#3e7d11e479455177" class="i property">Power</a>);
+                    <b>break</b>;
+                <b>case</b> <a href="#e93e6b403279cf33" class="t t">EdgeBehaviorEnum</a>.<a href="#79c492a39778b70a" class="i field">EaseOut</a>:
+                    <span class="r3 r">returnValue</span> = <a href="#f0fd2ee418cd6573" class="i method">EaseOut</a>(<span class="r2 r">clock</span>.<a href="@0@PresentationCore/A.html#1de4092dfea8fec6" class="i property">CurrentProgress</a>.<a href="@1@System.Runtime/A.html#7b38d1fa76071c95" class="i property">Value</a>, <span class="r4 r">start</span>, <span class="r5 r">delta</span>, <a href="#3e7d11e479455177" class="i property">Power</a>);
+                    <b>break</b>;
+                <b>default</b>:
+                    <span class="r3 r">returnValue</span> = <a href="#8bfc4c6b55feb8d4" class="i method">EaseInOut</a>(<span class="r2 r">clock</span>.<a href="@0@PresentationCore/A.html#1de4092dfea8fec6" class="i property">CurrentProgress</a>.<a href="@1@System.Runtime/A.html#7b38d1fa76071c95" class="i property">Value</a>, <span class="r4 r">start</span>, <span class="r5 r">delta</span>, <a href="#3e7d11e479455177" class="i property">Power</a>);
+                    <b>break</b>;
+            }
+            <b>return</b> <span class="r3 r">returnValue</span>;
+        }
+
+        <b>protected override</b> <a href="@0@WindowsBase/A.html#066003ffe0442caa" class="t t">Freezable</a> <a id="7c9fee04be32d65a" href="R/7c9fee04be32d65a.html" target="n" data-glyph="75,1" class="i method">CreateInstanceCore</a>() =&gt; <b>new</b> <a href="#43f4c9412e7635b0" class="t constructor">ExponentialDoubleAnimation</a>();
+
+        <b>private static double</b> <a id="70e3940ac0d24e92" href="R/70e3940ac0d24e92.html" target="n" data-glyph="76,1" class="i method">EaseIn</a>(<b>double</b> <span id="r6 rd" class="r6 r">timeFraction</span>, <b>double</b> <span id="r7 rd" class="r7 r">start</span>, <b>double</b> <span id="r8 rd" class="r8 r">delta</span>, <b>double</b> <span id="r9 rd" class="r9 r">power</span>)
+        {
+            <span class="c">// math magic: simple exponential growth</span>
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r10 rd" class="r10 r">returnValue</span> = <span class="t t">Math</span>.<span class="i method">Pow</span>(<span class="r6 r">timeFraction</span>, <span class="r9 r">power</span>);
+            <span class="r10 r">returnValue</span> *= <span class="r8 r">delta</span>;
+            <span class="r10 r">returnValue</span> = <span class="r10 r">returnValue</span> + <span class="r7 r">start</span>;
+            <b>return</b> <span class="r10 r">returnValue</span>;
+        }
+
+        <b>private static double</b> <a id="f0fd2ee418cd6573" href="R/f0fd2ee418cd6573.html" target="n" data-glyph="76,1" class="i method">EaseOut</a>(<b>double</b> <span id="r11 rd" class="r11 r">timeFraction</span>, <b>double</b> <span id="r12 rd" class="r12 r">start</span>, <b>double</b> <span id="r13 rd" class="r13 r">delta</span>, <b>double</b> <span id="r14 rd" class="r14 r">power</span>)
+        {
+            <span class="c">// math magic: simple exponential decay</span>
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r15 rd" class="r15 r">returnValue</span> = <span class="t t">Math</span>.<span class="i method">Pow</span>(<span class="r11 r">timeFraction</span>, 1/<span class="r14 r">power</span>);
+            <span class="r15 r">returnValue</span> *= <span class="r13 r">delta</span>;
+            <span class="r15 r">returnValue</span> = <span class="r15 r">returnValue</span> + <span class="r12 r">start</span>;
+            <b>return</b> <span class="r15 r">returnValue</span>;
+        }
+
+        <b>private static double</b> <a id="8bfc4c6b55feb8d4" href="R/8bfc4c6b55feb8d4.html" target="n" data-glyph="76,1" class="i method">EaseInOut</a>(<b>double</b> <span id="r16 rd" class="r16 r">timeFraction</span>, <b>double</b> <span id="r17 rd" class="r17 r">start</span>, <b>double</b> <span id="r18 rd" class="r18 r">delta</span>, <b>double</b> <span id="r19 rd" class="r19 r">power</span>)
+        {
+            <b>double</b> <span id="r20 rd" class="r20 r">returnValue</span>;
+
+            <span class="c">// we cut each effect in half by multiplying the time fraction by two and halving the distance.</span>
+            <b>if</b> (<span class="r16 r">timeFraction</span> &lt;= 0.5)
+            {
+                <span class="r20 r">returnValue</span> = <a href="#f0fd2ee418cd6573" class="i method">EaseOut</a>(<span class="r16 r">timeFraction</span>*2, <span class="r17 r">start</span>, <span class="r18 r">delta</span>/2, <span class="r19 r">power</span>);
+            }
+            <b>else</b>
+            {
+                <span class="r20 r">returnValue</span> = <a href="#70e3940ac0d24e92" class="i method">EaseIn</a>((<span class="r16 r">timeFraction</span> - 0.5)*2, <span class="r17 r">start</span>, <span class="r18 r">delta</span>/2, <span class="r19 r">power</span>);
+                <span class="r20 r">returnValue</span> += (<span class="r18 r">delta</span>/2);
+            }
+            <b>return</b> <span class="r20 r">returnValue</span>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

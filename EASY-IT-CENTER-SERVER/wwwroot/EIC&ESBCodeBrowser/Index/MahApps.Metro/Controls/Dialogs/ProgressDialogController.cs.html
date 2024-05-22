@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html><head><title>ProgressDialogController.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(192);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/Dialogs/ProgressDialogController.cs" target="_top">Controls\Dialogs\ProgressDialogController.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>.<span class="i n">Tasks</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>.<span class="i n">Dialogs</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> A class for manipulating an open ProgressDialog.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="08047b7c19c1041d" href="../../R/08047b7c19c1041d.html" target="n" data-glyph="0,0" class="t t">ProgressDialogController</a>
+    {
+        <b>private</b> <a href="@0@mscorlib/A.html#2d80bf84f593cc0c" class="t t">CancellationTokenRegistration</a> <a id="fc70ced60b0df855" href="../../R/fc70ced60b0df855.html" target="n" data-glyph="46,1" class="i field">cancellationTokenRegistration</a>;
+
+        <b>private</b> <a href="ProgressDialog.cs.html#5f2f5b29082d6f1c" class="t t">ProgressDialog</a> <a id="fc811b02e812fe59" href="../../R/fc811b02e812fe59.html" target="n" data-glyph="106,1" class="i property">WrappedDialog</a> { <b>get</b>; }
+
+        <b>private</b> <a href="@0@mscorlib/A.html#87d60abb7092d5a4" class="t t">Func</a>&lt;<a href="@0@mscorlib/A.html#045a746eb48cbaa9" class="t t">Task</a>&gt; <a id="5ea1cbb4b6e658c0" href="../../R/5ea1cbb4b6e658c0.html" target="n" data-glyph="106,1" class="i property">CloseCallback</a> { <b>get</b>; }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This event is raised when the associated </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="ProgressDialog.cs.html#5f2f5b29082d6f1c" class="t t">ProgressDialog</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> was closed programmatically.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a>? <a id="31a0a7fd19ae4256" href="../../R/31a0a7fd19ae4256.html" target="n" data-glyph="30,1" class="i">Closed</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This event is raised when the associated </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="ProgressDialog.cs.html#5f2f5b29082d6f1c" class="t t">ProgressDialog</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> was cancelled by the user.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a>? <a id="538b1d07273a824e" href="../../R/538b1d07273a824e.html" target="n" data-glyph="30,1" class="i">Canceled</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets if the Cancel button has been pressed.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="a65485389dc64dac" href="../../R/a65485389dc64dac.html" target="n" data-glyph="102,1" class="i property">IsCanceled</a> { <b>get</b>; <b>private set</b>; }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets if the wrapped ProgressDialog is open.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="f2686d4c6526ef2d" href="../../R/f2686d4c6526ef2d.html" target="n" data-glyph="102,1" class="i property">IsOpen</a> { <b>get</b>; <b>private set</b>; }
+
+        <b>internal</b> <a id="87791544faefac95" href="../../R/87791544faefac95.html" target="n" data-glyph="74,1" class="t constructor">ProgressDialogController</a>(<a href="ProgressDialog.cs.html#5f2f5b29082d6f1c" class="t t">ProgressDialog</a> <span id="r0 rd" class="r0 r">dialog</span>, <a href="@0@mscorlib/A.html#87d60abb7092d5a4" class="t t">Func</a>&lt;<a href="@0@mscorlib/A.html#045a746eb48cbaa9" class="t t">Task</a>&gt; <span id="r1 rd" class="r1 r">closeCallBack</span>)
+        {
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a> = <span class="r0 r">dialog</span>;
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#5ea1cbb4b6e658c0" class="i property">CloseCallback</a> = <span class="r1 r">closeCallBack</span>;
+
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#f2686d4c6526ef2d" class="i property">IsOpen</a> = <span class="r0 r">dialog</span>.<a href="@0@PresentationCore/A.html#90bc97a020426061" class="i property">IsVisible</a>;
+
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#a03707fe13ce3664" class="i method">Invoke</a>(() =&gt;
+                {
+                    <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="@0@PresentationCore/A.html#823b5eebadb2cc18" class="i">KeyDown</a> += <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#7a9864d8e1617053" class="i method">WrappedDialog_KeyDown</a>;
+                    <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#733962ffded699da" class="i field">PART_NegativeButton</a>!.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> += <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#464195d324129dbf" class="i method">PART_NegativeButton_Click</a>;
+                });
+
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc70ced60b0df855" class="i field">cancellationTokenRegistration</a> = <span class="r0 r">dialog</span>.<a href="ProgressDialog.cs.html#0177f50fce812a8e" class="i property">CancellationToken</a>.<a href="@0@mscorlib/A.html#b4627f3ac7f722a5" class="i method">Register</a>(() =&gt; { <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#0f91027776f39144" class="i method">BeginInvoke</a>(<a href="#08047b7c19c1041d" class="k">this</a>.<a href="#ee101c1b011b1207" class="i method">Abort</a>); });
+        }
+
+        <b>private void</b> <a id="7a9864d8e1617053" href="../../R/7a9864d8e1617053.html" target="n" data-glyph="76,1" class="i method">WrappedDialog_KeyDown</a>(<b>object</b> <span id="r2 rd" class="r2 r">sender</span>, <a href="@0@PresentationCore/A.html#0d2ce926f5cfc74b" class="t t">KeyEventArgs</a> <span id="r3 rd" class="r3 r">e</span>)
+        {
+            <b>if</b> (<span class="r3 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a> == <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#51a26d8f82f371eb" class="i field">Escape</a> || (<span class="r3 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a> == <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#fb6b5b92594477c5" class="i field">System</a> &amp;&amp; <span class="r3 r">e</span>.<a href="@0@PresentationCore/A.html#a729b8f7ffa361b1" class="i property">SystemKey</a> == <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#69f00d74f1dd9239" class="i field">F4</a>))
+            {
+                <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#a03707fe13ce3664" class="i method">Invoke</a>(<a href="#08047b7c19c1041d" class="k">this</a>.<a href="#ee101c1b011b1207" class="i method">Abort</a>);
+            }
+        }
+
+        <b>private void</b> <a id="464195d324129dbf" href="../../R/464195d324129dbf.html" target="n" data-glyph="76,1" class="i method">PART_NegativeButton_Click</a>(<b>object</b> <span id="r4 rd" class="r4 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r5 rd" class="r5 r">e</span>)
+        {
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#a03707fe13ce3664" class="i method">Invoke</a>(<a href="#08047b7c19c1041d" class="k">this</a>.<a href="#ee101c1b011b1207" class="i method">Abort</a>);
+            <span class="r5 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+        }
+
+        <b>private void</b> <a id="ee101c1b011b1207" href="../../R/ee101c1b011b1207.html" target="n" data-glyph="76,1" class="i method">Abort</a>()
+        {
+            <b>if</b> (<a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#8f027e3a506be97d" class="i property">IsCancelable</a>)
+            {
+                <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#733962ffded699da" class="i field">PART_NegativeButton</a>!.<a href="@0@PresentationCore/A.html#166ae927a742c046" class="i property">IsEnabled</a> = <b>false</b>;
+                <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#a65485389dc64dac" class="i property">IsCanceled</a> = <b>true</b>;
+                <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#538b1d07273a824e" class="i">Canceled</a>?.<a href="@0@mscorlib/A.html#aaedcaa3f05a32f9" class="i method">Invoke</a>(<a href="#08047b7c19c1041d" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets the ProgressBar&#39;s IsIndeterminate to true. To set it to false, call SetProgress.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="b643b83c46ebe0bd" href="../../R/b643b83c46ebe0bd.html" target="n" data-glyph="72,1" class="i method">SetIndeterminate</a>()
+        {
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#a03707fe13ce3664" class="i method">Invoke</a>(() =&gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#5a7179c1ff5765ae" class="i method">SetIndeterminate</a>());
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets if the Cancel button is visible.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r6 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="0249eab0f11629dc" href="../../R/0249eab0f11629dc.html" target="n" data-glyph="72,1" class="i method">SetCancelable</a>(<b>bool</b> <span id="r6 rd" class="r6 r">value</span>)
+        {
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#53f268df55d12b9f" class="i method">Invoke</a>(() =&gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#8f027e3a506be97d" class="i property">IsCancelable</a> = <span class="r6 r">value</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets the dialog&#39;s progress bar value and sets IsIndeterminate to false.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The percentage to set as the value.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="831f7a53b175c4a7" href="../../R/831f7a53b175c4a7.html" target="n" data-glyph="72,1" class="i method">SetProgress</a>(<b>double</b> <span id="r7 rd" class="r7 r">value</span>)
+        {
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#a03707fe13ce3664" class="i method">Invoke</a>(() =&gt;
+                {
+                    <b>if</b> (<span class="r7 r">value</span> &lt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#633b4d7d3865cafa" class="i property">Minimum</a> || <span class="r7 r">value</span> &gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#71b3a5c0e1655783" class="i property">Maximum</a>)
+                    {
+                        <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#5fec5e06371b1f6c" class="t constructor">ArgumentOutOfRangeException</a>(<b>nameof</b>(<span class="r7 r">value</span>));
+                    }
+
+                    <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#14d4ef7fbb5686a9" class="i property">ProgressValue</a> = <span class="r7 r">value</span>;
+                });
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">  Gets/Sets the minimum restriction of the progress Value property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="d754c6179e92ca3b" href="../../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Minimum</a>
+        {
+            <b>get</b> =&gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#53f268df55d12b9f" class="i method">Invoke</a>(() =&gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#633b4d7d3865cafa" class="i property">Minimum</a>);
+            <b>set</b> { <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#53f268df55d12b9f" class="i method">Invoke</a>(() =&gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#633b4d7d3865cafa" class="i property">Minimum</a> = <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">  Gets/Sets the maximum restriction of the progress Value property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="c967bec0423de42d" href="../../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Maximum</a>
+        {
+            <b>get</b> =&gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#53f268df55d12b9f" class="i method">Invoke</a>(() =&gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#71b3a5c0e1655783" class="i property">Maximum</a>);
+            <b>set</b> { <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#53f268df55d12b9f" class="i method">Invoke</a>(() =&gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#71b3a5c0e1655783" class="i property">Maximum</a> = <b>value</b>); }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets the dialog&#39;s message content.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">message</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The message to be set.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="d2c12c9cdc84cc6e" href="../../R/d2c12c9cdc84cc6e.html" target="n" data-glyph="72,1" class="i method">SetMessage</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r8 rd" class="r8 r">message</span>)
+        {
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#53f268df55d12b9f" class="i method">Invoke</a>(() =&gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#699f924ab265596a" class="i property">Message</a> = <span class="r8 r">message</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets the dialog&#39;s title.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">title</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The title to be set.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="6f1a7b6a4a03b9fd" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetTitle</a>(<b>object</b> <span id="r9 rd" class="r9 r">title</span>)
+        {
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#53f268df55d12b9f" class="i method">Invoke</a>(() =&gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="BaseMetroDialog.cs.html#1fd29ddd0225972e" class="i property">Title</a> = <span class="r9 r">title</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets the dialog&#39;s progress bar brush.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r10 r">brush</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The brush to use for the progress bar&#39;s foreground.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="b6cff0c0d576c5cc" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetProgressBarForegroundBrush</a>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a> <span id="r10 rd" class="r10 r">brush</span>)
+        {
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#53f268df55d12b9f" class="i method">Invoke</a>(() =&gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#787f3eff2142526c" class="i property">ProgressBarForeground</a> = <span class="r10 r">brush</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Begins an operation to close the ProgressDialog.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">A task representing the operation.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#045a746eb48cbaa9" class="t t">Task</a> <a id="ed1363e8d31a396a" href="../../R/ed1363e8d31a396a.html" target="n" data-glyph="72,1" class="i method">CloseAsync</a>()
+        {
+            <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#a03707fe13ce3664" class="i method">Invoke</a>(() =&gt;
+                {
+                    <b>if</b> (!<a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="@0@PresentationCore/A.html#90bc97a020426061" class="i property">IsVisible</a>)
+                    {
+                        <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#265d72f49e915224" class="t constructor">InvalidOperationException</a>(<span class="s">&quot;Dialog isn&#39;t visible to close&quot;</span>);
+                    }
+
+                    <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#fdcfbb9383a20825" class="i method">VerifyAccess</a>();
+                    <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="@0@PresentationCore/A.html#823b5eebadb2cc18" class="i">KeyDown</a> -= <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#7a9864d8e1617053" class="i method">WrappedDialog_KeyDown</a>;
+                    <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="ProgressDialog.cs.html#733962ffded699da" class="i field">PART_NegativeButton</a>!.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> -= <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#464195d324129dbf" class="i method">PART_NegativeButton_Click</a>;
+
+                    <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc70ced60b0df855" class="i field">cancellationTokenRegistration</a>.<a href="@0@mscorlib/A.html#f05a1300415bcfde" class="i method">Dispose</a>();
+                });
+
+            <b>return</b> <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#5ea1cbb4b6e658c0" class="i property">CloseCallback</a>()
+                       .<a href="@0@mscorlib/A.html#e71924f994d1bb54" class="i method">ContinueWith</a>(<span id="r11 rd" class="r11 r">_</span> =&gt; <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#fc811b02e812fe59" class="i property">WrappedDialog</a>.<a href="../Extensions.cs.html#a03707fe13ce3664" class="i method">Invoke</a>(() =&gt;
+                           {
+                               <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#f2686d4c6526ef2d" class="i property">IsOpen</a> = <b>false</b>;
+                               <a href="#08047b7c19c1041d" class="k">this</a>.<a href="#31a0a7fd19ae4256" class="i">Closed</a>?.<a href="@0@mscorlib/A.html#aaedcaa3f05a32f9" class="i method">Invoke</a>(<a href="#08047b7c19c1041d" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+                           }));
+        }
+    }
+}</pre></td></tr></table></div></body></html>

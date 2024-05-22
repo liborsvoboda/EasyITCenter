@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<html><head><title>Repository.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(116);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasyITcenter-HELP/ServerCore/Repositories/Repository.cs" target="_top">ServerCore\Repositories\Repository.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasyITcenter-HELP" target="_top">HelpProjects\EasyITcenter-HELP\EasyITcenter-HELP.csproj</a> (EasyITcenter-HELP)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>.<span class="i n">Expressions</span>;
+
+<b>namespace</b> <span class="i n">EasyITCenter</span>.<span class="i n">Services</span> {
+
+    <span class="c">// Generic Repository implementing generic interface takes two generic paremeters DbContext and</span>
+    <span class="c">// model class type</span>
+    <b>public class</b> <a id="7e493ab345bb8aca" href="../../R/7e493ab345bb8aca.html" target="n" data-glyph="0,0" class="t t">Repository</a>&lt;<span id="r0 rd t" class="r0 r t">DbEntity</span>, <span id="r1 rd t" class="r1 r t">Tentity</span>&gt; : <a href="IRepository.cs.html#f222fdf47f303de1" class="t t">IRepository</a>&lt;<span class="r0 r t">DbEntity</span>, <span class="r1 r t">Tentity</span>&gt; <b>where</b> <span class="r0 r t">DbEntity</span> : <span class="i">EasyITCenterContext</span> <b>where</b> <span class="r1 r t">Tentity</span> : <b>class</b> {
+        <b>private readonly</b> <span class="i">DbContext</span> <a id="90181f2f0192e899" href="../../R/90181f2f0192e899.html" target="n" data-glyph="46,1" class="i field">_context</a>;
+        <b>private readonly</b> <span class="i">DbSet</span>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="b3adab986541ddb6" href="../../R/b3adab986541ddb6.html" target="n" data-glyph="46,1" class="i field">dbSet</a>;
+
+        <b>public</b> <a id="324abc200f403135" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">Repository</a>(<span class="r0 r t">DbEntity</span> <span id="r2 rd" class="r2 r">context</span>) {
+            <a href="#90181f2f0192e899" class="i field">_context</a> = <span class="r2 r">context</span>;
+            <a href="#b3adab986541ddb6" class="i field">dbSet</a> = <span class="r2 r">context</span>.<span class="i">Set</span>&lt;<span class="r1 r t">Tentity</span>&gt;();
+            <a href="#63e0fc693e5d8561" class="i property">Query</a> = <a href="#b3adab986541ddb6" class="i field">dbSet</a>.<span class="i">AsQueryable</span>();
+        }
+
+        <b>internal</b> <span class="t t">IQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="63e0fc693e5d8561" href="../../R/63e0fc693e5d8561.html" target="n" data-glyph="104,1" class="i property">Query</a> { <b>get</b>; <b>set</b>; }
+
+        <b>public virtual</b> <span class="r1 r t">Tentity</span> <a id="b7bd104a47588bf6" href="../../R/b7bd104a47588bf6.html" target="n" data-glyph="72,1" class="i method">GetById</a>(<b>int</b> <span id="r3 rd" class="r3 r">id</span>) {
+            <b>return</b> <a href="#b3adab986541ddb6" class="i field">dbSet</a>.<span class="i">Find</span>(<span class="r3 r">id</span>)!;
+        }
+
+        <b>public virtual</b> <span class="r1 r t">Tentity</span> <a id="57960005a70df276" href="../../R/57960005a70df276.html" target="n" data-glyph="72,1" class="i method">Get</a>(<span class="t t">Expression</span>&lt;<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r1 r t">Tentity</span>, <b>bool</b>&gt;&gt; <span id="r4 rd" class="r4 r">predicate</span>) {
+            <b>return</b> <a href="#63e0fc693e5d8561" class="i property">Query</a>.<span class="i method">FirstOrDefault</span>(<span class="r4 r">predicate</span>);
+        }
+
+        <b>public virtual</b> <span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="9d16385cd01c120a" href="../../R/9d16385cd01c120a.html" target="n" data-glyph="72,1" class="i method">Add</a>(<span class="r1 r t">Tentity</span> <span id="r5 rd" class="r5 r">entity</span>) {
+            <span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt; <span id="r6 rd" class="r6 r">eentity</span> = <a href="#b3adab986541ddb6" class="i field">dbSet</a>.<span class="i">Add</span>(<span class="r5 r">entity</span>);
+            <b>return</b> <span class="r6 r">eentity</span>;
+        }
+ 
+        <b>public virtual</b> <span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="4e239a9ba0da6e2e" href="../../R/4e239a9ba0da6e2e.html" target="n" data-glyph="72,1" class="i method">Delete</a>(<b>int</b> <span id="r7 rd" class="r7 r">id</span>) {
+            <span class="r1 r t">Tentity</span>? <span id="r8 rd" class="r8 r">entityToDelete</span> = <a href="#b7bd104a47588bf6" class="i method">GetById</a>(<span class="r7 r">id</span>)!;
+            <a href="#90181f2f0192e899" class="i field">_context</a>.<span class="i">Entry</span>(<span class="r8 r">entityToDelete</span>).<span class="i">State</span> = <span class="i">EntityState</span>.<span class="i">Deleted</span>;
+            <b>if</b> (<span class="r8 r">entityToDelete</span> != <b>null</b>) {
+                <a href="#ffc787f253b604b7" class="i method">Delete</a>(<span class="r8 r">entityToDelete</span>!);
+            }
+            <span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt; <span id="r9 rd" class="r9 r">eentity</span> = <a href="#ffc787f253b604b7" class="i method">Delete</a>(<span class="r8 r">entityToDelete</span>!);
+            <b>return</b> <span class="r9 r">eentity</span>;
+        }
+
+        <b>public virtual</b> <span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="7ed34836d8760b5a" href="../../R/7ed34836d8760b5a.html" target="n" data-glyph="72,1" class="i method">Update</a>(<span class="r1 r t">Tentity</span> <span id="r10 rd" class="r10 r">entityToUpdate</span>) {
+            <span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt; <span id="r11 rd" class="r11 r">eentity</span> = <a href="#b3adab986541ddb6" class="i field">dbSet</a>.<span class="i">Update</span>(<span class="r10 r">entityToUpdate</span>);
+            <b>return</b> <span class="r11 r">eentity</span>;
+        }
+
+        <b>public virtual</b> <span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="ffc787f253b604b7" href="../../R/ffc787f253b604b7.html" target="n" data-glyph="72,1" class="i method">Delete</a>(<span class="r1 r t">Tentity</span> <span id="r12 rd" class="r12 r">entityToDelete</span>) {
+            <span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt; <span id="r13 rd" class="r13 r">eentity</span> = <a href="#b3adab986541ddb6" class="i field">dbSet</a>.<span class="i">Remove</span>(<span class="r12 r">entityToDelete</span>);
+            <b>return</b> <span class="r13 r">eentity</span>;
+        }
+
+        <b>public void</b> <a id="7cf69b3356e21b5b" href="../../R/7cf69b3356e21b5b.html" target="n" data-glyph="72,1" class="i method">SaveChanges</a>() {
+            <a href="#90181f2f0192e899" class="i field">_context</a>.<span class="i">SaveChanges</span>();
+        }
+
+        <b>public virtual int</b> <a id="aa11dec6e1af677e" href="../../R/aa11dec6e1af677e.html" target="n" data-glyph="72,1" class="i method">Total</a>(<span class="t t">Expression</span>&lt;<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r1 r t">Tentity</span>, <b>bool</b>&gt;&gt; <span id="r14 rd" class="r14 r">predicate</span>) {
+            <b>return</b> <a href="#63e0fc693e5d8561" class="i property">Query</a>.<span class="i method">Count</span>(<span class="r14 r">predicate</span>);
+        }
+
+        <b>public virtual bool</b> <a id="0998cf84c7f53d8f" href="../../R/0998cf84c7f53d8f.html" target="n" data-glyph="72,1" class="i method">Exist</a>(<span class="t t">Expression</span>&lt;<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r1 r t">Tentity</span>, <b>bool</b>&gt;&gt; <span id="r15 rd" class="r15 r">predicate</span>) {
+            <b>return</b> <a href="#63e0fc693e5d8561" class="i property">Query</a>.<span class="i method">Any</span>(<span class="r15 r">predicate</span>);
+        }
+
+        <b>public virtual</b> <span class="t t">List</span>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="c64ef7f2974683cc" href="../../R/c64ef7f2974683cc.html" target="n" data-glyph="72,1" class="i method">GetList</a>(
+            <span class="t t">Expression</span>&lt;<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r1 r t">Tentity</span>, <b>bool</b>&gt;&gt;? <span id="r16 rd" class="r16 r">filter</span> = <b>null</b>,
+            <a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="t t">IQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt;, <span class="t t">IOrderedQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt;&gt;? <span id="r17 rd" class="r17 r">orderBy</span> = <b>null</b>,
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r18 rd" class="r18 r">includeProperties</span> = <span class="s">&quot;&quot;</span>,
+            <b>int</b> <span id="r19 rd" class="r19 r">PageNo</span> = 0, <b>int</b> <span id="r20 rd" class="r20 r">PageSize</span> = 0) {
+            <b>var</b> <span id="r21 rd" class="r21 r">query</span> = <a href="#6c9efb4894a89d77" class="i method">QueryEntity</a>(<span class="r16 r">filter</span>, <span class="r17 r">orderBy</span>, <span class="r18 r">includeProperties</span>);
+            <b>if</b> (<span class="r20 r">PageSize</span> + <span class="r19 r">PageNo</span> &gt; 0) {
+                <b>return</b> <span class="r21 r">query</span>.<span class="i method">Skip</span>(<span class="r19 r">PageNo</span> * <span class="r20 r">PageSize</span>).<span class="i method">Take</span>(<span class="r20 r">PageSize</span>).<span class="i method">ToList</span>();
+            }
+            <b>return</b> <span class="r21 r">query</span>.<span class="i method">ToList</span>();
+        }
+ 
+        <b>public virtual</b> <span class="t t">List</span>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="f65c850afd1f2adf" href="../../R/f65c850afd1f2adf.html" target="n" data-glyph="72,1" class="i method">GetFromSql</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r22 rd" class="r22 r">sql</span>) {
+            <b>return</b> <a href="#b3adab986541ddb6" class="i field">dbSet</a>.<span class="i">FromSqlRaw</span>(<span class="r22 r">sql</span>).<span class="i">ToList</span>();
+        }
+ 
+        <b>private</b> <span class="t t">IQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="6c9efb4894a89d77" href="../../R/6c9efb4894a89d77.html" target="n" data-glyph="76,1" class="i method">QueryEntity</a>(
+            <span class="t t">Expression</span>&lt;<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r1 r t">Tentity</span>, <b>bool</b>&gt;&gt;? <span id="r23 rd" class="r23 r">filter</span> = <b>null</b>,
+            <a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="t t">IQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt;, <span class="t t">IOrderedQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt;&gt;? <span id="r24 rd" class="r24 r">orderBy</span> = <b>null</b>,
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r25 rd" class="r25 r">includeProperties</span> = <span class="s">&quot;&quot;</span>) {
+            <b>if</b> (<span class="r23 r">filter</span> != <b>null</b>) {
+                <a href="#63e0fc693e5d8561" class="i property">Query</a> = <a href="#63e0fc693e5d8561" class="i property">Query</a>.<span class="i method">Where</span>(<span class="r23 r">filter</span>);
+            }
+
+            <b>foreach</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r26 rd" class="r26 r">includeProperty</span> <b>in</b> <span class="r25 r">includeProperties</span>.<a href="@1@System.Runtime/A.html#1ff97959e1d46a53" class="i method">Split</a>(<b>new</b> <b>char</b>[] { <span class="s">&#39;,&#39;</span> }, <a href="@1@System.Runtime/A.html#a948431c3f385783" class="t t">StringSplitOptions</a>.<a href="@1@System.Runtime/A.html#249c323b50d44651" class="i field">RemoveEmptyEntries</a>)) {
+                <a href="#63e0fc693e5d8561" class="i property">Query</a> = <a href="#63e0fc693e5d8561" class="i property">Query</a>.<span class="i">Include</span>(<span class="r26 r">includeProperty</span>);
+            }
+
+            <b>if</b> (<span class="r24 r">orderBy</span> != <b>null</b>) {
+                <b>return</b> <span class="r24 r">orderBy</span>(<a href="#63e0fc693e5d8561" class="i property">Query</a>);
+            }
+            <b>else</b> {
+                <b>return</b> <a href="#63e0fc693e5d8561" class="i property">Query</a>;
+            }
+        }
+ 
+        <b>private bool</b> <a id="e3eca1a42db13a16" href="../../R/e3eca1a42db13a16.html" target="n" data-glyph="46,1" class="i field">disposed</a> = <b>false</b>;
+
+        <b>protected virtual void</b> <a id="ef9a45dc80a9c075" href="../../R/ef9a45dc80a9c075.html" target="n" data-glyph="75,1" class="i method">Dispose</a>(<b>bool</b> <span id="r27 rd" class="r27 r">disposing</span>) {
+            <b>if</b> (!<a href="#e3eca1a42db13a16" class="i field">disposed</a>) {
+                <b>if</b> (<span class="r27 r">disposing</span>) {
+                    <a href="#90181f2f0192e899" class="i field">_context</a>.<span class="i">Dispose</span>();
+                }
+            }
+            <a href="#e3eca1a42db13a16" class="i field">disposed</a> = <b>true</b>;
+        }
+
+        <b>public void</b> <a id="0aa139e3dbf02890" href="../../R/0aa139e3dbf02890.html" target="n" data-glyph="72,1" class="i method">Dispose</a>() {
+            <a href="#ef9a45dc80a9c075" class="i method">Dispose</a>(<b>true</b>);
+            <a href="@1@System.Runtime/A.html#25d9c1e022317a99" class="t t">GC</a>.<a href="@1@System.Runtime/A.html#2673f5220a565bf2" class="i method">SuppressFinalize</a>(<a href="#7e493ab345bb8aca" class="k">this</a>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

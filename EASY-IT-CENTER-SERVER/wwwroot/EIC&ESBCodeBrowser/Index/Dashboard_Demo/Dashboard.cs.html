@@ -1,0 +1,459 @@
+﻿<!DOCTYPE html>
+<html><head><title>Dashboard.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(450);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#Dashboard_Demo/Dashboard.cs" target="_top">Dashboard.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#Dashboard_Demo" target="_top">HelpProjects\WPF-MAIN\Dashboard_Demo\Dashboard_Demo.csproj</a> (Dashboard_Demo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i">Expression</span>.<span class="i">Shapes</span>;
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+
+<b>namespace</b> <span class="i n">Dashboard_Demo</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> 刻度盘控件</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span><span class="c">add by zhidanfeng 2017.2.19</span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;PART_IncreaseCircle&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<span class="i">Arc</span>))]
+    <b>public class</b> <a id="aac09ec24cbcf624" href="R/aac09ec24cbcf624.html" target="n" data-glyph="0,0" class="t t"><span id="469b4e9ac93fa617">Dashboard</span></a> : <a href="@0@PresentationFramework/A.html#6750b721a2294fc5" class="t t">Control</a>
+    {
+        <b>private</b> <span class="i">Arc</span> <a id="3c577e7651df3a13" href="R/3c577e7651df3a13.html" target="n" data-glyph="46,1" class="i field">PART_IncreaseCircle</a>;
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 保存角度变化前的角度值(用于动画)</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private double</b> <a id="d9f84d96f2b6cd78" href="R/d9f84d96f2b6cd78.html" target="n" data-glyph="46,1" class="i field">OldAngle</a>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructors
+        <b>static</b> <a id="efaa0489b3ade04d" href="R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">Dashboard</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6339cc8ec3e1311a" class="i field">DefaultStyleKeyProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>)));
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> 依赖属性
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Angle 刻度盘起始角度
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 刻度盘起始角度依赖属性</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f17205dc3235dc81" href="R/f17205dc3235dc81.html" target="n" data-glyph="42,1" class="i field">StartAngleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <span class="s">&quot;StartAngle&quot;</span>,
+                <b>typeof</b>(<b>double</b>),
+                <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(0d));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 刻度盘起始角度</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="86ed39eb2fd67633" href="R/86ed39eb2fd67633.html" target="n" data-glyph="102,1" class="i property">StartAngle</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f17205dc3235dc81" class="i field">StartAngleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f17205dc3235dc81" class="i field">StartAngleProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Angle 刻度盘结束角度依赖属性
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 刻度盘结束角度依赖属性</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="7ac96e76a098981a" href="R/7ac96e76a098981a.html" target="n" data-glyph="42,1" class="i field">EndAngleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <span class="s">&quot;EndAngle&quot;</span>,
+                <b>typeof</b>(<b>double</b>),
+                <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(0d));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 刻度盘结束角度依赖属性</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="7785b91db7d5fb68" href="R/7785b91db7d5fb68.html" target="n" data-glyph="102,1" class="i property">EndAngle</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#7ac96e76a098981a" class="i field">EndAngleProperty</a>); }
+            <b>set</b>
+            {
+                <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#7ac96e76a098981a" class="i field">EndAngleProperty</a>, <b>value</b>);
+            }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Minimum 最小值
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 最小值依赖属性,用于Binding</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="39a38a2554019d95" href="R/39a38a2554019d95.html" target="n" data-glyph="42,1" class="i field">MinimumProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <span class="s">&quot;Minimum&quot;</span>,
+                <b>typeof</b>(<b>double</b>),
+                <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(0.0));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 获取或设置最小值.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">最小值.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="e42c72c069508fd7" href="R/e42c72c069508fd7.html" target="n" data-glyph="102,1" class="i property">Minimum</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#39a38a2554019d95" class="i field">MinimumProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#39a38a2554019d95" class="i field">MinimumProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Maximum 最大值
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 最大值依赖属性,用于Binding</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="318057e901132131" href="R/318057e901132131.html" target="n" data-glyph="42,1" class="i field">MaximumProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <span class="s">&quot;Maximum&quot;</span>,
+                <b>typeof</b>(<b>double</b>),
+                <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(100.0));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 获取或设置最大值.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">最大值.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="cfe28cbc9ff92153" href="R/cfe28cbc9ff92153.html" target="n" data-glyph="102,1" class="i property">Maximum</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#318057e901132131" class="i field">MaximumProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#318057e901132131" class="i field">MaximumProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Value 当前值
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 最大值依赖属性,用于Binding</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="c8063b4bccdd298f" href="R/c8063b4bccdd298f.html" target="n" data-glyph="42,1" class="i field">ValueProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <span class="s">&quot;Value&quot;</span>,
+                <b>typeof</b>(<b>double</b>),
+                <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(0.0, <b>new</b> <span class="t">PropertyChangedCallback</span>(<a href="#c2595628848afd76" class="i method">OnValuePropertyChanged</a>)));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 获取或设置当前值</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="47fceafb192f2d8b" href="R/47fceafb192f2d8b.html" target="n" data-glyph="102,1" class="i property">Value</a>
+        {
+            <b>get</b>
+            {
+                <b>if</b> (<a href="#3c577e7651df3a13" class="i field">PART_IncreaseCircle</a> == <b>null</b>)
+                    <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#c8063b4bccdd298f" class="i field">ValueProperty</a>);
+
+                <b>if</b> ((<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#c8063b4bccdd298f" class="i field">ValueProperty</a>) &gt; 800000d)
+                {
+                    <a href="@0@PresentationCore/A.html#95e063a8a6c98a51" class="t t">LinearGradientBrush</a> <span id="r0 rd" class="r0 r">brush</span> = <b>new</b> <a href="@0@PresentationCore/A.html#cab8ccfc27cff4b9" class="t constructor">LinearGradientBrush</a>();
+                    <span class="r0 r">brush</span>.<a href="@0@PresentationCore/A.html#b1eee9a6882b4bcd" class="i property">StartPoint</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, 0);
+                    <span class="r0 r">brush</span>.<a href="@0@PresentationCore/A.html#f263c2997c4cfda3" class="i property">EndPoint</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(1, 0);
+                    <span class="r0 r">brush</span>.<a href="@0@PresentationCore/A.html#0392ede480e9384d" class="i property">GradientStops</a>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>((<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>)<a href="@0@PresentationCore/A.html#a5d358896c429793" class="t t">ColorConverter</a>.<a href="@0@PresentationCore/A.html#712b07b6ae41093f" class="i method">ConvertFromString</a>(<span class="s">&quot;#f0b046&quot;</span>), 0));
+                    <span class="r0 r">brush</span>.<a href="@0@PresentationCore/A.html#0392ede480e9384d" class="i property">GradientStops</a>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>((<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>)<a href="@0@PresentationCore/A.html#a5d358896c429793" class="t t">ColorConverter</a>.<a href="@0@PresentationCore/A.html#712b07b6ae41093f" class="i method">ConvertFromString</a>(<span class="s">&quot;#e83a2d&quot;</span>), 1));
+                    <a href="#3c577e7651df3a13" class="i field">PART_IncreaseCircle</a>.<span class="i">Stroke</span> = <span class="r0 r">brush</span>;
+                }
+                <b>else</b>
+                {
+                    <a href="@0@PresentationCore/A.html#95e063a8a6c98a51" class="t t">LinearGradientBrush</a> <span id="r1 rd" class="r1 r">brush</span> = <b>new</b> <a href="@0@PresentationCore/A.html#cab8ccfc27cff4b9" class="t constructor">LinearGradientBrush</a>();
+                    <span class="r1 r">brush</span>.<a href="@0@PresentationCore/A.html#b1eee9a6882b4bcd" class="i property">StartPoint</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, 0);
+                    <span class="r1 r">brush</span>.<a href="@0@PresentationCore/A.html#f263c2997c4cfda3" class="i property">EndPoint</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(1, 0);
+                    <span class="r1 r">brush</span>.<a href="@0@PresentationCore/A.html#0392ede480e9384d" class="i property">GradientStops</a>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>((<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>)<a href="@0@PresentationCore/A.html#a5d358896c429793" class="t t">ColorConverter</a>.<a href="@0@PresentationCore/A.html#712b07b6ae41093f" class="i method">ConvertFromString</a>(<span class="s">&quot;#1ccabd&quot;</span>), 0));
+                    <span class="r1 r">brush</span>.<a href="@0@PresentationCore/A.html#0392ede480e9384d" class="i property">GradientStops</a>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>((<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>)<a href="@0@PresentationCore/A.html#a5d358896c429793" class="t t">ColorConverter</a>.<a href="@0@PresentationCore/A.html#712b07b6ae41093f" class="i method">ConvertFromString</a>(<span class="s">&quot;#458ffc&quot;</span>), 1));
+                    <a href="#3c577e7651df3a13" class="i field">PART_IncreaseCircle</a>.<span class="i">Stroke</span> = <span class="r1 r">brush</span>;
+                }
+                <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#c8063b4bccdd298f" class="i field">ValueProperty</a>);
+
+            }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#c8063b4bccdd298f" class="i field">ValueProperty</a>, <b>value</b>); }
+        }
+
+        <b>private static void</b> <a id="c2595628848afd76" href="R/c2595628848afd76.html" target="n" data-glyph="76,1" class="i method">OnValuePropertyChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r2 rd" class="r2 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r3 rd" class="r3 r">e</span>)
+        {
+            <a href="#aac09ec24cbcf624" class="t t">Dashboard</a> <span id="r4 rd" class="r4 r">dashboard</span> = <span class="r2 r">d</span> <b>as</b> <a href="#aac09ec24cbcf624" class="t t">Dashboard</a>;
+            <span class="r4 r">dashboard</span>.<a href="#d9f84d96f2b6cd78" class="i field">OldAngle</a> = <span class="r4 r">dashboard</span>.<a href="#454ae8cf44403cd2" class="i property">Angle</a>;
+            <span class="r4 r">dashboard</span>.<a href="#a7efd4cdcad85bee" class="i method">SetAngle</a>();
+            <span class="r4 r">dashboard</span>.<a href="#9f9e87dfb9974a77" class="i method">TransformAngle</a>();
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> LongTickCount 长刻度个数
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="712ff604a7661700" href="R/712ff604a7661700.html" target="n" data-glyph="42,1" class="i field">LongTickCountProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <span class="s">&quot;LongTickCount&quot;</span>,
+                <b>typeof</b>(<b>int</b>),
+                <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(5));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 获取或设置长刻度个数，用于设置刻度盘显示几个长刻度</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public int</b> <a id="8c60aff8f552412b" href="R/8c60aff8f552412b.html" target="n" data-glyph="102,1" class="i property">LongTickCount</a>
+        {
+            <b>get</b> { <b>return</b> (<b>int</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#712ff604a7661700" class="i field">LongTickCountProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#712ff604a7661700" class="i field">LongTickCountProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> ShortTickCount 短刻度个数
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="ec84d4c2f1501850" href="R/ec84d4c2f1501850.html" target="n" data-glyph="42,1" class="i field">ShortTickCountProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <span class="s">&quot;ShortTickCount&quot;</span>,
+                <b>typeof</b>(<b>int</b>),
+                <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(3));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 获取或设置两个长刻度之间的短刻度的个数</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public int</b> <a id="6202818be108474d" href="R/6202818be108474d.html" target="n" data-glyph="102,1" class="i property">ShortTickCount</a>
+        {
+            <b>get</b> { <b>return</b> (<b>int</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#ec84d4c2f1501850" class="i field">ShortTickCountProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#ec84d4c2f1501850" class="i field">ShortTickCountProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> TickDurtion 刻度改变时的动画显示时长
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="84fcf0e6124b5358" href="R/84fcf0e6124b5358.html" target="n" data-glyph="42,1" class="i field">TickDurtionProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;TickDurtion&quot;</span>
+            , <b>typeof</b>(<a href="@0@PresentationCore/A.html#0922b12caaf47091" class="t t">Duration</a>)
+            , <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>),
+            <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>new</b> <a href="@0@PresentationCore/A.html#b34a900856537ced" class="t constructor">Duration</a>(<a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@0@mscorlib/A.html#668d91d771bce54b" class="i method">FromMilliseconds</a>(400))));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 刻度改变时的动画显示时长</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#0922b12caaf47091" class="t t">Duration</a> <a id="ba39717cc1e607be" href="R/ba39717cc1e607be.html" target="n" data-glyph="102,1" class="i property">TickDurtion</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#0922b12caaf47091" class="t t">Duration</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#84fcf0e6124b5358" class="i field">TickDurtionProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#84fcf0e6124b5358" class="i field">TickDurtionProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> ShortTicksBrush 短刻度颜色
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="c39101f2603bcc26" href="R/c39101f2603bcc26.html" target="n" data-glyph="42,1" class="i field">ShortTicksBrushProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#28c81133f2c673fb" class="i method">Register</a>(<span class="s">&quot;ShortTicksBrush&quot;</span>
+            , <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>)
+            , <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 短刻度颜色</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a> <a id="0db1aaf845d3f6fb" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">ShortTicksBrush</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#c39101f2603bcc26" class="i field">ShortTicksBrushProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#c39101f2603bcc26" class="i field">ShortTicksBrushProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> LongTicksBrush 长刻度颜色
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f88e810f0754edf9" href="R/f88e810f0754edf9.html" target="n" data-glyph="42,1" class="i field">LongTicksBrushProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#28c81133f2c673fb" class="i method">Register</a>(<span class="s">&quot;LongTicksBrush&quot;</span>
+            , <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>)
+            , <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 长刻度颜色</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a> <a id="74900c6a220db637" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">LongTicksBrush</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f88e810f0754edf9" class="i field">LongTicksBrushProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f88e810f0754edf9" class="i field">LongTicksBrushProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Content
+        <b>public object</b> <a id="11dc5068899b3281" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Content</a>
+        {
+            <b>get</b> { <b>return</b> (<b>object</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b3ed1ca6130c73e8" class="i field">ContentProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b3ed1ca6130c73e8" class="i field">ContentProperty</a>, <b>value</b>); }
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b3ed1ca6130c73e8" href="R/b3ed1ca6130c73e8.html" target="n" data-glyph="42,1" class="i field">ContentProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#28c81133f2c673fb" class="i method">Register</a>(<span class="s">&quot;Content&quot;</span>, <b>typeof</b>(<b>object</b>), <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>));
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> ContentTemplate
+        <b>public</b> <a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a> <a id="36fbbe028f477dd7" href="R/36fbbe028f477dd7.html" target="n" data-glyph="102,1" class="i property">ContentTemplate</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#0d4909c810e2bd68" class="i field">ContentTemplateProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#0d4909c810e2bd68" class="i field">ContentTemplateProperty</a>, <b>value</b>); }
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="0d4909c810e2bd68" href="R/0d4909c810e2bd68.html" target="n" data-glyph="42,1" class="i field">ContentTemplateProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#28c81133f2c673fb" class="i method">Register</a>(<span class="s">&quot;ContentTemplate&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>), <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>));
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private依赖属性
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Angle 刻度盘当前值所对应的角度
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 刻度盘当前值所对应的角度依赖属性</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="2aca41de593cfc82" href="R/2aca41de593cfc82.html" target="n" data-glyph="42,1" class="i field">AngleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <span class="s">&quot;Angle&quot;</span>,
+                <b>typeof</b>(<b>double</b>),
+                <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(0d));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 刻度盘当前值所对应的角度</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="454ae8cf44403cd2" href="R/454ae8cf44403cd2.html" target="n" data-glyph="102,1" class="i property">Angle</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#2aca41de593cfc82" class="i field">AngleProperty</a>); }
+            <b>private set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#2aca41de593cfc82" class="i field">AngleProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> ShortTicks 短刻度线集合
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 短刻度线依赖属性,用于Binding</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="d005c28bb5470242" href="R/d005c28bb5470242.html" target="n" data-glyph="42,1" class="i field">ShortTicksProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <span class="s">&quot;ShortTicks&quot;</span>,
+                <b>typeof</b>(<a href="@0@mscorlib/A.html#b19f71a84062554b" class="t t">IList</a>&lt;<b>object</b>&gt;),
+                <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 获取或设置短刻度线，用于绑定PathListBox的ItemsSource</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">短刻度线.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#b19f71a84062554b" class="t t">IList</a>&lt;<b>object</b>&gt; <a id="5b1903a91e1c4cee" href="R/5b1903a91e1c4cee.html" target="n" data-glyph="102,1" class="i property">ShortTicks</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@mscorlib/A.html#b19f71a84062554b" class="t t">IList</a>&lt;<b>object</b>&gt;)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#d005c28bb5470242" class="i field">ShortTicksProperty</a>); }
+            <b>private set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#d005c28bb5470242" class="i field">ShortTicksProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> LongTicks 长刻度线集合
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 长刻度线依赖属性,用于Binding</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="4894edc510bc0456" href="R/4894edc510bc0456.html" target="n" data-glyph="42,1" class="i field">LongTicksProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <span class="s">&quot;LongTicks&quot;</span>,
+                <b>typeof</b>(<a href="@0@mscorlib/A.html#b19f71a84062554b" class="t t">IList</a>&lt;<b>object</b>&gt;),
+                <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 获取或设置长刻度线，用于绑定PathListBox的ItemsSource</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">长刻度线.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#b19f71a84062554b" class="t t">IList</a>&lt;<b>object</b>&gt; <a id="47d536be18fed4b8" href="R/47d536be18fed4b8.html" target="n" data-glyph="102,1" class="i property">LongTicks</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@mscorlib/A.html#b19f71a84062554b" class="t t">IList</a>&lt;<b>object</b>&gt;)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#4894edc510bc0456" class="i field">LongTicksProperty</a>); }
+            <b>private set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#4894edc510bc0456" class="i field">LongTicksProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> LongTicks 长刻度线上显示的数字
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 长刻度线依赖属性,用于Binding</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="14aa7ab7632a974a" href="R/14aa7ab7632a974a.html" target="n" data-glyph="42,1" class="i field">NumberListProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+                <span class="s">&quot;NumberList&quot;</span>,
+                <b>typeof</b>(<a href="@0@mscorlib/A.html#b19f71a84062554b" class="t t">IList</a>&lt;<b>object</b>&gt;),
+                <b>typeof</b>(<a href="#aac09ec24cbcf624" class="t t">Dashboard</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 获取或设置长刻度线，用于绑定PathListBox的ItemsSource</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span><span class="c">长刻度线.</span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#b19f71a84062554b" class="t t">IList</a>&lt;<b>object</b>&gt; <a id="e8b8e673049671fa" href="R/e8b8e673049671fa.html" target="n" data-glyph="102,1" class="i property">NumberList</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@mscorlib/A.html#b19f71a84062554b" class="t t">IList</a>&lt;<b>object</b>&gt;)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#14aa7ab7632a974a" class="i field">NumberListProperty</a>); }
+            <b>private set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#14aa7ab7632a974a" class="i field">NumberListProperty</a>, <b>value</b>); }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> 重载
+        <b>public override void</b> <a id="beaee0e092b2fe09" href="R/beaee0e092b2fe09.html" target="n" data-glyph="72,1" class="i method">OnApplyTemplate</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6750b721a2294fc5" class="k">base</a>.<a href="@0@PresentationFramework/A.html#0c1b13beb625a4a2" class="i method">OnApplyTemplate</a>();
+
+            <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#3c577e7651df3a13" class="i field">PART_IncreaseCircle</a> = <a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;PART_IncreaseCircle&quot;</span>) <b>as</b> <span class="i">Arc</span>;
+
+            <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#65e0f05e4c587665" class="i method">SetTicks</a>();
+            <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#a7efd4cdcad85bee" class="i method">SetAngle</a>();
+            <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#9f9e87dfb9974a77" class="i method">TransformAngle</a>();
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private方法
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 设置刻度线</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="65e0f05e4c587665" href="R/65e0f05e4c587665.html" target="n" data-glyph="76,1" class="i method">SetTicks</a>()
+        {
+            <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<b>object</b>&gt; <span id="r5 rd" class="r5 r">numbers</span> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<b>object</b>&gt;();
+            <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<b>object</b>&gt; <span id="r6 rd" class="r6 r">shortticks</span> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<b>object</b>&gt;();
+            <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<b>object</b>&gt; <span id="r7 rd" class="r7 r">longticks</span> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<b>object</b>&gt;();
+
+            <b>for</b> (<b>int</b> <span id="r8 rd" class="r8 r">i</span> = 0; <span class="r8 r">i</span> &lt; <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#8c60aff8f552412b" class="i property">LongTickCount</a>; <span class="r8 r">i</span>++)
+            {
+                <span class="r5 r">numbers</span>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#e42c72c069508fd7" class="i property">Minimum</a> + (<a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#cfe28cbc9ff92153" class="i property">Maximum</a> - <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#e42c72c069508fd7" class="i property">Minimum</a>) / (<a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#8c60aff8f552412b" class="i property">LongTickCount</a> - 1) * <span class="r8 r">i</span>));
+                <span class="r7 r">longticks</span>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<b>new</b> <b>object</b>());
+            }
+
+            <b>for</b> (<b>int</b> <span id="r9 rd" class="r9 r">i</span> = 0; <span class="r9 r">i</span> &lt; (<a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#8c60aff8f552412b" class="i property">LongTickCount</a> - 1) * (<a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#6202818be108474d" class="i property">ShortTickCount</a> + 1) + 1; <span class="r9 r">i</span>++)
+            {
+                <span class="r6 r">shortticks</span>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<b>new</b> <b>object</b>());
+            }
+
+            <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#5b1903a91e1c4cee" class="i property">ShortTicks</a> = <span class="r6 r">shortticks</span>;
+            <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#47d536be18fed4b8" class="i property">LongTicks</a> = <span class="r7 r">longticks</span>;
+            <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#e8b8e673049671fa" class="i property">NumberList</a> = <span class="r5 r">numbers</span>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 根据当前值设置圆弧的EndAngle</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="a7efd4cdcad85bee" href="R/a7efd4cdcad85bee.html" target="n" data-glyph="76,1" class="i method">SetAngle</a>()
+        {
+            <b>if</b> (<a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#47fceafb192f2d8b" class="i property">Value</a> &lt; <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#e42c72c069508fd7" class="i property">Minimum</a>)
+            {
+                <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#454ae8cf44403cd2" class="i property">Angle</a> = <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#86ed39eb2fd67633" class="i property">StartAngle</a>;
+                <b>return</b>;
+            }
+
+            <b>if</b> (<a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#47fceafb192f2d8b" class="i property">Value</a> &gt; <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#cfe28cbc9ff92153" class="i property">Maximum</a>)
+            {
+                <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#454ae8cf44403cd2" class="i property">Angle</a> = <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#7785b91db7d5fb68" class="i property">EndAngle</a>;
+                <b>return</b>;
+            }
+
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r10 rd" class="r10 r">diff</span> = <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#cfe28cbc9ff92153" class="i property">Maximum</a> - <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#e42c72c069508fd7" class="i property">Minimum</a>;
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r11 rd" class="r11 r">valueDiff</span> = <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#47fceafb192f2d8b" class="i property">Value</a> - <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#e42c72c069508fd7" class="i property">Minimum</a>;
+            <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#454ae8cf44403cd2" class="i property">Angle</a> = <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#86ed39eb2fd67633" class="i property">StartAngle</a> + (<a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#7785b91db7d5fb68" class="i property">EndAngle</a> - <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#86ed39eb2fd67633" class="i property">StartAngle</a>) / <span class="r10 r">diff</span> * <span class="r11 r">valueDiff</span>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> 角度值变化动画</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="9f9e87dfb9974a77" href="R/9f9e87dfb9974a77.html" target="n" data-glyph="76,1" class="i method">TransformAngle</a>()
+        {
+            <b>if</b> (<a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#3c577e7651df3a13" class="i field">PART_IncreaseCircle</a> != <b>null</b>)
+            {
+                <a href="@0@PresentationCore/A.html#a17bc32ef694a3ac" class="t t">DoubleAnimation</a> <span id="r12 rd" class="r12 r">doubleAnimation</span> = <b>new</b> <a href="@0@PresentationCore/A.html#569e40fa072d54cc" class="t constructor">DoubleAnimation</a>(<a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#d9f84d96f2b6cd78" class="i field">OldAngle</a>, <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#454ae8cf44403cd2" class="i property">Angle</a>, <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#ba39717cc1e607be" class="i property">TickDurtion</a>);
+                <a href="#aac09ec24cbcf624" class="k">this</a>.<a href="#3c577e7651df3a13" class="i field">PART_IncreaseCircle</a>.<span class="i">BeginAnimation</span>(<span class="i">Arc</span>.<span class="i">EndAngleProperty</span>, <span class="r12 r">doubleAnimation</span>);
+            }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}
+</pre></td></tr></table></div></body></html>

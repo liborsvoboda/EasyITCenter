@@ -1,0 +1,1026 @@
+﻿<!DOCTYPE html>
+<html><head><title>RemoteDesktopWpf.xaml.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(1017);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RemoteDesktopWpf/RemoteDesktopWpf.xaml.cs" target="_top">RemoteDesktopWpf.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RemoteDesktopWpf" target="_top">..\..\..\EASY-TOOLS\EASYTools.VNCLib\EASYTools.VNCLib.csproj</a> (RemoteDesktopWpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// RemoteDesktopWpf - .NET VNC Client for WPF Library</span>
+<span class="c">// Copyright (C) 2008 David Humphrey</span>
+<span class="c">// Copyright (C) 2011 Masanori Nakano (Modified VncSharp for WPF)</span>
+<span class="c">//</span>
+<span class="c">// This program is free software; you can redistribute it and/or modify</span>
+<span class="c">// it under the terms of the GNU General Public License as published by</span>
+<span class="c">// the Free Software Foundation; either version 2 of the License, or</span>
+<span class="c">// (at your option) any later version.</span>
+<span class="c">//</span>
+<span class="c">// This program is distributed in the hope that it will be useful,</span>
+<span class="c">// but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c">// GNU General Public License for more details.</span>
+<span class="c">//</span>
+<span class="c">// You should have received a copy of the GNU General Public License</span>
+<span class="c">// along with this program; if not, write to the Free Software</span>
+<span class="c">// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</span>
+ 
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Reflection</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>.<span class="i n">Imaging</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>.<span class="i n">Drawing2D</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+ 
+<span class="c">//using RemoteDesktopWpf.Encodings;</span>
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Runtime</span>.<span class="i n">InteropServices</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Net</span>;
+ 
+<b>namespace</b> <span class="i n">RemoteDesktopWpf</span>
+{
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+	<span class="c">///</span><span class="c"> Event Handler delegate declaration used by events that signal successful connection with the server.</span>
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+	<b>public delegate void</b> <a id="644aff09883c51f6" href="R/644aff09883c51f6.html" target="n" data-glyph="12,0" class="t t"><span id="3372bbf815341a4f">ConnectCompleteHandler</span></a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="ConnectEventArgs.cs.html#550a39668e62e2ba" class="t t">ConnectEventArgs</a> <span id="r1 rd" class="r1 r">e</span>);
+	
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+	<span class="c">///</span><span class="c"> When connecting to a VNC Host, a password will sometimes be required.  Therefore a password must be obtained from the user.  A default Password dialog box is included and will be used unless users of the control provide their own Authenticate delegate function for the task.  For example, this might pull a password from a configuration file of some type instead of prompting the user.</span>
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+	<b>public delegate string</b> <a id="c4e9b051a2c9c4d0" href="R/c4e9b051a2c9c4d0.html" target="n" data-glyph="12,0" class="t t"><span id="cc64d00c4495ea86">AuthenticateDelegate</span></a>();
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+	<span class="c">///</span><span class="c"> SpecialKeys is a list of the various keyboard combinations that overlap with the client-side and make it</span>
+	<span class="c">///</span><span class="c"> difficult to send remotely.  These values are used in conjunction with the SendSpecialKeys method.</span>
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+	<b>public enum</b> <a id="eea1871eae63b05d" href="R/eea1871eae63b05d.html" target="n" data-glyph="18,0" class="t t"><span id="5aba8307fdfa401b">SpecialKeys</span></a> {
+		<a id="5e722132d2cc06a0" href="R/5e722132d2cc06a0.html" target="n" data-glyph="24,1" class="i field">CtrlAltDel</a>,
+		<a id="502d86e203e6ae4b" href="R/502d86e203e6ae4b.html" target="n" data-glyph="24,1" class="i field">AltF4</a>,
+		<a id="715f55cfbbc720cb" href="R/715f55cfbbc720cb.html" target="n" data-glyph="24,1" class="i field">CtrlEsc</a>, 
+		<a id="ec2b404e9914ff54" href="R/ec2b404e9914ff54.html" target="n" data-glyph="24,1" class="i field">Ctrl</a>,
+		<a id="c46cf5550feb0ed4" href="R/c46cf5550feb0ed4.html" target="n" data-glyph="24,1" class="i field">Alt</a>
+	}
+ 
+	[<a href="@0@System.Drawing/A.html#fe1fe67e1ee2de13" class="t constructor">ToolboxBitmap</a>(<b>typeof</b>(<a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="t t">RemoteDesktopWpf</a>), <span class="s">&quot;Resources.vncviewer.ico&quot;</span>)]
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+	<span class="c">///</span><span class="c"> The RemoteDesktop control takes care of all the necessary RFB Protocol and GUI handling, including mouse and keyboard support, as well as requesting and processing screen updates from the remote VNC host.  Most users will choose to use the RemoteDesktop control alone and not use any of the other protocol classes directly.</span>
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+	<b>public</b> <a href="P/cdf2a5bd4f427445.html" target="s" class="k">partial</a> <b>class</b> <a id="cdf2a5bd4f427445" href="R/cdf2a5bd4f427445.html" target="n" data-glyph="0,0" class="t t">RemoteDesktopWpf</a> : <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a>
+	{
+		[<a href="@0@System/A.html#4d506366d4bf7d91" class="t constructor">Description</a>(<span class="s">&quot;Raised after a successful call to the Connect() method.&quot;</span>)]
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Raised after a successful call to the Connect() method.  Includes information for updating the local display in ConnectEventArgs.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public event</b> <a href="#644aff09883c51f6" class="t t">ConnectCompleteHandler</a> <a id="e7a1e86194597c3a" href="R/e7a1e86194597c3a.html" target="n" data-glyph="30,1" class="i">ConnectComplete</a>;
+		
+		[<a href="@0@System/A.html#4d506366d4bf7d91" class="t constructor">Description</a>(<span class="s">&quot;Raised when the VNC Host drops the connection.&quot;</span>)]
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Raised when the VNC Host drops the connection.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a>	<a id="971dce8683b40cd7" href="R/971dce8683b40cd7.html" target="n" data-glyph="30,1" class="i">ConnectionLost</a>;
+ 
+        [<a href="@0@System/A.html#4d506366d4bf7d91" class="t constructor">Description</a>(<span class="s">&quot;Raised when the VNC Host sends text to the client&#39;s clipboard.&quot;</span>)]
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Raised when the VNC Host sends text to the client&#39;s clipboard. </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a>   <a id="2998d21ae5d2df46" href="R/2998d21ae5d2df46.html" target="n" data-glyph="30,1" class="i">ClipboardChanged</a>;
+ 
+        <b>public event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a>   <a id="3d66d119bc84e68a" href="R/3d66d119bc84e68a.html" target="n" data-glyph="30,1" class="i">StoppedListen</a>;
+        
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Points to a Function capable of obtaining a user&#39;s password.  By default this means using the PasswordDialog.GetPassword() function; however, users of RemoteDesktop can replace this with any function they like, so long as it matches the delegate type.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public</b> <a href="#c4e9b051a2c9c4d0" class="t t">AuthenticateDelegate</a> <a id="f56ab88f71f0a1f1" href="R/f56ab88f71f0a1f1.html" target="n" data-glyph="42,1" class="i field">GetPassword</a>;
+		
+		<a href="@0@PresentationCore/A.html#d8e6670e61603043" class="t t">WriteableBitmap</a> <a id="6850b0269ef7cfc7" href="R/6850b0269ef7cfc7.html" target="n" data-glyph="46,1" class="i field">desktop</a>;                 <span class="c">// Internal representation of remote image.</span>
+		<a href="VncClient.cs.html#b2bec9018c731cd1" class="t t">VncClient</a> <a id="c2f1401ada5d3514" href="R/c2f1401ada5d3514.html" target="n" data-glyph="46,1" class="i field">vnc</a>;						     <span class="c">// The Client object handling all protocol-level interaction</span>
+		<b>int</b> <a id="c6e0d373f8626656" href="R/c6e0d373f8626656.html" target="n" data-glyph="46,1" class="i field">port</a> = 5900;					     <span class="c">// The port to connectFromClient to on remote host (5900 is default)</span>
+		<b>bool</b> <a id="fab057b03caae29b" href="R/fab057b03caae29b.html" target="n" data-glyph="46,1" class="i field">passwordPending</a> = <b>false</b>;		     <span class="c">// After Connect() is called, a password might be required.</span>
+		<b>bool</b> <a id="2c8b3021d2dacb08" href="R/2c8b3021d2dacb08.html" target="n" data-glyph="46,1" class="i field">fullScreenRefresh</a> = <b>false</b>;		     <span class="c">// Whether or not to request the entire remote screen be sent.</span>
+        <a href="VncDesktopTransformPolicy.cs.html#1fcab9eafa387a67" class="t t">VncDesktopTransformPolicy</a> <a id="758dbc01361231e1" href="R/758dbc01361231e1.html" target="n" data-glyph="46,1" class="i field">desktopPolicy</a>;
+		<a href="#28f3e94f6024e99a" class="t t">RuntimeState</a> <a id="f12c924d26e8b198" href="R/f12c924d26e8b198.html" target="n" data-glyph="46,1" class="i field">state</a> = <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#8391921dd475c7f5" class="i field">Disconnected</a>;
+ 
+        <b>double</b> <a id="638e87493b798ca2" href="R/638e87493b798ca2.html" target="n" data-glyph="46,1" class="i field">imageScale</a>;        <span class="c">// Image Scale</span>
+ 
+		<b>private enum</b> <a id="28f3e94f6024e99a" href="R/28f3e94f6024e99a.html" target="n" data-glyph="22,1" class="t t"><span id="d383ea5cb9db64bc">RuntimeState</span></a> {
+			<a id="8391921dd475c7f5" href="R/8391921dd475c7f5.html" target="n" data-glyph="24,2" class="i field">Disconnected</a>,
+			<a id="283bde2a76d639fb" href="R/283bde2a76d639fb.html" target="n" data-glyph="24,2" class="i field">Disconnecting</a>,
+			<a id="a9e638eb36a129e8" href="R/a9e638eb36a129e8.html" target="n" data-glyph="24,2" class="i field">Connected</a>,
+			<a id="4722622cadeb60c0" href="R/../../0000000000.html" target="n" data-glyph="24,2" class="i field">Connecting</a>,
+            <a id="58f0361060419d6f" href="R/58f0361060419d6f.html" target="n" data-glyph="24,2" class="i field">Listen</a>
+		}
+		
+		<b>public</b> <a id="cc3405a32f34ee92" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">RemoteDesktopWpf</a>() : <a href="@0@PresentationFramework/A.html#15162d9f2ea113a1" class="k">base</a>()
+		{
+            <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#813465835f5c52a4" class="i method">InitializeComponent</a>();
+ 
+			<span class="c">// Use a simple desktop policy for design mode.  This will be replaced in Connect()</span>
+            <a href="#758dbc01361231e1" class="i field">desktopPolicy</a> = <b>new</b> <a href="VncDesignModeDesktopPolicy.cs.html#62d9646f89964f07" class="t constructor">VncDesignModeDesktopPolicy</a>(<a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>);
+ 
+            <b>if</b> (<a href="#758dbc01361231e1" class="i field">desktopPolicy</a>.<a href="VncDesktopTransformPolicy.cs.html#b20566614e109c5f" class="i property">AutoScroll</a>)
+            {
+                <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationFramework/A.html#1ad4e0e9b72d0a71" class="i property">HorizontalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#0ac97049b1a1ea41" class="i field">Auto</a>;
+                <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationFramework/A.html#28ce83b7afba6596" class="i property">VerticalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#0ac97049b1a1ea41" class="i field">Auto</a>;
+            } <b>else</b> {
+                <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationFramework/A.html#1ad4e0e9b72d0a71" class="i property">HorizontalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#13762237907098f4" class="i field">Disabled</a>;
+                <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationFramework/A.html#28ce83b7afba6596" class="i property">VerticalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#13762237907098f4" class="i field">Disabled</a>;
+            }
+            
+			<span class="c">// Users of the control can choose to use their own Authentication GetPassword() method via the delegate above.  This is a default only.</span>
+			<a href="#f56ab88f71f0a1f1" class="i field">GetPassword</a> = <b>new</b> <span class="t">AuthenticateDelegate</span>(<a href="P/9ef4e191fb663ebd.html#9ef4e191fb663ebd" class="t t">PasswordDialogWpf</a>.<a href="PasswordDialogWpf.xaml.cs.html#0600c92c20b705cd" class="i method">GetPassword</a>);
+ 
+            <span class="c">// EventHandler Settings</span>
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>.<a href="@0@PresentationFramework/A.html#ec1a90b4f82457bf" class="i">SizeChanged</a> +=<b>new</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="t">SizeChangedEventHandler</span>(<a href="#7894956873a707ba" class="i method">SizeChangedEventHandler</a>);
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>.<a href="@0@PresentationCore/A.html#8af943423996f9bf" class="i">MouseMove</a> += <b>new</b> <span class="t">MouseEventHandler</span>(<a href="#09bc1c48f8f2b9b8" class="i method">MouseDownUpMoveEventHandler</a>);
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>.<a href="@0@PresentationCore/A.html#bb42e64a3ed1a0ce" class="i">MouseDown</a> += <b>new</b> <span class="t">MouseButtonEventHandler</span>(<a href="#09bc1c48f8f2b9b8" class="i method">MouseDownUpMoveEventHandler</a>);
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>.<a href="@0@PresentationCore/A.html#efe155ade2e36eaf" class="i">MouseUp</a> += <b>new</b> <span class="t">MouseButtonEventHandler</span>(<a href="#09bc1c48f8f2b9b8" class="i method">MouseDownUpMoveEventHandler</a>);
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>.<a href="@0@PresentationCore/A.html#ebe95961ddbcbd2a" class="i">MouseWheel</a> +=<b>new</b> <span class="t">MouseWheelEventHandler</span>(<a href="#c8925f6c76e24a28" class="i method">MouseWHeelEventHandler</a>);
+		}
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> EventHandler for Image Size Change</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">sender</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r3 r">e</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="7894956873a707ba" href="R/7894956873a707ba.html" target="n" data-glyph="76,1" class="i method">SizeChangedEventHandler</a>(<b>object</b> <span id="r2 rd" class="r2 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r3 rd" class="r3 r">e</span>)
+        {
+            <b>if</b> (<a href="#9a10c7934038a5ab" class="i property">IsConnected</a>)
+            {
+                <a href="#54e2ae1a0bfe412c" class="i property">ImageScale</a> = <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a> / <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>.<a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a>.<a href="@0@PresentationCore/A.html#ec82c9729e8a0c7d" class="i property">Width</a>;
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The Image Scale for Mouse Position Convert</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="54e2ae1a0bfe412c" href="R/54e2ae1a0bfe412c.html" target="n" data-glyph="102,1" class="i property">ImageScale</a>
+        {
+            <b>get</b> {
+                <b>return</b> <a href="#638e87493b798ca2" class="i field">imageScale</a>;
+            }
+            <b>set</b>
+            {
+                <a href="#638e87493b798ca2" class="i field">imageScale</a> = <b>value</b>;
+            }
+        }
+ 
+		[<a href="@0@System/A.html#ee59cff4fb38f0df" class="t constructor">DefaultValue</a>(5900)]
+		[<a href="@0@System/A.html#4d506366d4bf7d91" class="t constructor">Description</a>(<span class="s">&quot;The port number used by the VNC Host (typically 5900)&quot;</span>)]
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> The port number used by the VNC Host (typically 5900).</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public int</b> <a id="ba7013b73d84989d" href="R/ba7013b73d84989d.html" target="n" data-glyph="102,1" class="i property">VncPort</a> {
+			<b>get</b> { 
+				<b>return</b> <a href="#c6e0d373f8626656" class="i field">port</a>; 
+			}
+			<b>set</b> { 
+				<span class="c">// Ignore attempts to use invalid port numbers</span>
+				<b>if</b> (<b>value</b> &lt; 1 | <b>value</b> &gt; 65535) <b>value</b> = 5900;
+				<a href="#c6e0d373f8626656" class="i field">port</a> = <b>value</b>;	
+			}
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> True if the RemoteDesktop is connected and authenticated (if necessary) with a remote VNC Host; otherwise False.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public bool</b> <a id="9a10c7934038a5ab" href="R/9a10c7934038a5ab.html" target="n" data-glyph="102,1" class="i property">IsConnected</a> {
+			<b>get</b> {
+				<b>return</b> <a href="#f12c924d26e8b198" class="i field">state</a> == <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#a9e638eb36a129e8" class="i field">Connected</a>;
+			}
+		}
+ 
+        <b>public bool</b> <a id="5c790e2f2d3dcce6" href="R/5c790e2f2d3dcce6.html" target="n" data-glyph="102,1" class="i property">IsListen</a>
+        {
+            <b>get</b>
+            {
+                <b>return</b> <a href="#f12c924d26e8b198" class="i field">state</a> == <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#58f0361060419d6f" class="i field">Listen</a>;
+            }
+        }
+		
+		<span class="c">// This is a hack to get around the issue of DesignMode returning</span>
+		<span class="c">// false when the control is being removed from a form at design time.</span>
+		<span class="c">// First check to see if the control is in DesignMode, then work up </span>
+		<span class="c">// to also check any parent controls.  DesignMode returns False sometimes</span>
+		<span class="c">// when it is really True for the parent. Thanks to Claes Bergefall for the idea.</span>
+		<b>protected bool</b> <a id="ede3420fd3ef417b" href="R/ede3420fd3ef417b.html" target="n" data-glyph="105,1" class="i property">DesignMode</a> {
+			<b>get</b> {
+                <b>return</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>.<a href="@0@PresentationFramework/A.html#75f95eee6bd69fa9" class="t t">DesignerProperties</a>.<a href="@0@PresentationFramework/A.html#940ce1b313016b20" class="i method">GetIsInDesignMode</a>(<a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>);
+			}
+		}
+ 
+        [<a href="@0@System/A.html#4d506366d4bf7d91" class="t constructor">Description</a>(<span class="s">&quot;The name of the remote desktop.&quot;</span>)]
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The name of the remote desktop, or &quot;Disconnected&quot; if not connected.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="8f8886f0f25d8451" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Hostname</a> {
+            <b>get</b> {
+                <b>return</b> <a href="#c2f1401ada5d3514" class="i field">vnc</a> == <b>null</b> ? <span class="s">&quot;Disconnected&quot;</span> : <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#dda60ed92e9c9aa3" class="i property">HostName</a>;
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The image of the remote desktop.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#d8e6670e61603043" class="t t">WriteableBitmap</a> <a id="66669c19e767055e" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Desktop</a> {
+            <b>get</b> {
+                <b>return</b> <a href="#6850b0269ef7cfc7" class="i field">desktop</a>;
+            }
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Get a complete update of the entire screen from the remote host.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span><span class="c">You should allow users to call FullScreenUpdate in order to correct</span>
+		<span class="c">///</span><span class="c"> corruption of the local image.  This will simply request that the next update be</span>
+		<span class="c">///</span><span class="c"> for the full screen, and not a portion of it.  It will not do the update while</span>
+		<span class="c">///</span><span class="c"> blocking.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is not in the Connected state.  See </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="t t">RemoteDesktopWpf</a>.<span class="i">RemoteDesktop</span>.<span class="i">IsConnected</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="2167e81c2d360dea" href="R/2167e81c2d360dea.html" target="n" data-glyph="72,1" class="i method">FullScreenUpdate</a>()
+		{
+			<a href="#2ad40714b9b5ec71" class="i method">InsureConnection</a>(<b>true</b>);
+			<a href="#2c8b3021d2dacb08" class="i field">fullScreenRefresh</a> = <b>true</b>;
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Insures the state of the connection to the server, either Connected or Not Connected depending on the value of the connected argument.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r4 r">connected</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">True if the connection must be established, otherwise False.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is in the wrong state.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+		<b>private void</b> <a id="2ad40714b9b5ec71" href="R/2ad40714b9b5ec71.html" target="n" data-glyph="76,1" class="i method">InsureConnection</a>(<b>bool</b> <span id="r4 rd" class="r4 r">connected</span>)
+		{
+			<span class="c">// Grab the name of the calling routine:</span>
+			<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r5 rd" class="r5 r">methodName</span> = <b>new</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<a href="@0@mscorlib/A.html#29c39ce8d11a5f1e" class="t constructor">StackTrace</a>().<a href="@0@mscorlib/A.html#2468a9c6f6be3d24" class="i method">GetFrame</a>(1).<a href="@0@mscorlib/A.html#9aa99613c484eb3a" class="i method">GetMethod</a>().<a href="@0@mscorlib/A.html#aa4f112f79364b6e" class="i property">Name</a>;
+			
+			<b>if</b> (<span class="r4 r">connected</span>) {
+				<span class="i n">System</span>.<span class="i n">Diagnostics</span>.<a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<a href="#f12c924d26e8b198" class="i field">state</a> == <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#a9e638eb36a129e8" class="i field">Connected</a> ||
+                                                <a href="#f12c924d26e8b198" class="i field">state</a> == <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#283bde2a76d639fb" class="i field">Disconnecting</a>,  <span class="c">// special case for Disconnect()</span>
+                                                <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9d5604d4425b216f" class="i method">Format</a>(<span class="s">&quot;RemoteDesktop must be in RuntimeState.Connected before calling {0}.&quot;</span>, <span class="r5 r">methodName</span>));
+				<b>if</b> (<a href="#f12c924d26e8b198" class="i field">state</a> != <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#a9e638eb36a129e8" class="i field">Connected</a> &amp;&amp; <a href="#f12c924d26e8b198" class="i field">state</a> != <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#283bde2a76d639fb" class="i field">Disconnecting</a>) {
+					<b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#265d72f49e915224" class="t constructor">InvalidOperationException</a>(<span class="s">&quot;RemoteDesktop must be in Connected state before calling methods that require an established connection.&quot;</span>);
+				}
+			} <b>else</b> { <span class="c">// disconnected</span>
+				<span class="i n">System</span>.<span class="i n">Diagnostics</span>.<a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<a href="#f12c924d26e8b198" class="i field">state</a> == <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#8391921dd475c7f5" class="i field">Disconnected</a> || 
+                                                <a href="#f12c924d26e8b198" class="i field">state</a> == <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#58f0361060419d6f" class="i field">Listen</a>,
+												<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9d5604d4425b216f" class="i method">Format</a>(<span class="s">&quot;RemoteDesktop must be in RuntimeState.Disconnected before calling {0}.&quot;</span>, <span class="r5 r">methodName</span>));
+                <b>if</b> (<a href="#f12c924d26e8b198" class="i field">state</a> != <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#8391921dd475c7f5" class="i field">Disconnected</a> &amp;&amp; <a href="#f12c924d26e8b198" class="i field">state</a> != <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#283bde2a76d639fb" class="i field">Disconnecting</a> &amp;&amp; <a href="#f12c924d26e8b198" class="i field">state</a> != <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#58f0361060419d6f" class="i field">Listen</a>) {
+					<b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#265d72f49e915224" class="t constructor">InvalidOperationException</a>(<span class="s">&quot;RemoteDesktop cannot be in Connected state when calling methods that establish a connection.&quot;</span>);
+				}
+			}
+		}
+ 
+		<span class="c">// This event handler deals with Frambebuffer Updates coming from the host. An</span>
+		<span class="c">// EncodedRectangle object is passed via the VncEventArgs (actually an IDesktopUpdater</span>
+		<span class="c">// object so that *only* Draw() can be called here--Decode() is done elsewhere).</span>
+		<span class="c">// The VncClient object handles thread marshalling onto the UI thread.</span>
+		<b>protected void</b> <a id="ec8c4d80e2055ae7" href="R/ec8c4d80e2055ae7.html" target="n" data-glyph="75,1" class="i method">VncUpdate</a>(<b>object</b> <span id="r6 rd" class="r6 r">sender</span>, <a href="VncEventArgs.cs.html#12f0c134730bd20f" class="t t">VncEventArgs</a> <span id="r7 rd" class="r7 r">e</span>)
+		{
+            <a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#73e16fb1fb6d2b98" class="i method">Invoke</a>(<b>new</b> <span class="t">Action</span>(() =&gt; {
+                <span class="r7 r">e</span>.<a href="VncEventArgs.cs.html#6431d0efa976447e" class="i property">DesktopUpdater</a>.<a href="IDesktopUpdater.cs.html#06a2d7e1abe34fc9" class="i method">Draw</a>(<a href="#6850b0269ef7cfc7" class="i field">desktop</a>);
+            }));
+ 
+            <b>if</b> (<a href="#f12c924d26e8b198" class="i field">state</a> == <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#a9e638eb36a129e8" class="i field">Connected</a>) {
+				<a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#8d1e3b67c0a305da" class="i method">RequestScreenUpdate</a>(<a href="#2c8b3021d2dacb08" class="i field">fullScreenRefresh</a>);
+				
+				<span class="c">// Make sure the next screen update is incremental</span>
+    			<a href="#2c8b3021d2dacb08" class="i field">fullScreenRefresh</a> = <b>false</b>;
+			}
+		}
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Connect to a VNC Host and determine whether or not the server requires a password.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The IP Address or Host Name of the VNC Host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#c742289497493bb8" class="t t">ArgumentNullException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if host is null.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#2975f0aa875d4a32" class="t t">ArgumentOutOfRangeException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if display is negative.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is already Connected.  See </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="t t">RemoteDesktopWpf</a>.<span class="i">RemoteDesktop</span>.<span class="i">IsConnected</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="2d98619b18bec381" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Connect</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r8 rd" class="r8 r">host</span>)
+        {
+            <span class="c">// Use Display 0 by default.</span>
+            <a href="#eca3dc153e7ee6e4" class="i method">Connect</a>(<span class="r8 r">host</span>, 0);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Connect to a VNC Host and determine whether or not the server requires a password.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The IP Address or Host Name of the VNC Host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r10 r">viewOnly</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Determines whether mouse and keyboard events will be sent to the host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#c742289497493bb8" class="t t">ArgumentNullException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if host is null.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#2975f0aa875d4a32" class="t t">ArgumentOutOfRangeException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if display is negative.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is already Connected.  See </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="t t">RemoteDesktopWpf</a>.<span class="i">RemoteDesktop</span>.<span class="i">IsConnected</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="4a36bacee057a36d" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Connect</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r9 rd" class="r9 r">host</span>, <b>bool</b> <span id="r10 rd" class="r10 r">viewOnly</span>)
+        {
+            <span class="c">// Use Display 0 by default.</span>
+            <a href="#6cf81aae18b20a40" class="i method">Connect</a>(<span class="r9 r">host</span>, 0, <span class="r10 r">viewOnly</span>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Connect to a VNC Host and determine whether or not the server requires a password.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r11 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The IP Address or Host Name of the VNC Host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r12 r">viewOnly</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Determines whether mouse and keyboard events will be sent to the host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r13 r">scaled</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Determines whether to use desktop scaling or leave it normal and clip.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#c742289497493bb8" class="t t">ArgumentNullException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if host is null.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#2975f0aa875d4a32" class="t t">ArgumentOutOfRangeException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if display is negative.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is already Connected.  See </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="t t">RemoteDesktopWpf</a>.<span class="i">RemoteDesktop</span>.<span class="i">IsConnected</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="4693a06090a75a62" href="R/4693a06090a75a62.html" target="n" data-glyph="72,1" class="i method">Connect</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r11 rd" class="r11 r">host</span>, <b>bool</b> <span id="r12 rd" class="r12 r">viewOnly</span>, <b>bool</b> <span id="r13 rd" class="r13 r">scaled</span>)
+        {
+            <span class="c">// Use Display 0 by default.</span>
+            <a href="#4f3b97ff21eb5222" class="i method">Connect</a>(<span class="r11 r">host</span>, 0, <span class="r12 r">viewOnly</span>, <span class="r13 r">scaled</span>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Connect to a VNC Host and determine whether or not the server requires a password.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r14 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The IP Address or Host Name of the VNC Host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r15 r">display</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The Display number (used on Unix hosts).</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#c742289497493bb8" class="t t">ArgumentNullException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if host is null.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#2975f0aa875d4a32" class="t t">ArgumentOutOfRangeException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if display is negative.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is already Connected.  See </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="t t">RemoteDesktopWpf</a>.<span class="i">RemoteDesktop</span>.<span class="i">IsConnected</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="eca3dc153e7ee6e4" href="R/eca3dc153e7ee6e4.html" target="n" data-glyph="72,1" class="i method">Connect</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r14 rd" class="r14 r">host</span>, <b>int</b> <span id="r15 rd" class="r15 r">display</span>)
+        {
+            <a href="#6cf81aae18b20a40" class="i method">Connect</a>(<span class="r14 r">host</span>, <span class="r15 r">display</span>, <b>false</b>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Connect to a VNC Host and determine whether or not the server requires a password.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r16 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The IP Address or Host Name of the VNC Host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r17 r">display</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The Display number (used on Unix hosts).</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r18 r">viewOnly</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Determines whether mouse and keyboard events will be sent to the host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#c742289497493bb8" class="t t">ArgumentNullException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if host is null.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#2975f0aa875d4a32" class="t t">ArgumentOutOfRangeException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if display is negative.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is already Connected.  See </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="t t">RemoteDesktopWpf</a>.<span class="i">RemoteDesktop</span>.<span class="i">IsConnected</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="6cf81aae18b20a40" href="R/6cf81aae18b20a40.html" target="n" data-glyph="72,1" class="i method">Connect</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r16 rd" class="r16 r">host</span>, <b>int</b> <span id="r17 rd" class="r17 r">display</span>, <b>bool</b> <span id="r18 rd" class="r18 r">viewOnly</span>)
+        {
+            <a href="#4f3b97ff21eb5222" class="i method">Connect</a>(<span class="r16 r">host</span>, <span class="r17 r">display</span>, <span class="r18 r">viewOnly</span>, <b>false</b>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Connect to a VNC Host and determine whether or not the server requires a password.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r19 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The IP Address or Host Name of the VNC Host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r20 r">display</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The Display number (used on Unix hosts).</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r21 r">viewOnly</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Determines whether mouse and keyboard events will be sent to the host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r22 r">scaled</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Determines whether to use desktop scaling or leave it normal and clip.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#c742289497493bb8" class="t t">ArgumentNullException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if host is null.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#2975f0aa875d4a32" class="t t">ArgumentOutOfRangeException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if display is negative.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is already Connected.  See </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="t t">RemoteDesktopWpf</a>.<span class="i">RemoteDesktop</span>.<span class="i">IsConnected</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="4f3b97ff21eb5222" href="R/4f3b97ff21eb5222.html" target="n" data-glyph="72,1" class="i method">Connect</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r19 rd" class="r19 r">host</span>, <b>int</b> <span id="r20 rd" class="r20 r">display</span>, <b>bool</b> <span id="r21 rd" class="r21 r">viewOnly</span>, <b>bool</b> <span id="r22 rd" class="r22 r">scaled</span>)
+        {
+            <span class="c">// TODO: Should this be done asynchronously so as not to block the UI?  Since an event </span>
+            <span class="c">// indicates the end of the connection, maybe that would be a better design.</span>
+            <a href="#2ad40714b9b5ec71" class="i method">InsureConnection</a>(<b>false</b>);
+ 
+            <b>if</b> (<span class="r19 r">host</span> == <b>null</b>) <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<span class="s">&quot;host&quot;</span>);
+            <b>if</b> (<span class="r20 r">display</span> &lt; 0) <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#c524af42f1a5665e" class="t constructor">ArgumentOutOfRangeException</a>(<span class="s">&quot;display&quot;</span>, <span class="r20 r">display</span>, <span class="s">&quot;Display number must be a positive integer.&quot;</span>);
+ 
+            <span class="c">// Start protocol-level handling and determine whether a password is needed</span>
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a> = <b>new</b> <a href="VncClient.cs.html#df859ec90076f24f" class="t constructor">VncClient</a>();
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#bcbfc9a402fb1a8c" class="i">ConnectionLost</a> += <b>new</b> <span class="t">EventHandler</span>(<a href="#d3dbe0dd3d84ccd9" class="i method">VncClientConnectionLost</a>);
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#aab1f2752ffb449a" class="i">ServerCutText</a> += <b>new</b> <span class="t">EventHandler</span>(<a href="#ac26efd13c364cf5" class="i method">VncServerCutText</a>);
+ 
+            <a href="#fab057b03caae29b" class="i field">passwordPending</a> = <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#0fb273150bacd07d" class="i method">Connect</a>(<span class="r19 r">host</span>, <span class="r20 r">display</span>, <a href="#ba7013b73d84989d" class="i property">VncPort</a>, <span class="r21 r">viewOnly</span>);
+ 
+            <a href="#758dbc01361231e1" class="i field">desktopPolicy</a> = <b>new</b> <a href="VncWpfDesktopPolicy.cs.html#dacab0e929c15542" class="t constructor">VncWpfDesktopPolicy</a>(<a href="#c2f1401ada5d3514" class="i field">vnc</a>, <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>);
+            <a href="#4dbd0d74b7fb1b41" class="i method">SetScalingMode</a>(<span class="r22 r">scaled</span>);
+ 
+            <b>if</b> (<a href="#fab057b03caae29b" class="i field">passwordPending</a>) {
+                <span class="c">// Server needs a password, so call which ever method is refered to by the GetPassword delegate.</span>
+                <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r23 rd" class="r23 r">password</span> = <a href="#f56ab88f71f0a1f1" class="i field">GetPassword</a>();
+ 
+                <b>if</b> (<span class="r23 r">password</span> == <b>null</b>) {
+                    <span class="c">// No password could be obtained (e.g., user clicked Cancel), so stop connecting</span>
+                    <b>return</b>;
+                } <b>else</b> {
+                    <a href="#c2b20eb61d76b0b6" class="i method">Authenticate</a>(<span class="r23 r">password</span>);
+                }
+            } <b>else</b> {
+                <span class="c">// No password needed, so go ahead and Initialize here</span>
+                <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#95b6c3f05a379269" class="i field">waitLabel</a>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <span class="s">&quot;Connecting to VNC host &quot;</span> + <span class="r19 r">host</span> + <span class="s">&quot;(&quot;</span> + <a href="#c6e0d373f8626656" class="i field">port</a> + <span class="s">&quot;) , please wait... &quot;</span>;
+                <a href="#99c4f6aab1f51681" class="i method">Initialize</a>();
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Wait for a connection from VNC Server.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r24 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Hostname or IP Address</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r25 r">port</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Listening Port</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r26 r">viewOnly</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Set true if you use viewonly mode</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r27 r">scaled</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Set true if you use scaled mode</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="8ce084a2e66fd1fa" href="R/8ce084a2e66fd1fa.html" target="n" data-glyph="72,1" class="i method">Listen</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r24 rd" class="r24 r">host</span>, <b>int</b> <span id="r25 rd" class="r25 r">port</span> = 5500, <b>bool</b> <span id="r26 rd" class="r26 r">viewOnly</span> = <b>false</b>, <b>bool</b> <span id="r27 rd" class="r27 r">scaled</span> = <b>false</b>)
+        {
+            <a href="#2ad40714b9b5ec71" class="i method">InsureConnection</a>(<b>false</b>);
+ 
+            <b>if</b> (<span class="r24 r">host</span> == <b>null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<span class="s">&quot;host&quot;</span>);
+            }
+ 
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a> = <b>new</b> <a href="VncClient.cs.html#df859ec90076f24f" class="t constructor">VncClient</a>();
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#bcbfc9a402fb1a8c" class="i">ConnectionLost</a> += <b>new</b> <span class="t">EventHandler</span>(<a href="#d3dbe0dd3d84ccd9" class="i method">VncClientConnectionLost</a>);
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#aab1f2752ffb449a" class="i">ServerCutText</a> += <b>new</b> <span class="t">EventHandler</span>(<a href="#ac26efd13c364cf5" class="i method">VncServerCutText</a>);
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#9752b4550cd3fd8d" class="i">ConnectedFromServer</a> += <b>new</b> <span class="t">VncConnectedFromServerHandler</span>(<a href="#328f8bd8cb9a305a" class="i method">ConnectedFromServerEventHandler</a>);
+ 
+            <a href="#758dbc01361231e1" class="i field">desktopPolicy</a> = <b>new</b> <a href="VncWpfDesktopPolicy.cs.html#dacab0e929c15542" class="t constructor">VncWpfDesktopPolicy</a>(<a href="#c2f1401ada5d3514" class="i field">vnc</a>, <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>);
+            <a href="#4dbd0d74b7fb1b41" class="i method">SetScalingMode</a>(<span class="r27 r">scaled</span>);
+            <a href="#f022e1e6fb71242b" class="i method">SetState</a>(<a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#58f0361060419d6f" class="i field">Listen</a>);
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#b2173f16eb751777" class="i method">Listen</a>(<span class="r24 r">host</span>, <span class="r25 r">port</span>, <span class="r26 r">viewOnly</span>);
+ 
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#95b6c3f05a379269" class="i field">waitLabel</a>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <span class="s">&quot;Wait for a connection at &quot;</span> + <a href="@0@System/A.html#f8023b9c19212708" class="t t">Dns</a>.<a href="@0@System/A.html#73f3a39371b05b2b" class="i method">GetHostEntry</a>(<span class="r24 r">host</span>).<a href="@0@System/A.html#4c893d0156d612a9" class="i property">AddressList</a>[0] + <span class="s">&quot;:&quot;</span> + <span class="r25 r">port</span>;
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#95b6c3f05a379269" class="i field">waitLabel</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a>;
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Event Handler for Event &quot;ConnectedFromServer&quot; </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r28 r">sender</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r29 r">authentication</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="328f8bd8cb9a305a" href="R/328f8bd8cb9a305a.html" target="n" data-glyph="72,1" class="i method">ConnectedFromServerEventHandler</a>(<b>object</b> <span id="r28 rd" class="r28 r">sender</span>, <b>bool</b> <span id="r29 rd" class="r29 r">authentication</span>)
+        {
+            <b>if</b> (<span class="r29 r">authentication</span>)
+            {
+                <span class="c">// Server needs a password, so call which ever method is refered to by the GetPassword delegate.</span>
+                <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r30 rd" class="r30 r">password</span> = <a href="#f56ab88f71f0a1f1" class="i field">GetPassword</a>();
+ 
+                <b>if</b> (<span class="r30 r">password</span> == <b>null</b>)
+                {
+                    <span class="c">// No password could be obtained (e.g., user clicked Cancel), so stop connecting</span>
+                    <b>return</b>;
+                }
+                <b>else</b>
+                {
+                    <a href="#c2b20eb61d76b0b6" class="i method">Authenticate</a>(<span class="r30 r">password</span>);
+                }
+            }
+            <b>else</b>
+            {
+                <span class="c">// No password needed, so go ahead and Initialize here</span>
+                <a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#73e16fb1fb6d2b98" class="i method">Invoke</a>(<b>new</b> <span class="t">Action</span>(() =&gt; {
+                    <a href="#99c4f6aab1f51681" class="i method">Initialize</a>();
+                }));
+            }
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Authenticate with the VNC Host using a user supplied password.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is already Connected.  See </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="t t">RemoteDesktopWpf</a>.<span class="i">RemoteDesktop</span>.<span class="i">IsConnected</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#2d739200b2282eb9" class="t t">NullReferenceException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the password is null.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r31 r">password</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The user&#39;s password.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="c2b20eb61d76b0b6" href="R/c2b20eb61d76b0b6.html" target="n" data-glyph="72,1" class="i method">Authenticate</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r31 rd" class="r31 r">password</span>)
+		{
+			<a href="#2ad40714b9b5ec71" class="i method">InsureConnection</a>(<b>false</b>);
+			<b>if</b> (!<a href="#fab057b03caae29b" class="i field">passwordPending</a>) <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#265d72f49e915224" class="t constructor">InvalidOperationException</a>(<span class="s">&quot;Authentication is only required when Connect() returns True and the VNC Host requires a password.&quot;</span>);
+			<b>if</b> (<span class="r31 r">password</span> == <b>null</b>) <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#9f48ddc15bcc3f0f" class="t constructor">NullReferenceException</a>(<span class="s">&quot;password&quot;</span>);
+ 
+			<a href="#fab057b03caae29b" class="i field">passwordPending</a> = <b>false</b>;  <span class="c">// repeated calls to Authenticate should fail.</span>
+			<b>if</b> (<a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#3315a8bda07db1e3" class="i method">Authenticate</a>(<span class="r31 r">password</span>)) {
+				<a href="#99c4f6aab1f51681" class="i method">Initialize</a>();
+			} <b>else</b> {		
+				<a href="#6cf2c3ddc40f538d" class="i method">OnConnectionLost</a>();										
+			}	
+		}
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Changes the input mode to view-only or interactive.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r32 r">viewOnly</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">True if view-only mode is desired (no mouse/keyboard events will be sent).</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="aaab564150d41504" href="R/aaab564150d41504.html" target="n" data-glyph="72,1" class="i method">SetInputMode</a>(<b>bool</b> <span id="r32 rd" class="r32 r">viewOnly</span>)
+        {
+            <b>if</b> (<a href="#c2f1401ada5d3514" class="i field">vnc</a> != <b>null</b> &amp;&amp; <a href="#9a10c7934038a5ab" class="i property">IsConnected</a>)
+            {
+                <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#1fa090c5564033ee" class="i method">SetInputMode</a>(<span class="r32 r">viewOnly</span>);
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Set the remote desktop&#39;s scaling mode.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r33 r">scaled</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Determines whether to use desktop scaling or leave it normal and clip.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="4dbd0d74b7fb1b41" href="R/4dbd0d74b7fb1b41.html" target="n" data-glyph="72,1" class="i method">SetScalingMode</a>(<b>bool</b> <span id="r33 rd" class="r33 r">scaled</span>)
+        {
+            <b>if</b> (<span class="r33 r">scaled</span>)
+            {
+                <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationFramework/A.html#1ad4e0e9b72d0a71" class="i property">HorizontalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#0ac97049b1a1ea41" class="i field">Auto</a>;
+                <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationFramework/A.html#28ce83b7afba6596" class="i property">VerticalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#0ac97049b1a1ea41" class="i field">Auto</a>;
+            }
+            <b>else</b>
+            {
+                <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationFramework/A.html#1ad4e0e9b72d0a71" class="i property">HorizontalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#13762237907098f4" class="i field">Disabled</a>;
+                <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationFramework/A.html#28ce83b7afba6596" class="i property">VerticalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#13762237907098f4" class="i field">Disabled</a>;
+            }
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> After protocol-level initialization and connecting is complete, the local GUI objects have to be set-up, and requests for updates to the remote host begun.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is already in the Connected state.  See </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="t t">RemoteDesktopWpf</a>.<span class="i">RemoteDesktop</span>.<span class="i">IsConnected</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span><span class="c">		</span>
+		<b>protected void</b> <a id="99c4f6aab1f51681" href="R/99c4f6aab1f51681.html" target="n" data-glyph="75,1" class="i method">Initialize</a>()
+		{
+			<span class="c">// Finish protocol handshake with host now that authentication is done.</span>
+			<a href="#2ad40714b9b5ec71" class="i method">InsureConnection</a>(<b>false</b>);
+			<a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#d535b0aa47840c2f" class="i method">Initialize</a>();
+			<a href="#f022e1e6fb71242b" class="i method">SetState</a>(<a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#a9e638eb36a129e8" class="i field">Connected</a>);
+			
+			<span class="c">// Create a buffer on which updated rectangles will be drawn and draw a &quot;please wait...&quot; </span>
+			<span class="c">// message on the buffer for initial display until we start getting rectangles</span>
+			<a href="#0fe4582fe84dacaf" class="i method">SetupDesktop</a>();
+ 
+            <span class="c">// Set Ket Event Handler</span>
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationCore/A.html#58bfd79a7ef6a62d" class="i">PreviewKeyDown</a> += <b>new</b> <span class="t">KeyEventHandler</span>(<a href="#91aa07075796eba2" class="i method">KeyDownEventHandler</a>);
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationCore/A.html#4e5db2d6b9c4f1bd" class="i">PreviewKeyUp</a> += <b>new</b> <span class="t">KeyEventHandler</span>(<a href="#0c3828fb79818a13" class="i method">KeyUpEventHandler</a>);
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationCore/A.html#0e11f7ae56f1c30f" class="i method">Focus</a>();
+ 
+            <span class="c">// Tell the user of this control the necessary info about the desktop in order to setup the display</span>
+			<a href="#b4fd9fd10dfcb798" class="i method">OnConnectComplete</a>(<b>new</b> <a href="ConnectEventArgs.cs.html#629c28e2511dd88a" class="t constructor">ConnectEventArgs</a>(<a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#5e86a677baea5539" class="i property">Framebuffer</a>.<a href="Framebuffer.cs.html#bdb7a09c14a81c20" class="i property">Width</a>,
+												   <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#5e86a677baea5539" class="i property">Framebuffer</a>.<a href="Framebuffer.cs.html#17f24f78fa8f4196" class="i property">Height</a>, 
+												   <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#5e86a677baea5539" class="i property">Framebuffer</a>.<a href="Framebuffer.cs.html#a2686b321fa26c2e" class="i property">DesktopName</a>));
+ 
+			<span class="c">// Start getting updates from the remote host (vnc.StartUpdates will begin a worker thread).</span>
+			<a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#35d691bfef48b955" class="i">VncUpdate</a> += <b>new</b> <span class="t">VncUpdateHandler</span>(<a href="#ec8c4d80e2055ae7" class="i method">VncUpdate</a>);
+			<a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#99bb143da780e807" class="i method">StartUpdates</a>();
+		}
+ 
+		<b>private void</b> <a id="f022e1e6fb71242b" href="R/f022e1e6fb71242b.html" target="n" data-glyph="76,1" class="i method">SetState</a>(<a href="#28f3e94f6024e99a" class="t t">RuntimeState</a> <span id="r34 rd" class="r34 r">newState</span>)
+		{
+			<a href="#f12c924d26e8b198" class="i field">state</a> = <span class="r34 r">newState</span>;
+			
+			<span class="c">// Set mouse pointer according to new state</span>
+			<b>switch</b> (<a href="#f12c924d26e8b198" class="i field">state</a>) {
+				<b>case</b> <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#a9e638eb36a129e8" class="i field">Connected</a>:
+					<span class="c">// Change the cursor to the &quot;vnc&quot; custor--a see-through dot</span>
+                    <span class="c">//Cursor = new Cursor(GetType(), &quot;Resources.vnccursor.cur&quot;);</span>
+                    <a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#73e16fb1fb6d2b98" class="i method">Invoke</a>(<b>new</b> <span class="t">Action</span>(() =&gt;
+                    {
+                        <span class="c">//Cursor = new Cursor(&quot;RemoteDesktopWpf.Resources.vnccursor.cur&quot;);</span>
+                        <a href="@0@PresentationFramework/A.html#63634408e3c1872a" class="i property">Cursor</a> = ((<a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>)<a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="@0@PresentationFramework/A.html#49776fc24d2e2b0d" class="i property">Resources</a><a href="@0@PresentationFramework/A.html#fe23e03a125d22aa">[</a><span class="s">&quot;VncCursor&quot;</span>]).<a href="@0@PresentationFramework/A.html#63634408e3c1872a" class="i property">Cursor</a>;
+                    }));
+					<b>break</b>;
+				<span class="c">// All other states should use the normal cursor.</span>
+				<b>case</b> <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#8391921dd475c7f5" class="i field">Disconnected</a>:
+				<b>default</b>:
+                    <a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#73e16fb1fb6d2b98" class="i method">Invoke</a>(<b>new</b> <span class="t">Action</span>(() =&gt;
+                    {
+                        <a href="@0@PresentationFramework/A.html#63634408e3c1872a" class="i property">Cursor</a> = <a href="@0@PresentationCore/A.html#09092748875d5e78" class="t t">Cursors</a>.<a href="@0@PresentationCore/A.html#0682898066dd921a" class="i property">Arrow</a>;
+                    }));
+					<b>break</b>;
+			}
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Creates and initially sets-up the local bitmap that will represent the remote desktop image.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is not already in the Connected state. See </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="t t">RemoteDesktopWpf</a>.<span class="i">RemoteDesktop</span>.<span class="i">IsConnected</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+		<b>protected void</b> <a id="0fe4582fe84dacaf" href="R/0fe4582fe84dacaf.html" target="n" data-glyph="75,1" class="i method">SetupDesktop</a>()
+		{
+			<a href="#2ad40714b9b5ec71" class="i method">InsureConnection</a>(<b>true</b>);
+ 
+			<span class="c">// Create a new bitmap to cache locally the remote desktop image.  Use the geometry of the</span>
+			<span class="c">// remote framebuffer, and 32bpp pixel format (doesn&#39;t matter what the server is sending--8,16,</span>
+			<span class="c">// or 32--we always draw 32bpp here for efficiency).</span>
+			<span class="c">//desktop = new Bitmap(vnc.Framebuffer.Width, vnc.Framebuffer.Height, PixelFormat.Format32bppPArgb);</span>
+ 
+            <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>&gt; <span id="r35 rd" class="r35 r">colors</span> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>&gt;();
+            <span class="r35 r">colors</span>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#0584e1e7d7fb612c" class="t t">Colors</a>.<a href="@0@PresentationCore/A.html#ff276a65240551dd" class="i property">Red</a>);
+            <span class="r35 r">colors</span>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#0584e1e7d7fb612c" class="t t">Colors</a>.<a href="@0@PresentationCore/A.html#aa1fb11db08ec967" class="i property">Blue</a>);
+            <span class="r35 r">colors</span>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#0584e1e7d7fb612c" class="t t">Colors</a>.<a href="@0@PresentationCore/A.html#129bdc18b649400c" class="i property">Green</a>);
+            <a href="@0@PresentationCore/A.html#639188943a88e467" class="t t">BitmapPalette</a> <span id="r36 rd" class="r36 r">myPalette</span> = <b>new</b> <a href="@0@PresentationCore/A.html#bc15a72ae4fbd3ec" class="t constructor">BitmapPalette</a>(<span class="r35 r">colors</span>);
+ 
+            <a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#73e16fb1fb6d2b98" class="i method">Invoke</a>(<b>new</b> <span class="t">Action</span>(() =&gt;
+            {
+                <a href="#6850b0269ef7cfc7" class="i field">desktop</a> = <b>new</b> <a href="@0@PresentationCore/A.html#991fe583f4fb062c" class="t constructor">WriteableBitmap</a>(<a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#5e86a677baea5539" class="i property">Framebuffer</a>.<a href="Framebuffer.cs.html#bdb7a09c14a81c20" class="i property">Width</a>, <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#5e86a677baea5539" class="i property">Framebuffer</a>.<a href="Framebuffer.cs.html#17f24f78fa8f4196" class="i property">Height</a>, 96, 96, <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#8f8a28423b24bd8e" class="t t">PixelFormats</a>.<a href="@0@PresentationCore/A.html#5c3c2dbdef6c1b4d" class="i property">Pbgra32</a>, <span class="r36 r">myPalette</span>);
+                <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>.<a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> = <a href="#6850b0269ef7cfc7" class="i field">desktop</a>;
+            }));
+ 
+			<span class="c">// Draw a &quot;please wait...&quot; message on the local desktop until the first</span>
+			<span class="c">// rectangle(s) arrive and overwrite with the desktop image.</span>
+			<span class="c">//DrawDesktopMessage(&quot;Connecting to VNC host, please wait...&quot;);</span>
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#95b6c3f05a379269" class="i field">waitLabel</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a>;
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Stops the remote host from sending further updates and disconnects.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is not already in the Connected state. See </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="t t">RemoteDesktopWpf</a>.<span class="i">RemoteDesktop</span>.<span class="i">IsConnected</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="a68214c8520acac6" href="R/a68214c8520acac6.html" target="n" data-glyph="72,1" class="i method">Disconnect</a>()
+		{
+			<a href="#2ad40714b9b5ec71" class="i method">InsureConnection</a>(<b>true</b>);
+			<a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#bcbfc9a402fb1a8c" class="i">ConnectionLost</a> -= <b>new</b> <span class="t">EventHandler</span>(<a href="#d3dbe0dd3d84ccd9" class="i method">VncClientConnectionLost</a>);
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#aab1f2752ffb449a" class="i">ServerCutText</a> -= <b>new</b> <span class="t">EventHandler</span>(<a href="#ac26efd13c364cf5" class="i method">VncServerCutText</a>);
+			<a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#d7176403eb3ebe3e" class="i method">Disconnect</a>();
+ 
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationCore/A.html#58bfd79a7ef6a62d" class="i">PreviewKeyDown</a> -= <b>new</b> <span class="t">KeyEventHandler</span>(<a href="#91aa07075796eba2" class="i method">KeyDownEventHandler</a>);
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationCore/A.html#4e5db2d6b9c4f1bd" class="i">PreviewKeyUp</a> -= <b>new</b> <span class="t">KeyEventHandler</span>(<a href="#0c3828fb79818a13" class="i method">KeyUpEventHandler</a>);
+ 
+            <b>if</b> (<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>.<a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#853a67ef85de632f" class="i method">CheckAccess</a>())
+            {
+                <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>.<a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> = <b>null</b>;
+                <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#95b6c3f05a379269" class="i field">waitLabel</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#0024ca32be32c247" class="i field">Hidden</a>;
+            }
+            <b>else</b>
+            {
+                <a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#73e16fb1fb6d2b98" class="i method">Invoke</a>(<b>new</b> <span class="t">Action</span>(() =&gt;
+                {
+                    <a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>.<a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> = <b>null</b>;
+                    <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#95b6c3f05a379269" class="i field">waitLabel</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#0024ca32be32c247" class="i field">Hidden</a>;
+                }));
+            }
+ 
+			<a href="#f022e1e6fb71242b" class="i method">SetState</a>(<a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#8391921dd475c7f5" class="i field">Disconnected</a>);
+			<a href="#6cf2c3ddc40f538d" class="i method">OnConnectionLost</a>();
+		}
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Stop Listening.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="73b3933a887e2e39" href="R/73b3933a887e2e39.html" target="n" data-glyph="72,1" class="i method">StopListen</a>()
+        {
+            <a href="#2ad40714b9b5ec71" class="i method">InsureConnection</a>(<b>false</b>);
+            
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#bcbfc9a402fb1a8c" class="i">ConnectionLost</a> -= <b>new</b> <span class="t">EventHandler</span>(<a href="#d3dbe0dd3d84ccd9" class="i method">VncClientConnectionLost</a>);
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#aab1f2752ffb449a" class="i">ServerCutText</a> -= <b>new</b> <span class="t">EventHandler</span>(<a href="#ac26efd13c364cf5" class="i method">VncServerCutText</a>);
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#9752b4550cd3fd8d" class="i">ConnectedFromServer</a> -= <b>new</b> <span class="t">VncConnectedFromServerHandler</span>(<a href="#328f8bd8cb9a305a" class="i method">ConnectedFromServerEventHandler</a>);
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#892843da80a0cf24" class="i method">StopListen</a>();
+ 
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationCore/A.html#58bfd79a7ef6a62d" class="i">PreviewKeyDown</a> -= <b>new</b> <span class="t">KeyEventHandler</span>(<a href="#91aa07075796eba2" class="i method">KeyDownEventHandler</a>);
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#b7cb3295b92ab5ab" class="i field">scrollviewer</a>.<a href="@0@PresentationCore/A.html#4e5db2d6b9c4f1bd" class="i">PreviewKeyUp</a> -= <b>new</b> <span class="t">KeyEventHandler</span>(<a href="#0c3828fb79818a13" class="i method">KeyUpEventHandler</a>);
+ 
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#95b6c3f05a379269" class="i field">waitLabel</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#0024ca32be32c247" class="i field">Hidden</a>;
+            <a href="#f022e1e6fb71242b" class="i method">SetState</a>(<a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#8391921dd475c7f5" class="i field">Disconnected</a>);
+ 
+            <a href="#a3a6f384b1e985f6" class="i method">OnStoppedListen</a>();
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Fills the remote server&#39;s clipboard with the text in the client&#39;s clipboard, if any.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="5291b802a26a7441" href="R/5291b802a26a7441.html" target="n" data-glyph="72,1" class="i method">FillServerClipboard</a>()
+        {
+            <a href="#f0a4eedf7ab8abc8" class="i method">FillServerClipboard</a>(<a href="@0@PresentationCore/A.html#bb14b599507febfc" class="t t">Clipboard</a>.<a href="@0@PresentationCore/A.html#1da681a70844b4be" class="i method">GetText</a>());
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Fills the remote server&#39;s clipboard with text.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r37 r">text</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The text to put in the server&#39;s clipboard.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="f0a4eedf7ab8abc8" href="R/f0a4eedf7ab8abc8.html" target="n" data-glyph="72,1" class="i method">FillServerClipboard</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r37 rd" class="r37 r">text</span>)
+        {
+            <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#4fee9e503b465b8e" class="i method">WriteClientCutText</a>(<span class="r37 r">text</span>);
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> RemoteDesktop listens for ConnectionLost events from the VncClient object.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r38 r">sender</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The VncClient object that raised the event.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r39 r">e</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">An empty EventArgs object.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>protected void</b> <a id="d3dbe0dd3d84ccd9" href="R/d3dbe0dd3d84ccd9.html" target="n" data-glyph="75,1" class="i method">VncClientConnectionLost</a>(<b>object</b> <span id="r38 rd" class="r38 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r39 rd" class="r39 r">e</span>)
+		{
+			<span class="c">// If the remote host dies, and there are attempts to write</span>
+			<span class="c">// keyboard/mouse/update notifications, this may get called </span>
+			<span class="c">// many times, and from main or worker thread.</span>
+			<span class="c">// Guard against this and invoke Disconnect once.</span>
+            <b>if</b> (<a href="#f12c924d26e8b198" class="i field">state</a> == <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#a9e638eb36a129e8" class="i field">Connected</a>)
+            {
+                <a href="#f022e1e6fb71242b" class="i method">SetState</a>(<a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#283bde2a76d639fb" class="i field">Disconnecting</a>);
+                <a href="#a68214c8520acac6" class="i method">Disconnect</a>();
+            }
+            <b>else</b> <b>if</b>(<a href="#f12c924d26e8b198" class="i field">state</a> == <a href="#28f3e94f6024e99a" class="t t">RuntimeState</a>.<a href="#58f0361060419d6f" class="i field">Listen</a>)
+            {
+                <a href="#73b3933a887e2e39" class="i method">StopListen</a>();
+            }
+		}
+ 
+        <span class="c">// Handle the VncClient ServerCutText event and bubble it up as ClipboardChanged.</span>
+        <b>protected void</b> <a id="ac26efd13c364cf5" href="R/ac26efd13c364cf5.html" target="n" data-glyph="75,1" class="i method">VncServerCutText</a>(<b>object</b> <span id="r40 rd" class="r40 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r41 rd" class="r41 r">e</span>)
+        {
+            <a href="#ea0bd7eed0568ef4" class="i method">OnClipboardChanged</a>();
+        }
+ 
+        <b>protected void</b> <a id="ea0bd7eed0568ef4" href="R/ea0bd7eed0568ef4.html" target="n" data-glyph="75,1" class="i method">OnClipboardChanged</a>()
+        {
+            <b>if</b> (<a href="#2998d21ae5d2df46" class="i">ClipboardChanged</a> != <b>null</b>)
+                <a href="#2998d21ae5d2df46" class="i">ClipboardChanged</a>(<a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Dispatches the ConnectionLost event if any targets have registered.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="i">e</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">An EventArgs object.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is in the Connected state.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+		<b>protected void</b> <a id="6cf2c3ddc40f538d" href="R/6cf2c3ddc40f538d.html" target="n" data-glyph="75,1" class="i method">OnConnectionLost</a>()
+		{
+			<b>if</b> (<a href="#971dce8683b40cd7" class="i">ConnectionLost</a> != <b>null</b>) {
+				<a href="#971dce8683b40cd7" class="i">ConnectionLost</a>(<a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+			}
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Dispatches the ConnectComplete event if any targets have registered.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r42 r">e</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">A ConnectEventArgs object with information about the remote framebuffer&#39;s geometry.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is not in the Connected state.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+		<b>protected void</b> <a id="b4fd9fd10dfcb798" href="R/b4fd9fd10dfcb798.html" target="n" data-glyph="75,1" class="i method">OnConnectComplete</a>(<a href="ConnectEventArgs.cs.html#550a39668e62e2ba" class="t t">ConnectEventArgs</a> <span id="r42 rd" class="r42 r">e</span>)
+		{
+			<b>if</b> (<a href="#e7a1e86194597c3a" class="i">ConnectComplete</a> != <b>null</b>) {
+				<a href="#e7a1e86194597c3a" class="i">ConnectComplete</a>(<a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>, <span class="r42 r">e</span>);
+			}
+		}
+ 
+        <b>protected void</b> <a id="a3a6f384b1e985f6" href="R/a3a6f384b1e985f6.html" target="n" data-glyph="75,1" class="i method">OnStoppedListen</a>()
+        {
+            <b>if</b> (<a href="#3d66d119bc84e68a" class="i">StoppedListen</a> != <b>null</b>)
+            {
+                <a href="#3d66d119bc84e68a" class="i">StoppedListen</a>(<a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+            }
+        }
+ 
+        <b>private void</b> <a id="09bc1c48f8f2b9b8" href="R/09bc1c48f8f2b9b8.html" target="n" data-glyph="76,1" class="i method">MouseDownUpMoveEventHandler</a>(<b>object</b> <span id="r43 rd" class="r43 r">sender</span>, <a href="@0@PresentationCore/A.html#2bd9049c90bfe71a" class="t t">MouseEventArgs</a> <span id="r44 rd" class="r44 r">e</span>)
+        {
+            <span class="c">// Only bother if the control is connected.</span>
+            <b>if</b> (<a href="#9a10c7934038a5ab" class="i property">IsConnected</a>)
+            {
+                <a href="#8485301bc05a8fc8" class="i method">UpdateRemotePointer</a>();
+            }
+        }
+ 
+        <b>private void</b> <a id="c8925f6c76e24a28" href="R/c8925f6c76e24a28.html" target="n" data-glyph="76,1" class="i method">MouseWHeelEventHandler</a>(<b>object</b> <span id="r45 rd" class="r45 r">sender</span>, <a href="@0@PresentationCore/A.html#2907728f4bd9d8a3" class="t t">MouseWheelEventArgs</a> <span id="r46 rd" class="r46 r">e</span>)
+        {
+            <b>if</b> (!<a href="#ede3420fd3ef417b" class="i property">DesignMode</a> &amp;&amp; <a href="#9a10c7934038a5ab" class="i property">IsConnected</a>)
+            {
+                <span class="i n">System</span>.<span class="i n">Windows</span>.<a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <span id="r47 rd" class="r47 r">mousePoint</span> = <a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#dc1b085c3b16ebf0" class="i method">GetPosition</a>(<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>);
+                <span class="i n">System</span>.<span class="i n">Drawing</span>.<a href="@0@System.Drawing/A.html#a041be61667d4c9a" class="t t">Point</a> <span id="r48 rd" class="r48 r">current</span> = <b>new</b> <span class="i n">System</span>.<span class="i n">Drawing</span>.<a href="@0@System.Drawing/A.html#05f39155f9d68aad" class="t constructor">Point</a>(<a href="@0@mscorlib/A.html#fc990bd1275d43d6" class="t t">Convert</a>.<a href="@0@mscorlib/A.html#10cd63a0dc4a7c4c" class="i method">ToInt32</a>(<span class="r47 r">mousePoint</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>), <a href="@0@mscorlib/A.html#fc990bd1275d43d6" class="t t">Convert</a>.<a href="@0@mscorlib/A.html#10cd63a0dc4a7c4c" class="i method">ToInt32</a>(<span class="r47 r">mousePoint</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>));
+ 
+                <b>byte</b> <span id="r49 rd" class="r49 r">mask</span> = 0;
+ 
+                <span class="c">// mouse was scrolled forward</span>
+                <b>if</b> (<span class="r46 r">e</span>.<a href="@0@PresentationCore/A.html#da89a6a0b369523a" class="i property">Delta</a> &gt; 0)
+                {
+                    <span class="r49 r">mask</span> += 8;
+                }
+                <b>else</b> <b>if</b> (<span class="r46 r">e</span>.<a href="@0@PresentationCore/A.html#da89a6a0b369523a" class="i property">Delta</a> &lt; 0)
+                { <span class="c">// mouse was scrolled backwards</span>
+                    <span class="r49 r">mask</span> += 16;
+                }
+ 
+                <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#afaf4371c6d6a890" class="i method">WritePointerEvent</a>(<span class="r49 r">mask</span>, <a href="#758dbc01361231e1" class="i field">desktopPolicy</a>.<a href="VncDesktopTransformPolicy.cs.html#2cb74c980d8077d1" class="i method">GetMouseMovePoint</a>(<span class="r48 r">current</span>));
+            }
+        }
+ 
+	    <b>private void</b> <a id="8485301bc05a8fc8" href="R/8485301bc05a8fc8.html" target="n" data-glyph="76,1" class="i method">UpdateRemotePointer</a>()
+        {
+            <span class="c">// HACK: this check insures that while in DesignMode, no messages are sent to a VNC Host</span>
+            <span class="c">// (i.e., there won&#39;t be one--NullReferenceException)			</span>
+            <b>if</b> (!<a href="#ede3420fd3ef417b" class="i property">DesignMode</a> &amp;&amp; <a href="#9a10c7934038a5ab" class="i property">IsConnected</a>)
+            {
+                <span class="i n">System</span>.<span class="i n">Windows</span>.<a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <span id="r50 rd" class="r50 r">mousePoint</span> = <a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#dc1b085c3b16ebf0" class="i method">GetPosition</a>(<a href="obj/x86/Debug/RemoteDesktopWpf.g.cs.html#3a68ecf88877ec78" class="i field">designModeDesktop</a>);
+                <span class="i n">System</span>.<span class="i n">Drawing</span>.<a href="@0@System.Drawing/A.html#a041be61667d4c9a" class="t t">Point</a> <span id="r51 rd" class="r51 r">current</span> = <b>new</b> <span class="i n">System</span>.<span class="i n">Drawing</span>.<a href="@0@System.Drawing/A.html#05f39155f9d68aad" class="t constructor">Point</a>(<a href="@0@mscorlib/A.html#fc990bd1275d43d6" class="t t">Convert</a>.<a href="@0@mscorlib/A.html#10cd63a0dc4a7c4c" class="i method">ToInt32</a>(<span class="r50 r">mousePoint</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>), <a href="@0@mscorlib/A.html#fc990bd1275d43d6" class="t t">Convert</a>.<a href="@0@mscorlib/A.html#10cd63a0dc4a7c4c" class="i method">ToInt32</a>(<span class="r50 r">mousePoint</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>));
+ 
+                <b>byte</b> <span id="r52 rd" class="r52 r">mask</span> = 0;
+ 
+                <b>if</b> (<a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#e044117979eb1463" class="i property">LeftButton</a> == <a href="@0@PresentationCore/A.html#c49fee26f1f7a30c" class="t t">MouseButtonState</a>.<a href="@0@PresentationCore/A.html#84ab65d095fc0025" class="i field">Pressed</a>)
+                {
+                    <span class="r52 r">mask</span> += 1;
+                }
+ 
+                <b>if</b> (<a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#cf3881c606aeb489" class="i property">MiddleButton</a> == <a href="@0@PresentationCore/A.html#c49fee26f1f7a30c" class="t t">MouseButtonState</a>.<a href="@0@PresentationCore/A.html#84ab65d095fc0025" class="i field">Pressed</a>)
+                {
+                    <span class="r52 r">mask</span> += 2;
+                }
+ 
+                <b>if</b> (<a href="@0@PresentationCore/A.html#580181d27512685c" class="t t">Mouse</a>.<a href="@0@PresentationCore/A.html#272246dbe0896779" class="i property">RightButton</a> == <a href="@0@PresentationCore/A.html#c49fee26f1f7a30c" class="t t">MouseButtonState</a>.<a href="@0@PresentationCore/A.html#84ab65d095fc0025" class="i field">Pressed</a>)
+                {
+                    <span class="r52 r">mask</span> += 4;
+                }
+ 
+                <span class="i n">System</span>.<span class="i n">Drawing</span>.<a href="@0@System.Drawing/A.html#a041be61667d4c9a" class="t t">Point</a> <span id="r53 rd" class="r53 r">adjusted</span> = <a href="#758dbc01361231e1" class="i field">desktopPolicy</a>.<a href="VncDesktopTransformPolicy.cs.html#1af99a360ffa2328" class="i method">UpdateRemotePointer</a>(<span class="r51 r">current</span>);
+                <span class="c">//if (adjusted.X &lt; 0 || adjusted.Y &lt; 0)</span>
+                <span class="c">//    throw new Exception();</span>
+ 
+                <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#afaf4371c6d6a890" class="i method">WritePointerEvent</a>(<span class="r52 r">mask</span>, <a href="#758dbc01361231e1" class="i field">desktopPolicy</a>.<a href="VncDesktopTransformPolicy.cs.html#1af99a360ffa2328" class="i method">UpdateRemotePointer</a>(<span class="r51 r">current</span>));
+            }
+        }
+ 
+        <b>private void</b> <a id="91aa07075796eba2" href="R/91aa07075796eba2.html" target="n" data-glyph="76,1" class="i method">KeyDownEventHandler</a>(<b>object</b> <span id="r54 rd" class="r54 r">sender</span>, <a href="@0@PresentationCore/A.html#0d2ce926f5cfc74b" class="t t">KeyEventArgs</a> <span id="r55 rd" class="r55 r">e</span>)
+        {
+            <b>if</b> (<a href="#ede3420fd3ef417b" class="i property">DesignMode</a> || !<a href="#9a10c7934038a5ab" class="i property">IsConnected</a>)
+            {
+                <b>return</b>;
+            }
+ 
+            <b>char</b> <span id="r56 rd" class="r56 r">ascii</span> = <a href="#2a220aaa0a5ebdbc" class="i method">ConvertKeyToAscii</a>(<span class="r55 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a>);
+ 
+            <b>if</b> (<a href="@0@mscorlib/A.html#02f2b1a33b09362d" class="t t">Char</a>.<a href="@0@mscorlib/A.html#73e61bf2c5d6ecd4" class="i method">IsLetterOrDigit</a>(<span class="r56 r">ascii</span>) || <a href="@0@mscorlib/A.html#02f2b1a33b09362d" class="t t">Char</a>.<a href="@0@mscorlib/A.html#cda2cc9b76535970" class="i method">IsWhiteSpace</a>(<span class="r56 r">ascii</span>) || <a href="@0@mscorlib/A.html#02f2b1a33b09362d" class="t t">Char</a>.<a href="@0@mscorlib/A.html#9a070dc640a3c108" class="i method">IsPunctuation</a>(<span class="r56 r">ascii</span>) ||
+                <span class="r56 r">ascii</span> == <span class="s">&#39;~&#39;</span> || <span class="r56 r">ascii</span> == <span class="s">&#39;`&#39;</span> || <span class="r56 r">ascii</span> == <span class="s">&#39;&lt;&#39;</span> || <span class="r56 r">ascii</span> == <span class="s">&#39;&gt;&#39;</span> || <span class="r56 r">ascii</span> == <span class="s">&#39;|&#39;</span> ||
+                <span class="r56 r">ascii</span> == <span class="s">&#39;=&#39;</span> || <span class="r56 r">ascii</span> == <span class="s">&#39;+&#39;</span> || <span class="r56 r">ascii</span> == <span class="s">&#39;$&#39;</span> || <span class="r56 r">ascii</span> == <span class="s">&#39;^&#39;</span>)
+            {
+                <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#52b418700645bb7c" class="i method">WriteKeyboardEvent</a>((<a href="@0@mscorlib/A.html#0cd3c987eff5ef85" class="t t">UInt32</a>)<span class="r56 r">ascii</span>, <b>true</b>);
+                <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#52b418700645bb7c" class="i method">WriteKeyboardEvent</a>((<a href="@0@mscorlib/A.html#0cd3c987eff5ef85" class="t t">UInt32</a>)<span class="r56 r">ascii</span>, <b>false</b>);
+            }
+            <b>else</b> <b>if</b> (<span class="r56 r">ascii</span> == <span class="s">&#39;\b&#39;</span>)
+            {
+                <a href="@0@mscorlib/A.html#0cd3c987eff5ef85" class="t t">UInt32</a> <span id="r57 rd" class="r57 r">keyChar</span> = ((<a href="@0@mscorlib/A.html#0cd3c987eff5ef85" class="t t">UInt32</a>)<span class="s">&#39;\b&#39;</span>) | 0x0000FF00;
+                <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#52b418700645bb7c" class="i method">WriteKeyboardEvent</a>(<span class="r57 r">keyChar</span>, <b>true</b>);
+                <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#52b418700645bb7c" class="i method">WriteKeyboardEvent</a>(<span class="r57 r">keyChar</span>, <b>false</b>);
+            }
+            <b>else</b>
+            {
+                <a href="#1e68a70329d042aa" class="i method">ManageKeyDownAndKeyUp</a>(<span class="r55 r">e</span>, <b>true</b>);
+            }
+ 
+            <span class="r55 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+        }
+ 
+        <b>private void</b> <a id="0c3828fb79818a13" href="R/0c3828fb79818a13.html" target="n" data-glyph="76,1" class="i method">KeyUpEventHandler</a>(<b>object</b> <span id="r58 rd" class="r58 r">sender</span>, <a href="@0@PresentationCore/A.html#0d2ce926f5cfc74b" class="t t">KeyEventArgs</a> <span id="r59 rd" class="r59 r">e</span>)
+        {
+            <b>if</b> (<a href="#ede3420fd3ef417b" class="i property">DesignMode</a> || !<a href="#9a10c7934038a5ab" class="i property">IsConnected</a>)
+            {
+                <b>return</b>;
+            }
+ 
+            <a href="#1e68a70329d042aa" class="i method">ManageKeyDownAndKeyUp</a>(<span class="r59 r">e</span>, <b>false</b>);
+ 
+            <span class="r59 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+        }
+          
+        [<a href="@0@mscorlib/A.html#19ddb78edbb90890" class="t constructor">DllImport</a>(<span class="s">&quot;user32.dll&quot;</span>)]
+        <b>static extern</b> <a href="@0@mscorlib/A.html#d99bf6ad49979009" class="t t">IntPtr</a> <a id="74aef486aa2beb51" href="R/74aef486aa2beb51.html" target="n" data-glyph="76,1" class="i method">GetKeyboardLayout</a>(<b>uint</b> <span id="r60 rd" class="r60 r">idThread</span>);
+ 
+        [<a href="@0@mscorlib/A.html#19ddb78edbb90890" class="t constructor">DllImport</a>(<span class="s">&quot;user32.dll&quot;</span>)]
+        <b>internal static extern bool</b> <a id="387bc77ecb32aa14" href="R/387bc77ecb32aa14.html" target="n" data-glyph="74,1" class="i method">GetKeyboardState</a>(<b>byte</b>[] <span id="r61 rd" class="r61 r">lpKeyState</span>);
+ 
+        [<a href="@0@mscorlib/A.html#19ddb78edbb90890" class="t constructor">DllImport</a>(<span class="s">&quot;user32.dll&quot;</span>)]
+        <b>static extern uint</b> <a id="a63f944e85c1a23b" href="R/a63f944e85c1a23b.html" target="n" data-glyph="76,1" class="i method">MapVirtualKeyEx</a>(<b>uint</b> <span id="r62 rd" class="r62 r">uCode</span>, <b>uint</b> <span id="r63 rd" class="r63 r">uMapType</span>, <a href="@0@mscorlib/A.html#d99bf6ad49979009" class="t t">IntPtr</a> <span id="r64 rd" class="r64 r">dwhkl</span>);
+ 
+        [<a href="@0@mscorlib/A.html#19ddb78edbb90890" class="t constructor">DllImport</a>(<span class="s">&quot;user32.dll&quot;</span>)]
+        <b>static extern int</b> <a id="a656a6b3dfe5307e" href="R/a656a6b3dfe5307e.html" target="n" data-glyph="76,1" class="i method">ToUnicodeEx</a>(<b>uint</b> <span id="r65 rd" class="r65 r">wVirtKey</span>, <b>uint</b> <span id="r66 rd" class="r66 r">wScanCode</span>, <b>byte</b>[]<span id="r67 rd" class="r67 r">lpKeyState</span>, 
+                                      [<a href="@0@mscorlib/A.html#fd277621fdfde8f1" class="t constructor">Out</a>, <a href="@0@mscorlib/A.html#10593e692a79dcfc" class="t constructor">MarshalAs</a>(<a href="@0@mscorlib/A.html#30a6beab5547caf7" class="t t">UnmanagedType</a>.<a href="@0@mscorlib/A.html#96c775806ba1bd0a" class="i field">LPWStr</a>)] <a href="@0@mscorlib/A.html#adf60ee46ebd299f" class="t t">StringBuilder</a> <span id="r68 rd" class="r68 r">pwszBuff</span>,
+                                      <b>int</b> <span id="r69 rd" class="r69 r">cchBuff</span>, <b>uint</b> <span id="r70 rd" class="r70 r">wFlags</span>, <a href="@0@mscorlib/A.html#d99bf6ad49979009" class="t t">IntPtr</a> <span id="r71 rd" class="r71 r">dwhkl</span>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Convert Key to Ascii Character.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r72 r">key</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c"> Source Key </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private char</b> <a id="2a220aaa0a5ebdbc" href="R/2a220aaa0a5ebdbc.html" target="n" data-glyph="76,1" class="i method">ConvertKeyToAscii</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a> <span id="r72 rd" class="r72 r">key</span>)
+        {
+            <b>byte</b>[] <span id="r73 rd" class="r73 r">keyState</span> = <b>new</b> <b>byte</b>[256];
+            <a href="#387bc77ecb32aa14" class="i method">GetKeyboardState</a>(<span class="r73 r">keyState</span>);
+ 
+            <b>uint</b> <span id="r74 rd" class="r74 r">vKey</span> = (<b>uint</b>)<a href="@0@WindowsBase/A.html#3fb1d65bbc333f9e" class="t t">KeyInterop</a>.<a href="@0@WindowsBase/A.html#4a15b63f2fcd2ab0" class="i method">VirtualKeyFromKey</a>(<span class="r72 r">key</span>);
+            <a href="@0@mscorlib/A.html#d99bf6ad49979009" class="t t">IntPtr</a> <span id="r75 rd" class="r75 r">kbLayout</span> = <a href="#74aef486aa2beb51" class="i method">GetKeyboardLayout</a>(0);
+            <b>uint</b> <span id="r76 rd" class="r76 r">scanCode</span> = <a href="#a63f944e85c1a23b" class="i method">MapVirtualKeyEx</a>(<span class="r74 r">vKey</span>, 0, <span class="r75 r">kbLayout</span>);
+ 
+            <a href="@0@mscorlib/A.html#adf60ee46ebd299f" class="t t">StringBuilder</a> <span id="r77 rd" class="r77 r">sb</span> = <b>new</b> <a href="@0@mscorlib/A.html#6e631639c1e2746b" class="t constructor">StringBuilder</a>();
+            <b>int</b> <span id="r78 rd" class="r78 r">result</span> = <a href="#a656a6b3dfe5307e" class="i method">ToUnicodeEx</a>(<span class="r74 r">vKey</span>, <span class="r76 r">scanCode</span>, <span class="r73 r">keyState</span>, <span class="r77 r">sb</span>, (<b>int</b>)5, (<b>uint</b>)0, <span class="r75 r">kbLayout</span>);
+ 
+            <b>switch</b> (<span class="r78 r">result</span>)
+            {
+                <b>default</b>:
+                <b>case</b> -1:
+                <b>case</b> 0: 
+                    <b>return</b> (<b>char</b>)0; 
+                <b>case</b> 1:
+                <b>case</b> 2:
+                    <b>return</b> <span class="r77 r">sb</span>.<a href="@0@mscorlib/A.html#5a97da49a158a3c9" class="i method">ToString</a>()[0];
+            }  
+        }
+ 
+        <span class="c">// Thanks to Lionel Cuir, Christian and the other developers at </span>
+        <span class="c">// Aulofee.com for cleaning-up my keyboard code, specifically:</span>
+        <span class="c">// ManageKeyDownAndKeyUp, OnKeyPress, OnKeyUp, OnKeyDown.</span>
+        <b>private void</b> <a id="1e68a70329d042aa" href="R/1e68a70329d042aa.html" target="n" data-glyph="76,1" class="i method">ManageKeyDownAndKeyUp</a>(<a href="@0@PresentationCore/A.html#0d2ce926f5cfc74b" class="t t">KeyEventArgs</a> <span id="r79 rd" class="r79 r">e</span>, <b>bool</b> <span id="r80 rd" class="r80 r">isDown</span>)
+        {
+            <a href="@0@mscorlib/A.html#0cd3c987eff5ef85" class="t t">UInt32</a> <span id="r81 rd" class="r81 r">keyChar</span>;
+            <b>bool</b> <span id="r82 rd" class="r82 r">isProcessed</span> = <b>true</b>;
+            <b>switch</b> (<span class="r79 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a>)
+            {
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#92551d8fd6698fd9" class="i field">Tab</a>:       <span class="r81 r">keyChar</span> = 0x0000FF09; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#38a06ab0ee7279d0" class="i field">Enter</a>:     <span class="r81 r">keyChar</span> = 0x0000FF0D; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#51a26d8f82f371eb" class="i field">Escape</a>:    <span class="r81 r">keyChar</span> = 0x0000FF1B; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#1b549be98799439b" class="i field">Home</a>:      <span class="r81 r">keyChar</span> = 0x0000FF50; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#eec36958cde02be2" class="i field">Left</a>:      <span class="r81 r">keyChar</span> = 0x0000FF51; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#3e53291dba010c69" class="i field">Up</a>:        <span class="r81 r">keyChar</span> = 0x0000FF52; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#eb42cde70e9949cf" class="i field">Right</a>:     <span class="r81 r">keyChar</span> = 0x0000FF53; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#dadbca967a7407ff" class="i field">Down</a>:      <span class="r81 r">keyChar</span> = 0x0000FF54; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#8ee0bf5eec133400" class="i field">PageUp</a>:    <span class="r81 r">keyChar</span> = 0x0000FF55; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#0b0e2d36da489c29" class="i field">PageDown</a>:  <span class="r81 r">keyChar</span> = 0x0000FF56; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#73853e833a22a7bf" class="i field">End</a>:       <span class="r81 r">keyChar</span> = 0x0000FF57; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#866765a1180ce540" class="i field">Insert</a>:    <span class="r81 r">keyChar</span> = 0x0000FF63; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#d063f622025ee52a" class="i field">LeftShift</a>: <span class="r81 r">keyChar</span> = 0x0000FFE1; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#b4e6e7b9707e42b0" class="i field">RightShift</a>:<span class="r81 r">keyChar</span> = 0x0000FFE1; <b>break</b>;
+ 
+                <span class="c">// BUG FIX -- added proper Alt/CTRL support (Edward Cooke)</span>
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#cbfa35444248c3b8" class="i field">LeftAlt</a>:   <span class="r81 r">keyChar</span> = 0x0000FFE9; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#0a717a0f835a8f84" class="i field">RightAlt</a>:  <span class="r81 r">keyChar</span> = 0x0000FFE9; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#2b72caec22f1249d" class="i field">LeftCtrl</a>:  <span class="r81 r">keyChar</span> = 0x0000FFE3; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#e89a228c9dc1bd2c" class="i field">RightCtrl</a>: <span class="r81 r">keyChar</span> = 0x0000FFE4; <b>break</b>;
+ 
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#47a9fb25e7bebcd8" class="i field">Delete</a>: <span class="r81 r">keyChar</span> = 0x0000FFFF; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#a9ca4a858a10f340" class="i field">LWin</a>: <span class="r81 r">keyChar</span> = 0x0000FFEB; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#6ff68c6a6aa106b6" class="i field">RWin</a>: <span class="r81 r">keyChar</span> = 0x0000FFEC; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#572404459e0d0107" class="i field">Apps</a>: <span class="r81 r">keyChar</span> = 0x0000FFEE; <b>break</b>;
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#403a1a3a3b3247ac" class="i field">F1</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#c22d2a5beaaff023" class="i field">F2</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#96a8cd37f3c42a09" class="i field">F3</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#69f00d74f1dd9239" class="i field">F4</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#9459670f1ea00920" class="i field">F5</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#89e3df23149474bd" class="i field">F6</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#eaf0a8d6d0ebbdac" class="i field">F7</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#7899866f84ee9300" class="i field">F8</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#81df6ce220ba6017" class="i field">F9</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#1056daf8bdb6b1ea" class="i field">F10</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#ab49dec47e076c16" class="i field">F11</a>:
+                <b>case</b> <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#f46026b90194cd3a" class="i field">F12</a>:
+                    <span class="r81 r">keyChar</span> = 0x0000FFBE + ((<a href="@0@mscorlib/A.html#0cd3c987eff5ef85" class="t t">UInt32</a>)<span class="r79 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a> - (<a href="@0@mscorlib/A.html#0cd3c987eff5ef85" class="t t">UInt32</a>)<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#403a1a3a3b3247ac" class="i field">F1</a>);
+                    <b>break</b>;
+                <b>default</b>:
+                    <span class="r81 r">keyChar</span> = 0;
+                    <span class="r82 r">isProcessed</span> = <b>false</b>;
+                    <b>break</b>;
+            }
+ 
+            <b>if</b> (<span class="r82 r">isProcessed</span>)
+            {
+                <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#52b418700645bb7c" class="i method">WriteKeyboardEvent</a>(<span class="r81 r">keyChar</span>, <span class="r80 r">isDown</span>);
+                <span class="r79 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sends a keyboard combination that would otherwise be reserved for the client PC.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r83 r">keys</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">SpecialKeys is an enumerated list of supported keyboard combinations.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span><span class="c">Keyboard combinations are Pressed and then Released, while single keys (e.g., SpecialKeys.Ctrl) are only pressed so that subsequent keys will be modified.</span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is not in the Connected state.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="c39f3424d213ab6d" href="R/c39f3424d213ab6d.html" target="n" data-glyph="72,1" class="i method">SendSpecialKeys</a>(<a href="#eea1871eae63b05d" class="t t">SpecialKeys</a> <span id="r83 rd" class="r83 r">keys</span>)
+        {
+            <a href="P/cdf2a5bd4f427445.html#cdf2a5bd4f427445" class="k">this</a>.<a href="#f7e2a4682b82313c" class="i method">SendSpecialKeys</a>(<span class="r83 r">keys</span>, <b>true</b>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sends a keyboard combination that would otherwise be reserved for the client PC.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r84 r">keys</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">SpecialKeys is an enumerated list of supported keyboard combinations.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span><span class="c">Keyboard combinations are Pressed and then Released, while single keys (e.g., SpecialKeys.Ctrl) are only pressed so that subsequent keys will be modified.</span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<a href="@0@mscorlib/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the RemoteDesktop control is not in the Connected state.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="f7e2a4682b82313c" href="R/f7e2a4682b82313c.html" target="n" data-glyph="72,1" class="i method">SendSpecialKeys</a>(<a href="#eea1871eae63b05d" class="t t">SpecialKeys</a> <span id="r84 rd" class="r84 r">keys</span>, <b>bool</b> <span id="r85 rd" class="r85 r">release</span>)
+        {
+            <a href="#2ad40714b9b5ec71" class="i method">InsureConnection</a>(<b>true</b>);
+            <span class="c">// For all of these I am sending the key presses manually instead of calling</span>
+            <span class="c">// the keyboard event handlers, as I don&#39;t want to propegate the calls up to the </span>
+            <span class="c">// base control class and form.</span>
+            <b>switch</b> (<span class="r84 r">keys</span>)
+            {
+                <b>case</b> <a href="#eea1871eae63b05d" class="t t">SpecialKeys</a>.<a href="#ec2b404e9914ff54" class="i field">Ctrl</a>:
+                    <a href="#72d471d14ccf86dc" class="i method">PressKeys</a>(<b>new</b> <b>uint</b>[] { 0xffe3 }, <span class="r85 r">release</span>);	<span class="c">// CTRL, but don&#39;t release</span>
+                    <b>break</b>;
+                <b>case</b> <a href="#eea1871eae63b05d" class="t t">SpecialKeys</a>.<a href="#c46cf5550feb0ed4" class="i field">Alt</a>:
+                    <a href="#72d471d14ccf86dc" class="i method">PressKeys</a>(<b>new</b> <b>uint</b>[] { 0xffe9 }, <span class="r85 r">release</span>);	<span class="c">// ALT, but don&#39;t release</span>
+                    <b>break</b>;
+                <b>case</b> <a href="#eea1871eae63b05d" class="t t">SpecialKeys</a>.<a href="#5e722132d2cc06a0" class="i field">CtrlAltDel</a>:
+                    <a href="#72d471d14ccf86dc" class="i method">PressKeys</a>(<b>new</b> <b>uint</b>[] { 0xffe3, 0xffe9, 0xffff }, <span class="r85 r">release</span>); <span class="c">// CTRL, ALT, DEL</span>
+                    <b>break</b>;
+                <b>case</b> <a href="#eea1871eae63b05d" class="t t">SpecialKeys</a>.<a href="#502d86e203e6ae4b" class="i field">AltF4</a>:
+                    <a href="#72d471d14ccf86dc" class="i method">PressKeys</a>(<b>new</b> <b>uint</b>[] { 0xffe9, 0xffc1 }, <span class="r85 r">release</span>); <span class="c">// ALT, F4</span>
+                    <b>break</b>;
+                <b>case</b> <a href="#eea1871eae63b05d" class="t t">SpecialKeys</a>.<a href="#715f55cfbbc720cb" class="i field">CtrlEsc</a>:
+                    <a href="#72d471d14ccf86dc" class="i method">PressKeys</a>(<b>new</b> <b>uint</b>[] { 0xffe3, 0xff1b }, <span class="r85 r">release</span>); <span class="c">// CTRL, ESC</span>
+                    <b>break</b>;
+                <span class="c">// TODO: are there more I should support???</span>
+                <b>default</b>:
+                    <b>break</b>;
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Given a list of keysym values, sends a key press for each, then a release.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r86 r">keys</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">An array of keysym values representing keys to press/release.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r87 r">release</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">A boolean indicating whether the keys should be Pressed and then Released.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="72d471d14ccf86dc" href="R/72d471d14ccf86dc.html" target="n" data-glyph="76,1" class="i method">PressKeys</a>(<b>uint</b>[] <span id="r86 rd" class="r86 r">keys</span>, <b>bool</b> <span id="r87 rd" class="r87 r">release</span>)
+        {
+            <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<span class="r86 r">keys</span> != <b>null</b>, <span class="s">&quot;keys[] cannot be null.&quot;</span>);
+ 
+            <b>for</b>(<b>int</b> <span id="r88 rd" class="r88 r">i</span> = 0; <span class="r88 r">i</span> &lt; <span class="r86 r">keys</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>; ++<span class="r88 r">i</span>) {
+                <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#52b418700645bb7c" class="i method">WriteKeyboardEvent</a>(<span class="r86 r">keys</span>[<span class="r88 r">i</span>], <b>true</b>);
+            }
+ 
+            <b>if</b> (<span class="r87 r">release</span>) {
+                <span class="c">// Walk the keys array backwards in order to release keys in correct order</span>
+                <b>for</b>(<b>int</b> <span id="r89 rd" class="r89 r">i</span> = <span class="r86 r">keys</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a> - 1; <span class="r89 r">i</span> &gt;= 0; --<span class="r89 r">i</span>) {
+                    <a href="#c2f1401ada5d3514" class="i field">vnc</a>.<a href="VncClient.cs.html#52b418700645bb7c" class="i method">WriteKeyboardEvent</a>(<span class="r86 r">keys</span>[<span class="r89 r">i</span>], <b>false</b>);
+                }
+            }
+        }
+	}
+}
+</pre></td></tr></table></div></body></html>

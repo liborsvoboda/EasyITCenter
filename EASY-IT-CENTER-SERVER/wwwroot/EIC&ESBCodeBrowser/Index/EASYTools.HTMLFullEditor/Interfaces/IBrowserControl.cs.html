@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html><head><title>IBrowserControl.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(102);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.HTMLFullEditor/Interfaces/IBrowserControl.cs" target="_top">Interfaces\IBrowserControl.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.HTMLFullEditor" target="_top">..\..\..\EASY-TOOLS\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor.csproj</a> (EASYTools.HTMLFullEditor)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Html</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">ViewModels</span>;
+<b>using</b> <span class="i n">mshtml</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Interfaces</span>
+{
+    <b>public interface</b> <a id="c6664bab75da7ecf" href="../R/c6664bab75da7ecf.html" target="n" data-glyph="48,0" class="t t">IBrowserControl</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Event, fired when internal browser got focus.</span>
+        <span class="c">///</span><span class="c"> (Internal browser is sometimes causing weird things when got/lost focus (eg previous binding not working correctly) - with this you can handle it.)</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="6c3be254235fdcc9" href="../R/6c3be254235fdcc9.html" target="n" data-glyph="30,1" class="i">InternalBrowserGotFocus</a>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Event, fired when internal browser lost focus.</span>
+        <span class="c">///</span><span class="c"> (Internal browser is sometimes causing weird things when got/lost focus (eg previous binding not working correctly) - with this you can handle it.)</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="95a902984b6bbf4b" href="../R/95a902984b6bbf4b.html" target="n" data-glyph="30,1" class="i">InternalBrowserLostFocus</a>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets actually opened HTML document by internal browser.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="t t">HTMLDocument</span> <a id="a9769112da0c78f4" href="../R/a9769112da0c78f4.html" target="n" data-glyph="102,1" class="i property">CurrentDocument</a> { <b>get</b>; }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Loads given HTML or standard empty document.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns if content has changed.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>bool</b> <a id="0463e677d7607dda" href="../R/0463e677d7607dda.html" target="n" data-glyph="72,1" class="i method">OpenDocument</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">fileContent</span> = <b>null</b>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Returns current html content of this editor.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <a id="1c2370f8ecf7c9b3" href="../R/1c2370f8ecf7c9b3.html" target="n" data-glyph="72,1" class="i method">GetCurrentHtml</a>();
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Returns current selected text (or just current position of cursor).</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <a href="../Html/SelectedRange.cs.html#3e7de8f2f0d9a441" class="t t">SelectedRange</a> <a id="25b47df059d7f04b" href="../R/25b47df059d7f04b.html" target="n" data-glyph="72,1" class="i method">GetSelectedRange</a>();
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Executes given command on current document.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This is shortcut for CurrentDocument.execCommand, but can be called without reference to mshtml.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>void</b> <a id="868390394ba254d9" href="../R/868390394ba254d9.html" target="n" data-glyph="72,1" class="i method">ExecuteCommand</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r1 rd" class="r1 r">commandId</span>, <b>bool</b> <span id="r2 rd" class="r2 r">showUI</span> = <b>false</b>, <b>object</b> <span id="r3 rd" class="r3 r">value</span> = <b>null</b>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Checks state of given command by its ID.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This is shortcut for CurrentDocument.queryCommandState, but can be called without reference to mshtml.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>object</b> <a id="0a13d6bb7c6ea2b8" href="../R/0a13d6bb7c6ea2b8.html" target="n" data-glyph="72,1" class="i method">QueryCommandState</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r4 rd" class="r4 r">commandId</span>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Checks if given command is enabled by its ID.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This is shortcut for CurrentDocument.queryCommandEnabled, but can be called without reference to mshtml.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>bool</b> <a id="ce4fde981191d3eb" href="../R/ce4fde981191d3eb.html" target="n" data-glyph="72,1" class="i method">QueryCommandEnabled</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r5 rd" class="r5 r">commandId</span>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets current font to the given one.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>void</b> <a id="e082468432d785ef" href="../R/e082468432d785ef.html" target="n" data-glyph="72,1" class="i method">SetFont</a>(<a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a> <span id="r6 rd" class="r6 r">font</span>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets current fontSize to given one.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>void</b> <a id="a26663e21bf7eaac" href="../R/a26663e21bf7eaac.html" target="n" data-glyph="72,1" class="i method">SetFontSize</a>(<a href="../Html/FontSize.cs.html#98b06392db112c09" class="t t">FontSize</a> <span id="r7 rd" class="r7 r">fontSize</span>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Will try to set focus inside the editor.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>void</b> <a id="243eacb7a23b7275" href="../R/243eacb7a23b7275.html" target="n" data-glyph="72,1" class="i method">Focus</a>();
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets if this editor is in source edit mode.</span>
+        <span class="c">///</span><span class="c"> (You can change mode with </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#cbb607a21b42fd7f" class="i method">ToggleSourceEditor</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.)</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>bool</b> <a id="4095531ded23f584" href="../R/4095531ded23f584.html" target="n" data-glyph="102,1" class="i property">IsInSourceEditMode</a> { <b>get</b>; }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the print dialog (after Ctrl+P hotKeys) is enabled.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>bool</b> <a id="6283d23e21156502" href="../R/6283d23e21156502.html" target="n" data-glyph="102,1" class="i property">EnablePrintHotKey</a> { <b>get</b>; <b>set</b>; }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Will change switch between WYSIWYG and HTML code editor.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">model</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Instance of ToolbarViewModel.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">enableSourceEditor</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">True for HTML editor, False for WYSIWYG editor.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>void</b> <a id="cbb607a21b42fd7f" href="../R/cbb607a21b42fd7f.html" target="n" data-glyph="72,1" class="i method">ToggleSourceEditor</a>(<a href="../ViewModels/ToolbarViewModel.cs.html#9e968c4319c4503a" class="t t">ToolbarViewModel</a> <span id="r8 rd" class="r8 r">model</span>, <b>bool</b> <span id="r9 rd" class="r9 r">enableSourceEditor</span>);
+    }
+}
+</pre></td></tr></table></div></body></html>

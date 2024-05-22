@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html><head><title>Filtering.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(64);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.ImageEffectLibrary/Filtering.cs" target="_top">Filtering.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.ImageEffectLibrary" target="_top">..\..\..\EASY-TOOLS\EASYTools.ImageEffectLibrary\EASYTools.ImageEffectLibrary.csproj</a> (EASYTools.ImageEffectLibrary)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">ImageEffectLibrary</span>
+{
+    <b>public interface</b> <a id="841281dd3c3566d3" href="R/841281dd3c3566d3.html" target="n" data-glyph="48,0" class="t t">IFilterableImage</a>
+    {
+        <a href="#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="4b243baf8d340fa9" href="R/4b243baf8d340fa9.html" target="n" data-glyph="72,1" class="i method">Filter</a>(<a href="#f9b842dedcd23fa6" class="t t">Filter</a> <span id="r0 rd" class="r0 r">filter</span>);
+ 
+        <a href="#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="ba5e5c0eb7d8394e" href="R/ba5e5c0eb7d8394e.html" target="n" data-glyph="72,1" class="i method">MeanFilter</a>(<b>int</b> <span id="r1 rd" class="r1 r">size</span>);
+ 
+        <a href="#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="684ba9956694a5dd" href="R/684ba9956694a5dd.html" target="n" data-glyph="72,1" class="i method">LaplacianFilter</a>();
+ 
+        <a href="#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="8f17ef86c35075b8" href="R/8f17ef86c35075b8.html" target="n" data-glyph="72,1" class="i method">ExtendedLaplacianFilter</a>();
+ 
+        <a href="#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="d4317c7ef58987b4" href="R/d4317c7ef58987b4.html" target="n" data-glyph="72,1" class="i method">BilateralFilter</a>(<b>int</b> <span id="r2 rd" class="r2 r">size</span>, <b>double</b> <span id="r3 rd" class="r3 r">sigmaD</span>, <b>double</b> <span id="r4 rd" class="r4 r">sigmaR</span>);
+    }
+ 
+    <b>public class</b> <a id="f9b842dedcd23fa6" href="R/f9b842dedcd23fa6.html" target="n" data-glyph="0,0" class="t t">Filter</a> : <a href="Image.cs.html#ae7b6f60d70a2351" class="t t">Image</a>&lt;<b>double</b>&gt;
+    {
+        <b>public</b> <a href="Utils.cs.html#f3050fa26e1403a8" class="t t">Point</a> <a id="e1639df15b2cb2d9" href="R/e1639df15b2cb2d9.html" target="n" data-glyph="102,1" class="i property">Origin</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>public</b> <a id="6e7639be98e99275" href="R/6e7639be98e99275.html" target="n" data-glyph="72,1" class="t constructor">Filter</a>(<b>int</b> <span id="r5 rd" class="r5 r">pixelWidth</span>, <b>int</b> <span id="r6 rd" class="r6 r">pixelHeight</span>) : <a href="Image.cs.html#6f7b6d48e70d4091" class="k">base</a>(<span class="r5 r">pixelWidth</span>, <span class="r6 r">pixelHeight</span>)
+        {
+            <a href="#e1639df15b2cb2d9" class="i property">Origin</a> = <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(<span class="r5 r">pixelWidth</span> / 2, <span class="r6 r">pixelHeight</span> / 2);
+        }
+ 
+        <b>public</b> <a id="6a67b465ed1aec02" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">Filter</a>(<b>int</b> <span id="r7 rd" class="r7 r">pixelWidth</span>, <b>int</b> <span id="r8 rd" class="r8 r">pixelHeight</span>, <a href="Utils.cs.html#f3050fa26e1403a8" class="t t">Point</a> <span id="r9 rd" class="r9 r">origin</span>) : <a href="Image.cs.html#6f7b6d48e70d4091" class="k">base</a>(<span class="r7 r">pixelWidth</span>, <span class="r8 r">pixelHeight</span>)
+        {
+            <a href="#e1639df15b2cb2d9" class="i property">Origin</a> = <span class="r9 r">origin</span>;
+        }
+ 
+        <b>public</b> <a id="71e815a36e1e85df" href="R/71e815a36e1e85df.html" target="n" data-glyph="72,1" class="t constructor">Filter</a>(<b>double</b>[,] <span id="r10 rd" class="r10 r">pixels</span>) : <a href="Image.cs.html#31a77774dc323871" class="k">base</a>(<span class="r10 r">pixels</span>)
+        {
+            <a href="#e1639df15b2cb2d9" class="i property">Origin</a> = <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> / 2, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> / 2);
+        }
+ 
+        <b>public</b> <a id="1859e3248bd0a32e" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">Filter</a>(<b>double</b>[,] <span id="r11 rd" class="r11 r">pixels</span>, <a href="Utils.cs.html#f3050fa26e1403a8" class="t t">Point</a> <span id="r12 rd" class="r12 r">origin</span>) : <a href="Image.cs.html#31a77774dc323871" class="k">base</a>(<span class="r11 r">pixels</span>)
+        {
+            <a href="#e1639df15b2cb2d9" class="i property">Origin</a> = <span class="r12 r">origin</span>;
+        }
+ 
+        <b>public void</b> <a id="10bc8c470b60838d" href="R/10bc8c470b60838d.html" target="n" data-glyph="72,1" class="i method">Normalize</a>()
+        {
+            <b>double</b> <span id="r13 rd" class="r13 r">sum</span> = <a href="Image.cs.html#5651742cc0b908e4" class="i property">Pixels</a>.<a href="@0@System.Core/A.html#27bb217a6d5457ec" class="i method">Cast</a>&lt;<b>double</b>&gt;().<a href="@0@System.Core/A.html#31d6311a3de99e2b" class="i method">Sum</a>();
+            <a href="Image.cs.html#2360fa3da3fd1e02" class="i method">Pipeline</a>(<span id="r14 rd" class="r14 r">pixel</span> =&gt; <span class="r14 r">pixel</span> / <span class="r13 r">sum</span>);
+        }
+    }
+ 
+    <b>public static class</b> <a id="96681fcf33d11ce9" href="R/96681fcf33d11ce9.html" target="n" data-glyph="0,0" class="t t">Filters</a>
+    {
+        <b>public static</b> <a href="#f9b842dedcd23fa6" class="t t">Filter</a> <a id="77666bfe21029f43" href="R/77666bfe21029f43.html" target="n" data-glyph="102,1" class="i property">Laplacian</a> { <b>get</b>; } = <b>new</b> <a href="#71e815a36e1e85df" class="t constructor">Filter</a>(<b>new</b> <b>double</b>[,] {{0, -1, 0}, {-1, 5, -1}, {0, -1, 0}});
+ 
+        <b>public static</b> <a href="#f9b842dedcd23fa6" class="t t">Filter</a> <a id="59447110b736bd65" href="R/59447110b736bd65.html" target="n" data-glyph="102,1" class="i property">ExtendedLaplacian</a> { <b>get</b>; } =
+            <b>new</b> <a href="#71e815a36e1e85df" class="t constructor">Filter</a>(<b>new</b> <b>double</b>[,] {{-1, -1, -1}, {-1, 9, -1}, {-1, -1, -1}});
+ 
+        <b>public static</b> <a href="#f9b842dedcd23fa6" class="t t">Filter</a> <a id="e14220af6370571b" href="R/e14220af6370571b.html" target="n" data-glyph="72,1" class="i method">Mean</a>(<b>int</b> <span id="r15 rd" class="r15 r">size</span> = 3)
+        {
+            <a href="#f9b842dedcd23fa6" class="k">var</a> <span id="r16 rd" class="r16 r">filter</span> = <b>new</b> <a href="#6e7639be98e99275" class="t constructor">Filter</a>(<span class="r15 r">size</span>, <span class="r15 r">size</span>);
+            <span class="r16 r">filter</span>.<a href="Image.cs.html#2360fa3da3fd1e02" class="i method">Pipeline</a>(<span id="r17 rd" class="r17 r">pixel</span> =&gt; 1);
+            <span class="r16 r">filter</span>.<a href="#10bc8c470b60838d" class="i method">Normalize</a>();
+            <b>return</b> <span class="r16 r">filter</span>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

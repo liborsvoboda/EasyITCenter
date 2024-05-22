@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+<html><head><title>AutoHideBehavior.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(205);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.TouchKeyboard/Behaviors/AutoHideBehavior.cs" target="_top">Behaviors\AutoHideBehavior.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.TouchKeyboard" target="_top">..\..\..\EASY-TOOLS\EASYTools.TouchKeyboard\EASYTools.TouchKeyboard.csproj</a> (EASYTools.TouchKeyboard)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Interactivity</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Threading</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">Behaviors</span>
+{
+    <b>public class</b> <a id="31ee68eaae1c1af4" href="../R/31ee68eaae1c1af4.html" target="n" data-glyph="0,0" class="t t"><span id="275ce68fe679b461">AutoHideBehavior</span></a> : <span class="t t">Behavior</span>&lt;<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>&gt;
+    {
+        <b>public enum</b> <a id="662da20d9b0e4e88" href="../R/662da20d9b0e4e88.html" target="n" data-glyph="18,1" class="t t"><span id="3426878ec9ab0e01">ClickAction</span></a>
+        {
+            <a id="b18949ff57752d8e" href="../R/../../0000000000.html" target="n" data-glyph="24,2" class="i field">None</a>,
+            <a id="e7e9c54c57f5fe88" href="../R/e7e9c54c57f5fe88.html" target="n" data-glyph="24,2" class="i field">Show</a>,
+            <a id="0ebecff73e996267" href="../R/0ebecff73e996267.html" target="n" data-glyph="24,2" class="i field">AcceleratedHide</a>,
+        }
+ 
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="e144addc63ecfec5" href="../R/e144addc63ecfec5.html" target="n" data-glyph="42,1" class="i field">ActionWhenClickedProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;ActionWhenClicked&quot;</span>, <b>typeof</b>(<a href="#662da20d9b0e4e88" class="t t">ClickAction</a>), <b>typeof</b>(<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(<a href="#662da20d9b0e4e88" class="t t">ClickAction</a>.<a href="#e7e9c54c57f5fe88" class="i field">Show</a>));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="29d74ee035b456c3" href="../R/29d74ee035b456c3.html" target="n" data-glyph="42,1" class="i field">AreAnimationsEnabledProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;AreAnimationsEnabled&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(<b>true</b>));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="ec60d5b50bc16878" href="../R/ec60d5b50bc16878.html" target="n" data-glyph="42,1" class="i field">HideDelayProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;HideDelay&quot;</span>, <b>typeof</b>(<b>double</b>), <b>typeof</b>(<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(5d));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="09ad51399c19081f" href="../R/09ad51399c19081f.html" target="n" data-glyph="42,1" class="i field">HideDurationProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;HideDuration&quot;</span>, <b>typeof</b>(<b>double</b>), <b>typeof</b>(<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(0.5d));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f85774287bcab35d" href="../R/f85774287bcab35d.html" target="n" data-glyph="42,1" class="i field">IsAllowedToHideProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;IsAllowedToHide&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>), <b>new</b> <a href="@0@PresentationCore/A.html#1708823089fadef6" class="t constructor">UIPropertyMetadata</a>(<b>true</b>, <a href="#99a23289c9af79c3" class="i method">OnIsAllowedToHidePropertyChanged</a>));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="afa9625fca7b00ba" href="../R/afa9625fca7b00ba.html" target="n" data-glyph="42,1" class="i field">IsAllowedToShowProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;IsAllowedToShow&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(<b>true</b>));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="e2df53c17a343779" href="../R/e2df53c17a343779.html" target="n" data-glyph="42,1" class="i field">IsShownProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;IsShown&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>), <b>new</b> <a href="@0@PresentationCore/A.html#1708823089fadef6" class="t constructor">UIPropertyMetadata</a>(<b>true</b>, <a href="#d1988829bb745b1b" class="i method">OnIsShownPropertyChanged</a>));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b5d17869c6aa88a6" href="../R/b5d17869c6aa88a6.html" target="n" data-glyph="42,1" class="i field">MaxOpacityProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;MaxOpacity&quot;</span>, <b>typeof</b>(<b>double</b>), <b>typeof</b>(<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(1d));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="562989cff17ec892" href="../R/562989cff17ec892.html" target="n" data-glyph="42,1" class="i field">MinOpacityProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;MinOpacity&quot;</span>, <b>typeof</b>(<b>double</b>), <b>typeof</b>(<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(0d));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="00794d19ff6e241e" href="../R/00794d19ff6e241e.html" target="n" data-glyph="42,1" class="i field">ShowDurationProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;ShowDuration&quot;</span>, <b>typeof</b>(<b>double</b>), <b>typeof</b>(<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(0d));
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="34934ec775978e48" href="../R/34934ec775978e48.html" target="n" data-glyph="42,1" class="i field">TimerIntervalProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;TimerInterval&quot;</span>, <b>typeof</b>(<b>double</b>), <b>typeof</b>(<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>), <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(0.3d));
+ 
+        <b>private</b> <a href="@0@WindowsBase/A.html#85652fc45bd4a61e" class="t t">DispatcherTimer</a> <a id="a71df31e29399bf6" href="../R/a71df31e29399bf6.html" target="n" data-glyph="46,1" class="i field">_timer</a>;
+        <b>private</b> <a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a> <a id="7cc87605b18bae16" href="../R/7cc87605b18bae16.html" target="n" data-glyph="46,1" class="i field">_lastActivityTime</a>;
+ 
+        <b>public</b> <a href="#662da20d9b0e4e88" class="t t">ClickAction</a> <a id="7d10459c1d28b95f" href="../R/7d10459c1d28b95f.html" target="n" data-glyph="102,1" class="i property">ActionWhenClicked</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="#662da20d9b0e4e88" class="t t">ClickAction</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#e144addc63ecfec5" class="i field">ActionWhenClickedProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#e144addc63ecfec5" class="i field">ActionWhenClickedProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public bool</b> <a id="1d3df91d52f171e3" href="../R/1d3df91d52f171e3.html" target="n" data-glyph="102,1" class="i property">AreAnimationsEnabled</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#29d74ee035b456c3" class="i field">AreAnimationsEnabledProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#29d74ee035b456c3" class="i field">AreAnimationsEnabledProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public double</b> <a id="3fc6643021dc9116" href="../R/3fc6643021dc9116.html" target="n" data-glyph="102,1" class="i property">HideDelay</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#ec60d5b50bc16878" class="i field">HideDelayProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#ec60d5b50bc16878" class="i field">HideDelayProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public double</b> <a id="2cd24137e30c11f9" href="../R/2cd24137e30c11f9.html" target="n" data-glyph="102,1" class="i property">HideDuration</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#09ad51399c19081f" class="i field">HideDurationProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#09ad51399c19081f" class="i field">HideDurationProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public bool</b> <a id="1d4620b6a12a0835" href="../R/1d4620b6a12a0835.html" target="n" data-glyph="102,1" class="i property">IsAllowedToHide</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f85774287bcab35d" class="i field">IsAllowedToHideProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f85774287bcab35d" class="i field">IsAllowedToHideProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public bool</b> <a id="11570708433ffeb1" href="../R/11570708433ffeb1.html" target="n" data-glyph="102,1" class="i property">IsAllowedToShow</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#afa9625fca7b00ba" class="i field">IsAllowedToShowProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#afa9625fca7b00ba" class="i field">IsAllowedToShowProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public bool</b> <a id="3b5f4d6b14246293" href="../R/3b5f4d6b14246293.html" target="n" data-glyph="102,1" class="i property">IsShown</a>
+        {
+            <b>get</b> { <b>return</b> (<b>bool</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#e2df53c17a343779" class="i field">IsShownProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#e2df53c17a343779" class="i field">IsShownProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public double</b> <a id="7a05d822e5012422" href="../R/7a05d822e5012422.html" target="n" data-glyph="102,1" class="i property">MaxOpacity</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b5d17869c6aa88a6" class="i field">MaxOpacityProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b5d17869c6aa88a6" class="i field">MaxOpacityProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public double</b> <a id="978e0bd1dc12a43c" href="../R/978e0bd1dc12a43c.html" target="n" data-glyph="102,1" class="i property">MinOpacity</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#562989cff17ec892" class="i field">MinOpacityProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#562989cff17ec892" class="i field">MinOpacityProperty</a>, <b>value</b>); }
+        }
+        
+        <b>public double</b> <a id="a67a54bd3f91351f" href="../R/a67a54bd3f91351f.html" target="n" data-glyph="102,1" class="i property">ShowDuration</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#00794d19ff6e241e" class="i field">ShowDurationProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#00794d19ff6e241e" class="i field">ShowDurationProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public double</b> <a id="f84aa8f451d46223" href="../R/f84aa8f451d46223.html" target="n" data-glyph="102,1" class="i property">TimerInterval</a>
+        {
+            <b>get</b> { <b>return</b> (<b>double</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#34934ec775978e48" class="i field">TimerIntervalProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#34934ec775978e48" class="i field">TimerIntervalProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>protected override void</b> <a id="833da6288a025fc6" href="../R/833da6288a025fc6.html" target="n" data-glyph="75,1" class="i method">OnAttached</a>()
+        {
+            <b>base</b>.<span class="i method">OnAttached</span>();
+            <span class="i property">AssociatedObject</span>.<a href="@0@PresentationCore/A.html#13e1cafa20a7a72f" class="i">PreviewMouseDown</a> += <a href="#9c748c0c39eb76c0" class="i method">HandlePreviewMouseDown</a>;
+            <a href="#9154c1db57215392" class="i method">Show</a>();
+            <a href="#9878a2b00374acd3" class="i method">PrepareToHide</a>();
+        }
+ 
+        <b>protected override void</b> <a id="93c30a72bea55988" href="../R/93c30a72bea55988.html" target="n" data-glyph="75,1" class="i method">OnDetaching</a>()
+        {
+            <b>base</b>.<span class="i method">OnDetaching</span>();
+            <span class="i property">AssociatedObject</span>.<a href="@0@PresentationCore/A.html#13e1cafa20a7a72f" class="i">PreviewMouseDown</a> -= <a href="#9c748c0c39eb76c0" class="i method">HandlePreviewMouseDown</a>;
+        }
+ 
+        <b>private static void</b> <a id="99a23289c9af79c3" href="../R/99a23289c9af79c3.html" target="n" data-glyph="76,1" class="i method">OnIsAllowedToHidePropertyChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <a href="#31ee68eaae1c1af4" class="k">var</a> <span id="r2 rd" class="r2 r">behavior</span> = (<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>)<span class="r0 r">d</span>;
+            <span class="r2 r">behavior</span>.<a href="#015ac3b41d3562ec" class="i method">PingActivity</a>();
+        }
+ 
+        <b>private static void</b> <a id="d1988829bb745b1b" href="../R/d1988829bb745b1b.html" target="n" data-glyph="76,1" class="i method">OnIsShownPropertyChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r3 rd" class="r3 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r4 rd" class="r4 r">e</span>)
+        {
+            <a href="#31ee68eaae1c1af4" class="k">var</a> <span id="r5 rd" class="r5 r">behavior</span> = (<a href="#31ee68eaae1c1af4" class="t t">AutoHideBehavior</a>) <span class="r3 r">d</span>;
+            <b>if</b> ((<b>bool</b>)<span class="r4 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>) <span class="r5 r">behavior</span>.<a href="#9154c1db57215392" class="i method">Show</a>();
+            <b>else</b> <span class="r5 r">behavior</span>.<a href="#7390f325820876e6" class="i method">Hide</a>();
+        }
+ 
+        <b>private void</b> <a id="9c748c0c39eb76c0" href="../R/9c748c0c39eb76c0.html" target="n" data-glyph="76,1" class="i method">HandlePreviewMouseDown</a>(<b>object</b> <span id="r6 rd" class="r6 r">sender</span>, <a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r7 rd" class="r7 r">e</span>)
+        {
+            <a href="#7cc87605b18bae16" class="i field">_lastActivityTime</a> = <a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@0@mscorlib/A.html#1cd5dd408a32124f" class="i property">Now</a>;
+            <b>switch</b> (<a href="#7d10459c1d28b95f" class="i property">ActionWhenClicked</a>)
+            {
+                <b>case</b> <a href="#662da20d9b0e4e88" class="t t">ClickAction</a>.<a href="#e7e9c54c57f5fe88" class="i field">Show</a>:
+                    <a href="#9154c1db57215392" class="i method">Show</a>();
+                    <b>break</b>;
+ 
+                <b>case</b> <a href="#662da20d9b0e4e88" class="t t">ClickAction</a>.<a href="#0ebecff73e996267" class="i field">AcceleratedHide</a>:
+                    <a href="#a7ee2006815c26c2" class="i method">HideFast</a>();
+                    <b>break</b>;
+            }
+        }
+ 
+        <b>private void</b> <a id="9878a2b00374acd3" href="../R/9878a2b00374acd3.html" target="n" data-glyph="76,1" class="i method">PrepareToHide</a>()
+        {
+            <a href="#015ac3b41d3562ec" class="i method">PingActivity</a>();
+            <b>if</b> (<a href="#a71df31e29399bf6" class="i field">_timer</a> == <b>null</b>)
+            {
+                <a href="#a71df31e29399bf6" class="i field">_timer</a> = <b>new</b> <a href="@0@WindowsBase/A.html#81717ce9ae7d3eb1" class="t constructor">DispatcherTimer</a>(<a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@0@mscorlib/A.html#c24437e069f958f9" class="i method">FromSeconds</a>(<a href="#f84aa8f451d46223" class="i property">TimerInterval</a>), <a href="@0@WindowsBase/A.html#af2d44a802e4535c" class="t t">DispatcherPriority</a>.<a href="@0@WindowsBase/A.html#805d62bb1042f893" class="i field">Background</a>,
+                                             <a href="#b7f71f840e8bb269" class="i method">Tick</a>, <a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>);
+            }
+        }
+ 
+        <b>private void</b> <a id="b7f71f840e8bb269" href="../R/b7f71f840e8bb269.html" target="n" data-glyph="76,1" class="i method">Tick</a>(<b>object</b> <span id="r8 rd" class="r8 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r9 rd" class="r9 r">e</span>)
+        {
+            <span class="i property">AssociatedObject</span>.<a href="@0@PresentationCore/A.html#4057a70a09218109" class="i property">IsHitTestVisible</a> = <span class="i property">AssociatedObject</span>.<a href="@0@PresentationCore/A.html#7ca23bf037950fa0" class="i property">Opacity</a> &gt; 0;
+            <b>if</b> (<a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@0@mscorlib/A.html#1cd5dd408a32124f" class="i property">Now</a> - <a href="#7cc87605b18bae16" class="i field">_lastActivityTime</a> &gt; <a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@0@mscorlib/A.html#c24437e069f958f9" class="i method">FromSeconds</a>(<a href="#3fc6643021dc9116" class="i property">HideDelay</a>))
+            {
+                <b>if</b> (<span class="i property">AssociatedObject</span>.<a href="@0@PresentationCore/A.html#7ca23bf037950fa0" class="i property">Opacity</a> &gt;= <a href="#7a05d822e5012422" class="i property">MaxOpacity</a> &amp;&amp; <a href="#1d4620b6a12a0835" class="i property">IsAllowedToHide</a>) <a href="#7390f325820876e6" class="i method">Hide</a>();
+                <b>else</b> <a href="#7cc87605b18bae16" class="i field">_lastActivityTime</a> = <a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@0@mscorlib/A.html#1cd5dd408a32124f" class="i property">Now</a>;
+            }
+        }
+ 
+        <b>public void</b> <a id="015ac3b41d3562ec" href="../R/015ac3b41d3562ec.html" target="n" data-glyph="72,1" class="i method">PingActivity</a>()
+        {
+            <a href="#7cc87605b18bae16" class="i field">_lastActivityTime</a> = <a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@0@mscorlib/A.html#1cd5dd408a32124f" class="i property">Now</a>;
+        }
+ 
+        <b>public void</b> <a id="9154c1db57215392" href="../R/9154c1db57215392.html" target="n" data-glyph="72,1" class="i method">Show</a>()
+        {
+            <b>if</b> (<span class="i property">AssociatedObject</span> == <b>null</b>) <b>return</b>;
+            <a href="#015ac3b41d3562ec" class="i method">PingActivity</a>();
+            <a href="#9878a2b00374acd3" class="i method">PrepareToHide</a>();
+            <b>if</b> (<a href="#11570708433ffeb1" class="i property">IsAllowedToShow</a>)
+            {
+                <a href="@0@PresentationCore/A.html#0922b12caaf47091" class="k">var</a> <span id="r10 rd" class="r10 r">duration</span> = <a href="#1d3df91d52f171e3" class="i property">AreAnimationsEnabled</a>
+                                   ? <b>new</b> <a href="@0@PresentationCore/A.html#b34a900856537ced" class="t constructor">Duration</a>(<a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@0@mscorlib/A.html#c24437e069f958f9" class="i method">FromSeconds</a>(<a href="#a67a54bd3f91351f" class="i property">ShowDuration</a>))
+                                   : <b>new</b> <a href="@0@PresentationCore/A.html#b34a900856537ced" class="t constructor">Duration</a>(<a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@0@mscorlib/A.html#225346b4cd3a8300" class="i field">Zero</a>);
+ 
+                <a href="#3b5f4d6b14246293" class="i property">IsShown</a> = <b>true</b>;
+                <span class="i property">AssociatedObject</span>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>.<a href="@0@PresentationCore/A.html#74e0cb58df4cb643" class="i field">OpacityProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<a href="#7a05d822e5012422" class="i property">MaxOpacity</a>, <span class="r10 r">duration</span>));
+            }
+        }
+ 
+        <b>public void</b> <a id="7390f325820876e6" href="../R/7390f325820876e6.html" target="n" data-glyph="72,1" class="i method">Hide</a>()
+        {
+            <b>if</b> (<span class="i property">AssociatedObject</span> == <b>null</b>) <b>return</b>;
+ 
+            <a href="@0@PresentationCore/A.html#0922b12caaf47091" class="k">var</a> <span id="r11 rd" class="r11 r">duration</span> = <a href="#1d3df91d52f171e3" class="i property">AreAnimationsEnabled</a>
+                               ? <b>new</b> <a href="@0@PresentationCore/A.html#b34a900856537ced" class="t constructor">Duration</a>(<a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@0@mscorlib/A.html#c24437e069f958f9" class="i method">FromSeconds</a>(<a href="#2cd24137e30c11f9" class="i property">HideDuration</a>))
+                               : <b>new</b> <a href="@0@PresentationCore/A.html#b34a900856537ced" class="t constructor">Duration</a>(<a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@0@mscorlib/A.html#225346b4cd3a8300" class="i field">Zero</a>);
+            
+            <a href="#3b5f4d6b14246293" class="i property">IsShown</a> = <b>false</b>;
+            <span class="i property">AssociatedObject</span>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>.<a href="@0@PresentationCore/A.html#74e0cb58df4cb643" class="i field">OpacityProperty</a>, <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<a href="#978e0bd1dc12a43c" class="i property">MinOpacity</a>, <span class="r11 r">duration</span>));
+        }
+ 
+        <b>public void</b> <a id="a7ee2006815c26c2" href="../R/a7ee2006815c26c2.html" target="n" data-glyph="72,1" class="i method">HideFast</a>()
+        {
+            <b>if</b> (<span class="i property">AssociatedObject</span> == <b>null</b>) <b>return</b>;
+            <a href="#3b5f4d6b14246293" class="i property">IsShown</a> = <b>false</b>;
+            <span class="i property">AssociatedObject</span>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>.<a href="@0@PresentationCore/A.html#74e0cb58df4cb643" class="i field">OpacityProperty</a>, <b>null</b>);
+            <span class="i property">AssociatedObject</span>.<a href="@0@PresentationCore/A.html#bb11d2b5685b1ad6" class="i method">BeginAnimation</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>.<a href="@0@PresentationCore/A.html#74e0cb58df4cb643" class="i field">OpacityProperty</a>,
+                                            <b>new</b> <a href="@0@PresentationCore/A.html#deb2de52e00cb788" class="t constructor">DoubleAnimation</a>(<a href="#978e0bd1dc12a43c" class="i property">MinOpacity</a>, <b>new</b> <a href="@0@PresentationCore/A.html#b34a900856537ced" class="t constructor">Duration</a>(<a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@0@mscorlib/A.html#225346b4cd3a8300" class="i field">Zero</a>)));
+        }
+    }
+}</pre></td></tr></table></div></body></html>

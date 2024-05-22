@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html><head><title>MyVideos.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(67);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#VideoViewerDemo/MyVideos.cs" target="_top">MyVideos.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#VideoViewerDemo" target="_top">HelpProjects\WPF-MORE\Sample Applications\VideoViewerDemo\VideoViewerDemo.csproj</a> (VideoViewerDemo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">ObjectModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+
+<span class="c">// ObserverableCollection</span>
+<span class="c">// DirectoryInfo</span>
+
+<span class="c">// MessageBox</span>
+
+<b>namespace</b> <span class="i n">VideoViewerDemo</span>
+{
+    <span class="c">// MyVideos is a collection of MyVideo objects</span>
+    <span class="c">// This class has a Directory string property</span>
+    <span class="c">// The Update() method takes all .wmv files from the specified directory</span>
+    <span class="c">// and adds them as MyVideo objects into the collection</span>
+    <b>public class</b> <a id="793439bb21d5c002" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">MyVideos</a> : <span class="t t">ObservableCollection</span>&lt;<a href="MyVideo.cs.html#2e9be80647347134" class="t t">MyVideo</a>&gt;
+    {
+        <b>private</b> <span class="t t">DirectoryInfo</span> <a id="024062cad23704a5" href="R/024062cad23704a5.html" target="n" data-glyph="46,1" class="i field">_directory</a>;
+
+        <b>public</b> <a id="fc798a4eee705fc4" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MyVideos</a>()
+        {
+        }
+
+        <b>public</b> <a id="06de1de2458481f3" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MyVideos</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">directory</span>)
+        {
+            <a href="#5f51731f60534af5" class="i property">Directory</a> = <span class="r0 r">directory</span>;
+        }
+
+        <b>public string</b> <a id="5f51731f60534af5" href="R/5f51731f60534af5.html" target="n" data-glyph="102,1" class="i property">Directory</a>
+        {
+            <b>set</b>
+            {
+                <span class="c">// Don&#39;t set path if directory is invalid</span>
+                <b>if</b> (!<span class="i n">System</span>.<span class="i n">IO</span>.<span class="t t">Directory</span>.<span class="i method">Exists</span>(<b>value</b>))
+                {
+                    <a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#d30dae02a986885a" class="i method">Show</a>(<span class="s">&quot;No Such Directory&quot;</span>);
+                }
+
+                <a href="#024062cad23704a5" class="i field">_directory</a> = <b>new</b> <span class="t constructor">DirectoryInfo</span>(<b>value</b>);
+
+                <a href="#1be80a582786b7fd" class="i method">Update</a>();
+            }
+            <b>get</b> { <b>return</b> <a href="#024062cad23704a5" class="i field">_directory</a>.<span class="i property">FullName</span>; }
+        }
+
+        <b>private void</b> <a id="1be80a582786b7fd" href="R/1be80a582786b7fd.html" target="n" data-glyph="76,1" class="i method">Update</a>()
+        {
+            <span class="c">// Don&#39;t update if no directory to get files from</span>
+            <b>if</b> (<a href="#024062cad23704a5" class="i field">_directory</a> == <b>null</b>) <b>return</b>;
+
+            <span class="c">// Remove all MyVideo objects from this collection</span>
+            <a href="@1@System.Runtime/A.html#1c7184c9f3526d9d" class="i method">Clear</a>();
+
+            <span class="c">// Create MyVideo objects</span>
+            <b>foreach</b> (<b>var</b> <span id="r1 rd" class="r1 r">f</span> <b>in</b> <a href="#024062cad23704a5" class="i field">_directory</a>.<span class="i method">GetFiles</span>(<span class="s">&quot;*.wmv&quot;</span>))
+            {
+                <a href="@1@System.Runtime/A.html#5c61cc24de82f7e7" class="i method">Add</a>(<b>new</b> <a href="MyVideo.cs.html#42a2fb4af511af51" class="t constructor">MyVideo</a>(<span class="r1 r">f</span>.<span class="i property">FullName</span>, <span class="r1 r">f</span>.<span class="i property">Name</span>));
+            }
+        }
+    }
+
+    <span class="c">// MyVideo class</span>
+    <span class="c">// Properties: VideoTitle and Source</span>
+}</pre></td></tr></table></div></body></html>

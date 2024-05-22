@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html><head><title>TemplateRangeApi.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(44);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasyITcenter-HELP/ApiTemplates/CleanTemplatesForDirectUsingSingleDbApi/TemplateRangeApi.cs" target="_top">ApiTemplates\CleanTemplatesForDirectUsingSingleDbApi\TemplateRangeApi.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasyITcenter-HELP" target="_top">HelpProjects\EasyITcenter-HELP\EasyITcenter-HELP.csproj</a> (EasyITcenter-HELP)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">EASYDATACenter</span>.<span class="i n">DBModel</span>;
+ 
+<b>namespace</b> <span class="i n">EASYDATACenter</span>.<span class="i n">Controllers</span> {
+ 
+    [<span class="i">Authorize</span>]
+    [<span class="i">ApiController</span>]
+    [<span class="t">Route</span>(<span class="s">&quot;TemplateRange&quot;</span>)]
+    <b>public class</b> <a id="9559f2376bfcedd2" href="../../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="bc63c7100ea30f5c">TemplateRangeApi</span></a> : <span class="i">ControllerBase</span> {
+ 
+        [<span class="i">HttpGet</span>(<span class="s">&quot;/TemplateRange/{documentNumber}&quot;</span>)]
+        <b>public async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="c0b1585a0e25f6e8" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetTemplateRangeKey</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">documentNumber</span>) {
+            <span class="t t">List</span>&lt;<span class="i">OutgoingInvoiceSupportList</span>&gt; <span id="r1 rd" class="r1 r">data</span>;
+            <b>using</b> (<b>new</b> <span class="i">TransactionScope</span>(<span class="i">TransactionScopeOption</span>.<span class="i">Required</span>, <b>new</b> <span class="i">TransactionOptions</span> { <span class="i">IsolationLevel</span> = <span class="i">IsolationLevel</span>.<span class="i">ReadUncommitted</span> })) { <span class="r1 r">data</span> = <b>new</b> <span class="i">EASYDATACenterContext</span>().<span class="i">OutgoingInvoiceSupportLists</span>.<span class="i">Where</span>(<span id="r2 rd" class="r2 r">a</span> =&gt; <span class="r2 r">a</span>.<span class="i">DocumentNumber</span> == <span class="r0 r">documentNumber</span>).<span class="i">ToList</span>(); }
+ 
+            <b>return</b> <span class="i">JsonSerializer</span>.<span class="i">Serialize</span>(<span class="r1 r">data</span>);
+        }
+ 
+        [<span class="i">HttpPut</span>(<span class="s">&quot;/TemplateRange&quot;</span>)]
+        [<span class="i">Consumes</span>(<span class="s">&quot;application/json&quot;</span>)]
+        <b>public async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="93e2a16f4f676e0e" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">InsertAllDocTemplateRange</a>([<span class="i">FromBody</span>] <span class="t t">List</span>&lt;<span class="i">OutgoingInvoiceSupportList</span>&gt; <span id="r3 rd" class="r3 r">record</span>) {
+            <b>try</b> {
+                <b>int</b> <span id="r4 rd" class="r4 r">result</span>;
+                <span class="i">EASYDATACenterContext</span> <span id="r5 rd" class="r5 r">data</span> = <b>new</b> <span class="i">EASYDATACenterContext</span>(); <span class="r5 r">data</span>.<span class="i">OutgoingInvoiceSupportLists</span>.<span class="i">AddRange</span>(<span class="r3 r">record</span>);
+                <span class="r4 r">result</span> = <span class="r5 r">data</span>.<span class="i">SaveChanges</span>();
+ 
+                <b>if</b> (<span class="r4 r">result</span> &gt; 0) <b>return</b> <span class="i">JsonSerializer</span>.<span class="i">Serialize</span>(<b>new</b> <span class="i">DBResultMessage</span>() { <span class="i">InsertedId</span> = 0, <span class="i">Status</span> = <span class="i">DBResult</span>.<span class="i">success</span>.<span class="i">ToString</span>(), <span class="i">RecordCount</span> = <span class="r4 r">result</span>, <span class="i">ErrorMessage</span> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a> });
+                <b>else</b> <b>return</b> <span class="i">JsonSerializer</span>.<span class="i">Serialize</span>(<b>new</b> <span class="i">DBResultMessage</span>() { <span class="i">Status</span> = <span class="i">DBResult</span>.<span class="i">error</span>.<span class="i">ToString</span>(), <span class="i">RecordCount</span> = <span class="r4 r">result</span>, <span class="i">ErrorMessage</span> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a> });
+            } <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r6 rd" class="r6 r">ex</span>) { <b>return</b> <span class="i">JsonSerializer</span>.<span class="i">Serialize</span>(<b>new</b> <span class="i">DBResultMessage</span>() { <span class="i">Status</span> = <span class="i">DBResult</span>.<span class="i">error</span>.<span class="i">ToString</span>(), <span class="i">RecordCount</span> = 0, <span class="i">ErrorMessage</span> = <span class="i">ServerCoreFunctions</span>.<span class="i">GetUserApiErrMessage</span>(<span class="r6 r">ex</span>) }); }
+        }
+ 
+        [<span class="i">HttpDelete</span>(<span class="s">&quot;/TemplateRange/{documentNumber}&quot;</span>)]
+        [<span class="i">Consumes</span>(<span class="s">&quot;application/json&quot;</span>)]
+        <b>public async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="37d91c4d630cf0f3" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">DeleteItemList</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r7 rd" class="r7 r">documentNumber</span>) {
+            <b>try</b> {
+                <span class="t t">List</span>&lt;<span class="i">OutgoingInvoiceSupportList</span>&gt; <span id="r8 rd" class="r8 r">data</span>;
+                <span class="r8 r">data</span> = <b>new</b> <span class="i">EASYDATACenterContext</span>().<span class="i">OutgoingInvoiceSupportLists</span>.<span class="i">Where</span>(<span id="r9 rd" class="r9 r">a</span> =&gt; <span class="r9 r">a</span>.<span class="i">DocumentNumber</span> == <span class="r7 r">documentNumber</span>).<span class="i">ToList</span>();
+                <span class="i">EASYDATACenterContext</span> <span id="r10 rd" class="r10 r">data1</span> = <b>new</b> <span class="i">EASYDATACenterContext</span>(); <span class="r10 r">data1</span>.<span class="i">OutgoingInvoiceSupportLists</span>.<span class="i">RemoveRange</span>(<span class="r8 r">data</span>);
+                <b>int</b> <span id="r11 rd" class="r11 r">result</span> = <span class="r10 r">data1</span>.<span class="i">SaveChanges</span>();
+                <b>if</b> (<span class="r11 r">result</span> &gt; 0) <b>return</b> <span class="i">JsonSerializer</span>.<span class="i">Serialize</span>(<b>new</b> <span class="i">DBResultMessage</span>() { <span class="i">InsertedId</span> = 0, <span class="i">Status</span> = <span class="i">DBResult</span>.<span class="i">success</span>.<span class="i">ToString</span>(), <span class="i">RecordCount</span> = <span class="r11 r">result</span>, <span class="i">ErrorMessage</span> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a> });
+                <b>else</b> <b>return</b> <span class="i">JsonSerializer</span>.<span class="i">Serialize</span>(<b>new</b> <span class="i">DBResultMessage</span>() { <span class="i">Status</span> = <span class="i">DBResult</span>.<span class="i">error</span>.<span class="i">ToString</span>(), <span class="i">RecordCount</span> = <span class="r11 r">result</span>, <span class="i">ErrorMessage</span> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a> });
+            } <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r12 rd" class="r12 r">ex</span>) { <b>return</b> <span class="i">JsonSerializer</span>.<span class="i">Serialize</span>(<b>new</b> <span class="i">DBResultMessage</span>() { <span class="i">Status</span> = <span class="i">DBResult</span>.<span class="i">error</span>.<span class="i">ToString</span>(), <span class="i">RecordCount</span> = 0, <span class="i">ErrorMessage</span> = <span class="i">ServerCoreFunctions</span>.<span class="i">GetUserApiErrMessage</span>(<span class="r12 r">ex</span>) }); }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

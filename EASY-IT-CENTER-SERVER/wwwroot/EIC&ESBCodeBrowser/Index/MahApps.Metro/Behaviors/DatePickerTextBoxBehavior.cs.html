@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html><head><title>DatePickerTextBoxBehavior.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(39);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Behaviors/DatePickerTextBoxBehavior.cs" target="_top">Behaviors\DatePickerTextBoxBehavior.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<span class="i n">Primitives</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Xaml</span>.<span class="i n">Behaviors</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Behaviors</span>
+{
+    <b>public class</b> <a id="5ad825027e2b975b" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="1de5692dc5782719">DatePickerTextBoxBehavior</span></a> : <span class="t t">Behavior</span>&lt;<a href="@0@PresentationFramework/A.html#75eba7b58f095c56" class="t t">DatePickerTextBox</a>&gt;
+    {
+        <b>protected override void</b> <a id="2f83a270a559ba98" href="../R/2f83a270a559ba98.html" target="n" data-glyph="75,1" class="i method">OnAttached</a>()
+        {
+            <b>base</b>.<span class="i method">OnAttached</span>();
+            <a href="#5ad825027e2b975b" class="k">this</a>.<span class="i property">AssociatedObject</span>.<a href="@0@PresentationFramework/A.html#22cd61fb3203047e" class="i">TextChanged</a> += <a href="#5ad825027e2b975b" class="k">this</a>.<a href="#17d5ed5a89d75182" class="i method">OnTextChanged</a>;
+            <a href="#5ad825027e2b975b" class="k">this</a>.<a href="../Controls/Extensions.cs.html#0f91027776f39144" class="i method">BeginInvoke</a>(<a href="#5ad825027e2b975b" class="k">this</a>.<a href="#1e7a1365828434a9" class="i method">SetHasTextProperty</a>, <a href="@0@WindowsBase/A.html#af2d44a802e4535c" class="t t">DispatcherPriority</a>.<a href="@0@WindowsBase/A.html#e8a06d36865cc80f" class="i field">Loaded</a>);
+        }
+
+        <b>protected override void</b> <a id="a42f1d98265fa74e" href="../R/a42f1d98265fa74e.html" target="n" data-glyph="75,1" class="i method">OnDetaching</a>()
+        {
+            <a href="#5ad825027e2b975b" class="k">this</a>.<span class="i property">AssociatedObject</span>.<a href="@0@PresentationFramework/A.html#22cd61fb3203047e" class="i">TextChanged</a> -= <a href="#5ad825027e2b975b" class="k">this</a>.<a href="#17d5ed5a89d75182" class="i method">OnTextChanged</a>;
+            <b>base</b>.<span class="i method">OnDetaching</span>();
+        }
+
+        <b>private void</b> <a id="17d5ed5a89d75182" href="../R/17d5ed5a89d75182.html" target="n" data-glyph="76,1" class="i method">OnTextChanged</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@PresentationFramework/A.html#b619f7b054bda67d" class="t t">TextChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <a href="#5ad825027e2b975b" class="k">this</a>.<a href="#1e7a1365828434a9" class="i method">SetHasTextProperty</a>();
+        }
+
+        <b>private void</b> <a id="1e7a1365828434a9" href="../R/1e7a1365828434a9.html" target="n" data-glyph="76,1" class="i method">SetHasTextProperty</a>()
+        {
+            <a href="#5ad825027e2b975b" class="k">this</a>.<span class="i property">AssociatedObject</span>.<a href="@0@PresentationFramework/A.html#f4f4a242f96eff32" class="i property">TemplatedParent</a>?.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="../Controls/Helper/TextBoxHelper.cs.html#c7a49507bd85fa56" class="t t">TextBoxHelper</a>.<a href="../Controls/Helper/TextBoxHelper.cs.html#b2b0618705c5f512" class="i field">HasTextProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<a href="#5ad825027e2b975b" class="k">this</a>.<span class="i property">AssociatedObject</span>.<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a> &gt; 0));
+        }
+    }
+}</pre></td></tr></table></div></body></html>

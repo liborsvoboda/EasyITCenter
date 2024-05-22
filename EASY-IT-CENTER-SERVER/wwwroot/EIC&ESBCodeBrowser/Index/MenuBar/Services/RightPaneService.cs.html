@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html><head><title>RightPaneService.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(58);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MenuBar/Services/RightPaneService.cs" target="_top">Services\RightPaneService.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MenuBar" target="_top">HelpProjects\WPF-MAIN\WPFprism\MenuBar\MenuBar\MenuBar.csproj</a> (MenuBar)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>;
+
+<b>using</b> <span class="i n">MenuBar</span>.<span class="i n">Constants</span>;
+<b>using</b> <span class="i n">MenuBar</span>.<span class="i n">Contracts</span>.<span class="i n">Services</span>;
+
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Regions</span>;
+
+<b>namespace</b> <span class="i n">MenuBar</span>.<span class="i n">Services</span>
+{
+    <b>public class</b> <a id="d06b1a0ba0b87483" href="../R/d06b1a0ba0b87483.html" target="n" data-glyph="0,0" class="t t">RightPaneService</a> : <a href="../Contracts/Services/IRightPaneService.cs.html#3c710b85eba866b0" class="t t">IRightPaneService</a>
+    {
+        <b>private readonly</b> <span class="t t">IRegionManager</span> <a id="7db551975bbe3e7e" href="../R/7db551975bbe3e7e.html" target="n" data-glyph="46,1" class="i field">_regionManager</a>;
+        <b>private</b> <span class="t t">IRegionNavigationService</span> <a id="7cad10b79649fae3" href="../R/7cad10b79649fae3.html" target="n" data-glyph="46,1" class="i field">_rightPaneNavigationService</a>;
+        <b>private</b> <a href="/MahApps.Metro/A.html#11f06b768f4a5f0a" class="t t">SplitView</a> <a id="1e948a52b089da61" href="../R/1e948a52b089da61.html" target="n" data-glyph="46,1" class="i field">_splitView</a>;
+
+        <b>public event</b> <a href="@1@System.Runtime/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="7e2c3aeccde5bba7" href="../R/7e2c3aeccde5bba7.html" target="n" data-glyph="30,1" class="i">PaneOpened</a>;
+
+        <b>public event</b> <a href="@1@System.Runtime/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="37a5621e19f68b76" href="../R/37a5621e19f68b76.html" target="n" data-glyph="30,1" class="i">PaneClosed</a>;
+
+        <b>public</b> <a id="bdc3738d926c96ee" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">RightPaneService</a>(<span class="t t">IRegionManager</span> <span id="r0 rd" class="r0 r">regionManager</span>)
+        {
+            <a href="#7db551975bbe3e7e" class="i field">_regionManager</a> = <span class="r0 r">regionManager</span>;
+        }
+
+        <b>public void</b> <a id="ba057c33bad73891" href="../R/ba057c33bad73891.html" target="n" data-glyph="72,1" class="i method">Initialize</a>(<a href="/MahApps.Metro/A.html#11f06b768f4a5f0a" class="t t">SplitView</a> <span id="r1 rd" class="r1 r">splitView</span>, <a href="@0@PresentationFramework/A.html#f8ee23c685054e71" class="t t">ContentControl</a> <span id="r2 rd" class="r2 r">rightPaneContentControl</span>)
+        {
+            <a href="#1e948a52b089da61" class="i field">_splitView</a> = <span class="r1 r">splitView</span>;
+            <span class="t t">RegionManager</span>.<span class="i method">SetRegionName</span>(<span class="r2 r">rightPaneContentControl</span>, <a href="../Constants/Regions.cs.html#1b2492a4369bfa50" class="t t">Regions</a>.<a href="../Constants/Regions.cs.html#5d4065b1a603a1c4" class="i field">RightPane</a>);
+            <span class="t t">RegionManager</span>.<span class="i method">SetRegionManager</span>(<span class="r2 r">rightPaneContentControl</span>, <a href="#7db551975bbe3e7e" class="i field">_regionManager</a>);
+            <a href="#7cad10b79649fae3" class="i field">_rightPaneNavigationService</a> = <a href="#7db551975bbe3e7e" class="i field">_regionManager</a>.<span class="i property">Regions</span>[<a href="../Constants/Regions.cs.html#1b2492a4369bfa50" class="t t">Regions</a>.<a href="../Constants/Regions.cs.html#5d4065b1a603a1c4" class="i field">RightPane</a>].<span class="i property">NavigationService</span>;
+            <a href="#1e948a52b089da61" class="i field">_splitView</a>.<a href="/MahApps.Metro/A.html#14cd0baa6a145e00" class="i">PaneClosed</a> += <a href="#34d8d97ed2127fd9" class="i method">OnPaneClosed</a>;
+        }
+
+        <b>public void</b> <a id="eb3604ab309ce064" href="../R/eb3604ab309ce064.html" target="n" data-glyph="72,1" class="i method">CleanUp</a>()
+        {
+            <a href="#1e948a52b089da61" class="i field">_splitView</a>.<a href="/MahApps.Metro/A.html#14cd0baa6a145e00" class="i">PaneClosed</a> -= <a href="#34d8d97ed2127fd9" class="i method">OnPaneClosed</a>;
+            <a href="#7db551975bbe3e7e" class="i field">_regionManager</a>.<span class="i property">Regions</span>.<span class="i method">Remove</span>(<a href="../Constants/Regions.cs.html#1b2492a4369bfa50" class="t t">Regions</a>.<a href="../Constants/Regions.cs.html#5d4065b1a603a1c4" class="i field">RightPane</a>);
+        }
+
+        <b>public void</b> <a id="c25f0a096dca9c0c" href="../R/c25f0a096dca9c0c.html" target="n" data-glyph="72,1" class="i method">OpenInRightPane</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r3 rd" class="r3 r">pageKey</span>, <span class="t t">NavigationParameters</span> <span id="r4 rd" class="r4 r">navigationParameters</span> = <b>null</b>)
+        {
+            <b>if</b> (<a href="#7cad10b79649fae3" class="i field">_rightPaneNavigationService</a>.<a href="../Helpers/IRegionNavigationServiceExtensions.cs.html#5e9db30995ca80df" class="i method">CanNavigate</a>(<span class="r3 r">pageKey</span>))
+            {
+                <a href="#7cad10b79649fae3" class="i field">_rightPaneNavigationService</a>.<span class="i method">RequestNavigate</span>(<span class="r3 r">pageKey</span>, <span class="r4 r">navigationParameters</span>);
+            }
+
+            <a href="#1e948a52b089da61" class="i field">_splitView</a>.<a href="/MahApps.Metro/A.html#c34c821f3034e994" class="i property">IsPaneOpen</a> = <b>true</b>;
+            <a href="#7e2c3aeccde5bba7" class="i">PaneOpened</a>?.<a href="@1@System.Runtime/A.html#aaedcaa3f05a32f9" class="i method">Invoke</a>(<a href="#1e948a52b089da61" class="i field">_splitView</a>, <a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@1@System.Runtime/A.html#433622385e05af0d" class="i field">Empty</a>);
+        }
+
+        <b>private void</b> <a id="34d8d97ed2127fd9" href="../R/34d8d97ed2127fd9.html" target="n" data-glyph="76,1" class="i method">OnPaneClosed</a>(<b>object</b> <span id="r5 rd" class="r5 r">sender</span>, <a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r6 rd" class="r6 r">e</span>)
+           =&gt; <a href="#37a5621e19f68b76" class="i">PaneClosed</a>?.<a href="@1@System.Runtime/A.html#aaedcaa3f05a32f9" class="i method">Invoke</a>(<span class="r5 r">sender</span>, <span class="r6 r">e</span>);
+    }
+}
+</pre></td></tr></table></div></body></html>

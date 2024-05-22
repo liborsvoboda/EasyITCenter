@@ -1,0 +1,361 @@
+﻿<!DOCTYPE html>
+<html><head><title>SplitButton.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(352);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/SplitButton.cs" target="_top">Controls\SplitButton.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<span class="i n">Primitives</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Markup</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">JetBrains</span>.<span class="i n">Annotations</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    [<a href="@0@System.Xaml/A.html#b7f5565c3af7268c" class="t constructor">ContentProperty</a>(<b>nameof</b>(<a href="@0@PresentationFramework/A.html#3bb5cb5ee01ee8d2" class="i property">ItemsSource</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;PART_Container&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#f9ce1d6be154348a" class="t t">Grid</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;PART_Button&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;PART_ButtonContent&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#f8ee23c685054e71" class="t t">ContentControl</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;PART_Popup&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#40ab7810a8f8c8f6" class="t t">Popup</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <span class="s">&quot;PART_Expander&quot;</span>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>))]
+    [<a href="@0@PresentationFramework/A.html#9ab2fac8b7a8b635" class="t constructor">StyleTypedProperty</a>(<a href="@0@PresentationFramework/A.html#da879f836063281e" class="i property">Property</a> = <b>nameof</b>(<a href="#03bca5c67be210d3" class="i property">ButtonStyle</a>), <a href="@0@PresentationFramework/A.html#6f382f56eab3e273" class="i property">StyleTargetType</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>))]
+    [<a href="@0@PresentationFramework/A.html#9ab2fac8b7a8b635" class="t constructor">StyleTypedProperty</a>(<a href="@0@PresentationFramework/A.html#da879f836063281e" class="i property">Property</a> = <b>nameof</b>(<a href="#ec7145fcd697a651" class="i property">ButtonArrowStyle</a>), <a href="@0@PresentationFramework/A.html#6f382f56eab3e273" class="i property">StyleTargetType</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>))]
+    <b>public class</b> <a id="6c64274106f9457e" href="../R/6c64274106f9457e.html" target="n" data-glyph="0,0" class="t t"><span id="23aad729a3dcc4cf">SplitButton</span></a> : <a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>, <a href="@0@PresentationCore/A.html#1c1aab4a272b7852" class="t t">ICommandSource</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#d45575a09dcd8c1e" class="i">Click</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> routed event.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@PresentationCore/A.html#1494cfe9a0c5ee74" class="t t">RoutedEvent</a> <a id="62d284f4c466185f" href="../R/62d284f4c466185f.html" target="n" data-glyph="42,1" class="i field">ClickEvent</a>
+            = <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#a5460796900a6473" class="i method">RegisterRoutedEvent</a>(<b>nameof</b>(<a href="#d45575a09dcd8c1e" class="i">Click</a>),
+                                               <a href="@0@PresentationCore/A.html#2144a30d9ece7dfe" class="t t">RoutingStrategy</a>.<a href="@0@PresentationCore/A.html#43b9d70d58d66c4c" class="i field">Bubble</a>,
+                                               <b>typeof</b>(<a href="@0@PresentationCore/A.html#af107ecb60427a17" class="t t">RoutedEventHandler</a>),
+                                               <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>));
+
+        <b>public event</b> <a href="@0@PresentationCore/A.html#af107ecb60427a17" class="t t">RoutedEventHandler</a> <a id="d45575a09dcd8c1e" href="../R/d45575a09dcd8c1e.html" target="n" data-glyph="30,1" class="i">Click</a>
+        {
+            <b>add</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@PresentationCore/A.html#18cd7adc001fa956" class="i method">AddHandler</a>(<a href="#62d284f4c466185f" class="i field">ClickEvent</a>, <b>value</b>);
+            <b>remove</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@PresentationCore/A.html#221a746a1b193eb1" class="i method">RemoveHandler</a>(<a href="#62d284f4c466185f" class="i field">ClickEvent</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#1fb7f513f51bc6ef" class="i property">ExtraTag</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="110eafa3e0608639" href="../R/110eafa3e0608639.html" target="n" data-glyph="42,1" class="i field">ExtraTagProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#28c81133f2c673fb" class="i method">Register</a>(<b>nameof</b>(<a href="#1fb7f513f51bc6ef" class="i property">ExtraTag</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets an extra tag.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b>? <a id="1fb7f513f51bc6ef" href="../R/1fb7f513f51bc6ef.html" target="n" data-glyph="102,1" class="i property">ExtraTag</a>
+        {
+            <b>get</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#110eafa3e0608639" class="i field">ExtraTagProperty</a>);
+            <b>set</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#110eafa3e0608639" class="i field">ExtraTagProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#bd4967b22e6c4c2d" class="i property">Orientation</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="07a0681049673b6d" href="../R/07a0681049673b6d.html" target="n" data-glyph="42,1" class="i field">OrientationProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#bd4967b22e6c4c2d" class="i property">Orientation</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a>),
+                                          <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a>.<a href="@0@PresentationFramework/A.html#eb60498b6a8ff15f" class="i field">Horizontal</a>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the orientation of children stacking.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a> <a id="bd4967b22e6c4c2d" href="../R/bd4967b22e6c4c2d.html" target="n" data-glyph="102,1" class="i property">Orientation</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a>)<a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#07a0681049673b6d" class="i field">OrientationProperty</a>);
+            <b>set</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#07a0681049673b6d" class="i field">OrientationProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#f261198d61e8752b" class="i property">Icon</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="97df7e9fe168f74a" href="../R/97df7e9fe168f74a.html" target="n" data-glyph="42,1" class="i field">IconProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#28c81133f2c673fb" class="i method">Register</a>(<b>nameof</b>(<a href="#f261198d61e8752b" class="i property">Icon</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the content for the icon part.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#50b61a9099914970" class="t constructor">Bindable</a>(<b>true</b>)]
+        <b>public object</b>? <a id="f261198d61e8752b" href="../R/f261198d61e8752b.html" target="n" data-glyph="102,1" class="i property">Icon</a>
+        {
+            <b>get</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#97df7e9fe168f74a" class="i field">IconProperty</a>);
+            <b>set</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#97df7e9fe168f74a" class="i field">IconProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#5a9ba8c4265e0427" class="i property">IconTemplate</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="31aaafb581bd6dcd" href="../R/31aaafb581bd6dcd.html" target="n" data-glyph="42,1" class="i field">IconTemplateProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#28c81133f2c673fb" class="i method">Register</a>(<b>nameof</b>(<a href="#5a9ba8c4265e0427" class="i property">IconTemplate</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>),
+                                          <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c"> </span>
+        <span class="c">///</span><span class="c"> Gets or sets the DataTemplate for the icon part.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#50b61a9099914970" class="t constructor">Bindable</a>(<b>true</b>)]
+        <b>public</b> <a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>? <a id="5a9ba8c4265e0427" href="../R/5a9ba8c4265e0427.html" target="n" data-glyph="102,1" class="i property">IconTemplate</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>?)<a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#31aaafb581bd6dcd" class="i field">IconTemplateProperty</a>);
+            <b>set</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#31aaafb581bd6dcd" class="i field">IconTemplateProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#4bfcbc42359d17c7" class="i property">Command</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="70f0270a3fb30e05" href="../R/70f0270a3fb30e05.html" target="n" data-glyph="42,1" class="i field">CommandProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#4bfcbc42359d17c7" class="i property">Command</a>),
+                                          <b>typeof</b>(<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>),
+                                          <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>null</b>, <a href="#522aa5521efc7618" class="i method">OnCommandPropertyChangedCallback</a>));
+
+        <b>private static void</b> <a id="522aa5521efc7618" href="../R/522aa5521efc7618.html" target="n" data-glyph="76,1" class="i method">OnCommandPropertyChangedCallback</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">dependencyObject</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            (<span class="r0 r">dependencyObject</span> <b>as</b> <a href="#6c64274106f9457e" class="t t">SplitButton</a>)?.<a href="#e1361171c32407cc" class="i method">OnCommandChanged</a>((<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>?)<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a>, (<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>?)<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the command to invoke when the content button is pressed.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <a id="4bfcbc42359d17c7" href="../R/4bfcbc42359d17c7.html" target="n" data-glyph="102,1" class="i property">Command</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>?)<a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#70f0270a3fb30e05" class="i field">CommandProperty</a>);
+            <b>set</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#70f0270a3fb30e05" class="i field">CommandProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#d529d39cf5754381" class="i property">CommandTarget</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="bbc4fec1365ff4a2" href="../R/bbc4fec1365ff4a2.html" target="n" data-glyph="42,1" class="i field">CommandTargetProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#d529d39cf5754381" class="i property">CommandTarget</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>),
+                                          <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the element on which to raise the specified command.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>? <a id="d529d39cf5754381" href="../R/d529d39cf5754381.html" target="n" data-glyph="102,1" class="i property">CommandTarget</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>?)<a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#bbc4fec1365ff4a2" class="i field">CommandTargetProperty</a>);
+            <b>set</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#bbc4fec1365ff4a2" class="i field">CommandTargetProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#e53c305513b453fe" class="i property">CommandParameter</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="1a2c91ed94cbd438" href="../R/1a2c91ed94cbd438.html" target="n" data-glyph="42,1" class="i field">CommandParameterProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#e53c305513b453fe" class="i property">CommandParameter</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the parameter to pass to the command property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b>? <a id="e53c305513b453fe" href="../R/e53c305513b453fe.html" target="n" data-glyph="102,1" class="i property">CommandParameter</a>
+        {
+            <b>get</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#1a2c91ed94cbd438" class="i field">CommandParameterProperty</a>);
+            <b>set</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#1a2c91ed94cbd438" class="i field">CommandParameterProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#03bca5c67be210d3" class="i property">ButtonStyle</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="600ca1346a0a90c5" href="../R/600ca1346a0a90c5.html" target="n" data-glyph="42,1" class="i field">ButtonStyleProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#03bca5c67be210d3" class="i property">ButtonStyle</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>),
+                                          <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#346d0d32656c4827" class="i field">Inherits</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#b3ede21c21163c04" class="i field">AffectsArrange</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the button content style.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>? <a id="03bca5c67be210d3" href="../R/03bca5c67be210d3.html" target="n" data-glyph="102,1" class="i property">ButtonStyle</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>?)<a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#600ca1346a0a90c5" class="i field">ButtonStyleProperty</a>);
+            <b>set</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#600ca1346a0a90c5" class="i field">ButtonStyleProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#ec7145fcd697a651" class="i property">ButtonArrowStyle</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="313c17344cb49941" href="../R/313c17344cb49941.html" target="n" data-glyph="42,1" class="i field">ButtonArrowStyleProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#ec7145fcd697a651" class="i property">ButtonArrowStyle</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>),
+                                          <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#346d0d32656c4827" class="i field">Inherits</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#b3ede21c21163c04" class="i field">AffectsArrange</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the button arrow style.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>? <a id="ec7145fcd697a651" href="../R/ec7145fcd697a651.html" target="n" data-glyph="102,1" class="i property">ButtonArrowStyle</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>?)<a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#313c17344cb49941" class="i field">ButtonArrowStyleProperty</a>);
+            <b>set</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#313c17344cb49941" class="i field">ButtonArrowStyleProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#49c113dd250d074d" class="i property">ArrowBrush</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="e78190feaf004f98" href="../R/e78190feaf004f98.html" target="n" data-glyph="42,1" class="i field">ArrowBrushProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#49c113dd250d074d" class="i property">ArrowBrush</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>),
+                                          <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>), <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the foreground brush for the button arrow icon.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <a id="49c113dd250d074d" href="../R/49c113dd250d074d.html" target="n" data-glyph="102,1" class="i property">ArrowBrush</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>?)<a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#e78190feaf004f98" class="i field">ArrowBrushProperty</a>);
+            <b>set</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#e78190feaf004f98" class="i field">ArrowBrushProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#f7207974fa0eae8b" class="i property">ArrowMouseOverBrush</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="334291dd326905eb" href="../R/334291dd326905eb.html" target="n" data-glyph="42,1" class="i field">ArrowMouseOverBrushProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#f7207974fa0eae8b" class="i property">ArrowMouseOverBrush</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>),
+                                          <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>), <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the foreground brush of the button arrow icon if the mouse is over the split button.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <a id="f7207974fa0eae8b" href="../R/f7207974fa0eae8b.html" target="n" data-glyph="102,1" class="i property">ArrowMouseOverBrush</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>?)<a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#334291dd326905eb" class="i field">ArrowMouseOverBrushProperty</a>);
+            <b>set</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#334291dd326905eb" class="i field">ArrowMouseOverBrushProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#df680946c51bdd5b" class="i property">ArrowPressedBrush</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="ffd580c6acb69a21" href="../R/ffd580c6acb69a21.html" target="n" data-glyph="42,1" class="i field">ArrowPressedBrushProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#df680946c51bdd5b" class="i property">ArrowPressedBrush</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>),
+                                          <b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>), <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the foreground brush of the button arrow icon if the arrow button is pressed.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <a id="df680946c51bdd5b" href="../R/df680946c51bdd5b.html" target="n" data-glyph="102,1" class="i property">ArrowPressedBrush</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>?)<a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#ffd580c6acb69a21" class="i field">ArrowPressedBrushProperty</a>);
+            <b>set</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#ffd580c6acb69a21" class="i field">ArrowPressedBrushProperty</a>, <b>value</b>);
+        }
+
+        <b>static</b> <a id="20a51268396ca61e" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">SplitButton</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6339cc8ec3e1311a" class="i field">DefaultStyleKeyProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>)));
+
+            <a href="@0@PresentationFramework/A.html#b107badb760f9c38" class="i field">IsEditableProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#6c64274106f9457e" class="t t">SplitButton</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#1eac4672a3e1ee7a" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>, <b>null</b>, <a href="#a003a25a9e89ddcd" class="i method">CoerceIsEditableProperty</a>));
+        }
+
+        <b>private void</b> <a id="e1361171c32407cc" href="../R/e1361171c32407cc.html" target="n" data-glyph="76,1" class="i method">OnCommandChanged</a>(<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <span id="r2 rd" class="r2 r">oldCommand</span>, <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <span id="r3 rd" class="r3 r">newCommand</span>)
+        {
+            <b>if</b> (<span class="r2 r">oldCommand</span> != <b>null</b>)
+            {
+                <a href="#6c64274106f9457e" class="k">this</a>.<a href="#37b23c84717f3675" class="i method">UnhookCommand</a>(<span class="r2 r">oldCommand</span>);
+            }
+
+            <b>if</b> (<span class="r3 r">newCommand</span> != <b>null</b>)
+            {
+                <a href="#6c64274106f9457e" class="k">this</a>.<a href="#59c1dcf500d66a06" class="i method">HookCommand</a>(<span class="r3 r">newCommand</span>);
+            }
+        }
+
+        <b>private void</b> <a id="37b23c84717f3675" href="../R/37b23c84717f3675.html" target="n" data-glyph="76,1" class="i method">UnhookCommand</a>(<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a> <span id="r4 rd" class="r4 r">command</span>)
+        {
+            <a href="@0@PresentationCore/A.html#8cceaa80bd7582e3" class="t t">CanExecuteChangedEventManager</a>.<a href="@0@PresentationCore/A.html#dcf06a16b1abd525" class="i method">RemoveHandler</a>(<span class="r4 r">command</span>, <a href="#6c64274106f9457e" class="k">this</a>.<a href="#8264ebf10d4add01" class="i method">OnCanExecuteChanged</a>);
+            <a href="#6c64274106f9457e" class="k">this</a>.<a href="#1d5d1f5f87dab973" class="i method">UpdateCanExecute</a>();
+        }
+
+        <b>private void</b> <a id="59c1dcf500d66a06" href="../R/59c1dcf500d66a06.html" target="n" data-glyph="76,1" class="i method">HookCommand</a>(<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a> <span id="r5 rd" class="r5 r">command</span>)
+        {
+            <a href="@0@PresentationCore/A.html#8cceaa80bd7582e3" class="t t">CanExecuteChangedEventManager</a>.<a href="@0@PresentationCore/A.html#8723e418493212d6" class="i method">AddHandler</a>(<span class="r5 r">command</span>, <a href="#6c64274106f9457e" class="k">this</a>.<a href="#8264ebf10d4add01" class="i method">OnCanExecuteChanged</a>);
+            <a href="#6c64274106f9457e" class="k">this</a>.<a href="#1d5d1f5f87dab973" class="i method">UpdateCanExecute</a>();
+        }
+
+        <b>private void</b> <a id="8264ebf10d4add01" href="../R/8264ebf10d4add01.html" target="n" data-glyph="76,1" class="i method">OnCanExecuteChanged</a>(<b>object</b>? <span id="r6 rd" class="r6 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r7 rd" class="r7 r">e</span>)
+        {
+            <a href="#6c64274106f9457e" class="k">this</a>.<a href="#1d5d1f5f87dab973" class="i method">UpdateCanExecute</a>();
+        }
+
+        <b>private void</b> <a id="1d5d1f5f87dab973" href="../R/1d5d1f5f87dab973.html" target="n" data-glyph="76,1" class="i method">UpdateCanExecute</a>()
+        {
+            <a href="#6c64274106f9457e" class="k">this</a>.<a href="#18a7dd17341030a3" class="i property">CanExecute</a> = <a href="#6c64274106f9457e" class="k">this</a>.<a href="#4bfcbc42359d17c7" class="i property">Command</a> == <b>null</b> || <a href="CommandHelpers.cs.html#2c7f1bc32925312e" class="t t">CommandHelpers</a>.<a href="CommandHelpers.cs.html#5653990cd65d389c" class="i method">CanExecuteCommandSource</a>(<a href="#6c64274106f9457e" class="k">this</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span> <span class="c">/&gt;</span>
+        <b>protected override bool</b> <a id="96d026aff5e2590b" href="../R/96d026aff5e2590b.html" target="n" data-glyph="105,1" class="i property">IsEnabledCore</a> =&gt; <a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="k">base</a>.<a href="@0@PresentationCore/A.html#e1496f9f2fc68f46" class="i property">IsEnabledCore</a> &amp;&amp; <a href="#6c64274106f9457e" class="k">this</a>.<a href="#18a7dd17341030a3" class="i property">CanExecute</a>;
+
+        <b>private bool</b> <a id="436c96c163165cbd" href="../R/436c96c163165cbd.html" target="n" data-glyph="46,1" class="i field">canExecute</a> = <b>true</b>;
+
+        <b>private bool</b> <a id="18a7dd17341030a3" href="../R/18a7dd17341030a3.html" target="n" data-glyph="106,1" class="i property">CanExecute</a>
+        {
+            <b>get</b> =&gt; <a href="#6c64274106f9457e" class="k">this</a>.<a href="#436c96c163165cbd" class="i field">canExecute</a>;
+            <b>set</b>
+            {
+                <b>if</b> (<b>value</b> == <a href="#6c64274106f9457e" class="k">this</a>.<a href="#436c96c163165cbd" class="i field">canExecute</a>)
+                {
+                    <b>return</b>;
+                }
+
+                <a href="#6c64274106f9457e" class="k">this</a>.<a href="#436c96c163165cbd" class="i field">canExecute</a> = <b>value</b>;
+                <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#d7d60b06f633a857" class="i method">CoerceValue</a>(<a href="@0@PresentationCore/A.html#99400a39f1740209" class="i field">IsEnabledProperty</a>);
+            }
+        }
+
+        [<span class="t constructor">MustUseReturnValue</span>]
+        <b>private static object</b> <a id="a003a25a9e89ddcd" href="../R/a003a25a9e89ddcd.html" target="n" data-glyph="76,1" class="i method">CoerceIsEditableProperty</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r8 rd" class="r8 r">dependencyObject</span>, <b>object</b>? <span id="r9 rd" class="r9 r">value</span>)
+        {
+            <span class="c">// For now SplitButton is not editable</span>
+            <b>return</b> <b>false</b>;
+        }
+
+        <b>private void</b> <a id="e2b9c9d1a3eaff96" href="../R/e2b9c9d1a3eaff96.html" target="n" data-glyph="76,1" class="i method">ButtonClick</a>(<b>object</b> <span id="r10 rd" class="r10 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r11 rd" class="r11 r">e</span>)
+        {
+            <a href="CommandHelpers.cs.html#2c7f1bc32925312e" class="t t">CommandHelpers</a>.<a href="CommandHelpers.cs.html#a8073c750a20238a" class="i method">ExecuteCommandSource</a>(<a href="#6c64274106f9457e" class="k">this</a>);
+
+            <span class="r11 r">e</span>.<a href="@0@PresentationCore/A.html#31c68d1651808fc1" class="i property">RoutedEvent</a> = <a href="#62d284f4c466185f" class="i field">ClickEvent</a>;
+            <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<span class="r11 r">e</span>);
+
+            <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#b7d0ca0feb3bbeb3" class="i field">IsDropDownOpenProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>);
+        }
+
+        <b>private void</b> <a id="fae705decf0d1b9a" href="../R/fae705decf0d1b9a.html" target="n" data-glyph="76,1" class="i method">ExpanderMouseLeftButtonDown</a>(<b>object</b> <span id="r12 rd" class="r12 r">sender</span>, <a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r13 rd" class="r13 r">e</span>)
+        {
+            <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#b7d0ca0feb3bbeb3" class="i field">IsDropDownOpenProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(!<a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@PresentationFramework/A.html#475101a64e4a0d92" class="i property">IsDropDownOpen</a>));
+            <span class="r13 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+        }
+
+        <b>public override void</b> <a id="801cd827f435b22f" href="../R/801cd827f435b22f.html" target="n" data-glyph="72,1" class="i method">OnApplyTemplate</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="k">base</a>.<a href="@0@PresentationFramework/A.html#427b14ca702bee57" class="i method">OnApplyTemplate</a>();
+
+            <b>if</b> (<a href="#6c64274106f9457e" class="k">this</a>.<a href="#fe003ed0cf62fe25" class="i field">button</a> != <b>null</b>)
+            {
+                <a href="#6c64274106f9457e" class="k">this</a>.<a href="#fe003ed0cf62fe25" class="i field">button</a>.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> -= <a href="#6c64274106f9457e" class="k">this</a>.<a href="#e2b9c9d1a3eaff96" class="i method">ButtonClick</a>;
+            }
+
+            <a href="#6c64274106f9457e" class="k">this</a>.<a href="#fe003ed0cf62fe25" class="i field">button</a> = <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;PART_Button&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>;
+            <b>if</b> (<a href="#6c64274106f9457e" class="k">this</a>.<a href="#fe003ed0cf62fe25" class="i field">button</a> != <b>null</b>)
+            {
+                <a href="#6c64274106f9457e" class="k">this</a>.<a href="#fe003ed0cf62fe25" class="i field">button</a>.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> += <a href="#6c64274106f9457e" class="k">this</a>.<a href="#e2b9c9d1a3eaff96" class="i method">ButtonClick</a>;
+            }
+
+            <b>if</b> (<a href="#6c64274106f9457e" class="k">this</a>.<a href="#fd575ad2cef4184a" class="i field">expanderButton</a> != <b>null</b>)
+            {
+                <a href="#6c64274106f9457e" class="k">this</a>.<a href="#fd575ad2cef4184a" class="i field">expanderButton</a>.<a href="@0@PresentationCore/A.html#ea5a3a9c07751cf7" class="i">PreviewMouseLeftButtonDown</a> -= <a href="#6c64274106f9457e" class="k">this</a>.<a href="#fae705decf0d1b9a" class="i method">ExpanderMouseLeftButtonDown</a>;
+            }
+
+            <a href="#6c64274106f9457e" class="k">this</a>.<a href="#fd575ad2cef4184a" class="i field">expanderButton</a> = <a href="#6c64274106f9457e" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<span class="s">&quot;PART_Expander&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>;
+            <b>if</b> (<a href="#6c64274106f9457e" class="k">this</a>.<a href="#fd575ad2cef4184a" class="i field">expanderButton</a> != <b>null</b>)
+            {
+                <a href="#6c64274106f9457e" class="k">this</a>.<a href="#fd575ad2cef4184a" class="i field">expanderButton</a>.<a href="@0@PresentationCore/A.html#ea5a3a9c07751cf7" class="i">PreviewMouseLeftButtonDown</a> += <a href="#6c64274106f9457e" class="k">this</a>.<a href="#fae705decf0d1b9a" class="i method">ExpanderMouseLeftButtonDown</a>;
+            }
+        }
+
+        <b>private</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>? <a id="fe003ed0cf62fe25" href="../R/fe003ed0cf62fe25.html" target="n" data-glyph="46,1" class="i field">button</a>;
+        <b>private</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>? <a id="fd575ad2cef4184a" href="../R/fd575ad2cef4184a.html" target="n" data-glyph="46,1" class="i field">expanderButton</a>;
+    }
+}</pre></td></tr></table></div></body></html>

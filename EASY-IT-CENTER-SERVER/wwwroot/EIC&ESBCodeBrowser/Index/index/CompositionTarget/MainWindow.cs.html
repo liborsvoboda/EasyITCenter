@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html><head><title>MainWindow.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(61);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#CompositionTarget/MainWindow.cs" target="_top">MainWindow.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#CompositionTarget" target="_top">HelpProjects\WPF-MORE\Visual Layer\CompositionTarget\CompositionTarget.csproj</a> (CompositionTarget)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+
+<b>namespace</b> <span class="i n">CompositionTarget</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     Interaction logic for MainWindow.xaml</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <a href="P/65ed874a07ad199a.html" target="s" class="k">partial</a> <b>class</b> <a id="65ed874a07ad199a" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">MainWindow</a> : <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>
+    {
+        <b>private readonly</b> <span class="t t">Stopwatch</span> <a id="c8692b904340e3e3" href="R/c8692b904340e3e3.html" target="n" data-glyph="46,1" class="i field">_stopwatch</a> = <b>new</b> <span class="t constructor">Stopwatch</span>();
+        <b>private double</b> <a id="a855e02b9ee392da" href="R/a855e02b9ee392da.html" target="n" data-glyph="46,1" class="i field">_frameCounter</a>;
+        <b>private</b> <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <a id="7d61796f71287631" href="R/7d61796f71287631.html" target="n" data-glyph="46,1" class="i field">_pt</a>;
+
+        <b>public</b> <a id="81d5dad50343dc10" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MainWindow</a>()
+        {
+            <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#d36adffe9bccd294" class="i method">InitializeComponent</a>();
+
+            <span class="c">// Add an event handler to update canvas background color just before it is rendered.</span>
+            <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#aef94c5837d0b18b" class="t t">CompositionTarget</a>.<a href="@0@PresentationCore/A.html#012389a205c19313" class="i">Rendering</a> += <a href="#4e0d7ecf52fc1322" class="i method">UpdateColor</a>;
+        }
+
+        <span class="c">// Called just before frame is rendered to allow custom drawing.</span>
+        <b>protected void</b> <a id="4e0d7ecf52fc1322" href="R/4e0d7ecf52fc1322.html" target="n" data-glyph="75,1" class="i method">UpdateColor</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <b>if</b> (<a href="#a855e02b9ee392da" class="i field">_frameCounter</a>++ == 0)
+            {
+                <span class="c">// Starting timing.</span>
+                <a href="#c8692b904340e3e3" class="i field">_stopwatch</a>.<span class="i method">Start</span>();
+            }
+
+            <span class="c">// Determine frame rate in fps (frames per second).</span>
+            <a href="@1@System.Runtime/A.html#e566178cce890c36" class="k">var</a> <span id="r2 rd" class="r2 r">frameRate</span> = (<b>long</b>) (<a href="#a855e02b9ee392da" class="i field">_frameCounter</a>/<a href="#c8692b904340e3e3" class="i field">_stopwatch</a>.<span class="i property">Elapsed</span>.<a href="@1@System.Runtime/A.html#061d7498e3227cfb" class="i property">TotalSeconds</a>);
+            <b>if</b> (<span class="r2 r">frameRate</span> &gt; 0)
+            {
+                <span class="c">// Update elapsed time, number of frames, and frame rate.</span>
+                <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#0d9679c21400ec1e" class="i field">myStopwatchLabel</a>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <a href="#c8692b904340e3e3" class="i field">_stopwatch</a>.<span class="i property">Elapsed</span>.<a href="@1@System.Runtime/A.html#b8c8f6dc0f808233" class="i method">ToString</a>();
+                <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#0ae72a9f0417b7a8" class="i field">myFrameCounterLabel</a>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <a href="#a855e02b9ee392da" class="i field">_frameCounter</a>.<a href="@1@System.Runtime/A.html#102b12e1c4385406" class="i method">ToString</a>(<a href="@1@System.Runtime/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@1@System.Runtime/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>);
+                <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#f34e4d7a91afea1b" class="i field">myFrameRateLabel</a>.<a href="@0@PresentationFramework/A.html#2811283b5ba60413" class="i property">Content</a> = <span class="r2 r">frameRate</span>.<a href="@1@System.Runtime/A.html#76873dfc1b95c712" class="i method">ToString</a>();
+            }
+
+            <span class="c">// Update the background of the canvas by converting MouseMove info to RGB info.</span>
+            <a href="@1@System.Runtime/A.html#3933aebb80415ce0" class="k">var</a> <span id="r3 rd" class="r3 r">redColor</span> = (<b>byte</b>) (<a href="#7d61796f71287631" class="i field">_pt</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>/3.0);
+            <a href="@1@System.Runtime/A.html#3933aebb80415ce0" class="k">var</a> <span id="r4 rd" class="r4 r">blueColor</span> = (<b>byte</b>) (<a href="#7d61796f71287631" class="i field">_pt</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>/2.0);
+            <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#aa4ae93f8d6049b2" class="i field">myCanvas</a>.<a href="@0@PresentationFramework/A.html#03c5f431b20f4bce" class="i property">Background</a> = <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(<span class="r3 r">redColor</span>, 0x0, <span class="r4 r">blueColor</span>));
+        }
+
+        <b>public void</b> <a id="4a9b95f3666a3481" href="R/4a9b95f3666a3481.html" target="n" data-glyph="72,1" class="i method">MouseMoveHandler</a>(<b>object</b> <span id="r5 rd" class="r5 r">sender</span>, <a href="@0@PresentationCore/A.html#2bd9049c90bfe71a" class="t t">MouseEventArgs</a> <span id="r6 rd" class="r6 r">e</span>)
+        {
+            <span class="c">// Retreive the coordinates of the mouse button event.</span>
+            <a href="#7d61796f71287631" class="i field">_pt</a> = <span class="r6 r">e</span>.<a href="@0@PresentationCore/A.html#912fdca8fa7cbeed" class="i method">GetPosition</a>((<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>) <span class="r5 r">sender</span>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

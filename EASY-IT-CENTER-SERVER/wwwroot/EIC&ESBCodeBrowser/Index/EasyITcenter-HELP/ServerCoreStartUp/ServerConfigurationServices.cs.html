@@ -1,0 +1,282 @@
+﻿<!DOCTYPE html>
+<html><head><title>ServerConfigurationServices.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(273);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasyITcenter-HELP/ServerCoreStartUp/ServerConfigurationServices.cs" target="_top">ServerCoreStartUp\ServerConfigurationServices.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasyITcenter-HELP" target="_top">HelpProjects\EasyITcenter-HELP\EasyITcenter-HELP.csproj</a> (EasyITcenter-HELP)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i">FubarDev</span>.<span class="i">FtpServer</span>;
+<b>using</b> <span class="i">FubarDev</span>.<span class="i">FtpServer</span>.<span class="i">AccountManagement</span>;
+<b>using</b> <span class="i">FubarDev</span>.<span class="i">FtpServer</span>.<span class="i">FileSystem</span>.<span class="i">DotNet</span>;
+<b>using</b> <span class="i n">EasyITCenter</span>.<span class="i n">Services</span>;
+<b>using</b> <span class="i">LettuceEncrypt</span>;
+<b>using</b> <span class="i">Newtonsoft</span>.<span class="i">Json</span>;
+<b>using</b> <span class="i">Newtonsoft</span>.<span class="i">Json</span>.<span class="i">Serialization</span>;
+<b>using</b> <span class="i n">Quartz</span>;
+<b>using</b> <span class="i">SimpleMvcSitemap</span>;
+<b>using</b> <span class="i">Snickler</span>.<span class="i">RSSCore</span>.<span class="i">Extensions</span>;
+<b>using</b> <span class="i">FileContextCore</span>;
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Extensions</span>.<span class="i n">FileProviders</span>;
+ 
+<b>namespace</b> <span class="i n">EasyITCenter</span>.<span class="i n">ServerCoreConfiguration</span> {
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Server Core Configuration Settings of Security, Communications, Technologies, Modules Rules,</span>
+    <span class="c">///</span><span class="c"> Rights, Conditions, Formats, Services, Logging, etc..</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="3cf7899a64a55d04" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="bfaf987d162bf4f0">ServerConfigurationServices</span></a> {
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Custom Secure FTP Server</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The services.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="ceadccb512781b80" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureFTPServer</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r0 rd" class="r0 r">services</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">ServerFtpEngineEnabled</span>) {
+                <span class="r0 r">services</span>.<span class="i">AddFtpServer</span>(
+                                    <span id="r1 rd" class="r1 r">builder</span> =&gt; {
+                                        <b>if</b> (!<span class="i">ServerConfigSettings</span>.<span class="i">ServerFtpSecurityEnabled</span>) { <span class="r1 r">builder</span>.<span class="i">EnableAnonymousAuthentication</span>(); }
+                                        <span class="r1 r">builder</span>.<span class="i">UseDotNetFileSystem</span>().<span class="i">DisableChecks</span>().<span class="i">UseSingleRoot</span>();
+                                    });
+ 
+                <span class="r0 r">services</span>.<span class="i method">Configure</span>&lt;<span class="i">FtpServerOptions</span>&gt;(<span id="r2 rd" class="r2 r">opt</span> =&gt; <span class="r2 r">opt</span>.<span class="i">ServerAddress</span> = <span class="s">&quot;*&quot;</span>);
+                <span class="r0 r">services</span>.<span class="i">Configure</span>&lt;<span class="i">DotNetFileSystemOptions</span>&gt;(<span id="r3 rd" class="r3 r">opt</span> =&gt; {
+                    <span class="r3 r">opt</span>.<span class="i">RootPath</span> = <span class="i n">System</span>.<span class="i n">IO</span>.<a href="@1@System.Runtime/A.html#090eca8621a248ee" class="t t">Path</a>.<span class="i">Combine</span>(<span class="i">ServerRuntimeData</span>.<span class="i">WebRoot_path</span>, <span class="i">ServerConfigSettings</span>.<span class="i">ServerFtpStorageRootPath</span>);
+                    <span class="r3 r">opt</span>.<span class="i">AllowNonEmptyDirectoryDelete</span> = <b>true</b>;
+                });
+                <span class="r0 r">services</span>.<span class="i method">AddSingleton</span>&lt;<span class="i">IMembershipProvider</span>, <span class="i">HostedFtpServerMembershipProvider</span>&gt;();
+                <span class="r0 r">services</span>.<span class="i method">AddHostedService</span>&lt;<span class="i">HostedFtpServer</span>&gt;();
+ 
+                <b>using</b> (<b>var</b> <span id="r4 rd" class="r4 r">serviceProvider</span> = <span class="r0 r">services</span>.<span class="i method">BuildServiceProvider</span>()) {
+                    <span class="i">ServerRuntimeData</span>.<span class="i">ServerFTPProvider</span> = <span class="r4 r">serviceProvider</span>.<span class="i method">GetRequiredService</span>&lt;<span class="i">IFtpServerHost</span>&gt;();
+                }
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Core: Configure Cookie Politics</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r5 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="934f517056ebb0d7" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureCookie</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r5 rd" class="r5 r">services</span>) {
+            <span class="r5 r">services</span>.<span class="i method">Configure</span>&lt;<span class="t t">CookiePolicyOptions</span>&gt;(<span id="r6 rd" class="r6 r">options</span> =&gt; {
+                <span class="r6 r">options</span>.<span class="i property">CheckConsentNeeded</span> = <span id="r7 rd" class="r7 r">context</span> =&gt; <b>false</b>;
+                <span class="r6 r">options</span>.<span class="i property">MinimumSameSitePolicy</span> = <span class="t t">SameSiteMode</span>.<span class="i field">Lax</span>;
+                <span class="r6 r">options</span>.<span class="i property">Secure</span> = <span class="t t">CookieSecurePolicy</span>.<span class="i field">Always</span>;
+                <span class="r6 r">options</span>.<span class="i property">HttpOnly</span> = <span class="i n">Microsoft</span>.<span class="i n">AspNetCore</span>.<span class="i n">CookiePolicy</span>.<span class="t t">HttpOnlyPolicy</span>.<span class="i field">Always</span>;
+            });
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Core: Configure Server Controllers</span>
+        <span class="c">///</span><span class="c"> options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = [ValidateNever]</span>
+        <span class="c">///</span><span class="c"> in Class options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore</span>
+        <span class="c">///</span><span class="c"> = [JsonIgnore] in Class</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="efa5ae908adb44ac" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureControllers</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r8 rd" class="r8 r">services</span>) {
+            <span class="c">//services.AddServerSideBlazor(options =&gt; { options.RootComponents.MaxJSRootComponents = 1000; });</span>
+ 
+            <span class="r8 r">services</span>.<span class="i method">AddRouting</span>(<span id="r9 rd" class="r9 r">options</span> =&gt; <span class="r9 r">options</span>.<span class="i property">LowercaseUrls</span> = <b>true</b>);
+ 
+            <span class="r8 r">services</span>.<span class="i method">AddControllersWithViews</span>(<span id="r10 rd" class="r10 r">options</span> =&gt; {
+                <span class="c">//if (ServerConfigSettings.ConfigServerStartupOnHttps) { options.Filters.Add(new RequireHttpsAttribute()); }</span>
+                <span class="r10 r">options</span>.<span class="i property">SuppressImplicitRequiredAttributeForNonNullableReferenceTypes</span> = <b>true</b>;
+            }).<span class="i">AddNewtonsoftJson</span>(<span id="r11 rd" class="r11 r">options</span> =&gt; {
+                <span class="r11 r">options</span>.<span class="i">SerializerSettings</span>.<span class="i">ReferenceLoopHandling</span> = <span class="i">ReferenceLoopHandling</span>.<span class="i">Ignore</span>;
+                <span class="r11 r">options</span>.<span class="i">SerializerSettings</span>.<span class="i">ContractResolver</span> = <b>new</b> <span class="i">DefaultContractResolver</span>();
+                <span class="r11 r">options</span>.<span class="i">SerializerSettings</span>.<span class="i">Formatting</span> = <span class="i">Formatting</span>.<span class="i">Indented</span>;
+            }).<span class="i">AddJsonOptions</span>(<span id="r12 rd" class="r12 r">x</span> =&gt; {
+                <span class="r12 r">x</span>.<span class="i">JsonSerializerOptions</span>.<span class="i">ReferenceHandler</span> = <span class="i">ReferenceHandler</span>.<span class="i">IgnoreCycles</span>;
+                <span class="r12 r">x</span>.<span class="i">JsonSerializerOptions</span>.<span class="i">WriteIndented</span> = <b>true</b>;
+                <span class="r12 r">x</span>.<span class="i">JsonSerializerOptions</span>.<span class="i">Converters</span>.<span class="i">Add</span>(<b>new</b> <span class="i">JsonStringEnumConverter</span>());
+                <span class="r12 r">x</span>.<span class="i">JsonSerializerOptions</span>.<span class="i">DefaultIgnoreCondition</span> = <span class="i">JsonIgnoreCondition</span>.<span class="i">WhenWritingNull</span>;
+            });
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Core: Configure Server Logging</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r13 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="528fd39cc6afd441" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureLogging</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r13 rd" class="r13 r">services</span>) {
+            <b>if</b> (<span class="i">ServerRuntimeData</span>.<span class="i">DebugMode</span>) {
+                <span class="r13 r">services</span>.<span class="i">AddLogging</span>(<span id="r14 rd" class="r14 r">builder</span> =&gt; {
+                    <span class="r14 r">builder</span>.<span class="i method">AddConsole</span>().<span class="i method">AddDebug</span>().<span class="i method">SetMinimumLevel</span>(<span class="t t">LogLevel</span>.<span class="i field">Debug</span>)
+                    .<span class="i method">AddFilter</span>&lt;<span class="i">ConsoleLoggerProvider</span>&gt;(<span class="r15 r">category</span>: <b>null</b>, <span class="r16 r">level</span>: <span class="t t">LogLevel</span>.<span class="i field">Debug</span>)
+                    .<span class="i method">AddFilter</span>&lt;<span class="i">DebugLoggerProvider</span>&gt;(<span class="r17 r">category</span>: <b>null</b>, <span class="r18 r">level</span>: <span class="t t">LogLevel</span>.<span class="i field">Debug</span>);
+                });
+            }
+            <span class="r13 r">services</span>.<span class="i">AddHttpLogging</span>(<span id="r19 rd" class="r19 r">logging</span> =&gt; {
+                <span class="r19 r">logging</span>.<span class="i property">LoggingFields</span> = <span class="i">HttpLoggingFields</span>.<span class="i">All</span>;
+                <span class="r19 r">logging</span>.<span class="i property">RequestHeaders</span>.<a href="@1@System.Runtime/A.html#6d1ecaba3aea05cd" class="i method">Add</a>(<span class="s">&quot;sec-ch-ua&quot;</span>); <span class="r19 r">logging</span>.<span class="i property">ResponseHeaders</span>.<a href="@1@System.Runtime/A.html#6d1ecaba3aea05cd" class="i method">Add</a>(<span class="s">&quot;RequestJsonFormatNotCorrectly&quot;</span>);
+                <span class="r19 r">logging</span>.<span class="i property">MediaTypeOptions</span>.<span class="i method">AddText</span>(<span class="s">&quot;application/javascript&quot;</span>);
+                <span class="r19 r">logging</span>.<span class="i property">RequestBodyLogLimit</span> = <span class="r19 r">logging</span>.<span class="i property">ResponseBodyLogLimit</span> = 4096;
+            });
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Core: Configure Server Authentication Support</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r20 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="c7539a75ab5c8e0c" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureAuthentication</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r20 rd" class="r20 r">services</span>) {
+            <span class="c">//FUTURE  Certificate Auth</span>
+            <span class="c">//if (ServerConfigSettings.ConfigServerStartupHttpAndHttps || ServerConfigSettings.ConfigServerStartupOnHttps) {</span>
+            <span class="c">//    services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme).AddCertificate(options =&gt;</span>
+            <span class="c">//    {</span>
+            <span class="c">//        options.Events = new CertificateAuthenticationEvents {</span>
+            <span class="c">//            OnCertificateValidated = context =&gt; { var claims = new[]{</span>
+            <span class="c">//        new Claim(context.ClientCertificate.Subject,</span>
+            <span class="c">//            ClaimValueTypes.String, context.Options.ClaimsIssuer),</span>
+            <span class="c">//        new Claim(ClaimTypes.Name,context.ClientCertificate.Subject,</span>
+            <span class="c">//            ClaimValueTypes.String, context.Options.ClaimsIssuer)};</span>
+            <span class="c">//                context.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, context.Scheme.Name));</span>
+            <span class="c">//                context.Success();return Task.CompletedTask;</span>
+            <span class="c">//            }</span>
+            <span class="c">//        };</span>
+            <span class="c">//    });</span>
+            <span class="c">//}</span>
+ 
+            <span class="r20 r">services</span>.<span class="i">AddAuthentication</span>(<span id="r21 rd" class="r21 r">x</span> =&gt; {
+                <span class="r21 r">x</span>.<span class="i property">DefaultAuthenticateScheme</span> = <span class="i">JwtBearerDefaults</span>.<span class="i">AuthenticationScheme</span>;
+                <span class="r21 r">x</span>.<span class="i property">DefaultChallengeScheme</span> = <span class="i">JwtBearerDefaults</span>.<span class="i">AuthenticationScheme</span>;
+                <span class="r21 r">x</span>.<span class="i property">DefaultScheme</span> = <span class="i">JwtBearerDefaults</span>.<span class="i">AuthenticationScheme</span>;
+            })
+            .<span class="i">AddJwtBearer</span>(<span id="r22 rd" class="r22 r">x</span> =&gt; {
+                <span class="r22 r">x</span>.<span class="i">BackchannelHttpHandler</span> = <b>new</b> <span class="t constructor">HttpClientHandler</span> { <span class="i property">ServerCertificateCustomValidationCallback</span> = <b>delegate</b> { <b>return</b> <b>true</b>; } };
+                <span class="r22 r">x</span>.<span class="i">RequireHttpsMetadata</span> = <b>false</b>;
+                <span class="r22 r">x</span>.<span class="i">SaveToken</span> = <b>true</b>;
+                <span class="r22 r">x</span>.<span class="i">TokenValidationParameters</span> = <span class="i">CoreOperations</span>.<span class="i">ValidAndGetTokenParameters</span>();
+                <span class="r22 r">x</span>.<span class="i">ForwardSignIn</span> = <span class="s">&quot;/Login&quot;</span>;
+ 
+                <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">ConfigTimeTokenValidationEnabled</span>) { <span class="r22 r">x</span>.<span class="i">TokenValidationParameters</span>.<span class="i">LifetimeValidator</span> = <span class="i">EasyITCenterAuthenticationApi</span>.<span class="i">LifetimeValidator</span>; }
+ 
+                <span class="r22 r">x</span>.<span class="i">Events</span> = <b>new</b> <span class="i">JwtBearerEvents</span> {
+                    <span class="i">OnAuthenticationFailed</span> = <span id="r23 rd" class="r23 r">context</span> =&gt; {
+                        <b>if</b> (<span class="r23 r">context</span>.<span class="i">Exception</span>.<span class="i">GetType</span>() == <b>typeof</b>(<span class="i">SecurityTokenExpiredException</span>)) {
+                            <span class="r23 r">context</span>.<span class="i">Response</span>.<span class="i">Headers</span>.<span class="i">Add</span>(<span class="s">&quot;IS-TOKEN-EXPIRED&quot;</span>, <span class="s">&quot;true&quot;</span>);
+                        }
+                        <b>return</b> <a href="@1@System.Runtime/A.html#045a746eb48cbaa9" class="t t">Task</a>.<a href="@1@System.Runtime/A.html#66f1c3e3e272f591" class="i property">CompletedTask</a>;
+                    }
+                };
+            });
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Configures the MVC server pages on Server format &quot;cshtml&quot;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r24 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The services.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="fbbcd088f2a9fb99" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureServerWebPages</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r24 rd" class="r24 r">services</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">WebRazorPagesEngineEnabled</span>) {
+                <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">WebRazorPagesCompileOnRuntime</span>) {
+                    <span class="r24 r">services</span>.<span class="i">AddMvc</span>(<span id="r25 rd" class="r25 r">options</span> =&gt; {
+                        <span class="r25 r">options</span>.<span class="i property">CacheProfiles</span>.<span class="i">Add</span>(<span class="s">&quot;Default30&quot;</span>, <b>new</b> <span class="i">CacheProfile</span>() { <span class="i">Duration</span> = 30 });
+                    }).<span class="i method">AddRazorPagesOptions</span>(<span id="r26 rd" class="r26 r">opt</span> =&gt; {
+                        <span class="r26 r">opt</span>.<span class="i property">RootDirectory</span> = <span class="s">&quot;/ServerCorePages&quot;</span>;
+                    }).<span class="i">AddRazorRuntimeCompilation</span>();
+                }
+                <b>else</b> {
+                    <span class="r24 r">services</span>.<span class="i">AddMvc</span>(<span id="r27 rd" class="r27 r">options</span> =&gt; {
+                        <span class="r27 r">options</span>.<span class="i property">CacheProfiles</span>.<span class="i">Add</span>(<span class="s">&quot;Default30&quot;</span>, <b>new</b> <span class="i">CacheProfile</span>() { <span class="i">Duration</span> = 30 });
+                    }).<span class="i method">AddRazorPagesOptions</span>(<span id="r28 rd" class="r28 r">opt</span> =&gt; {
+                        <span class="r28 r">opt</span>.<span class="i property">RootDirectory</span> = <span class="s">&quot;/ServerCorePages&quot;</span>;
+                    }).<span class="i">AddRazorRuntimeCompilation</span>();
+                }<span class="c">//services.AddRazorPages();</span>
+            }
+ 
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">WebMvcPagesEngineEnabled</span>) {
+                <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">WebRazorPagesCompileOnRuntime</span>) {
+                    <span class="r24 r">services</span>.<span class="i method">AddMvc</span>(<span id="r29 rd" class="r29 r">options</span> =&gt; {
+                        <span class="r29 r">options</span>.<span class="i property">EnableEndpointRouting</span> = <b>false</b>;
+                        <span class="r29 r">options</span>.<span class="i property">AllowEmptyInputInBodyModelBinding</span> = <b>true</b>;
+                    }).<span class="i">AddRazorRuntimeCompilation</span>();
+                }
+                <b>else</b> {
+                    <span class="r24 r">services</span>.<span class="i method">AddMvc</span>(<span id="r30 rd" class="r30 r">options</span> =&gt; {
+                        <span class="r30 r">options</span>.<span class="i property">EnableEndpointRouting</span> = <b>false</b>;
+                        <span class="r30 r">options</span>.<span class="i property">AllowEmptyInputInBodyModelBinding</span> = <b>true</b>;
+                    });
+                }
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server core: Configures LetsEncrypt using. Certificate will be saved in DataPath</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r31 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The services.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="26078fd94ddc5ace" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureLetsEncrypt</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r31 rd" class="r31 r">services</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">ConfigServerGetLetsEncrypt</span>) {
+                <span class="r31 r">services</span>.<span class="i">AddLettuceEncrypt</span>(<span id="r32 rd" class="r32 r">option</span> =&gt; {
+                    <span class="t t">List</span>&lt;<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <span id="r33 rd" class="r33 r">domainList</span> = <span class="i">ServerConfigSettings</span>.<span class="i">ConfigCertificateDomain</span>.<span class="i">Contains</span>(<span class="s">&#39;,&#39;</span>)
+                    ? <span class="i">ServerConfigSettings</span>.<span class="i">ConfigCertificateDomain</span>.<span class="i">Split</span>(<span class="s">&#39;,&#39;</span>).<span class="i">ToList</span>()
+                    : <span class="i">ServerConfigSettings</span>.<span class="i">ConfigCertificateDomain</span>.<span class="i">Split</span>(<span class="s">&#39;;&#39;</span>).<span class="i">ToList</span>();
+ 
+                    <span class="r33 r">domainList</span>.<span class="i method">ForEach</span>(<span id="r34 rd" class="r34 r">domain</span> =&gt; { <b>if</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r34 r">domain</span>)) <span class="r33 r">domainList</span>.<span class="i method">Remove</span>(<span class="r34 r">domain</span>); });
+                    <span class="r32 r">option</span>.<span class="i">DomainNames</span> = <span class="r33 r">domainList</span>.<span class="i method">ToArray</span>();
+                    <span class="r32 r">option</span>.<span class="i">EmailAddress</span> = <span class="i">ServerConfigSettings</span>.<span class="i">EmailerServiceEmailAddress</span>;
+                    <span class="r32 r">option</span>.<span class="i">AcceptTermsOfService</span> = <b>true</b>;
+                }).<span class="i">PersistDataToDirectory</span>(<b>new</b> <a href="@1@System.Runtime/A.html#683f5ff112df8d3a" class="t constructor">DirectoryInfo</a>(<span class="i n">System</span>.<span class="i n">IO</span>.<a href="@1@System.Runtime/A.html#090eca8621a248ee" class="t t">Path</a>.<span class="i">Combine</span>(<span class="i">ServerRuntimeData</span>.<span class="i">Startup_path</span>, <span class="i">ServerRuntimeData</span>.<span class="i">DataPath</span>)), <span class="i">ServerConfigSettings</span>.<span class="i">ConfigCertificatePassword</span>);
+            }
+        }
+ 
+        <b>internal static void</b> <a id="14f137ac7b2e586f" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureRSSfeed</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r35 rd" class="r35 r">services</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">WebRSSFeedsEnabled</span>) { <span class="r35 r">services</span>.<span class="i">AddRSSFeed</span>&lt;<span class="i">SomeRSSProvider</span>&gt;(); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server core: Configures the WebSocket logger monitor. For multi monitoring and for</span>
+        <span class="c">///</span><span class="c"> Example Posibilities</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r36 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The services.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="9001792f3b357a4e" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureWebSocketLoggerMonitor</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r36 rd" class="r36 r">services</span>) {
+            <b>if</b> (<span class="i">ServerConfigSettings</span>.<span class="i">WebSocketServerMonitorEnabled</span>) { <span class="r36 r">services</span>.<span class="i method">AddSingleton</span>&lt;<span class="t t">ILoggerProvider</span>, <span class="i">WebSocketLogProvider</span>&gt;(); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Core: Configure HTTP Client for work with third party API</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r37 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="3b6882702d8b1019" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureThirdPartyApi</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r37 rd" class="r37 r">services</span>) {
+            <span class="c">//services.AddHttpClient();</span>
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Core: Configures the singletons. Its Register Custom Listeners For Actions</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r38 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The services.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="1ef3b4562bab3929" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureSingletons</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r38 rd" class="r38 r">services</span>) {
+            <span class="r38 r">services</span>.<span class="i method">AddSingleton</span>&lt;<span class="t t">IHttpContextAccessor</span>, <span class="i">CommunicationController</span>&gt;();
+            <span class="r38 r">services</span>.<span class="i method">AddSingleton</span>&lt;<span class="i">ISitemapProvider</span>, <span class="i">SitemapProvider</span>&gt;();
+            <span class="r38 r">services</span>.<span class="i method">AddSingleton</span>&lt;<span class="i">IHealthCheckPublisher</span>, <span class="i">DelegateHealthCheckPublisher</span>&gt;();
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Core: Configure Custom Core Services</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r39 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="5453032d0f0427c6" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureScoped</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r39 rd" class="r39 r">services</span>) {
+            <span class="r39 r">services</span>.<span class="i method">AddScoped</span>(<b>typeof</b>(<a href="../ServerCore/Repositories/IRepositoryAsync.cs.html#6c09706f13c0395d" class="t t">IRepositoryAsync</a>&lt;,&gt;), <b>typeof</b>(<a href="../ServerCore/Repositories/RepositoryAsync.cs.html#77049596f0959a6d" class="t t">RepositoryAsync</a>&lt;,&gt;));
+            <span class="r39 r">services</span>.<span class="i method">AddScoped</span>(<b>typeof</b>(<a href="../ServerCore/Repositories/IRepository.cs.html#f222fdf47f303de1" class="t t">IRepository</a>&lt;,&gt;), <b>typeof</b>(<a href="../ServerCore/Repositories/Repository.cs.html#7e493ab345bb8aca" class="t t">Repository</a>&lt;,&gt;));
+            <span class="r39 r">services</span>.<span class="i method">AddScoped</span>&lt;<a href="../ServerCore/Repositories/WebsitesStaticFileDbRepository.cs.html#3c242d474963bd1f" class="t t">WebsitesStaticFileDbRepository</a>&gt; ();
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Core: Configure Hosted Service to Runtime Core For Access to Root Functionalities</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r40 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="10f17b8c1476ad83" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureCentralServicesProviders</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r40 rd" class="r40 r">services</span>) {
+            <span class="i">ServerRuntimeData</span>.<span class="i">ServerServiceProvider</span> = <span class="r40 r">services</span>.<span class="i method">BuildServiceProvider</span>();
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Core: Configure Custom Services</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r41 r">services</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="58fae6b626f19f02" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ConfigureDatabaseContext</a>(<b>ref</b> <span class="t t">IServiceCollection</span> <span id="r41 rd" class="r41 r">services</span>) {
+            <b>if</b> (<span class="i">ServerRuntimeData</span>.<span class="i">DebugMode</span>) { <span class="r41 r">services</span>.<span class="i">AddDatabaseDeveloperPageExceptionFilter</span>(); }
+            <b>try</b> {
+                <span class="r41 r">services</span>.<span class="i">AddDbContext</span>&lt;<span class="i">EasyITCenterContext</span>&gt;(<span id="r42 rd" class="r42 r">opt</span> =&gt; <span class="r42 r">opt</span>.<span class="i">UseSqlServer</span>(<span class="i">ServerConfigSettings</span>.<span class="i">DatabaseConnectionString</span>).<span class="i">UseQueryTrackingBehavior</span>(<span class="i">QueryTrackingBehavior</span>.<span class="i">NoTracking</span>));
+                <span class="c">//services.AddDbContext&lt;Context&gt;(options =&gt; options.UseFileContextDatabase(databaseName: &quot;LocalDatabase&quot;,location: @&quot;C:\Users\mjanatzek\Documents\Projects\test&quot;,password: &quot;EasyITCenter&quot;));</span>
+            } <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r43 rd" class="r43 r">ex</span>) { }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

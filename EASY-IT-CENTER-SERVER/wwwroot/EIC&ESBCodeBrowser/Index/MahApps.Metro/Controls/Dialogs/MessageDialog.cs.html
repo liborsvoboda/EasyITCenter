@@ -1,0 +1,407 @@
+﻿<!DOCTYPE html>
+<html><head><title>MessageDialog.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(398);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/Dialogs/MessageDialog.cs" target="_top">Controls\Dialogs\MessageDialog.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>.<span class="i n">Tasks</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">ControlzEx</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>.<span class="i n">Dialogs</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> An internal control that represents a message dialog. Please use MetroWindow.ShowMessage instead!</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <b>nameof</b>(<a href="#6905681ffd5ebe18" class="i field">PART_AffirmativeButton</a>), <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <b>nameof</b>(<a href="#8d1001d54eba656d" class="i field">PART_NegativeButton</a>), <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <b>nameof</b>(<a href="#e0d80b7cd95c4998" class="i field">PART_FirstAuxiliaryButton</a>), <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <b>nameof</b>(<a href="#99d8310bae700cd6" class="i field">PART_SecondAuxiliaryButton</a>), <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>))]
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <b>nameof</b>(<a href="#e4048be8e50672ee" class="i field">PART_MessageScrollViewer</a>), <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>))]
+    <b>public class</b> <a id="a524c03b8af7e308" href="../../R/a524c03b8af7e308.html" target="n" data-glyph="0,0" class="t t">MessageDialog</a> : <a href="BaseMetroDialog.cs.html#9e4d9d36e4974ced" class="t t">BaseMetroDialog</a>
+    {
+        <b>private readonly</b> <a href="@0@mscorlib/A.html#94bf04047d6bd325" class="t t">TaskCompletionSource</a>&lt;<a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>&gt; <a id="d36134a492b65fce" href="../../R/d36134a492b65fce.html" target="n" data-glyph="46,1" class="i field">tcs</a> = <a href="@0@mscorlib/A.html#4aca22f9388e0ac8" class="k">new</a>();
+        <b>private</b> <a href="@0@mscorlib/A.html#2d80bf84f593cc0c" class="t t">CancellationTokenRegistration</a>? <a id="74944923efed9c9c" href="../../R/74944923efed9c9c.html" target="n" data-glyph="46,1" class="i field">cancellationTokenRegistration</a>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Controls
+
+        <b>private</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>? <a id="6905681ffd5ebe18" href="../../R/6905681ffd5ebe18.html" target="n" data-glyph="46,1" class="i field">PART_AffirmativeButton</a>;
+        <b>private</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>? <a id="8d1001d54eba656d" href="../../R/8d1001d54eba656d.html" target="n" data-glyph="46,1" class="i field">PART_NegativeButton</a>;
+        <b>private</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>? <a id="e0d80b7cd95c4998" href="../../R/e0d80b7cd95c4998.html" target="n" data-glyph="46,1" class="i field">PART_FirstAuxiliaryButton</a>;
+        <b>private</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>? <a id="99d8310bae700cd6" href="../../R/99d8310bae700cd6.html" target="n" data-glyph="46,1" class="i field">PART_SecondAuxiliaryButton</a>;
+        <b>private</b> <a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>? <a id="e4048be8e50672ee" href="../../R/e4048be8e50672ee.html" target="n" data-glyph="46,1" class="i field">PART_MessageScrollViewer</a>;
+
+        <b>public override void</b> <a id="3666f187df7b8140" href="../../R/3666f187df7b8140.html" target="n" data-glyph="72,1" class="i method">OnApplyTemplate</a>()
+        {
+            <a href="BaseMetroDialog.cs.html#9e4d9d36e4974ced" class="k">base</a>.<a href="@0@PresentationFramework/A.html#0c1b13beb625a4a2" class="i method">OnApplyTemplate</a>();
+
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6905681ffd5ebe18" class="i field">PART_AffirmativeButton</a> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<b>nameof</b>(<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6905681ffd5ebe18" class="i field">PART_AffirmativeButton</a>)) <b>as</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>;
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#8d1001d54eba656d" class="i field">PART_NegativeButton</a> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<b>nameof</b>(<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#8d1001d54eba656d" class="i field">PART_NegativeButton</a>)) <b>as</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>;
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e0d80b7cd95c4998" class="i field">PART_FirstAuxiliaryButton</a> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<b>nameof</b>(<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e0d80b7cd95c4998" class="i field">PART_FirstAuxiliaryButton</a>)) <b>as</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>;
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#99d8310bae700cd6" class="i field">PART_SecondAuxiliaryButton</a> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<b>nameof</b>(<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#99d8310bae700cd6" class="i field">PART_SecondAuxiliaryButton</a>)) <b>as</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>;
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e4048be8e50672ee" class="i field">PART_MessageScrollViewer</a> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<b>nameof</b>(<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e4048be8e50672ee" class="i field">PART_MessageScrollViewer</a>)) <b>as</b> <a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>;
+
+            <b>if</b> (<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e4048be8e50672ee" class="i field">PART_MessageScrollViewer</a> <b>is not null</b>)
+            {
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e4048be8e50672ee" class="i field">PART_MessageScrollViewer</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="BaseMetroDialog.cs.html#bf134373b9c776a6" class="i property">DialogSettings</a>.<a href="MetroDialogSettings.cs.html#01b519f67e6070ac" class="i property">MaximumBodyHeight</a>;
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Controls
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> DependencyProperties
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#600dbfdbe9ec71e0" class="i property">Message</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="a13ed78138fa70c6" href="../../R/a13ed78138fa70c6.html" target="n" data-glyph="42,1" class="i field">MessageProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#600dbfdbe9ec71e0" class="i property">Message</a>),
+                                          <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>),
+                                          <b>typeof</b>(<a href="#a524c03b8af7e308" class="t t">MessageDialog</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>)));
+
+        <b>public string</b>? <a id="600dbfdbe9ec71e0" href="../../R/600dbfdbe9ec71e0.html" target="n" data-glyph="102,1" class="i property">Message</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>?)<a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#a13ed78138fa70c6" class="i field">MessageProperty</a>);
+            <b>set</b> =&gt; <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#a13ed78138fa70c6" class="i field">MessageProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#8b0b77176aec9b10" class="i property">AffirmativeButtonText</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="61213343b7ddc6ae" href="../../R/61213343b7ddc6ae.html" target="n" data-glyph="42,1" class="i field">AffirmativeButtonTextProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#8b0b77176aec9b10" class="i property">AffirmativeButtonText</a>),
+                                          <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>),
+                                          <b>typeof</b>(<a href="#a524c03b8af7e308" class="t t">MessageDialog</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<span class="s">&quot;OK&quot;</span>));
+
+        <b>public string</b> <a id="8b0b77176aec9b10" href="../../R/8b0b77176aec9b10.html" target="n" data-glyph="102,1" class="i property">AffirmativeButtonText</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>)<a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#61213343b7ddc6ae" class="i field">AffirmativeButtonTextProperty</a>);
+            <b>set</b> =&gt; <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#61213343b7ddc6ae" class="i field">AffirmativeButtonTextProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#36005c37f83721aa" class="i property">NegativeButtonText</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="5eb0a4e721a701a0" href="../../R/5eb0a4e721a701a0.html" target="n" data-glyph="42,1" class="i field">NegativeButtonTextProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#36005c37f83721aa" class="i property">NegativeButtonText</a>),
+                                          <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>),
+                                          <b>typeof</b>(<a href="#a524c03b8af7e308" class="t t">MessageDialog</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<span class="s">&quot;Cancel&quot;</span>));
+
+        <b>public string</b> <a id="36005c37f83721aa" href="../../R/36005c37f83721aa.html" target="n" data-glyph="102,1" class="i property">NegativeButtonText</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>)<a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#5eb0a4e721a701a0" class="i field">NegativeButtonTextProperty</a>);
+            <b>set</b> =&gt; <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#5eb0a4e721a701a0" class="i field">NegativeButtonTextProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7916e30c96d559ac" class="i property">FirstAuxiliaryButtonText</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b14811c929274f87" href="../../R/b14811c929274f87.html" target="n" data-glyph="42,1" class="i field">FirstAuxiliaryButtonTextProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#7916e30c96d559ac" class="i property">FirstAuxiliaryButtonText</a>),
+                                          <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>),
+                                          <b>typeof</b>(<a href="#a524c03b8af7e308" class="t t">MessageDialog</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>)));
+
+        <b>public string</b>? <a id="7916e30c96d559ac" href="../../R/7916e30c96d559ac.html" target="n" data-glyph="102,1" class="i property">FirstAuxiliaryButtonText</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>?)<a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b14811c929274f87" class="i field">FirstAuxiliaryButtonTextProperty</a>);
+            <b>set</b> =&gt; <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b14811c929274f87" class="i field">FirstAuxiliaryButtonTextProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7ce789e7fc6bbdc9" class="i property">SecondAuxiliaryButtonText</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="c39e0506d1fd4543" href="../../R/c39e0506d1fd4543.html" target="n" data-glyph="42,1" class="i field">SecondAuxiliaryButtonTextProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#7ce789e7fc6bbdc9" class="i property">SecondAuxiliaryButtonText</a>),
+                                          <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>),
+                                          <b>typeof</b>(<a href="#a524c03b8af7e308" class="t t">MessageDialog</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>)));
+
+        <b>public string</b>? <a id="7ce789e7fc6bbdc9" href="../../R/7ce789e7fc6bbdc9.html" target="n" data-glyph="102,1" class="i property">SecondAuxiliaryButtonText</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>?)<a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#c39e0506d1fd4543" class="i field">SecondAuxiliaryButtonTextProperty</a>);
+            <b>set</b> =&gt; <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#c39e0506d1fd4543" class="i field">SecondAuxiliaryButtonTextProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#361a6f185417368a" class="i property">ButtonStyle</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="e2eda58065df7bf4" href="../../R/e2eda58065df7bf4.html" target="n" data-glyph="42,1" class="i field">ButtonStyleProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#361a6f185417368a" class="i property">ButtonStyle</a>),
+                                          <b>typeof</b>(<a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>),
+                                          <b>typeof</b>(<a href="#a524c03b8af7e308" class="t t">MessageDialog</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>.<a href="MessageDialogStyle.cs.html#4a713ad3aceec7d8" class="i field">Affirmative</a>, <a href="#e1630b46b3e39f44" class="i method">OnButtonStylePropertyChangedCallback</a>));
+
+        <b>private static void</b> <a id="e1630b46b3e39f44" href="../../R/e1630b46b3e39f44.html" target="n" data-glyph="76,1" class="i method">OnButtonStylePropertyChangedCallback</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            ((<a href="#a524c03b8af7e308" class="t t">MessageDialog</a>)<span class="r0 r">d</span>).<a href="#01448b9c81ab3986" class="i method">OnButtonStyleChanged</a>((<a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>)<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a>, (<a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>)<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>);
+        }
+
+        <b>public</b> <a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a> <a id="361a6f185417368a" href="../../R/361a6f185417368a.html" target="n" data-glyph="102,1" class="i property">ButtonStyle</a>
+        {
+            <b>get</b> =&gt; (<a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>)<a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#e2eda58065df7bf4" class="i field">ButtonStyleProperty</a>);
+            <b>set</b> =&gt; <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#e2eda58065df7bf4" class="i field">ButtonStyleProperty</a>, <b>value</b>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="49c8d4c03b6dfebc" href="../../R/49c8d4c03b6dfebc.html" target="n" data-glyph="42,1" class="i field">DefaultButtonFocusProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#6e0b7e0311444f16" class="i property">DefaultButtonFocus</a>),
+                                          <b>typeof</b>(<a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>),
+                                          <b>typeof</b>(<a href="#a524c03b8af7e308" class="t t">MessageDialog</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#667b1f7550ad1bd5" class="i field">Negative</a>));
+
+        <b>public</b> <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a> <a id="6e0b7e0311444f16" href="../../R/6e0b7e0311444f16.html" target="n" data-glyph="102,1" class="i property">DefaultButtonFocus</a>
+        {
+            <b>get</b> =&gt; (<a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>)<a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#49c8d4c03b6dfebc" class="i field">DefaultButtonFocusProperty</a>);
+            <b>set</b> =&gt; <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#49c8d4c03b6dfebc" class="i field">DefaultButtonFocusProperty</a>, <b>value</b>);
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> DependencyProperties
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructor
+
+        <b>internal</b> <a id="9fbda1ac6b5ab863" href="../../R/../../0000000000.html" target="n" data-glyph="74,1" class="t constructor">MessageDialog</a>()
+            : <a href="#d29c21287a8025d7" class="k">this</a>(<b>null</b>)
+        {
+        }
+
+        <b>internal</b> <a id="d29c21287a8025d7" href="../../R/d29c21287a8025d7.html" target="n" data-glyph="74,1" class="t constructor">MessageDialog</a>(<a href="../MetroWindow.cs.html#5a37f9897ea7f8e0" class="t t">MetroWindow</a>? <span id="r2 rd" class="r2 r">parentWindow</span>)
+            : <a href="#54c0d2fbe7aed2e6" class="k">this</a>(<span class="r2 r">parentWindow</span>, <b>null</b>)
+        {
+        }
+
+        <b>internal</b> <a id="54c0d2fbe7aed2e6" href="../../R/54c0d2fbe7aed2e6.html" target="n" data-glyph="74,1" class="t constructor">MessageDialog</a>(<a href="../MetroWindow.cs.html#5a37f9897ea7f8e0" class="t t">MetroWindow</a>? <span id="r3 rd" class="r3 r">parentWindow</span>, <a href="MetroDialogSettings.cs.html#28729669bd8ecc77" class="t t">MetroDialogSettings</a>? <span id="r4 rd" class="r4 r">settings</span>)
+            : <a href="BaseMetroDialog.cs.html#0eddd16cc6fe9b29" class="k">base</a>(<span class="r3 r">parentWindow</span>, <span class="r4 r">settings</span>)
+        {
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#61213343b7ddc6ae" class="i field">AffirmativeButtonTextProperty</a>, <a href="#a524c03b8af7e308" class="k">this</a>.<a href="BaseMetroDialog.cs.html#bf134373b9c776a6" class="i property">DialogSettings</a>.<a href="MetroDialogSettings.cs.html#b4939d811931c91e" class="i property">AffirmativeButtonText</a>);
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#5eb0a4e721a701a0" class="i field">NegativeButtonTextProperty</a>, <a href="#a524c03b8af7e308" class="k">this</a>.<a href="BaseMetroDialog.cs.html#bf134373b9c776a6" class="i property">DialogSettings</a>.<a href="MetroDialogSettings.cs.html#fd38781fbc020095" class="i property">NegativeButtonText</a>);
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#b14811c929274f87" class="i field">FirstAuxiliaryButtonTextProperty</a>, <a href="#a524c03b8af7e308" class="k">this</a>.<a href="BaseMetroDialog.cs.html#bf134373b9c776a6" class="i property">DialogSettings</a>.<a href="MetroDialogSettings.cs.html#2c6d3deee7c1c2b4" class="i property">FirstAuxiliaryButtonText</a>);
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#c39e0506d1fd4543" class="i field">SecondAuxiliaryButtonTextProperty</a>, <a href="#a524c03b8af7e308" class="k">this</a>.<a href="BaseMetroDialog.cs.html#bf134373b9c776a6" class="i property">DialogSettings</a>.<a href="MetroDialogSettings.cs.html#4c4005bf8a82dfe8" class="i property">SecondAuxiliaryButtonText</a>);
+            
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#092b66c359ad3e90" class="i method">ApplyDefaultButtonFocus</a>();
+        }
+
+        <b>static</b> <a id="8a87c66d19b8b5fa" href="../../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">MessageDialog</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6339cc8ec3e1311a" class="i field">DefaultStyleKeyProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#a524c03b8af7e308" class="t t">MessageDialog</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>typeof</b>(<a href="#a524c03b8af7e308" class="t t">MessageDialog</a>)));
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Constructor
+
+        <b>private void</b> <a id="01448b9c81ab3986" href="../../R/01448b9c81ab3986.html" target="n" data-glyph="76,1" class="i method">OnButtonStyleChanged</a>(<a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a> <span id="r5 rd" class="r5 r">oldStyle</span>, <a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a> <span id="r6 rd" class="r6 r">newStyle</span>)
+        {
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#092b66c359ad3e90" class="i method">ApplyDefaultButtonFocus</a>();
+        }
+
+        <b>private void</b> <a id="092b66c359ad3e90" href="../../R/092b66c359ad3e90.html" target="n" data-glyph="76,1" class="i method">ApplyDefaultButtonFocus</a>()
+        {
+            <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="k">var</a> <span id="r7 rd" class="r7 r">defaultButtonFocus</span> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="BaseMetroDialog.cs.html#bf134373b9c776a6" class="i property">DialogSettings</a>.<a href="MetroDialogSettings.cs.html#c8c1fdb4aa4ac82b" class="i property">DefaultButtonFocus</a>;
+
+            <span class="c">//Ensure it&#39;s a valid option</span>
+            <b>if</b> (!<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#209c7625ca3345f7" class="i method">IsApplicable</a>(<span class="r7 r">defaultButtonFocus</span>))
+            {
+                <span class="r7 r">defaultButtonFocus</span> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#361a6f185417368a" class="i property">ButtonStyle</a> == <a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>.<a href="MessageDialogStyle.cs.html#4a713ad3aceec7d8" class="i field">Affirmative</a>
+                    ? <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#aa22be2646a94eb3" class="i field">Affirmative</a>
+                    : <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#667b1f7550ad1bd5" class="i field">Negative</a>;
+            }
+
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#49c8d4c03b6dfebc" class="i field">DefaultButtonFocusProperty</a>, <span class="r7 r">defaultButtonFocus</span>);
+        }
+
+        <b>internal async</b> <a href="@0@mscorlib/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>&gt; <a id="6a13ed880e4d50e1" href="../../R/6a13ed880e4d50e1.html" target="n" data-glyph="74,1" class="i method">WaitForButtonPressAsync</a>()
+        {
+            <b>await</b> <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#968dc7ef71211110" class="i method">BeginInvoke</a>(<b>new</b> <span class="t">Action</span>(() =&gt;
+                {
+                    <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@PresentationCore/A.html#0e11f7ae56f1c30f" class="i method">Focus</a>();
+
+                    <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="k">var</a> <span id="r8 rd" class="r8 r">defaultButtonFocus</span> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6e0b7e0311444f16" class="i property">DefaultButtonFocus</a>;
+
+                    <b>switch</b> (<span class="r8 r">defaultButtonFocus</span>)
+                    {
+                        <span class="c">//kind of acts like a selective &#39;IsDefault&#39; mechanism.</span>
+                        <b>case</b> <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#aa22be2646a94eb3" class="i field">Affirmative</a>:
+                            <span class="t t">KeyboardNavigationEx</span>.<span class="i method">Focus</span>(<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6905681ffd5ebe18" class="i field">PART_AffirmativeButton</a>);
+                            <b>break</b>;
+                        <b>case</b> <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#667b1f7550ad1bd5" class="i field">Negative</a>:
+                            <span class="t t">KeyboardNavigationEx</span>.<span class="i method">Focus</span>(<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#8d1001d54eba656d" class="i field">PART_NegativeButton</a>);
+                            <b>break</b>;
+                        <b>case</b> <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#45b0748377f2ea7d" class="i field">FirstAuxiliary</a>:
+                            <span class="t t">KeyboardNavigationEx</span>.<span class="i method">Focus</span>(<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e0d80b7cd95c4998" class="i field">PART_FirstAuxiliaryButton</a>);
+                            <b>break</b>;
+                        <b>case</b> <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#f7888895a222531d" class="i field">SecondAuxiliary</a>:
+                            <span class="t t">KeyboardNavigationEx</span>.<span class="i method">Focus</span>(<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#99d8310bae700cd6" class="i field">PART_SecondAuxiliaryButton</a>);
+                            <b>break</b>;
+                        <b>case</b> <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#393de727803a1311" class="i field">Canceled</a>:
+                            <b>break</b>;
+                        <b>default</b>:
+                            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#337b690f0704f510" class="t constructor">ArgumentOutOfRangeException</a>();
+                    }
+                }));
+
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#786180803b44b4b7" class="i method">SetUpHandlers</a>();
+
+            <b>return</b> <b>await</b> <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#d36134a492b65fce" class="i field">tcs</a>.<a href="@0@mscorlib/A.html#14fe3876fba4607a" class="i property">Task</a>.<a href="@0@mscorlib/A.html#07ef75a8fa372c94" class="i method">ConfigureAwait</a>(<b>false</b>);
+        }
+
+        <b>private void</b> <a id="180ab8728af8713b" href="../../R/180ab8728af8713b.html" target="n" data-glyph="76,1" class="i method">OnKeyDownHandler</a>(<b>object</b> <span id="r9 rd" class="r9 r">sender</span>, <a href="@0@PresentationCore/A.html#0d2ce926f5cfc74b" class="t t">KeyEventArgs</a> <span id="r10 rd" class="r10 r">e</span>)
+        {
+            <b>if</b> (<span class="r10 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a> == <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#51a26d8f82f371eb" class="i field">Escape</a> || (<span class="r10 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a> == <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#fb6b5b92594477c5" class="i field">System</a> &amp;&amp; <span class="r10 r">e</span>.<a href="@0@PresentationCore/A.html#a729b8f7ffa361b1" class="i property">SystemKey</a> == <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#69f00d74f1dd9239" class="i field">F4</a>))
+            {
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#0b0d9684772eaf8d" class="i method">CleanUpHandlers</a>();
+
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#d36134a492b65fce" class="i field">tcs</a>.<a href="@0@mscorlib/A.html#f58e440930617bf6" class="i method">TrySetResult</a>(<a href="#a524c03b8af7e308" class="k">this</a>.<a href="BaseMetroDialog.cs.html#bf134373b9c776a6" class="i property">DialogSettings</a>.<a href="MetroDialogSettings.cs.html#c1bdf457f6d2e0c1" class="i property">DialogResultOnCancel</a> ?? <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#393de727803a1311" class="i field">Canceled</a>);
+
+                <span class="r10 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+            }
+            <b>else</b> <b>if</b> (<span class="r10 r">e</span>.<a href="@0@PresentationCore/A.html#102560189e85fa41" class="i property">Key</a> == <a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#38a06ab0ee7279d0" class="i field">Enter</a>)
+            {
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#0b0d9684772eaf8d" class="i method">CleanUpHandlers</a>();
+
+                <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="k">var</a> <span id="r11 rd" class="r11 r">result</span> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#361a6f185417368a" class="i property">ButtonStyle</a> == <a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>.<a href="MessageDialogStyle.cs.html#4a713ad3aceec7d8" class="i field">Affirmative</a> ? <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#aa22be2646a94eb3" class="i field">Affirmative</a> : <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#667b1f7550ad1bd5" class="i field">Negative</a>;
+
+                <b>if</b> (<a href="@0@mscorlib/A.html#4d607d6d56a93c7e" class="i method">ReferenceEquals</a>(<span class="r9 r">sender</span>, <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#8d1001d54eba656d" class="i field">PART_NegativeButton</a>))
+                {
+                    <span class="r11 r">result</span> = <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#667b1f7550ad1bd5" class="i field">Negative</a>;
+                }
+                <b>else</b> <b>if</b> (<a href="@0@mscorlib/A.html#4d607d6d56a93c7e" class="i method">ReferenceEquals</a>(<span class="r9 r">sender</span>, <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6905681ffd5ebe18" class="i field">PART_AffirmativeButton</a>))
+                {
+                    <span class="r11 r">result</span> = <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#aa22be2646a94eb3" class="i field">Affirmative</a>;
+                }
+                <b>else</b> <b>if</b> (<a href="@0@mscorlib/A.html#4d607d6d56a93c7e" class="i method">ReferenceEquals</a>(<span class="r9 r">sender</span>, <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e0d80b7cd95c4998" class="i field">PART_FirstAuxiliaryButton</a>))
+                {
+                    <span class="r11 r">result</span> = <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#45b0748377f2ea7d" class="i field">FirstAuxiliary</a>;
+                }
+                <b>else</b> <b>if</b> (<a href="@0@mscorlib/A.html#4d607d6d56a93c7e" class="i method">ReferenceEquals</a>(<span class="r9 r">sender</span>, <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#99d8310bae700cd6" class="i field">PART_SecondAuxiliaryButton</a>))
+                {
+                    <span class="r11 r">result</span> = <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#f7888895a222531d" class="i field">SecondAuxiliary</a>;
+                }
+
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#d36134a492b65fce" class="i field">tcs</a>.<a href="@0@mscorlib/A.html#f58e440930617bf6" class="i method">TrySetResult</a>(<span class="r11 r">result</span>);
+
+                <span class="r10 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+            }
+        }
+
+        <b>private void</b> <a id="6e9b9703edfce699" href="../../R/6e9b9703edfce699.html" target="n" data-glyph="76,1" class="i method">OnButtonClick</a>(<b>object</b> <span id="r12 rd" class="r12 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r13 rd" class="r13 r">e</span>)
+        {
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#0b0d9684772eaf8d" class="i method">CleanUpHandlers</a>();
+
+            <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="k">var</a> <span id="r14 rd" class="r14 r">result</span> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#361a6f185417368a" class="i property">ButtonStyle</a> == <a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>.<a href="MessageDialogStyle.cs.html#4a713ad3aceec7d8" class="i field">Affirmative</a> ? <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#aa22be2646a94eb3" class="i field">Affirmative</a> : <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#667b1f7550ad1bd5" class="i field">Negative</a>;
+
+            <b>if</b> (<a href="@0@mscorlib/A.html#4d607d6d56a93c7e" class="i method">ReferenceEquals</a>(<span class="r12 r">sender</span>, <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#8d1001d54eba656d" class="i field">PART_NegativeButton</a>))
+            {
+                <span class="r14 r">result</span> = <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#667b1f7550ad1bd5" class="i field">Negative</a>;
+            }
+            <b>else</b> <b>if</b> (<a href="@0@mscorlib/A.html#4d607d6d56a93c7e" class="i method">ReferenceEquals</a>(<span class="r12 r">sender</span>, <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6905681ffd5ebe18" class="i field">PART_AffirmativeButton</a>))
+            {
+                <span class="r14 r">result</span> = <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#aa22be2646a94eb3" class="i field">Affirmative</a>;
+            }
+            <b>else</b> <b>if</b> (<a href="@0@mscorlib/A.html#4d607d6d56a93c7e" class="i method">ReferenceEquals</a>(<span class="r12 r">sender</span>, <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e0d80b7cd95c4998" class="i field">PART_FirstAuxiliaryButton</a>))
+            {
+                <span class="r14 r">result</span> = <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#45b0748377f2ea7d" class="i field">FirstAuxiliary</a>;
+            }
+            <b>else</b> <b>if</b> (<a href="@0@mscorlib/A.html#4d607d6d56a93c7e" class="i method">ReferenceEquals</a>(<span class="r12 r">sender</span>, <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#99d8310bae700cd6" class="i field">PART_SecondAuxiliaryButton</a>))
+            {
+                <span class="r14 r">result</span> = <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#f7888895a222531d" class="i field">SecondAuxiliary</a>;
+            }
+
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#d36134a492b65fce" class="i field">tcs</a>.<a href="@0@mscorlib/A.html#f58e440930617bf6" class="i method">TrySetResult</a>(<span class="r14 r">result</span>);
+
+            <span class="r13 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+        }
+
+        <b>private void</b> <a id="786180803b44b4b7" href="../../R/786180803b44b4b7.html" target="n" data-glyph="76,1" class="i method">SetUpHandlers</a>()
+        {
+            <b>if</b> (<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6905681ffd5ebe18" class="i field">PART_AffirmativeButton</a> <b>is not null</b>)
+            {
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6905681ffd5ebe18" class="i field">PART_AffirmativeButton</a>.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> += <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6e9b9703edfce699" class="i method">OnButtonClick</a>;
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6905681ffd5ebe18" class="i field">PART_AffirmativeButton</a>.<a href="@0@PresentationCore/A.html#823b5eebadb2cc18" class="i">KeyDown</a> += <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#180ab8728af8713b" class="i method">OnKeyDownHandler</a>;
+            }
+
+            <b>if</b> (<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#8d1001d54eba656d" class="i field">PART_NegativeButton</a> <b>is not null</b>)
+            {
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#8d1001d54eba656d" class="i field">PART_NegativeButton</a>.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> += <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6e9b9703edfce699" class="i method">OnButtonClick</a>;
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#8d1001d54eba656d" class="i field">PART_NegativeButton</a>.<a href="@0@PresentationCore/A.html#823b5eebadb2cc18" class="i">KeyDown</a> += <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#180ab8728af8713b" class="i method">OnKeyDownHandler</a>;
+            }
+
+            <b>if</b> (<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e0d80b7cd95c4998" class="i field">PART_FirstAuxiliaryButton</a> <b>is not null</b>)
+            {
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e0d80b7cd95c4998" class="i field">PART_FirstAuxiliaryButton</a>.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> += <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6e9b9703edfce699" class="i method">OnButtonClick</a>;
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e0d80b7cd95c4998" class="i field">PART_FirstAuxiliaryButton</a>.<a href="@0@PresentationCore/A.html#823b5eebadb2cc18" class="i">KeyDown</a> += <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#180ab8728af8713b" class="i method">OnKeyDownHandler</a>;
+            }
+
+            <b>if</b> (<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#99d8310bae700cd6" class="i field">PART_SecondAuxiliaryButton</a> <b>is not null</b>)
+            {
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#99d8310bae700cd6" class="i field">PART_SecondAuxiliaryButton</a>.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> += <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6e9b9703edfce699" class="i method">OnButtonClick</a>;
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#99d8310bae700cd6" class="i field">PART_SecondAuxiliaryButton</a>.<a href="@0@PresentationCore/A.html#823b5eebadb2cc18" class="i">KeyDown</a> += <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#180ab8728af8713b" class="i method">OnKeyDownHandler</a>;
+            }
+
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@PresentationCore/A.html#823b5eebadb2cc18" class="i">KeyDown</a> += <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#180ab8728af8713b" class="i method">OnKeyDownHandler</a>;
+
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#74944923efed9c9c" class="i field">cancellationTokenRegistration</a> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="BaseMetroDialog.cs.html#bf134373b9c776a6" class="i property">DialogSettings</a>
+                                                     .<a href="MetroDialogSettings.cs.html#dc088b316c8947bc" class="i property">CancellationToken</a>
+                                                     .<a href="@0@mscorlib/A.html#b4627f3ac7f722a5" class="i method">Register</a>(() =&gt;
+                                                         {
+                                                             <a href="#a524c03b8af7e308" class="k">this</a>.<a href="../Extensions.cs.html#0f91027776f39144" class="i method">BeginInvoke</a>(() =&gt;
+                                                                 {
+                                                                     <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#0b0d9684772eaf8d" class="i method">CleanUpHandlers</a>();
+                                                                     <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#d36134a492b65fce" class="i field">tcs</a>.<a href="@0@mscorlib/A.html#f58e440930617bf6" class="i method">TrySetResult</a>(<a href="#a524c03b8af7e308" class="k">this</a>.<a href="BaseMetroDialog.cs.html#bf134373b9c776a6" class="i property">DialogSettings</a>.<a href="MetroDialogSettings.cs.html#c1bdf457f6d2e0c1" class="i property">DialogResultOnCancel</a> ?? <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#393de727803a1311" class="i field">Canceled</a>);
+                                                                 });
+                                                         });
+        }
+
+        <b>private void</b> <a id="0b0d9684772eaf8d" href="../../R/0b0d9684772eaf8d.html" target="n" data-glyph="76,1" class="i method">CleanUpHandlers</a>()
+        {
+            <b>if</b> (<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#8d1001d54eba656d" class="i field">PART_NegativeButton</a> <b>is not null</b>)
+            {
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#8d1001d54eba656d" class="i field">PART_NegativeButton</a>.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> -= <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6e9b9703edfce699" class="i method">OnButtonClick</a>;
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#8d1001d54eba656d" class="i field">PART_NegativeButton</a>.<a href="@0@PresentationCore/A.html#823b5eebadb2cc18" class="i">KeyDown</a> -= <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#180ab8728af8713b" class="i method">OnKeyDownHandler</a>;
+            }
+
+            <b>if</b> (<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6905681ffd5ebe18" class="i field">PART_AffirmativeButton</a> <b>is not null</b>)
+            {
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6905681ffd5ebe18" class="i field">PART_AffirmativeButton</a>.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> -= <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6e9b9703edfce699" class="i method">OnButtonClick</a>;
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6905681ffd5ebe18" class="i field">PART_AffirmativeButton</a>.<a href="@0@PresentationCore/A.html#823b5eebadb2cc18" class="i">KeyDown</a> -= <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#180ab8728af8713b" class="i method">OnKeyDownHandler</a>;
+            }
+
+            <b>if</b> (<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e0d80b7cd95c4998" class="i field">PART_FirstAuxiliaryButton</a> <b>is not null</b>)
+            {
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e0d80b7cd95c4998" class="i field">PART_FirstAuxiliaryButton</a>.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> -= <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6e9b9703edfce699" class="i method">OnButtonClick</a>;
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#e0d80b7cd95c4998" class="i field">PART_FirstAuxiliaryButton</a>.<a href="@0@PresentationCore/A.html#823b5eebadb2cc18" class="i">KeyDown</a> -= <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#180ab8728af8713b" class="i method">OnKeyDownHandler</a>;
+            }
+
+            <b>if</b> (<a href="#a524c03b8af7e308" class="k">this</a>.<a href="#99d8310bae700cd6" class="i field">PART_SecondAuxiliaryButton</a> <b>is not null</b>)
+            {
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#99d8310bae700cd6" class="i field">PART_SecondAuxiliaryButton</a>.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> -= <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#6e9b9703edfce699" class="i method">OnButtonClick</a>;
+                <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#99d8310bae700cd6" class="i field">PART_SecondAuxiliaryButton</a>.<a href="@0@PresentationCore/A.html#823b5eebadb2cc18" class="i">KeyDown</a> -= <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#180ab8728af8713b" class="i method">OnKeyDownHandler</a>;
+            }
+
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="@0@PresentationCore/A.html#823b5eebadb2cc18" class="i">KeyDown</a> -= <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#180ab8728af8713b" class="i method">OnKeyDownHandler</a>;
+
+            <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#74944923efed9c9c" class="i field">cancellationTokenRegistration</a>?.<a href="@0@mscorlib/A.html#f05a1300415bcfde" class="i method">Dispose</a>();
+        }
+
+        <b>private void</b> <a id="15a6a7863cc05250" href="../../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">OnKeyCopyExecuted</a>(<b>object</b> <span id="r15 rd" class="r15 r">sender</span>, <a href="@0@PresentationCore/A.html#b5b9242d784d106a" class="t t">ExecutedRoutedEventArgs</a> <span id="r16 rd" class="r16 r">e</span>)
+        {
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r17 rd" class="r17 r">message</span> = <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#600dbfdbe9ec71e0" class="i property">Message</a>;
+            <b>if</b> (<span class="r17 r">message</span> != <b>null</b>)
+            {
+                <a href="@0@PresentationCore/A.html#bb14b599507febfc" class="t t">Clipboard</a>.<a href="@0@PresentationCore/A.html#358295c7fc59f8e8" class="i method">SetDataObject</a>(<span class="r17 r">message</span>);
+            }
+        }
+
+        <b>private bool</b> <a id="209c7625ca3345f7" href="../../R/209c7625ca3345f7.html" target="n" data-glyph="76,1" class="i method">IsApplicable</a>(<a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a> <span id="r18 rd" class="r18 r">value</span>)
+        {
+            <b>return</b> <span class="r18 r">value</span> <b>switch</b>
+            {
+                <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#aa22be2646a94eb3" class="i field">Affirmative</a> =&gt; <b>true</b>,
+                <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#667b1f7550ad1bd5" class="i field">Negative</a> =&gt; <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#361a6f185417368a" class="i property">ButtonStyle</a> != <a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>.<a href="MessageDialogStyle.cs.html#4a713ad3aceec7d8" class="i field">Affirmative</a>,
+                <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#45b0748377f2ea7d" class="i field">FirstAuxiliary</a> =&gt; <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#361a6f185417368a" class="i property">ButtonStyle</a> <b>is</b> <a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>.<a href="MessageDialogStyle.cs.html#7bae02686559e0cd" class="i field">AffirmativeAndNegativeAndSingleAuxiliary</a> <b>or</b> <a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>.<a href="MessageDialogStyle.cs.html#8f7bccd8719aafec" class="i field">AffirmativeAndNegativeAndDoubleAuxiliary</a>,
+                <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#f7888895a222531d" class="i field">SecondAuxiliary</a> =&gt; <a href="#a524c03b8af7e308" class="k">this</a>.<a href="#361a6f185417368a" class="i property">ButtonStyle</a> == <a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>.<a href="MessageDialogStyle.cs.html#8f7bccd8719aafec" class="i field">AffirmativeAndNegativeAndDoubleAuxiliary</a>,
+                <b>_</b> =&gt; <b>false</b>
+            };
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

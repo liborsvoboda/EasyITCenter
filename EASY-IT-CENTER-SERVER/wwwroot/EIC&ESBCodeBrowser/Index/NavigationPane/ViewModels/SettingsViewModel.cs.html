@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html><head><title>SettingsViewModel.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(80);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#NavigationPane/ViewModels/SettingsViewModel.cs" target="_top">ViewModels\SettingsViewModel.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#NavigationPane" target="_top">HelpProjects\WPF-MAIN\WPFprism\NavigationPane\NavigationPane\NavigationPane.csproj</a> (NavigationPane)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Reflection</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">Contracts</span>.<span class="i n">Services</span>;
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">Models</span>;
+
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Commands</span>;
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Mvvm</span>;
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Regions</span>;
+
+<b>namespace</b> <span class="i n">NavigationPane</span>.<span class="i n">ViewModels</span>
+{
+    <span class="c">// TODO WTS: Change the URL for your privacy policy in the appsettings.json file, currently set to https://YourPrivacyUrlGoesHere</span>
+    <b>public class</b> <a id="1702171d5315f792" href="../R/1702171d5315f792.html" target="n" data-glyph="0,0" class="t t">SettingsViewModel</a> : <span class="t t">BindableBase</span>, <span class="t t">INavigationAware</span>
+    {
+        <b>private readonly</b> <a href="../Models/AppConfig.cs.html#1b526ce2ea90219e" class="t t">AppConfig</a> <a id="6a01d2e0c0b4bd40" href="../R/6a01d2e0c0b4bd40.html" target="n" data-glyph="46,1" class="i field">_config</a>;
+        <b>private readonly</b> <a href="../Contracts/Services/IThemeSelectorService.cs.html#5f6554e7259391ac" class="t t">IThemeSelectorService</a> <a id="e22ac14ddabcfd52" href="../R/e22ac14ddabcfd52.html" target="n" data-glyph="46,1" class="i field">_themeSelectorService</a>;
+        <b>private readonly</b> <a href="../Contracts/Services/ISystemService.cs.html#76cf1fe8d8a56b7d" class="t t">ISystemService</a> <a id="637e0cdcac7b1e0d" href="../R/637e0cdcac7b1e0d.html" target="n" data-glyph="46,1" class="i field">_systemService</a>;
+        <b>private</b> <a href="../Models/AppTheme.cs.html#51e69e18de9bffc4" class="t t">AppTheme</a> <a id="30f1dfcf81598dbe" href="../R/30f1dfcf81598dbe.html" target="n" data-glyph="46,1" class="i field">_theme</a>;
+        <b>private string</b> <a id="0b524662f0f148ed" href="../R/0b524662f0f148ed.html" target="n" data-glyph="46,1" class="i field">_versionDescription</a>;
+        <b>private</b> <span class="t t">ICommand</span> <a id="07349d34da12fc42" href="../R/07349d34da12fc42.html" target="n" data-glyph="46,1" class="i field">_setThemeCommand</a>;
+        <b>private</b> <span class="t t">ICommand</span> <a id="6cde1f8950ce4d0c" href="../R/6cde1f8950ce4d0c.html" target="n" data-glyph="46,1" class="i field">_privacyStatementCommand</a>;
+
+        <b>public</b> <a href="../Models/AppTheme.cs.html#51e69e18de9bffc4" class="t t">AppTheme</a> <a id="9525f6b74e9e68b5" href="../R/9525f6b74e9e68b5.html" target="n" data-glyph="102,1" class="i property">Theme</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#30f1dfcf81598dbe" class="i field">_theme</a>; }
+            <b>set</b> { <span class="i method">SetProperty</span>(<b>ref</b> <a href="#30f1dfcf81598dbe" class="i field">_theme</a>, <b>value</b>); }
+        }
+
+        <b>public string</b> <a id="2771ef2bc3a290a0" href="../R/2771ef2bc3a290a0.html" target="n" data-glyph="102,1" class="i property">VersionDescription</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#0b524662f0f148ed" class="i field">_versionDescription</a>; }
+            <b>set</b> { <span class="i method">SetProperty</span>(<b>ref</b> <a href="#0b524662f0f148ed" class="i field">_versionDescription</a>, <b>value</b>); }
+        }
+
+        <b>public</b> <span class="t t">ICommand</span> <a id="adaecc3838981748" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">SetThemeCommand</a> =&gt; <a href="#07349d34da12fc42" class="i field">_setThemeCommand</a> ?? (<a href="#07349d34da12fc42" class="i field">_setThemeCommand</a> = <b>new</b> <span class="t constructor">DelegateCommand</span>&lt;<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>&gt;(<a href="#322e1bfdef36a218" class="i method">OnSetTheme</a>));
+
+        <b>public</b> <span class="t t">ICommand</span> <a id="677d868e96b92bd0" href="../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">PrivacyStatementCommand</a> =&gt; <a href="#6cde1f8950ce4d0c" class="i field">_privacyStatementCommand</a> ?? (<a href="#6cde1f8950ce4d0c" class="i field">_privacyStatementCommand</a> = <b>new</b> <span class="t constructor">DelegateCommand</span>(<a href="#1f4df0ba71fde175" class="i method">OnPrivacyStatement</a>));
+
+        <b>public</b> <a id="e89d0bcc1f5f44f0" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">SettingsViewModel</a>(<a href="../Models/AppConfig.cs.html#1b526ce2ea90219e" class="t t">AppConfig</a> <span id="r0 rd" class="r0 r">config</span>, <a href="../Contracts/Services/IThemeSelectorService.cs.html#5f6554e7259391ac" class="t t">IThemeSelectorService</a> <span id="r1 rd" class="r1 r">themeSelectorService</span>, <a href="../Contracts/Services/ISystemService.cs.html#76cf1fe8d8a56b7d" class="t t">ISystemService</a> <span id="r2 rd" class="r2 r">systemService</span>)
+        {
+            <a href="#6a01d2e0c0b4bd40" class="i field">_config</a> = <span class="r0 r">config</span>;
+            <a href="#e22ac14ddabcfd52" class="i field">_themeSelectorService</a> = <span class="r1 r">themeSelectorService</span>;
+            <a href="#637e0cdcac7b1e0d" class="i field">_systemService</a> = <span class="r2 r">systemService</span>;
+        }
+
+        <b>public void</b> <a id="9d44cb4e2633315f" href="../R/9d44cb4e2633315f.html" target="n" data-glyph="72,1" class="i method">OnNavigatedTo</a>(<span class="t t">NavigationContext</span> <span id="r3 rd" class="r3 r">navigationContext</span>)
+        {
+            <a href="#2771ef2bc3a290a0" class="i property">VersionDescription</a> = <a href="#f2186154e1b2c6ed" class="i method">GetVersionDescription</a>();
+            <a href="#9525f6b74e9e68b5" class="i property">Theme</a> = <a href="#e22ac14ddabcfd52" class="i field">_themeSelectorService</a>.<a href="../Contracts/Services/IThemeSelectorService.cs.html#9aa9de2024931c80" class="i method">GetCurrentTheme</a>();
+        }
+
+        <b>public void</b> <a id="d6c775e902ca478b" href="../R/d6c775e902ca478b.html" target="n" data-glyph="72,1" class="i method">OnNavigatedFrom</a>(<span class="t t">NavigationContext</span> <span id="r4 rd" class="r4 r">navigationContext</span>)
+        {
+        }
+
+        <b>private string</b> <a id="f2186154e1b2c6ed" href="../R/f2186154e1b2c6ed.html" target="n" data-glyph="76,1" class="i method">GetVersionDescription</a>()
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r5 rd" class="r5 r">appName</span> = <span class="s">&quot;NavigationPane&quot;</span>;
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r6 rd" class="r6 r">assemblyLocation</span> = <a href="@1@System.Runtime/A.html#73b5be5e9c2474b2" class="t t">Assembly</a>.<a href="@1@System.Runtime/A.html#bd671af9926207e9" class="i method">GetExecutingAssembly</a>().<a href="@1@System.Runtime/A.html#3faa3e0e41d8868b" class="i property">Location</a>;
+            <b>var</b> <span id="r7 rd" class="r7 r">versionInfo</span> = <span class="t t">FileVersionInfo</span>.<span class="i method">GetVersionInfo</span>(<span class="r6 r">assemblyLocation</span>);
+            <b>return</b> <span class="s">$&quot;</span>{<span class="r5 r">appName</span>}<span class="s"> - </span>{<span class="r7 r">versionInfo</span>.<span class="i property">FileVersion</span>}<span class="s">&quot;</span>;
+        }
+
+        <b>private void</b> <a id="322e1bfdef36a218" href="../R/322e1bfdef36a218.html" target="n" data-glyph="76,1" class="i method">OnSetTheme</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r8 rd" class="r8 r">themeName</span>)
+        {
+            <a href="../Models/AppTheme.cs.html#51e69e18de9bffc4" class="k">var</a> <span id="r9 rd" class="r9 r">theme</span> = (<a href="../Models/AppTheme.cs.html#51e69e18de9bffc4" class="t t">AppTheme</a>)<a href="@1@System.Runtime/A.html#36729210e317a805" class="t t">Enum</a>.<a href="@1@System.Runtime/A.html#6c84f29508754e27" class="i method">Parse</a>(<b>typeof</b>(<a href="../Models/AppTheme.cs.html#51e69e18de9bffc4" class="t t">AppTheme</a>), <span class="r8 r">themeName</span>);
+            <a href="#e22ac14ddabcfd52" class="i field">_themeSelectorService</a>.<a href="../Contracts/Services/IThemeSelectorService.cs.html#8855e7eed0430701" class="i method">SetTheme</a>(<span class="r9 r">theme</span>);
+        }
+
+        <b>private void</b> <a id="1f4df0ba71fde175" href="../R/1f4df0ba71fde175.html" target="n" data-glyph="76,1" class="i method">OnPrivacyStatement</a>()
+            =&gt; <a href="#637e0cdcac7b1e0d" class="i field">_systemService</a>.<a href="../Contracts/Services/ISystemService.cs.html#57a78feb2aa20a23" class="i method">OpenInWebBrowser</a>(<a href="#6a01d2e0c0b4bd40" class="i field">_config</a>.<a href="../Models/AppConfig.cs.html#ada4cbe586800e55" class="i property">PrivacyStatement</a>);
+
+        <b>public bool</b> <a id="842bfa8557242ae7" href="../R/842bfa8557242ae7.html" target="n" data-glyph="72,1" class="i method">IsNavigationTarget</a>(<span class="t t">NavigationContext</span> <span id="r10 rd" class="r10 r">navigationContext</span>)
+            =&gt; <b>true</b>;
+    }
+}
+</pre></td></tr></table></div></body></html>

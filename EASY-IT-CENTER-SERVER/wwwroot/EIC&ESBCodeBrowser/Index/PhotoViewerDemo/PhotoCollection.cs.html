@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html><head><title>PhotoCollection.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(65);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#PhotoViewerDemo/PhotoCollection.cs" target="_top">PhotoCollection.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#PhotoViewerDemo" target="_top">HelpProjects\WPF-MORE\Sample Applications\PhotoViewerDemo\PhotoViewerDemo.csproj</a> (PhotoViewerDemo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">ObjectModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+
+<b>namespace</b> <span class="i n">PhotoViewerDemo</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     This class represents a collection of photos in a directory.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="d2df0b2bcdb9a1e6" href="R/d2df0b2bcdb9a1e6.html" target="n" data-glyph="0,0" class="t t">PhotoCollection</a> : <span class="t t">ObservableCollection</span>&lt;<a href="Photo.cs.html#3b9d8a112480cd79" class="t t">Photo</a>&gt;
+    {
+        <b>private</b> <span class="t t">DirectoryInfo</span> <a id="daf7b7e1ffdfb955" href="R/daf7b7e1ffdfb955.html" target="n" data-glyph="46,1" class="i field">_directory</a>;
+
+        <b>public</b> <a id="98618f2c8bf05255" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">PhotoCollection</a>()
+        {
+        }
+
+        <b>public</b> <a id="be2cb928d9b8a1cf" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">PhotoCollection</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">path</span>) : <a href="#e508bc877527a8ca" class="k">this</a>(<b>new</b> <span class="t constructor">DirectoryInfo</span>(<span class="r0 r">path</span>))
+        {
+        }
+
+        <b>public</b> <a id="e508bc877527a8ca" href="R/e508bc877527a8ca.html" target="n" data-glyph="72,1" class="t constructor">PhotoCollection</a>(<span class="t t">DirectoryInfo</span> <span id="r1 rd" class="r1 r">directory</span>)
+        {
+            <a href="#daf7b7e1ffdfb955" class="i field">_directory</a> = <span class="r1 r">directory</span>;
+            <a href="#72d78d47784e7bc9" class="i method">Update</a>();
+        }
+
+        <b>public string</b> <a id="ed8212f5c77b3f3e" href="R/ed8212f5c77b3f3e.html" target="n" data-glyph="102,1" class="i property">Path</a>
+        {
+            <b>set</b>
+            {
+                <a href="#daf7b7e1ffdfb955" class="i field">_directory</a> = <b>new</b> <span class="t constructor">DirectoryInfo</span>(<b>value</b>);
+                <a href="#72d78d47784e7bc9" class="i method">Update</a>();
+            }
+            <b>get</b> { <b>return</b> <a href="#daf7b7e1ffdfb955" class="i field">_directory</a>.<span class="i property">FullName</span>; }
+        }
+
+        <b>public</b> <span class="t t">DirectoryInfo</span> <a id="90154665bbff870a" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Directory</a>
+        {
+            <b>set</b>
+            {
+                <a href="#daf7b7e1ffdfb955" class="i field">_directory</a> = <b>value</b>;
+                <a href="#72d78d47784e7bc9" class="i method">Update</a>();
+            }
+            <b>get</b> { <b>return</b> <a href="#daf7b7e1ffdfb955" class="i field">_directory</a>; }
+        }
+
+        <b>private void</b> <a id="72d78d47784e7bc9" href="R/72d78d47784e7bc9.html" target="n" data-glyph="76,1" class="i method">Update</a>()
+        {
+            <a href="@1@System.Runtime/A.html#1c7184c9f3526d9d" class="i method">Clear</a>();
+            <b>try</b>
+            {
+                <b>foreach</b> (<b>var</b> <span id="r2 rd" class="r2 r">f</span> <b>in</b> <a href="#daf7b7e1ffdfb955" class="i field">_directory</a>.<span class="i method">GetFiles</span>(<span class="s">&quot;*.jpg&quot;</span>))
+                    <a href="@1@System.Runtime/A.html#5c61cc24de82f7e7" class="i method">Add</a>(<b>new</b> <a href="Photo.cs.html#de591118e6184e7d" class="t constructor">Photo</a>(<span class="r2 r">f</span>.<span class="i property">FullName</span>));
+            }
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#c89af51ac20d8a84" class="t t">DirectoryNotFoundException</a>)
+            {
+                <a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#d30dae02a986885a" class="i method">Show</a>(<span class="s">&quot;No Such Directory&quot;</span>);
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

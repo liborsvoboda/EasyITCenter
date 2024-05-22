@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html><head><title>TemplateWebViewPage.xaml.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(70);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasySYSTEMbuilderHelp/FormTemplates/MultiMediaTemplates/TemplateWebViewPage.xaml.cs" target="_top">FormTemplates\MultiMediaTemplates\TemplateWebViewPage.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasySYSTEMbuilderHelp" target="_top">HelpProjects\EasySYSTEMbuilderHelp\EasySYSTEMbuilderHelp.vbproj</a> (EasySYSTEMbuilderHelp)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i">CefSharp</span>;
+<b>using</b> <span class="i">EasyITSystemCenter</span>.<span class="i">Classes</span>;
+<b>using</b> <span class="i">EasyITSystemCenter</span>.<span class="i">GlobalOperations</span>;
+<b>using</b> <span class="i">Newtonsoft</span>.<span class="i">Json</span>;
+<b>using</b> <span class="i">System</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">IO</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Linq</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Controls</span>;
+ 
+<b>namespace</b> <span class="i n">EasyITSystemCenter</span>.<span class="i n">Pages</span> {
+ 
+    /// &lt;<span class="i">summary</span>&gt;
+    /// <span class="i">Template</span> <span class="i">Page</span> <b>For</b> <span class="i">internet</span> <span class="i">pages</span> <span class="i">document</span>, <span class="i">pictures</span>, <span class="i">text</span> <b>and and</b> <span class="i">much</span> <span class="i">more</span> <span class="i">file</span> <span class="i">formats</span>
+    /// <span class="i">opened</span> <b>in</b> <span class="i">WebViewer</span>
+    /// &lt;/<span class="i">summary</span>&gt;
+    <b>public</b> <b>partial</b> <b>class</b> <a id="70366099205a12a7" href="../../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="40ef58868d95c7f9">TemplateWebViewPage</span></a> : <span class="i">UserControl</span> {
+ 
+        /// &lt;<span class="i">summary</span>&gt;
+        /// <span class="i">Standartized</span> <span class="i">declaring</span> <b>static</b> <span class="i">page</span> <span class="i">data</span> <b>for global</b> <span class="i">vorking</span> <b>with</b> <span class="i">pages</span>
+        /// &lt;/<span class="i">summary</span>&gt;
+        <b>public static</b> <a id="af05fa0b156f76ee" href="../../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">DataViewSupport</a> <span class="i">dataViewSupport</span> = <b>new</b> <span class="i">DataViewSupport</span>();
+ 
+        <b>public static</b> <a id="a787e19a6d0e6da7" href="../../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">TemplateClassList</a> <span class="i">selectedRecord</span> = <b>new</b> <span class="i">TemplateClassList</span>();
+ 
+        /// &lt;<span class="i">summary</span>&gt;
+        /// <span class="i">Initialize</span> <span class="i">page</span> <b>with</b> <span class="i">loading</span> <span class="i">Dictionary</span> <b>and</b> <span class="i">direct</span> <span class="i">show</span> <span class="i">example</span> <span class="i">file</span>
+        /// &lt;/<span class="i">summary</span>&gt;
+        <b>public</b> <a id="54a03bae6dcab4fa" href="../../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">TemplateWebViewPage</a>() {
+            <span class="i">InitializeComponent</span>();
+            _ = <span class="i">SystemOperations</span>.<span class="i">SetLanguageDictionary</span>(<span class="i">Resources</span>, <span class="i">App</span>.<span class="i">appRuntimeData</span>.<span class="i">AppClientSettings</span>.<span class="i">First</span>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">Key</span> == <span class="s">&quot;sys_defaultLanguage&quot;</span>).<span class="i">Value</span>);
+ 
+            <b>try</b> {
+                <span class="i">webViewer</span>.<span class="i">BeginInit</span>();
+                <span class="i">webViewer</span>.<span class="i">Address</span> = <span class="i">Path</span>.<span class="i">Combine</span>(<span class="s">&quot;https://kliknetezde.cz&quot;</span>);
+                <span class="i">webViewer</span>.<span class="i">FrameLoadStart</span> += <span class="i">WebViewer_FrameLoadStart</span>;
+                <span class="i">webViewer</span>.<span class="i">FrameLoadEnd</span> += <span class="i">WebViewer_FrameLoadEnd</span>;
+                <span class="i">webViewer</span>.<span class="i">LifeSpanHandler</span> = <b>new</b> <span class="i">MyCustomLifeSpanHandler</span>();
+                <span class="i">MainWindow</span>.<span class="i">ProgressRing</span> = <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Visibility</span>.<span class="i">Visible</span>;
+            } <b>catch</b> (<span class="i">Exception</span> <span class="i">ex</span>) { }
+            <span class="i">MainWindow</span>.<span class="i">ProgressRing</span> = <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Visibility</span>.<span class="i">Hidden</span>;
+        }
+ 
+        <b>private</b> <a id="906e7e65d4b4461d" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">WebViewer_FrameLoadStart</span>(<b>object</b> <span class="i">sender</span>, <span class="i">FrameLoadStartEventArgs</span> <span class="i">e</span>) {
+            <span class="i">MainWindow</span>.<span class="i">ProgressRing</span> = <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Visibility</span>.<span class="i">Visible</span>;
+        }
+ 
+        <b>private</b> <a id="906e7e65d4b4461d" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">WebViewer_FrameLoadEnd</span>(<b>object</b> <span class="i">sender</span>, <span class="i">FrameLoadEndEventArgs</span> <span class="i">e</span>) {
+            <span class="i">MainWindow</span>.<span class="i">ProgressRing</span> = <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Visibility</span>.<span class="i">Hidden</span>;
+        }
+ 
+        <b>private class</b> <a id="aee9b0917f50a540" href="../../R/../../0000000000.html" target="n" data-glyph="4,1" class="t t"><span id="aac208c22233e539">MyCustomLifeSpanHandler</span></a> : <span class="i">ILifeSpanHandler</span> {
+ 
+            <b>public</b> <a id="3a077ac655c7401b" href="../../R/../../0000000000.html" target="n" data-glyph="42,2" class="i field">bool</a> <span class="i">DoClose</span>(<span class="i">IWebBrowser</span> <span class="i">chromiumWebBrowser</span>, <span class="i">IBrowser</span> <span class="i">browser</span>) {
+                <b>return</b> <b>true</b>;
+            }
+ 
+            <b>public</b> <a id="1422156d3c8a04a1" href="../../R/../../0000000000.html" target="n" data-glyph="42,2" class="i field">void</a> <span class="i">OnAfterCreated</span>(<span class="i">IWebBrowser</span> <span class="i">chromiumWebBrowser</span>, <span class="i">IBrowser</span> <span class="i">browser</span>) {
+            }
+ 
+            <b>public</b> <a id="1422156d3c8a04a1" href="../../R/../../0000000000.html" target="n" data-glyph="42,2" class="i field">void</a> <span class="i">OnBeforeClose</span>(<span class="i">IWebBrowser</span> <span class="i">chromiumWebBrowser</span>, <span class="i">IBrowser</span> <span class="i">browser</span>) {
+            }
+ 
+            <b>public</b> <a id="3a077ac655c7401b" href="../../R/../../0000000000.html" target="n" data-glyph="42,2" class="i field">bool</a> <span class="i">OnBeforePopup</span>(<span class="i">IWebBrowser</span> <span class="i">chromiumWebBrowser</span>, <span class="i">IBrowser</span> <span class="i">browser</span>, <span class="i">IFrame</span> <span class="i">frame</span>, <b>string</b> <span class="i">targetUrl</span>, <b>string</b> <span class="i">targetFrameName</span>, <span class="i">WindowOpenDisposition</span> <span class="i">targetDisposition</span>, <span class="i">bool</span> <span class="i">userGesture</span>, <span class="i">IPopupFeatures</span> <span class="i">popupFeatures</span>, <span class="i">IWindowInfo</span> <span class="i">windowInfo</span>, <span class="i">IBrowserSettings</span> <span class="i">browserSettings</span>, <span class="i">ref</span> <span class="i">bool</span> <span class="i">noJavascriptAccess</span>, <span class="i">out</span> <span class="i">IWebBrowser</span> <span class="i">newBrowser</span>) {
+                <span class="i">browser</span>.<span class="i">MainFrame</span>.<span class="i">LoadUrl</span>(<span class="i">targetUrl</span>);
+                <span class="i">newBrowser</span> = <span class="i">null</span>;
+                <b>return</b> <b>true</b>;
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

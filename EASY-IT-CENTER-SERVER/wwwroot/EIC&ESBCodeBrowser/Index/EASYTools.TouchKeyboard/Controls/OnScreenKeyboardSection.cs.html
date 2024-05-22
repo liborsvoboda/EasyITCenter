@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html><head><title>OnScreenKeyboardSection.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(120);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.TouchKeyboard/Controls/OnScreenKeyboardSection.cs" target="_top">Controls\OnScreenKeyboardSection.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.TouchKeyboard" target="_top">..\..\..\EASY-TOOLS\EASYTools.TouchKeyboard\EASYTools.TouchKeyboard.csproj</a> (EASYTools.TouchKeyboard)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">ObjectModel</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">Controls</span>
+{
+    <b>public class</b> <a id="b735514733b3d527" href="../R/b735514733b3d527.html" target="n" data-glyph="0,0" class="t t">OnScreenKeyboardSection</a> : <a href="@0@PresentationFramework/A.html#f9ce1d6be154348a" class="t t">Grid</a>
+    {
+        <b>private</b> <a href="@0@System/A.html#f63ea2601f5edbbb" class="t t">ObservableCollection</a>&lt;<a href="OnScreenKey.cs.html#04ae579109c2f9fa" class="t t">OnScreenKey</a>&gt; <a id="8313f6aaa7abf602" href="../R/8313f6aaa7abf602.html" target="n" data-glyph="46,1" class="i field">_keys</a>;
+        <b>private</b> <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="@0@PresentationFramework/A.html#f9ce1d6be154348a" class="t t">Grid</a>&gt; <a id="e35bd2815da69c40" href="../R/e35bd2815da69c40.html" target="n" data-glyph="46,1" class="i field">_buttonRows</a>;
+ 
+        <b>public</b> <a href="@0@System/A.html#f63ea2601f5edbbb" class="t t">ObservableCollection</a>&lt;<a href="OnScreenKey.cs.html#04ae579109c2f9fa" class="t t">OnScreenKey</a>&gt; <a id="23b1d26fdddf37a1" href="../R/23b1d26fdddf37a1.html" target="n" data-glyph="102,1" class="i property">Keys</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#8313f6aaa7abf602" class="i field">_keys</a>; }
+            <b>set</b>
+            {
+                <b>if</b> (<b>value</b> == <a href="#8313f6aaa7abf602" class="i field">_keys</a>) <b>return</b>;
+ 
+                <a href="#afb319801e4d1f93" class="i method">Reset</a>();
+                <a href="#8313f6aaa7abf602" class="i field">_keys</a> = <b>value</b>;
+                <a href="#7974ff39f2d23aba" class="i method">LayoutKeys</a>();
+            }
+        }
+ 
+        <b>public</b> <a id="0e026309623a84b7" href="../R/0e026309623a84b7.html" target="n" data-glyph="72,1" class="t constructor">OnScreenKeyboardSection</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#8aedc94268115177" class="i property">Margin</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#f24f92e6dee837d3" class="t constructor">Thickness</a>(5);
+            <a href="#e35bd2815da69c40" class="i field">_buttonRows</a> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<a href="@0@PresentationFramework/A.html#f9ce1d6be154348a" class="t t">Grid</a>&gt;();
+            <a href="#8313f6aaa7abf602" class="i field">_keys</a> = <b>new</b> <a href="@0@System/A.html#a0b7a0640c9feb02" class="t constructor">ObservableCollection</a>&lt;<a href="OnScreenKey.cs.html#04ae579109c2f9fa" class="t t">OnScreenKey</a>&gt;();
+            <a href="#8313f6aaa7abf602" class="i field">_keys</a>.<a href="@0@System/A.html#545075576488da8d" class="i">CollectionChanged</a> += <a href="#28ede5cfdbda28a3" class="i method">Keys_CollectionChanged</a>;
+        }
+ 
+        <b>private void</b> <a id="28ede5cfdbda28a3" href="../R/28ede5cfdbda28a3.html" target="n" data-glyph="76,1" class="i method">Keys_CollectionChanged</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>,
+                                            <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Specialized</span>.<a href="@0@System/A.html#f5d7031313cab4ab" class="t t">NotifyCollectionChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <b>switch</b> (<span class="r1 r">e</span>.<a href="@0@System/A.html#15d9dc6d0ce211ef" class="i property">Action</a>)
+            {
+                <b>case</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Specialized</span>.<a href="@0@System/A.html#5cce4343d1536ac7" class="t t">NotifyCollectionChangedAction</a>.<a href="@0@System/A.html#88ebb74b8f8efbc4" class="i field">Add</a>:
+                <b>case</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Specialized</span>.<a href="@0@System/A.html#5cce4343d1536ac7" class="t t">NotifyCollectionChangedAction</a>.<a href="@0@System/A.html#23d01c629bee7ad3" class="i field">Remove</a>:
+                    <a href="#7974ff39f2d23aba" class="i method">LayoutKeys</a>();
+                    <b>break</b>;
+                <b>case</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Specialized</span>.<a href="@0@System/A.html#5cce4343d1536ac7" class="t t">NotifyCollectionChangedAction</a>.<a href="@0@System/A.html#cd5043261ecba982" class="i field">Replace</a>:
+                    <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#3d3c2c03118be4f8" class="t constructor">NotSupportedException</a>(<span class="s">&quot;You cannot currently replace keys.&quot;</span>);
+                <b>case</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Specialized</span>.<a href="@0@System/A.html#5cce4343d1536ac7" class="t t">NotifyCollectionChangedAction</a>.<a href="@0@System/A.html#9f765bcaf89c2cbe" class="i field">Reset</a>:
+                    <a href="#afb319801e4d1f93" class="i method">Reset</a>();
+                    <b>break</b>;
+                <b>default</b>:
+                    <b>break</b>;
+            }
+        }
+ 
+        <b>private void</b> <a id="7974ff39f2d23aba" href="../R/7974ff39f2d23aba.html" target="n" data-glyph="76,1" class="i method">LayoutKeys</a>()
+        {
+            <b>if</b> (<a href="#8313f6aaa7abf602" class="i field">_keys</a> == <b>null</b> || <a href="#8313f6aaa7abf602" class="i field">_keys</a>.<a href="@0@mscorlib/A.html#f2419069e9890f5d" class="i property">Count</a> == 0) <b>return</b>;
+ 
+            <a href="#9a961177f461b157" class="i method">ResizeGrid</a>(<a href="#8313f6aaa7abf602" class="i field">_keys</a>);
+            <b>for</b> (<a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r2 rd" class="r2 r">buttonRowIndex</span> = 0; <span class="r2 r">buttonRowIndex</span> &lt; <a href="#e35bd2815da69c40" class="i field">_buttonRows</a>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a>; <span class="r2 r">buttonRowIndex</span>++)
+            {
+                <a href="@0@PresentationFramework/A.html#f9ce1d6be154348a" class="k">var</a> <span id="r3 rd" class="r3 r">grid</span> = <a href="#e35bd2815da69c40" class="i field">_buttonRows</a><a href="@0@mscorlib/A.html#0c65bec4d3fac21e">[</a><span class="r2 r">buttonRowIndex</span>];
+                <span class="r3 r">grid</span>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#5ec678e22d847fa1" class="i method">Clear</a>();
+                <b>foreach</b> (<a href="OnScreenKey.cs.html#04ae579109c2f9fa" class="k">var</a> <span id="r4 rd" class="r4 r">key</span> <b>in</b> <a href="#8313f6aaa7abf602" class="i field">_keys</a>.<a href="@0@System.Core/A.html#e73922753675387a" class="i method">Where</a>(<span id="r5 rd" class="r5 r">x</span> =&gt; <span class="r5 r">x</span>.<a href="OnScreenKey.cs.html#f0f780fe7463ed78" class="i property">GridRow</a> == <span class="r2 r">buttonRowIndex</span>))
+                {
+                    <span class="r3 r">grid</span>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<span class="r4 r">key</span>);
+                }
+            }
+        }
+ 
+        <b>private void</b> <a id="9a961177f461b157" href="../R/9a961177f461b157.html" target="n" data-glyph="76,1" class="i method">ResizeGrid</a>(<a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="OnScreenKey.cs.html#04ae579109c2f9fa" class="t t">OnScreenKey</a>&gt; <span id="r6 rd" class="r6 r">keys</span>)
+        {
+            <b>if</b> (<span class="r6 r">keys</span> == <b>null</b>) <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<span class="s">&quot;keys&quot;</span>);
+ 
+            <span class="c">// Make sure there&#39;s enough rows</span>
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r7 rd" class="r7 r">rowCount</span> = <span class="r6 r">keys</span>.<a href="@0@System.Core/A.html#f74d20c7edf30968" class="i method">Max</a>(<span id="r8 rd" class="r8 r">x</span> =&gt; <span class="r8 r">x</span>.<a href="OnScreenKey.cs.html#f0f780fe7463ed78" class="i property">GridRow</a>) + 1;
+            <b>for</b> (<a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r9 rd" class="r9 r">extraRowIndex</span> = <a href="@0@PresentationFramework/A.html#e6e16a8002a4d90f" class="i property">RowDefinitions</a>.<a href="@0@PresentationFramework/A.html#7227a95489382231" class="i property">Count</a>; <span class="r9 r">extraRowIndex</span> &lt; <span class="r7 r">rowCount</span>; <span class="r9 r">extraRowIndex</span>++)
+            {
+                <span class="c">// Button Row</span>
+                <a href="@0@PresentationFramework/A.html#e6e16a8002a4d90f" class="i property">RowDefinitions</a>.<a href="@0@PresentationFramework/A.html#c48d379cbac6b258" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#546bff66ff767474" class="t constructor">RowDefinition</a>());
+ 
+                <span class="c">// Add a grid for the buttons</span>
+                <a href="@0@PresentationFramework/A.html#f9ce1d6be154348a" class="k">var</a> <span id="r10 rd" class="r10 r">g</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#8200223a7211c338" class="t constructor">Grid</a>();
+                <a href="#e35bd2815da69c40" class="i field">_buttonRows</a>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<span class="r10 r">g</span>);
+                <a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<span class="r10 r">g</span>);
+                <span class="r10 r">g</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="@0@PresentationFramework/A.html#c187a7e85446f76c" class="i field">RowProperty</a>, <span class="r9 r">extraRowIndex</span>);
+            }
+ 
+            <span class="c">// Make sure each row has enough columns</span>
+            <b>for</b> (<a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r11 rd" class="r11 r">buttonRowIndex</span> = 0; <span class="r11 r">buttonRowIndex</span> &lt; <span class="r7 r">rowCount</span>; <span class="r11 r">buttonRowIndex</span>++)
+            {
+                <a href="@0@PresentationFramework/A.html#f9ce1d6be154348a" class="k">var</a> <span id="r12 rd" class="r12 r">grid</span> = <a href="#e35bd2815da69c40" class="i field">_buttonRows</a><a href="@0@mscorlib/A.html#0c65bec4d3fac21e">[</a><span class="r11 r">buttonRowIndex</span>];
+                <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r13 rd" class="r13 r">colCount</span> = <span class="r6 r">keys</span>.<a href="@0@System.Core/A.html#e73922753675387a" class="i method">Where</a>(<span id="r14 rd" class="r14 r">x</span> =&gt; <span class="r14 r">x</span>.<a href="OnScreenKey.cs.html#f0f780fe7463ed78" class="i property">GridRow</a> == <span class="r11 r">buttonRowIndex</span>).<a href="@0@System.Core/A.html#f74d20c7edf30968" class="i method">Max</a>(<span id="r15 rd" class="r15 r">x</span> =&gt; <span class="r15 r">x</span>.<a href="OnScreenKey.cs.html#29d34ce5ef789d0e" class="i property">GridColumn</a>) + 1;
+                <b>for</b> (<a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r16 rd" class="r16 r">colsToAdd</span> = <span class="r13 r">colCount</span> - <span class="r12 r">grid</span>.<a href="@0@PresentationFramework/A.html#586a925b8abdf5bb" class="i property">ColumnDefinitions</a>.<a href="@0@PresentationFramework/A.html#2cdf4b0f6aec05b7" class="i property">Count</a>; <span class="r16 r">colsToAdd</span> &gt; 0; <span class="r16 r">colsToAdd</span>--)
+                {
+                    <span class="c">// Add the extra Column</span>
+                    <span class="r12 r">grid</span>.<a href="@0@PresentationFramework/A.html#586a925b8abdf5bb" class="i property">ColumnDefinitions</a>.<a href="@0@PresentationFramework/A.html#623348263fd6b23a" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#169db1506e375c02" class="t constructor">ColumnDefinition</a>());
+                }
+                <b>for</b> (<a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r17 rd" class="r17 r">colsToRemove</span> = <span class="r12 r">grid</span>.<a href="@0@PresentationFramework/A.html#586a925b8abdf5bb" class="i property">ColumnDefinitions</a>.<a href="@0@PresentationFramework/A.html#2cdf4b0f6aec05b7" class="i property">Count</a> - <span class="r13 r">colCount</span>; <span class="r17 r">colsToRemove</span> &gt; 0; <span class="r17 r">colsToRemove</span>--)
+                {
+                    <span class="c">// Remove the extra Column</span>
+                    <span class="r12 r">grid</span>.<a href="@0@PresentationFramework/A.html#586a925b8abdf5bb" class="i property">ColumnDefinitions</a>.<a href="@0@PresentationFramework/A.html#43379c55fd5229e5" class="i method">RemoveAt</a>(0);
+                }
+ 
+                <span class="c">// Set the width of each column according to the key&#39;s GridWidth definition</span>
+                <span class="r6 r">keys</span>.<a href="@0@System.Core/A.html#e73922753675387a" class="i method">Where</a>(<span id="r18 rd" class="r18 r">x</span> =&gt; <span class="r18 r">x</span>.<a href="OnScreenKey.cs.html#f0f780fe7463ed78" class="i property">GridRow</a> == <span class="r11 r">buttonRowIndex</span> &amp;&amp; <span class="r18 r">x</span>.<a href="OnScreenKey.cs.html#12fa0536ab5205fb" class="i property">GridWidth</a>.<a href="@0@PresentationFramework/A.html#865d0af1c6f05cbf" class="i property">Value</a> != 1).<a href="@0@System.Core/A.html#e276d6892241255b" class="i method">ToList</a>()
+                    .<a href="@0@mscorlib/A.html#0e5a9cf0a310b9e5" class="i method">ForEach</a>(<span id="r19 rd" class="r19 r">x</span> =&gt; <span class="r12 r">grid</span>.<a href="@0@PresentationFramework/A.html#586a925b8abdf5bb" class="i property">ColumnDefinitions</a><a href="@0@PresentationFramework/A.html#6aa752703b712b22">[</a><span class="r19 r">x</span>.<a href="OnScreenKey.cs.html#29d34ce5ef789d0e" class="i property">GridColumn</a>].<a href="@0@PresentationFramework/A.html#fd69e8dcaa48c155" class="i property">Width</a> = <span class="r19 r">x</span>.<a href="OnScreenKey.cs.html#12fa0536ab5205fb" class="i property">GridWidth</a>);
+ 
+            }
+        }
+ 
+        <b>private void</b> <a id="afb319801e4d1f93" href="../R/afb319801e4d1f93.html" target="n" data-glyph="76,1" class="i method">Reset</a>()
+        {
+            <a href="#8313f6aaa7abf602" class="i field">_keys</a> = <b>null</b>;
+            <a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#5ec678e22d847fa1" class="i method">Clear</a>();
+            <a href="@0@PresentationFramework/A.html#e6e16a8002a4d90f" class="i property">RowDefinitions</a>.<a href="@0@PresentationFramework/A.html#db2fb741192915ce" class="i method">Clear</a>();
+            <a href="@0@PresentationFramework/A.html#586a925b8abdf5bb" class="i property">ColumnDefinitions</a>.<a href="@0@PresentationFramework/A.html#31f4656e367eb079" class="i method">Clear</a>();
+        }
+    }
+}</pre></td></tr></table></div></body></html>

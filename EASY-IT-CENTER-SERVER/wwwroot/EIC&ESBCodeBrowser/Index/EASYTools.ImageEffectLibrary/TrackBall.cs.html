@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html><head><title>TrackBall.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(231);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.ImageEffectLibrary/TrackBall.cs" target="_top">TrackBall.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.ImageEffectLibrary" target="_top">..\..\..\EASY-TOOLS\EASYTools.ImageEffectLibrary\EASYTools.ImageEffectLibrary.csproj</a> (EASYTools.ImageEffectLibrary)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+ 
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Media3D</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">ImageEffectLibrary</span> {
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> ScreenSaver TrackBall</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="45d7ab761a3c453f" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">Trackball</a>
+    {
+        <b>private</b> <a href="@0@PresentationCore/A.html#eaf7ad1d4aa42d7b" class="t t">Vector3D</a> <a id="d59191d2ef79b67a" href="R/d59191d2ef79b67a.html" target="n" data-glyph="46,1" class="i field">_center</a>;
+        <b>private bool</b> <a id="991d1a24d21831ae" href="R/991d1a24d21831ae.html" target="n" data-glyph="46,1" class="i field">_centered</a>; <span class="c">// Have we already determined the rotation center?</span>
+        <b>private bool</b> <a id="97151b2c5226a053" href="R/97151b2c5226a053.html" target="n" data-glyph="46,1" class="i field">_enabled</a>;
+        <b>private</b> <a href="Utils.cs.html#f3050fa26e1403a8" class="t t">Point</a> <a id="b48eb3e9ab4b8741" href="R/b48eb3e9ab4b8741.html" target="n" data-glyph="46,1" class="i field">_point</a>; <span class="c">// Initial point of drag</span>
+        <b>private bool</b> <a id="0381846abc2db424" href="R/0381846abc2db424.html" target="n" data-glyph="46,1" class="i field">_rotating</a>;
+        <b>private</b> <a href="@0@PresentationCore/A.html#d7fe24535ba22e11" class="t t">Quaternion</a> <a id="a9f11311177ece75" href="R/a9f11311177ece75.html" target="n" data-glyph="46,1" class="i field">_rotation</a>;
+        <b>private</b> <a href="@0@PresentationCore/A.html#d7fe24535ba22e11" class="t t">Quaternion</a> <a id="e1536cff3b648333" href="R/e1536cff3b648333.html" target="n" data-glyph="46,1" class="i field">_rotationDelta</a>; <span class="c">// Change to rotation because of this drag</span>
+        <b>private double</b> <a id="e1c27baf5ab30bfa" href="R/e1c27baf5ab30bfa.html" target="n" data-glyph="46,1" class="i field">_scale</a>;
+        <b>private double</b> <a id="0d7348de42937822" href="R/0d7348de42937822.html" target="n" data-glyph="46,1" class="i field">_scaleDelta</a>; <span class="c">// Change to scale because of this drag</span>
+        <b>private bool</b> <a id="338789365e8c815a" href="R/338789365e8c815a.html" target="n" data-glyph="46,1" class="i field">_scaling</a>; <span class="c">// Are we scaling?  NOTE otherwise we&#39;re rotating</span>
+        <b>private</b> <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="@0@PresentationFramework/A.html#906cf52d2e7ddbf6" class="t t">Viewport3D</a>&gt; <a id="e5333ff7a6ef940c" href="R/e5333ff7a6ef940c.html" target="n" data-glyph="46,1" class="i field">_slaves</a>;
+        <b>private</b> <a href="@0@PresentationCore/A.html#eaf7ad1d4aa42d7b" class="t t">Vector3D</a> <a id="0cbdb7782cc18d06" href="R/0cbdb7782cc18d06.html" target="n" data-glyph="46,1" class="i field">_translate</a>;
+        <b>private</b> <a href="@0@PresentationCore/A.html#eaf7ad1d4aa42d7b" class="t t">Vector3D</a> <a id="86e99d48c64da88e" href="R/86e99d48c64da88e.html" target="n" data-glyph="46,1" class="i field">_translateDelta</a>;
+ 
+        <b>public</b> <a id="1f45b156bdeeaaec" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">Trackball</a>()
+        {
+            <a href="#03d7276e22be0b3b" class="i method">Reset</a>();
+        }
+ 
+        <b>public</b> <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="@0@PresentationFramework/A.html#906cf52d2e7ddbf6" class="t t">Viewport3D</a>&gt; <a id="0590a294df1a5de8" href="R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">Slaves</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#e5333ff7a6ef940c" class="i field">_slaves</a> ?? (<a href="#e5333ff7a6ef940c" class="i field">_slaves</a> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<a href="@0@PresentationFramework/A.html#906cf52d2e7ddbf6" class="t t">Viewport3D</a>&gt;()); }
+            <b>set</b> { <a href="#e5333ff7a6ef940c" class="i field">_slaves</a> = <b>value</b>; }
+        }
+ 
+        <b>public bool</b> <a id="a9ea53eebde8456a" href="R/a9ea53eebde8456a.html" target="n" data-glyph="102,1" class="i property">Enabled</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#97151b2c5226a053" class="i field">_enabled</a> &amp;&amp; (<a href="#e5333ff7a6ef940c" class="i field">_slaves</a> != <b>null</b>) &amp;&amp; (<a href="#e5333ff7a6ef940c" class="i field">_slaves</a>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a> &gt; 0); }
+            <b>set</b> { <a href="#97151b2c5226a053" class="i field">_enabled</a> = <b>value</b>; }
+        }
+ 
+        <b>public void</b> <a id="90bb240ffa81c23f" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Attach</a>(<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r0 rd" class="r0 r">element</span>)
+        {
+            <span class="r0 r">element</span>.<a href="@0@PresentationCore/A.html#8af943423996f9bf" class="i">MouseMove</a> += <a href="#b6b9594763eead32" class="i method">MouseMoveHandler</a>;
+            <span class="r0 r">element</span>.<a href="@0@PresentationCore/A.html#a761fd76a8b14c91" class="i">MouseRightButtonDown</a> += <a href="#a9c91bead28b420c" class="i method">MouseDownHandler</a>;
+            <span class="r0 r">element</span>.<a href="@0@PresentationCore/A.html#d550060955732e60" class="i">MouseRightButtonUp</a> += <a href="#c843305993ec1950" class="i method">MouseUpHandler</a>;
+            <span class="r0 r">element</span>.<a href="@0@PresentationCore/A.html#ebe95961ddbcbd2a" class="i">MouseWheel</a> += <a href="#833c4c403bf17ea7" class="i method">OnMouseWheel</a>;
+        }
+ 
+        <b>public void</b> <a id="b484cc762f14c84e" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Detach</a>(<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r1 rd" class="r1 r">element</span>)
+        {
+            <span class="r1 r">element</span>.<a href="@0@PresentationCore/A.html#8af943423996f9bf" class="i">MouseMove</a> -= <a href="#b6b9594763eead32" class="i method">MouseMoveHandler</a>;
+            <span class="r1 r">element</span>.<a href="@0@PresentationCore/A.html#a761fd76a8b14c91" class="i">MouseRightButtonDown</a> -= <a href="#a9c91bead28b420c" class="i method">MouseDownHandler</a>;
+            <span class="r1 r">element</span>.<a href="@0@PresentationCore/A.html#d550060955732e60" class="i">MouseRightButtonUp</a> -= <a href="#c843305993ec1950" class="i method">MouseUpHandler</a>;
+            <span class="r1 r">element</span>.<a href="@0@PresentationCore/A.html#ebe95961ddbcbd2a" class="i">MouseWheel</a> -= <a href="#833c4c403bf17ea7" class="i method">OnMouseWheel</a>;
+        }
+ 
+        <span class="c">// Updates the matrices of the slaves using the rotation quaternion.</span>
+        <b>private void</b> <a id="362588653ac09b61" href="R/362588653ac09b61.html" target="n" data-glyph="76,1" class="i method">UpdateSlaves</a>(<a href="@0@PresentationCore/A.html#d7fe24535ba22e11" class="t t">Quaternion</a> <span id="r2 rd" class="r2 r">q</span>, <b>double</b> <span id="r3 rd" class="r3 r">s</span>, <a href="@0@PresentationCore/A.html#eaf7ad1d4aa42d7b" class="t t">Vector3D</a> <span id="r4 rd" class="r4 r">t</span>)
+        {
+            <span class="c">//RotateTransform3D rotation = new RotateTransform3D(q,_center);</span>
+            <span class="c">//ScaleTransform3D scale = new ScaleTransform3D(new Vector3D(s,s,s));</span>
+            <span class="c">//Transform3DCollection rotateAndScale = new Transform3DCollection(rotation,scale);</span>
+ 
+            <b>if</b> (<a href="#e5333ff7a6ef940c" class="i field">_slaves</a> != <b>null</b>)
+            {
+                <b>foreach</b> (<a href="@0@PresentationFramework/A.html#906cf52d2e7ddbf6" class="k">var</a> <span id="r5 rd" class="r5 r">i</span> <b>in</b> <a href="#e5333ff7a6ef940c" class="i field">_slaves</a>)
+                {
+                    <a href="@0@PresentationCore/A.html#66c1955656299d81" class="k">var</a> <span id="r6 rd" class="r6 r">mv</span> = <span class="r5 r">i</span>.<a href="@0@PresentationFramework/A.html#4fd9be21c9fdec01" class="i property">Children</a>[0] <b>as</b> <a href="@0@PresentationCore/A.html#66c1955656299d81" class="t t">ModelVisual3D</a>;
+                    <a href="@0@PresentationCore/A.html#56c334b998ddfaf1" class="k">var</a> <span id="r7 rd" class="r7 r">t3Dg</span> = <span class="r6 r">mv</span>.<a href="@0@PresentationCore/A.html#8e6ddd52b2656d72" class="i property">Transform</a> <b>as</b> <a href="@0@PresentationCore/A.html#56c334b998ddfaf1" class="t t">Transform3DGroup</a>;
+ 
+                    <a href="@0@PresentationCore/A.html#3be86b016efeabbb" class="k">var</a> <span id="r8 rd" class="r8 r">groupScaleTransform</span> = <span class="r7 r">t3Dg</span>.<a href="@0@PresentationCore/A.html#6480ede1b80dc20f" class="i property">Children</a>[0] <b>as</b> <a href="@0@PresentationCore/A.html#3be86b016efeabbb" class="t t">ScaleTransform3D</a>;
+                    <a href="@0@PresentationCore/A.html#e79a4e520967efcb" class="k">var</a> <span id="r9 rd" class="r9 r">groupRotateTransform</span> = <span class="r7 r">t3Dg</span>.<a href="@0@PresentationCore/A.html#6480ede1b80dc20f" class="i property">Children</a>[1] <b>as</b> <a href="@0@PresentationCore/A.html#e79a4e520967efcb" class="t t">RotateTransform3D</a>;
+                    <a href="@0@PresentationCore/A.html#04d2976a2bbcf86a" class="k">var</a> <span id="r10 rd" class="r10 r">groupTranslateTransform</span> = <span class="r7 r">t3Dg</span>.<a href="@0@PresentationCore/A.html#6480ede1b80dc20f" class="i property">Children</a>[2] <b>as</b> <a href="@0@PresentationCore/A.html#04d2976a2bbcf86a" class="t t">TranslateTransform3D</a>;
+ 
+                    <span class="r8 r">groupScaleTransform</span>.<a href="@0@PresentationCore/A.html#d835b1b2eba3d38e" class="i property">ScaleX</a> = <span class="r3 r">s</span>;
+                    <span class="r8 r">groupScaleTransform</span>.<a href="@0@PresentationCore/A.html#e4263a61df6b0f0f" class="i property">ScaleY</a> = <span class="r3 r">s</span>;
+                    <span class="r8 r">groupScaleTransform</span>.<a href="@0@PresentationCore/A.html#ea246c9fb5c49bb0" class="i property">ScaleZ</a> = <span class="r3 r">s</span>;
+                    <span class="r9 r">groupRotateTransform</span>.<a href="@0@PresentationCore/A.html#7a689427e6d97d7f" class="i property">Rotation</a> = <b>new</b> <a href="@0@PresentationCore/A.html#83d010f65077a64d" class="t constructor">AxisAngleRotation3D</a>(<span class="r2 r">q</span>.<a href="@0@PresentationCore/A.html#56bf1d1f479a7573" class="i property">Axis</a>, <span class="r2 r">q</span>.<a href="@0@PresentationCore/A.html#c5fafc01f9ebb086" class="i property">Angle</a>);
+                    <span class="r10 r">groupTranslateTransform</span>.<a href="@0@PresentationCore/A.html#c68dab52010c59b6" class="i property">OffsetX</a> = <span class="r4 r">t</span>.<a href="@0@PresentationCore/A.html#a5fe7a2598d7709f" class="i property">X</a>;
+                    <span class="r10 r">groupTranslateTransform</span>.<a href="@0@PresentationCore/A.html#b1a7cd57d4bcfe94" class="i property">OffsetY</a> = <span class="r4 r">t</span>.<a href="@0@PresentationCore/A.html#4a10a35f945ff1db" class="i property">Y</a>;
+                    <span class="r10 r">groupTranslateTransform</span>.<a href="@0@PresentationCore/A.html#bb062c0196e7fb6f" class="i property">OffsetZ</a> = <span class="r4 r">t</span>.<a href="@0@PresentationCore/A.html#8f64d9116006ab2c" class="i property">Z</a>;
+ 
+                    <span class="c">// Note that we don&#39;t copy constantly here, we copy the first time someone tries to</span>
+                    <span class="c">// trackball a frozen Models, but we replace it with a ChangeableReference</span>
+                    <span class="c">// and so subsequent interactions go through without a copy.</span>
+                    <span class="c">/*
+                    if (i.Models.Transform.IsChangeable)
+                    {
+                        Model3DGroup mutableCopy = i.Models.Copy();
+                        mutableCopy.StatusOfNextUse = UseStatus.ChangeableReference;
+                        i.Models = mutableCopy;
+                    }
+                    i.Models.Transform = rotateAndScale;
+                    */</span>
+                }
+            }
+        }
+ 
+        <b>private void</b> <a id="b6b9594763eead32" href="R/b6b9594763eead32.html" target="n" data-glyph="76,1" class="i method">MouseMoveHandler</a>(<b>object</b> <span id="r11 rd" class="r11 r">sender</span>, <a href="@0@PresentationCore/A.html#2bd9049c90bfe71a" class="t t">MouseEventArgs</a> <span id="r12 rd" class="r12 r">e</span>)
+        {
+            <b>if</b> (!<a href="#a9ea53eebde8456a" class="i property">Enabled</a>) <b>return</b>;
+            <span class="r12 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+ 
+            <a href="@0@PresentationCore/A.html#7911653ccb506216" class="k">var</a> <span id="r13 rd" class="r13 r">el</span> = (<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>) <span class="r11 r">sender</span>;
+ 
+            <b>if</b> (<span class="r13 r">el</span>.<a href="@0@PresentationCore/A.html#c34fe3db969c2270" class="i property">IsMouseCaptured</a>)
+            {
+                <a href="Utils.cs.html#f3050fa26e1403a8" class="k">var</a> <span id="r14 rd" class="r14 r">delta</span> = <a href="#b48eb3e9ab4b8741" class="i field">_point</a>;<span class="c">// - e.MouseDevice.GetPosition(el);</span>
+                <a href="@0@PresentationCore/A.html#eaf7ad1d4aa42d7b" class="k">var</a> <span id="r15 rd" class="r15 r">t</span> = <b>new</b> <a href="@0@PresentationCore/A.html#eaf7ad1d4aa42d7b" class="t constructor">Vector3D</a>();
+ 
+               <span class="c">// delta /= 2;</span>
+                <a href="@0@PresentationCore/A.html#d7fe24535ba22e11" class="k">var</a> <span id="r16 rd" class="r16 r">q</span> = <a href="#a9f11311177ece75" class="i field">_rotation</a>;
+ 
+                <b>if</b> (<a href="#0381846abc2db424" class="i field">_rotating</a>)
+                {
+                    <span class="c">// We can redefine this 2D mouse delta as a 3D mouse delta</span>
+                    <span class="c">// where &quot;into the screen&quot; is Z</span>
+                    <a href="@0@PresentationCore/A.html#eaf7ad1d4aa42d7b" class="k">var</a> <span id="r17 rd" class="r17 r">mouse</span> = <b>new</b> <a href="@0@PresentationCore/A.html#773628212c014341" class="t constructor">Vector3D</a>(<span class="r14 r">delta</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a>, -<span class="r14 r">delta</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a>, 0);
+                    <a href="@0@PresentationCore/A.html#eaf7ad1d4aa42d7b" class="k">var</a> <span id="r18 rd" class="r18 r">axis</span> = <a href="@0@PresentationCore/A.html#eaf7ad1d4aa42d7b" class="t t">Vector3D</a>.<a href="@0@PresentationCore/A.html#a4af36635c55eba6" class="i method">CrossProduct</a>(<span class="r17 r">mouse</span>, <b>new</b> <a href="@0@PresentationCore/A.html#773628212c014341" class="t constructor">Vector3D</a>(0, 0, 1));
+                    <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r19 rd" class="r19 r">len</span> = <span class="r18 r">axis</span>.<a href="@0@PresentationCore/A.html#0114024f90681e97" class="i property">Length</a>;
+                    <b>if</b> (<span class="r19 r">len</span> &lt; 0.00001 || <a href="#338789365e8c815a" class="i field">_scaling</a>)
+                        <a href="#e1536cff3b648333" class="i field">_rotationDelta</a> = <b>new</b> <a href="@0@PresentationCore/A.html#6435a4c882a20632" class="t constructor">Quaternion</a>(<b>new</b> <a href="@0@PresentationCore/A.html#773628212c014341" class="t constructor">Vector3D</a>(0, 0, 1), 0);
+                    <b>else</b>
+                        <a href="#e1536cff3b648333" class="i field">_rotationDelta</a> = <b>new</b> <a href="@0@PresentationCore/A.html#6435a4c882a20632" class="t constructor">Quaternion</a>(<span class="r18 r">axis</span>, <span class="r19 r">len</span>);
+ 
+                    <span class="r16 r">q</span> = <a href="#e1536cff3b648333" class="i field">_rotationDelta</a>*<a href="#a9f11311177ece75" class="i field">_rotation</a>;
+                }
+                <b>else</b>
+                {
+                   <span class="c">// delta /= 20;</span>
+                    <a href="#86e99d48c64da88e" class="i field">_translateDelta</a>.<a href="@0@PresentationCore/A.html#a5fe7a2598d7709f" class="i property">X</a> = <span class="r14 r">delta</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a>*-1;
+                    <a href="#86e99d48c64da88e" class="i field">_translateDelta</a>.<a href="@0@PresentationCore/A.html#4a10a35f945ff1db" class="i property">Y</a> = <span class="r14 r">delta</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a>;
+                }
+ 
+                <span class="r15 r">t</span> = <a href="#0cbdb7782cc18d06" class="i field">_translate</a> + <a href="#86e99d48c64da88e" class="i field">_translateDelta</a>;
+ 
+                <a href="#362588653ac09b61" class="i method">UpdateSlaves</a>(<span class="r16 r">q</span>, <a href="#e1c27baf5ab30bfa" class="i field">_scale</a>*<a href="#0d7348de42937822" class="i field">_scaleDelta</a>, <span class="r15 r">t</span>);
+            }
+        }
+ 
+        <b>private void</b> <a id="a9c91bead28b420c" href="R/a9c91bead28b420c.html" target="n" data-glyph="76,1" class="i method">MouseDownHandler</a>(<b>object</b> <span id="r20 rd" class="r20 r">sender</span>, <a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r21 rd" class="r21 r">e</span>)
+        {
+            <b>if</b> (!<a href="#a9ea53eebde8456a" class="i property">Enabled</a>) <b>return</b>;
+            <span class="r21 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+ 
+ 
+            <b>if</b> (<a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#4e532ab033c068e5" class="i method">IsKeyDown</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#403a1a3a3b3247ac" class="i field">F1</a>))
+            {
+                <a href="#03d7276e22be0b3b" class="i method">Reset</a>();
+                <b>return</b>;
+            }
+ 
+            <a href="@0@PresentationCore/A.html#7911653ccb506216" class="k">var</a> <span id="r22 rd" class="r22 r">el</span> = (<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>) <span class="r20 r">sender</span>;
+            <span class="c">//_point = e.MouseDevice.GetPosition(el);</span>
+            <span class="c">// Initialize the center of rotation to the lookatpoint</span>
+            <b>if</b> (!<a href="#991d1a24d21831ae" class="i field">_centered</a>)
+            {
+                <a href="@0@PresentationCore/A.html#96f66618a820c1bb" class="k">var</a> <span id="r23 rd" class="r23 r">camera</span> = (<a href="@0@PresentationCore/A.html#96f66618a820c1bb" class="t t">ProjectionCamera</a>) <a href="#e5333ff7a6ef940c" class="i field">_slaves</a>[0].<a href="@0@PresentationFramework/A.html#47cf185ce6ff176b" class="i property">Camera</a>;
+                <a href="#d59191d2ef79b67a" class="i field">_center</a> = <span class="r23 r">camera</span>.<a href="@0@PresentationCore/A.html#94da59fda927c765" class="i property">LookDirection</a>;
+                <a href="#991d1a24d21831ae" class="i field">_centered</a> = <b>true</b>;
+            }
+ 
+            <a href="#338789365e8c815a" class="i field">_scaling</a> = (<span class="r21 r">e</span>.<a href="@0@PresentationCore/A.html#1432317a0bf728b9" class="i property">MiddleButton</a> == <a href="@0@PresentationCore/A.html#c49fee26f1f7a30c" class="t t">MouseButtonState</a>.<a href="@0@PresentationCore/A.html#84ab65d095fc0025" class="i field">Pressed</a>);
+ 
+            <a href="#0381846abc2db424" class="i field">_rotating</a> = <a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#4e532ab033c068e5" class="i method">IsKeyDown</a>(<a href="@0@WindowsBase/A.html#8e0d9266dee78287" class="t t">Key</a>.<a href="@0@WindowsBase/A.html#692aebff3e077477" class="i field">Space</a>) == <b>false</b>;
+ 
+            <span class="r22 r">el</span>.<a href="@0@PresentationCore/A.html#466850becfc3b224" class="i method">CaptureMouse</a>();
+        }
+ 
+        <b>private void</b> <a id="c843305993ec1950" href="R/c843305993ec1950.html" target="n" data-glyph="76,1" class="i method">MouseUpHandler</a>(<b>object</b> <span id="r24 rd" class="r24 r">sender</span>, <a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r25 rd" class="r25 r">e</span>)
+        {
+            <b>if</b> (!<a href="#97151b2c5226a053" class="i field">_enabled</a>) <b>return</b>;
+            <span class="r25 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+ 
+            <span class="c">// Stuff the current initial + delta into initial so when we next move we</span>
+            <span class="c">// start at the right place.</span>
+            <b>if</b> (<a href="#0381846abc2db424" class="i field">_rotating</a>)
+                <a href="#a9f11311177ece75" class="i field">_rotation</a> = <a href="#e1536cff3b648333" class="i field">_rotationDelta</a>*<a href="#a9f11311177ece75" class="i field">_rotation</a>;
+            <b>else</b>
+            {
+                <a href="#0cbdb7782cc18d06" class="i field">_translate</a> += <a href="#86e99d48c64da88e" class="i field">_translateDelta</a>;
+                <a href="#86e99d48c64da88e" class="i field">_translateDelta</a>.<a href="@0@PresentationCore/A.html#a5fe7a2598d7709f" class="i property">X</a> = 0;
+                <a href="#86e99d48c64da88e" class="i field">_translateDelta</a>.<a href="@0@PresentationCore/A.html#4a10a35f945ff1db" class="i property">Y</a> = 0;
+            }
+ 
+            <span class="c">//_scale = _scaleDelta*_scale;</span>
+            <a href="@0@PresentationCore/A.html#7911653ccb506216" class="k">var</a> <span id="r26 rd" class="r26 r">el</span> = (<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a>) <span class="r24 r">sender</span>;
+            <span class="r26 r">el</span>.<a href="@0@PresentationCore/A.html#d6873c5315db5dbb" class="i method">ReleaseMouseCapture</a>();
+        }
+ 
+        <b>private void</b> <a id="833c4c403bf17ea7" href="R/833c4c403bf17ea7.html" target="n" data-glyph="76,1" class="i method">OnMouseWheel</a>(<b>object</b> <span id="r27 rd" class="r27 r">sender</span>, <a href="@0@PresentationCore/A.html#2907728f4bd9d8a3" class="t t">MouseWheelEventArgs</a> <span id="r28 rd" class="r28 r">e</span>)
+        {
+            <span class="r28 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+ 
+            <a href="#0d7348de42937822" class="i field">_scaleDelta</a> += <span class="r28 r">e</span>.<a href="@0@PresentationCore/A.html#da89a6a0b369523a" class="i property">Delta</a>/(<b>double</b>) 1000;
+            <a href="@0@PresentationCore/A.html#d7fe24535ba22e11" class="k">var</a> <span id="r29 rd" class="r29 r">q</span> = <a href="#a9f11311177ece75" class="i field">_rotation</a>;
+ 
+            <a href="#362588653ac09b61" class="i method">UpdateSlaves</a>(<span class="r29 r">q</span>, <a href="#e1c27baf5ab30bfa" class="i field">_scale</a>*<a href="#0d7348de42937822" class="i field">_scaleDelta</a>, <a href="#0cbdb7782cc18d06" class="i field">_translate</a>);
+        }
+ 
+        <b>private void</b> <a id="37f835ca986ad824" href="R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">MouseDoubleClickHandler</a>(<b>object</b> <span id="r30 rd" class="r30 r">sender</span>, <a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r31 rd" class="r31 r">e</span>)
+        {
+            <a href="#03d7276e22be0b3b" class="i method">Reset</a>();
+        }
+ 
+        <b>private void</b> <a id="03d7276e22be0b3b" href="R/03d7276e22be0b3b.html" target="n" data-glyph="76,1" class="i method">Reset</a>()
+        {
+            <a href="#a9f11311177ece75" class="i field">_rotation</a> = <b>new</b> <a href="@0@PresentationCore/A.html#82589d82b30cbafa" class="t constructor">Quaternion</a>(0, 0, 0, 1);
+            <a href="#e1c27baf5ab30bfa" class="i field">_scale</a> = 1;
+            <a href="#0cbdb7782cc18d06" class="i field">_translate</a>.<a href="@0@PresentationCore/A.html#a5fe7a2598d7709f" class="i property">X</a> = 0;
+            <a href="#0cbdb7782cc18d06" class="i field">_translate</a>.<a href="@0@PresentationCore/A.html#4a10a35f945ff1db" class="i property">Y</a> = 0;
+            <a href="#0cbdb7782cc18d06" class="i field">_translate</a>.<a href="@0@PresentationCore/A.html#8f64d9116006ab2c" class="i property">Z</a> = 0;
+            <a href="#86e99d48c64da88e" class="i field">_translateDelta</a>.<a href="@0@PresentationCore/A.html#a5fe7a2598d7709f" class="i property">X</a> = 0;
+            <a href="#86e99d48c64da88e" class="i field">_translateDelta</a>.<a href="@0@PresentationCore/A.html#4a10a35f945ff1db" class="i property">Y</a> = 0;
+            <a href="#86e99d48c64da88e" class="i field">_translateDelta</a>.<a href="@0@PresentationCore/A.html#8f64d9116006ab2c" class="i property">Z</a> = 0;
+ 
+            <span class="c">// Clear delta too, because if reset is called because of a double click then the mouse</span>
+            <span class="c">// up handler will also be called and this way it won&#39;t do anything.</span>
+            <a href="#e1536cff3b648333" class="i field">_rotationDelta</a> = <a href="@0@PresentationCore/A.html#d7fe24535ba22e11" class="t t">Quaternion</a>.<a href="@0@PresentationCore/A.html#dcfaff69c7cc3135" class="i property">Identity</a>;
+            <a href="#0d7348de42937822" class="i field">_scaleDelta</a> = 1;
+            <a href="#362588653ac09b61" class="i method">UpdateSlaves</a>(<a href="#a9f11311177ece75" class="i field">_rotation</a>, <a href="#e1c27baf5ab30bfa" class="i field">_scale</a>, <a href="#0cbdb7782cc18d06" class="i field">_translate</a>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

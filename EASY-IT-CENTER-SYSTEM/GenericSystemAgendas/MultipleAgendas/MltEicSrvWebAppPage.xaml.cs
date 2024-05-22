@@ -77,19 +77,20 @@ namespace EasyITSystemCenter.Pages {
 
                 if (systemCustomPageList.DevModeEnabled) { webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = true; } else { webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = false; }
 
-                if (systemCustomPageList.ShowHelpTab) {
+                if (systemCustomPageList.ShowHelpTab && systemCustomPageList.HelpTabUrl != null) {
 
                     switch (systemCustomPageList.InheritedHelpTabSourceType.ToLower()) {
                         case "eicserverhelpurl":
+                            ti_helpUrl.SetCurrentValue(VisibilityProperty, Visibility.Visible);
+                            helpWebBrowser.SetCurrentValue(Microsoft.Web.WebView2.Wpf.WebView2.SourceProperty, new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "conn_apiAddress").Value + $"{(systemCustomPageList.HelpTabUrl.StartsWith("/")?systemCustomPageList.HelpTabUrl:"/"+systemCustomPageList.HelpTabUrl)}"));
+                            break;
                         case "esbsystemhelpurl":
+                            ti_helpUrl.SetCurrentValue(VisibilityProperty, Visibility.Visible);
+                            helpWebBrowser.SetCurrentValue(Microsoft.Web.WebView2.Wpf.WebView2.SourceProperty, new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + systemCustomPageList.HelpTabUrl));
+                            break;
                         case "publicwebhelpurl":
                             ti_helpUrl.SetCurrentValue(VisibilityProperty, Visibility.Visible);
-                            helpWebBrowser.SetCurrentValue(Microsoft.Web.WebView2.Wpf.WebView2.SourceProperty, new Uri(systemCustomPageList.IsServerUrl ? App.appRuntimeData.AppClientSettings.First(a => a.Key == "conn_apiAddress").Value +
-                            (systemCustomPageList.HelpTabUrl != null && systemCustomPageList.HelpTabUrl.StartsWith("/") ? systemCustomPageList.HelpTabUrl : "/" + systemCustomPageList.HelpTabUrl)
-                            : systemCustomPageList.IsSystemUrl ? App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.HelpTabUrl
-                            : systemCustomPageList.HelpTabUrl
-                            ));
-                            helpWebBrowser.CoreWebView2.Settings.AreDevToolsEnabled = false;
+                            helpWebBrowser.SetCurrentValue(Microsoft.Web.WebView2.Wpf.WebView2.SourceProperty, new Uri(systemCustomPageList.HelpTabUrl));
                             break;
                         case "eicservermdfile":
                             ti_helpDoc.SetCurrentValue(VisibilityProperty, Visibility.Visible);

@@ -1,0 +1,1218 @@
+﻿<!DOCTYPE html>
+<html><head><title>ThumbViewer.xaml.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(1209);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#DocumentSerialization/ThumbViewer.xaml.cs" target="_top">ThumbViewer.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#DocumentSerialization" target="_top">HelpProjects\WPF-MORE\Documents\Fixed Documents\DocumentSerialization\DocumentSerialization.csproj</a> (DocumentSerialization)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// DocumentSerialize SDK Sample - ThumbViewer.cs</span>
+<span class="c">// Copyright (c) Microsoft Corporation. All rights reserved.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>.<span class="i n">Serialization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Markup</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<span class="i n">Primitives</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Reflection</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Xps</span>.<span class="i n">Packaging</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Xps</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Annotations</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Annotations</span>.<span class="i n">Storage</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Xml</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>;
+
+<b>namespace</b> <span class="i n">DocumentSerialization</span>
+{
+    <b>public</b> <a href="P/b9f78ae39a7a8c15.html" target="s" class="k">partial</a> <b>class</b> <a id="b9f78ae39a7a8c15" href="R/b9f78ae39a7a8c15.html" target="n" data-glyph="0,0" class="t t"><span id="415e214c019b2a24">ThumbViewer</span></a> : <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>
+    {
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Command Handlers
+        <span class="c">// ------------------------ AddCommandHandlers ------------------------</span>
+        <b>private void</b> <a id="805144c8f427c5a5" href="R/805144c8f427c5a5.html" target="n" data-glyph="76,1" class="i method">AddCommandHandlers</a>(<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r0 rd" class="r0 r">uiScope</span>)
+        {
+            <a href="@0@PresentationCore/A.html#d2c2dc017f319c88" class="t t">CommandManager</a>.<a href="@0@PresentationCore/A.html#5b13a154e4e3d49d" class="i method">RegisterClassCommandBinding</a>( <b>typeof</b>(<a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="t t">ThumbViewer</a>),
+                <b>new</b> <a href="@0@PresentationCore/A.html#d77b2f2792ce84cf" class="t constructor">CommandBinding</a>( <a href="@0@PresentationCore/A.html#f5ce0fa6ad00e8b4" class="t t">ApplicationCommands</a>.<a href="@0@PresentationCore/A.html#ad8a45fe29732c6f" class="i property">Open</a>,
+                            <b>new</b> <span class="t">ExecutedRoutedEventHandler</span>(<a href="#8461edd4d6023c45" class="i method">OnOpen</a>),
+                            <b>new</b> <span class="t">CanExecuteRoutedEventHandler</span>(<a href="#bf1abf713b521be0" class="i method">OnNewQuery</a>) ) );
+
+            <span class="c">// Add Command Handlers</span>
+            <a href="@0@PresentationCore/A.html#0ede566c0a442aaa" class="t t">CommandBindingCollection</a> <span id="r1 rd" class="r1 r">commandBindings</span> = <span class="r0 r">uiScope</span>.<a href="@0@PresentationCore/A.html#f7cc4be88f56abe2" class="i property">CommandBindings</a>;
+
+            <span class="r1 r">commandBindings</span>.<a href="@0@PresentationCore/A.html#8e7311636e497744" class="i method">Add</a>(
+                <b>new</b> <a href="@0@PresentationCore/A.html#d77b2f2792ce84cf" class="t constructor">CommandBinding</a>( <a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="t t">ThumbViewer</a>.<a href="#c9f3ea13274b26f7" class="i property">Exit</a>,
+                            <b>new</b> <span class="t">ExecutedRoutedEventHandler</span>(<a href="#0e22f2650947f76f" class="i method">OnExit</a>),
+                            <b>new</b> <span class="t">CanExecuteRoutedEventHandler</span>(<a href="#bf1abf713b521be0" class="i method">OnNewQuery</a>) ) );
+
+            <span class="r1 r">commandBindings</span>.<a href="@0@PresentationCore/A.html#8e7311636e497744" class="i method">Add</a>(
+                <b>new</b> <a href="@0@PresentationCore/A.html#d77b2f2792ce84cf" class="t constructor">CommandBinding</a>( <a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="t t">ThumbViewer</a>.<a href="#2237adcfa8e729fa" class="i property">SaveAs</a>,
+                            <b>new</b> <span class="t">ExecutedRoutedEventHandler</span>(<a href="#ed4102597d33858d" class="i method">OnSaveAs</a>),
+                            <b>new</b> <span class="t">CanExecuteRoutedEventHandler</span>(<a href="#bf1abf713b521be0" class="i method">OnNewQuery</a>) ) );
+
+            <span class="r1 r">commandBindings</span>.<a href="@0@PresentationCore/A.html#8e7311636e497744" class="i method">Add</a>(
+                <b>new</b> <a href="@0@PresentationCore/A.html#d77b2f2792ce84cf" class="t constructor">CommandBinding</a>(<a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="t t">ThumbViewer</a>.<a href="#890e6338bd632b3a" class="i property">AddBookmark</a>,
+                            <b>new</b> <span class="t">ExecutedRoutedEventHandler</span>(<a href="#b07e87d3acd8fd15" class="i method">OnAddBookmark</a>),
+                            <b>new</b> <span class="t">CanExecuteRoutedEventHandler</span>(<a href="#bf1abf713b521be0" class="i method">OnNewQuery</a>) ) );
+
+            <span class="r1 r">commandBindings</span>.<a href="@0@PresentationCore/A.html#8e7311636e497744" class="i method">Add</a>(
+                <b>new</b> <a href="@0@PresentationCore/A.html#d77b2f2792ce84cf" class="t constructor">CommandBinding</a>(<a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="t t">ThumbViewer</a>.<a href="#9899138e6060964f" class="i property">AddComment</a>,
+                            <b>new</b> <span class="t">ExecutedRoutedEventHandler</span>(<a href="#4a4393abe0bdac90" class="i method">OnAddComment</a>),
+                            <b>new</b> <span class="t">CanExecuteRoutedEventHandler</span>(<a href="#bf1abf713b521be0" class="i method">OnNewQuery</a>) ) );
+
+            <span class="c">// Enable Annotations</span>
+            <a href="#0eb3614f0c379958" class="i field">_annotationBuffer</a> = <b>new</b> <span class="t constructor">MemoryStream</span>();
+            <a href="#403d3bfa10a33571" class="i field">_annStore</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#1b72721b2b293706" class="t constructor">XmlStreamStore</a>(<a href="#0eb3614f0c379958" class="i field">_annotationBuffer</a>);
+            <a href="#cac019a6fbf46cd5" class="i field">_annServ</a>  = <b>new</b> <a href="@0@PresentationFramework/A.html#c18d97a94e649752" class="t constructor">AnnotationService</a>(<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>);
+            <a href="#403d3bfa10a33571" class="i field">_annStore</a>.<a href="@0@PresentationFramework/A.html#c971d0f9afebf003" class="i">StoreContentChanged</a> +=
+                <b>new</b> <span class="t">StoreContentChangedEventHandler</span>(<a href="#cf212c814e2911f1" class="i method">_annStore_StoreContentChanged</a>);
+            <a href="#cac019a6fbf46cd5" class="i field">_annServ</a>.<a href="@0@PresentationFramework/A.html#c66998f4282f1138" class="i method">Enable</a>(<a href="#403d3bfa10a33571" class="i field">_annStore</a>);
+
+        }<span class="c">// end:AddCommandHandlers()</span>
+
+
+        <b>public static</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <a id="c9f3ea13274b26f7" href="R/c9f3ea13274b26f7.html" target="n" data-glyph="102,1" class="i property">Exit</a> =&gt; <a href="#362abedd17beafd3" class="i method">DeclareCommand</a>(<b>ref</b> <a href="#ce53317b8076ded9" class="i field">_Exit</a>, <span class="s">&quot;FileExit&quot;</span>);
+
+        <b>private static</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <a id="ce53317b8076ded9" href="R/ce53317b8076ded9.html" target="n" data-glyph="46,1" class="i field">_Exit</a>;
+
+        <b>public static</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <a id="2237adcfa8e729fa" href="R/2237adcfa8e729fa.html" target="n" data-glyph="102,1" class="i property">SaveAs</a> =&gt; <a href="#362abedd17beafd3" class="i method">DeclareCommand</a>(<b>ref</b> <a href="#8ca964f213ff4e93" class="i field">_SaveAs</a>, <span class="s">&quot;SaveAs&quot;</span>);
+
+        <b>private static</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <a id="8ca964f213ff4e93" href="R/8ca964f213ff4e93.html" target="n" data-glyph="46,1" class="i field">_SaveAs</a>;
+
+        <b>public static</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <a id="890e6338bd632b3a" href="R/890e6338bd632b3a.html" target="n" data-glyph="102,1" class="i property">AddBookmark</a> =&gt; <a href="#362abedd17beafd3" class="i method">DeclareCommand</a>(<b>ref</b> <a href="#2f28277c46fb0a7b" class="i field">_AddBookmark</a>, <span class="s">&quot;AddBookmark&quot;</span>);
+
+        <b>private static</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <a id="2f28277c46fb0a7b" href="R/2f28277c46fb0a7b.html" target="n" data-glyph="46,1" class="i field">_AddBookmark</a>;
+
+        <b>public static</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <a id="9899138e6060964f" href="R/9899138e6060964f.html" target="n" data-glyph="102,1" class="i property">AddComment</a> =&gt; <a href="#362abedd17beafd3" class="i method">DeclareCommand</a>(<b>ref</b> <a href="#b5293359e2e2ef3b" class="i field">_AddComment</a>, <span class="s">&quot;AddComment&quot;</span>);
+
+        <b>private static</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <a id="b5293359e2e2ef3b" href="R/b5293359e2e2ef3b.html" target="n" data-glyph="46,1" class="i field">_AddComment</a>;
+
+        <b>private static</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <a id="362abedd17beafd3" href="R/362abedd17beafd3.html" target="n" data-glyph="76,1" class="i method">DeclareCommand</a>(<b>ref</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <span id="r2 rd" class="r2 r">command</span>,
+                                                      <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r3 rd" class="r3 r">commandDebugName</span>) =&gt; <a href="#3d369c1e75d96a64" class="i method">DeclareCommand</a>(<b>ref</b> <span class="r2 r">command</span>, <span class="r3 r">commandDebugName</span>, <b>null</b>);
+
+        <b>private static</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <a id="3d369c1e75d96a64" href="R/3d369c1e75d96a64.html" target="n" data-glyph="76,1" class="i method">DeclareCommand</a>(<b>ref</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <span id="r4 rd" class="r4 r">command</span>,
+                                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r5 rd" class="r5 r">commandDebugName</span>, <a href="@0@PresentationCore/A.html#0ae69681272793fd" class="t t">InputGesture</a> <span id="r6 rd" class="r6 r">gesture</span>)
+        {
+            <b>if</b> (<span class="r4 r">command</span> == <b>null</b>)
+            {
+                <a href="@0@PresentationCore/A.html#dbe6ed9b73e2de6d" class="t t">InputGestureCollection</a> <span id="r7 rd" class="r7 r">collection</span> = <b>null</b>;
+
+                <b>if</b> (<span class="r6 r">gesture</span> != <b>null</b>)
+                {
+                    <span class="r7 r">collection</span> = <b>new</b> <a href="@0@PresentationCore/A.html#1fb2fc27415d1ec4" class="t constructor">InputGestureCollection</a>();
+                    <span class="r7 r">collection</span>.<a href="@0@PresentationCore/A.html#7e0b610c08a44207" class="i method">Add</a>(<span class="r6 r">gesture</span>);
+                }
+
+                <span class="r4 r">command</span> = <b>new</b> <a href="@0@PresentationCore/A.html#a37655b343325079" class="t constructor">RoutedCommand</a>(<span class="r5 r">commandDebugName</span>,
+                                            <b>typeof</b>(<a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="t t">ThumbViewer</a>), <span class="r7 r">collection</span>);
+            }
+            <b>return</b> <span class="r4 r">command</span>;
+        }<span class="c">// end:DeclareCommand()</span>
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Command Handlers
+
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Initialize and Terminate
+        <span class="c">// ---------------------- InitializeThumbViewer -----------------------</span>
+        <b>private void</b> <a id="6f51a6a7ef1e15bc" href="R/6f51a6a7ef1e15bc.html" target="n" data-glyph="76,1" class="i method">InitializeThumbViewer</a>(<b>object</b> <span id="r8 rd" class="r8 r">sender</span>, <span class="i n">System</span>.<a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r9 rd" class="r9 r">args</span>)
+        {
+            <a href="#805144c8f427c5a5" class="i method">AddCommandHandlers</a>(<a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="k">this</a>);
+            <a href="#0bb35177dca16377" class="i field">_reflectionTextPointer_InsertTextElement</a> =
+                <b>typeof</b>(<a href="@0@PresentationFramework/A.html#653528d814b49dce" class="t t">TextPointer</a>).<a href="@1@System.Runtime/A.html#f24e0c9fd5441fd5" class="i method">GetMethod</a>( <span class="s">&quot;InsertTextElement&quot;</span>,
+                              <a href="@1@System.Runtime/A.html#4795caf3b483702d" class="t t">BindingFlags</a>.<a href="@1@System.Runtime/A.html#5144189c11f6b668" class="i field">NonPublic</a> | <a href="@1@System.Runtime/A.html#4795caf3b483702d" class="t t">BindingFlags</a>.<a href="@1@System.Runtime/A.html#54a14f747b06c614" class="i field">Instance</a> );
+            <b>if</b> (<a href="#0bb35177dca16377" class="i field">_reflectionTextPointer_InsertTextElement</a> == <b>null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#df2d82d91ca29e40" class="t constructor">Exception</a>(
+                    <span class="s">&quot;TextPointer.InsertTextElement method not found&quot;</span> );
+            }
+            <span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a> == <b>null</b>);
+        }<span class="c">// end:InitializeThumbViewer()</span>
+
+
+        <span class="c">// ------------------------------ OnExit ------------------------------</span>
+        <b>private void</b> <a id="0e22f2650947f76f" href="R/0e22f2650947f76f.html" target="n" data-glyph="76,1" class="i method">OnExit</a>(<b>object</b> <span id="r10 rd" class="r10 r">target</span>, <a href="@0@PresentationCore/A.html#b5b9242d784d106a" class="t t">ExecutedRoutedEventArgs</a> <span id="r11 rd" class="r11 r">args</span>)
+        {
+            <a href="#ed07fa9cb730e0d4" class="i method">ShutDown</a>();
+        }
+
+
+        <span class="c">// ------------------------ ClosedThumbViewer -------------------------</span>
+        <b>void</b> <a id="25e4fa1b5df126d7" href="R/25e4fa1b5df126d7.html" target="n" data-glyph="76,1" class="i method">ClosedThumbViewer</a>(<b>object</b> <span id="r12 rd" class="r12 r">sender</span>, <a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r13 rd" class="r13 r">e</span>)
+        {
+            <a href="#ed07fa9cb730e0d4" class="i method">ShutDown</a>();
+        }
+
+
+        <span class="c">// ----------------------------- ShutDown -----------------------------</span>
+        <b>void</b> <a id="ed07fa9cb730e0d4" href="R/ed07fa9cb730e0d4.html" target="n" data-glyph="76,1" class="i method">ShutDown</a>()
+        {
+            <b>if</b> (<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a> != <b>null</b>)
+            {
+                <span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a>.<a href="@0@PresentationCore/A.html#8f378e7777e14ef2" class="i property">DocumentPaginator</a> <b>is</b>
+                                                    <a href="@0@PresentationCore/A.html#90f849c487b7276d" class="t t">DynamicDocumentPaginator</a>);
+                (<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a>.<a href="@0@PresentationCore/A.html#8f378e7777e14ef2" class="i property">DocumentPaginator</a> <b>as</b>
+                    <a href="@0@PresentationCore/A.html#90f849c487b7276d" class="t t">DynamicDocumentPaginator</a>).<a href="@0@PresentationCore/A.html#095f921f08c44b33" class="i">PaginationCompleted</a> -=
+                                                    <a href="#d95856fc9993ebcf" class="i method">PaginationCompleted</a>;
+            }
+
+            <b>if</b> (<a href="@0@PresentationFramework/A.html#cf9c51e402f97b05" class="t t">Application</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a> != <b>null</b>)
+                <a href="@0@PresentationFramework/A.html#cf9c51e402f97b05" class="t t">Application</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>.<a href="@0@PresentationFramework/A.html#323f71efbcb142b9" class="i method">Shutdown</a>();
+        }<span class="c">// end:ShutDown()</span>
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Initialize and Terminate
+
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Load and Save Documents
+        <span class="c">// ------------------------------ OnOpen ------------------------------</span>
+        <b>private static void</b> <a id="8461edd4d6023c45" href="R/8461edd4d6023c45.html" target="n" data-glyph="76,1" class="i method">OnOpen</a>(<b>object</b> <span id="r14 rd" class="r14 r">target</span>, <a href="@0@PresentationCore/A.html#b5b9242d784d106a" class="t t">ExecutedRoutedEventArgs</a> <span id="r15 rd" class="r15 r">args</span>)
+        {
+            <a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="t t">ThumbViewer</a> <span id="r16 rd" class="r16 r">tv</span> = (<a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="t t">ThumbViewer</a>)<span class="r14 r">target</span>;
+            <b>if</b> (<span class="r16 r">tv</span>.<a href="#824fb729b4a6ddd2" class="i method">OpenDocument</a>(<b>null</b>))  <span class="c">// null indicates prompt for filename.</span>
+            {
+                <span class="r16 r">tv</span>.<a href="#e76d31b3ca7d4e77" class="i method">CreateThumbs</a>();
+            }
+        }
+
+
+        <span class="c">// --------------------------- OpenDocument ---------------------------</span>
+        <b>public bool</b> <a id="824fb729b4a6ddd2" href="R/824fb729b4a6ddd2.html" target="n" data-glyph="72,1" class="i method">OpenDocument</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r17 rd" class="r17 r">fileName</span>)
+        {
+            <span class="i n">Microsoft</span>.<span class="i n">Win32</span>.<a href="@0@PresentationFramework/A.html#abaa785ee8266b3d" class="t t">OpenFileDialog</a> <span id="r18 rd" class="r18 r">dialog</span>;
+
+            <span class="c">// If there is a document currently open, close it.</span>
+            <b>if</b> (<a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="k">this</a>.<a href="#3540ba324b459ece" class="i property">Document</a> != <b>null</b>)  <a href="#b99f465a9c3e698b" class="i method">CloseFile</a>();
+
+            <span class="r18 r">dialog</span> = <b>new</b> <span class="i n">Microsoft</span>.<span class="i n">Win32</span>.<a href="@0@PresentationFramework/A.html#007fad921b514290" class="t constructor">OpenFileDialog</a>();
+            <span class="r18 r">dialog</span>.<a href="@0@PresentationFramework/A.html#a6657594201aaea4" class="i property">CheckFileExists</a> = <b>true</b>;
+            <span class="r18 r">dialog</span>.<a href="@0@PresentationFramework/A.html#83b53bc23f01d394" class="i property">InitialDirectory</a> = <a href="#caaa62ec89eb3044" class="i method">GetContentFolder</a>();
+            <span class="r18 r">dialog</span>.<a href="@0@PresentationFramework/A.html#592779c62eeddaa8" class="i property">Filter</a> = <a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="k">this</a>.<a href="#d7a40e9a56b21ec9" class="i property">OpenFileFilter</a>;
+            <b>bool</b> <span id="r19 rd" class="r19 r">result</span> = (<b>bool</b>)<span class="r18 r">dialog</span>.<a href="@0@PresentationFramework/A.html#0223c1563184cfac" class="i method">ShowDialog</a>(<b>null</b>);
+            <b>if</b> (<span class="r19 r">result</span> == <b>false</b>)  <b>return</b> <b>false</b>;
+
+            <span class="r17 r">fileName</span> = <span class="r18 r">dialog</span>.<a href="@0@PresentationFramework/A.html#df29941779e9aecf" class="i property">FileName</a>;
+            <b>return</b> <a href="#a365198ce7e0065f" class="i method">OpenFile</a>(<span class="r17 r">fileName</span>);
+        }<span class="c">// end:OpenDocument()</span>
+
+
+        <span class="c">// ------------------------- GetContentFolder -------------------------</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   Locates and returns the path to the &quot;Content\&quot; folder</span>
+        <span class="c">///</span><span class="c">   containing the document for the sample.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   The path to the sample document &quot;Content\&quot; folder.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private string</b> <a id="caaa62ec89eb3044" href="R/caaa62ec89eb3044.html" target="n" data-glyph="76,1" class="i method">GetContentFolder</a>()
+        {
+            <span class="c">// Get the path to the current directory and its length.</span>
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r20 rd" class="r20 r">contentDir</span> = <span class="t t">Directory</span>.<span class="i method">GetCurrentDirectory</span>();
+            <b>int</b> <span id="r21 rd" class="r21 r">dirLength</span> = <span class="r20 r">contentDir</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a>;
+
+            <span class="c">// If we&#39;re in &quot;...\bin\debug&quot;, move up to the root.</span>
+            <b>if</b> (<span class="r20 r">contentDir</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>().<a href="@1@System.Runtime/A.html#cb74053b3f2d03f4" class="i method">EndsWith</a>(<span class="s">@&quot;\bin\debug&quot;</span>))
+                <span class="r20 r">contentDir</span> = <span class="r20 r">contentDir</span>.<a href="@1@System.Runtime/A.html#c1d590f287f2c0de" class="i method">Remove</a>(<span class="r21 r">dirLength</span> - 10, 10);
+
+            <span class="c">// If we&#39;re in &quot;...\bin\release&quot;, move up to the root.</span>
+            <b>else</b> <b>if</b> (<span class="r20 r">contentDir</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>().<a href="@1@System.Runtime/A.html#cb74053b3f2d03f4" class="i method">EndsWith</a>(<span class="s">@&quot;\bin\release&quot;</span>))
+                <span class="r20 r">contentDir</span> = <span class="r20 r">contentDir</span>.<a href="@1@System.Runtime/A.html#c1d590f287f2c0de" class="i method">Remove</a>(<span class="r21 r">dirLength</span> - 12, 12);
+
+            <span class="c">// If there&#39;s a &quot;Content&quot; subfolder, that&#39;s what we want.</span>
+            <b>if</b> (<span class="t t">Directory</span>.<span class="i method">Exists</span>(<span class="r20 r">contentDir</span> + <span class="s">@&quot;\Content&quot;</span>))
+                <span class="r20 r">contentDir</span> = <span class="r20 r">contentDir</span> + <span class="s">@&quot;\Content&quot;</span>;
+
+            <span class="c">// Return the &quot;Content\&quot; folder (or the &quot;current&quot;</span>
+            <span class="c">// directory if we&#39;re executing somewhere else).</span>
+            <b>return</b> <span class="r20 r">contentDir</span>;
+        }<span class="c">// end:GetContentFolder()</span>
+
+
+        <span class="c">// ----------------------------- OpenFile -----------------------------</span>
+        <b>private bool</b> <a id="a365198ce7e0065f" href="R/a365198ce7e0065f.html" target="n" data-glyph="76,1" class="i method">OpenFile</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r22 rd" class="r22 r">fileName</span>)
+        {
+            <b>if</b> (<span class="r22 r">fileName</span> == <b>null</b>)  <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r22 r">fileName</span>));
+
+            <span class="c">// Check file existence</span>
+            <b>if</b> (!<span class="i n">System</span>.<span class="i n">IO</span>.<span class="t t">File</span>.<span class="i method">Exists</span>(<span class="r22 r">fileName</span>))
+            {
+                <a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#27a5faa8fab7f6ba" class="i method">Show</a>(
+                    <span class="s">&quot;File not found: &quot;</span> + <span class="r22 r">fileName</span>, <a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="k">this</a>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@1@System.Runtime/A.html#aa4f112f79364b6e" class="i property">Name</a>,
+                    <a href="@0@PresentationFramework/A.html#57cf33522d50233a" class="t t">MessageBoxButton</a>.<a href="@0@PresentationFramework/A.html#6f4d7963ffc6793b" class="i field">OK</a>, <a href="@0@PresentationFramework/A.html#26947fb9108271b2" class="t t">MessageBoxImage</a>.<a href="@0@PresentationFramework/A.html#bb06bda657335264" class="i field">Error</a>);
+                <b>return</b> <b>false</b>;
+            }
+
+            <b>object</b> <span id="r23 rd" class="r23 r">newDocument</span> = <b>null</b>;
+
+            <span class="c">// Apply appropriate converter to a file content</span>
+            <b>try</b>
+            {
+                <b>if</b> (<span class="r22 r">fileName</span>.<a href="@1@System.Runtime/A.html#cb74053b3f2d03f4" class="i method">EndsWith</a>(<span class="s">&quot;.xaml&quot;</span>))
+                {
+                    <b>using</b> (<a href="@1@System.Runtime/A.html#e23a38af5d11ddd3" class="t t">FileStream</a> <span id="r24 rd" class="r24 r">inputStream</span> = <span class="t t">File</span>.<span class="i method">OpenRead</span>(<span class="r22 r">fileName</span>))
+                    {
+                        <a href="@0@PresentationFramework/A.html#ea31b6428ed12199" class="t t">ParserContext</a> <span id="r25 rd" class="r25 r">pc</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#b6d0ea91411904f5" class="t constructor">ParserContext</a>();
+                        <span class="r25 r">pc</span>.<a href="@0@PresentationFramework/A.html#9b97aeadcf9bce81" class="i property">BaseUri</a> =
+                            <b>new</b> <a href="@1@System.Runtime/A.html#9e1bb2fef0d1159b" class="t constructor">Uri</a>(<span class="i n">System</span>.<span class="t t">Environment</span>.<span class="i property">CurrentDirectory</span> + <span class="s">&quot;/&quot;</span>);
+                        <span class="r23 r">newDocument</span> = <a href="@0@PresentationFramework/A.html#7449eaf937932294" class="t t">XamlReader</a>.<a href="@0@PresentationFramework/A.html#39ebc10136a0393f" class="i method">Load</a>(<span class="r24 r">inputStream</span>, <span class="r25 r">pc</span>) <b>as object</b>;
+                        <b>if</b> (<span class="r23 r">newDocument</span> == <b>null</b>)
+                        {
+                            <a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#27a5faa8fab7f6ba" class="i method">Show</a>(
+                                <span class="s">&quot;Invalid Xaml File. Could not be parsed&quot;</span> +
+                                <span class="r22 r">fileName</span>, <a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="k">this</a>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@1@System.Runtime/A.html#aa4f112f79364b6e" class="i property">Name</a>,
+                                <a href="@0@PresentationFramework/A.html#57cf33522d50233a" class="t t">MessageBoxButton</a>.<a href="@0@PresentationFramework/A.html#6f4d7963ffc6793b" class="i field">OK</a>, <a href="@0@PresentationFramework/A.html#26947fb9108271b2" class="t t">MessageBoxImage</a>.<a href="@0@PresentationFramework/A.html#bb06bda657335264" class="i field">Error</a>);
+                            <b>return</b> <b>false</b>;
+                        }
+                    }
+                }
+            }
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r26 rd" class="r26 r">e</span>)
+            {
+                <a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#27a5faa8fab7f6ba" class="i method">Show</a>(
+                    <span class="s">&quot;Error occurred during conversion from this file format: &quot;</span> +
+                    <span class="r22 r">fileName</span> + <span class="s">&quot;\n&quot;</span> + <span class="r26 r">e</span>.<a href="@1@System.Runtime/A.html#e2e19f4ed8da81aa" class="i method">ToString</a>(), <a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="k">this</a>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@1@System.Runtime/A.html#aa4f112f79364b6e" class="i property">Name</a>,
+                    <a href="@0@PresentationFramework/A.html#57cf33522d50233a" class="t t">MessageBoxButton</a>.<a href="@0@PresentationFramework/A.html#6f4d7963ffc6793b" class="i field">OK</a>, <a href="@0@PresentationFramework/A.html#26947fb9108271b2" class="t t">MessageBoxImage</a>.<a href="@0@PresentationFramework/A.html#bb06bda657335264" class="i field">Error</a>);
+                <b>return</b> <b>false</b>;
+            }
+
+            <b>if</b> (<span class="r23 r">newDocument</span> <b>is</b> <a href="@0@PresentationCore/A.html#25d3322518a3b619" class="t t">IDocumentPaginatorSource</a>)
+            {
+                <b>if</b> (<a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="k">this</a>.<a href="#3540ba324b459ece" class="i property">Document</a> != <b>null</b>)
+                {
+                    <span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a>.<a href="@0@PresentationCore/A.html#8f378e7777e14ef2" class="i property">DocumentPaginator</a> <b>is</b>
+                                                    <a href="@0@PresentationCore/A.html#90f849c487b7276d" class="t t">DynamicDocumentPaginator</a>);
+                    (<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a>.<a href="@0@PresentationCore/A.html#8f378e7777e14ef2" class="i property">DocumentPaginator</a> <b>as</b>
+                        <a href="@0@PresentationCore/A.html#90f849c487b7276d" class="t t">DynamicDocumentPaginator</a>).<a href="@0@PresentationCore/A.html#095f921f08c44b33" class="i">PaginationCompleted</a> -=
+                                                          <a href="#d95856fc9993ebcf" class="i method">PaginationCompleted</a>;
+                }
+                <a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="k">this</a>.<a href="#3540ba324b459ece" class="i property">Document</a> = (<a href="@0@PresentationCore/A.html#25d3322518a3b619" class="t t">IDocumentPaginatorSource</a>)<span class="r23 r">newDocument</span>;
+                <a href="Util.cs.html#554dc4b2f3ea8fd7" class="t t">Util</a>.<a href="Util.cs.html#b2a7aed11720cf9e" class="i method">FlushDispatcher</a>();
+                <span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a>.<a href="@0@PresentationCore/A.html#8f378e7777e14ef2" class="i property">DocumentPaginator</a> <b>is</b>
+                                        <a href="@0@PresentationCore/A.html#90f849c487b7276d" class="t t">DynamicDocumentPaginator</a>);
+                (<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a>.<a href="@0@PresentationCore/A.html#8f378e7777e14ef2" class="i property">DocumentPaginator</a> <b>as</b>
+                    <a href="@0@PresentationCore/A.html#90f849c487b7276d" class="t t">DynamicDocumentPaginator</a>).<a href="@0@PresentationCore/A.html#095f921f08c44b33" class="i">PaginationCompleted</a> +=
+                                        <b>new</b> <span class="t">EventHandler</span>(<a href="#d95856fc9993ebcf" class="i method">PaginationCompleted</a>);
+                <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#81d9bde0d952b09e" class="i field">SaveAsMenu</a>.<a href="@0@PresentationCore/A.html#166ae927a742c046" class="i property">IsEnabled</a> = <b>true</b>;
+                <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#de119ee76f96e936" class="i field">SaveAsToolbarButton</a>.<a href="@0@PresentationCore/A.html#166ae927a742c046" class="i property">IsEnabled</a> = <b>true</b>;
+                <a href="#52a272d773296739" class="i field">_fileName</a> = <span class="r22 r">fileName</span>;
+            }
+
+            <b>else</b> <span class="c">// if !(newDocument is IDocumentPaginatorSource)</span>
+            {
+                <b>throw</b> <b>new</b> <span class="t constructor">InvalidDataException</span>(
+                    <span class="s">&quot;Thumbnail viewer only supports IDocumentPaginatorSource&quot;</span>);
+                <span class="c">//return false;</span>
+            }
+
+            <b>return</b> <b>true</b>;
+        }<span class="c">// end:OpenFile()</span>
+
+
+        <span class="c">// ---------------------------- CloseFile -----------------------------</span>
+        <b>private void</b> <a id="b99f465a9c3e698b" href="R/b99f465a9c3e698b.html" target="n" data-glyph="76,1" class="i method">CloseFile</a>()
+        {
+            <span class="c">// If there are existing annotations, then they should be saved.</span>
+            <b>if</b> (<a href="#403d3bfa10a33571" class="i field">_annStore</a>.<a href="@0@PresentationFramework/A.html#25c2e67801ba4e1f" class="i method">GetAnnotations</a>().<a href="@1@System.Runtime/A.html#3d6c21c4e9bd5f63" class="i property">Count</a> &gt; 0)
+            {
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r27 rd" class="r27 r">backupFile</span> = <a href="#52a272d773296739" class="i field">_fileName</a> + <span class="s">&quot;.annotations&quot;</span> + <span class="s">&quot;.xml&quot;</span>;
+                <a href="@1@System.Runtime/A.html#e23a38af5d11ddd3" class="t t">FileStream</a> <span id="r28 rd" class="r28 r">backupStream</span> = <b>new</b> <a href="@1@System.Runtime/A.html#66c00a58470ce47d" class="t constructor">FileStream</a>(<span class="r27 r">backupFile</span>, <a href="@1@System.Runtime/A.html#c0cb6ba6af625b3a" class="t t">FileMode</a>.<a href="@1@System.Runtime/A.html#17684d43e30dc120" class="i field">Create</a>);
+                <a href="#fa5e44a1bd174f61" class="i method">CopyStream</a>(<a href="#0eb3614f0c379958" class="i field">_annotationBuffer</a>, <span class="r28 r">backupStream</span>);
+                <a href="#403d3bfa10a33571" class="i field">_annStore</a>.<a href="@0@PresentationFramework/A.html#7721af713d83cf3a" class="i method">Flush</a>();
+                <a href="#cac019a6fbf46cd5" class="i field">_annServ</a>.<a href="@0@PresentationFramework/A.html#9430c1ffd73ff29d" class="i method">Disable</a>();
+            }
+        }
+
+
+        <span class="c">// ---------------------------- CopyStream ----------------------------</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   Copies the contents of one stream to another.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r29 r">src</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   The source stream.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r30 r">dest</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   The destination stream.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="fa5e44a1bd174f61" href="R/fa5e44a1bd174f61.html" target="n" data-glyph="76,1" class="i method">CopyStream</a>(<a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r29 rd" class="r29 r">src</span>, <a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r30 rd" class="r30 r">dest</span>)
+        {
+            <b>long</b> <span id="r31 rd" class="r31 r">originalPosition</span> = <span class="r29 r">src</span>.<a href="@1@System.Runtime/A.html#35112b2a53fb536a" class="i property">Position</a>;
+
+            <span class="r29 r">src</span>.<a href="@1@System.Runtime/A.html#eb5599035c4388ce" class="i method">Seek</a>(0, <a href="@1@System.Runtime/A.html#2cc1cf6635f00a52" class="t t">SeekOrigin</a>.<a href="@1@System.Runtime/A.html#c29481af7c617299" class="i field">Begin</a>);
+            <span class="r30 r">dest</span>.<a href="@1@System.Runtime/A.html#eb5599035c4388ce" class="i method">Seek</a>(0, <a href="@1@System.Runtime/A.html#2cc1cf6635f00a52" class="t t">SeekOrigin</a>.<a href="@1@System.Runtime/A.html#c29481af7c617299" class="i field">Begin</a>);
+            <span class="r30 r">dest</span>.<a href="@1@System.Runtime/A.html#70f6f69c124200cc" class="i method">SetLength</a>(0); <span class="c">// Erase destination.</span>
+            <span class="t t">StreamReader</span> <span id="r32 rd" class="r32 r">reader</span> = <b>new</b> <span class="t constructor">StreamReader</span>(<span class="r29 r">src</span>);
+            <span class="t t">StreamWriter</span> <span id="r33 rd" class="r33 r">writer</span> = <b>new</b> <span class="t constructor">StreamWriter</span>(<span class="r30 r">dest</span>);
+            <b>while</b> (!<span class="r32 r">reader</span>.<span class="i property">EndOfStream</span>)
+            {
+                <b>char</b>[] <span id="r34 rd" class="r34 r">buffer</span> = <b>new</b> <b>char</b>[50];
+                <span class="r32 r">reader</span>.<span class="i method">Read</span>(<span class="r34 r">buffer</span>, 0, <span class="r34 r">buffer</span>.<a href="@1@System.Runtime/A.html#42e9b7616956cf94" class="i property">Length</a>);
+                <span class="r33 r">writer</span>.<span class="i method">Write</span>(<span class="r34 r">buffer</span>);
+            }
+            <span class="r33 r">writer</span>.<span class="i method">Flush</span>();
+            <span class="r30 r">dest</span>.<a href="@1@System.Runtime/A.html#eb5599035c4388ce" class="i method">Seek</a>(0, <a href="@1@System.Runtime/A.html#2cc1cf6635f00a52" class="t t">SeekOrigin</a>.<a href="@1@System.Runtime/A.html#c29481af7c617299" class="i field">Begin</a>);
+
+            <span class="r29 r">src</span>.<a href="@1@System.Runtime/A.html#eb5599035c4388ce" class="i method">Seek</a>(<span class="r31 r">originalPosition</span>, <a href="@1@System.Runtime/A.html#2cc1cf6635f00a52" class="t t">SeekOrigin</a>.<a href="@1@System.Runtime/A.html#c29481af7c617299" class="i field">Begin</a>);
+        }<span class="c">// end:CopyStream()</span>
+
+
+        <span class="c">// -------------------------- OpenFileFilter --------------------------</span>
+        <b>private string</b> <a id="d7a40e9a56b21ec9" href="R/d7a40e9a56b21ec9.html" target="n" data-glyph="106,1" class="i property">OpenFileFilter</a> =&gt; <span class="s">&quot;XAML FlowDocuments (*.xaml)|*.xaml&quot;</span>;
+
+
+        <span class="c">// ---------------------------- OnNewQuery ----------------------------</span>
+        <b>private static void</b> <a id="bf1abf713b521be0" href="R/bf1abf713b521be0.html" target="n" data-glyph="76,1" class="i method">OnNewQuery</a>(
+                                <b>object</b> <span id="r35 rd" class="r35 r">target</span>, <a href="@0@PresentationCore/A.html#eaa3ff973c551253" class="t t">CanExecuteRoutedEventArgs</a> <span id="r36 rd" class="r36 r">args</span>)
+        {
+            <span class="r36 r">args</span>.<a href="@0@PresentationCore/A.html#99e32d0d6f6947bd" class="i property">CanExecute</a> = <b>true</b>;
+        }
+
+
+        <span class="c">// --------------------------- CreateThumbs ---------------------------</span>
+        <b>public void</b> <a id="e76d31b3ca7d4e77" href="R/e76d31b3ca7d4e77.html" target="n" data-glyph="72,1" class="i method">CreateThumbs</a>()
+        {
+            <b>if</b> ( (<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a> != <b>null</b>) &amp;&amp; (<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#4808b70b6149b33d" class="i property">Count</a> &gt; 0) )
+                <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#ffd0144f9d66cb9d" class="i method">Clear</a>();
+
+            <a href="#79afc8f17e6998fc" class="i field">_currentThumbnail</a> = 0;
+            <a href="#271126054a7dd76d" class="i field">_maxThumbnails</a> = <a href="#d875e25db72c6000" class="i method">CalculateMaxThumbnails</a>();
+            <a href="#4e8a2523f5d5e92a" class="i field">_numDisplayedThumbnails</a> = (<a href="#271126054a7dd76d" class="i field">_maxThumbnails</a> &lt;= <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#354bddbb78a1ce2b" class="i property">PageCount</a>) ?
+                                                <a href="#271126054a7dd76d" class="i field">_maxThumbnails</a> : <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#354bddbb78a1ce2b" class="i property">PageCount</a>;
+
+            <b>for</b> (<b>int</b> <span id="r37 rd" class="r37 r">i</span> = <a href="#79afc8f17e6998fc" class="i field">_currentThumbnail</a>; <span class="r37 r">i</span> &lt; <a href="#4e8a2523f5d5e92a" class="i field">_numDisplayedThumbnails</a>; <span class="r37 r">i</span>++)
+                <a href="#94c02b36d3c63e17" class="i method">AddPageThumb</a>(<span class="r37 r">i</span>, <b>true</b>);
+
+            <b>for</b> (<b>int</b> <span id="r38 rd" class="r38 r">i</span> = <a href="#4e8a2523f5d5e92a" class="i field">_numDisplayedThumbnails</a>; <span class="r38 r">i</span> &lt; <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#354bddbb78a1ce2b" class="i property">PageCount</a>; <span class="r38 r">i</span>++)
+                <a href="#94c02b36d3c63e17" class="i method">AddPageThumb</a>(<span class="r38 r">i</span>, <b>false</b>); <span class="c">// Add empty thumb</span>
+
+            <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#5b32cea23abdf2c5" class="i method">MoveCurrentToPosition</a>(<a href="#79afc8f17e6998fc" class="i field">_currentThumbnail</a>);
+            <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationCore/A.html#0e11f7ae56f1c30f" class="i method">Focus</a>();
+        }
+
+
+        <span class="c">// --------------------------- AddPageThumb ---------------------------</span>
+        <b>private void</b> <a id="94c02b36d3c63e17" href="R/94c02b36d3c63e17.html" target="n" data-glyph="76,1" class="i method">AddPageThumb</a>(<b>int</b> <span id="r39 rd" class="r39 r">pageIndex</span>, <b>bool</b> <span id="r40 rd" class="r40 r">isDisplayed</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a> <span id="r41 rd" class="r41 r">thumbBorder</span> = <a href="#68b0a0d786a95741" class="i method">CreateThumbBorder</a>(<span class="r39 r">pageIndex</span> + 1);
+            <b>if</b> (<span class="r40 r">isDisplayed</span>)
+            {
+                <span class="c">// Get page visual and display it</span>
+                <a href="@0@PresentationCore/A.html#d3e2b9e14bb725a3" class="t t">DocumentPage</a> <span id="r42 rd" class="r42 r">docPage</span> =
+                    <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a>.<a href="@0@PresentationCore/A.html#8f378e7777e14ef2" class="i property">DocumentPaginator</a>.<a href="@0@PresentationCore/A.html#e7a0e0ce6e6c1859" class="i method">GetPage</a>(<span class="r39 r">pageIndex</span>);
+                <a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a> <span id="r43 rd" class="r43 r">pageThumb</span> =
+                    <a href="#643c2978aa6a78c6" class="i method">CreatePageThumb</a>(<span class="r42 r">docPage</span>.<a href="@0@PresentationCore/A.html#0a90d7a3639ec023" class="i property">Visual</a>, <span class="r42 r">docPage</span>.<a href="@0@PresentationCore/A.html#38cde3d7fb7cf630" class="i property">Size</a>, <span class="r39 r">pageIndex</span> + 1);
+                <b>if</b> (<span class="r43 r">pageThumb</span> != <b>null</b>)
+                {
+                    <a href="#7084bf30d69a3ded" class="i method">PrepareBorderForDisplay</a>(<span class="r41 r">thumbBorder</span>);
+                    <span class="r41 r">thumbBorder</span>.<a href="@0@PresentationFramework/A.html#2a880652079bdb31" class="i property">Child</a> = <span class="r43 r">pageThumb</span>;
+                }
+            }
+            <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<span class="r41 r">thumbBorder</span>);
+        }
+
+
+        <span class="c">// ---------------------- CalculateMaxThumbnails ----------------------</span>
+        <b>private int</b> <a id="d875e25db72c6000" href="R/d875e25db72c6000.html" target="n" data-glyph="76,1" class="i method">CalculateMaxThumbnails</a>()
+        {
+            <b>int</b> <span id="r44 rd" class="r44 r">numRows</span> = (<b>int</b>)(<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a> / (<a href="#f7b0fe8ec6f5ad36" class="i field">_thumbnailHeight</a>));
+            <b>int</b> <span id="r45 rd" class="r45 r">numColumns</span> = (<b>int</b>)(<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>/ (<a href="#446af08ce796d183" class="i field">_thumbnailWidth</a>));
+            <b>return</b> (<span class="t t">Math</span>.<span class="i method">Max</span>(<span class="r44 r">numRows</span>, 1) * <span class="t t">Math</span>.<span class="i method">Max</span>(<span class="r45 r">numColumns</span>, 1));
+        }
+
+
+        <span class="c">// -------------------------- CreatePageThumb -------------------------</span>
+        <b>private</b> <a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a> <a id="643c2978aa6a78c6" href="R/643c2978aa6a78c6.html" target="n" data-glyph="76,1" class="i method">CreatePageThumb</a>(
+                                    <a href="@0@PresentationCore/A.html#5dae7b267e6db0d6" class="t t">Visual</a> <span id="r46 rd" class="r46 r">visual</span>, <span class="i n">System</span>.<span class="i n">Windows</span>.<a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="t t">Size</a> <span id="r47 rd" class="r47 r">size</span>, <b>int</b> <span id="r48 rd" class="r48 r">pageNumber</span>)
+        {
+            <b>if</b> (<span class="r46 r">visual</span> != <b>null</b>)
+            {
+                <a href="@0@WindowsBase/A.html#fc387a6f7a1c2856" class="t t">Rect</a> <span id="r49 rd" class="r49 r">pageRect</span> = <b>new</b> <a href="@0@WindowsBase/A.html#76998d12a82ab004" class="t constructor">Rect</a>(<span class="r47 r">size</span>);
+                <a href="@0@PresentationCore/A.html#d6086316e5884862" class="t t">RenderTargetBitmap</a> <span id="r50 rd" class="r50 r">renderTargetBitmap</span> = <b>new</b> <a href="@0@PresentationCore/A.html#2dba660cc337f682" class="t constructor">RenderTargetBitmap</a>(
+                        (<b>int</b>)<span class="r49 r">pageRect</span>.<a href="@0@WindowsBase/A.html#fcc6efd876cb44c2" class="i property">Width</a>, (<b>int</b>)<span class="r49 r">pageRect</span>.<a href="@0@WindowsBase/A.html#fc918653cc6706b1" class="i property">Height</a>,
+                         96.0, 96.0, <a href="@0@PresentationCore/A.html#8f8a28423b24bd8e" class="t t">PixelFormats</a>.<a href="@0@PresentationCore/A.html#5c3c2dbdef6c1b4d" class="i property">Pbgra32</a> );
+                <span class="r50 r">renderTargetBitmap</span>.<a href="@0@PresentationCore/A.html#68a5d530e98147e4" class="i method">Render</a>(<span class="r46 r">visual</span>);
+
+                <a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a> <span id="r51 rd" class="r51 r">sp</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#71baf37380eff816" class="t constructor">StackPanel</a>();
+                <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="t t">Image</a> <span id="r52 rd" class="r52 r">img</span> = <b>new</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<a href="@0@PresentationFramework/A.html#11dd36f90cfdae62" class="t constructor">Image</a>();
+                <span class="r52 r">img</span>.<a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> = <span class="r50 r">renderTargetBitmap</span>;
+                <span class="r52 r">img</span>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#f7b0fe8ec6f5ad36" class="i field">_thumbnailHeight</a>;
+
+                <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a> <span id="r53 rd" class="r53 r">tb</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#600aeccf8068acee" class="t constructor">TextBlock</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#b8abdcbfcb7b7da9" class="t constructor">Run</a>(<span class="r48 r">pageNumber</span>.<a href="@1@System.Runtime/A.html#8d6f2d8bc0589463" class="i method">ToString</a>()));
+                <span class="r53 r">tb</span>.<a href="@0@PresentationFramework/A.html#606ef85043a0cffb" class="i property">FontSize</a> = 10;
+
+                <span class="r51 r">sp</span>.<a href="@0@PresentationFramework/A.html#a1bbab4c4a075bad" class="i property">Orientation</a> = <a href="@0@PresentationFramework/A.html#b6bff92693930c47" class="t t">Orientation</a>.<a href="@0@PresentationFramework/A.html#fa09895e0e094750" class="i field">Vertical</a>;
+                <span class="r51 r">sp</span>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<span class="r52 r">img</span>);
+                <span class="r51 r">sp</span>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>.<a href="@0@PresentationFramework/A.html#8886057feae649bc" class="i method">Add</a>(<span class="r53 r">tb</span>);
+                <b>return</b> <span class="r51 r">sp</span>;
+            }
+            <b>return</b> <b>null</b>;
+        }
+
+
+        <span class="c">// ----------------------- CreateThumbBorder --------------------------</span>
+        <b>private</b> <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a> <a id="68b0a0d786a95741" href="R/68b0a0d786a95741.html" target="n" data-glyph="76,1" class="i method">CreateThumbBorder</a>(<b>int</b> <span id="r54 rd" class="r54 r">pageNumber</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a> <span id="r55 rd" class="r55 r">OuterBorder</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#d751eeeb20246035" class="t constructor">Border</a>();
+            <span class="r55 r">OuterBorder</span>.<a href="@0@PresentationFramework/A.html#be65e048a5b94c6f" class="i property">BorderThickness</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#f24f92e6dee837d3" class="t constructor">Thickness</a>(2);
+            <span class="r55 r">OuterBorder</span>.<a href="@0@PresentationFramework/A.html#8aedc94268115177" class="i property">Margin</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#f24f92e6dee837d3" class="t constructor">Thickness</a>(3);
+            <span class="r55 r">OuterBorder</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="#446af08ce796d183" class="i field">_thumbnailWidth</a> + <a href="#65dc85fd858bfd7d" class="i field">_borderIncrement</a>;
+            <span class="r55 r">OuterBorder</span>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#f7b0fe8ec6f5ad36" class="i field">_thumbnailHeight</a> + <a href="#65dc85fd858bfd7d" class="i field">_borderIncrement</a>;
+            <span class="r55 r">OuterBorder</span>.<a href="@0@PresentationFramework/A.html#67dc070dd55308e6" class="i property">Background</a> = <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#11eb50ba6c5ef1c6" class="i property">White</a>;
+            <span class="r55 r">OuterBorder</span>.<a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> = <span class="r54 r">pageNumber</span>;
+            <b>return</b> <span class="r55 r">OuterBorder</span>;
+        }
+
+
+        <span class="c">// -------------------- PrepareBorderForDisplay -----------------------</span>
+        <b>private void</b> <a id="7084bf30d69a3ded" href="R/7084bf30d69a3ded.html" target="n" data-glyph="76,1" class="i method">PrepareBorderForDisplay</a>(<a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a> <span id="r56 rd" class="r56 r">border</span>)
+        {
+            <span class="r56 r">border</span>.<a href="@0@PresentationFramework/A.html#0abeaa3587f36789" class="i property">BorderBrush</a> = <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#4c63c441ae36a080" class="i property">Black</a>;
+            <span class="r56 r">border</span>.<a href="@0@PresentationCore/A.html#7d8f094db08df28d" class="i">MouseLeftButtonDown</a> +=
+                <b>new</b> <span class="t">MouseButtonEventHandler</span>(<a href="#dda990a749d1734f" class="i method">ThumbnailClick</a>);
+
+            <span class="c">// add ContextMenu.</span>
+            <a href="@0@PresentationFramework/A.html#f4776732cf34c5a5" class="t t">ContextMenu</a> <span id="r57 rd" class="r57 r">cm</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#329171435db997f0" class="t constructor">ContextMenu</a>();
+            <a href="@0@PresentationFramework/A.html#0368237ab8fc1146" class="t t">MenuItem</a> <span id="r58 rd" class="r58 r">miReduce</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#e4608c757123b12e" class="t constructor">MenuItem</a>();
+            <span class="r58 r">miReduce</span>.<a href="@0@PresentationFramework/A.html#44abad05df1a5b04" class="i property">Header</a> = <span class="s">&quot;Reduce Pa_ge Thumbnails&quot;</span>;
+            <span class="r58 r">miReduce</span>.<a href="@0@PresentationFramework/A.html#fd8d5c6f9a0b86ed" class="i">Click</a> += <b>new</b> <span class="t">RoutedEventHandler</span>(<a href="#dd7c7004cc955c64" class="i method">miReduce_Click</a>);
+            <a href="@0@PresentationFramework/A.html#0368237ab8fc1146" class="t t">MenuItem</a> <span id="r59 rd" class="r59 r">miEnlarge</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#e4608c757123b12e" class="t constructor">MenuItem</a>();
+            <span class="r59 r">miEnlarge</span>.<a href="@0@PresentationFramework/A.html#44abad05df1a5b04" class="i property">Header</a> = <span class="s">&quot;En_large Page Thumbnails&quot;</span>;
+            <span class="r59 r">miEnlarge</span>.<a href="@0@PresentationFramework/A.html#fd8d5c6f9a0b86ed" class="i">Click</a> += <b>new</b> <span class="t">RoutedEventHandler</span>(<a href="#754b74885801bd85" class="i method">miEnlarge_Click</a>);
+            <a href="@0@PresentationFramework/A.html#0368237ab8fc1146" class="t t">MenuItem</a> <span id="r60 rd" class="r60 r">miRotate</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#e4608c757123b12e" class="t constructor">MenuItem</a>();
+            <span class="r60 r">miRotate</span>.<a href="@0@PresentationFramework/A.html#44abad05df1a5b04" class="i property">Header</a> = <span class="s">&quot;Rotate Page Thumbnails&quot;</span>;
+            <span class="r60 r">miRotate</span>.<a href="@0@PresentationFramework/A.html#fd8d5c6f9a0b86ed" class="i">Click</a> += <b>new</b> <span class="t">RoutedEventHandler</span>(<a href="#a619b0ece8358325" class="i method">miRotate_Click</a>);
+            <span class="r57 r">cm</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<span class="r58 r">miReduce</span>);
+            <span class="r57 r">cm</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<span class="r59 r">miEnlarge</span>);
+            <span class="r57 r">cm</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#9c69be9934fa8f24" class="t constructor">Separator</a>());
+            <span class="r57 r">cm</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<span class="r60 r">miRotate</span>);
+            <span class="r56 r">border</span>.<a href="@0@PresentationFramework/A.html#f9485affacabfc50" class="i property">ContextMenu</a> = <span class="r57 r">cm</span>;
+        }<span class="c">// end:PrepareBorderForDisplay()</span>
+
+
+        <span class="c">// ---------------------------- OnSaveAs ------------------------------</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   Occurs when the user clicks File | Save As...&quot;</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="ed4102597d33858d" href="R/ed4102597d33858d.html" target="n" data-glyph="76,1" class="i method">OnSaveAs</a>(<b>object</b> <span id="r61 rd" class="r61 r">target</span>, <a href="@0@PresentationCore/A.html#b5b9242d784d106a" class="t t">ExecutedRoutedEventArgs</a> <span id="r62 rd" class="r62 r">args</span>)
+        {
+            <a href="#3af8b5581c356bbc" class="i method">SaveDocumentAsFile</a>(<b>null</b>);
+        }
+
+
+        <span class="c">// ----------------------- SaveDocumentAsFile -------------------------</span>
+        <b>public bool</b> <a id="3af8b5581c356bbc" href="R/3af8b5581c356bbc.html" target="n" data-glyph="72,1" class="i method">SaveDocumentAsFile</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r63 rd" class="r63 r">fileName</span>)
+        {
+            <span class="c">// If no filename was specified, prompt the user for one.</span>
+            <b>if</b> (<span class="r63 r">fileName</span> == <b>null</b>)
+            {
+                <span class="c">// Create a File | Save As... dailog.</span>
+                <span class="i n">Microsoft</span>.<span class="i n">Win32</span>.<a href="@0@PresentationFramework/A.html#1cc3303b6fe0d095" class="t t">SaveFileDialog</a> <span id="r64 rd" class="r64 r">dialog</span>;
+                <span class="r64 r">dialog</span> = <b>new</b> <span class="i n">Microsoft</span>.<span class="i n">Win32</span>.<a href="@0@PresentationFramework/A.html#809a6b4d2cea3900" class="t constructor">SaveFileDialog</a>();
+                <span class="r64 r">dialog</span>.<a href="@0@PresentationFramework/A.html#a6657594201aaea4" class="i property">CheckFileExists</a> = <b>false</b>;
+                <span class="r64 r">dialog</span>.<a href="@0@PresentationFramework/A.html#592779c62eeddaa8" class="i property">Filter</a> = <a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="k">this</a>.<a href="#258e72479234e8b2" class="i property">PlugInFileFilter</a> +
+                                <span class="s">&quot;|XAML FlowDocument (*.xaml)|*.xaml&quot;</span> +
+                                <span class="s">&quot;|HTML Document (*.html; *.htm)|*.html; *.htm&quot;</span> +
+                                <span class="s">&quot;|WordXML Document (*.xml)|*.xml&quot;</span> +
+                                <span class="s">&quot;|RTF Document (*.rtf)|*.rtf&quot;</span> +
+                                <span class="s">&quot;|Plain Text (*.txt)|*.txt&quot;</span>;
+
+                <span class="c">// Display the dialog and wait for the user response.</span>
+                <b>bool</b> <span id="r65 rd" class="r65 r">result</span> = (<b>bool</b>)<span class="r64 r">dialog</span>.<a href="@0@PresentationFramework/A.html#0223c1563184cfac" class="i method">ShowDialog</a>(<b>null</b>);
+
+                <span class="c">// If the user clicked &quot;Cancel&quot;, cancel the saving the file.</span>
+                <b>if</b> (<span class="r65 r">result</span> == <b>false</b>)  <b>return</b> <b>false</b>;
+                <span class="r63 r">fileName</span> = <span class="r64 r">dialog</span>.<a href="@0@PresentationFramework/A.html#df29941779e9aecf" class="i property">FileName</a>;
+            }
+
+            <span class="c">// Save the document to the specified file.</span>
+            <b>return</b> <a href="#deab245b2ceed359" class="i method">SaveToFile</a>(<span class="r63 r">fileName</span>);
+        }<span class="c">// end:SaveDocumentAsFile()</span>
+
+
+        <span class="c">// --------------------------- SaveToFile -----------------------------</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   Saves the current document to a specified file.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&#39;</span><span class="r66 r">fileName</span><span class="c">&#39;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   The name of file to save to.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   true if the document was saved successfully; otherwise, false</span>
+        <span class="c">///</span><span class="c">   if there was an error or the user canceled the save.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private bool</b> <a id="deab245b2ceed359" href="R/deab245b2ceed359.html" target="n" data-glyph="76,1" class="i method">SaveToFile</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r66 rd" class="r66 r">fileName</span>)
+        {
+            <b>if</b> (<span class="r66 r">fileName</span> == <b>null</b>)  <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r66 r">fileName</span>));
+
+            <span class="c">// If the file already exists, delete it (replace).</span>
+            <b>if</b> ( <span class="t t">File</span>.<span class="i method">Exists</span>(<span class="r66 r">fileName</span>) )  <span class="t t">File</span>.<span class="i method">Delete</span>(<span class="r66 r">fileName</span>);
+
+            <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a> <span id="r67 rd" class="r67 r">flowDocument</span> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a> <b>as</b> <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a>;
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r68 rd" class="r68 r">fileContent</span> = <b>null</b>;
+            <b>try</b>
+            {
+                <span class="c">// Create a SerializerProvider for accessing plug-in serializers.</span>
+                <a href="@0@PresentationFramework/A.html#195616abfb2b64e1" class="t t">SerializerProvider</a> <span id="r69 rd" class="r69 r">serializerProvider</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#a09e842fd449ac7b" class="t constructor">SerializerProvider</a>();
+
+                <span class="c">// Locate the serializer that matches the fileName extension.</span>
+                <a href="@0@PresentationFramework/A.html#a128e41c720f1162" class="t t">SerializerDescriptor</a> <span id="r70 rd" class="r70 r">selectedPlugIn</span> = <b>null</b>;
+                <b>foreach</b> ( <a href="@0@PresentationFramework/A.html#a128e41c720f1162" class="t t">SerializerDescriptor</a> <span id="r71 rd" class="r71 r">serializerDescriptor</span> <b>in</b>
+                                <span class="r69 r">serializerProvider</span>.<a href="@0@PresentationFramework/A.html#e30816d07227b2b7" class="i property">InstalledSerializers</a> )
+                {
+                    <b>if</b> ( <span class="r71 r">serializerDescriptor</span>.<a href="@0@PresentationFramework/A.html#3ae344799e013115" class="i property">IsLoadable</a> &amp;&amp;
+                         <span class="r66 r">fileName</span>.<a href="@1@System.Runtime/A.html#cb74053b3f2d03f4" class="i method">EndsWith</a>(<span class="r71 r">serializerDescriptor</span>.<a href="@0@PresentationFramework/A.html#30fb10a7e41750b3" class="i property">DefaultFileExtension</a>) )
+                    {   <span class="c">// The plug-in serializer and fileName extensions match.</span>
+                        <span class="r70 r">selectedPlugIn</span> = <span class="r71 r">serializerDescriptor</span>;
+                        <b>break</b>; <span class="c">// foreach</span>
+                    }
+                }
+
+                <span class="c">// If a match for a plug-in serializer was found,</span>
+                <span class="c">// use it to output and store the document.</span>
+                <b>if</b> (<span class="r70 r">selectedPlugIn</span> != <b>null</b>)
+                {
+                    <a href="@1@System.Runtime/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r72 rd" class="r72 r">package</span> = <span class="t t">File</span>.<span class="i method">Create</span>(<span class="r66 r">fileName</span>);
+                    <a href="@0@PresentationFramework/A.html#fb4efa51650c717d" class="t t">SerializerWriter</a> <span id="r73 rd" class="r73 r">serializerWriter</span> =
+                        <span class="r69 r">serializerProvider</span>.<a href="@0@PresentationFramework/A.html#27868cc03b904416" class="i method">CreateSerializerWriter</a>(<span class="r70 r">selectedPlugIn</span>,
+                                                                  <span class="r72 r">package</span>);
+                    <a href="@0@PresentationCore/A.html#25d3322518a3b619" class="t t">IDocumentPaginatorSource</a> <span id="r74 rd" class="r74 r">idoc</span> =
+                        <span class="r67 r">flowDocument</span> <b>as</b> <a href="@0@PresentationCore/A.html#25d3322518a3b619" class="t t">IDocumentPaginatorSource</a>;
+                    <span class="r73 r">serializerWriter</span>.<a href="@0@PresentationFramework/A.html#41a5906fe5d774b8" class="i method">Write</a>(<span class="r74 r">idoc</span>.<a href="@0@PresentationCore/A.html#8f378e7777e14ef2" class="i property">DocumentPaginator</a>, <b>null</b>);
+                    <span class="r72 r">package</span>.<a href="@1@System.Runtime/A.html#dc4ffe046b847b84" class="i method">Close</a>();
+                    <b>return</b> <b>true</b>;
+                }
+               <b>else</b> <b>if</b> (<span class="r66 r">fileName</span>.<a href="@1@System.Runtime/A.html#cb74053b3f2d03f4" class="i method">EndsWith</a>(<span class="s">&quot;.xml&quot;</span>))
+                {
+                    <span class="c">// Save as a WordXML document.</span>
+                    <a href="WordXmlSerialize/wordxmlserializer.cs.html#392d18598b15a9aa" class="t t">WordXmlSerializer</a>.<a href="WordXmlSerialize/wordxmlserializer.cs.html#1ff06cacff0c83de" class="i method">SaveToFile</a>(<span class="r66 r">fileName</span>, <span class="r67 r">flowDocument</span>.<a href="@0@PresentationFramework/A.html#038ddae1a0bc6cc1" class="i property">ContentStart</a>, <span class="r67 r">flowDocument</span>.<a href="@0@PresentationFramework/A.html#2a6aa9d9cfdb57cd" class="i property">ContentEnd</a>);
+                    <b>return</b> <b>true</b>;
+                }
+            }
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r75 rd" class="r75 r">e</span>)
+            {
+                <a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#27a5faa8fab7f6ba" class="i method">Show</a>(
+                    <span class="s">&quot;Error occurred during a conversion to this file format: &quot;</span> +
+                    <span class="r66 r">fileName</span> + <span class="s">&quot;\n&quot;</span> + <span class="r75 r">e</span>.<a href="@1@System.Runtime/A.html#e2e19f4ed8da81aa" class="i method">ToString</a>(), <a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="k">this</a>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@1@System.Runtime/A.html#aa4f112f79364b6e" class="i property">Name</a>,
+                    <a href="@0@PresentationFramework/A.html#57cf33522d50233a" class="t t">MessageBoxButton</a>.<a href="@0@PresentationFramework/A.html#6f4d7963ffc6793b" class="i field">OK</a>, <a href="@0@PresentationFramework/A.html#26947fb9108271b2" class="t t">MessageBoxImage</a>.<a href="@0@PresentationFramework/A.html#bb06bda657335264" class="i field">Error</a>);
+                <b>return</b> <b>false</b>;
+            }
+
+            <b>if</b> (<span class="r68 r">fileContent</span> == <b>null</b>)
+            {
+                <a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#27a5faa8fab7f6ba" class="i method">Show</a>(<span class="s">&quot;A serializer for the given file extension&quot;</span> +
+                    <span class="s">&quot;could not be found.\n&quot;</span> + <span class="r66 r">fileName</span>, <a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="k">this</a>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@1@System.Runtime/A.html#aa4f112f79364b6e" class="i property">Name</a>,
+                    <a href="@0@PresentationFramework/A.html#57cf33522d50233a" class="t t">MessageBoxButton</a>.<a href="@0@PresentationFramework/A.html#6f4d7963ffc6793b" class="i field">OK</a>, <a href="@0@PresentationFramework/A.html#26947fb9108271b2" class="t t">MessageBoxImage</a>.<a href="@0@PresentationFramework/A.html#bb06bda657335264" class="i field">Error</a>);
+                <b>return</b> <b>false</b>;
+            }
+
+            <span class="c">// Output the formatted content to the specified file.</span>
+            <b>try</b>
+            {   <span class="c">// Write the file content.</span>
+                <span class="t t">StreamWriter</span> <span id="r76 rd" class="r76 r">writer</span> = <b>new</b> <span class="t constructor">StreamWriter</span>(<span class="r66 r">fileName</span>);
+                <span class="r76 r">writer</span>.<span class="i method">WriteLine</span>(<span class="r68 r">fileContent</span>);
+                <span class="r76 r">writer</span>.<span class="i method">Close</span>();
+            }
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r77 rd" class="r77 r">e</span>)
+            {
+                <a href="@0@PresentationFramework/A.html#5f466a86dcc227ac" class="t t">MessageBox</a>.<a href="@0@PresentationFramework/A.html#27a5faa8fab7f6ba" class="i method">Show</a>( <span class="s">&quot;Error occurred during document save: &quot;</span> +
+                    <span class="r66 r">fileName</span> + <span class="s">&quot;\n&quot;</span> + <span class="r77 r">e</span>.<a href="@1@System.Runtime/A.html#e2e19f4ed8da81aa" class="i method">ToString</a>(), <a href="P/b9f78ae39a7a8c15.html#b9f78ae39a7a8c15" class="k">this</a>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@1@System.Runtime/A.html#aa4f112f79364b6e" class="i property">Name</a>,
+                    <a href="@0@PresentationFramework/A.html#57cf33522d50233a" class="t t">MessageBoxButton</a>.<a href="@0@PresentationFramework/A.html#6f4d7963ffc6793b" class="i field">OK</a>, <a href="@0@PresentationFramework/A.html#26947fb9108271b2" class="t t">MessageBoxImage</a>.<a href="@0@PresentationFramework/A.html#bb06bda657335264" class="i field">Error</a>);
+                <b>return</b> <b>false</b>;
+            }
+
+            <b>return</b> <b>true</b>;
+        }<span class="c">// end:SaveToFile()</span>
+
+
+        <span class="c">// ------------------------ PlugInFileFilter --------------------------</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   Gets a filter string for installed plug-in serializers.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remark</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   PlugInFileFilter is used to set the SaveFileDialog or</span>
+        <span class="c">///</span><span class="c">   OpenFileDialog &quot;Filter&quot; property when saving or opening files</span>
+        <span class="c">///</span><span class="c">   using plug-in serializers.</span><span class="c">&lt;/</span><span class="c">remark</span><span class="c">&gt;</span>
+        <b>private string</b> <a id="258e72479234e8b2" href="R/258e72479234e8b2.html" target="n" data-glyph="106,1" class="i property">PlugInFileFilter</a>
+        {
+            <b>get</b>
+            {   <span class="c">// Create a SerializerProvider for accessing plug-in serializers.</span>
+                <a href="@0@PresentationFramework/A.html#195616abfb2b64e1" class="t t">SerializerProvider</a> <span id="r78 rd" class="r78 r">serializerProvider</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#a09e842fd449ac7b" class="t constructor">SerializerProvider</a>();
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r79 rd" class="r79 r">filter</span> = <span class="s">&quot;&quot;</span>;
+
+                <span class="c">// For each loadable serializer, add its display</span>
+                <span class="c">// name and extension to the filter string.</span>
+                <b>foreach</b> (<a href="@0@PresentationFramework/A.html#a128e41c720f1162" class="t t">SerializerDescriptor</a> <span id="r80 rd" class="r80 r">serializerDescriptor</span> <b>in</b>
+                    <span class="r78 r">serializerProvider</span>.<a href="@0@PresentationFramework/A.html#e30816d07227b2b7" class="i property">InstalledSerializers</a>)
+                {
+                    <b>if</b> (<span class="r80 r">serializerDescriptor</span>.<a href="@0@PresentationFramework/A.html#3ae344799e013115" class="i property">IsLoadable</a>)
+                    {
+                        <span class="c">// After the first, separate entries with a &quot;|&quot;.</span>
+                        <b>if</b> (<span class="r79 r">filter</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> &gt; 0)   <span class="r79 r">filter</span> += <span class="s">&quot;|&quot;</span>;
+
+                        <span class="c">// Add an entry with the plug-in name and extension.</span>
+                        <span class="r79 r">filter</span> += <span class="r80 r">serializerDescriptor</span>.<a href="@0@PresentationFramework/A.html#a6a40d48b1c63854" class="i property">DisplayName</a> + <span class="s">&quot; (*&quot;</span> +
+                            <span class="r80 r">serializerDescriptor</span>.<a href="@0@PresentationFramework/A.html#30fb10a7e41750b3" class="i property">DefaultFileExtension</a> + <span class="s">&quot;)|*&quot;</span> +
+                            <span class="r80 r">serializerDescriptor</span>.<a href="@0@PresentationFramework/A.html#30fb10a7e41750b3" class="i property">DefaultFileExtension</a>;
+                    }
+                }
+
+                <span class="c">// Return the filter string of installed plug-in serializers.</span>
+                <b>return</b> <span class="r79 r">filter</span>;
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Load and Save Documents
+
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Public Properties
+        <b>public</b> <a href="@0@PresentationCore/A.html#25d3322518a3b619" class="t t">IDocumentPaginatorSource</a> <a id="3540ba324b459ece" href="R/3540ba324b459ece.html" target="n" data-glyph="102,1" class="i property">Document</a>
+        {
+            <b>get</b> { <b>return</b> <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a>;  }
+            <b>set</b> { <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a> = <b>value</b>; }
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Public Properties
+
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Fields
+        <b>private double</b> <a id="ba4a7404c4efc1f7" href="R/ba4a7404c4efc1f7.html" target="n" data-glyph="46,1" class="i field">_rotateAngle</a> = 0;
+        <b>private int</b> <a id="f7b0fe8ec6f5ad36" href="R/f7b0fe8ec6f5ad36.html" target="n" data-glyph="46,1" class="i field">_thumbnailHeight</a> = 74;
+        <b>private int</b> <a id="446af08ce796d183" href="R/446af08ce796d183.html" target="n" data-glyph="46,1" class="i field">_thumbnailWidth</a> = 60;
+        <b>private int</b> <a id="271126054a7dd76d" href="R/271126054a7dd76d.html" target="n" data-glyph="46,1" class="i field">_maxThumbnails</a>;
+        <b>private int</b> <a id="65dc85fd858bfd7d" href="R/65dc85fd858bfd7d.html" target="n" data-glyph="46,1" class="i field">_borderIncrement</a> = 20;
+        <b>private int</b> <a id="79afc8f17e6998fc" href="R/79afc8f17e6998fc.html" target="n" data-glyph="46,1" class="i field">_currentThumbnail</a> = 0;
+        <b>private int</b> <a id="4e8a2523f5d5e92a" href="R/4e8a2523f5d5e92a.html" target="n" data-glyph="46,1" class="i field">_numDisplayedThumbnails</a>;
+        <b>internal static</b> <a href="@1@System.Runtime/A.html#382d90b1fa682bac" class="t t">MethodInfo</a> <a id="0bb35177dca16377" href="R/0bb35177dca16377.html" target="n" data-glyph="44,1" class="i field">_reflectionTextPointer_InsertTextElement</a>;
+
+        <span class="c">// Bookmarks and comments</span>
+        <a href="@0@PresentationFramework/A.html#27e6230489706ec0" class="t t">AnnotationService</a> <a id="cac019a6fbf46cd5" href="R/cac019a6fbf46cd5.html" target="n" data-glyph="46,1" class="i field">_annServ</a> = <b>null</b>;
+        <a href="@0@PresentationFramework/A.html#1319d7465fbe7786" class="t t">AnnotationStore</a> <a id="403d3bfa10a33571" href="R/403d3bfa10a33571.html" target="n" data-glyph="46,1" class="i field">_annStore</a> = <b>null</b>;
+        <span class="t t">MemoryStream</span> <a id="0eb3614f0c379958" href="R/0eb3614f0c379958.html" target="n" data-glyph="46,1" class="i field">_annotationBuffer</a> = <b>null</b>;
+
+        <span class="c">// filename open</span>
+        <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <a id="52a272d773296739" href="R/52a272d773296739.html" target="n" data-glyph="46,1" class="i field">_fileName</a> = <span class="s">&quot;&quot;</span>;
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Private Fields
+
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Event Handling
+
+        <span class="c">// ----------------------- PaginationCompleted ------------------------</span>
+        <b>void</b> <a id="d95856fc9993ebcf" href="R/d95856fc9993ebcf.html" target="n" data-glyph="76,1" class="i method">PaginationCompleted</a>(<b>object</b> <span id="r81 rd" class="r81 r">sender</span>, <a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r82 rd" class="r82 r">e</span>)
+        {
+            <a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#035566f3e2455f79" class="i method">BeginInvoke</a>(<a href="@0@WindowsBase/A.html#af2d44a802e4535c" class="t t">DispatcherPriority</a>.<a href="@0@WindowsBase/A.html#39dd818cde688888" class="i field">Normal</a>,
+                <b>new</b> <span class="t">DispatcherOperationCallback</span>(
+                    <b>delegate</b> { <a href="#c3dc16b26ccdc191" class="i method">RefreshThumbnails</a>(); <b>return</b> <b>null</b>; } ), <b>null</b> );
+        }
+
+
+        <span class="c">// ------------------------ SplitterEndResize -------------------------</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   Resizes Thumblist on Resizing Splitter.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>void</b> <a id="883ddae9c4e2e76e" href="R/883ddae9c4e2e76e.html" target="n" data-glyph="76,1" class="i method">SplitterEndResize</a>(<b>object</b> <span id="r83 rd" class="r83 r">sender</span>, <a href="@0@PresentationFramework/A.html#084eb6ffa4891365" class="t t">DragCompletedEventArgs</a> <span id="r84 rd" class="r84 r">e</span>)
+        {
+            <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#42c4ad45769ff4b4" class="i field">LeftTabControl</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#5da7a9f956eaf82f" class="i field">MainGrid</a>.<a href="@0@PresentationFramework/A.html#586a925b8abdf5bb" class="i property">ColumnDefinitions</a>[0].<a href="@0@PresentationFramework/A.html#74aafbfaebd78f2e" class="i property">ActualWidth</a>;
+            <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a>    = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#42c4ad45769ff4b4" class="i field">LeftTabControl</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> - 24;
+            <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#2b2c9e658d3226de" class="i field">BookmarkList</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#42c4ad45769ff4b4" class="i field">LeftTabControl</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> - 24;
+            <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#6194dbfc3c960c96" class="i field">CommentsList</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#42c4ad45769ff4b4" class="i field">LeftTabControl</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> - 24;
+            <b>foreach</b> (<a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a> <span id="r85 rd" class="r85 r">sp</span> <b>in</b> <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#2b2c9e658d3226de" class="i field">BookmarkList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>)
+            {
+                <a href="#522ce9c9666fc7ff" class="i method">AdjustMarkSizes</a>(<span class="r85 r">sp</span>);
+            }
+
+            <b>foreach</b> (<a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a> <span id="r86 rd" class="r86 r">sp</span> <b>in</b> <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#6194dbfc3c960c96" class="i field">CommentsList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>)
+            {
+                <a href="#522ce9c9666fc7ff" class="i method">AdjustMarkSizes</a>(<span class="r86 r">sp</span>);
+            }
+
+            <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#233aeb3c350ffbf4" class="i field">TrackerRect</a>.<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#0024ca32be32c247" class="i field">Hidden</a>;
+        }
+
+
+        <span class="c">// ------------------------- AdjustMarkSizes --------------------------</span>
+        <b>private void</b> <a id="522ce9c9666fc7ff" href="R/522ce9c9666fc7ff.html" target="n" data-glyph="76,1" class="i method">AdjustMarkSizes</a>(<a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a> <span id="r87 rd" class="r87 r">sp</span>)
+        {
+            <span class="r87 r">sp</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#2b2c9e658d3226de" class="i field">BookmarkList</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> - 10;
+
+            <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>.<a href="@0@PresentationFramework/A.html#ede77210f20e8cf9" class="t t">Path</a> <span id="r88 rd" class="r88 r">path</span> =
+                <a href="@0@PresentationFramework/A.html#7b6652b52c5711cc" class="t t">LogicalTreeHelper</a>.<a href="@0@PresentationFramework/A.html#5341aaba95b4dff9" class="i method">FindLogicalNode</a>(<span class="r87 r">sp</span>, <span class="s">&quot;MarkPath&quot;</span>)
+                    <b>as</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>.<a href="@0@PresentationFramework/A.html#ede77210f20e8cf9" class="t t">Path</a>;
+
+            <a href="#b038602f6398e349" class="i method">IncrementPathData</a>(<span class="r88 r">path</span>, <span class="r87 r">sp</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a>);
+            <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a> <span id="r89 rd" class="r89 r">btn</span> = <a href="@0@PresentationFramework/A.html#7b6652b52c5711cc" class="t t">LogicalTreeHelper</a>.<a href="@0@PresentationFramework/A.html#5341aaba95b4dff9" class="i method">FindLogicalNode</a>(<span class="r87 r">sp</span>, <span class="s">&quot;GoToMark&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>;
+            <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a> <span id="r90 rd" class="r90 r">tb</span> = <a href="@0@PresentationFramework/A.html#7b6652b52c5711cc" class="t t">LogicalTreeHelper</a>.<a href="@0@PresentationFramework/A.html#5341aaba95b4dff9" class="i method">FindLogicalNode</a>(<span class="r87 r">sp</span>, <span class="s">&quot;TB&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>;
+            <b>if</b> (<span class="r89 r">btn</span> != <b>null</b>)
+                <span class="r89 r">btn</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <span class="r87 r">sp</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> - 10;
+            <b>if</b> (<span class="r90 r">tb</span> != <b>null</b>)
+                <span class="r90 r">tb</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <span class="r89 r">btn</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> - 8;
+        }
+
+
+        <span class="c">// ------------------------ IncrementPathData -------------------------</span>
+        <b>private void</b> <a id="b038602f6398e349" href="R/b038602f6398e349.html" target="n" data-glyph="76,1" class="i method">IncrementPathData</a>(<span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>.<a href="@0@PresentationFramework/A.html#ede77210f20e8cf9" class="t t">Path</a> <span id="r91 rd" class="r91 r">path</span>, <b>double</b> <span id="r92 rd" class="r92 r">p</span>)
+        {
+            <b>if</b> (<span class="r91 r">path</span> == <b>null</b>)  <b>return</b>;
+            <a href="@0@PresentationCore/A.html#e4d72d28528823ae" class="t t">PathGeometry</a> <span id="r93 rd" class="r93 r">pGeom</span> = <span class="r91 r">path</span>.<a href="@0@PresentationFramework/A.html#3f47244595d8fa3d" class="i property">Data</a> <b>as</b> <a href="@0@PresentationCore/A.html#e4d72d28528823ae" class="t t">PathGeometry</a>;
+
+            <b>if</b> (<span class="r93 r">pGeom</span> == <b>null</b>) <b>return</b>;
+            <a href="@0@PresentationCore/A.html#7c0c953410385da4" class="t t">PathFigure</a> <span id="r94 rd" class="r94 r">pFig</span> = <span class="r93 r">pGeom</span>.<a href="@0@PresentationCore/A.html#1ae4a7e325e4a881" class="i property">Figures</a>[0] <b>as</b> <a href="@0@PresentationCore/A.html#7c0c953410385da4" class="t t">PathFigure</a>;
+
+            <span class="c">// Left Top to Left Bottom</span>
+            <a href="@0@PresentationCore/A.html#da9af6fd7e3724dc" class="t t">LineSegment</a> <span id="r95 rd" class="r95 r">lSegLTLB</span> = <span class="r94 r">pFig</span>.<a href="@0@PresentationCore/A.html#6877629a0d160bc5" class="i property">Segments</a>[0] <b>as</b> <a href="@0@PresentationCore/A.html#da9af6fd7e3724dc" class="t t">LineSegment</a>;
+            <span class="r95 r">lSegLTLB</span>.<a href="@0@PresentationCore/A.html#6e85e6ca8950bfe6" class="i property">Point</a> = <b>new</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, 24);
+
+            <span class="c">// Left Bottom to Right Bottom</span>
+            <a href="@0@PresentationCore/A.html#da9af6fd7e3724dc" class="t t">LineSegment</a> <span id="r96 rd" class="r96 r">lSegLBRB</span> = <span class="r94 r">pFig</span>.<a href="@0@PresentationCore/A.html#6877629a0d160bc5" class="i property">Segments</a>[1] <b>as</b> <a href="@0@PresentationCore/A.html#da9af6fd7e3724dc" class="t t">LineSegment</a>;
+            <span class="r96 r">lSegLBRB</span>.<a href="@0@PresentationCore/A.html#6e85e6ca8950bfe6" class="i property">Point</a> = <b>new</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r92 r">p</span> - 10, 24);
+
+            <span class="c">// Right Bottom to Right Top</span>
+            <a href="@0@PresentationCore/A.html#da9af6fd7e3724dc" class="t t">LineSegment</a> <span id="r97 rd" class="r97 r">lSegRBRT</span> = <span class="r94 r">pFig</span>.<a href="@0@PresentationCore/A.html#6877629a0d160bc5" class="i property">Segments</a>[2] <b>as</b> <a href="@0@PresentationCore/A.html#da9af6fd7e3724dc" class="t t">LineSegment</a>;
+            <span class="r97 r">lSegRBRT</span>.<a href="@0@PresentationCore/A.html#6e85e6ca8950bfe6" class="i property">Point</a> = <b>new</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r92 r">p</span> - 10, 7);
+
+            <span class="c">// Right Top to Right Further Top</span>
+            <a href="@0@PresentationCore/A.html#da9af6fd7e3724dc" class="t t">LineSegment</a> <span id="r98 rd" class="r98 r">lSegRTRT</span> = <span class="r94 r">pFig</span>.<a href="@0@PresentationCore/A.html#6877629a0d160bc5" class="i property">Segments</a>[3] <b>as</b> <a href="@0@PresentationCore/A.html#da9af6fd7e3724dc" class="t t">LineSegment</a>;
+            <span class="r98 r">lSegRTRT</span>.<a href="@0@PresentationCore/A.html#6e85e6ca8950bfe6" class="i property">Point</a> = <b>new</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r92 r">p</span> - 2, 0);
+        }
+
+
+        <span class="c">// ------------------------- miEnlarge_Click --------------------------</span>
+        <b>void</b> <a id="754b74885801bd85" href="R/754b74885801bd85.html" target="n" data-glyph="76,1" class="i method">miEnlarge_Click</a>(<b>object</b> <span id="r99 rd" class="r99 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r100 rd" class="r100 r">e</span>)
+        {
+            <a href="#f7b0fe8ec6f5ad36" class="i field">_thumbnailHeight</a> *= 2;
+            <a href="#446af08ce796d183" class="i field">_thumbnailWidth</a>  *= 2;
+            <a href="#6a0d895f24d037e7" class="i method">RefreshThumbnailSizes</a>();
+        }
+
+
+        <span class="c">// ------------------------- miReduce_Click ---------------------------</span>
+        <b>void</b> <a id="dd7c7004cc955c64" href="R/dd7c7004cc955c64.html" target="n" data-glyph="76,1" class="i method">miReduce_Click</a>(<b>object</b> <span id="r101 rd" class="r101 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r102 rd" class="r102 r">e</span>)
+        {
+            <a href="#f7b0fe8ec6f5ad36" class="i field">_thumbnailHeight</a> /= 2;
+            <a href="#446af08ce796d183" class="i field">_thumbnailWidth</a>  /= 2;
+            <a href="#6a0d895f24d037e7" class="i method">RefreshThumbnailSizes</a>();
+        }
+
+
+        <span class="c">// ------------------------- miRotate_Click ---------------------------</span>
+        <b>void</b> <a id="a619b0ece8358325" href="R/a619b0ece8358325.html" target="n" data-glyph="76,1" class="i method">miRotate_Click</a>(<b>object</b> <span id="r103 rd" class="r103 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r104 rd" class="r104 r">e</span>)
+        {
+            <a href="#ba4a7404c4efc1f7" class="i field">_rotateAngle</a> = (<a href="#ba4a7404c4efc1f7" class="i field">_rotateAngle</a> + 90) % 360;
+            <a href="#6b34c8d1fdc88a6c" class="i method">RotateThumbnails</a>();
+        }
+
+
+        <span class="c">// ---------------------- RefreshThumbnailSizes -----------------------</span>
+        <b>private void</b> <a id="6a0d895f24d037e7" href="R/6a0d895f24d037e7.html" target="n" data-glyph="76,1" class="i method">RefreshThumbnailSizes</a>()
+        {
+            <span class="c">// TODO: Refresh only displayed.</span>
+            <b>foreach</b> (<a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a> <span id="r105 rd" class="r105 r">OuterBorder</span> <b>in</b> <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>)
+            {
+                <b>if</b> (<span class="r105 r">OuterBorder</span>.<a href="@0@PresentationFramework/A.html#2a880652079bdb31" class="i property">Child</a> != <b>null</b>)
+                {
+                    <a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a> <span id="r106 rd" class="r106 r">sp</span> = <span class="r105 r">OuterBorder</span>.<a href="@0@PresentationFramework/A.html#2a880652079bdb31" class="i property">Child</a> <b>as</b> <a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a>;
+                    <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="t t">Image</a> <span id="r107 rd" class="r107 r">img</span> = <span class="r106 r">sp</span>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>[0] <b>as</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="t t">Image</a>;
+                    <span class="r107 r">img</span>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#f7b0fe8ec6f5ad36" class="i field">_thumbnailHeight</a>;
+                }
+                <span class="r105 r">OuterBorder</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="#446af08ce796d183" class="i field">_thumbnailWidth</a> + <a href="#65dc85fd858bfd7d" class="i field">_borderIncrement</a>;
+                <span class="r105 r">OuterBorder</span>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#f7b0fe8ec6f5ad36" class="i field">_thumbnailHeight</a> + <a href="#65dc85fd858bfd7d" class="i field">_borderIncrement</a>;
+            }
+
+            <span class="c">// Refresh thumbnails</span>
+            <a href="#c3dc16b26ccdc191" class="i method">RefreshThumbnails</a>();
+        }
+
+
+        <span class="c">// ------------------------ RefreshThumbnails -------------------------</span>
+        <b>private void</b> <a id="c3dc16b26ccdc191" href="R/c3dc16b26ccdc191.html" target="n" data-glyph="76,1" class="i method">RefreshThumbnails</a>()
+        {
+            <span class="c">// Invalidate displayed thumbnails</span>
+            <a href="#fd4f03c1a45fd93d" class="i method">InvalidateDisplayedThumbs</a>();
+            <a href="#271126054a7dd76d" class="i field">_maxThumbnails</a> = <a href="#d875e25db72c6000" class="i method">CalculateMaxThumbnails</a>();
+            <b>if</b> (<a href="#79afc8f17e6998fc" class="i field">_currentThumbnail</a> &gt; <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#354bddbb78a1ce2b" class="i property">PageCount</a>)
+            {
+                <b>if</b> (<a href="#271126054a7dd76d" class="i field">_maxThumbnails</a> &lt;= <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#354bddbb78a1ce2b" class="i property">PageCount</a>)
+                {
+                    <a href="#79afc8f17e6998fc" class="i field">_currentThumbnail</a> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#354bddbb78a1ce2b" class="i property">PageCount</a> - <a href="#271126054a7dd76d" class="i field">_maxThumbnails</a>;
+                    <a href="#4e8a2523f5d5e92a" class="i field">_numDisplayedThumbnails</a> = <a href="#271126054a7dd76d" class="i field">_maxThumbnails</a>;
+                }
+                <b>else</b>
+                {
+                    <a href="#79afc8f17e6998fc" class="i field">_currentThumbnail</a> = 0;
+                    <a href="#4e8a2523f5d5e92a" class="i field">_numDisplayedThumbnails</a> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#354bddbb78a1ce2b" class="i property">PageCount</a>;
+                }
+
+                <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#5b32cea23abdf2c5" class="i method">MoveCurrentToPosition</a>(<a href="#79afc8f17e6998fc" class="i field">_currentThumbnail</a>);
+            }
+            <b>else</b>
+            {
+                <b>if</b> (<a href="#79afc8f17e6998fc" class="i field">_currentThumbnail</a> + <a href="#271126054a7dd76d" class="i field">_maxThumbnails</a> &lt;= <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#354bddbb78a1ce2b" class="i property">PageCount</a>)
+                {
+                    <a href="#4e8a2523f5d5e92a" class="i field">_numDisplayedThumbnails</a> = <a href="#271126054a7dd76d" class="i field">_maxThumbnails</a>;
+                }
+                <b>else</b>
+                {
+                    <a href="#4e8a2523f5d5e92a" class="i field">_numDisplayedThumbnails</a> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#354bddbb78a1ce2b" class="i property">PageCount</a> - <a href="#79afc8f17e6998fc" class="i field">_currentThumbnail</a>;
+                }
+            }
+            <a href="#394e58784c7cec6f" class="i method">RefreshThumbnailDisplay</a>();
+        }
+
+
+        <span class="c">// --------------------- RefreshThumbnailDisplay ----------------------</span>
+        <b>void</b> <a id="394e58784c7cec6f" href="R/394e58784c7cec6f.html" target="n" data-glyph="76,1" class="i method">RefreshThumbnailDisplay</a>()
+        {
+            <span class="c">//FDPV.Focus();</span>
+            <b>bool</b> <span id="r108 rd" class="r108 r">createMode</span> =
+                (<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#f18d7f0a13f61539" class="i property">CurrentItem</a> <b>is</b> <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>) ?  <b>false</b> : <b>true</b>;
+
+            <b>for</b> (<b>int</b> <span id="r109 rd" class="r109 r">i</span> = 0; <span class="r109 r">i</span> &lt; <a href="#4e8a2523f5d5e92a" class="i field">_numDisplayedThumbnails</a>; <span class="r109 r">i</span>++)
+            {
+                <a href="@0@PresentationCore/A.html#d3e2b9e14bb725a3" class="t t">DocumentPage</a> <span id="r110 rd" class="r110 r">docPage</span> =
+                    <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a>.<a href="@0@PresentationCore/A.html#8f378e7777e14ef2" class="i property">DocumentPaginator</a>.<a href="@0@PresentationCore/A.html#e7a0e0ce6e6c1859" class="i method">GetPage</a>(<a href="#79afc8f17e6998fc" class="i field">_currentThumbnail</a> + <span class="r109 r">i</span>);
+
+                <a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a> <span id="r111 rd" class="r111 r">pageThumb</span> =
+                    <a href="#643c2978aa6a78c6" class="i method">CreatePageThumb</a>(
+                        <span class="r110 r">docPage</span>.<a href="@0@PresentationCore/A.html#0a90d7a3639ec023" class="i property">Visual</a>, <span class="r110 r">docPage</span>.<a href="@0@PresentationCore/A.html#38cde3d7fb7cf630" class="i property">Size</a>, <a href="#79afc8f17e6998fc" class="i field">_currentThumbnail</a> + <span class="r109 r">i</span> + 1 );
+
+                <b>if</b> (!<span class="r108 r">createMode</span>)
+                {
+                    <a href="@1@System.Runtime/A.html#d9262ceecc1719ab" class="t t">Object</a> <span id="r112 rd" class="r112 r">currentItem</span> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#f18d7f0a13f61539" class="i property">CurrentItem</a>;
+                    <b>if</b> ( !(<span class="r112 r">currentItem</span> <b>is</b> <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>) )  <b>continue</b>;
+                    <a href="#7084bf30d69a3ded" class="i method">PrepareBorderForDisplay</a>((<a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>)<span class="r112 r">currentItem</span>);
+                    ((<a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>)<span class="r112 r">currentItem</span>).<a href="@0@PresentationFramework/A.html#2a880652079bdb31" class="i property">Child</a> = <span class="r111 r">pageThumb</span>;
+                }
+                <b>else</b>
+                {
+                    <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a> <span id="r113 rd" class="r113 r">border</span> = <a href="#68b0a0d786a95741" class="i method">CreateThumbBorder</a>( <a href="#79afc8f17e6998fc" class="i field">_currentThumbnail</a> + <span class="r109 r">i</span> + 1);
+                    <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<span class="r113 r">border</span>);
+                    <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#def4c86590286f30" class="i method">MoveCurrentToNext</a>();
+                    <b>if</b> ( !(<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#f18d7f0a13f61539" class="i property">CurrentItem</a> <b>is</b> <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>) )  <b>continue</b>;
+                    <a href="#7084bf30d69a3ded" class="i method">PrepareBorderForDisplay</a>(<span class="r113 r">border</span>);
+                    <span class="r113 r">border</span>.<a href="@0@PresentationFramework/A.html#2a880652079bdb31" class="i property">Child</a> = <span class="r111 r">pageThumb</span>;
+                    <b>continue</b>;
+                }
+
+                <span class="c">// If ThumbList doesn&#39;t have enough items,</span>
+                <span class="c">// the FixedDocument pages may have increased.</span>
+                <b>if</b> ( !<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#def4c86590286f30" class="i method">MoveCurrentToNext</a>() )  <span class="r108 r">createMode</span> = <b>true</b>;
+            }
+
+            <b>for</b> (<b>int</b> <span id="r114 rd" class="r114 r">i</span> = <a href="#4e8a2523f5d5e92a" class="i field">_numDisplayedThumbnails</a>; <span class="r114 r">i</span> &gt; 0; <span class="r114 r">i</span>--)
+            {
+                <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#365b15621f8d4826" class="i method">MoveCurrentToPrevious</a>();
+            }
+        }<span class="c">// end:RefreshThumbnailDisplay()</span>
+
+
+        <span class="c">// ------------------- InvalidateDisplayedThumbs() --------------------</span>
+        <b>void</b> <a id="fd4f03c1a45fd93d" href="R/fd4f03c1a45fd93d.html" target="n" data-glyph="76,1" class="i method">InvalidateDisplayedThumbs</a>()
+        {
+            <span class="c">// TODO: Can this be combined with the refresh operation?  The only</span>
+            <span class="c">// issue to deal with is that number of displayed thumbnails may be</span>
+            <span class="c">// different and if less than before we have some more invalidations</span>
+            <span class="c">// to carry out.</span>
+            <b>for</b> (<b>int</b> <span id="r115 rd" class="r115 r">i</span> = 0; <span class="r115 r">i</span> &lt; <a href="#4e8a2523f5d5e92a" class="i field">_numDisplayedThumbnails</a>; <span class="r115 r">i</span>++)
+            {
+                <a href="@1@System.Runtime/A.html#d9262ceecc1719ab" class="t t">Object</a> <span id="r116 rd" class="r116 r">currentItem</span> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#f18d7f0a13f61539" class="i property">CurrentItem</a>;
+                <span class="t t">Debug</span>.<span class="i method">Assert</span>(<span class="r116 r">currentItem</span> <b>is</b> <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>);
+                <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a> <span id="r117 rd" class="r117 r">border</span> = (<a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>)<span class="r116 r">currentItem</span>;
+                <b>if</b> (<span class="r117 r">border</span> == <b>null</b>) <b>continue</b>; <span class="c">// for (int i=0</span>
+                <span class="r117 r">border</span>.<a href="@0@PresentationFramework/A.html#2a880652079bdb31" class="i property">Child</a> = <b>null</b>;
+                <span class="r117 r">border</span>.<a href="@0@PresentationFramework/A.html#0abeaa3587f36789" class="i property">BorderBrush</a> = <b>null</b>;
+                <span class="r117 r">border</span>.<a href="@0@PresentationFramework/A.html#f9485affacabfc50" class="i property">ContextMenu</a> = <b>null</b>;
+                <span class="r117 r">border</span>.<a href="@0@PresentationCore/A.html#bb42e64a3ed1a0ce" class="i">MouseDown</a> -= <a href="#dda990a749d1734f" class="i method">ThumbnailClick</a>;
+                <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#def4c86590286f30" class="i method">MoveCurrentToNext</a>();
+            }
+
+            <span class="c">// Go back to the current position</span>
+            <b>for</b> (<b>int</b> <span id="r118 rd" class="r118 r">i</span> = <a href="#4e8a2523f5d5e92a" class="i field">_numDisplayedThumbnails</a>; <span class="r118 r">i</span> &gt; 0; <span class="r118 r">i</span>--)
+            {
+                <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#365b15621f8d4826" class="i method">MoveCurrentToPrevious</a>();
+            }
+        }<span class="c">// end:InvalidateDisplayedThumbs()</span>
+
+
+        <span class="c">// ----------------------- RotateThumbnails() -------------------------</span>
+        <b>private void</b> <a id="6b34c8d1fdc88a6c" href="R/6b34c8d1fdc88a6c.html" target="n" data-glyph="76,1" class="i method">RotateThumbnails</a>()
+        {
+            <b>foreach</b> (<a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a> <span id="r119 rd" class="r119 r">OuterBorder</span> <b>in</b> <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#f2c6602b91be306a" class="i field">ThumbList</a>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>)
+            {
+                <a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a> <span id="r120 rd" class="r120 r">sp</span> = <span class="r119 r">OuterBorder</span>.<a href="@0@PresentationFramework/A.html#2a880652079bdb31" class="i property">Child</a> <b>as</b> <a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a>;
+                <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="t t">Image</a> <span id="r121 rd" class="r121 r">img</span> = <span class="r120 r">sp</span>.<a href="@0@PresentationFramework/A.html#fb9060d71a3afc83" class="i property">Children</a>[0] <b>as</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="t t">Image</a>;
+                <a href="@0@PresentationCore/A.html#823075529000c4d5" class="t t">RotateTransform</a> <span id="r122 rd" class="r122 r">rt</span> = <b>new</b> <a href="@0@PresentationCore/A.html#88c1ebb3eb7f41fb" class="t constructor">RotateTransform</a>(<a href="#ba4a7404c4efc1f7" class="i field">_rotateAngle</a>);
+                <span class="r121 r">img</span>.<a href="@0@PresentationFramework/A.html#6a5dca5405e3cf1d" class="i property">LayoutTransform</a> = <span class="r122 r">rt</span>;
+            }
+        }
+
+
+        <span class="c">// ------------------------ ThumbnailClick() --------------------------</span>
+        <b>void</b> <a id="dda990a749d1734f" href="R/dda990a749d1734f.html" target="n" data-glyph="76,1" class="i method">ThumbnailClick</a>(<b>object</b> <span id="r123 rd" class="r123 r">sender</span>, <a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r124 rd" class="r124 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a> <span id="r125 rd" class="r125 r">OuterBorder</span> = <span class="r123 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>;
+            <span class="c">//TrackerRect.Height = OuterBorder.Height;</span>
+            <span class="c">//TrackerRect.Width = OuterBorder.Width;</span>
+            <span class="c">//Point pt = OuterBorder.TranslatePoint(new Point(0,0), ThumbList);</span>
+            <span class="c">//RectGeom.Rect = new Rect(pt.X + OuterBorder.Margin.Left,</span>
+            <span class="c">//                         pt.Y + OuterBorder.Margin.Top,</span>
+            <span class="c">//                         OuterBorder.Width, OuterBorder.Height);</span>
+            <span class="c">//TrackerRect.Visibility = Visibility.Visible;</span>
+            <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#2a5fed4930793c05" class="i method">GoToPage</a>(<b>int</b>.<a href="@1@System.Runtime/A.html#a438016f815a35c3" class="i method">Parse</a>(<span class="r125 r">OuterBorder</span>.<a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a>.<a href="@1@System.Runtime/A.html#ff31a6bf27c58f89" class="i method">ToString</a>()));
+        }
+
+
+        <span class="c">// ------------------------ OnAddBookmark() ---------------------------</span>
+        <b>void</b> <a id="b07e87d3acd8fd15" href="R/b07e87d3acd8fd15.html" target="n" data-glyph="76,1" class="i method">OnAddBookmark</a>(<b>object</b> <span id="r126 rd" class="r126 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r127 rd" class="r127 r">args</span>)
+        {
+            <b>try</b>
+            {
+                <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a> <span id="r128 rd" class="r128 r">col</span> = (<span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>)<span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#a5d358896c429793" class="t t">ColorConverter</a>.<a href="@0@PresentationCore/A.html#712b07b6ae41093f" class="i method">ConvertFromString</a>(<span class="s">&quot;#A6FFFF00&quot;</span>);
+                <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a> <span id="r129 rd" class="r129 r">myBrush</span> = <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<span class="r128 r">col</span>);
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r130 rd" class="r130 r">userName</span> = <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Forms</span>.<a href="@0@System.Windows.Forms/A.html#7c2ae3bbbd7ef9ff" class="t t">SystemInformation</a>.<a href="@0@System.Windows.Forms/A.html#fb3f548d9fc31e60" class="i property">UserName</a>;
+                <a href="@0@PresentationFramework/A.html#99d987b49da01121" class="t t">AnnotationHelper</a>.<a href="@0@PresentationFramework/A.html#8a1f5691eddec7a1" class="i method">CreateHighlightForSelection</a>(
+                                            <a href="#cac019a6fbf46cd5" class="i field">_annServ</a>, <span class="r130 r">userName</span>, <span class="r129 r">myBrush</span>);
+            }
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a>)
+            {
+                <b>return</b>;
+            }
+            <span class="c">//AddBookmarkOrComment(BookmarkList);</span>
+        }
+
+
+        <span class="c">// -------------------------- OnAddComment ----------------------------</span>
+        <b>void</b> <a id="4a4393abe0bdac90" href="R/4a4393abe0bdac90.html" target="n" data-glyph="76,1" class="i method">OnAddComment</a>(<b>object</b> <span id="r131 rd" class="r131 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r132 rd" class="r132 r">args</span>)
+        {
+            <b>try</b>
+            {
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r133 rd" class="r133 r">userName</span> = <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Forms</span>.<a href="@0@System.Windows.Forms/A.html#7c2ae3bbbd7ef9ff" class="t t">SystemInformation</a>.<a href="@0@System.Windows.Forms/A.html#fb3f548d9fc31e60" class="i property">UserName</a>;
+                <a href="@0@PresentationFramework/A.html#99d987b49da01121" class="t t">AnnotationHelper</a>.<a href="@0@PresentationFramework/A.html#a3e3432b316bf07c" class="i method">CreateTextStickyNoteForSelection</a>(
+                                                            <a href="#cac019a6fbf46cd5" class="i field">_annServ</a>, <span class="r133 r">userName</span>);
+            }
+            <b>catch</b> (<a href="@1@System.Runtime/A.html#beac22dfca574cd4" class="t t">InvalidOperationException</a>)
+            {
+                <b>return</b>;
+            }
+
+            <span class="c">//AddBookmarkOrComment(CommentsList);</span>
+            <span class="c">//Annotation ann1 = _annStore.GetAnnotations()[0];</span>
+            <span class="c">//ColorConverter converter = new ColorConverter();</span>
+            <span class="c">//Nullable&lt;Color&gt; color = ((SolidColorBrush)Brushes.Yellow).Color;</span>
+            <span class="c">//ann1.Cargos[0].Contents[0].Attributes[0].Value =</span>
+            <span class="c">//    converter.ConvertToInvariantString(color.Value);</span>
+        }
+
+
+        <span class="c">// ------------------ _annStore_StoreContentChanged -------------------</span>
+        <b>void</b> <a id="cf212c814e2911f1" href="R/cf212c814e2911f1.html" target="n" data-glyph="76,1" class="i method">_annStore_StoreContentChanged</a>(<b>object</b> <span id="r134 rd" class="r134 r">sender</span>, <a href="@0@PresentationFramework/A.html#31f8437bf86f2638" class="t t">StoreContentChangedEventArgs</a> <span id="r135 rd" class="r135 r">e</span>)
+        {
+            <b>if</b> (<span class="r135 r">e</span>.<a href="@0@PresentationFramework/A.html#bb28f45f9c01dea7" class="i property">Action</a> == <a href="@0@PresentationFramework/A.html#50b6651e99fb97ce" class="t t">StoreContentAction</a>.<a href="@0@PresentationFramework/A.html#a79602578101dd7e" class="i field">Deleted</a>) <b>return</b>;
+            <a href="@0@PresentationFramework/A.html#5fb4c9bd9be6e38e" class="t t">Annotation</a> <span id="r136 rd" class="r136 r">ann</span> = <span class="r135 r">e</span>.<a href="@0@PresentationFramework/A.html#f87b3adaa75d8127" class="i property">Annotation</a>;
+            <b>if</b> (<span class="r136 r">ann</span>.<a href="@0@PresentationFramework/A.html#d3421f659bfc1187" class="i property">Cargos</a>.<a href="@1@System.Runtime/A.html#f2419069e9890f5d" class="i property">Count</a> &gt; 0)
+            {
+                <a href="@0@PresentationFramework/A.html#a9ca850299e3ff2e" class="t t">AnnotationResource</a> <span id="r137 rd" class="r137 r">annResource</span> = <span class="r136 r">ann</span>.<a href="@0@PresentationFramework/A.html#d3421f659bfc1187" class="i property">Cargos</a>[0] <b>as</b> <a href="@0@PresentationFramework/A.html#a9ca850299e3ff2e" class="t t">AnnotationResource</a>;
+                <b>if</b> (<span class="r137 r">annResource</span>.<a href="@0@PresentationFramework/A.html#4ac39081db922a67" class="i property">Name</a> == <span class="s">&quot;Highlight&quot;</span>)
+                    <a href="#8edb8bb058c530dc" class="i method">AddBookmarkOrComment</a>(<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#2b2c9e658d3226de" class="i field">BookmarkList</a>, <span class="r136 r">ann</span>);
+                <b>else</b>
+                    <a href="#8edb8bb058c530dc" class="i method">AddBookmarkOrComment</a>(<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#6194dbfc3c960c96" class="i field">CommentsList</a>, <span class="r136 r">ann</span>);
+            }
+            <b>else</b>
+            {
+                <a href="#8edb8bb058c530dc" class="i method">AddBookmarkOrComment</a>(<a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#6194dbfc3c960c96" class="i field">CommentsList</a>, <span class="r136 r">ann</span>);
+            }
+        }
+
+
+        <span class="c">// ----------------------- AddBookmarkOrComment -----------------------</span>
+        <b>private void</b> <a id="8edb8bb058c530dc" href="R/8edb8bb058c530dc.html" target="n" data-glyph="76,1" class="i method">AddBookmarkOrComment</a>(<a href="@0@PresentationFramework/A.html#fef199e8c0e96177" class="t t">ListBox</a> <span id="r138 rd" class="r138 r">collection</span>, <a href="@0@PresentationFramework/A.html#5fb4c9bd9be6e38e" class="t t">Annotation</a> <span id="r139 rd" class="r139 r">ann</span>)
+        {
+            <b>if</b> (<span class="r139 r">ann</span>.<a href="@0@PresentationFramework/A.html#d3421f659bfc1187" class="i property">Cargos</a>.<a href="@1@System.Runtime/A.html#f2419069e9890f5d" class="i property">Count</a> &lt;= 1)
+            {
+                <span class="r139 r">ann</span>.<a href="@0@PresentationFramework/A.html#d3421f659bfc1187" class="i property">Cargos</a>.<a href="@1@System.Runtime/A.html#5c61cc24de82f7e7" class="i method">Add</a>(
+                    <b>new</b> <a href="@0@PresentationFramework/A.html#a0a14f41c4b6be29" class="t constructor">AnnotationResource</a>( <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#68e610820443e813" class="i property">MasterPageNumber</a>.<a href="@1@System.Runtime/A.html#8d6f2d8bc0589463" class="i method">ToString</a>() ) );
+            }
+
+            <a href="@1@System.Runtime/A.html#73b5be5e9c2474b2" class="t t">Assembly</a> <span id="r140 rd" class="r140 r">a</span> = <span class="i n">System</span>.<span class="i n">Reflection</span>.<a href="@1@System.Runtime/A.html#73b5be5e9c2474b2" class="t t">Assembly</a>.<a href="@1@System.Runtime/A.html#bd671af9926207e9" class="i method">GetExecutingAssembly</a>();
+
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r141 rd" class="r141 r">path</span> = <span class="i n">System</span>.<span class="i n">IO</span>.<span class="t t">Path</span>.<span class="i method">Combine</span>(
+                <span class="r140 r">a</span>.<a href="@1@System.Runtime/A.html#3faa3e0e41d8868b" class="i property">Location</a>.<a href="@1@System.Runtime/A.html#1aa209df053ff944" class="i method">Remove</a>(<span class="r140 r">a</span>.<a href="@1@System.Runtime/A.html#3faa3e0e41d8868b" class="i property">Location</a>.<a href="@1@System.Runtime/A.html#43ea090a2243545e" class="i method">LastIndexOf</a>(<span class="s">&#39;\\&#39;</span>)), <span class="s">&quot;GoButton.xaml&quot;</span>);
+
+            <a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a> <span id="r142 rd" class="r142 r">EntryInList</span> =
+                <a href="@0@PresentationFramework/A.html#7449eaf937932294" class="t t">XamlReader</a>.<a href="@0@PresentationFramework/A.html#5a2e202c49f4093f" class="i method">Load</a>(<span class="t t">File</span>.<span class="i method">OpenRead</span>(<span class="r141 r">path</span>)) <b>as</b> <a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a>;
+
+            <span class="r142 r">EntryInList</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#2b2c9e658d3226de" class="i field">BookmarkList</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> - 10;
+
+            <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a> <span id="r143 rd" class="r143 r">GoToMark</span> = <a href="@0@PresentationFramework/A.html#7b6652b52c5711cc" class="t t">LogicalTreeHelper</a>.<a href="@0@PresentationFramework/A.html#5341aaba95b4dff9" class="i method">FindLogicalNode</a>(
+                                            <span class="r142 r">EntryInList</span>, <span class="s">&quot;GoToMark&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>;
+
+            <b>if</b> (<span class="r143 r">GoToMark</span> != <b>null</b>)
+            {
+                <span class="r143 r">GoToMark</span>.<a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> = <span class="r139 r">ann</span>;
+                <span class="r143 r">GoToMark</span>.<a href="@0@PresentationFramework/A.html#56b78e5307732315" class="i">Click</a> += <b>new</b> <span class="t">RoutedEventHandler</span>(<a href="#d41c4966b815159a" class="i method">GoToMark_Click</a>);
+            }
+
+            <a href="@0@PresentationFramework/A.html#0368237ab8fc1146" class="t t">MenuItem</a> <span id="r144 rd" class="r144 r">GoToMenu</span> = <a href="@0@PresentationFramework/A.html#7b6652b52c5711cc" class="t t">LogicalTreeHelper</a>.<a href="@0@PresentationFramework/A.html#5341aaba95b4dff9" class="i method">FindLogicalNode</a>(
+                                  <span class="r143 r">GoToMark</span>.<a href="@0@PresentationFramework/A.html#f9485affacabfc50" class="i property">ContextMenu</a>, <span class="s">&quot;GoToMenu&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#0368237ab8fc1146" class="t t">MenuItem</a>;
+
+            <span class="r144 r">GoToMenu</span>.<a href="@0@PresentationFramework/A.html#fd8d5c6f9a0b86ed" class="i">Click</a> += <b>new</b> <span class="t">RoutedEventHandler</span>(<a href="#d41c4966b815159a" class="i method">GoToMark_Click</a>);
+            <span class="r144 r">GoToMenu</span>.<a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> = <span class="r139 r">ann</span>;
+
+            <a href="@0@PresentationFramework/A.html#0368237ab8fc1146" class="t t">MenuItem</a> <span id="r145 rd" class="r145 r">DeleteMark</span> = <a href="@0@PresentationFramework/A.html#7b6652b52c5711cc" class="t t">LogicalTreeHelper</a>.<a href="@0@PresentationFramework/A.html#5341aaba95b4dff9" class="i method">FindLogicalNode</a>(
+                                  <span class="r143 r">GoToMark</span>.<a href="@0@PresentationFramework/A.html#f9485affacabfc50" class="i property">ContextMenu</a>, <span class="s">&quot;DeleteMark&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#0368237ab8fc1146" class="t t">MenuItem</a>;
+
+            <span class="r145 r">DeleteMark</span>.<a href="@0@PresentationFramework/A.html#fd8d5c6f9a0b86ed" class="i">Click</a> += <b>new</b> <span class="t">RoutedEventHandler</span>(<a href="#c69a760376db9e10" class="i method">DeleteMark_Click</a>);
+            <span class="r145 r">DeleteMark</span>.<a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> = <span class="r139 r">ann</span>;
+
+            <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>.<a href="@0@PresentationFramework/A.html#ede77210f20e8cf9" class="t t">Path</a> <span id="r146 rd" class="r146 r">markPath</span> =
+                <a href="@0@PresentationFramework/A.html#7b6652b52c5711cc" class="t t">LogicalTreeHelper</a>.<a href="@0@PresentationFramework/A.html#5341aaba95b4dff9" class="i method">FindLogicalNode</a>(<span class="r142 r">EntryInList</span>, <span class="s">&quot;MarkPath&quot;</span>)
+                    <b>as</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>.<a href="@0@PresentationFramework/A.html#ede77210f20e8cf9" class="t t">Path</a>;
+
+            <b>if</b> ( (<span class="r138 r">collection</span> == <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#6194dbfc3c960c96" class="i field">CommentsList</a>) &amp;&amp; (<span class="r146 r">markPath</span> != <b>null</b>) )
+            {
+                <a href="@0@PresentationCore/A.html#95e063a8a6c98a51" class="t t">LinearGradientBrush</a> <span id="r147 rd" class="r147 r">lBrush</span> = <b>new</b> <a href="@0@PresentationCore/A.html#cab8ccfc27cff4b9" class="t constructor">LinearGradientBrush</a>();
+                <a href="@0@PresentationCore/A.html#b3b8a1db9c51e976" class="t t">GradientStopCollection</a> <span id="r148 rd" class="r148 r">gColl</span> = <b>new</b> <a href="@0@PresentationCore/A.html#da78b9c1109ee092" class="t constructor">GradientStopCollection</a>();
+                <a href="@0@PresentationCore/A.html#f064ffa33775aaea" class="t t">GradientStop</a> <span id="r149 rd" class="r149 r">gStop</span> = <b>new</b> <a href="@0@PresentationCore/A.html#0400ce61273143af" class="t constructor">GradientStop</a>(<a href="@0@PresentationCore/A.html#0584e1e7d7fb612c" class="t t">Colors</a>.<a href="@0@PresentationCore/A.html#024e99a4948cfe82" class="i property">LightGreen</a>, 0);
+                <span class="r148 r">gColl</span>.<a href="@0@PresentationCore/A.html#004b45c9d64a0cf1" class="i method">Add</a>(<span class="r149 r">gStop</span>);
+                <span class="r147 r">lBrush</span>.<a href="@0@PresentationCore/A.html#0392ede480e9384d" class="i property">GradientStops</a> = <span class="r148 r">gColl</span>;
+                <span class="r146 r">markPath</span>.<a href="@0@PresentationFramework/A.html#9126b79b79de4c67" class="i property">Fill</a> = <span class="r147 r">lBrush</span>;
+            }
+
+            <span class="r138 r">collection</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<span class="r142 r">EntryInList</span>);
+
+            <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a> <span id="r150 rd" class="r150 r">spText</span> =
+                <a href="@0@PresentationFramework/A.html#7b6652b52c5711cc" class="t t">LogicalTreeHelper</a>.<a href="@0@PresentationFramework/A.html#5341aaba95b4dff9" class="i method">FindLogicalNode</a>(<span class="r142 r">EntryInList</span>, <span class="s">&quot;TB&quot;</span>) <b>as</b> <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>;
+
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r151 rd" class="r151 r">MarkText</span> = <span class="s">&quot;&quot;</span>;
+            <b>if</b> (<span class="r150 r">spText</span> != <b>null</b>)
+            {
+                <a href="@0@PresentationFramework/A.html#c032e8ddd3451f8d" class="t t">ContentLocator</a> <span id="r152 rd" class="r152 r">cloc</span> =
+                    <span class="r139 r">ann</span>.<a href="@0@PresentationFramework/A.html#a79bc3d29256d5ee" class="i property">Anchors</a>[0].<a href="@0@PresentationFramework/A.html#ad009a98a67a0f88" class="i property">ContentLocators</a>[0] <b>as</b> <a href="@0@PresentationFramework/A.html#c032e8ddd3451f8d" class="t t">ContentLocator</a>;
+                <b>if</b> (<span class="r152 r">cloc</span> == <b>null</b>)         <b>return</b>;
+                <b>if</b> (<span class="r152 r">cloc</span>.<a href="@0@PresentationFramework/A.html#5d84eed341aae469" class="i property">Parts</a>.<a href="@1@System.Runtime/A.html#f2419069e9890f5d" class="i property">Count</a> &lt; 2) <b>return</b>;
+
+                <a href="@0@PresentationFramework/A.html#447fcfec27d76332" class="t t">ContentLocatorPart</a> <span id="r153 rd" class="r153 r">cPart</span> = <span class="r152 r">cloc</span>.<a href="@0@PresentationFramework/A.html#5d84eed341aae469" class="i property">Parts</a>[1];
+                <b>if</b> (<span class="r153 r">cPart</span> == <b>null</b>)        <b>return</b>;
+                <b>if</b> (<span class="r153 r">cPart</span>.<a href="@0@PresentationFramework/A.html#f87a233e487c7684" class="i property">NameValuePairs</a><a href="@1@System.Runtime/A.html#86884956b17e491a">[</a><span class="s">&quot;Segment0&quot;</span>] != <b>null</b>)
+                {
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>[] <span id="r154 rd" class="r154 r">charPos</span> = <span class="r153 r">cPart</span>.<a href="@0@PresentationFramework/A.html#f87a233e487c7684" class="i property">NameValuePairs</a><a href="@1@System.Runtime/A.html#86884956b17e491a">[</a><span class="s">&quot;Segment0&quot;</span>].<a href="@1@System.Runtime/A.html#b06c6275ef677846" class="i method">Split</a>(<span class="s">&#39;,&#39;</span>);
+                    <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a> <span id="r155 rd" class="r155 r">fd</span> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a> <b>as</b> <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a>;
+                    <a href="@0@PresentationFramework/A.html#653528d814b49dce" class="t t">TextPointer</a> <span id="r156 rd" class="r156 r">tp</span> = <span class="r155 r">fd</span>.<a href="@0@PresentationFramework/A.html#038ddae1a0bc6cc1" class="i property">ContentStart</a>.<a href="@0@PresentationFramework/A.html#daf9478feed8477b" class="i method">GetPositionAtOffset</a>(
+                        <b>int</b>.<a href="@1@System.Runtime/A.html#a438016f815a35c3" class="i method">Parse</a>(<span class="r154 r">charPos</span>[0]), <a href="@0@PresentationFramework/A.html#ea3cad6dc7ae64ef" class="t t">LogicalDirection</a>.<a href="@0@PresentationFramework/A.html#db84cc4f1e52efc3" class="i field">Forward</a>);
+
+                    <b>if</b> (<span class="r156 r">tp</span> == <b>null</b>)       <b>return</b>;
+                    <b>if</b> (   <span class="r156 r">tp</span>.<a href="@0@PresentationFramework/A.html#796ac5bd5e8ce15f" class="i method">GetPointerContext</a>(<a href="@0@PresentationFramework/A.html#ea3cad6dc7ae64ef" class="t t">LogicalDirection</a>.<a href="@0@PresentationFramework/A.html#db84cc4f1e52efc3" class="i field">Forward</a>)
+                        == <a href="@0@PresentationFramework/A.html#827318cbbece5ea9" class="t t">TextPointerContext</a>.<a href="@0@PresentationFramework/A.html#3a054a93bedee2d0" class="i field">Text</a> )
+                    {
+                        <span class="r151 r">MarkText</span> += <span class="r156 r">tp</span>.<a href="@0@PresentationFramework/A.html#1324cacf669bcd71" class="i method">GetTextInRun</a>(<a href="@0@PresentationFramework/A.html#ea3cad6dc7ae64ef" class="t t">LogicalDirection</a>.<a href="@0@PresentationFramework/A.html#db84cc4f1e52efc3" class="i field">Forward</a>);
+                    }
+                    <span class="r150 r">spText</span>.<a href="@0@PresentationFramework/A.html#e77c881b0d6f7e9e" class="i property">Text</a> = <span class="r151 r">MarkText</span>.<a href="@1@System.Runtime/A.html#8124961f027d9ac9" class="i method">Substring</a>( 0,
+                        (<span class="r151 r">MarkText</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> &gt; 150) ? 150 : <span class="r151 r">MarkText</span>.<a href="@1@System.Runtime/A.html#e13f5829ef28aa07" class="i property">Length</a> );
+                }
+            }
+        }<span class="c">// end:AddBookmarkOrComment()</span>
+
+
+        <span class="c">// ------------------------- DeleteMark_Click -------------------------</span>
+        <b>void</b> <a id="c69a760376db9e10" href="R/c69a760376db9e10.html" target="n" data-glyph="76,1" class="i method">DeleteMark_Click</a>(<b>object</b> <span id="r157 rd" class="r157 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r158 rd" class="r158 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#5fb4c9bd9be6e38e" class="t t">Annotation</a> <span id="r159 rd" class="r159 r">ann</span> = ((<a href="@0@PresentationFramework/A.html#0368237ab8fc1146" class="t t">MenuItem</a>)<span class="r157 r">sender</span>).<a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> <b>as</b> <a href="@0@PresentationFramework/A.html#5fb4c9bd9be6e38e" class="t t">Annotation</a>;
+            <a href="#403d3bfa10a33571" class="i field">_annStore</a>.<a href="@0@PresentationFramework/A.html#c3edb0135df6a307" class="i method">DeleteAnnotation</a>(<span class="r159 r">ann</span>.<a href="@0@PresentationFramework/A.html#fb78efd779e0c321" class="i property">Id</a>);
+            <a href="#403d3bfa10a33571" class="i field">_annStore</a>.<a href="@0@PresentationFramework/A.html#7721af713d83cf3a" class="i method">Flush</a>();
+
+            <a href="@0@PresentationFramework/A.html#0368237ab8fc1146" class="t t">MenuItem</a> <span id="r160 rd" class="r160 r">thisMenu</span> = <span class="r157 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#0368237ab8fc1146" class="t t">MenuItem</a>;
+            <a href="@0@PresentationFramework/A.html#f4776732cf34c5a5" class="t t">ContextMenu</a> <span id="r161 rd" class="r161 r">parentMenu</span> = <span class="r160 r">thisMenu</span>.<a href="@0@PresentationFramework/A.html#f649907cbc82d1a0" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#f4776732cf34c5a5" class="t t">ContextMenu</a>;
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r162 rd" class="r162 r">dObj</span> =
+                <span class="r161 r">parentMenu</span>.<a href="@0@PresentationFramework/A.html#a51636ab4e28c527" class="i property">PlacementTarget</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+            <b>while</b> (!(<span class="r162 r">dObj</span> <b>is</b> <a href="@0@PresentationFramework/A.html#74647d237fc89a63" class="t t">StackPanel</a>))
+            {
+                <span class="r162 r">dObj</span> = <span class="r162 r">dObj</span>.<a href="@0@PresentationFramework/A.html#f649907cbc82d1a0" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+            }
+
+            <a href="@0@PresentationFramework/A.html#fef199e8c0e96177" class="t t">ListBox</a> <span id="r163 rd" class="r163 r">collection</span> = <span class="r162 r">dObj</span>.<a href="@0@PresentationFramework/A.html#f649907cbc82d1a0" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#fef199e8c0e96177" class="t t">ListBox</a>;
+            <span class="r163 r">collection</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d48c9329f1788bd8" class="i method">Remove</a>(<span class="r162 r">dObj</span>);
+            <a href="Util.cs.html#554dc4b2f3ea8fd7" class="t t">Util</a>.<a href="Util.cs.html#b2a7aed11720cf9e" class="i method">FlushDispatcher</a>();
+        }
+
+
+        <span class="c">// -------------------------- GoToMark_Click --------------------------</span>
+        <b>void</b> <a id="d41c4966b815159a" href="R/d41c4966b815159a.html" target="n" data-glyph="76,1" class="i method">GoToMark_Click</a>(<b>object</b> <span id="r164 rd" class="r164 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r165 rd" class="r165 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#5fb4c9bd9be6e38e" class="t t">Annotation</a> <span id="r166 rd" class="r166 r">ann</span> = <b>null</b>;
+            <b>if</b> (<span class="r164 r">sender</span> <b>is</b> <a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>)
+                <span class="r166 r">ann</span> = ((<a href="@0@PresentationFramework/A.html#bfc2d93e5b6e9a96" class="t t">Button</a>)<span class="r164 r">sender</span>).<a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> <b>as</b> <a href="@0@PresentationFramework/A.html#5fb4c9bd9be6e38e" class="t t">Annotation</a>;
+            <b>else</b> <b>if</b> (<span class="r164 r">sender</span> <b>is</b> <a href="@0@PresentationFramework/A.html#0368237ab8fc1146" class="t t">MenuItem</a>)
+                <span class="r166 r">ann</span> = ((<a href="@0@PresentationFramework/A.html#0368237ab8fc1146" class="t t">MenuItem</a>)<span class="r164 r">sender</span>).<a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> <b>as</b> <a href="@0@PresentationFramework/A.html#5fb4c9bd9be6e38e" class="t t">Annotation</a>;
+            <b>if</b> (<span class="r166 r">ann</span> == <b>null</b>)          <b>return</b>;
+
+            <a href="@0@PresentationFramework/A.html#c032e8ddd3451f8d" class="t t">ContentLocator</a> <span id="r167 rd" class="r167 r">cloc</span> =
+                <span class="r166 r">ann</span>.<a href="@0@PresentationFramework/A.html#a79bc3d29256d5ee" class="i property">Anchors</a>[0].<a href="@0@PresentationFramework/A.html#ad009a98a67a0f88" class="i property">ContentLocators</a>[0] <b>as</b> <a href="@0@PresentationFramework/A.html#c032e8ddd3451f8d" class="t t">ContentLocator</a>;
+            <b>if</b> (<span class="r167 r">cloc</span> == <b>null</b>)         <b>return</b>;
+            <b>if</b> (<span class="r167 r">cloc</span>.<a href="@0@PresentationFramework/A.html#5d84eed341aae469" class="i property">Parts</a>.<a href="@1@System.Runtime/A.html#f2419069e9890f5d" class="i property">Count</a> &lt; 2) <b>return</b>;
+
+            <a href="@0@PresentationFramework/A.html#447fcfec27d76332" class="t t">ContentLocatorPart</a> <span id="r168 rd" class="r168 r">cPart</span> = <span class="r167 r">cloc</span>.<a href="@0@PresentationFramework/A.html#5d84eed341aae469" class="i property">Parts</a>[1];
+            <b>if</b> (<span class="r168 r">cPart</span> == <b>null</b>)        <b>return</b>;
+            <b>if</b> (<span class="r168 r">cPart</span>.<a href="@0@PresentationFramework/A.html#f87a233e487c7684" class="i property">NameValuePairs</a><a href="@1@System.Runtime/A.html#86884956b17e491a">[</a><span class="s">&quot;Segment0&quot;</span>] != <b>null</b>)
+            {
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>[] <span id="r169 rd" class="r169 r">charPos</span> = <span class="r168 r">cPart</span>.<a href="@0@PresentationFramework/A.html#f87a233e487c7684" class="i property">NameValuePairs</a><a href="@1@System.Runtime/A.html#86884956b17e491a">[</a><span class="s">&quot;Segment0&quot;</span>].<a href="@1@System.Runtime/A.html#b06c6275ef677846" class="i method">Split</a>(<span class="s">&#39;,&#39;</span>);
+                <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a> <span id="r170 rd" class="r170 r">fd</span> = <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#593d3c2dc0b59be5" class="i field">FDPV</a>.<a href="@0@PresentationFramework/A.html#ef66feb7db9b289c" class="i property">Document</a> <b>as</b> <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a>;
+                <a href="@0@PresentationFramework/A.html#653528d814b49dce" class="t t">TextPointer</a> <span id="r171 rd" class="r171 r">tp</span> = <span class="r170 r">fd</span>.<a href="@0@PresentationFramework/A.html#038ddae1a0bc6cc1" class="i property">ContentStart</a>.<a href="@0@PresentationFramework/A.html#daf9478feed8477b" class="i method">GetPositionAtOffset</a>(
+                                 <b>int</b>.<a href="@1@System.Runtime/A.html#a438016f815a35c3" class="i method">Parse</a>(<span class="r169 r">charPos</span>[0]), <a href="@0@PresentationFramework/A.html#ea3cad6dc7ae64ef" class="t t">LogicalDirection</a>.<a href="@0@PresentationFramework/A.html#db84cc4f1e52efc3" class="i field">Forward</a>);
+                <b>if</b> (<span class="r171 r">tp</span> == <b>null</b>)   <b>return</b>;
+
+                <a href="@0@PresentationFramework/A.html#12f57ec65f270e8f" class="t t">FrameworkContentElement</a> <span id="r172 rd" class="r172 r">fce</span> = <span class="r171 r">tp</span>.<a href="@0@PresentationFramework/A.html#94eeeb51b6b1b9a3" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#12f57ec65f270e8f" class="t t">FrameworkContentElement</a>;
+                <b>if</b> (<span class="r172 r">fce</span> == <b>null</b>)  <b>return</b>;
+
+                <span class="r172 r">fce</span>.<a href="@0@PresentationFramework/A.html#43d1f7d2194ef2a5" class="i method">BringIntoView</a>();
+            }
+        }
+
+
+        <span class="c">// ---------------------- SetStatusOfContextMenu ----------------------</span>
+        <b>void</b> <a id="df6db01e0cc49b7b" href="R/df6db01e0cc49b7b.html" target="n" data-glyph="76,1" class="i method">SetStatusOfContextMenu</a>(<b>object</b> <span id="r173 rd" class="r173 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r174 rd" class="r174 r">args</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a> <span id="r175 rd" class="r175 r">fd</span> = <span class="r173 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a>;
+            <b>if</b> (<span class="r175 r">fd</span> == <b>null</b>) <b>return</b>;
+
+            <a href="obj/Debug/netcoreapp3.1/ThumbViewer.g.cs.html#2c8e43c53ad99c34" class="i field">cm_Bookmark</a>.<a href="@0@PresentationCore/A.html#166ae927a742c046" class="i property">IsEnabled</a> = <b>true</b>;
+        }
+
+
+        <b>private static double</b> <a id="9c2b3e89b015a5ca" href="R/9c2b3e89b015a5ca.html" target="n" data-glyph="46,1" class="i field">_articleZoomValue</a> = 110;
+
+        <span class="c">// ------------------------- ZoomSlider_Loaded ------------------------</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">   Event Handler for the ZoomSlider&#39;s Loaded event.</span>
+        <span class="c">///</span><span class="c">     Sets the slider&#39;s Value property to the</span>
+        <span class="c">///</span><span class="c">     application &quot;ArticleZoomValue&quot; property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="758415efd2d0e63b" href="R/758415efd2d0e63b.html" target="n" data-glyph="76,1" class="i method">ZoomSlider_Loaded</a>(<b>object</b> <span id="r176 rd" class="r176 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r177 rd" class="r177 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#6532ecbe410bb4ae" class="t t">Slider</a> <span id="r178 rd" class="r178 r">zoomSlider</span> = <span class="r176 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#6532ecbe410bb4ae" class="t t">Slider</a>;
+            <b>if</b> (<span class="r178 r">zoomSlider</span> != <b>null</b>)  <span class="r178 r">zoomSlider</span>.<a href="@0@PresentationFramework/A.html#0e28ca7cc2d8c26f" class="i property">Value</a> = <a href="#9c2b3e89b015a5ca" class="i field">_articleZoomValue</a>;
+        }
+
+
+        <span class="c">// ---------------------- ZoomSlider_ValueChanged ---------------------</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Event Handler for the ZoomSlider&#39;s ValueChanged event.</span>
+        <span class="c">///</span><span class="c">   Updates the application &quot;ArticleZoomValue&quot; property</span>
+        <span class="c">///</span><span class="c">   with new value of slider.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="2ab65784df985b82" href="R/2ab65784df985b82.html" target="n" data-glyph="76,1" class="i method">ZoomSlider_ValueChanged</a>(
+            <b>object</b> <span id="r179 rd" class="r179 r">sender</span>, <a href="@0@PresentationFramework/A.html#a5422d54686003ed" class="t t">RoutedPropertyChangedEventArgs</a>&lt;<b>double</b>&gt; <span id="r180 rd" class="r180 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#6532ecbe410bb4ae" class="t t">Slider</a> <span id="r181 rd" class="r181 r">zoomSlider</span> = <span class="r179 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#6532ecbe410bb4ae" class="t t">Slider</a>;
+
+            <b>if</b> (<span class="r181 r">zoomSlider</span> != <b>null</b>)
+            {
+                <b>double</b> <span id="r182 rd" class="r182 r">newValue</span> = <span class="r180 r">e</span>.<a href="@0@PresentationFramework/A.html#feaccc5df6b37552" class="i property">NewValue</a>;
+                <b>double</b> <span id="r183 rd" class="r183 r">oldValue</span> = <span class="r180 r">e</span>.<a href="@0@PresentationFramework/A.html#176525b16ad6386d" class="i property">OldValue</a>;
+
+                <span class="c">//NOTE: We have to do a check to make sure old value is greater</span>
+                <span class="c">//      than zero.  This only occurs when the slider is being</span>
+                <span class="c">//      initialized.  Basically we don&#39;t want to set the</span>
+                <span class="c">//      ArticleZoomValue property BEFORE ZoomSlider_Loaded is</span>
+                <span class="c">//      called.  There might be a better way of guarranting this.</span>
+                <b>if</b> ( (<span class="r182 r">newValue</span> != <span class="r183 r">oldValue</span>) &amp;&amp; (<span class="r183 r">oldValue</span> &gt; 0) )
+                    <a href="#9c2b3e89b015a5ca" class="i field">_articleZoomValue</a> = <span class="r180 r">e</span>.<a href="@0@PresentationFramework/A.html#feaccc5df6b37552" class="i property">NewValue</a>;
+            }
+        }<span class="c">// end:ZoomSlider_ValueChanged()</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Event Handling
+
+    }<span class="c">// end:partial class ThumbViewer</span>
+
+}<span class="c">// end:namespace DocumentSerialization</span>
+
+</pre></td></tr></table></div></body></html>

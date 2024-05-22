@@ -1,0 +1,895 @@
+﻿<!DOCTYPE html>
+<html><head><title>RfbProtocol.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(886);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RemoteDesktopWpf/RfbProtocol.cs" target="_top">RfbProtocol.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RemoteDesktopWpf" target="_top">..\..\..\EASY-TOOLS\EASYTools.VNCLib\EASYTools.VNCLib.csproj</a> (RemoteDesktopWpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// RemoteDesktopWpf - .NET VNC Client for WPF Library</span>
+<span class="c">// Copyright (C) 2008 David Humphrey</span>
+<span class="c">// Copyright (C) 2011 Dalbish Farrjones @ twitter (Modified VncSharp for WPF)</span>
+<span class="c">//</span>
+<span class="c">// This program is free software; you can redistribute it and/or modify</span>
+<span class="c">// it under the terms of the GNU General Public License as published by</span>
+<span class="c">// the Free Software Foundation; either version 2 of the License, or</span>
+<span class="c">// (at your option) any later version.</span>
+<span class="c">//</span>
+<span class="c">// This program is distributed in the hope that it will be useful,</span>
+<span class="c">// but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c">// GNU General Public License for more details.</span>
+<span class="c">//</span>
+<span class="c">// You should have received a copy of the GNU General Public License</span>
+<span class="c">// along with this program; if not, write to the Free Software</span>
+<span class="c">// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</span>
+ 
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Net</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Net</span>.<span class="i n">Sockets</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Security</span>.<span class="i n">Cryptography</span>;
+ 
+<b>namespace</b> <span class="i n">RemoteDesktopWpf</span>
+{
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+	<span class="c">///</span><span class="c"> Contains methods and properties to handle all aspects of the RFB Protocol versions 3.3 - 3.8.</span>
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+	<b>public class</b> <a id="3f12a63f7e6564da" href="R/3f12a63f7e6564da.html" target="n" data-glyph="0,0" class="t t">RfbProtocol</a>
+	{
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Reaise when Connected From VNC Server.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="8c0c96f7d9dae989" href="R/8c0c96f7d9dae989.html" target="n" data-glyph="30,1" class="i">RfbConnectedFromServer</a>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Raised when Failed To Listen. </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="9f10c909b367fddb" href="R/9f10c909b367fddb.html" target="n" data-glyph="42,1" class="i field">FailedToListen</a>;
+ 
+		<span class="c">// Encoding Constants</span>
+		<b>public const int</b> <a id="58ba0bdd3798b703" href="R/58ba0bdd3798b703.html" target="n" data-glyph="6,1" class="i field">RAW_ENCODING</a> 					= 0;
+		<b>public const int</b> <a id="45a52513f497118e" href="R/45a52513f497118e.html" target="n" data-glyph="6,1" class="i field">COPYRECT_ENCODING</a> 				= 1;
+		<b>public const int</b> <a id="0d52122a1ab379bd" href="R/0d52122a1ab379bd.html" target="n" data-glyph="6,1" class="i field">RRE_ENCODING</a> 					= 2;
+		<b>public const int</b> <a id="e01254557f2e5b48" href="R/e01254557f2e5b48.html" target="n" data-glyph="6,1" class="i field">CORRE_ENCODING</a>					= 4;
+		<b>public const int</b> <a id="839dcd92250c6f9d" href="R/839dcd92250c6f9d.html" target="n" data-glyph="6,1" class="i field">HEXTILE_ENCODING</a> 				= 5;
+		<b>public const int</b> <a id="b6b0ed7c7971608e" href="R/b6b0ed7c7971608e.html" target="n" data-glyph="6,1" class="i field">ZRLE_ENCODING</a> 					= 16;
+ 
+		<span class="c">// Server to Client Message-Type constants</span>
+		<b>public const int</b> <a id="6e55a07e7a5cc5da" href="R/6e55a07e7a5cc5da.html" target="n" data-glyph="6,1" class="i field">FRAMEBUFFER_UPDATE</a> 			= 0;
+		<b>public const int</b> <a id="104e369d63128904" href="R/104e369d63128904.html" target="n" data-glyph="6,1" class="i field">SET_COLOUR_MAP_ENTRIES</a>			= 1;
+		<b>public const int</b> <a id="57823ff055a0970d" href="R/57823ff055a0970d.html" target="n" data-glyph="6,1" class="i field">BELL</a> 							= 2;
+		<b>public const int</b> <a id="a7efd4384bec9874" href="R/a7efd4384bec9874.html" target="n" data-glyph="6,1" class="i field">SERVER_CUT_TEXT</a> 				= 3;
+ 
+		<span class="c">// Client to Server Message-Type constants</span>
+		<b>protected const byte</b> <a id="8b5e34ff863c7d33" href="R/8b5e34ff863c7d33.html" target="n" data-glyph="9,1" class="i field">SET_PIXEL_FORMAT</a> 			= 0;
+		<b>protected const byte</b> <a id="a638e31e4d1535bb" href="R/a638e31e4d1535bb.html" target="n" data-glyph="9,1" class="i field">SET_ENCODINGS</a> 				= 2;
+		<b>protected const byte</b> <a id="c6fa148fc0789313" href="R/c6fa148fc0789313.html" target="n" data-glyph="9,1" class="i field">FRAMEBUFFER_UPDATE_REQUEST</a> = 3;
+		<b>protected const byte</b> <a id="f00560611e25f013" href="R/f00560611e25f013.html" target="n" data-glyph="9,1" class="i field">KEY_EVENT</a> 					= 4;
+		<b>protected const byte</b> <a id="121c164a60404f23" href="R/121c164a60404f23.html" target="n" data-glyph="9,1" class="i field">POINTER_EVENT</a> 				= 5;
+		<b>protected const byte</b> <a id="79ed2e5f8a3059cd" href="R/79ed2e5f8a3059cd.html" target="n" data-glyph="9,1" class="i field">CLIENT_CUT_TEXT</a> 			= 6;
+ 
+		<b>protected int</b> <a id="7e2ef27e8b858850" href="R/7e2ef27e8b858850.html" target="n" data-glyph="45,1" class="i field">verMajor</a>;	<span class="c">// Major version of Protocol--probably 3</span>
+		<b>protected int</b> <a id="158a3c68e405a666" href="R/158a3c68e405a666.html" target="n" data-glyph="45,1" class="i field">verMinor</a>; <span class="c">// Minor version of Protocol--probably 3, 7, or 8</span>
+ 
+		<b>protected</b> <a href="@0@System/A.html#943f9db3a7511918" class="t t">TcpClient</a> <a id="59b62f67a8b366f2" href="R/59b62f67a8b366f2.html" target="n" data-glyph="45,1" class="i field">tcpClient</a>;		<span class="c">// Network object used to communicate with host</span>
+        <b>protected</b> <a href="@0@System/A.html#ad615384c4805213" class="t t">TcpListener</a> <a id="78ae04dc09f40a1a" href="R/78ae04dc09f40a1a.html" target="n" data-glyph="45,1" class="i field">tcpListener</a>;  <span class="c">// Network object used to wait for a connection from Server</span>
+		<b>protected</b> <a href="@0@System/A.html#6006b93b3942e29b" class="t t">NetworkStream</a> <a id="953d096c6188a656" href="R/953d096c6188a656.html" target="n" data-glyph="45,1" class="i field">stream</a>;	<span class="c">// Stream object used to send/receive data</span>
+		<b>protected</b> <a href="@0@mscorlib/A.html#4f6cad84482876ff" class="t t">BinaryReader</a> <a id="1453b99ee26787d6" href="R/1453b99ee26787d6.html" target="n" data-glyph="45,1" class="i field">reader</a>;	<span class="c">// Integral rather than Byte values are typically</span>
+		<b>protected</b> <a href="@0@mscorlib/A.html#cf806b417abe1a35" class="t t">BinaryWriter</a> <a id="bcbcebbab5e8e404" href="R/bcbcebbab5e8e404.html" target="n" data-glyph="45,1" class="i field">writer</a>;	<span class="c">// sent and received, so these handle this.</span>
+		<b>protected</b> <a href="#33a7318ec1f54fe3" class="t t">ZRLECompressedReader</a> <a id="9a01611a7ec48e61" href="R/9a01611a7ec48e61.html" target="n" data-glyph="45,1" class="i field">zrleReader</a>;
+ 
+        <b>private readonly object</b> <a id="316f646093127d8b" href="R/316f646093127d8b.html" target="n" data-glyph="46,1" class="i field">lockObj</a> = <b>new</b> <b>object</b>(); <span class="c">// Used to Synchronized method writing a data into writer</span>
+ 
+		<b>public</b> <a id="de7fed8bf04cd1f3" href="R/de7fed8bf04cd1f3.html" target="n" data-glyph="72,1" class="t constructor">RfbProtocol</a>()
+		{
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Gets the Protocol Version of the remote VNC Host--probably 3.3, 3.7, or 3.8.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public float</b> <a id="7a473e998eaed376" href="R/7a473e998eaed376.html" target="n" data-glyph="102,1" class="i property">ServerVersion</a> {
+			<b>get</b> {
+				<b>return</b> (<b>float</b>) <a href="#7e2ef27e8b858850" class="i field">verMajor</a> + (<a href="#158a3c68e405a666" class="i field">verMinor</a> * 0.1f);
+			}
+		}
+ 
+        <b>public</b> <a href="@0@mscorlib/A.html#4f6cad84482876ff" class="t t">BinaryReader</a> <a id="34e475046957cc34" href="R/34e475046957cc34.html" target="n" data-glyph="102,1" class="i property">Reader</a>
+        {
+            <b>get</b>
+            {
+                <b>return</b> <a href="#1453b99ee26787d6" class="i field">reader</a>;
+            }
+        }
+ 
+        <b>public</b> <a href="#33a7318ec1f54fe3" class="t t">ZRLECompressedReader</a> <a id="a115ec7d28e576ba" href="R/a115ec7d28e576ba.html" target="n" data-glyph="102,1" class="i property">ZrleReader</a>
+        {
+            <b>get</b>
+            {
+                <b>return</b> <a href="#9a01611a7ec48e61" class="i field">zrleReader</a>;
+            }
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Attempt to connectFromClient to a remote VNC Host.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The IP Address or Host Name of the VNC Host.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">port</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The Port number on which to connectFromClient.  Usually this will be 5900, except in the case that the VNC Host is running on a different Display, in which case the Display number should be added to 5900 to determine the correct port.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="262f20515d361868" href="R/262f20515d361868.html" target="n" data-glyph="72,1" class="i method">Connect</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">host</span>, <b>int</b> <span id="r1 rd" class="r1 r">port</span>)
+		{
+			<b>if</b> (<span class="r0 r">host</span> == <b>null</b>) <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<span class="s">&quot;host&quot;</span>);
+ 
+			<span class="c">// Try to connectFromClient, passing any exceptions up to the caller, and if successful, </span>
+			<span class="c">// wrap a big endian Binary Reader and Binary Writer around the resulting stream.</span>
+			<a href="#59b62f67a8b366f2" class="i field">tcpClient</a> = <b>new</b> <a href="@0@System/A.html#358b8a83fd52bc2d" class="t constructor">TcpClient</a>();
+			<a href="#59b62f67a8b366f2" class="i field">tcpClient</a>.<a href="@0@System/A.html#fdf385bbf3cdc7dd" class="i property">NoDelay</a> = <b>true</b>;  <span class="c">// turn-off Nagle&#39;s Algorithm for better interactive performance with host.</span>
+						
+			<a href="#59b62f67a8b366f2" class="i field">tcpClient</a>.<a href="@0@System/A.html#7f451440390e3925" class="i method">Connect</a>(<span class="r0 r">host</span>, <span class="r1 r">port</span>);
+            <a href="#8f70fb3904ccc9f5" class="i method">SetStreams</a>();
+		}
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Set Streams to valiables.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="8f70fb3904ccc9f5" href="R/8f70fb3904ccc9f5.html" target="n" data-glyph="76,1" class="i method">SetStreams</a>()
+        {
+            <a href="#953d096c6188a656" class="i field">stream</a> = <a href="#59b62f67a8b366f2" class="i field">tcpClient</a>.<a href="@0@System/A.html#bf6366b416aed83b" class="i method">GetStream</a>();
+ 
+            <span class="c">// Most of the RFB protocol uses Big-Endian byte order, while</span>
+            <span class="c">// .NET uses Little-Endian. These wrappers convert between the</span>
+            <span class="c">// two.  See BigEndianReader and BigEndianWriter below for more details.</span>
+            <a href="#1453b99ee26787d6" class="i field">reader</a> = <b>new</b> <a href="#94886d55fd3f504d" class="t constructor">BigEndianBinaryReader</a>(<a href="#953d096c6188a656" class="i field">stream</a>);
+            <a href="#bcbcebbab5e8e404" class="i field">writer</a> = <b>new</b> <a href="#2bfc3d1df731b843" class="t constructor">BigEndianBinaryWriter</a>(<a href="#953d096c6188a656" class="i field">stream</a>);
+            <a href="#9a01611a7ec48e61" class="i field">zrleReader</a> = <b>new</b> <a href="#90778eafcbb71be1" class="t constructor">ZRLECompressedReader</a>(<a href="#953d096c6188a656" class="i field">stream</a>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Start to Listen.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">host</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r3 r">port</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="a7e5655598867083" href="R/a7e5655598867083.html" target="n" data-glyph="72,1" class="i method">Listen</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r2 rd" class="r2 r">host</span>, <b>int</b> <span id="r3 rd" class="r3 r">port</span>)
+        {
+            <b>if</b> (<span class="r2 r">host</span> == <b>null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#eb98012a74461437" class="t constructor">ArgumentException</a>(<span class="s">&quot;No Host Name.&quot;</span>);
+            }
+ 
+            <b>try</b>
+            {
+                <a href="#78ae04dc09f40a1a" class="i field">tcpListener</a> = <b>new</b> <a href="@0@System/A.html#401aaaf4d4379a9d" class="t constructor">TcpListener</a>(<a href="@0@System/A.html#f8023b9c19212708" class="t t">Dns</a>.<a href="@0@System/A.html#73f3a39371b05b2b" class="i method">GetHostEntry</a>(<span class="r2 r">host</span>).<a href="@0@System/A.html#4c893d0156d612a9" class="i property">AddressList</a>[0], <span class="r3 r">port</span>);
+ 
+                <span class="c">// Start Listening Thread</span>
+                <a href="@0@mscorlib/A.html#3980e012bae82e96" class="t t">Thread</a> <span id="r4 rd" class="r4 r">listenThread</span> = <b>new</b> <a href="@0@mscorlib/A.html#76f340c84df6da8d" class="t constructor">Thread</a>(<b>new</b> <span class="t">ThreadStart</span>(<a href="#4e18c3176d21df27" class="i method">ListenCore</a>));
+                <span class="r4 r">listenThread</span>.<a href="@0@mscorlib/A.html#cd2144b8dd6f4373" class="i method">Start</a>();
+            }
+            <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r5 rd" class="r5 r">ex</span>) 
+            {
+                <b>if</b> (<a href="#78ae04dc09f40a1a" class="i field">tcpListener</a> != <b>null</b>)
+                {
+                    <a href="#78ae04dc09f40a1a" class="i field">tcpListener</a>.<a href="@0@System/A.html#89edac20814925e0" class="i method">Stop</a>();
+                }
+                <b>throw</b> <span class="r5 r">ex</span>;
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Function for Listening Thread.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="4e18c3176d21df27" href="R/4e18c3176d21df27.html" target="n" data-glyph="76,1" class="i method">ListenCore</a>()
+        {
+            <b>try</b>
+            {
+                <a href="#78ae04dc09f40a1a" class="i field">tcpListener</a>.<a href="@0@System/A.html#48a2c22e5b2aa4f7" class="i method">Start</a>();
+ 
+                <span class="c">// Wait for a connection.</span>
+                <a href="#59b62f67a8b366f2" class="i field">tcpClient</a> = <a href="#78ae04dc09f40a1a" class="i field">tcpListener</a>.<a href="@0@System/A.html#a8c4d4802b33b565" class="i method">AcceptTcpClient</a>();
+ 
+                <span class="c">// Disable Nagle Algorithm.</span>
+                <a href="#59b62f67a8b366f2" class="i field">tcpClient</a>.<a href="@0@System/A.html#fdf385bbf3cdc7dd" class="i property">NoDelay</a> = <b>true</b>;
+                
+                <a href="#8f70fb3904ccc9f5" class="i method">SetStreams</a>();
+ 
+                <b>if</b> (<a href="#8c0c96f7d9dae989" class="i">RfbConnectedFromServer</a> != <b>null</b>)
+                {
+                    <a href="#8c0c96f7d9dae989" class="i">RfbConnectedFromServer</a>(<a href="#3f12a63f7e6564da" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+                }
+            }
+            <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a>)
+            {
+                <b>if</b> (<a href="#1453b99ee26787d6" class="i field">reader</a> != <b>null</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#3f7b92569e0ffacf" class="i method">Close</a>();
+                <b>if</b> (<a href="#bcbcebbab5e8e404" class="i field">writer</a> != <b>null</b>) <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#5ad08f617a3213c3" class="i method">Close</a>();
+                <b>if</b> (<a href="#9a01611a7ec48e61" class="i field">zrleReader</a> != <b>null</b>) <a href="#9a01611a7ec48e61" class="i field">zrleReader</a>.<a href="@0@mscorlib/A.html#3f7b92569e0ffacf" class="i method">Close</a>();
+                <b>if</b> (<a href="#59b62f67a8b366f2" class="i field">tcpClient</a> != <b>null</b>) <a href="#59b62f67a8b366f2" class="i field">tcpClient</a>.<a href="@0@System/A.html#529712bfef0bdce0" class="i method">Close</a>();
+                
+                <b>if</b> (<a href="#9f10c909b367fddb" class="i field">FailedToListen</a> != <b>null</b>)
+                {
+                    <a href="#9f10c909b367fddb" class="i field">FailedToListen</a>(<a href="#3f12a63f7e6564da" class="k">this</a>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@0@mscorlib/A.html#433622385e05af0d" class="i field">Empty</a>);
+                }
+            }
+            <b>finally</b>
+            {
+                <b>if</b> (<a href="#78ae04dc09f40a1a" class="i field">tcpListener</a> != <b>null</b>)
+                {
+                    <a href="#78ae04dc09f40a1a" class="i field">tcpListener</a>.<a href="@0@System/A.html#89edac20814925e0" class="i method">Stop</a>();
+                    <a href="#78ae04dc09f40a1a" class="i field">tcpListener</a> = <b>null</b>;
+                }
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Stop Listening.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="f2227a9d9171a4cd" href="R/f2227a9d9171a4cd.html" target="n" data-glyph="72,1" class="i method">StopListen</a>()
+        {
+            <b>if</b> (<a href="#78ae04dc09f40a1a" class="i field">tcpListener</a> != <b>null</b>)
+            {
+                <a href="#78ae04dc09f40a1a" class="i field">tcpListener</a>.<a href="@0@System/A.html#89edac20814925e0" class="i method">Stop</a>();
+                <a href="#78ae04dc09f40a1a" class="i field">tcpListener</a> = <b>null</b>;
+            }
+        }
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Closes the connection to the remote host.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="d1b7970178ae1036" href="R/d1b7970178ae1036.html" target="n" data-glyph="72,1" class="i method">Close</a>()
+		{
+			<b>try</b> {
+				<a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#5ad08f617a3213c3" class="i method">Close</a>();
+				<a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#3f7b92569e0ffacf" class="i method">Close</a>();
+				<a href="#953d096c6188a656" class="i field">stream</a>.<a href="@0@mscorlib/A.html#dc4ffe046b847b84" class="i method">Close</a>();
+				<a href="#59b62f67a8b366f2" class="i field">tcpClient</a>.<a href="@0@System/A.html#529712bfef0bdce0" class="i method">Close</a>();
+			} <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r6 rd" class="r6 r">ex</span>) {
+				<a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#edba047e49087cd7" class="i method">Fail</a>(<span class="r6 r">ex</span>.<a href="@0@mscorlib/A.html#5fba0e16215b42a3" class="i property">Message</a>);
+			}
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Reads VNC Host Protocol Version message (see RFB Doc v. 3.8 section 6.1.1)</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">exception</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@mscorlib/A.html#99ee329017558ada" class="t t">NotSupportedException</a><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thrown if the version of the host is not known or supported.</span><span class="c">&lt;/</span><span class="c">exception</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="aa6174a58a4ec3f5" href="R/aa6174a58a4ec3f5.html" target="n" data-glyph="72,1" class="i method">ReadProtocolVersion</a>()
+		{
+			<b>byte</b>[] <span id="r7 rd" class="r7 r">b</span> = <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#f4904e94e7164f50" class="i method">ReadBytes</a>(12);
+ 
+			<span class="c">// As of the time of writing, the only supported versions are 3.3, 3.7, and 3.8.</span>
+			<b>if</b> (	<span class="r7 r">b</span>[0]  == 0x52 &amp;&amp;					<span class="c">// R</span>
+					<span class="r7 r">b</span>[1]  == 0x46 &amp;&amp;					<span class="c">// F</span>
+					<span class="r7 r">b</span>[2]  == 0x42 &amp;&amp;					<span class="c">// B</span>
+					<span class="r7 r">b</span>[3]  == 0x20 &amp;&amp;					<span class="c">// (space)</span>
+					<span class="r7 r">b</span>[4]  == 0x30 &amp;&amp;					<span class="c">// 0</span>
+					<span class="r7 r">b</span>[5]  == 0x30 &amp;&amp;					<span class="c">// 0</span>
+					<span class="r7 r">b</span>[6]  == 0x33 &amp;&amp;					<span class="c">// 3</span>
+					<span class="r7 r">b</span>[7]  == 0x2e &amp;&amp;					<span class="c">// .</span>
+                   (<span class="r7 r">b</span>[8]  == 0x30 ||                    <span class="c">// 0</span>
+                    <span class="r7 r">b</span>[8]  == 0x38) &amp;&amp;					<span class="c">// BUG FIX: Apple reports 8 </span>
+                   (<span class="r7 r">b</span>[9] == 0x30 ||                     <span class="c">// 0</span>
+                    <span class="r7 r">b</span>[9] == 0x38) &amp;&amp;					<span class="c">// BUG FIX: Apple reports 8 </span>
+				   (<span class="r7 r">b</span>[10] == 0x33 ||					<span class="c">// 3, 7, OR 8 are all valid and possible</span>
+				    <span class="r7 r">b</span>[10] == 0x36 ||					<span class="c">// BUG FIX: UltraVNC reports protocol version 3.6!</span>
+				    <span class="r7 r">b</span>[10] == 0x37 ||
+                    <span class="r7 r">b</span>[10] == 0x38 ||
+                    <span class="r7 r">b</span>[10] == 0x39) &amp;&amp;                   <span class="c">// BUG FIX: Apple reports 9					</span>
+				    <span class="r7 r">b</span>[11] == 0x0a)						<span class="c">// \n</span>
+			{
+				<span class="c">// Since we only currently support the 3.x protocols, this can be assumed here.</span>
+				<span class="c">// If and when 4.x comes out, this will need to be fixed--however, the entire </span>
+				<span class="c">// protocol will need to be updated then anyway :)</span>
+				<a href="#7e2ef27e8b858850" class="i field">verMajor</a> = 3;
+ 
+				<span class="c">// Figure out which version of the protocol this is:</span>
+				<b>switch</b> (<span class="r7 r">b</span>[10]) {
+					<b>case</b> 0x33: 
+					<b>case</b> 0x36:	<span class="c">// BUG FIX: pass 3.3 for 3.6 to allow UltraVNC to work, thanks to Steve Bostedor.</span>
+						<a href="#158a3c68e405a666" class="i field">verMinor</a> = 3;
+						<b>break</b>;
+					<b>case</b> 0x37:
+						<a href="#158a3c68e405a666" class="i field">verMinor</a> = 7;
+						<b>break</b>;
+					<b>case</b> 0x38:
+                        <a href="#158a3c68e405a666" class="i field">verMinor</a> = 8;
+                        <b>break</b>;
+                    <b>case</b> 0x39:  <span class="c">// BUG FIX: Apple reports 3.889</span>
+                        <span class="c">// According to the RealVNC mailing list, Apple is really using 3.3 </span>
+                        <span class="c">// (see http://www.mail-archive.com/vnc-list@realvnc.com/msg23615.html).  I&#39;ve tested with</span>
+                        <span class="c">// both 3.3 and 3.8, and they both seem to work (I obviously haven&#39;t hit the issues others have).</span>
+                        <span class="c">// Because 3.8 seems to work, I&#39;m leaving that, but it might be necessary to use 3.3 in future.</span>
+                        <a href="#158a3c68e405a666" class="i field">verMinor</a> = 8;
+						<b>break</b>;
+				}
+			} <b>else</b> {
+				<b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#3d3c2c03118be4f8" class="t constructor">NotSupportedException</a>(<span class="s">&quot;Only versions 3.3, 3.7, and 3.8 of the RFB Protocol are supported.&quot;</span>);
+			}
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Send the Protocol Version supported by the client.  Will be highest supported by server (see RFB Doc v. 3.8 section 6.1.1).</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="6cf8cc079a07aa24" href="R/6cf8cc079a07aa24.html" target="n" data-glyph="72,1" class="i method">WriteProtocolVersion</a>()
+		{
+			<span class="c">// We will use which ever version the server understands, be it 3.3, 3.7, or 3.8.</span>
+			<a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#d82afdab0c302da5" class="i method">Assert</a>(<a href="#158a3c68e405a666" class="i field">verMinor</a> == 3 || <a href="#158a3c68e405a666" class="i field">verMinor</a> == 7 || <a href="#158a3c68e405a666" class="i field">verMinor</a> == 8, <span class="s">&quot;Wrong Protocol Version!&quot;</span>,
+						 <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#7432dab173fae5fc" class="i method">Format</a>(<span class="s">&quot;Protocol Version should be 3.3, 3.7, or 3.8 but is {0}.{1}&quot;</span>, <a href="#7e2ef27e8b858850" class="i field">verMajor</a>.<a href="@0@mscorlib/A.html#8d6f2d8bc0589463" class="i method">ToString</a>(), <a href="#158a3c68e405a666" class="i field">verMinor</a>.<a href="@0@mscorlib/A.html#8d6f2d8bc0589463" class="i method">ToString</a>()));
+ 
+            <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+            {
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#3b784e1877648aef" class="i method">Write</a>(<a href="#79fe1d19dddc19d2" class="i method">GetBytes</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9d5604d4425b216f" class="i method">Format</a>(<span class="s">&quot;RFB 003.00{0}\n&quot;</span>, <a href="#158a3c68e405a666" class="i field">verMinor</a>.<a href="@0@mscorlib/A.html#8d6f2d8bc0589463" class="i method">ToString</a>())));
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#38f4e6c6f7e28bbb" class="i method">Flush</a>(); 
+            }
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Determine the type(s) of authentication that the server supports. See RFB Doc v. 3.8 section 6.1.2.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">An array of bytes containing the supported Security Type(s) of the server.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public byte</b>[] <a id="b9be7983a6cf6976" href="R/b9be7983a6cf6976.html" target="n" data-glyph="72,1" class="i method">ReadSecurityTypes</a>()
+		{
+			<span class="c">// Read and return the types of security supported by the server (see protocol doc 6.1.2)</span>
+			<b>byte</b>[] <span id="r8 rd" class="r8 r">types</span> = <b>null</b>;
+			
+			<span class="c">// Protocol Version 3.7 onward supports multiple security types, while 3.3 only 1</span>
+			<b>if</b> (<a href="#158a3c68e405a666" class="i field">verMinor</a> == 3) {
+				<span class="r8 r">types</span> = <b>new</b> <b>byte</b>[] { (<b>byte</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#14c04f0e9a208049" class="i method">ReadUInt32</a>() };
+			} <b>else</b> {
+				<b>byte</b> <span id="r9 rd" class="r9 r">num</span> = <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#4e9b113b875fdf4a" class="i method">ReadByte</a>();
+				<span class="r8 r">types</span> = <b>new</b> <b>byte</b>[<span class="r9 r">num</span>];
+				
+				<b>for</b> (<b>int</b> <span id="r10 rd" class="r10 r">i</span> = 0; <span class="r10 r">i</span> &lt; <span class="r9 r">num</span>; ++<span class="r10 r">i</span>) {
+					<span class="r8 r">types</span>[<span class="r10 r">i</span>] = <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#4e9b113b875fdf4a" class="i method">ReadByte</a>();
+				}
+			}
+			<b>return</b> <span class="r8 r">types</span>;
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> If the server has rejected the connection during Authentication, a reason is given. See RFB Doc v. 3.8 section 6.1.2.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns a string containing the reason for the server rejecting the connection.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public string</b> <a id="04f2eb71d0dceda1" href="R/04f2eb71d0dceda1.html" target="n" data-glyph="72,1" class="i method">ReadSecurityFailureReason</a>()
+		{
+			<b>int</b> <span id="r11 rd" class="r11 r">length</span> = (<b>int</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#14c04f0e9a208049" class="i method">ReadUInt32</a>();
+			<b>return</b> <a href="#836a29ac9da38d3c" class="i method">GetString</a>(<a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#f4904e94e7164f50" class="i method">ReadBytes</a>(<span class="r11 r">length</span>));
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Indicate to the server which type of authentication will be used. See RFB Doc v. 3.8 section 6.1.2.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r12 r">type</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The type of Authentication to be used, 1 (None) or 2 (VNC Authentication).</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="c69d4b4923192c43" href="R/c69d4b4923192c43.html" target="n" data-glyph="72,1" class="i method">WriteSecurityType</a>(<b>byte</b> <span id="r12 rd" class="r12 r">type</span>)
+		{
+			<a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#d82afdab0c302da5" class="i method">Assert</a>(<span class="r12 r">type</span> &gt;= 1, <span class="s">&quot;Wrong Security Type&quot;</span>, <span class="s">&quot;The Security Type must be one that requires authentication.&quot;</span>);
+			
+			<span class="c">// Only bother writing this byte if the version of the server is 3.7</span>
+			<b>if</b> (<a href="#158a3c68e405a666" class="i field">verMinor</a> &gt;= 7) {
+                <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+                {
+                    <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#430d3c5573a2b429" class="i method">Write</a>(<span class="r12 r">type</span>);
+                    <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#38f4e6c6f7e28bbb" class="i method">Flush</a>();		 
+                }	
+			}
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> When the server uses Security Type 2 (i.e., VNC Authentication), a Challenge/Response </span>
+		<span class="c">///</span><span class="c"> mechanism is used to authenticate the user. See RFB Doc v. 3.8 section 6.1.2 and 6.2.2.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns the 16 byte Challenge sent by the server.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public byte</b>[] <a id="63496e0d45bb5e03" href="R/63496e0d45bb5e03.html" target="n" data-glyph="72,1" class="i method">ReadSecurityChallenge</a>()
+		{
+			<b>return</b> <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#f4904e94e7164f50" class="i method">ReadBytes</a>(16);
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Sends the encrypted Response back to the server. See RFB Doc v. 3.8 section 6.1.2.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r13 r">response</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The DES password encrypted challege sent by the server.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="91cc7c138638017c" href="R/91cc7c138638017c.html" target="n" data-glyph="72,1" class="i method">WriteSecurityResponse</a>(<b>byte</b>[] <span id="r13 rd" class="r13 r">response</span>)
+		{
+            <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+            {
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#fae34c4f5667c7a2" class="i method">Write</a>(<span class="r13 r">response</span>, 0, <span class="r13 r">response</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#38f4e6c6f7e28bbb" class="i method">Flush</a>(); 
+            }
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> When the server uses VNC Authentication, after the Challege/Response, the server</span>
+		<span class="c">///</span><span class="c"> sends a status code to indicate whether authentication worked. See RFB Doc v. 3.8 section 6.1.3.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">An integer indicating the status of authentication: 0 = OK; 1 = Failed; 2 = Too Many (deprecated).</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public uint</b> <a id="7179d9862b4e215e" href="R/7179d9862b4e215e.html" target="n" data-glyph="72,1" class="i method">ReadSecurityResult</a>()
+		{
+			<b>return</b> <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#14c04f0e9a208049" class="i method">ReadUInt32</a>();
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Sends an Initialisation message to the server. See RFB Doc v. 3.8 section 6.1.4.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r14 r">shared</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">True if the server should allow other clients to connectFromClient, otherwise False.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="79446f1b7dd28809" href="R/79446f1b7dd28809.html" target="n" data-glyph="72,1" class="i method">WriteClientInitialisation</a>(<b>bool</b> <span id="r14 rd" class="r14 r">shared</span>)
+		{
+            <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+            {
+                <span class="c">// Non-zero if TRUE, zero if FALSE</span>
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#430d3c5573a2b429" class="i method">Write</a>((<b>byte</b>)(<span class="r14 r">shared</span> ? 1 : 0));
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#38f4e6c6f7e28bbb" class="i method">Flush</a>(); 
+            }
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Reads the server&#39;s Initialization message, specifically the remote Framebuffer&#39;s properties. See RFB Doc v. 3.8 section 6.1.5.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns a Framebuffer object representing the geometry and properties of the remote host.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public</b> <a href="Framebuffer.cs.html#271f2ef1d4bba1cb" class="t t">Framebuffer</a> <a id="67081327bfd238f9" href="R/67081327bfd238f9.html" target="n" data-glyph="72,1" class="i method">ReadServerInit</a>()
+		{
+			<b>int</b> <span id="r15 rd" class="r15 r">w</span> = (<b>int</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#288d935fc870ecb4" class="i method">ReadUInt16</a>();
+			<b>int</b> <span id="r16 rd" class="r16 r">h</span> = (<b>int</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#288d935fc870ecb4" class="i method">ReadUInt16</a>();
+			<a href="Framebuffer.cs.html#271f2ef1d4bba1cb" class="t t">Framebuffer</a> <span id="r17 rd" class="r17 r">buffer</span> = <a href="Framebuffer.cs.html#271f2ef1d4bba1cb" class="t t">Framebuffer</a>.<a href="Framebuffer.cs.html#ac4dcb97c80873db" class="i method">FromPixelFormat</a>(<a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#f4904e94e7164f50" class="i method">ReadBytes</a>(16), <span class="r15 r">w</span>, <span class="r16 r">h</span>);
+			<b>int</b> <span id="r18 rd" class="r18 r">length</span> = (<b>int</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#14c04f0e9a208049" class="i method">ReadUInt32</a>();
+ 
+			<span class="r17 r">buffer</span>.<a href="Framebuffer.cs.html#a2686b321fa26c2e" class="i property">DesktopName</a> = <a href="#836a29ac9da38d3c" class="i method">GetString</a>(<a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#f4904e94e7164f50" class="i method">ReadBytes</a>(<span class="r18 r">length</span>));
+			
+			<b>return</b> <span class="r17 r">buffer</span>;
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Sends the format to be used by the server when sending Framebuffer Updates. See RFB Doc v. 3.8 section 6.3.1.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r19 r">buffer</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">A Framebuffer telling the server how to encode pixel data. Typically this will be the same one sent by the server during initialization.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="c3c7881fac067030" href="R/c3c7881fac067030.html" target="n" data-glyph="72,1" class="i method">WriteSetPixelFormat</a>(<a href="Framebuffer.cs.html#271f2ef1d4bba1cb" class="t t">Framebuffer</a> <span id="r19 rd" class="r19 r">buffer</span>)
+		{
+            <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+            {
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#430d3c5573a2b429" class="i method">Write</a>(<a href="#8b5e34ff863c7d33" class="i field">SET_PIXEL_FORMAT</a>);
+                <a href="#171aeeabd9696f91" class="i method">WritePadding</a>(3);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#3b784e1877648aef" class="i method">Write</a>(<span class="r19 r">buffer</span>.<a href="Framebuffer.cs.html#1ee41f900dd1fe37" class="i method">ToPixelFormat</a>());		<span class="c">// 16-byte Pixel Format</span>
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#38f4e6c6f7e28bbb" class="i method">Flush</a>(); 
+            }
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Tell the server which encodings are supported by the client. See RFB Doc v. 3.8 section 6.3.3.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r20 r">encodings</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">An array of integers indicating the encoding types supported.  The order indicates preference, where the first item is the first preferred.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="68dbf7b487f7cc3f" href="R/68dbf7b487f7cc3f.html" target="n" data-glyph="72,1" class="i method">WriteSetEncodings</a>(<b>uint</b>[] <span id="r20 rd" class="r20 r">encodings</span>)
+		{
+            <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+            {
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#430d3c5573a2b429" class="i method">Write</a>(<a href="#a638e31e4d1535bb" class="i field">SET_ENCODINGS</a>);
+                <a href="#171aeeabd9696f91" class="i method">WritePadding</a>(1);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#c9d238436c8e1358" class="i method">Write</a>((<b>ushort</b>)<span class="r20 r">encodings</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>);
+ 
+                <b>for</b> (<b>int</b> <span id="r21 rd" class="r21 r">i</span> = 0; <span class="r21 r">i</span> &lt; <span class="r20 r">encodings</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>; <span class="r21 r">i</span>++)
+                {
+                    <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#61fdb0aa2521cfae" class="i method">Write</a>(<span class="r20 r">encodings</span>[<span class="r21 r">i</span>]);
+                }
+ 
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#38f4e6c6f7e28bbb" class="i method">Flush</a>(); 
+            }
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Sends a request for an update of the area specified by (x, y, w, h). See RFB Doc v. 3.8 section 6.3.4.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r22 r">x</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The x-position of the area to be updated.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r23 r">y</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The y-position of the area to be updated.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r24 r">width</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The width of the area to be updated.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r25 r">height</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The height of the area to be updated.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r26 r">incremental</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Indicates whether only changes to the client&#39;s data should be sent or the entire desktop.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="95d90c249c2507a5" href="R/95d90c249c2507a5.html" target="n" data-glyph="72,1" class="i method">WriteFramebufferUpdateRequest</a>(<b>ushort</b> <span id="r22 rd" class="r22 r">x</span>, <b>ushort</b> <span id="r23 rd" class="r23 r">y</span>, <b>ushort</b> <span id="r24 rd" class="r24 r">width</span>, <b>ushort</b> <span id="r25 rd" class="r25 r">height</span>, <b>bool</b> <span id="r26 rd" class="r26 r">incremental</span>)
+		{
+            <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+            {
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#430d3c5573a2b429" class="i method">Write</a>(<a href="#c6fa148fc0789313" class="i field">FRAMEBUFFER_UPDATE_REQUEST</a>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#430d3c5573a2b429" class="i method">Write</a>((<b>byte</b>)(<span class="r26 r">incremental</span> ? 1 : 0));
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#c9d238436c8e1358" class="i method">Write</a>(<span class="r22 r">x</span>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#c9d238436c8e1358" class="i method">Write</a>(<span class="r23 r">y</span>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#c9d238436c8e1358" class="i method">Write</a>(<span class="r24 r">width</span>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#c9d238436c8e1358" class="i method">Write</a>(<span class="r25 r">height</span>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#38f4e6c6f7e28bbb" class="i method">Flush</a>(); 
+            }
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Sends a key press or release to the server. See RFB Doc v. 3.8 section 6.3.5.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r27 r">keysym</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The value of the key pressed, expressed using X Window &quot;keysym&quot; values.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r28 r">pressed</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="6391aec89e968a11" href="R/6391aec89e968a11.html" target="n" data-glyph="72,1" class="i method">WriteKeyEvent</a>(<b>uint</b> <span id="r27 rd" class="r27 r">keysym</span>, <b>bool</b> <span id="r28 rd" class="r28 r">pressed</span>)
+		{
+            <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+            {
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#430d3c5573a2b429" class="i method">Write</a>(<a href="#f00560611e25f013" class="i field">KEY_EVENT</a>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#430d3c5573a2b429" class="i method">Write</a>((<b>byte</b>)(<span class="r28 r">pressed</span> ? 1 : 0));
+                <a href="#171aeeabd9696f91" class="i method">WritePadding</a>(2);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#61fdb0aa2521cfae" class="i method">Write</a>(<span class="r27 r">keysym</span>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#38f4e6c6f7e28bbb" class="i method">Flush</a>(); 
+            }
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Sends a mouse movement or button press/release to the server. See RFB Doc v. 3.8 section 6.3.6.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r29 r">buttonMask</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">A bitmask indicating which button(s) are pressed.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r30 r">point</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The location of the mouse cursor.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="fbb3f7368b992647" href="R/fbb3f7368b992647.html" target="n" data-glyph="72,1" class="i method">WritePointerEvent</a>(<b>byte</b> <span id="r29 rd" class="r29 r">buttonMask</span>, <a href="@0@System.Drawing/A.html#a041be61667d4c9a" class="t t">Point</a> <span id="r30 rd" class="r30 r">point</span>)
+		{
+            <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+            {
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#430d3c5573a2b429" class="i method">Write</a>(<a href="#121c164a60404f23" class="i field">POINTER_EVENT</a>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#430d3c5573a2b429" class="i method">Write</a>(<span class="r29 r">buttonMask</span>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#c9d238436c8e1358" class="i method">Write</a>((<b>ushort</b>)<span class="r30 r">point</span>.<a href="@0@System.Drawing/A.html#3e7433d837e96641" class="i property">X</a>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#c9d238436c8e1358" class="i method">Write</a>((<b>ushort</b>)<span class="r30 r">point</span>.<a href="@0@System.Drawing/A.html#a6e7daad97b017e5" class="i property">Y</a>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#38f4e6c6f7e28bbb" class="i method">Flush</a>(); 
+            }
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Sends text in the client&#39;s Cut Buffer to the server. See RFB Doc v. 3.8 section 6.3.7.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r31 r">text</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The text to be sent to the server.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span><span class="c">&lt;/param&gt;</span>
+		<b>public void</b> <a id="06c9cfbfd7949998" href="R/06c9cfbfd7949998.html" target="n" data-glyph="72,1" class="i method">WriteClientCutText</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r31 rd" class="r31 r">text</span>)
+		{
+            <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+            {
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#430d3c5573a2b429" class="i method">Write</a>(<a href="#79ed2e5f8a3059cd" class="i field">CLIENT_CUT_TEXT</a>);
+                <a href="#171aeeabd9696f91" class="i method">WritePadding</a>(3);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#61fdb0aa2521cfae" class="i method">Write</a>((<b>uint</b>)<span class="r31 r">text</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a>);
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#3b784e1877648aef" class="i method">Write</a>(<a href="#79fe1d19dddc19d2" class="i method">GetBytes</a>(<span class="r31 r">text</span>));
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#38f4e6c6f7e28bbb" class="i method">Flush</a>(); 
+            }
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Reads the type of message being sent by the server--all messages are prefixed with a message type.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns the message type as an integer.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public int</b> <a id="0b42a0c62972a9b3" href="R/0b42a0c62972a9b3.html" target="n" data-glyph="72,1" class="i method">ReadServerMessageType</a>()
+		{
+			<b>return</b> (<b>int</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#4e9b113b875fdf4a" class="i method">ReadByte</a>();
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Reads the number of update rectangles being sent by the server. See RFB Doc v. 3.8 section 6.4.1.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns the number of rectangles that follow.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public int</b> <a id="48e129bfa45946eb" href="R/48e129bfa45946eb.html" target="n" data-glyph="72,1" class="i method">ReadFramebufferUpdate</a>()
+		{
+			<a href="#9a54c081e5d46cae" class="i method">ReadPadding</a>(1);
+			<b>return</b> (<b>int</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#288d935fc870ecb4" class="i method">ReadUInt16</a>();
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Reads a rectangle&#39;s header information, including its encoding. See RFB Doc v. 3.8 section 6.4.1.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r32 r">rectangle</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The geometry of the rectangle that is about to be sent.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r33 r">encoding</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The encoding used for this rectangle.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="7d5084bccca26c9d" href="R/7d5084bccca26c9d.html" target="n" data-glyph="72,1" class="i method">ReadFramebufferUpdateRectHeader</a>(<b>out</b> <a href="@0@System.Drawing/A.html#17559e21008f381d" class="t t">Rectangle</a> <span id="r32 rd" class="r32 r">rectangle</span>, <b>out int</b> <span id="r33 rd" class="r33 r">encoding</span>)
+		{
+			<span class="r32 r">rectangle</span> = <b>new</b> <a href="@0@System.Drawing/A.html#17559e21008f381d" class="t constructor">Rectangle</a>();
+			<span class="r32 r">rectangle</span>.<a href="@0@System.Drawing/A.html#f045c0910eceecfd" class="i property">X</a> = (<b>int</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#288d935fc870ecb4" class="i method">ReadUInt16</a>();
+			<span class="r32 r">rectangle</span>.<a href="@0@System.Drawing/A.html#e83b4dcac590f07f" class="i property">Y</a> = (<b>int</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#288d935fc870ecb4" class="i method">ReadUInt16</a>();
+			<span class="r32 r">rectangle</span>.<a href="@0@System.Drawing/A.html#481ac5928cfac2d1" class="i property">Width</a> = (<b>int</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#288d935fc870ecb4" class="i method">ReadUInt16</a>();
+			<span class="r32 r">rectangle</span>.<a href="@0@System.Drawing/A.html#dd217069ab7562a6" class="i property">Height</a> = (<b>int</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#288d935fc870ecb4" class="i method">ReadUInt16</a>();
+			<span class="r33 r">encoding</span> = (<b>int</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#14c04f0e9a208049" class="i method">ReadUInt32</a>();
+		}
+		
+        <span class="c">// TODO: this colour map code should probably go in Framebuffer.cs</span>
+        <b>private ushort</b>[,] <a id="8a353127a488e265" href="R/8a353127a488e265.html" target="n" data-glyph="46,1" class="i field">mapEntries</a> = <b>new</b> <b>ushort</b>[256, 3];
+        <b>public ushort</b>[,] <a id="f04c9fdb1fe784d8" href="R/f04c9fdb1fe784d8.html" target="n" data-glyph="102,1" class="i property">MapEntries</a>
+        {
+            <b>get</b> {
+                <b>return</b> <a href="#8a353127a488e265" class="i field">mapEntries</a>;
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Reads 8-bit RGB colour values (or updated values) into the colour map.  See RFB Doc v. 3.8 section 6.5.2.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="15983d4ac67567ed" href="R/15983d4ac67567ed.html" target="n" data-glyph="72,1" class="i method">ReadColourMapEntry</a>()
+        {
+            <a href="#9a54c081e5d46cae" class="i method">ReadPadding</a>(1);
+            <b>ushort</b> <span id="r34 rd" class="r34 r">firstColor</span> = <a href="#ade3db0a50588218" class="i method">ReadUInt16</a>();
+            <b>ushort</b> <span id="r35 rd" class="r35 r">nbColors</span> = <a href="#ade3db0a50588218" class="i method">ReadUInt16</a>();
+ 
+            <b>for</b> (<b>int</b> <span id="r36 rd" class="r36 r">i</span> = 0; <span class="r36 r">i</span> &lt; <span class="r35 r">nbColors</span>; <span class="r36 r">i</span>++, <span class="r34 r">firstColor</span>++)
+            {
+                <a href="#8a353127a488e265" class="i field">mapEntries</a>[<span class="r34 r">firstColor</span>, 0] = (<b>byte</b>)(<a href="#ade3db0a50588218" class="i method">ReadUInt16</a>() * <b>byte</b>.<a href="@0@mscorlib/A.html#0581fc38fe2c1ac0" class="i field">MaxValue</a> / <b>ushort</b>.<a href="@0@mscorlib/A.html#21ac26ada195222b" class="i field">MaxValue</a>);    <span class="c">// R</span>
+                <a href="#8a353127a488e265" class="i field">mapEntries</a>[<span class="r34 r">firstColor</span>, 1] = (<b>byte</b>)(<a href="#ade3db0a50588218" class="i method">ReadUInt16</a>() * <b>byte</b>.<a href="@0@mscorlib/A.html#0581fc38fe2c1ac0" class="i field">MaxValue</a> / <b>ushort</b>.<a href="@0@mscorlib/A.html#21ac26ada195222b" class="i field">MaxValue</a>);    <span class="c">// G</span>
+                <a href="#8a353127a488e265" class="i field">mapEntries</a>[<span class="r34 r">firstColor</span>, 2] = (<b>byte</b>)(<a href="#ade3db0a50588218" class="i method">ReadUInt16</a>() * <b>byte</b>.<a href="@0@mscorlib/A.html#0581fc38fe2c1ac0" class="i field">MaxValue</a> / <b>ushort</b>.<a href="@0@mscorlib/A.html#21ac26ada195222b" class="i field">MaxValue</a>);    <span class="c">// B</span>
+            }
+        } 
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Reads the text from the Cut Buffer on the server. See RFB Doc v. 3.8 section 6.4.4.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns the text in the server&#39;s Cut Buffer.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public string</b> <a id="2325e3e3b27e44df" href="R/2325e3e3b27e44df.html" target="n" data-glyph="72,1" class="i method">ReadServerCutText</a>()
+		{
+			<a href="#9a54c081e5d46cae" class="i method">ReadPadding</a>(3);
+			<b>int</b> <span id="r37 rd" class="r37 r">length</span> = (<b>int</b>) <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#14c04f0e9a208049" class="i method">ReadUInt32</a>();
+			<b>return</b> <a href="#836a29ac9da38d3c" class="i method">GetString</a>(<a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#f4904e94e7164f50" class="i method">ReadBytes</a>(<span class="r37 r">length</span>));
+		}
+ 
+		<span class="c">// ---------------------------------------------------------------------------------------</span>
+		<span class="c">// Here&#39;s all the &quot;low-level&quot; protocol stuff so user objects can access the data directly</span>
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Reads a single UInt32 value from the server, taking care of Big- to Little-Endian conversion.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns a UInt32 value.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+	    <b>public uint</b> <a id="bae8c721b42644d7" href="R/bae8c721b42644d7.html" target="n" data-glyph="72,1" class="i method">ReadUint32</a>()
+		{
+			<b>return</b> <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#14c04f0e9a208049" class="i method">ReadUInt32</a>(); 
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Reads a single UInt16 value from the server, taking care of Big- to Little-Endian conversion.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns a UInt16 value.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public ushort</b> <a id="ade3db0a50588218" href="R/ade3db0a50588218.html" target="n" data-glyph="72,1" class="i method">ReadUInt16</a>()
+		{
+			<b>return</b> <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#288d935fc870ecb4" class="i method">ReadUInt16</a>(); 
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Reads a single Byte value from the server.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns a Byte value.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public byte</b> <a id="f3977909b7999e3a" href="R/f3977909b7999e3a.html" target="n" data-glyph="72,1" class="i method">ReadByte</a>()
+		{
+			<b>return</b> <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#4e9b113b875fdf4a" class="i method">ReadByte</a>();
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Reads the specified number of bytes from the server, taking care of Big- to Little-Endian conversion.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r38 r">count</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The number of bytes to be read.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns a Byte Array containing the values read.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>public byte</b>[] <a id="14075d31a7e42f24" href="R/14075d31a7e42f24.html" target="n" data-glyph="72,1" class="i method">ReadBytes</a>(<b>int</b> <span id="r38 rd" class="r38 r">count</span>)
+		{
+			<b>return</b> <a href="#1453b99ee26787d6" class="i field">reader</a>.<a href="@0@mscorlib/A.html#f4904e94e7164f50" class="i method">ReadBytes</a>(<span class="r38 r">count</span>);
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Writes a single UInt32 value to the server, taking care of Little- to Big-Endian conversion.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r39 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The UInt32 value to be written.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="a25b9163cd11f4f1" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">WriteUint32</a>(<b>uint</b> <span id="r39 rd" class="r39 r">value</span>)
+		{
+            <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+            {
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#61fdb0aa2521cfae" class="i method">Write</a>(<span class="r39 r">value</span>); 
+            }
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Writes a single UInt16 value to the server, taking care of Little- to Big-Endian conversion.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r40 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The UInt16 value to be written.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="29ddc80ac8398815" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">WriteUInt16</a>(<b>ushort</b> <span id="r40 rd" class="r40 r">value</span>)
+		{
+            <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+            {
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#c9d238436c8e1358" class="i method">Write</a>(<span class="r40 r">value</span>); 
+            }
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Writes a single Byte value to the server.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r41 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The UInt32 value to be written.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>public void</b> <a id="3b1f2bfaeb5f58bb" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">WriteByte</a>(<b>byte</b> <span id="r41 rd" class="r41 r">value</span>)
+		{
+            <b>lock</b> (<a href="#316f646093127d8b" class="i field">lockObj</a>)
+            {
+                <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#430d3c5573a2b429" class="i method">Write</a>(<span class="r41 r">value</span>); 
+            }
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Reads the specified number of bytes of padding (i.e., garbage bytes) from the server.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r42 r">length</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The number of bytes of padding to read.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>protected void</b> <a id="9a54c081e5d46cae" href="R/9a54c081e5d46cae.html" target="n" data-glyph="75,1" class="i method">ReadPadding</a>(<b>int</b> <span id="r42 rd" class="r42 r">length</span>)
+		{
+			<a href="#14075d31a7e42f24" class="i method">ReadBytes</a>(<span class="r42 r">length</span>);
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Writes the specified number of bytes of padding (i.e., garbage bytes) to the server.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r43 r">length</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The number of bytes of padding to write.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<b>protected void</b> <a id="171aeeabd9696f91" href="R/171aeeabd9696f91.html" target="n" data-glyph="75,1" class="i method">WritePadding</a>(<b>int</b> <span id="r43 rd" class="r43 r">length</span>)
+		{
+			<b>byte</b> [] <span id="r44 rd" class="r44 r">padding</span> = <b>new</b> <b>byte</b>[<span class="r43 r">length</span>];
+            
+            <a href="#bcbcebbab5e8e404" class="i field">writer</a>.<a href="@0@mscorlib/A.html#fae34c4f5667c7a2" class="i method">Write</a>(<span class="r44 r">padding</span>, 0, <span class="r44 r">padding</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>); 
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Converts a string to bytes for transfer to the server.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r45 r">text</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The text to be converted to bytes.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns a Byte Array containing the text as bytes.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>protected static byte</b>[] <a id="79fe1d19dddc19d2" href="R/79fe1d19dddc19d2.html" target="n" data-glyph="75,1" class="i method">GetBytes</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r45 rd" class="r45 r">text</span>)
+		{
+			<b>return</b> <span class="i n">System</span>.<span class="i n">Text</span>.<a href="@0@mscorlib/A.html#3b6090c501893c25" class="t t">Encoding</a>.<a href="@0@mscorlib/A.html#65768102b7ace585" class="i property">ASCII</a>.<a href="@0@mscorlib/A.html#83f2d2c6f22db1a9" class="i method">GetBytes</a>(<span class="r45 r">text</span>);
+		}
+		
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> Converts a series of bytes to a string.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r46 r">bytes</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The Array of Bytes to be converted to a string.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Returns a String representation of bytes.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+		<b>protected static string</b> <a id="836a29ac9da38d3c" href="R/836a29ac9da38d3c.html" target="n" data-glyph="75,1" class="i method">GetString</a>(<b>byte</b>[] <span id="r46 rd" class="r46 r">bytes</span>)
+		{
+			<b>return</b> <span class="i n">System</span>.<span class="i n">Text</span>.<a href="@0@mscorlib/A.html#30e1b471aa1ad923" class="t t">ASCIIEncoding</a>.<a href="@0@mscorlib/A.html#a10eb90a3d884500" class="i property">UTF8</a>.<a href="@0@mscorlib/A.html#233647d04fbec0c0" class="i method">GetString</a>(<span class="r46 r">bytes</span>, 0, <span class="r46 r">bytes</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>);
+		}
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> BigEndianBinaryReader is a wrapper class used to read .NET integral types from a Big-Endian stream.  It inherits from BinaryReader and adds Big- to Little-Endian conversion.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>protected sealed class</b> <a id="5f96d0404abc0945" href="R/5f96d0404abc0945.html" target="n" data-glyph="3,1" class="t t">BigEndianBinaryReader</a> : <a href="@0@mscorlib/A.html#4f6cad84482876ff" class="t t">BinaryReader</a>
+		{
+			<b>private byte</b>[] <a id="02c1e03e6c890021" href="R/02c1e03e6c890021.html" target="n" data-glyph="46,2" class="i field">buff</a> = <b>new</b> <b>byte</b>[4];
+ 
+			<b>public</b> <a id="94886d55fd3f504d" href="R/94886d55fd3f504d.html" target="n" data-glyph="72,2" class="t constructor">BigEndianBinaryReader</a>(<span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r47 rd" class="r47 r">input</span>) : <a href="@0@mscorlib/A.html#6fcf6f88785c9632" class="k">base</a>(<span class="r47 r">input</span>)
+			{
+			}
+			
+			<b>public</b> <a id="f31107498d527186" href="R/../../0000000000.html" target="n" data-glyph="72,2" class="t constructor">BigEndianBinaryReader</a>(<span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r48 rd" class="r48 r">input</span>, <span class="i n">System</span>.<span class="i n">Text</span>.<a href="@0@mscorlib/A.html#3b6090c501893c25" class="t t">Encoding</a> <span id="r49 rd" class="r49 r">encoding</span>) : <a href="@0@mscorlib/A.html#b1c6c8d9b5e51732" class="k">base</a>(<span class="r48 r">input</span>, <span class="r49 r">encoding</span>)
+			{
+			}
+ 
+			<span class="c">// Since this is being used to communicate with an RFB host, only some of the overrides are provided below.</span>
+	
+			<b>public override ushort</b> <a id="3165895d28c97ba6" href="R/3165895d28c97ba6.html" target="n" data-glyph="72,2" class="i method">ReadUInt16</a>()
+			{
+				<a href="#6c612598ff73d5ce" class="i method">FillBuff</a>(2);
+				<b>return</b> (<b>ushort</b>)(((<b>uint</b>)<a href="#02c1e03e6c890021" class="i field">buff</a>[1]) | ((<b>uint</b>)<a href="#02c1e03e6c890021" class="i field">buff</a>[0]) &lt;&lt; 8);
+				
+			}
+			
+			<b>public override short</b> <a id="836a587909b7ed1e" href="R/836a587909b7ed1e.html" target="n" data-glyph="72,2" class="i method">ReadInt16</a>()
+			{
+				<a href="#6c612598ff73d5ce" class="i method">FillBuff</a>(2);
+				<b>return</b> (<b>short</b>)(<a href="#02c1e03e6c890021" class="i field">buff</a>[1] &amp; 0xFF | <a href="#02c1e03e6c890021" class="i field">buff</a>[0] &lt;&lt; 8);
+			}
+ 
+			<b>public override uint</b> <a id="41e1dda2593b402d" href="R/41e1dda2593b402d.html" target="n" data-glyph="72,2" class="i method">ReadUInt32</a>()
+			{
+				<a href="#6c612598ff73d5ce" class="i method">FillBuff</a>(4);
+				<b>return</b> (<b>uint</b>)(((<b>uint</b>)<a href="#02c1e03e6c890021" class="i field">buff</a>[3]) &amp; 0xFF | ((<b>uint</b>)<a href="#02c1e03e6c890021" class="i field">buff</a>[2]) &lt;&lt; 8 | ((<b>uint</b>)<a href="#02c1e03e6c890021" class="i field">buff</a>[1]) &lt;&lt; 16 | ((<b>uint</b>)<a href="#02c1e03e6c890021" class="i field">buff</a>[0]) &lt;&lt; 24);
+			}
+			
+			<b>public override int</b> <a id="3a5b3c86cdfaaaee" href="R/3a5b3c86cdfaaaee.html" target="n" data-glyph="72,2" class="i method">ReadInt32</a>()
+			{
+				<a href="#6c612598ff73d5ce" class="i method">FillBuff</a>(4);
+				<b>return</b> (<b>int</b>)(<a href="#02c1e03e6c890021" class="i field">buff</a>[3] | <a href="#02c1e03e6c890021" class="i field">buff</a>[2] &lt;&lt; 8 | <a href="#02c1e03e6c890021" class="i field">buff</a>[1] &lt;&lt; 16 | <a href="#02c1e03e6c890021" class="i field">buff</a>[0] &lt;&lt; 24);
+			}
+ 
+			<b>private void</b> <a id="6c612598ff73d5ce" href="R/6c612598ff73d5ce.html" target="n" data-glyph="76,2" class="i method">FillBuff</a>(<b>int</b> <span id="r50 rd" class="r50 r">totalBytes</span>)
+			{
+				<b>int</b> <span id="r51 rd" class="r51 r">bytesRead</span> = 0;
+				<b>int</b> <span id="r52 rd" class="r52 r">n</span> = 0;
+ 
+				<b>do</b> {
+					<span class="r52 r">n</span> = <a href="@0@mscorlib/A.html#13c2126079760870" class="i property">BaseStream</a>.<a href="@0@mscorlib/A.html#6fb9c001d7524ba2" class="i method">Read</a>(<a href="#02c1e03e6c890021" class="i field">buff</a>, <span class="r51 r">bytesRead</span>, <span class="r50 r">totalBytes</span> - <span class="r51 r">bytesRead</span>);
+					
+					<b>if</b> (<span class="r52 r">n</span> == 0)
+						<b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#db370b64091ac4df" class="t constructor">IOException</a>(<span class="s">&quot;Unable to read next byte(s).&quot;</span>);
+ 
+					<span class="r51 r">bytesRead</span> += <span class="r52 r">n</span>;
+				} <b>while</b> (<span class="r51 r">bytesRead</span> &lt; <span class="r50 r">totalBytes</span>);
+	        }
+		}
+		
+ 
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+		<span class="c">///</span><span class="c"> BigEndianBinaryWriter is a wrapper class used to write .NET integral types in Big-Endian order to a stream.  It inherits from BinaryWriter and adds Little- to Big-Endian conversion.</span>
+		<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>protected sealed class</b> <a id="d8f9cc60f47ce14b" href="R/d8f9cc60f47ce14b.html" target="n" data-glyph="3,1" class="t t">BigEndianBinaryWriter</a> : <a href="@0@mscorlib/A.html#cf806b417abe1a35" class="t t">BinaryWriter</a>
+		{
+			<b>public</b> <a id="2bfc3d1df731b843" href="R/2bfc3d1df731b843.html" target="n" data-glyph="72,2" class="t constructor">BigEndianBinaryWriter</a>(<span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r53 rd" class="r53 r">input</span>) : <a href="@0@mscorlib/A.html#93163b0edbac85a5" class="k">base</a>(<span class="r53 r">input</span>)
+			{
+			}
+ 
+			<b>public</b> <a id="7b1a5b9eaa6ee314" href="R/../../0000000000.html" target="n" data-glyph="72,2" class="t constructor">BigEndianBinaryWriter</a>(<span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r54 rd" class="r54 r">input</span>, <span class="i n">System</span>.<span class="i n">Text</span>.<a href="@0@mscorlib/A.html#3b6090c501893c25" class="t t">Encoding</a> <span id="r55 rd" class="r55 r">encoding</span>) : <a href="@0@mscorlib/A.html#cd70ae8f05c5d055" class="k">base</a>(<span class="r54 r">input</span>, <span class="r55 r">encoding</span>)
+			{
+			}
+			
+			<span class="c">// Flip all little-endian .NET types into big-endian order and send</span>
+			<b>public override void</b> <a id="577ca4ac91b88531" href="R/577ca4ac91b88531.html" target="n" data-glyph="72,2" class="i method">Write</a>(<b>ushort</b> <span id="r56 rd" class="r56 r">value</span>)
+			{
+				<a href="#19ea16daedc16400" class="i method">FlipAndWrite</a>(<a href="@0@mscorlib/A.html#8640d8adfffb155b" class="t t">BitConverter</a>.<a href="@0@mscorlib/A.html#3c53ed99dc75f499" class="i method">GetBytes</a>(<span class="r56 r">value</span>));
+			}
+			
+			<b>public override void</b> <a id="d675c8b2e3330077" href="R/d675c8b2e3330077.html" target="n" data-glyph="72,2" class="i method">Write</a>(<b>short</b> <span id="r57 rd" class="r57 r">value</span>)
+			{
+				<a href="#19ea16daedc16400" class="i method">FlipAndWrite</a>(<a href="@0@mscorlib/A.html#8640d8adfffb155b" class="t t">BitConverter</a>.<a href="@0@mscorlib/A.html#97d8c368a26f2711" class="i method">GetBytes</a>(<span class="r57 r">value</span>));
+			}
+ 
+			<b>public override void</b> <a id="894e555811ad3822" href="R/894e555811ad3822.html" target="n" data-glyph="72,2" class="i method">Write</a>(<b>uint</b> <span id="r58 rd" class="r58 r">value</span>)
+			{
+				<a href="#19ea16daedc16400" class="i method">FlipAndWrite</a>(<a href="@0@mscorlib/A.html#8640d8adfffb155b" class="t t">BitConverter</a>.<a href="@0@mscorlib/A.html#9c302f6e63fe6036" class="i method">GetBytes</a>(<span class="r58 r">value</span>));
+			}
+			
+			<b>public override void</b> <a id="37c64b7d88ee02d6" href="R/37c64b7d88ee02d6.html" target="n" data-glyph="72,2" class="i method">Write</a>(<b>int</b> <span id="r59 rd" class="r59 r">value</span>)
+			{
+				<a href="#19ea16daedc16400" class="i method">FlipAndWrite</a>(<a href="@0@mscorlib/A.html#8640d8adfffb155b" class="t t">BitConverter</a>.<a href="@0@mscorlib/A.html#9108fa2d0b37805b" class="i method">GetBytes</a>(<span class="r59 r">value</span>));
+			}
+ 
+			<b>public override void</b> <a id="d9ec6a220fb5b1a7" href="R/d9ec6a220fb5b1a7.html" target="n" data-glyph="72,2" class="i method">Write</a>(<b>ulong</b> <span id="r60 rd" class="r60 r">value</span>)
+			{
+				<a href="#19ea16daedc16400" class="i method">FlipAndWrite</a>(<a href="@0@mscorlib/A.html#8640d8adfffb155b" class="t t">BitConverter</a>.<a href="@0@mscorlib/A.html#1109603c73042929" class="i method">GetBytes</a>(<span class="r60 r">value</span>));
+			}
+			
+			<b>public override void</b> <a id="3ffa35558e0cc03f" href="R/3ffa35558e0cc03f.html" target="n" data-glyph="72,2" class="i method">Write</a>(<b>long</b> <span id="r61 rd" class="r61 r">value</span>)
+			{
+				<a href="#19ea16daedc16400" class="i method">FlipAndWrite</a>(<a href="@0@mscorlib/A.html#8640d8adfffb155b" class="t t">BitConverter</a>.<a href="@0@mscorlib/A.html#2b234aa7b25ddfe3" class="i method">GetBytes</a>(<span class="r61 r">value</span>));
+			}
+ 
+			<b>private void</b> <a id="19ea16daedc16400" href="R/19ea16daedc16400.html" target="n" data-glyph="76,2" class="i method">FlipAndWrite</a>(<b>byte</b>[] <span id="r62 rd" class="r62 r">b</span>)
+			{
+				<span class="c">// Given an array of bytes, flip and write to underlying stream</span>
+				<a href="@0@mscorlib/A.html#156e066ecc4ccedf" class="t t">Array</a>.<a href="@0@mscorlib/A.html#c1651950924e01b7" class="i method">Reverse</a>(<span class="r62 r">b</span>);
+				<a href="@0@mscorlib/A.html#cf806b417abe1a35" class="k">base</a>.<a href="@0@mscorlib/A.html#3b784e1877648aef" class="i method">Write</a>(<span class="r62 r">b</span>);
+			}
+		}
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> ZRLE compressed binary reader, used by ZrleRectangle.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+		<b>public sealed class</b> <a id="33a7318ec1f54fe3" href="R/33a7318ec1f54fe3.html" target="n" data-glyph="0,1" class="t t">ZRLECompressedReader</a> : <a href="@0@mscorlib/A.html#4f6cad84482876ff" class="t t">BinaryReader</a>
+		{
+			<a href="@0@mscorlib/A.html#1a4dcb744a23ba6f" class="t t">MemoryStream</a> <a id="d83cd84575f51742" href="R/d83cd84575f51742.html" target="n" data-glyph="46,2" class="i field">zlibMemoryStream</a>;
+			<span class="i n">ComponentAce</span>.<span class="i n">Compression</span>.<span class="i n">Libs</span>.<span class="i n">zlib</span>.<a href="zlib.NET/ZOutputStream.cs.html#3250d423f0aa8bef" class="t t">ZOutputStream</a> <a id="e31fe93187d59ac1" href="R/e31fe93187d59ac1.html" target="n" data-glyph="46,2" class="i field">zlibDecompressedStream</a>;
+			<a href="@0@mscorlib/A.html#4f6cad84482876ff" class="t t">BinaryReader</a> <a id="d36be972ad3c4fa0" href="R/d36be972ad3c4fa0.html" target="n" data-glyph="46,2" class="i field">uncompressedReader</a>;
+ 
+			<b>public</b> <a id="90778eafcbb71be1" href="R/90778eafcbb71be1.html" target="n" data-glyph="72,2" class="t constructor">ZRLECompressedReader</a>(<a href="@0@mscorlib/A.html#f956b0c07e86df64" class="t t">Stream</a> <span id="r63 rd" class="r63 r">uncompressedStream</span>) : <a href="@0@mscorlib/A.html#6fcf6f88785c9632" class="k">base</a>(<span class="r63 r">uncompressedStream</span>)
+			{
+				<a href="#d83cd84575f51742" class="i field">zlibMemoryStream</a> = <b>new</b> <a href="@0@mscorlib/A.html#d308091cc690e78d" class="t constructor">MemoryStream</a>();
+				<a href="#e31fe93187d59ac1" class="i field">zlibDecompressedStream</a> = <b>new</b> <span class="i n">ComponentAce</span>.<span class="i n">Compression</span>.<span class="i n">Libs</span>.<span class="i n">zlib</span>.<a href="zlib.NET/ZOutputStream.cs.html#be2d08b800953a26" class="t constructor">ZOutputStream</a>(<a href="#d83cd84575f51742" class="i field">zlibMemoryStream</a>);
+				<a href="#d36be972ad3c4fa0" class="i field">uncompressedReader</a> = <b>new</b> <a href="@0@mscorlib/A.html#6fcf6f88785c9632" class="t constructor">BinaryReader</a>(<a href="#d83cd84575f51742" class="i field">zlibMemoryStream</a>);
+			}
+ 
+			<b>public override byte</b> <a id="efe1ce7d1a4e9204" href="R/efe1ce7d1a4e9204.html" target="n" data-glyph="72,2" class="i method">ReadByte</a>()
+			{
+				<b>return</b> <a href="#d36be972ad3c4fa0" class="i field">uncompressedReader</a>.<a href="@0@mscorlib/A.html#4e9b113b875fdf4a" class="i method">ReadByte</a>();
+			}
+ 
+			<b>public override byte</b>[] <a id="f2efd0488e83e933" href="R/f2efd0488e83e933.html" target="n" data-glyph="72,2" class="i method">ReadBytes</a>(<b>int</b> <span id="r64 rd" class="r64 r">count</span>)
+			{
+				<b>return</b> <a href="#d36be972ad3c4fa0" class="i field">uncompressedReader</a>.<a href="@0@mscorlib/A.html#f4904e94e7164f50" class="i method">ReadBytes</a>(<span class="r64 r">count</span>);
+			}
+ 
+			<b>public void</b> <a id="7154d95dd52f271c" href="R/7154d95dd52f271c.html" target="n" data-glyph="72,2" class="i method">DecodeStream</a>()
+			{
+				<span class="c">// Reset position to use same buffer</span>
+				<a href="#d83cd84575f51742" class="i field">zlibMemoryStream</a>.<a href="@0@mscorlib/A.html#ad08f8ca81a5a763" class="i property">Position</a> = 0;
+ 
+				<span class="c">// Get compressed stream length to read</span>
+				<b>byte</b>[] <span id="r65 rd" class="r65 r">buff</span> = <b>new</b> <b>byte</b>[4];
+				<b>if</b> (<a href="#33a7318ec1f54fe3" class="k">this</a>.<a href="@0@mscorlib/A.html#13c2126079760870" class="i property">BaseStream</a>.<a href="@0@mscorlib/A.html#6fb9c001d7524ba2" class="i method">Read</a>(<span class="r65 r">buff</span>, 0, 4) != 4)
+					<b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#df2d82d91ca29e40" class="t constructor">Exception</a>(<span class="s">&quot;ZRLE decoder: Invalid compressed stream size&quot;</span>);
+ 
+				<span class="c">// BigEndian to LittleEndian conversion</span>
+				<b>int</b> <span id="r66 rd" class="r66 r">compressedBufferSize</span> = (<b>int</b>)(<span class="r65 r">buff</span>[3] | <span class="r65 r">buff</span>[2] &lt;&lt; 8 | <span class="r65 r">buff</span>[1] &lt;&lt; 16 | <span class="r65 r">buff</span>[0] &lt;&lt; 24);
+				<b>if</b> (<span class="r66 r">compressedBufferSize</span> &gt; 64 * 1024 * 1024)
+					<b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#df2d82d91ca29e40" class="t constructor">Exception</a>(<span class="s">&quot;ZRLE decoder: Invalid compressed data size&quot;</span>);
+ 
+				<span class="c">// Decode stream</span>
+				<b>int</b> <span id="r67 rd" class="r67 r">pos</span> = 0;
+				<b>while</b> (<span class="r67 r">pos</span>++ &lt; <span class="r66 r">compressedBufferSize</span>)
+					<a href="#e31fe93187d59ac1" class="i field">zlibDecompressedStream</a>.<a href="zlib.NET/ZOutputStream.cs.html#e8db12d71cfaa534" class="i method">WriteByte</a>(<a href="#33a7318ec1f54fe3" class="k">this</a>.<a href="@0@mscorlib/A.html#13c2126079760870" class="i property">BaseStream</a>.<a href="@0@mscorlib/A.html#8b5e336542fa849f" class="i method">ReadByte</a>());
+ 
+				<a href="#d83cd84575f51742" class="i field">zlibMemoryStream</a>.<a href="@0@mscorlib/A.html#ad08f8ca81a5a763" class="i property">Position</a> = 0;
+			}
+		}
+	}
+}</pre></td></tr></table></div></body></html>

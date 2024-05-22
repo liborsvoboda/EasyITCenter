@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html><head><title>ResourceEntryToComboItemConverter.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(51);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#AnnotationsStyling/ResourceEntryToComboItemConverter.cs" target="_top">ResourceEntryToComboItemConverter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#AnnotationsStyling" target="_top">HelpProjects\WPF-MORE\Documents\Annotations\AnnotationsStyling\AnnotationsStyling.csproj</a> (AnnotationsStyling)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">ObjectModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+
+<b>namespace</b> <span class="i n">AnnotationsStyling</span>
+{
+    [<a href="@0@PresentationFramework/A.html#ddd8a157949fec4d" class="t constructor">ValueConversion</a>(<b>typeof</b> (<a href="@1@System.Runtime/A.html#281923b8611114ec" class="t t">Collection</a>&lt;<a href="StyleMetaData.cs.html#32172fcbe8da8a6f" class="t t">StyleMetaData</a>&gt;),
+        <b>typeof</b> (<a href="@1@System.Runtime/A.html#281923b8611114ec" class="t t">Collection</a>&lt;<a href="@0@PresentationFramework/A.html#08d992ee7e0a1516" class="t t">ResourceDictionary</a>&gt;))]
+    <b>public class</b> <a id="205eae863dd7509c" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="dbc16579db3935ec">ResourceEntryToComboItemConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <span class="c">// ----------------------------- Convert ------------------------------</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Parses a collection of ResourceDictionaries and</span>
+        <span class="c">///</span><span class="c">     extracts all StickyNote styles.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     A list of Styles and their associated</span>
+        <span class="c">///</span><span class="c">     keys (for identification).</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="4d48b1e9e9d49892" href="R/4d48b1e9e9d49892.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b> <span id="r0 rd" class="r0 r">value</span>, <a href="@1@System.Runtime/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r1 rd" class="r1 r">targetType</span>,
+            <b>object</b> <span id="r2 rd" class="r2 r">parameter</span>, <a href="@1@System.Runtime/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r3 rd" class="r3 r">culture</span>)
+        {
+            <a href="@1@System.Runtime/A.html#281923b8611114ec" class="k">var</a> <span id="r4 rd" class="r4 r">unfiltered</span> =
+                <span class="r0 r">value</span> <b>as</b> <a href="@1@System.Runtime/A.html#281923b8611114ec" class="t t">Collection</a>&lt;<a href="@0@PresentationFramework/A.html#08d992ee7e0a1516" class="t t">ResourceDictionary</a>&gt;;
+
+            <a href="@1@System.Runtime/A.html#281923b8611114ec" class="k">var</a> <span id="r5 rd" class="r5 r">filtered</span> =
+                <b>new</b> <a href="@1@System.Runtime/A.html#6cc62f70a89e1c31" class="t constructor">Collection</a>&lt;<a href="StyleMetaData.cs.html#32172fcbe8da8a6f" class="t t">StyleMetaData</a>&gt;();
+
+            <b>foreach</b> (<a href="@0@PresentationFramework/A.html#08d992ee7e0a1516" class="k">var</a> <span id="r6 rd" class="r6 r">dict</span> <b>in</b> <span class="r4 r">unfiltered</span>)
+            {
+                <b>foreach</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r7 rd" class="r7 r">key</span> <b>in</b> <span class="r6 r">dict</span>.<a href="@0@PresentationFramework/A.html#d3d0dbe5e0452923" class="i property">Keys</a>)
+                {
+                    <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="k">var</a> <span id="r8 rd" class="r8 r">aStyle</span> = <span class="r6 r">dict</span><a href="@0@PresentationFramework/A.html#fe23e03a125d22aa">[</a><span class="r7 r">key</span>] <b>as</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>;
+                    <b>if</b> (<span class="r8 r">aStyle</span> != <b>null</b> &amp;&amp; <span class="r8 r">aStyle</span>.<a href="@0@PresentationFramework/A.html#f1b91a2787572b4b" class="i property">TargetType</a>.<a href="@1@System.Runtime/A.html#6ad282f6c8736636" class="i method">Equals</a>(<b>typeof</b> (<a href="@0@PresentationFramework/A.html#dfdeae1d0590fa25" class="t t">StickyNoteControl</a>)))
+                        <span class="r5 r">filtered</span>.<a href="@1@System.Runtime/A.html#5c61cc24de82f7e7" class="i method">Add</a>(<b>new</b> <a href="StyleMetaData.cs.html#decb0283092ec765" class="t constructor">StyleMetaData</a>(<span class="r7 r">key</span>, <span class="r8 r">aStyle</span>));
+                }
+            }
+
+            <b>return</b> <span class="r5 r">filtered</span>;
+        } <span class="c">// end:Convert</span>
+        <span class="c">// --------------------------- ConvertBack ----------------------------</span>
+        <b>public object</b> <a id="6a9cd3addfb157d6" href="R/6a9cd3addfb157d6.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r9 rd" class="r9 r">value</span>, <a href="@1@System.Runtime/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r10 rd" class="r10 r">targetType</span>,
+            <b>object</b> <span id="r11 rd" class="r11 r">parameter</span>, <a href="@1@System.Runtime/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r12 rd" class="r12 r">culture</span>) =&gt; <b>null</b>;
+    }
+}</pre></td></tr></table></div></body></html>

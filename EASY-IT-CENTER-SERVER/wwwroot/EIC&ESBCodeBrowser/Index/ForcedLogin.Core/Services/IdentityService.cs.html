@@ -1,0 +1,271 @@
+﻿<!DOCTYPE html>
+<html><head><title>IdentityService.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(262);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#ForcedLogin.Core/Services/IdentityService.cs" target="_top">Services\IdentityService.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#ForcedLogin.Core" target="_top">HelpProjects\WPF-MAIN\WPFprism\ForcedLogin\ForcedLogin.Core\ForcedLogin.Core.csproj</a> (ForcedLogin.Core)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Net</span>.<span class="i n">NetworkInformation</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Reflection</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Security</span>.<span class="i n">Cryptography</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>.<span class="i n">Tasks</span>;
+
+<b>using</b> <span class="i n">ForcedLogin</span>.<span class="i n">Core</span>.<span class="i n">Contracts</span>.<span class="i n">Services</span>;
+<b>using</b> <span class="i n">ForcedLogin</span>.<span class="i n">Core</span>.<span class="i n">Helpers</span>;
+
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Identity</span>.<span class="i n">Client</span>;
+
+<b>namespace</b> <span class="i n">ForcedLogin</span>.<span class="i n">Core</span>.<span class="i n">Services</span>
+{
+    <b>public class</b> <a id="ff49818950011cc8" href="../R/ff49818950011cc8.html" target="n" data-glyph="0,0" class="t t">IdentityService</a> : <a href="../Contracts/Services/IIdentityService.cs.html#d2ae96b758d6d0bf" class="t t">IIdentityService</a>
+    {
+        <span class="c">/*
+        For more information about using Identity, see
+        https://github.com/microsoft/WindowsTemplateStudio/blob/master/docs/WPF/services/identity.md
+
+        Read more about Microsoft Identity Client here
+        https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki
+        https://docs.microsoft.com/azure/active-directory/develop/v2-overview
+
+        WTS TODO: Please create a ClientID following these steps and update the appsettings.json IdentityClientId.
+        https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app
+
+        The provided clientID requests permissions on user.read, this might be blocked in environments that require admin consent.
+        For more info about admin consent please see https://docs.microsoft.com/azure/active-directory/develop/application-consent-experience
+        For more info creating protected APIs, see https://docs.microsoft.com/azure/active-directory/develop/scenario-protected-web-api-overview
+        For more info on desktop apps that call protected APIs, see https://docs.microsoft.com/azure/active-directory/develop/scenario-desktop-overview
+        */</span>
+        <b>private readonly string</b>[] <a id="87d0bb705405c26c" href="../R/87d0bb705405c26c.html" target="n" data-glyph="46,1" class="i field">_graphScopes</a> = <b>new</b> <a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a>[] { <span class="s">&quot;user.read&quot;</span> };
+        <b>private readonly</b> <a href="../Contracts/Services/IIdentityCacheService.cs.html#e7df67fedec92d9a" class="t t">IIdentityCacheService</a> <a id="3107d017965c3041" href="../R/3107d017965c3041.html" target="n" data-glyph="46,1" class="i field">_identityCacheService</a>;
+        <b>private bool</b> <a id="9a4e2492f071e698" href="../R/9a4e2492f071e698.html" target="n" data-glyph="46,1" class="i field">_integratedAuthAvailable</a>;
+        <b>private</b> <span class="t t">IPublicClientApplication</span> <a id="f347fb623b3389f1" href="../R/f347fb623b3389f1.html" target="n" data-glyph="46,1" class="i field">_client</a>;
+        <b>private</b> <span class="t t">AuthenticationResult</span> <a id="af849ca3fd8fcb8f" href="../R/af849ca3fd8fcb8f.html" target="n" data-glyph="46,1" class="i field">_authenticationResult</a>;
+
+        <b>public event</b> <a href="@1@netstandard/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="d3053f582ad1eae6" href="../R/d3053f582ad1eae6.html" target="n" data-glyph="30,1" class="i">LoggedIn</a>;
+
+        <b>public event</b> <a href="@1@netstandard/A.html#3b79d2b06c15f250" class="t t">EventHandler</a> <a id="342532477cdf210f" href="../R/342532477cdf210f.html" target="n" data-glyph="30,1" class="i">LoggedOut</a>;
+
+        <b>public</b> <a id="de38b88cf6ff8adf" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">IdentityService</a>(<a href="../Contracts/Services/IIdentityCacheService.cs.html#e7df67fedec92d9a" class="t t">IIdentityCacheService</a> <span id="r0 rd" class="r0 r">identityCacheService</span>)
+        {
+            <a href="#3107d017965c3041" class="i field">_identityCacheService</a> = <span class="r0 r">identityCacheService</span>;
+        }
+
+        <b>public void</b> <a id="fd2369ef67d21259" href="../R/fd2369ef67d21259.html" target="n" data-glyph="72,1" class="i method">InitializeWithAadAndPersonalMsAccounts</a>(<a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r1 rd" class="r1 r">clientId</span>, <a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r2 rd" class="r2 r">redirectUri</span> = <b>null</b>)
+        {
+            <a href="#9a4e2492f071e698" class="i field">_integratedAuthAvailable</a> = <b>false</b>;
+            <a href="#f347fb623b3389f1" class="i field">_client</a> = <span class="t t">PublicClientApplicationBuilder</span>.<span class="i method">Create</span>(<span class="r1 r">clientId</span>)
+                                                    .<span class="i method">WithAuthority</span>(<span class="t t">AadAuthorityAudience</span>.<span class="i field">AzureAdAndPersonalMicrosoftAccount</span>)
+                                                    .<span class="i method">WithRedirectUri</span>(<span class="r2 r">redirectUri</span>)
+                                                    .<span class="i method">Build</span>();
+
+            <a href="#6db533fe93e650f9" class="i method">ConfigureCache</a>();
+        }
+
+        <b>public void</b> <a id="c6d029327740631f" href="../R/c6d029327740631f.html" target="n" data-glyph="72,1" class="i method">InitializeWithAadMultipleOrgs</a>(<a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r3 rd" class="r3 r">clientId</span>, <b>bool</b> <span id="r4 rd" class="r4 r">integratedAuth</span> = <b>false</b>, <a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r5 rd" class="r5 r">redirectUri</span> = <b>null</b>)
+        {
+            <a href="#9a4e2492f071e698" class="i field">_integratedAuthAvailable</a> = <span class="r4 r">integratedAuth</span>;
+            <a href="#f347fb623b3389f1" class="i field">_client</a> = <span class="t t">PublicClientApplicationBuilder</span>.<span class="i method">Create</span>(<span class="r3 r">clientId</span>)
+                                                    .<span class="i method">WithAuthority</span>(<span class="t t">AadAuthorityAudience</span>.<span class="i field">AzureAdMultipleOrgs</span>)
+                                                    .<span class="i method">WithRedirectUri</span>(<span class="r5 r">redirectUri</span>)
+                                                    .<span class="i method">Build</span>();
+
+            <a href="#6db533fe93e650f9" class="i method">ConfigureCache</a>();
+        }
+
+        <b>public void</b> <a id="7e9c45234db2bcf5" href="../R/7e9c45234db2bcf5.html" target="n" data-glyph="72,1" class="i method">InitializeWithAadSingleOrg</a>(<a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r6 rd" class="r6 r">clientId</span>, <a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r7 rd" class="r7 r">tenant</span>, <b>bool</b> <span id="r8 rd" class="r8 r">integratedAuth</span> = <b>false</b>, <a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r9 rd" class="r9 r">redirectUri</span> = <b>null</b>)
+        {
+            <a href="#9a4e2492f071e698" class="i field">_integratedAuthAvailable</a> = <span class="r8 r">integratedAuth</span>;
+            <a href="#f347fb623b3389f1" class="i field">_client</a> = <span class="t t">PublicClientApplicationBuilder</span>.<span class="i method">Create</span>(<span class="r6 r">clientId</span>)
+                                                    .<span class="i method">WithAuthority</span>(<span class="t t">AzureCloudInstance</span>.<span class="i field">AzurePublic</span>, <span class="r7 r">tenant</span>)
+                                                    .<span class="i method">WithRedirectUri</span>(<span class="r9 r">redirectUri</span>)
+                                                    .<span class="i method">Build</span>();
+
+            <a href="#6db533fe93e650f9" class="i method">ConfigureCache</a>();
+        }
+
+        <b>public bool</b> <a id="b56c7a0aa0681700" href="../R/b56c7a0aa0681700.html" target="n" data-glyph="72,1" class="i method">IsLoggedIn</a>() =&gt; <a href="#af849ca3fd8fcb8f" class="i field">_authenticationResult</a> != <b>null</b>;
+
+        <b>public async</b> <a href="@1@netstandard/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<a href="../Helpers/LoginResultType.cs.html#3eeb696e2f6cd870" class="t t">LoginResultType</a>&gt; <a id="220995cd4a6b524c" href="../R/220995cd4a6b524c.html" target="n" data-glyph="72,1" class="i method">LoginAsync</a>()
+        {
+            <b>if</b> (!<a href="@1@netstandard/A.html#32ecfe4ec3ef7160" class="t t">NetworkInterface</a>.<a href="@1@netstandard/A.html#ed130d091756b4c9" class="i method">GetIsNetworkAvailable</a>())
+            {
+                <b>return</b> <a href="../Helpers/LoginResultType.cs.html#3eeb696e2f6cd870" class="t t">LoginResultType</a>.<a href="../Helpers/LoginResultType.cs.html#86f9e2021b664bfe" class="i field">NoNetworkAvailable</a>;
+            }
+
+            <b>try</b>
+            {
+                <a href="@1@netstandard/A.html#3acf01620172c7f0" class="k">var</a> <span id="r10 rd" class="r10 r">accounts</span> = <b>await</b> <a href="#f347fb623b3389f1" class="i field">_client</a>.<span class="i method">GetAccountsAsync</span>();
+                <a href="#af849ca3fd8fcb8f" class="i field">_authenticationResult</a> = <b>await</b> <a href="#f347fb623b3389f1" class="i field">_client</a>.<span class="i method">AcquireTokenInteractive</span>(<a href="#87d0bb705405c26c" class="i field">_graphScopes</a>)
+                                                     .<span class="i method">WithAccount</span>(<span class="r10 r">accounts</span>.<a href="@1@netstandard/A.html#8087366974af11d2" class="i method">FirstOrDefault</a>())
+                                                     .<span class="i method">ExecuteAsync</span>();
+                <b>if</b> (!<a href="#6a3e79ce0ccec9ed" class="i method">IsAuthorized</a>())
+                {
+                    <a href="#af849ca3fd8fcb8f" class="i field">_authenticationResult</a> = <b>null</b>;
+                    <b>return</b> <a href="../Helpers/LoginResultType.cs.html#3eeb696e2f6cd870" class="t t">LoginResultType</a>.<a href="../Helpers/LoginResultType.cs.html#d6298782694722c3" class="i field">Unauthorized</a>;
+                }
+
+                <a href="#d3053f582ad1eae6" class="i">LoggedIn</a>?.<a href="@1@netstandard/A.html#aaedcaa3f05a32f9" class="i method">Invoke</a>(<a href="#ff49818950011cc8" class="k">this</a>, <a href="@1@netstandard/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@1@netstandard/A.html#433622385e05af0d" class="i field">Empty</a>);
+                <b>return</b> <a href="../Helpers/LoginResultType.cs.html#3eeb696e2f6cd870" class="t t">LoginResultType</a>.<a href="../Helpers/LoginResultType.cs.html#6dbc36345373d5c0" class="i field">Success</a>;
+            }
+            <b>catch</b> (<span class="t t">MsalClientException</span> <span id="r11 rd" class="r11 r">ex</span>)
+            {
+                <b>if</b> (<span class="r11 r">ex</span>.<span class="i property">ErrorCode</span> == <span class="s">&quot;authentication_canceled&quot;</span>)
+                {
+                    <b>return</b> <a href="../Helpers/LoginResultType.cs.html#3eeb696e2f6cd870" class="t t">LoginResultType</a>.<a href="../Helpers/LoginResultType.cs.html#48a4c8148a7fbb0e" class="i field">CancelledByUser</a>;
+                }
+
+                <b>return</b> <a href="../Helpers/LoginResultType.cs.html#3eeb696e2f6cd870" class="t t">LoginResultType</a>.<a href="../Helpers/LoginResultType.cs.html#493c37c9ba789f94" class="i field">UnknownError</a>;
+            }
+            <b>catch</b> (<a href="@1@netstandard/A.html#f092fb2b893a0162" class="t t">Exception</a> <span id="r12 rd" class="r12 r">ex</span>)
+            {
+                <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<a href="@1@netstandard/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@1@netstandard/A.html#de18340cbf015ef1" class="i method">WriteLine</a>(<span class="r12 r">ex</span>);
+                <b>return</b> <a href="../Helpers/LoginResultType.cs.html#3eeb696e2f6cd870" class="t t">LoginResultType</a>.<a href="../Helpers/LoginResultType.cs.html#493c37c9ba789f94" class="i field">UnknownError</a>;
+            }
+        }
+
+        <b>public bool</b> <a id="6a3e79ce0ccec9ed" href="../R/6a3e79ce0ccec9ed.html" target="n" data-glyph="72,1" class="i method">IsAuthorized</a>()
+        {
+            <span class="c">// TODO WTS: You can also add extra authorization checks here.</span>
+            <span class="c">// i.e.: Checks permisions of _authenticationResult.Account.Username in a database.</span>
+            <b>return</b> <b>true</b>;
+        }
+
+        <b>public string</b> <a id="0fc02aeb7699a336" href="../R/0fc02aeb7699a336.html" target="n" data-glyph="72,1" class="i method">GetAccountUserName</a>()
+        {
+            <b>return</b> <a href="#af849ca3fd8fcb8f" class="i field">_authenticationResult</a>?.<span class="i property">Account</span>?.<span class="i property">Username</span>;
+        }
+
+        <b>public async</b> <a href="@1@netstandard/A.html#045a746eb48cbaa9" class="t t">Task</a> <a id="b2a2cbfcf2d4ee1f" href="../R/b2a2cbfcf2d4ee1f.html" target="n" data-glyph="72,1" class="i method">LogoutAsync</a>()
+        {
+            <b>try</b>
+            {
+                <a href="@1@netstandard/A.html#3acf01620172c7f0" class="k">var</a> <span id="r13 rd" class="r13 r">accounts</span> = <b>await</b> <a href="#f347fb623b3389f1" class="i field">_client</a>.<span class="i method">GetAccountsAsync</span>();
+                <b>var</b> <span id="r14 rd" class="r14 r">account</span> = <span class="r13 r">accounts</span>.<a href="@1@netstandard/A.html#8087366974af11d2" class="i method">FirstOrDefault</a>();
+                <b>if</b> (<span class="r14 r">account</span> != <b>null</b>)
+                {
+                    <b>await</b> <a href="#f347fb623b3389f1" class="i field">_client</a>.<span class="i method">RemoveAsync</span>(<span class="r14 r">account</span>);
+                }
+
+                <a href="#af849ca3fd8fcb8f" class="i field">_authenticationResult</a> = <b>null</b>;
+                <a href="#342532477cdf210f" class="i">LoggedOut</a>?.<a href="@1@netstandard/A.html#aaedcaa3f05a32f9" class="i method">Invoke</a>(<a href="#ff49818950011cc8" class="k">this</a>, <a href="@1@netstandard/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@1@netstandard/A.html#433622385e05af0d" class="i field">Empty</a>);
+            }
+            <b>catch</b> (<span class="t t">MsalException</span>)
+            {
+                <span class="c">// TODO WTS: LogoutAsync can fail please handle exceptions as appropriate to your scenario</span>
+                <span class="c">// For more info on MsalExceptions see</span>
+                <span class="c">// https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/exceptions</span>
+            }
+        }
+
+        <b>public async</b> <a href="@1@netstandard/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="0fc68c5203d78c0c" href="../R/0fc68c5203d78c0c.html" target="n" data-glyph="72,1" class="i method">GetAccessTokenForGraphAsync</a>() =&gt; <b>await</b> <a href="#05513fc5dfa3d731" class="i method">GetAccessTokenAsync</a>(<a href="#87d0bb705405c26c" class="i field">_graphScopes</a>);
+
+        <span class="c">// All sensitive data in your app should be retrieven using access tokens.</span>
+        <span class="c">// This method provides you with an access token to secure calls to the Microsoft Graph or other protected API.</span>
+        <span class="c">// For more info on protecting web api with tokens see https://docs.microsoft.com/azure/active-directory/develop/scenario-protected-web-api-overview</span>
+        <b>public async</b> <a href="@1@netstandard/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="05513fc5dfa3d731" href="../R/05513fc5dfa3d731.html" target="n" data-glyph="72,1" class="i method">GetAccessTokenAsync</a>(<a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a>[] <span id="r15 rd" class="r15 r">scopes</span>)
+        {
+            <a href="@1@netstandard/A.html#f1b135ff6c380b37" class="k">var</a> <span id="r16 rd" class="r16 r">acquireTokenSuccess</span> = <b>await</b> <a href="#fe59351facae3777" class="i method">AcquireTokenSilentAsync</a>(<span class="r15 r">scopes</span>);
+            <b>if</b> (<span class="r16 r">acquireTokenSuccess</span>)
+            {
+                <b>return</b> <a href="#af849ca3fd8fcb8f" class="i field">_authenticationResult</a>.<span class="i property">AccessToken</span>;
+            }
+            <b>else</b>
+            {
+                <b>try</b>
+                {
+                    <span class="c">// Interactive authentication is required</span>
+                    <a href="@1@netstandard/A.html#3acf01620172c7f0" class="k">var</a> <span id="r17 rd" class="r17 r">accounts</span> = <b>await</b> <a href="#f347fb623b3389f1" class="i field">_client</a>.<span class="i method">GetAccountsAsync</span>();
+                    <a href="#af849ca3fd8fcb8f" class="i field">_authenticationResult</a> = <b>await</b> <a href="#f347fb623b3389f1" class="i field">_client</a>.<span class="i method">AcquireTokenInteractive</span>(<span class="r15 r">scopes</span>)
+                                                         .<span class="i method">WithAccount</span>(<span class="r17 r">accounts</span>.<a href="@1@netstandard/A.html#8087366974af11d2" class="i method">FirstOrDefault</a>())
+                                                         .<span class="i method">ExecuteAsync</span>();
+                    <b>return</b> <a href="#af849ca3fd8fcb8f" class="i field">_authenticationResult</a>.<span class="i property">AccessToken</span>;
+                }
+                <b>catch</b> (<span class="t t">MsalException</span>)
+                {
+                    <span class="c">// AcquireTokenSilent and AcquireTokenInteractive failed, the session will be closed.</span>
+                    <a href="#af849ca3fd8fcb8f" class="i field">_authenticationResult</a> = <b>null</b>;
+                    <a href="#342532477cdf210f" class="i">LoggedOut</a>?.<a href="@1@netstandard/A.html#aaedcaa3f05a32f9" class="i method">Invoke</a>(<a href="#ff49818950011cc8" class="k">this</a>, <a href="@1@netstandard/A.html#9a1496aa60befd10" class="t t">EventArgs</a>.<a href="@1@netstandard/A.html#433622385e05af0d" class="i field">Empty</a>);
+                    <b>return</b> <a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@netstandard/A.html#c9f70a27facb27cf" class="i field">Empty</a>;
+                }
+            }
+        }
+
+        <b>public async</b> <a href="@1@netstandard/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<b>bool</b>&gt; <a id="fe24e86c289fc80e" href="../R/fe24e86c289fc80e.html" target="n" data-glyph="72,1" class="i method">AcquireTokenSilentAsync</a>() =&gt; <b>await</b> <a href="#fe59351facae3777" class="i method">AcquireTokenSilentAsync</a>(<a href="#87d0bb705405c26c" class="i field">_graphScopes</a>);
+
+        <b>private async</b> <a href="@1@netstandard/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<b>bool</b>&gt; <a id="fe59351facae3777" href="../R/fe59351facae3777.html" target="n" data-glyph="76,1" class="i method">AcquireTokenSilentAsync</a>(<a href="@1@netstandard/A.html#8281103e6f23cb5c" class="k">string</a>[] <span id="r18 rd" class="r18 r">scopes</span>)
+        {
+            <b>if</b> (!<a href="@1@netstandard/A.html#32ecfe4ec3ef7160" class="t t">NetworkInterface</a>.<a href="@1@netstandard/A.html#ed130d091756b4c9" class="i method">GetIsNetworkAvailable</a>())
+            {
+                <b>return</b> <b>false</b>;
+            }
+
+            <b>try</b>
+            {
+                <a href="@1@netstandard/A.html#3acf01620172c7f0" class="k">var</a> <span id="r19 rd" class="r19 r">accounts</span> = <b>await</b> <a href="#f347fb623b3389f1" class="i field">_client</a>.<span class="i method">GetAccountsAsync</span>();
+                <a href="#af849ca3fd8fcb8f" class="i field">_authenticationResult</a> = <b>await</b> <a href="#f347fb623b3389f1" class="i field">_client</a>.<span class="i method">AcquireTokenSilent</span>(<span class="r18 r">scopes</span>, <span class="r19 r">accounts</span>.<a href="@1@netstandard/A.html#8087366974af11d2" class="i method">FirstOrDefault</a>())
+                                                     .<span class="i method">ExecuteAsync</span>();
+                <b>return</b> <b>true</b>;
+            }
+            <b>catch</b> (<span class="t t">MsalUiRequiredException</span> <span id="r20 rd" class="r20 r">ex</span>)
+            {
+                <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<a href="@1@netstandard/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@1@netstandard/A.html#de18340cbf015ef1" class="i method">WriteLine</a>(<span class="r20 r">ex</span>);
+                <b>if</b> (<a href="#9a4e2492f071e698" class="i field">_integratedAuthAvailable</a>)
+                {
+                    <b>try</b>
+                    {
+                        <a href="#af849ca3fd8fcb8f" class="i field">_authenticationResult</a> = <b>await</b> <a href="#f347fb623b3389f1" class="i field">_client</a>.<span class="i method">AcquireTokenByIntegratedWindowsAuth</span>(<a href="#87d0bb705405c26c" class="i field">_graphScopes</a>)
+                                                             .<span class="i method">ExecuteAsync</span>();
+                        <b>return</b> <b>true</b>;
+                    }
+                    <b>catch</b> (<span class="t t">MsalUiRequiredException</span>)
+                    {
+                        <span class="c">// Interactive authentication is required</span>
+                        <b>return</b> <b>false</b>;
+                    }
+                }
+                <b>else</b>
+                {
+                    <span class="c">// Interactive authentication is required</span>
+                    <b>return</b> <b>false</b>;
+                }
+            }
+            <b>catch</b> (<span class="t t">MsalException</span>)
+            {
+                <span class="c">// TODO WTS: Silentauth failed, please handle this exception as appropriate to your scenario</span>
+                <span class="c">// For more info on MsalExceptions see</span>
+                <span class="c">// https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/exceptions</span>
+                <b>return</b> <b>false</b>;
+            }
+        }
+
+        <b>private void</b> <a id="6db533fe93e650f9" href="../R/6db533fe93e650f9.html" target="n" data-glyph="76,1" class="i method">ConfigureCache</a>()
+        {
+            <b>if</b> (<a href="#3107d017965c3041" class="i field">_identityCacheService</a> != <b>null</b>)
+            {
+                <span class="c">// .Net Core Apps should provide a mechanism to serialize and deserialize the user token cache</span>
+                <span class="c">// https://aka.ms/msal-net-token-cache-serialization</span>
+                <a href="#f347fb623b3389f1" class="i field">_client</a>.<span class="i property">UserTokenCache</span>.<span class="i method">SetBeforeAccess</span>((<span id="r21 rd" class="r21 r">args</span>) =&gt;
+                {
+                    <b>var</b> <span id="r22 rd" class="r22 r">data</span> = <a href="#3107d017965c3041" class="i field">_identityCacheService</a>.<a href="../Contracts/Services/IIdentityCacheService.cs.html#3f1428acebd63981" class="i method">ReadMsalToken</a>();
+                    <b>if</b> (<span class="r22 r">data</span> != <b>default</b>)
+                    {
+                        <span class="r21 r">args</span>.<span class="i property">TokenCache</span>.<span class="i method">DeserializeMsalV3</span>(<span class="r22 r">data</span>);
+                    }
+                });
+                <a href="#f347fb623b3389f1" class="i field">_client</a>.<span class="i property">UserTokenCache</span>.<span class="i method">SetAfterAccess</span>((<span id="r23 rd" class="r23 r">args</span>) =&gt;
+                {
+                    <b>if</b> (<span class="r23 r">args</span>.<span class="i property">HasStateChanged</span>)
+                    {
+                        <a href="#3107d017965c3041" class="i field">_identityCacheService</a>.<a href="../Contracts/Services/IIdentityCacheService.cs.html#7f0123164474156b" class="i method">SaveMsalToken</a>(<span class="r23 r">args</span>.<span class="i property">TokenCache</span>.<span class="i method">SerializeMsalV3</span>());
+                    }
+                });
+            }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

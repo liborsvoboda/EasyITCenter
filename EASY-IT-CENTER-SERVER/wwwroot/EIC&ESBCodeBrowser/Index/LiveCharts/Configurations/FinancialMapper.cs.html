@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html><head><title>FinancialMapper.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(177);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts/Configurations/FinancialMapper.cs" target="_top">Configurations\FinancialMapper.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Core\Core.csproj</a> (LiveCharts)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>.<span class="i n">Configurations</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Mapper to configure financial points</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">typeparam</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r t">T</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">type to configure</span><span class="c">&lt;/</span><span class="c">typeparam</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="47763c58f3cebdf3" href="../R/47763c58f3cebdf3.html" target="n" data-glyph="0,0" class="t t"><span id="cf9208ad8c90c3e4">FinancialMapper</span></a>&lt;<span id="r0 rd t" class="r0 r t">T</span>&gt; : <a href="IPointEvaluator.cs.html#2efe8c33c581a5e7" class="t t">IPointEvaluator</a>&lt;<span class="r0 r t">T</span>&gt;
+    {
+        <b>private</b> <a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>int</b>, <b>double</b>&gt; <a id="925004703287b236" href="../R/925004703287b236.html" target="n" data-glyph="46,1" class="i field">_x</a> = (<span id="r1 rd" class="r1 r">v</span>, <span id="r2 rd" class="r2 r">i</span>) =&gt; <span class="r2 r">i</span>;
+        <b>private</b> <a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>int</b>, <b>double</b>&gt; <a id="cf73f18aee745afd" href="../R/cf73f18aee745afd.html" target="n" data-glyph="46,1" class="i field">_y</a> = (<span id="r3 rd" class="r3 r">v</span>, <span id="r4 rd" class="r4 r">i</span>) =&gt; 0;
+        <b>private</b> <a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>int</b>, <b>double</b>&gt; <a id="6e062eb94ab8fca5" href="../R/6e062eb94ab8fca5.html" target="n" data-glyph="46,1" class="i field">_open</a>;
+        <b>private</b> <a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>int</b>, <b>double</b>&gt; <a id="9a55a139039de6ed" href="../R/9a55a139039de6ed.html" target="n" data-glyph="46,1" class="i field">_high</a>;
+        <b>private</b> <a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>int</b>, <b>double</b>&gt; <a id="674bee3a39d291c8" href="../R/674bee3a39d291c8.html" target="n" data-glyph="46,1" class="i field">_low</a>;
+        <b>private</b> <a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>int</b>, <b>double</b>&gt; <a id="e9f84bd8805beea1" href="../R/e9f84bd8805beea1.html" target="n" data-glyph="46,1" class="i field">_close</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets values for a specific point</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r5 r">point</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Point to set</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r6 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">key</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="a364f0edb5f49a0f" href="../R/a364f0edb5f49a0f.html" target="n" data-glyph="72,1" class="i method">Evaluate</a>(<b>int</b> <span id="r7 rd" class="r7 r">key</span>, <span class="r0 r t">T</span> <span id="r6 rd" class="r6 r">value</span>, <a href="../ChartPoint.cs.html#a7b99b1eebb29334" class="t t">ChartPoint</a> <span id="r5 rd" class="r5 r">point</span>)
+        {
+            <span class="r5 r">point</span>.<a href="../ChartPoint.cs.html#b51782bb1f4c229b" class="i property">X</a> = <a href="#925004703287b236" class="i field">_x</a>(<span class="r6 r">value</span>, <span class="r7 r">key</span>);
+            <span class="r5 r">point</span>.<a href="../ChartPoint.cs.html#2647768eb1eb41f6" class="i property">Y</a> = <a href="#cf73f18aee745afd" class="i field">_y</a>(<span class="r6 r">value</span>, <span class="r7 r">key</span>);
+            <span class="r5 r">point</span>.<a href="../ChartPoint.cs.html#d6e95b330bbacc6d" class="i property">Open</a> = <a href="#6e062eb94ab8fca5" class="i field">_open</a>(<span class="r6 r">value</span>, <span class="r7 r">key</span>);
+            <span class="r5 r">point</span>.<a href="../ChartPoint.cs.html#53b46486e8abaceb" class="i property">High</a> = <a href="#9a55a139039de6ed" class="i field">_high</a>(<span class="r6 r">value</span>, <span class="r7 r">key</span>);
+            <span class="r5 r">point</span>.<a href="../ChartPoint.cs.html#1749836e9aa5ed21" class="i property">Close</a> = <a href="#e9f84bd8805beea1" class="i field">_close</a>(<span class="r6 r">value</span>, <span class="r7 r">key</span>);
+            <span class="r5 r">point</span>.<a href="../ChartPoint.cs.html#8b8cb2cc49304c4c" class="i property">Low</a> = <a href="#674bee3a39d291c8" class="i field">_low</a>(<span class="r6 r">value</span>, <span class="r7 r">key</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Maps X value</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">predicate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">function that pulls X coordinate</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">current mapper instance</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#47763c58f3cebdf3" class="t t">FinancialMapper</a>&lt;<span class="r0 r t">T</span>&gt; <a id="52f79429c90b4b0b" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">X</a>(<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>double</b>&gt; <span id="r8 rd" class="r8 r">predicate</span>)
+        {
+            <b>return</b> <a href="#52f0e88a4db72bed" class="i method">X</a>((<span id="r9 rd" class="r9 r">t</span>, <span id="r10 rd" class="r10 r">i</span>) =&gt; <span class="r8 r">predicate</span>(<span class="r9 r">t</span>));
+        }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Maps X value</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r11 r">predicate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">function that pulls X coordinate, with value and index as parameters</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">current mapper instance</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#47763c58f3cebdf3" class="t t">FinancialMapper</a>&lt;<span class="r0 r t">T</span>&gt; <a id="52f0e88a4db72bed" href="../R/52f0e88a4db72bed.html" target="n" data-glyph="72,1" class="i method">X</a>(<a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>int</b>, <b>double</b>&gt; <span id="r11 rd" class="r11 r">predicate</span>)
+        {
+            <a href="#925004703287b236" class="i field">_x</a> = <span class="r11 r">predicate</span>;
+            <b>return</b> <a href="#47763c58f3cebdf3" class="k">this</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Maps Y value</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r12 r">predicate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">function that pulls Y coordinate</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">current mapper instance</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#47763c58f3cebdf3" class="t t">FinancialMapper</a>&lt;<span class="r0 r t">T</span>&gt; <a id="0b37e7dd541b2e6c" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Y</a>(<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>double</b>&gt; <span id="r12 rd" class="r12 r">predicate</span>)
+        {
+            <b>return</b> <a href="#5bcdbfbe89d2467e" class="i method">Y</a>((<span id="r13 rd" class="r13 r">t</span>, <span id="r14 rd" class="r14 r">i</span>) =&gt; <span class="r12 r">predicate</span>(<span class="r13 r">t</span>));
+        }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Maps Y value</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r15 r">predicate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">function that pulls Y coordinate, with value and index as parameters</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">current mapper instance</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#47763c58f3cebdf3" class="t t">FinancialMapper</a>&lt;<span class="r0 r t">T</span>&gt; <a id="5bcdbfbe89d2467e" href="../R/5bcdbfbe89d2467e.html" target="n" data-glyph="72,1" class="i method">Y</a>(<a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>int</b>, <b>double</b>&gt; <span id="r15 rd" class="r15 r">predicate</span>)
+        {
+            <a href="#cf73f18aee745afd" class="i field">_y</a> = <span class="r15 r">predicate</span>;
+            <b>return</b> <a href="#47763c58f3cebdf3" class="k">this</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Maps Open value</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r16 r">predicate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">function that pulls open value</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">current mapper instance</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#47763c58f3cebdf3" class="t t">FinancialMapper</a>&lt;<span class="r0 r t">T</span>&gt; <a id="5dd986fb3ad53ef8" href="../R/5dd986fb3ad53ef8.html" target="n" data-glyph="72,1" class="i method">Open</a>(<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>double</b>&gt; <span id="r16 rd" class="r16 r">predicate</span>)
+        {
+            <b>return</b> <a href="#eae0988cb63b40bd" class="i method">Open</a>((<span id="r17 rd" class="r17 r">t</span>, <span id="r18 rd" class="r18 r">i</span>) =&gt; <span class="r16 r">predicate</span>(<span class="r17 r">t</span>));
+        }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Maps Open value</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r19 r">predicate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">function that pulls open value, value and index as parameters</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">current mapper instance</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#47763c58f3cebdf3" class="t t">FinancialMapper</a>&lt;<span class="r0 r t">T</span>&gt; <a id="eae0988cb63b40bd" href="../R/eae0988cb63b40bd.html" target="n" data-glyph="72,1" class="i method">Open</a>(<a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>int</b>, <b>double</b>&gt; <span id="r19 rd" class="r19 r">predicate</span>)
+        {
+            <a href="#6e062eb94ab8fca5" class="i field">_open</a> = <span class="r19 r">predicate</span>;
+            <b>return</b> <a href="#47763c58f3cebdf3" class="k">this</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Maps High value</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r20 r">predicate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">function that pulls High value</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">current mapper instance</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#47763c58f3cebdf3" class="t t">FinancialMapper</a>&lt;<span class="r0 r t">T</span>&gt; <a id="58442050755ecd24" href="../R/58442050755ecd24.html" target="n" data-glyph="72,1" class="i method">High</a>(<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>double</b>&gt; <span id="r20 rd" class="r20 r">predicate</span>)
+        {
+            <b>return</b> <a href="#016a37860f218d75" class="i method">High</a>((<span id="r21 rd" class="r21 r">t</span>, <span id="r22 rd" class="r22 r">i</span>) =&gt; <span class="r20 r">predicate</span>(<span class="r21 r">t</span>));
+        }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Maps High value</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r23 r">predicate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">function that pulls High value</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">current mapper instance</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#47763c58f3cebdf3" class="t t">FinancialMapper</a>&lt;<span class="r0 r t">T</span>&gt; <a id="016a37860f218d75" href="../R/016a37860f218d75.html" target="n" data-glyph="72,1" class="i method">High</a>(<a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>int</b>, <b>double</b>&gt; <span id="r23 rd" class="r23 r">predicate</span>)
+        {
+            <a href="#9a55a139039de6ed" class="i field">_high</a> = <span class="r23 r">predicate</span>;
+            <b>return</b> <a href="#47763c58f3cebdf3" class="k">this</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Maps Close value</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r24 r">predicate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">function that pulls close value</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">current mapper instance</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#47763c58f3cebdf3" class="t t">FinancialMapper</a>&lt;<span class="r0 r t">T</span>&gt; <a id="856a80af93ebf450" href="../R/856a80af93ebf450.html" target="n" data-glyph="72,1" class="i method">Close</a>(<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>double</b>&gt; <span id="r24 rd" class="r24 r">predicate</span>)
+        {
+            <b>return</b> <a href="#ada7deb966fd515a" class="i method">Close</a>((<span id="r25 rd" class="r25 r">t</span>, <span id="r26 rd" class="r26 r">i</span>) =&gt; <span class="r24 r">predicate</span>(<span class="r25 r">t</span>));
+        }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Maps Close value</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r27 r">predicate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">function that pulls close value, value and index as parameters</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">current mapper instance</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#47763c58f3cebdf3" class="t t">FinancialMapper</a>&lt;<span class="r0 r t">T</span>&gt; <a id="ada7deb966fd515a" href="../R/ada7deb966fd515a.html" target="n" data-glyph="72,1" class="i method">Close</a>(<a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>int</b>, <b>double</b>&gt; <span id="r27 rd" class="r27 r">predicate</span>)
+        {
+            <a href="#e9f84bd8805beea1" class="i field">_close</a> = <span class="r27 r">predicate</span>;
+            <b>return</b> <a href="#47763c58f3cebdf3" class="k">this</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Maps Low value</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r28 r">predicate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">function that pulls low value</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">current mapper instance</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#47763c58f3cebdf3" class="t t">FinancialMapper</a>&lt;<span class="r0 r t">T</span>&gt; <a id="e742347516ff9b97" href="../R/e742347516ff9b97.html" target="n" data-glyph="72,1" class="i method">Low</a>(<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>double</b>&gt; <span id="r28 rd" class="r28 r">predicate</span>)
+        {
+            <b>return</b> <a href="#a3892dbdd19f719a" class="i method">Low</a>((<span id="r29 rd" class="r29 r">t</span>, <span id="r30 rd" class="r30 r">i</span>) =&gt; <span class="r28 r">predicate</span>(<span class="r29 r">t</span>));
+        }
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Maps Low value</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r31 r">predicate</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">function that pulls low value, index and value as parameters</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">current mapper instance</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#47763c58f3cebdf3" class="t t">FinancialMapper</a>&lt;<span class="r0 r t">T</span>&gt; <a id="a3892dbdd19f719a" href="../R/a3892dbdd19f719a.html" target="n" data-glyph="72,1" class="i method">Low</a>(<a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r0 r t">T</span>, <b>int</b>, <b>double</b>&gt; <span id="r31 rd" class="r31 r">predicate</span>)
+        {
+            <a href="#674bee3a39d291c8" class="i field">_low</a> = <span class="r31 r">predicate</span>;
+            <b>return</b> <a href="#47763c58f3cebdf3" class="k">this</a>;
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

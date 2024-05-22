@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html><head><title>ServerEnablingServices.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(114);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasyITcenter-HELP/ServerCoreStartUp/ServerEnablingServices.cs" target="_top">ServerCoreStartUp\ServerEnablingServices.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasyITcenter-HELP" target="_top">HelpProjects\EasyITcenter-HELP\EasyITcenter-HELP.csproj</a> (EasyITcenter-HELP)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+
+ 
+<b>using</b> <span class="i n">EasyITCenter</span>.<span class="i n">ServerCoreStructure</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Transactions</span>;
+ 
+<b>namespace</b> <span class="i n">EasyITCenter</span>.<span class="i n">ServerCoreConfiguration</span> {
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Server Core Enabling Settings of Security, API Communications, Technologies, Modules,Rules,</span>
+    <span class="c">///</span><span class="c"> Rights, Rules, Rights, Conditions, Cors, Cookies, Formats, Services, Logging, etc..</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="3c73f7345fe66a6e" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="c11c85e3edf5772e">ServerEnablingServices</span></a> {
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Enable Server Logging in Debug Mode</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="d650666d55395008" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">EnableLogging</a>(<b>ref</b> <span class="t t">IApplicationBuilder</span> <span id="r0 rd" class="r0 r">app</span>) {
+            <b>if</b> (<a href="../ServerCore/Classes/ServerCoreRuntimeDefinitions.cs.html#b22b05b0ecb479ff" class="t t">ServerRuntimeData</a>.<a href="../ServerCore/Classes/ServerCoreRuntimeDefinitions.cs.html#c6b274c5fb9a0664" class="i property">DebugMode</a>) { <span class="r0 r">app</span>.<span class="i method">UseHttpLogging</span>(); }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Cors Configuration</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="9640ca831b4a731d" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">EnableCors</a>(<b>ref</b> <span class="t t">IApplicationBuilder</span> <span id="r1 rd" class="r1 r">app</span>) {
+            <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#28178e872457a3b3" class="i property">ServerCorsEnabled</a>) {
+                <span class="r1 r">app</span>.<span class="i">UseCors</span>(<span id="r2 rd" class="r2 r">x</span> =&gt; {
+                    <span class="t t">List</span>&lt;<span class="i">ServerCorsDefAllowedOriginList</span>&gt; <span id="r3 rd" class="r3 r">data</span>;
+                    <b>using</b> (<b>new</b> <span class="t constructor">TransactionScope</span>(<span class="t t">TransactionScopeOption</span>.<span class="i field">Required</span>, <b>new</b> <span class="t constructor">TransactionOptions</span> { <span class="i property">IsolationLevel</span> = <span class="t">IsolationLevel</span>.<span class="i">ReadUncommitted</span> })) {
+                        <span class="r3 r">data</span> = <b>new</b> <span class="i">EasyITCenterContext</span>().<span class="i">ServerCorsDefAllowedOriginLists</span>.<span class="i">Where</span>(<span id="r4 rd" class="r4 r">a</span> =&gt; <span class="r4 r">a</span>.<span class="i">Active</span>).<span class="i">ToList</span>();
+                    }
+ 
+                    <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#f09c4f3d5845fd9b" class="i property">ServerCorsAllowAnyHeader</a>) { <span class="r2 r">x</span>.<span class="i method">AllowAnyHeader</span>(); }
+                    <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#6a1f078ae7e321c3" class="i property">ServerCorsAllowAnyMethod</a>) { <span class="r2 r">x</span>.<span class="i method">AllowAnyMethod</span>(); }
+                    <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#5f18ec989f3b16ac" class="i property">ServerCorsAllowCredentials</a>) { <span class="r2 r">x</span>.<span class="i method">AllowCredentials</span>(); }
+                    <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#f808b070ea1953fe" class="i property">ServerCorsAllowAnyOrigin</a>) { <span class="r2 r">x</span>.<span class="i method">AllowAnyOrigin</span>(); }
+                    <b>else</b> <b>if</b> (<span class="r3 r">data</span>.<span class="i method">Any</span>()) { <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>[] <span id="r5 rd" class="r5 r">allowedDomains</span> = <span class="r3 r">data</span>.<span class="i method">Select</span>(<span id="r6 rd" class="r6 r">a</span> =&gt; <span class="r6 r">a</span>.<span class="i">AllowedDomain</span>).<span class="i method">ToArray</span>(); <span class="r2 r">x</span>.<span class="i method">WithOrigins</span>(<span class="r5 r">allowedDomains</span>); }
+                });
+            };
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server WebSocket Configuration</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">app</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="89f6604cb4201909" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">EnableWebSocket</a>(<b>ref</b> <span class="t t">IApplicationBuilder</span> <span id="r7 rd" class="r7 r">app</span>) {
+            <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#f30c2c915611642f" class="i property">WebSocketEngineEnabled</a>) {
+                <b>var</b> <span id="r8 rd" class="r8 r">webSocketOptions</span> = <b>new</b> <span class="t constructor">WebSocketOptions</span>() {
+                    <span class="i property">KeepAliveInterval</span> = <a href="@1@System.Runtime/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@1@System.Runtime/A.html#060fe8cc38e0a7e3" class="i method">FromHours</a>(<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#ffcfbcf4f111cb29" class="i property">WebSocketTimeoutMin</a>),
+                };
+                <span class="r7 r">app</span>.<span class="i method">UseWebSockets</span>(<span class="r8 r">webSocketOptions</span>);
+            }
+        }
+ 
+ 
+ 
+        <b>internal static void</b> <a id="09e42b7644946b6c" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">EnableRssFeed</a>(<b>ref</b> <span class="t t">IApplicationBuilder</span> <span id="r9 rd" class="r9 r">app</span>) {
+            <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#7254853b30ea5863" class="i property">WebRSSFeedsEnabled</a>) {
+                <span class="r9 r">app</span>.<span class="i">UseRSSFeed</span>(<span class="s">&quot;/feed&quot;</span>, <b>new</b> <span class="i">RSSFeedOptions</span> {
+                    <span class="i">Title</span> = <a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#df12387ffd1b520a" class="i property">ConfigCoreServerRegisteredName</a> + <span class="s">&quot; RSS Feed&quot;</span>,
+                    <span class="i">Copyright</span> = <span class="s">&quot;2023 &quot;</span> + <a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#df12387ffd1b520a" class="i property">ConfigCoreServerRegisteredName</a>,
+                    <span class="i">Description</span> = <span class="s">&quot;RSS Feed with Company Portfolio&quot;</span>,
+                    <span class="i">ManagingEditor</span> = <a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#1a5f3bed7121e15a" class="i property">ConfigManagerEmailAddress</a>,
+                    <span class="i">Webmaster</span> = <a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#08642b0aa428675f" class="i property">EmailerServiceEmailAddress</a>,
+                    <span class="i">Url</span> = <b>new</b> <a href="@1@System.Runtime/A.html#9e1bb2fef0d1159b" class="t constructor">Uri</a>(<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#431cf3003859f24d" class="i property">ServerPublicUrl</a>),
+                    <span class="i">Caching</span> = <b>new</b> <span class="i">MemoryCacheProvider</span> { <span class="i">CacheDuration</span> = <a href="@1@System.Runtime/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@1@System.Runtime/A.html#e7c4baa19fa38e8e" class="i method">FromDays</a>(5), <span class="i">Key</span> = <span class="s">&quot;RSSCacheKey&quot;</span> }
+                });
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Server Endpoints Configuration</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal static void</b> <a id="44c6f004546b3190" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">EnableEndpoints</a>(<b>ref</b> <span class="t t">IApplicationBuilder</span> <span id="r10 rd" class="r10 r">app</span>) {
+            <span class="r10 r">app</span>.<span class="i">UseEndpoints</span>(<span id="r11 rd" class="r11 r">endpoints</span> =&gt; {
+                <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#71236699693e8b14" class="i property">ModuleWebDataManagerEnabled</a>) { <span class="r11 r">endpoints</span>.<span class="i">MapEasyData</span>(<span id="r12 rd" class="r12 r">options</span> =&gt; { <span class="r12 r">options</span>.<span class="i">UseDbContext</span>&lt;<span class="i">EasyITCenterContext</span>&gt;(); }); }
+ 
+                <span class="r11 r">endpoints</span>.<span class="i method">MapControllers</span>();
+ 
+                <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#f1d2defc741bf6e7" class="i property">WebRazorPagesEngineEnabled</a>) {
+                    <span class="r11 r">endpoints</span>.<span class="i method">MapRazorPages</span>();
+                    <span class="r11 r">endpoints</span>.<span class="i method">MapControllerRoute</span>(<span class="r13 r">name</span>: <span class="s">&quot;default&quot;</span>, <span class="r14 r">pattern</span>: <span class="s">&quot;{controller=ServerCorePages}/{action=Index}/{id?}&quot;</span>);
+                }
+ 
+                <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#d6377ccb2b1d2671" class="i property">ModuleHealthServiceEnabled</a>) {
+                    <span class="r11 r">endpoints</span>.<span class="i">MapHealthChecks</span>(<span class="s">&quot;/HealthResultService&quot;</span>,
+                        <b>new</b> <span class="i">HealthCheckOptions</span>() {
+                            <span class="i">Predicate</span> = <span id="r15 rd" class="r15 r">p</span> =&gt; <b>true</b>,
+                            <span class="i">ResultStatusCodes</span> = { [<span class="i">HealthStatus</span>.<span class="i">Healthy</span>] = <span class="t t">StatusCodes</span>.<span class="i field">Status200OK</span>, [<span class="i">HealthStatus</span>.<span class="i">Degraded</span>] = <span class="t t">StatusCodes</span>.<span class="i field">Status500InternalServerError</span>, [<span class="i">HealthStatus</span>.<span class="i">Unhealthy</span>] = <span class="t t">StatusCodes</span>.<span class="i field">Status503ServiceUnavailable</span> },
+                            <span class="i">ResponseWriter</span> = <span class="i">UIResponseWriter</span>.<span class="i">WriteHealthCheckUIResponse</span>,
+                            <span class="i">AllowCachingResponses</span> = <b>false</b>
+                        }
+                        );
+                }
+ 
+                <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#f23599fa8ea8e5c3" class="i property">ModuleCSharpCodeBuilder</a>) { <span class="r11 r">endpoints</span>.<span class="i">MapMirrorSharp</span>(<span class="s">&quot;/mirrorsharp&quot;</span>, <b>new</b> <span class="i">MirrorSharpOptions</span> { <span class="i">SelfDebugEnabled</span> = <b>true</b>, <span class="i">IncludeExceptionDetails</span> = <b>true</b>, }); }
+            });
+ 
+ 
+            <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#f23599fa8ea8e5c3" class="i property">ModuleCSharpCodeBuilder</a>) { <span class="r10 r">app</span>.<span class="i">MapMirrorSharp</span>(<span class="s">&quot;/mirrorsharp&quot;</span>); }
+ 
+            <b>if</b> (<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#d6377ccb2b1d2671" class="i property">ModuleHealthServiceEnabled</a>) {
+                <span class="r10 r">app</span>.<span class="i method">UseHealthChecks</span>(<span class="s">&quot;/HealthResultService&quot;</span>);
+                <span class="r10 r">app</span>.<span class="i">UseHealthChecksUI</span>(<span id="r16 rd" class="r16 r">setup</span> =&gt; {
+                    <span class="r16 r">setup</span>.<span class="i">UIPath</span> = <a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#ab9b4a82aa921b26" class="i property">ModuleHealthServicePath</a>.<a href="@1@System.Runtime/A.html#23804789ea4c9c0e" class="i method">StartsWith</a>(<span class="s">&quot;/&quot;</span>) ? <a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#ab9b4a82aa921b26" class="i property">ModuleHealthServicePath</a> : <span class="s">&quot;/&quot;</span> + <a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#ab9b4a82aa921b26" class="i property">ModuleHealthServicePath</a>;
+                    <span class="r16 r">setup</span>.<span class="i">AsideMenuOpened</span> = <b>true</b>;
+                    <span class="r16 r">setup</span>.<span class="i">PageTitle</span> = <a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#de6c49ae64743fc3" class="t t">ServerConfigSettings</a>.<a href="../ServerCore/Classes/ServerConfigurationDefinitions.cs.html#df12387ffd1b520a" class="i property">ConfigCoreServerRegisteredName</a>;
+                    <span class="r16 r">setup</span>.<span class="i">AddCustomStylesheet</span>(<span class="s">&quot;ServerCoreDefinitions/Styles/HealthChecksUI.css&quot;</span>);
+                });
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

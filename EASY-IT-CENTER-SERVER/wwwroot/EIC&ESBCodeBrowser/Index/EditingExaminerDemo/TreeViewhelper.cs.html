@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html><head><title>TreeViewhelper.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(136);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EditingExaminerDemo/TreeViewhelper.cs" target="_top">TreeViewhelper.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EditingExaminerDemo" target="_top">HelpProjects\WPF-MORE\Sample Applications\EditingExaminerDemo\EditingExaminerDemo.csproj</a> (EditingExaminerDemo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>;
+
+<b>namespace</b> <span class="i n">EditingExaminerDemo</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c">     Provides help function for the document TreeView.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>internal class</b> <a id="9a0424e27529a689" href="R/9a0424e27529a689.html" target="n" data-glyph="2,0" class="t t"><span id="62ce77c0bfd60c7c">TreeViewhelper</span></a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Create or fill up a TreeView of the document content</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">treeView</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Pass an TreeView control</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">document</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Pass in an Document object</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public static</b> <a href="@0@PresentationFramework/A.html#5050528c9202ffc4" class="t t">TreeView</a> <a id="1b82f48a67be9b4c" href="R/1b82f48a67be9b4c.html" target="n" data-glyph="72,1" class="i method">SetupTreeView</a>(<a href="@0@PresentationFramework/A.html#5050528c9202ffc4" class="t t">TreeView</a> <span id="r0 rd" class="r0 r">treeView</span>, <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a> <span id="r1 rd" class="r1 r">document</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#c17a2c09aaa80559" class="t t">TreeViewItem</a> <span id="r2 rd" class="r2 r">root</span>;
+            <b>if</b> (<span class="r0 r">treeView</span> == <b>null</b>)
+            {
+                <span class="r0 r">treeView</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#28f5f5d2f35ddf90" class="t constructor">TreeView</a> {<a href="@0@PresentationCore/A.html#69f262dd47fdf2be" class="i property">Visibility</a> = <a href="@0@PresentationCore/A.html#2668d640196eddd0" class="t t">Visibility</a>.<a href="@0@PresentationCore/A.html#02d18b751f37c2fd" class="i field">Visible</a>};
+            }
+            <b>if</b> (<span class="r1 r">document</span> != <b>null</b>)
+            {
+                <span class="r0 r">treeView</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#ffd0144f9d66cb9d" class="i method">Clear</a>();
+                <span class="r2 r">root</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#f8735ceaf057df11" class="t constructor">TreeViewItem</a>
+                {
+                    <a href="@0@PresentationFramework/A.html#44abad05df1a5b04" class="i property">Header</a> = <span class="s">&quot;Document&quot;</span>,
+                    <a href="@0@PresentationFramework/A.html#b54aa385fc85e872" class="i property">IsExpanded</a> = <b>true</b>
+                };
+                <span class="r0 r">treeView</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<span class="r2 r">root</span>);
+                <a href="#1497e703bd6a2bfe" class="i method">AddCollection</a>(<span class="r2 r">root</span>, <span class="r1 r">document</span>.<a href="@0@PresentationFramework/A.html#4d1bf7b5451a11f8" class="i property">Blocks</a>);
+            }
+
+            <b>return</b> <span class="r0 r">treeView</span>;
+        }
+
+        <b>private static void</b> <a id="1497e703bd6a2bfe" href="R/1497e703bd6a2bfe.html" target="n" data-glyph="76,1" class="i method">AddCollection</a>(<a href="@0@PresentationFramework/A.html#c17a2c09aaa80559" class="t t">TreeViewItem</a> <span id="r3 rd" class="r3 r">item</span>, <a href="@1@System.Runtime/A.html#5d74f6adfeaf6c7d" class="t t">IList</a> <span id="r4 rd" class="r4 r">list</span>)
+        {
+            <b>foreach</b> (<a href="@1@System.Runtime/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r5 rd" class="r5 r">listItem</span> <b>in</b> <span class="r4 r">list</span>)
+            {
+                <a href="@0@PresentationFramework/A.html#c17a2c09aaa80559" class="k">var</a> <span id="r6 rd" class="r6 r">titem</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#f8735ceaf057df11" class="t constructor">TreeViewItem</a>();
+                <span class="r3 r">item</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<span class="r6 r">titem</span>);
+                <span class="r6 r">titem</span>.<a href="@0@PresentationFramework/A.html#b54aa385fc85e872" class="i property">IsExpanded</a> = <b>true</b>;
+                <span class="r6 r">titem</span>.<a href="@0@PresentationFramework/A.html#44abad05df1a5b04" class="i property">Header</a> = <span class="r5 r">listItem</span>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@1@System.Runtime/A.html#aa4f112f79364b6e" class="i property">Name</a>;
+                <a href="#dc7c1b8edf2f6d58" class="i method">AddItem</a>(<span class="r6 r">titem</span>, <span class="r5 r">listItem</span> <b>as</b> <a href="@0@PresentationFramework/A.html#e28640b48d79de57" class="t t">TextElement</a>);
+            }
+        }
+
+        <b>private static void</b> <a id="dc7c1b8edf2f6d58" href="R/dc7c1b8edf2f6d58.html" target="n" data-glyph="76,1" class="i method">AddItem</a>(<a href="@0@PresentationFramework/A.html#c17a2c09aaa80559" class="t t">TreeViewItem</a> <span id="r7 rd" class="r7 r">item</span>, <a href="@0@PresentationFramework/A.html#e28640b48d79de57" class="t t">TextElement</a> <span id="r8 rd" class="r8 r">textElement</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#c17a2c09aaa80559" class="t t">TreeViewItem</a> <span id="r9 rd" class="r9 r">childItem</span>;
+
+            <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#f2bb54fbd1b29b86" class="t t">InlineUIContainer</a>)
+            {
+                <span class="r9 r">childItem</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#f8735ceaf057df11" class="t constructor">TreeViewItem</a>
+                {
+                    <a href="@0@PresentationFramework/A.html#44abad05df1a5b04" class="i property">Header</a> = ((<a href="@0@PresentationFramework/A.html#f2bb54fbd1b29b86" class="t t">InlineUIContainer</a>) <span class="r8 r">textElement</span>).<a href="@0@PresentationFramework/A.html#c399a27f8b31d8d8" class="i property">Child</a>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@1@System.Runtime/A.html#aa4f112f79364b6e" class="i property">Name</a>,
+                    <a href="@0@PresentationFramework/A.html#b54aa385fc85e872" class="i property">IsExpanded</a> = <b>true</b>
+                };
+                <span class="r7 r">item</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<span class="r9 r">childItem</span>);
+            }
+            <b>else</b> <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#449f969a87850c76" class="t t">BlockUIContainer</a>)
+            {
+                <span class="r9 r">childItem</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#f8735ceaf057df11" class="t constructor">TreeViewItem</a>
+                {
+                    <a href="@0@PresentationFramework/A.html#44abad05df1a5b04" class="i property">Header</a> = ((<a href="@0@PresentationFramework/A.html#449f969a87850c76" class="t t">BlockUIContainer</a>) <span class="r8 r">textElement</span>).<a href="@0@PresentationFramework/A.html#76b2b1aa497524e4" class="i property">Child</a>.<a href="@1@System.Runtime/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@1@System.Runtime/A.html#aa4f112f79364b6e" class="i property">Name</a>,
+                    <a href="@0@PresentationFramework/A.html#b54aa385fc85e872" class="i property">IsExpanded</a> = <b>true</b>
+                };
+                <span class="r7 r">item</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<span class="r9 r">childItem</span>);
+            }
+            <b>else</b> <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#be5c6e4c02b1655f" class="t t">Span</a>)
+            {
+                <a href="#1497e703bd6a2bfe" class="i method">AddCollection</a>(<span class="r7 r">item</span>, ((<a href="@0@PresentationFramework/A.html#be5c6e4c02b1655f" class="t t">Span</a>) <span class="r8 r">textElement</span>).<a href="@0@PresentationFramework/A.html#2ec80c36805cbaca" class="i property">Inlines</a>);
+            }
+            <b>else</b> <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="t t">Paragraph</a>)
+            {
+                <a href="#1497e703bd6a2bfe" class="i method">AddCollection</a>(<span class="r7 r">item</span>, ((<a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="t t">Paragraph</a>) <span class="r8 r">textElement</span>).<a href="@0@PresentationFramework/A.html#065c321bf62a9a0f" class="i property">Inlines</a>);
+            }
+            <b>else</b> <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#eabc7101897ec6e6" class="t t">List</a>)
+            {
+                <a href="#1497e703bd6a2bfe" class="i method">AddCollection</a>(<span class="r7 r">item</span>, ((<a href="@0@PresentationFramework/A.html#eabc7101897ec6e6" class="t t">List</a>) <span class="r8 r">textElement</span>).<a href="@0@PresentationFramework/A.html#8b595d59b38bc092" class="i property">ListItems</a>);
+            }
+            <b>else</b> <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#a7410ebbf0d73f2d" class="t t">ListItem</a>)
+            {
+                <a href="#1497e703bd6a2bfe" class="i method">AddCollection</a>(<span class="r7 r">item</span>, ((<a href="@0@PresentationFramework/A.html#a7410ebbf0d73f2d" class="t t">ListItem</a>) <span class="r8 r">textElement</span>).<a href="@0@PresentationFramework/A.html#48658afc1938b29c" class="i property">Blocks</a>);
+            }
+            <b>else</b> <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#5e2adb14c87526f9" class="t t">Table</a>)
+            {
+                <a href="#ef39dd3cbb1cef80" class="i method">TableTreeView</a>(<span class="r7 r">item</span>, <span class="r8 r">textElement</span> <b>as</b> <a href="@0@PresentationFramework/A.html#5e2adb14c87526f9" class="t t">Table</a>);
+            }
+            <b>else</b> <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#3efa3b841559c035" class="t t">AnchoredBlock</a>)
+            {
+                <a href="@0@PresentationFramework/A.html#be56bb15236d47cf" class="k">var</a> <span id="r10 rd" class="r10 r">floater</span> = <span class="r8 r">textElement</span> <b>as</b> <a href="@0@PresentationFramework/A.html#be56bb15236d47cf" class="t t">Floater</a>;
+                <a href="#1497e703bd6a2bfe" class="i method">AddCollection</a>(<span class="r7 r">item</span>, ((<a href="@0@PresentationFramework/A.html#3efa3b841559c035" class="t t">AnchoredBlock</a>) <span class="r8 r">textElement</span>).<a href="@0@PresentationFramework/A.html#c2478f78aa3b0da3" class="i property">Blocks</a>);
+            }
+
+            <span class="c">//The element should be an inline (Run); try to display the text.</span>
+            <b>else</b> <b>if</b> (<span class="r8 r">textElement</span> <b>is</b> <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>)
+            {
+                <a href="@0@PresentationFramework/A.html#6c113c5cdd5b9976" class="k">var</a> <span id="r11 rd" class="r11 r">range</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#89b123297a8cd9e8" class="t constructor">TextRange</a>(((<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>) <span class="r8 r">textElement</span>).<a href="@0@PresentationFramework/A.html#1a7e8799086c9265" class="i property">ContentEnd</a>, ((<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>) <span class="r8 r">textElement</span>).<a href="@0@PresentationFramework/A.html#80c52942535bded4" class="i property">ContentStart</a>);
+                <span class="r7 r">item</span>.<a href="@0@PresentationFramework/A.html#44abad05df1a5b04" class="i property">Header</a> = <span class="r7 r">item</span>.<a href="@0@PresentationFramework/A.html#44abad05df1a5b04" class="i property">Header</a> + <span class="s">&quot; - [&quot;</span> + <span class="r11 r">range</span>.<a href="@0@PresentationFramework/A.html#9bc40088b9689560" class="i property">Text</a> + <span class="s">&quot;]&quot;</span>;
+            }
+        }
+
+        <b>private static void</b> <a id="ef39dd3cbb1cef80" href="R/ef39dd3cbb1cef80.html" target="n" data-glyph="76,1" class="i method">TableTreeView</a>(<a href="@0@PresentationFramework/A.html#c17a2c09aaa80559" class="t t">TreeViewItem</a> <span id="r12 rd" class="r12 r">item</span>, <a href="@0@PresentationFramework/A.html#5e2adb14c87526f9" class="t t">Table</a> <span id="r13 rd" class="r13 r">table</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#c17a2c09aaa80559" class="t t">TreeViewItem</a> <span id="r14 rd" class="r14 r">item1</span>, <span id="r15 rd" class="r15 r">item2</span>;
+            <b>foreach</b> (<a href="@0@PresentationFramework/A.html#0591802947e281eb" class="k">var</a> <span id="r16 rd" class="r16 r">rg</span> <b>in</b> <span class="r13 r">table</span>.<a href="@0@PresentationFramework/A.html#c008f1ef4f5a7cdc" class="i property">RowGroups</a>)
+            {
+                <b>foreach</b> (<a href="@0@PresentationFramework/A.html#dc188c848b66134c" class="k">var</a> <span id="r17 rd" class="r17 r">tr</span> <b>in</b> <span class="r16 r">rg</span>.<a href="@0@PresentationFramework/A.html#62f8e42e87617c49" class="i property">Rows</a>)
+                {
+                    <span class="r14 r">item1</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#f8735ceaf057df11" class="t constructor">TreeViewItem</a>
+                    {
+                        <a href="@0@PresentationFramework/A.html#b54aa385fc85e872" class="i property">IsExpanded</a> = <b>true</b>,
+                        <a href="@0@PresentationFramework/A.html#44abad05df1a5b04" class="i property">Header</a> = <span class="s">&quot;TableRow&quot;</span>
+                    };
+                    <span class="r12 r">item</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<span class="r14 r">item1</span>);
+                    <b>foreach</b> (<a href="@0@PresentationFramework/A.html#45e31fb36c2fff62" class="k">var</a> <span id="r18 rd" class="r18 r">tc</span> <b>in</b> <span class="r17 r">tr</span>.<a href="@0@PresentationFramework/A.html#20561d178fac29b6" class="i property">Cells</a>)
+                    {
+                        <span class="r15 r">item2</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#f8735ceaf057df11" class="t constructor">TreeViewItem</a> {<a href="@0@PresentationFramework/A.html#44abad05df1a5b04" class="i property">Header</a> = <span class="s">&quot;TableCell&quot;</span>};
+                        <span class="r14 r">item1</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d8832077b4ca2360" class="i method">Add</a>(<span class="r15 r">item2</span>);
+                        <span class="r15 r">item2</span>.<a href="@0@PresentationFramework/A.html#b54aa385fc85e872" class="i property">IsExpanded</a> = <b>true</b>;
+                        <a href="#1497e703bd6a2bfe" class="i method">AddCollection</a>(<span class="r15 r">item2</span>, <span class="r18 r">tc</span>.<a href="@0@PresentationFramework/A.html#e92c14fcdda4d49c" class="i property">Blocks</a>);
+                    }
+                }
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

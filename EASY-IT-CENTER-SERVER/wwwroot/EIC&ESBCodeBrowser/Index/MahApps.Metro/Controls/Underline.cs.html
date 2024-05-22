@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html><head><title>Underline.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(107);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/Underline.cs" target="_top">Controls\Underline.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    [<a href="@0@PresentationFramework/A.html#96557b5c070ecfa3" class="t constructor">TemplatePart</a>(<a href="@0@PresentationFramework/A.html#f9842165d0f4cd9c" class="i property">Name</a> = <a href="#4b410a134423926d" class="i field">UnderlineBorderPartName</a>, <a href="@0@PresentationFramework/A.html#cc0b0b68afac8782" class="i property">Type</a> = <b>typeof</b>(<a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>))]
+    <b>public class</b> <a id="12daf6e8352a718f" href="../R/12daf6e8352a718f.html" target="n" data-glyph="0,0" class="t t"><span id="c84e871eab8c0449">Underline</span></a> : <a href="@0@PresentationFramework/A.html#f8ee23c685054e71" class="t t">ContentControl</a>
+    {
+        <b>public const string</b> <a id="4b410a134423926d" href="../R/4b410a134423926d.html" target="n" data-glyph="6,1" class="i field">UnderlineBorderPartName</a> = <span class="s">&quot;PART_UnderlineBorder&quot;</span>;
+        <b>private</b> <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>? <a id="27178794256d2cc8" href="../R/27178794256d2cc8.html" target="n" data-glyph="46,1" class="i field">underlineBorder</a>;
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="d9a10dbff8e4e791" href="../R/d9a10dbff8e4e791.html" target="n" data-glyph="42,1" class="i field">PlacementProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#ef1a928edce00d0a" class="i property">Placement</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationFramework/A.html#247b2a9cc539228a" class="t t">Dock</a>),
+                                          <b>typeof</b>(<a href="#12daf6e8352a718f" class="t t">Underline</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>default</b>(<a href="@0@PresentationFramework/A.html#247b2a9cc539228a" class="t t">Dock</a>), (<span id="r0 rd" class="r0 r">o</span>, <span id="r1 rd" class="r1 r">e</span>) =&gt; { (<span class="r0 r">o</span> <b>as</b> <a href="#12daf6e8352a718f" class="t t">Underline</a>)?.<a href="#841de0a6ef7efde3" class="i method">ApplyBorderProperties</a>(); }));
+
+        <b>public</b> <a href="@0@PresentationFramework/A.html#247b2a9cc539228a" class="t t">Dock</a> <a id="ef1a928edce00d0a" href="../R/ef1a928edce00d0a.html" target="n" data-glyph="102,1" class="i property">Placement</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationFramework/A.html#247b2a9cc539228a" class="t t">Dock</a>)<a href="#12daf6e8352a718f" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#d9a10dbff8e4e791" class="i field">PlacementProperty</a>);
+            <b>set</b> =&gt; <a href="#12daf6e8352a718f" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#d9a10dbff8e4e791" class="i field">PlacementProperty</a>, <b>value</b>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="da71a0f6a86594fa" href="../R/da71a0f6a86594fa.html" target="n" data-glyph="42,1" class="i field">LineThicknessProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#fee8e3ca7d75c951" class="i property">LineThickness</a>),
+                                          <b>typeof</b>(<b>double</b>),
+                                          <b>typeof</b>(<a href="#12daf6e8352a718f" class="t t">Underline</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(1d, (<span id="r2 rd" class="r2 r">o</span>, <span id="r3 rd" class="r3 r">e</span>) =&gt; { (<span class="r2 r">o</span> <b>as</b> <a href="#12daf6e8352a718f" class="t t">Underline</a>)?.<a href="#841de0a6ef7efde3" class="i method">ApplyBorderProperties</a>(); }));
+
+        <b>public double</b> <a id="fee8e3ca7d75c951" href="../R/fee8e3ca7d75c951.html" target="n" data-glyph="102,1" class="i property">LineThickness</a>
+        {
+            <b>get</b> =&gt; (<b>double</b>)<a href="#12daf6e8352a718f" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#da71a0f6a86594fa" class="i field">LineThicknessProperty</a>);
+            <b>set</b> =&gt; <a href="#12daf6e8352a718f" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#da71a0f6a86594fa" class="i field">LineThicknessProperty</a>, <b>value</b>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="af22f0cee7fde032" href="../R/af22f0cee7fde032.html" target="n" data-glyph="42,1" class="i field">LineExtentProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#d6098f1ec3433e7e" class="i property">LineExtent</a>),
+                                          <b>typeof</b>(<b>double</b>),
+                                          <b>typeof</b>(<a href="#12daf6e8352a718f" class="t t">Underline</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="t t">Double</a>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>, (<span id="r4 rd" class="r4 r">o</span>, <span id="r5 rd" class="r5 r">e</span>) =&gt; { (<span class="r4 r">o</span> <b>as</b> <a href="#12daf6e8352a718f" class="t t">Underline</a>)?.<a href="#841de0a6ef7efde3" class="i method">ApplyBorderProperties</a>(); }));
+
+        <b>public double</b> <a id="d6098f1ec3433e7e" href="../R/d6098f1ec3433e7e.html" target="n" data-glyph="102,1" class="i property">LineExtent</a>
+        {
+            <b>get</b> =&gt; (<b>double</b>)<a href="#12daf6e8352a718f" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#af22f0cee7fde032" class="i field">LineExtentProperty</a>);
+            <b>set</b> =&gt; <a href="#12daf6e8352a718f" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#af22f0cee7fde032" class="i field">LineExtentProperty</a>, <b>value</b>);
+        }
+
+        <b>static</b> <a id="a016acf4481c8013" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">Underline</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#6339cc8ec3e1311a" class="i field">DefaultStyleKeyProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#12daf6e8352a718f" class="t t">Underline</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>typeof</b>(<a href="#12daf6e8352a718f" class="t t">Underline</a>)));
+        }
+
+        <b>public override void</b> <a id="6189cab5f228c8ea" href="../R/6189cab5f228c8ea.html" target="n" data-glyph="72,1" class="i method">OnApplyTemplate</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#f8ee23c685054e71" class="k">base</a>.<a href="@0@PresentationFramework/A.html#0c1b13beb625a4a2" class="i method">OnApplyTemplate</a>();
+
+            <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a> = <a href="#12daf6e8352a718f" class="k">this</a>.<a href="@0@PresentationFramework/A.html#22f3c30930053b81" class="i method">GetTemplateChild</a>(<a href="#4b410a134423926d" class="i field">UnderlineBorderPartName</a>) <b>as</b> <a href="@0@PresentationFramework/A.html#06cd39da928ee424" class="t t">Border</a>;
+
+            <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#841de0a6ef7efde3" class="i method">ApplyBorderProperties</a>();
+        }
+
+        <b>private void</b> <a id="841de0a6ef7efde3" href="../R/841de0a6ef7efde3.html" target="n" data-glyph="76,1" class="i method">ApplyBorderProperties</a>()
+        {
+            <b>if</b> (<a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a> == <b>null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <b>void</b> <a id="cce4137682ded989" href="../R/cce4137682ded989.html" target="n" data-glyph="76,2" class="i method">Execute</a>()
+            {
+                <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="t t">Double</a>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>;
+                <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="t t">Double</a>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>;
+                <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a>.<a href="@0@PresentationFramework/A.html#be65e048a5b94c6f" class="i property">BorderThickness</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t constructor">Thickness</a>();
+                <b>switch</b> (<a href="#12daf6e8352a718f" class="k">this</a>.<a href="#ef1a928edce00d0a" class="i property">Placement</a>)
+                {
+                    <b>case</b> <a href="@0@PresentationFramework/A.html#247b2a9cc539228a" class="t t">Dock</a>.<a href="@0@PresentationFramework/A.html#ccf1b2e3c1ae6495" class="i field">Left</a>:
+                        <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#d6098f1ec3433e7e" class="i property">LineExtent</a>;
+                        <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a>.<a href="@0@PresentationFramework/A.html#be65e048a5b94c6f" class="i property">BorderThickness</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#7d5226ec44f0e6f6" class="t constructor">Thickness</a>(<a href="#12daf6e8352a718f" class="k">this</a>.<a href="#fee8e3ca7d75c951" class="i property">LineThickness</a>, 0d, 0d, 0d);
+                        <b>break</b>;
+                    <b>case</b> <a href="@0@PresentationFramework/A.html#247b2a9cc539228a" class="t t">Dock</a>.<a href="@0@PresentationFramework/A.html#60fa0559eeaa26e6" class="i field">Top</a>:
+                        <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#d6098f1ec3433e7e" class="i property">LineExtent</a>;
+                        <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a>.<a href="@0@PresentationFramework/A.html#be65e048a5b94c6f" class="i property">BorderThickness</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#7d5226ec44f0e6f6" class="t constructor">Thickness</a>(0d, <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#fee8e3ca7d75c951" class="i property">LineThickness</a>, 0d, 0d);
+                        <b>break</b>;
+                    <b>case</b> <a href="@0@PresentationFramework/A.html#247b2a9cc539228a" class="t t">Dock</a>.<a href="@0@PresentationFramework/A.html#f1f8f6afc1b836d6" class="i field">Right</a>:
+                        <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#d6098f1ec3433e7e" class="i property">LineExtent</a>;
+                        <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a>.<a href="@0@PresentationFramework/A.html#be65e048a5b94c6f" class="i property">BorderThickness</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#7d5226ec44f0e6f6" class="t constructor">Thickness</a>(0d, 0d, <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#fee8e3ca7d75c951" class="i property">LineThickness</a>, 0d);
+                        <b>break</b>;
+                    <b>case</b> <a href="@0@PresentationFramework/A.html#247b2a9cc539228a" class="t t">Dock</a>.<a href="@0@PresentationFramework/A.html#dcb1dc3fc048cdcf" class="i field">Bottom</a>:
+                        <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#d6098f1ec3433e7e" class="i property">LineExtent</a>;
+                        <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#27178794256d2cc8" class="i field">underlineBorder</a>.<a href="@0@PresentationFramework/A.html#be65e048a5b94c6f" class="i property">BorderThickness</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#7d5226ec44f0e6f6" class="t constructor">Thickness</a>(0d, 0d, 0d, <a href="#12daf6e8352a718f" class="k">this</a>.<a href="#fee8e3ca7d75c951" class="i property">LineThickness</a>);
+                        <b>break</b>;
+                    <b>default</b>:
+                        <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#337b690f0704f510" class="t constructor">ArgumentOutOfRangeException</a>();
+                }
+
+                <a href="#12daf6e8352a718f" class="k">this</a>.<a href="@0@PresentationCore/A.html#fdda546b8cd3480c" class="i method">InvalidateVisual</a>();
+            }
+
+            <a href="#12daf6e8352a718f" class="k">this</a>.<a href="Extensions.cs.html#624aaf1943890cfc" class="i method">ExecuteWhenLoaded</a>(<a href="#cce4137682ded989" class="i method">Execute</a>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

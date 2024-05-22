@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html><head><title>SplineExample.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(76);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#AnimationExamples/KeyFrames/SplineExample.cs" target="_top">KeyFrames\SplineExample.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#AnimationExamples" target="_top">HelpProjects\WPF-MORE\Animation\AnimationExamples\AnimationExamples.csproj</a> (AnimationExamples)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Animation</span>;
+
+<b>namespace</b> <span class="i n">AnimationExamples</span>
+{
+    <b>public</b> <a href="../P/f3cd6e96a0df3eb9.html" target="s" class="k">partial</a> <b>class</b> <a id="f3cd6e96a0df3eb9" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="a46e7f5fb04b4ede">SplineExample</span></a> : <a href="@0@PresentationFramework/A.html#ee962c953241b09c" class="t t">Page</a>
+    {
+        <b>private</b> <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <a id="c8015ee747670790" href="../R/c8015ee747670790.html" target="n" data-glyph="46,1" class="i field">_controlPoint1</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, 100);
+        <b>private</b> <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <a id="162880dbf10c9c51" href="../R/162880dbf10c9c51.html" target="n" data-glyph="46,1" class="i field">_controlPoint2</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, 100);
+
+        <b>private void</b> <a id="8d7da79e4f2f8f3a" href="../R/8d7da79e4f2f8f3a.html" target="n" data-glyph="76,1" class="i method">OnSliderChanged</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <span class="c">// Retrieve the name of slider.</span>
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r2 rd" class="r2 r">name</span> = ((<a href="@0@PresentationFramework/A.html#6532ecbe410bb4ae" class="t t">Slider</a>) <span class="r0 r">sender</span>).<a href="@0@PresentationFramework/A.html#1d519a9bdfa176e6" class="i property">Name</a>;
+
+            <a href="@0@PresentationFramework/A.html#a5422d54686003ed" class="k">var</a> <span id="r3 rd" class="r3 r">args</span> = <span class="r1 r">e</span> <b>as</b> <a href="@0@PresentationFramework/A.html#a5422d54686003ed" class="t t">RoutedPropertyChangedEventArgs</a>&lt;<b>double</b>&gt;;
+
+            <b>switch</b> (<span class="r2 r">name</span>)
+            {
+                <b>case</b> <span class="s">&quot;SliderControlPoint1X&quot;</span>:
+                    <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#b9d97121d01ba18f" class="i property">ControlPoint1</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r3 r">args</span>.<a href="@0@PresentationFramework/A.html#feaccc5df6b37552" class="i property">NewValue</a>,
+                        <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#b9d97121d01ba18f" class="i property">ControlPoint1</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>);
+                    <a href="#c8015ee747670790" class="i field">_controlPoint1</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> = 100*<span class="r3 r">args</span>.<a href="@0@PresentationFramework/A.html#feaccc5df6b37552" class="i property">NewValue</a>;
+                    <b>break</b>;
+                <b>case</b> <span class="s">&quot;SliderControlPoint1Y&quot;</span>:
+                    <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#b9d97121d01ba18f" class="i property">ControlPoint1</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#b9d97121d01ba18f" class="i property">ControlPoint1</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>,
+                        <span class="r3 r">args</span>.<a href="@0@PresentationFramework/A.html#feaccc5df6b37552" class="i property">NewValue</a>);
+                    <a href="#c8015ee747670790" class="i field">_controlPoint1</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> = 100 - (100*<span class="r3 r">args</span>.<a href="@0@PresentationFramework/A.html#feaccc5df6b37552" class="i property">NewValue</a>);
+                    <b>break</b>;
+                <b>case</b> <span class="s">&quot;SliderControlPoint2X&quot;</span>:
+                    <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#d476919a59e5e6b6" class="i property">ControlPoint2</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r3 r">args</span>.<a href="@0@PresentationFramework/A.html#feaccc5df6b37552" class="i property">NewValue</a>,
+                        <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#d476919a59e5e6b6" class="i property">ControlPoint2</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>);
+                    <a href="#162880dbf10c9c51" class="i field">_controlPoint2</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> = 100*<span class="r3 r">args</span>.<a href="@0@PresentationFramework/A.html#feaccc5df6b37552" class="i property">NewValue</a>;
+                    <b>break</b>;
+                <b>case</b> <span class="s">&quot;SliderControlPoint2Y&quot;</span>:
+                    <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#d476919a59e5e6b6" class="i property">ControlPoint2</a> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#d476919a59e5e6b6" class="i property">ControlPoint2</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>,
+                        <span class="r3 r">args</span>.<a href="@0@PresentationFramework/A.html#feaccc5df6b37552" class="i property">NewValue</a>);
+                    <a href="#162880dbf10c9c51" class="i field">_controlPoint2</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> = 100 - (100*<span class="r3 r">args</span>.<a href="@0@PresentationFramework/A.html#feaccc5df6b37552" class="i property">NewValue</a>);
+                    <b>break</b>;
+            }
+
+
+            <span class="c">// Update the animations and illustrations.</span>
+            <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#f7f4f863c32b3fcd" class="i field">myVector3DSplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#b9d97121d01ba18f" class="i property">ControlPoint1</a> = <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#b9d97121d01ba18f" class="i property">ControlPoint1</a>;
+            <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#f7f4f863c32b3fcd" class="i field">myVector3DSplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#d476919a59e5e6b6" class="i property">ControlPoint2</a> = <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#d476919a59e5e6b6" class="i property">ControlPoint2</a>;
+
+
+            <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#06b62c2292f5d76e" class="i field">SplineIllustrationSegment</a>.<a href="@0@PresentationCore/A.html#3fe2b5b5bac2b55b" class="i property">Point1</a> = <a href="#c8015ee747670790" class="i field">_controlPoint1</a>;
+            <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#06b62c2292f5d76e" class="i field">SplineIllustrationSegment</a>.<a href="@0@PresentationCore/A.html#6d27f5fc8164c557" class="i property">Point2</a> = <a href="#162880dbf10c9c51" class="i field">_controlPoint2</a>;
+            <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#7824c7300067ecca" class="i field">SplineControlPoint1Marker</a>.<a href="@0@PresentationCore/A.html#d83df33f65050222" class="i property">Center</a> = <a href="#c8015ee747670790" class="i field">_controlPoint1</a>;
+            <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#57275557111cadea" class="i field">SplineControlPoint2Marker</a>.<a href="@0@PresentationCore/A.html#d83df33f65050222" class="i property">Center</a> = <a href="#162880dbf10c9c51" class="i field">_controlPoint2</a>;
+
+            <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#1b2cc334891b3116" class="i field">keySplineText</a>.<a href="@0@PresentationFramework/A.html#e77c881b0d6f7e9e" class="i property">Text</a> =
+                <span class="s">&quot;KeySpline=\&quot;&quot;</span> + <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#b9d97121d01ba18f" class="i property">ControlPoint1</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>.<a href="@1@System.Runtime/A.html#0e003048b54ae390" class="i method">ToString</a>(<span class="s">&quot;N&quot;</span>) + <span class="s">&quot;,&quot;</span> +
+                <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#b9d97121d01ba18f" class="i property">ControlPoint1</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>.<a href="@1@System.Runtime/A.html#0e003048b54ae390" class="i method">ToString</a>(<span class="s">&quot;N&quot;</span>) + <span class="s">&quot; &quot;</span> +
+                <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#d476919a59e5e6b6" class="i property">ControlPoint2</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>.<a href="@1@System.Runtime/A.html#0e003048b54ae390" class="i method">ToString</a>(<span class="s">&quot;N&quot;</span>) + <span class="s">&quot;,&quot;</span> +
+                <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#cd73d7f28aeb0594" class="i field">mySplineKeyFrame</a>.<a href="@0@PresentationCore/A.html#7549c2c51edf5b48" class="i property">KeySpline</a>.<a href="@0@PresentationCore/A.html#d476919a59e5e6b6" class="i property">ControlPoint2</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>.<a href="@1@System.Runtime/A.html#0e003048b54ae390" class="i method">ToString</a>(<span class="s">&quot;N&quot;</span>) + <span class="s">&quot;\&quot;&quot;</span>;
+
+            <span class="c">// Determine the storyboard&#39;s current time.</span>
+            <a href="@1@System.Runtime/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>? <span id="r4 rd" class="r4 r">oldTime</span> = <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#84be89ca6f457a23" class="i field">ExampleStoryboard</a>.<a href="@0@PresentationFramework/A.html#529106c5fe6c8472" class="i method">GetCurrentTime</a>(<a href="../P/f3cd6e96a0df3eb9.html#f3cd6e96a0df3eb9" class="k">this</a>) ?? <a href="@1@System.Runtime/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>.<a href="@1@System.Runtime/A.html#c24437e069f958f9" class="i method">FromSeconds</a>(0);
+
+            <span class="c">// Generate new clocks for the animations by calling </span>
+            <span class="c">// the Begin method.</span>
+            <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#84be89ca6f457a23" class="i field">ExampleStoryboard</a>.<a href="@0@PresentationFramework/A.html#30723858589e3094" class="i method">Begin</a>(<a href="../P/f3cd6e96a0df3eb9.html#f3cd6e96a0df3eb9" class="k">this</a>, <b>true</b>);
+
+            <span class="c">// Because the storyboard was reset, advance it to its previous</span>
+            <span class="c">// position using the Seek method.</span>
+            <a href="../obj/Debug/netcoreapp3.1/KeyFrames/SplineExample.g.cs.html#84be89ca6f457a23" class="i field">ExampleStoryboard</a>.<a href="@0@PresentationFramework/A.html#85fc208a76007b19" class="i method">Seek</a>(<a href="../P/f3cd6e96a0df3eb9.html#f3cd6e96a0df3eb9" class="k">this</a>, (<a href="@1@System.Runtime/A.html#865ef7b89f41b632" class="t t">TimeSpan</a>) <span class="r4 r">oldTime</span>, <a href="@0@PresentationCore/A.html#800b8c02722a07bc" class="t t">TimeSeekOrigin</a>.<a href="@0@PresentationCore/A.html#4ed526b3071211a1" class="i field">BeginTime</a>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

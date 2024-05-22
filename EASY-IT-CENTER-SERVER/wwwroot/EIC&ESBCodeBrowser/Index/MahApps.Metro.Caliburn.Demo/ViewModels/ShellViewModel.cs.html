@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html><head><title>ShellViewModel.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(48);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro.Caliburn.Demo/ViewModels/ShellViewModel.cs" target="_top">ViewModels\ShellViewModel.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro.Caliburn.Demo" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro.Samples\MahApps.Metro.Caliburn.Demo\MahApps.Metro.Caliburn.Demo.csproj</a> (MahApps.Metro.Caliburn.Demo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>.<span class="i n">Composition</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>.<span class="i n">Tasks</span>;
+<b>using</b> <span class="i n">Caliburn</span>.<span class="i n">Metro</span>.<span class="i n">Demo</span>.<span class="i n">ViewModels</span>.<span class="i n">Flyouts</span>;
+<b>using</b> <span class="i n">Caliburn</span>.<span class="i n">Micro</span>;
+
+<b>namespace</b> <span class="i n">Caliburn</span>.<span class="i n">Metro</span>.<span class="i n">Demo</span>.<span class="i n">ViewModels</span>
+{
+    [<a href="@0@System.ComponentModel.Composition/A.html#a2a14721c3852bea" class="t constructor">Export</a>(<b>typeof</b>(<a href="../IShell.cs.html#0d3474ea0d01b8cc" class="t t">IShell</a>))]
+    <b>public class</b> <a id="2905c1d3363fae80" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">ShellViewModel</a> : <span class="t t">Screen</span>, <a href="../IShell.cs.html#0d3474ea0d01b8cc" class="t t">IShell</a>
+    {
+        <b>public</b> <span class="t t">IObservableCollection</span>&lt;<a href="FlyoutBaseViewModel.cs.html#58906f5462fb16e5" class="t t">FlyoutBaseViewModel</a>&gt; <a id="07c514b3cf7aae16" href="../R/07c514b3cf7aae16.html" target="n" data-glyph="102,1" class="i property">FlyoutViewModels</a> { <b>get</b>; }
+
+        <b>public</b> <a id="1077ce95cb792c1e" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ShellViewModel</a>()
+        {
+            <a href="#2905c1d3363fae80" class="k">this</a>.<a href="#07c514b3cf7aae16" class="i property">FlyoutViewModels</a> = <b>new</b> <span class="t constructor">BindableCollection</span>&lt;<a href="FlyoutBaseViewModel.cs.html#58906f5462fb16e5" class="t t">FlyoutBaseViewModel</a>&gt;();
+        }
+
+        <b>public async</b> <a href="@0@mscorlib/A.html#045a746eb48cbaa9" class="t t">Task</a> <a id="02038b331e777ae4" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Close</a>()
+        {
+            <b>await</b> <a href="#2905c1d3363fae80" class="k">this</a>.<span class="i method">TryCloseAsync</span>();
+        }
+
+        <b>public void</b> <a id="51a77d2a7987ff31" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">ToggleFlyout</a>(<b>int</b> <span id="r0 rd" class="r0 r">index</span>)
+        {
+            <a href="FlyoutBaseViewModel.cs.html#58906f5462fb16e5" class="k">var</a> <span id="r1 rd" class="r1 r">flyout</span> = <a href="#2905c1d3363fae80" class="k">this</a>.<a href="#07c514b3cf7aae16" class="i property">FlyoutViewModels</a><a href="@0@mscorlib/A.html#396bb785d31f5979">[</a><span class="r0 r">index</span>];
+            <span class="r1 r">flyout</span>.<a href="FlyoutBaseViewModel.cs.html#75b67f4bfc509ad1" class="i property">IsOpen</a> = !<span class="r1 r">flyout</span>.<a href="FlyoutBaseViewModel.cs.html#75b67f4bfc509ad1" class="i property">IsOpen</a>;
+        }
+
+        <b>protected override</b> <a href="@0@mscorlib/A.html#045a746eb48cbaa9" class="t t">Task</a> <a id="eae54717e177881d" href="../R/eae54717e177881d.html" target="n" data-glyph="75,1" class="i method">OnInitializeAsync</a>(<a href="@0@mscorlib/A.html#36b17ded8b1a228c" class="t t">CancellationToken</a> <span id="r2 rd" class="r2 r">cancellationToken</span>)
+        {
+            <a href="#2905c1d3363fae80" class="k">this</a>.<span class="i property">DisplayName</span> = <span class="s">&quot;Caliburn Metro Demo&quot;</span>;
+            <a href="#2905c1d3363fae80" class="k">this</a>.<a href="#07c514b3cf7aae16" class="i property">FlyoutViewModels</a>.<a href="@0@mscorlib/A.html#a9319db8c62ae453" class="i method">Add</a>(<b>new</b> <a href="Flyouts/Flyout1ViewModel.cs.html#1523441a998ec0f8" class="t constructor">Flyout1ViewModel</a>());
+            <a href="#2905c1d3363fae80" class="k">this</a>.<a href="#07c514b3cf7aae16" class="i property">FlyoutViewModels</a>.<a href="@0@mscorlib/A.html#a9319db8c62ae453" class="i method">Add</a>(<b>new</b> <a href="Flyouts/Flyout2ViewModel.cs.html#d35e78f1c82b5185" class="t constructor">Flyout2ViewModel</a>());
+            <a href="#2905c1d3363fae80" class="k">this</a>.<a href="#07c514b3cf7aae16" class="i property">FlyoutViewModels</a>.<a href="@0@mscorlib/A.html#a9319db8c62ae453" class="i method">Add</a>(<b>new</b> <a href="Flyouts/Flyout3ViewModel.cs.html#c69573065c8678e9" class="t constructor">Flyout3ViewModel</a>());
+            <a href="#2905c1d3363fae80" class="k">this</a>.<a href="#07c514b3cf7aae16" class="i property">FlyoutViewModels</a>.<a href="@0@mscorlib/A.html#a9319db8c62ae453" class="i method">Add</a>(<b>new</b> <a href="Flyouts/FlyoutSettingsViewModel.cs.html#a16ff6931dc89ea8" class="t constructor">FlyoutSettingsViewModel</a>());
+            <a href="#2905c1d3363fae80" class="k">this</a>.<a href="#07c514b3cf7aae16" class="i property">FlyoutViewModels</a>.<a href="@0@mscorlib/A.html#a9319db8c62ae453" class="i method">Add</a>(<b>new</b> <a href="Flyouts/FlyoutLeftViewModel.cs.html#a4cb97892f277fc2" class="t constructor">FlyoutLeftViewModel</a>());
+            <a href="#2905c1d3363fae80" class="k">this</a>.<a href="#07c514b3cf7aae16" class="i property">FlyoutViewModels</a>.<a href="@0@mscorlib/A.html#a9319db8c62ae453" class="i method">Add</a>(<b>new</b> <a href="Flyouts/FlyoutTopViewModel.cs.html#a9a6d2305b6354f1" class="t constructor">FlyoutTopViewModel</a>());
+            <a href="#2905c1d3363fae80" class="k">this</a>.<a href="#07c514b3cf7aae16" class="i property">FlyoutViewModels</a>.<a href="@0@mscorlib/A.html#a9319db8c62ae453" class="i method">Add</a>(<b>new</b> <a href="Flyouts/FlyoutBottomViewModel.cs.html#6202c75c9fe701d9" class="t constructor">FlyoutBottomViewModel</a>());
+
+            <b>return</b> <a href="@0@mscorlib/A.html#045a746eb48cbaa9" class="t t">Task</a>.<a href="@0@mscorlib/A.html#11a386e7d7cae64a" class="i method">FromResult</a>(<b>true</b>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

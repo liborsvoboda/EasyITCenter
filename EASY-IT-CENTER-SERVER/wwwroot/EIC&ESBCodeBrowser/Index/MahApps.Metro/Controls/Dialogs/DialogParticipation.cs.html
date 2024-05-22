@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html><head><title>DialogParticipation.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(64);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/Dialogs/DialogParticipation.cs" target="_top">Controls\Dialogs\DialogParticipation.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>.<span class="i n">Dialogs</span>
+{
+    <b>public static class</b> <a id="996658b84e49edcb" href="../../R/996658b84e49edcb.html" target="n" data-glyph="0,0" class="t t">DialogParticipation</a>
+    {
+        <b>private static readonly</b> <a href="@0@mscorlib/A.html#20343df0c96b629b" class="t t">IDictionary</a>&lt;<b>object</b>, <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>&gt; <a id="9655842f1fddd9d7" href="../../R/9655842f1fddd9d7.html" target="n" data-glyph="46,1" class="i field">ContextRegistrationIndex</a> = <b>new</b> <a href="@0@mscorlib/A.html#bf6849e410b43c4c" class="t constructor">Dictionary</a>&lt;<b>object</b>, <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>&gt;();
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="314f185fa58407b8" href="../../R/314f185fa58407b8.html" target="n" data-glyph="42,1" class="i field">RegisterProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(<span class="s">&quot;Register&quot;</span>,
+                                                  <b>typeof</b>(<b>object</b>),
+                                                  <b>typeof</b>(<a href="#996658b84e49edcb" class="t t">DialogParticipation</a>),
+                                                  <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>null</b>, <a href="#e49a3d7f03797b2e" class="i method">RegisterPropertyChangedCallback</a>));
+
+        <b>private static void</b> <a id="e49a3d7f03797b2e" href="../../R/e49a3d7f03797b2e.html" target="n" data-glyph="76,1" class="i method">RegisterPropertyChangedCallback</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">dependencyObject</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">dependencyPropertyChangedEventArgs</span>)
+        {
+            <b>if</b> (<span class="r1 r">dependencyPropertyChangedEventArgs</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a> != <b>null</b>)
+            {
+                <a href="#9655842f1fddd9d7" class="i field">ContextRegistrationIndex</a>.<a href="@0@mscorlib/A.html#3682f274b2ca119f" class="i method">Remove</a>(<span class="r1 r">dependencyPropertyChangedEventArgs</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a>);
+            }
+
+            <b>if</b> (<span class="r1 r">dependencyPropertyChangedEventArgs</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a> != <b>null</b>)
+            {
+                <a href="#9655842f1fddd9d7" class="i field">ContextRegistrationIndex</a><a href="@0@mscorlib/A.html#86884956b17e491a">[</a><span class="r1 r">dependencyPropertyChangedEventArgs</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>] = <span class="r0 r">dependencyObject</span>;
+            }
+        }
+
+        <b>public static void</b> <a id="bc1c48042c60f14c" href="../../R/bc1c48042c60f14c.html" target="n" data-glyph="72,1" class="i method">SetRegister</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r2 rd" class="r2 r">element</span>, <b>object</b>? <span id="r3 rd" class="r3 r">context</span>)
+        {
+            <span class="r2 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#314f185fa58407b8" class="i field">RegisterProperty</a>, <span class="r3 r">context</span>);
+        }
+
+        <b>public static object</b>? <a id="e7ce8204912d8e1d" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetRegister</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r4 rd" class="r4 r">element</span>)
+        {
+            <b>return</b> <span class="r4 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#314f185fa58407b8" class="i field">RegisterProperty</a>);
+        }
+
+        <b>internal static bool</b> <a id="f3ee80e5c2594c8e" href="../../R/f3ee80e5c2594c8e.html" target="n" data-glyph="74,1" class="i method">IsRegistered</a>(<b>object</b> <span id="r5 rd" class="r5 r">context</span>)
+        {
+            <b>if</b> (<span class="r5 r">context</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r5 r">context</span>));
+            }
+
+            <b>return</b> <a href="#9655842f1fddd9d7" class="i field">ContextRegistrationIndex</a>.<a href="@0@mscorlib/A.html#6105ae1e7c0835eb" class="i method">ContainsKey</a>(<span class="r5 r">context</span>);
+        }
+
+        <b>internal static</b> <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <a id="b4d14548bb564c43" href="../../R/b4d14548bb564c43.html" target="n" data-glyph="74,1" class="i method">GetAssociation</a>(<b>object</b> <span id="r6 rd" class="r6 r">context</span>)
+        {
+            <b>if</b> (<span class="r6 r">context</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r6 r">context</span>));
+            }
+
+            <b>return</b> <a href="#9655842f1fddd9d7" class="i field">ContextRegistrationIndex</a><a href="@0@mscorlib/A.html#86884956b17e491a">[</a><span class="r6 r">context</span>];
+        }
+    }
+}</pre></td></tr></table></div></body></html>

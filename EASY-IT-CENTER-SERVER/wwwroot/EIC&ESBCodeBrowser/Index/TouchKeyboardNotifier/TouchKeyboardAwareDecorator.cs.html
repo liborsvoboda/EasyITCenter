@@ -1,0 +1,282 @@
+﻿<!DOCTYPE html>
+<html><head><title>TouchKeyboardAwareDecorator.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(273);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#TouchKeyboardNotifier/TouchKeyboardAwareDecorator.cs" target="_top">TouchKeyboardAwareDecorator.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#TouchKeyboardNotifier" target="_top">HelpProjects\WPF-MORE\Input and Commands\TouchKeyboard\TouchKeyboardNotifier\TouchKeyboardNotifier.csproj</a> (TouchKeyboardNotifier)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// THIS CODE AND INFORMATION IS PROVIDED &quot;AS IS&quot; WITHOUT WARRANTY OF</span>
+<span class="c">// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO</span>
+<span class="c">// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A</span>
+<span class="c">// PARTICULAR PURPOSE.</span>
+<span class="c">//</span>
+<span class="c">// Copyright (c) Microsoft Corporation. All rights reserved</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<span class="i n">Primitives</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Interop</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+
+<b>namespace</b> <span class="i n">Microsoft</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>.<span class="i n">TouchKeyboard</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> A decorator that registers for and responds to touch keyboard events.</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> If the keyboard focused control is within the decorator and the control is occluded by the keyboard</span>
+    <span class="c">///</span><span class="c"> the decorator will appropriately shift the arrangement of the content such that the focused control</span>
+    <span class="c">///</span><span class="c"> is either snapped to the top of the decorator or snapped to the top of the occluded rectangle.</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> To use this, wrap either part or the entire content of a window in this decorator.  The content inside</span>
+    <span class="c">///</span><span class="c"> the decorator will then respond to the touch keyboard showing and hiding.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Known Issues:</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c">     Popups will NOT move with their owning controls.  This includes tooltips, menus, dropdowns.  This is</span>
+    <span class="c">///</span><span class="c">     an internal WPF issue and is beyond the scope of this class.</span>
+    <span class="c">///</span><span class="c">     </span>
+    <span class="c">///</span><span class="c">     Two decorators placed side by side in the visual tree might exhibit a strange look and feel.  This is</span>
+    <span class="c">///</span><span class="c">     due to only the decorator with the focused element being shifted up.</span>
+    <span class="c">///</span><span class="c">     </span>
+    <span class="c">///</span><span class="c">     Partial trust applications cannot automatically invoke the touch keyboard or register for notifications.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="c6c3fb138b79d36a" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">TouchKeyboardAwareDecorator</a> : <a href="@0@PresentationFramework/A.html#69b4bdadbc461ce5" class="t t">Decorator</a>
+    {
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Member Variables
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> If the touch keyboard is currently showing</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private bool</b> <a id="1b7c4d3d1297835a" href="R/1b7c4d3d1297835a.html" target="n" data-glyph="46,1" class="i field">_kbShowing</a> = <b>false</b>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The rectangle occluded by the touch keyboard</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static</b> <a href="@0@WindowsBase/A.html#fc387a6f7a1c2856" class="t t">Rect</a> <a id="fbf1e5d6fbd98593" href="R/fbf1e5d6fbd98593.html" target="n" data-glyph="46,1" class="i field">_occludedRect</a> = <b>new</b> <a href="@0@WindowsBase/A.html#fc387a6f7a1c2856" class="t constructor">Rect</a>();
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The Y value that is being used to shift the decorator&#39;s content</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private double</b> <a id="058d8c1b62494b8d" href="R/058d8c1b62494b8d.html" target="n" data-glyph="46,1" class="i field">_currentShift</a> = 0;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The window being occluded by the touch keyboard</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <a id="390d5619274c470d" href="R/390d5619274c470d.html" target="n" data-glyph="46,1" class="i field">_occludedWindow</a> = <b>null</b>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructor/Initialize
+
+        <b>public</b> <a id="9edd64b84c8f93ef" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">TouchKeyboardAwareDecorator</a>()
+            : <a href="@0@PresentationFramework/A.html#48116610daf64a61" class="k">base</a>()
+        {
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> When the decorator is initialized, subscribe to window load</span>
+        <span class="c">///</span><span class="c"> in order to have the HWND to subscribe to touch keyboard events.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">e</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>protected override void</b> <a id="30783cd1d708fbf5" href="R/30783cd1d708fbf5.html" target="n" data-glyph="75,1" class="i method">OnInitialized</a>(<a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r0 rd" class="r0 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#69b4bdadbc461ce5" class="k">base</a>.<a href="@0@PresentationFramework/A.html#0450193725d943ca" class="i method">OnInitialized</a>(<span class="r0 r">e</span>);
+
+            <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r1 rd" class="r1 r">w</span> = <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>.<a href="@0@PresentationFramework/A.html#d82ac67277fcffc1" class="i method">GetWindow</a>(<a href="#c6c3fb138b79d36a" class="k">this</a>);
+
+            <b>if</b> (<span class="r1 r">w</span> != <b>null</b>)
+            {
+                <span class="r1 r">w</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += <a href="#0a735ccb415c980c" class="i method">ParentWindowLoaded</a>;
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Overrides
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Overrides arrange so that we can alter the rectangle used for arranging the</span>
+        <span class="c">///</span><span class="c"> decorator&#39;s content.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">finalSize</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The arrange size</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">The final arrangement size</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>protected override</b> <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="t t">Size</a> <a id="fcab46dc0b2c0d07" href="R/fcab46dc0b2c0d07.html" target="n" data-glyph="75,1" class="i method">ArrangeOverride</a>(<a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="t t">Size</a> <span id="r2 rd" class="r2 r">finalSize</span>)
+        {
+            <a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r3 rd" class="r3 r">child</span> = <a href="@0@PresentationFramework/A.html#2a880652079bdb31" class="i property">Child</a>;
+
+            <b>if</b> (<span class="r3 r">child</span> != <b>null</b>)
+            {
+                <span class="c">// Get the Y shift that must be done to properly display the occluded control (if any)</span>
+                <a href="#058d8c1b62494b8d" class="i field">_currentShift</a> = <a href="#9eecea78d795a381" class="i method">CalculateContentShift</a>();
+
+                <span class="c">// We need to modify the size we arrange into in order to account for the current shift value.</span>
+                <span class="c">// If we don&#39;t, any shift up will result in a bottom control that is clipped to the original</span>
+                <span class="c">// arrange size, much like a translate RenderTransform would do.</span>
+                <span class="r2 r">finalSize</span> = <b>new</b> <a href="@0@WindowsBase/A.html#a9e92f9d82abccc2" class="t constructor">Size</a>(<span class="r2 r">finalSize</span>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>, <span class="r2 r">finalSize</span>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a> + <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#36d8f3b3bd14bad6" class="i method">Abs</a>(<a href="#058d8c1b62494b8d" class="i field">_currentShift</a>));
+
+                <span class="c">// Arrange the child to the desired size, but with a shifted rect</span>
+                <span class="r3 r">child</span>.<a href="@0@PresentationCore/A.html#db317f34429aad8f" class="i method">Arrange</a>(<b>new</b> <a href="@0@WindowsBase/A.html#ef3f15bc2f9537c0" class="t constructor">Rect</a>(<b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, <a href="#058d8c1b62494b8d" class="i field">_currentShift</a>), <span class="r2 r">finalSize</span>));
+            }
+
+            <span class="c">// Return the calculated size</span>
+            <b>return</b> <span class="r2 r">finalSize</span>;
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Touch Keyboard Handling
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Subscribe to touch keyboard notifications.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r4 r">sender</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r5 r">e</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="0a735ccb415c980c" href="R/0a735ccb415c980c.html" target="n" data-glyph="76,1" class="i method">ParentWindowLoaded</a>(<b>object</b> <span id="r4 rd" class="r4 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r5 rd" class="r5 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r6 rd" class="r6 r">w</span> = <span class="r4 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>;
+
+            <b>if</b> (<span class="r6 r">w</span> != <b>null</b>)
+            {
+                <span class="c">// Register the window for touch KB notifications</span>
+                <a href="TouchKeyboardEventManager.cs.html#2de03d9f6b33cbce" class="t t">TouchKeyboardEventManager</a>.<a href="TouchKeyboardEventManager.cs.html#97d6f9a0b07d1347" class="i method">AddHandlers</a>(<span class="r6 r">w</span>, <a href="#ad99753576cb56a2" class="i method">HandleTouchKeyboardShowing</a>, <a href="#6de41dfc4370a1ac" class="i method">HandleTouchKeyboardHiding</a>);
+
+                <span class="c">// Also register for focus changes to detect situations where a shift has caused a clipped top/bottom control</span>
+                <a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#78eb6574010f7d9c" class="i method">AddGotKeyboardFocusHandler</a>(<span class="r6 r">w</span>, <a href="#6db3d1281147bcf1" class="i method">HandleKeyboardFocus</a>);
+
+                <span class="r6 r">w</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> -= <a href="#0a735ccb415c980c" class="i method">ParentWindowLoaded</a>;
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This is used to detect scenarios where the KB is already showing and a shift has</span>
+        <span class="c">///</span><span class="c"> split a control either with the top of the decorator, or the top of the touch keyboard.</span>
+        <span class="c">///</span><span class="c"> If this control is focused, we then need to modify the shift to make it fully visible.</span>
+        <span class="c">///</span><span class="c"> </span>
+        <span class="c">///</span><span class="c"> Marks arrange as dirty to trigger a new layout.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">sender</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">e</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="6db3d1281147bcf1" href="R/6db3d1281147bcf1.html" target="n" data-glyph="76,1" class="i method">HandleKeyboardFocus</a>(<b>object</b> <span id="r7 rd" class="r7 r">sender</span>, <a href="@0@PresentationCore/A.html#5f005baa2f324db1" class="t t">KeyboardFocusChangedEventArgs</a> <span id="r8 rd" class="r8 r">e</span>)
+        {
+            <a href="#390d5619274c470d" class="i field">_occludedWindow</a> = <span class="r7 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>;
+
+            <span class="c">// On a focus, we only want to update if the KB is showing.  Otherwise any</span>
+            <span class="c">// current arrangement is correct.</span>
+            <b>if</b> (<a href="#1b7c4d3d1297835a" class="i field">_kbShowing</a>)
+            {
+                <a href="@0@PresentationCore/A.html#122da6e9bd28e257" class="i method">InvalidateArrange</a>();
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Stores state information about the touch keyboard and marks arrange as dirty to trigger a</span>
+        <span class="c">///</span><span class="c"> new layout.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">occludedWindow</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window for the touch keyboard</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r10 r">occludedRect</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The screen rectangle being occluded by the touch keyboard</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="ad99753576cb56a2" href="R/ad99753576cb56a2.html" target="n" data-glyph="76,1" class="i method">HandleTouchKeyboardShowing</a>(<a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r9 rd" class="r9 r">occludedWindow</span>, <a href="@0@WindowsBase/A.html#fc387a6f7a1c2856" class="t t">Rect</a> <span id="r10 rd" class="r10 r">occludedRect</span>)
+        {
+            <a href="#1b7c4d3d1297835a" class="i field">_kbShowing</a> = <b>true</b>;
+            <a href="#fbf1e5d6fbd98593" class="i field">_occludedRect</a> = <span class="r10 r">occludedRect</span>;
+            <a href="#390d5619274c470d" class="i field">_occludedWindow</a> = <span class="r9 r">occludedWindow</span>;
+
+            <a href="@0@PresentationCore/A.html#122da6e9bd28e257" class="i method">InvalidateArrange</a>();
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Stores state information about the touch keyboard and marks arrange as dirty to trigger a</span>
+        <span class="c">///</span><span class="c"> new layout.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r11 r">occludedWindow</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window for the touch keyboard</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r12 r">occludedRect</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The screen rectangle being occluded by the touch keyboard</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="6de41dfc4370a1ac" href="R/6de41dfc4370a1ac.html" target="n" data-glyph="76,1" class="i method">HandleTouchKeyboardHiding</a>(<a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r11 rd" class="r11 r">occludedWindow</span>, <a href="@0@WindowsBase/A.html#fc387a6f7a1c2856" class="t t">Rect</a> <span id="r12 rd" class="r12 r">occludedRect</span>)
+        {
+            <a href="#1b7c4d3d1297835a" class="i field">_kbShowing</a> = <b>false</b>;
+            <a href="#fbf1e5d6fbd98593" class="i field">_occludedRect</a> = <span class="r12 r">occludedRect</span>;
+            <a href="#390d5619274c470d" class="i field">_occludedWindow</a> = <span class="r11 r">occludedWindow</span>;
+
+            <a href="@0@PresentationCore/A.html#122da6e9bd28e257" class="i method">InvalidateArrange</a>();
+        }
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Utility
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The main math behind shifting the content of the decorator in response to occlusion</span>
+        <span class="c">///</span><span class="c"> by the touch keyboard.</span>
+        <span class="c">///</span><span class="c"> </span>
+        <span class="c">///</span><span class="c"> The algorithm is as follows:</span>
+        <span class="c">///</span><span class="c"> </span>
+        <span class="c">///</span><span class="c">     Given a current layout with a current shift value</span>
+        <span class="c">///</span><span class="c"> </span>
+        <span class="c">///</span><span class="c">     If we should evaluate occlusion for the focused element</span>
+        <span class="c">///</span><span class="c">         Start with the current shift as basis for new shift</span>
+        <span class="c">///</span><span class="c">         Test difference between top of element vs top of decorator</span>
+        <span class="c">///</span><span class="c">             If negative we are hiding part of it, modify shift downward to make it visible</span>
+        <span class="c">///</span><span class="c">         Test difference between bottom of element vs top of touch keyboard</span>
+        <span class="c">///</span><span class="c">             If negative we are hiding part of it, modify shift upward to make it visible</span>
+        <span class="c">///</span><span class="c">                 If shift upward would occlude element by top of decorator, snap to top of decorator</span>
+        <span class="c">///</span><span class="c">     If we should not evaluate occlusion (touch keyboard is hidden) shift by zero</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">The calculated Y shift value</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private double</b> <a id="9eecea78d795a381" href="R/9eecea78d795a381.html" target="n" data-glyph="76,1" class="i method">CalculateContentShift</a>()
+        {
+            <b>double</b> <span id="r13 rd" class="r13 r">newShift</span> = 0;
+
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r14 rd" class="r14 r">focusedElement</span> = <a href="@0@PresentationCore/A.html#af9b7892ee354373" class="t t">Keyboard</a>.<a href="@0@PresentationCore/A.html#ebedddce76b0bb54" class="i property">FocusedElement</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+
+            <span class="c">// We should only calculate the shift if the KB is showing and both this </span>
+            <span class="c">// decorator and the occluded window is an ancestor of the focused element.</span>
+            <span class="c">// This accounts for focusing on items in popups.</span>
+            <b>if</b> (<a href="#1b7c4d3d1297835a" class="i field">_kbShowing</a>
+                &amp;&amp; <span class="r14 r">focusedElement</span> != <b>null</b>
+                &amp;&amp; <a href="#390d5619274c470d" class="i field">_occludedWindow</a> == <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>.<a href="@0@PresentationFramework/A.html#d82ac67277fcffc1" class="i method">GetWindow</a>(<span class="r14 r">focusedElement</span>)
+                &amp;&amp; <a href="@0@PresentationCore/A.html#7c2fed870cc51ab9" class="i method">IsAncestorOf</a>(<span class="r14 r">focusedElement</span>))
+            {
+                <span class="c">// If no work is to be done, we just keep the current shift.</span>
+                <span class="r13 r">newShift</span> = <a href="#058d8c1b62494b8d" class="i field">_currentShift</a>;
+
+                <span class="c">// The offset to the top of the focused element in window coordinates.</span>
+                <span class="c">// We use the decorator coordinates here since this directly influences the shift.</span>
+                <b>double</b> <span id="r15 rd" class="r15 r">offsetTopToDecorator</span> = <span class="r14 r">focusedElement</span>.<a href="@0@PresentationCore/A.html#b96a6bbaee70dc98" class="i method">TransformToVisual</a>(<a href="#c6c3fb138b79d36a" class="k">this</a>).<a href="@0@PresentationCore/A.html#9ce175611bffc8b3" class="i method">Transform</a>(<b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, 0)).<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+
+                <b>if</b> (<span class="r15 r">offsetTopToDecorator</span> &lt; 0)
+                {
+                    <span class="c">// Shift down an increment due to the top of the decorator occluding the focused control</span>
+                    <span class="r13 r">newShift</span> = <a href="#058d8c1b62494b8d" class="i field">_currentShift</a> - <span class="r15 r">offsetTopToDecorator</span>;
+                }
+                <b>else</b>
+                {
+                    <span class="c">// The offset to the bottom of the focused element in screen coords.</span>
+                    <span class="c">// We use screen coordinates here since this is compared against the KB occluded rect.</span>
+                    <b>double</b> <span id="r16 rd" class="r16 r">offsetBottomToDecorator</span> = <a href="@0@PresentationCore/A.html#dd3ac0e288343e52" class="i method">PointToScreen</a>(<span class="r14 r">focusedElement</span>.<a href="@0@PresentationCore/A.html#b96a6bbaee70dc98" class="i method">TransformToVisual</a>(<a href="#c6c3fb138b79d36a" class="k">this</a>).<a href="@0@PresentationCore/A.html#9ce175611bffc8b3" class="i method">Transform</a>(<b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, <span class="r14 r">focusedElement</span>.<a href="@0@PresentationCore/A.html#630885025f47613b" class="i property">RenderSize</a>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>))).<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+
+                    <span class="c">// The different from the bottom of the occluded element to the KB top converted from screen coords</span>
+                    <span class="c">// since this will be added to the shift</span>
+                    <b>double</b> <span id="r17 rd" class="r17 r">kbDiff</span> = <a href="@0@PresentationCore/A.html#d2e483e75f9cd850" class="i method">PointFromScreen</a>(<b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, <a href="#fbf1e5d6fbd98593" class="i field">_occludedRect</a>.<a href="@0@WindowsBase/A.html#a3c8a162c3dfa208" class="i property">Top</a> - <span class="r16 r">offsetBottomToDecorator</span>)).<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+
+                    <b>if</b> (<span class="r17 r">kbDiff</span> &lt; 0)
+                    {
+                        <span class="c">// Shift up an increment due to the KB occluding the focused control</span>
+                        <span class="c">// Need to take into account the current shift since this control could be occluded due to</span>
+                        <span class="c">// a prior shift.  Also ensure we are not shifting the focused element out of the window by</span>
+                        <span class="c">// ensuring it does not shift passed the top offset.  If it does, snap to the top.</span>
+                        <span class="r13 r">newShift</span> = (<span class="r15 r">offsetTopToDecorator</span> + <span class="r17 r">kbDiff</span> &lt; 0) ? -<span class="r15 r">offsetTopToDecorator</span> : <a href="#058d8c1b62494b8d" class="i field">_currentShift</a> + <span class="r17 r">kbDiff</span>;
+                    }
+                }
+            }
+
+            <b>return</b> <span class="r13 r">newShift</span>;
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}
+</pre></td></tr></table></div></body></html>

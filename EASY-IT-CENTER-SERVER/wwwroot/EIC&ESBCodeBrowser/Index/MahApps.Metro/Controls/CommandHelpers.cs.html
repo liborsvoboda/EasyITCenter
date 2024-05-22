@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html><head><title>CommandHelpers.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(117);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/CommandHelpers.cs" target="_top">Controls\CommandHelpers.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Security</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <b>internal static class</b> <a id="2c7f1bc32925312e" href="../R/2c7f1bc32925312e.html" target="n" data-glyph="2,0" class="t t">CommandHelpers</a>
+    {
+        <b>internal static bool</b> <a id="5653990cd65d389c" href="../R/5653990cd65d389c.html" target="n" data-glyph="74,1" class="i method">CanExecuteCommandSource</a>(<a href="@0@PresentationCore/A.html#1c1aab4a272b7852" class="t t">ICommandSource</a> <span id="r0 rd" class="r0 r">commandSource</span>)
+        {
+            <a href="@0@System/A.html#f0e0f4acfe262659" class="k">var</a> <span id="r1 rd" class="r1 r">command</span> = <span class="r0 r">commandSource</span>.<a href="@0@PresentationCore/A.html#0e6bc69f3b044f4c" class="i property">Command</a>;
+            <b>if</b> (<span class="r1 r">command</span> == <b>null</b>)
+            {
+                <b>return</b> <b>false</b>;
+            }
+
+            <a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r2 rd" class="r2 r">commandParameter</span> = <span class="r0 r">commandSource</span>.<a href="@0@PresentationCore/A.html#a59cbb19cc3ce844" class="i property">CommandParameter</a> ?? <span class="r0 r">commandSource</span>;
+            <b>if</b> (<span class="r1 r">command</span> <b>is</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <span id="r3 rd" class="r3 r">routedCommand</span>)
+            {
+                <a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="k">var</a> <span id="r4 rd" class="r4 r">target</span> = <span class="r0 r">commandSource</span>.<a href="@0@PresentationCore/A.html#a27f0e79ae3db938" class="i property">CommandTarget</a> ?? <span class="r0 r">commandSource</span> <b>as</b> <a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>;
+                <b>return</b> <span class="r3 r">routedCommand</span>.<a href="@0@PresentationCore/A.html#c422c2917195295e" class="i method">CanExecute</a>(<span class="r2 r">commandParameter</span>, <span class="r4 r">target</span>);
+            }
+
+            <b>return</b> <span class="r1 r">command</span>.<a href="@0@System/A.html#c4fc2bcd5384bf98" class="i method">CanExecute</a>(<span class="r2 r">commandParameter</span>);
+        }
+
+        [<a href="@0@mscorlib/A.html#29a3d687a50338b1" class="t constructor">SecurityCritical</a>]
+        [<a href="@0@mscorlib/A.html#13cf8064dae6f902" class="t constructor">SecuritySafeCritical</a>]
+        <b>internal static void</b> <a id="a8073c750a20238a" href="../R/a8073c750a20238a.html" target="n" data-glyph="74,1" class="i method">ExecuteCommandSource</a>(<a href="@0@PresentationCore/A.html#1c1aab4a272b7852" class="t t">ICommandSource</a> <span id="r5 rd" class="r5 r">commandSource</span>)
+        {
+            <a href="#0ef36fd3e0340d8e" class="i method">CriticalExecuteCommandSource</a>(<span class="r5 r">commandSource</span>);
+        }
+
+        [<a href="@0@mscorlib/A.html#29a3d687a50338b1" class="t constructor">SecurityCritical</a>]
+        <b>internal static void</b> <a id="0ef36fd3e0340d8e" href="../R/0ef36fd3e0340d8e.html" target="n" data-glyph="74,1" class="i method">CriticalExecuteCommandSource</a>(<a href="@0@PresentationCore/A.html#1c1aab4a272b7852" class="t t">ICommandSource</a> <span id="r6 rd" class="r6 r">commandSource</span>)
+        {
+            <a href="@0@System/A.html#f0e0f4acfe262659" class="k">var</a> <span id="r7 rd" class="r7 r">command</span> = <span class="r6 r">commandSource</span>.<a href="@0@PresentationCore/A.html#0e6bc69f3b044f4c" class="i property">Command</a>;
+            <b>if</b> (<span class="r7 r">command</span> == <b>null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r8 rd" class="r8 r">commandParameter</span> = <span class="r6 r">commandSource</span>.<a href="@0@PresentationCore/A.html#a59cbb19cc3ce844" class="i property">CommandParameter</a> ?? <span class="r6 r">commandSource</span>;
+            <b>if</b> (<span class="r7 r">command</span> <b>is</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <span id="r9 rd" class="r9 r">routedCommand</span>)
+            {
+                <a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="k">var</a> <span id="r10 rd" class="r10 r">target</span> = <span class="r6 r">commandSource</span>.<a href="@0@PresentationCore/A.html#a27f0e79ae3db938" class="i property">CommandTarget</a> ?? <span class="r6 r">commandSource</span> <b>as</b> <a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>;
+                <b>if</b> (<span class="r9 r">routedCommand</span>.<a href="@0@PresentationCore/A.html#c422c2917195295e" class="i method">CanExecute</a>(<span class="r8 r">commandParameter</span>, <span class="r10 r">target</span>))
+                {
+                    <span class="r9 r">routedCommand</span>.<a href="@0@PresentationCore/A.html#4ffb2a8d216e7a8c" class="i method">Execute</a>(<span class="r8 r">commandParameter</span>, <span class="r10 r">target</span>);
+                }
+            }
+            <b>else</b>
+            {
+                <b>if</b> (<span class="r7 r">command</span>.<a href="@0@System/A.html#c4fc2bcd5384bf98" class="i method">CanExecute</a>(<span class="r8 r">commandParameter</span>))
+                {
+                    <span class="r7 r">command</span>.<a href="@0@System/A.html#a7ce328d8207b8bf" class="i method">Execute</a>(<span class="r8 r">commandParameter</span>);
+                }
+            }
+        }
+
+        <b>internal static bool</b> <a id="019a49a28f40d109" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">CanExecuteCommandSource</a>(<a href="@0@PresentationCore/A.html#1c1aab4a272b7852" class="t t">ICommandSource</a> <span id="r11 rd" class="r11 r">commandSource</span>, <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <span id="r12 rd" class="r12 r">theCommand</span>)
+        {
+            <a href="@0@System/A.html#f0e0f4acfe262659" class="k">var</a> <span id="r13 rd" class="r13 r">command</span> = <span class="r12 r">theCommand</span>;
+            <b>if</b> (<span class="r13 r">command</span> == <b>null</b>)
+            {
+                <b>return</b> <b>false</b>;
+            }
+
+            <a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r14 rd" class="r14 r">commandParameter</span> = <span class="r11 r">commandSource</span>.<a href="@0@PresentationCore/A.html#a59cbb19cc3ce844" class="i property">CommandParameter</a> ?? <span class="r11 r">commandSource</span>;
+            <b>if</b> (<span class="r13 r">command</span> <b>is</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <span id="r15 rd" class="r15 r">routedCommand</span>)
+            {
+                <a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="k">var</a> <span id="r16 rd" class="r16 r">target</span> = <span class="r11 r">commandSource</span>.<a href="@0@PresentationCore/A.html#a27f0e79ae3db938" class="i property">CommandTarget</a> ?? <span class="r11 r">commandSource</span> <b>as</b> <a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>;
+                <b>return</b> <span class="r15 r">routedCommand</span>.<a href="@0@PresentationCore/A.html#c422c2917195295e" class="i method">CanExecute</a>(<span class="r14 r">commandParameter</span>, <span class="r16 r">target</span>);
+            }
+
+            <b>return</b> <span class="r13 r">command</span>.<a href="@0@System/A.html#c4fc2bcd5384bf98" class="i method">CanExecute</a>(<span class="r14 r">commandParameter</span>);
+        }
+
+        [<a href="@0@mscorlib/A.html#29a3d687a50338b1" class="t constructor">SecurityCritical</a>]
+        [<a href="@0@mscorlib/A.html#13cf8064dae6f902" class="t constructor">SecuritySafeCritical</a>]
+        <b>internal static void</b> <a id="07e491b2b1208226" href="../R/07e491b2b1208226.html" target="n" data-glyph="74,1" class="i method">ExecuteCommandSource</a>(<a href="@0@PresentationCore/A.html#1c1aab4a272b7852" class="t t">ICommandSource</a> <span id="r17 rd" class="r17 r">commandSource</span>, <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <span id="r18 rd" class="r18 r">theCommand</span>)
+        {
+            <a href="#878d3effccc38641" class="i method">CriticalExecuteCommandSource</a>(<span class="r17 r">commandSource</span>, <span class="r18 r">theCommand</span>);
+        }
+
+        [<a href="@0@mscorlib/A.html#29a3d687a50338b1" class="t constructor">SecurityCritical</a>]
+        <b>internal static void</b> <a id="878d3effccc38641" href="../R/878d3effccc38641.html" target="n" data-glyph="74,1" class="i method">CriticalExecuteCommandSource</a>(<a href="@0@PresentationCore/A.html#1c1aab4a272b7852" class="t t">ICommandSource</a> <span id="r19 rd" class="r19 r">commandSource</span>, <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <span id="r20 rd" class="r20 r">theCommand</span>)
+        {
+            <a href="@0@System/A.html#f0e0f4acfe262659" class="k">var</a> <span id="r21 rd" class="r21 r">command</span> = <span class="r20 r">theCommand</span>;
+            <b>if</b> (<span class="r21 r">command</span> == <b>null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r22 rd" class="r22 r">commandParameter</span> = <span class="r19 r">commandSource</span>.<a href="@0@PresentationCore/A.html#a59cbb19cc3ce844" class="i property">CommandParameter</a> ?? <span class="r19 r">commandSource</span>;
+            <b>if</b> (<span class="r21 r">command</span> <b>is</b> <a href="@0@PresentationCore/A.html#bad35753824e03de" class="t t">RoutedCommand</a> <span id="r23 rd" class="r23 r">routedCommand</span>)
+            {
+                <a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="k">var</a> <span id="r24 rd" class="r24 r">target</span> = <span class="r19 r">commandSource</span>.<a href="@0@PresentationCore/A.html#a27f0e79ae3db938" class="i property">CommandTarget</a> ?? <span class="r19 r">commandSource</span> <b>as</b> <a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>;
+                <b>if</b> (<span class="r23 r">routedCommand</span>.<a href="@0@PresentationCore/A.html#c422c2917195295e" class="i method">CanExecute</a>(<span class="r22 r">commandParameter</span>, <span class="r24 r">target</span>))
+                {
+                    <span class="r23 r">routedCommand</span>.<a href="@0@PresentationCore/A.html#4ffb2a8d216e7a8c" class="i method">Execute</a>(<span class="r22 r">commandParameter</span>, <span class="r24 r">target</span>);
+                }
+            }
+            <b>else</b>
+            {
+                <b>if</b> (<span class="r21 r">command</span>.<a href="@0@System/A.html#c4fc2bcd5384bf98" class="i method">CanExecute</a>(<span class="r22 r">commandParameter</span>))
+                {
+                    <span class="r21 r">command</span>.<a href="@0@System/A.html#a7ce328d8207b8bf" class="i method">Execute</a>(<span class="r22 r">commandParameter</span>);
+                }
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

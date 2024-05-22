@@ -1,0 +1,764 @@
+﻿<!DOCTYPE html>
+<html><head><title>htmlschema.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(755);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#DocumentSerialization/HtmlXmlConverter/htmlschema.cs" target="_top">HtmlXmlConverter\htmlschema.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#DocumentSerialization" target="_top">HelpProjects\WPF-MORE\Documents\Fixed Documents\DocumentSerialization\DocumentSerialization.csproj</a> (DocumentSerialization)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//---------------------------------------------------------------------------</span>
+<span class="c">// </span>
+<span class="c">// File: HtmlSchema.cs</span>
+<span class="c">//</span>
+<span class="c">// Copyright (C) Microsoft Corporation.  All rights reserved.</span>
+<span class="c">//</span>
+<span class="c">// Description: Static information about HTML structure</span>
+<span class="c">//</span>
+<span class="c">//---------------------------------------------------------------------------</span>
+
+<b>namespace</b> <span class="i n">DocumentSerialization</span>
+{
+    <b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+    <b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>;
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> HtmlSchema class</span>
+    <span class="c">///</span><span class="c"> maintains static information about HTML structure</span>
+    <span class="c">///</span><span class="c"> can be used by HtmlParser to check conditions under which an element starts or ends, etc.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>internal class</b> <a id="9ea126cb1b0433ae" href="../R/9ea126cb1b0433ae.html" target="n" data-glyph="2,0" class="t t"><span id="a063316f4013d821">HtmlSchema</span></a>
+    {
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Constructors</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructors
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> static constructor, initializes the ArrayLists</span>
+        <span class="c">///</span><span class="c"> that hold the elements in various sub-components of the schema</span>
+        <span class="c">///</span><span class="c"> e.g _htmlEmptyElements, etc.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>static</b> <a id="f0fa298efd6aca86" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">HtmlSchema</a>()
+        {
+            <span class="c">// initializes the list of all html elements</span>
+            <a href="#c6cbf3545dd9efaa" class="i method">InitializeInlineElements</a>();
+
+            <a href="#e6410ea1826dd32f" class="i method">InitializeBlockElements</a>();
+
+            <a href="#c89d778a28b6f5b4" class="i method">InitializeOtherOpenableElements</a>();
+
+            <span class="c">// initialize empty elements list</span>
+            <a href="#5edc91d0f84dbff3" class="i method">InitializeEmptyElements</a>();
+
+            <span class="c">// initialize list of elements closing on the outer element end</span>
+            <a href="#d887e985868d032f" class="i method">InitializeElementsClosingOnParentElementEnd</a>();
+
+            <span class="c">// initalize list of elements that close when a new element starts</span>
+            <a href="#0edbd7615981b5bb" class="i method">InitializeElementsClosingOnNewElementStart</a>();
+
+            <span class="c">// Initialize character entities</span>
+            <a href="#c182c57da9ec92e6" class="i method">InitializeHtmlCharacterEntities</a>();
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Constructors;
+
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Internal Methods</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Internal Methods
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> returns true when xmlElementName corresponds to empty element </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">xmlElementName</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> string representing name to test</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static bool</b> <a id="57731e61d10a507e" href="../R/57731e61d10a507e.html" target="n" data-glyph="74,1" class="i method">IsEmptyElement</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">xmlElementName</span>) =&gt; <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Contains</span>(<span class="r0 r">xmlElementName</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>());
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> returns true if xmlElementName represents a block formattinng element.</span>
+        <span class="c">///</span><span class="c"> It used in an algorithm of transferring inline elements over block elements</span>
+        <span class="c">///</span><span class="c"> in HtmlParser</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">xmlElementName</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>internal static bool</b> <a id="29e25338c549b3e2" href="../R/29e25338c549b3e2.html" target="n" data-glyph="74,1" class="i method">IsBlockElement</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r1 rd" class="r1 r">xmlElementName</span>) =&gt; <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Contains</span>(<span class="r1 r">xmlElementName</span>);
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> returns true if the xmlElementName represents an inline formatting element</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">xmlElementName</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>internal static bool</b> <a id="0d40e97f536e7ca1" href="../R/0d40e97f536e7ca1.html" target="n" data-glyph="74,1" class="i method">IsInlineElement</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r2 rd" class="r2 r">xmlElementName</span>) =&gt; <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Contains</span>(<span class="r2 r">xmlElementName</span>);
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> It is a list of known html elements which we</span>
+        <span class="c">///</span><span class="c"> want to allow to produce bt HTML parser,</span>
+        <span class="c">///</span><span class="c"> but don&#39;tt want to act as inline, block or no-scope.</span>
+        <span class="c">///</span><span class="c"> Presence in this list will allow to open</span>
+        <span class="c">///</span><span class="c"> elements during html parsing, and adding the</span>
+        <span class="c">///</span><span class="c"> to a tree produced by html parser.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal static bool</b> <a id="2f1837d9a7d1ed85" href="../R/2f1837d9a7d1ed85.html" target="n" data-glyph="74,1" class="i method">IsKnownOpenableElement</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r3 rd" class="r3 r">xmlElementName</span>) =&gt; <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Contains</span>(<span class="r3 r">xmlElementName</span>);
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> returns true when xmlElementName closes when the outer element closes</span>
+        <span class="c">///</span><span class="c"> this is true of elements with optional start tags</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r4 r">xmlElementName</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> string representing name to test</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static bool</b> <a id="56fe39425e3e2833" href="../R/../../0000000000.html" target="n" data-glyph="74,1" class="i method">ClosesOnParentElementEnd</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r4 rd" class="r4 r">xmlElementName</span>) =&gt; <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Contains</span>(<span class="r4 r">xmlElementName</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>());
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> returns true if the current element closes when the new element, whose name has just been read, starts</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r5 r">currentElementName</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> string representing current element name</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="i">elementName</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> string representing name of the next element that will start</span>
+        <b>internal static bool</b> <a id="7867e7973a79b3a2" href="../R/7867e7973a79b3a2.html" target="n" data-glyph="74,1" class="i method">ClosesOnNextElementStart</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r5 rd" class="r5 r">currentElementName</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r6 rd" class="r6 r">nextElementName</span>)
+        {
+            <span class="t t">Debug</span>.<span class="i method">Assert</span>(<span class="r5 r">currentElementName</span> == <span class="r5 r">currentElementName</span>.<a href="@1@System.Runtime/A.html#0b5a1ee33618e0b3" class="i method">ToLower</a>());
+            <b>switch</b> (<span class="r5 r">currentElementName</span>)
+            {
+                <b>case</b> <span class="s">&quot;colgroup&quot;</span>:
+                    <b>return</b> <a href="#7df0869b88bf57ad" class="i field">_htmlElementsClosingColgroup</a>.<span class="i method">Contains</span>(<span class="r6 r">nextElementName</span>) &amp;&amp; <a href="#9ea126cb1b0433ae" class="t t">HtmlSchema</a>.<a href="#29e25338c549b3e2" class="i method">IsBlockElement</a>(<span class="r6 r">nextElementName</span>);
+                <b>case</b> <span class="s">&quot;dd&quot;</span>:
+                    <b>return</b> <a href="#7c4a8c2e017fdf25" class="i field">_htmlElementsClosingDD</a>.<span class="i method">Contains</span>(<span class="r6 r">nextElementName</span>) &amp;&amp; <a href="#9ea126cb1b0433ae" class="t t">HtmlSchema</a>.<a href="#29e25338c549b3e2" class="i method">IsBlockElement</a>(<span class="r6 r">nextElementName</span>);
+                <b>case</b> <span class="s">&quot;dt&quot;</span>:
+                    <b>return</b> <a href="#6862e088d71932c2" class="i field">_htmlElementsClosingDT</a>.<span class="i method">Contains</span>(<span class="r6 r">nextElementName</span>) &amp;&amp; <a href="#9ea126cb1b0433ae" class="t t">HtmlSchema</a>.<a href="#29e25338c549b3e2" class="i method">IsBlockElement</a>(<span class="r6 r">nextElementName</span>);
+                <b>case</b> <span class="s">&quot;li&quot;</span>:
+                    <b>return</b> <a href="#203b00ffc5865e47" class="i field">_htmlElementsClosingLI</a>.<span class="i method">Contains</span>(<span class="r6 r">nextElementName</span>);
+                <b>case</b> <span class="s">&quot;p&quot;</span>:
+                    <b>return</b> <a href="#9ea126cb1b0433ae" class="t t">HtmlSchema</a>.<a href="#29e25338c549b3e2" class="i method">IsBlockElement</a>(<span class="r6 r">nextElementName</span>);
+                <b>case</b> <span class="s">&quot;tbody&quot;</span>:
+                    <b>return</b> <a href="#bc9f72d97e43f4ca" class="i field">_htmlElementsClosingTbody</a>.<span class="i method">Contains</span>(<span class="r6 r">nextElementName</span>);
+                <b>case</b> <span class="s">&quot;tfoot&quot;</span>:
+                    <b>return</b> <a href="#7dab7832ceee853e" class="i field">_htmlElementsClosingTfoot</a>.<span class="i method">Contains</span>(<span class="r6 r">nextElementName</span>);
+                <b>case</b> <span class="s">&quot;thead&quot;</span>:
+                    <b>return</b> <a href="#4e24d8cb70221365" class="i field">_htmlElementsClosingThead</a>.<span class="i method">Contains</span>(<span class="r6 r">nextElementName</span>);
+                <b>case</b> <span class="s">&quot;tr&quot;</span>:
+                    <b>return</b> <a href="#ec1e27f4e105c14f" class="i field">_htmlElementsClosingTR</a>.<span class="i method">Contains</span>(<span class="r6 r">nextElementName</span>);
+                <b>case</b> <span class="s">&quot;td&quot;</span>:
+                    <b>return</b> <a href="#7f4b13896d8315d0" class="i field">_htmlElementsClosingTD</a>.<span class="i method">Contains</span>(<span class="r6 r">nextElementName</span>);
+                <b>case</b> <span class="s">&quot;th&quot;</span>:
+                    <b>return</b> <a href="#1b374385542efa30" class="i field">_htmlElementsClosingTH</a>.<span class="i method">Contains</span>(<span class="r6 r">nextElementName</span>);
+            }
+            <b>return</b> <b>false</b>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> returns true if the string passed as argument is an Html entity name</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">entityName</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> string to be tested for Html entity name </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static bool</b> <a id="3db2c277ed5d492b" href="../R/3db2c277ed5d492b.html" target="n" data-glyph="74,1" class="i method">IsEntity</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r7 rd" class="r7 r">entityName</span>)
+        {
+            <span class="c">// we do not convert entity strings to lowercase because these names are case-sensitive</span>
+            <b>if</b> (<a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>.<span class="i method">Contains</span>(<span class="r7 r">entityName</span>))
+            {
+                <b>return</b> <b>true</b>;
+            }
+            <b>else</b>
+            {
+                <b>return</b> <b>false</b>;
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> returns the character represented by the entity name string which is passed as an argument, if the string is an entity name</span>
+        <span class="c">///</span><span class="c"> as specified in _htmlCharacterEntities, returns the character value of 0 otherwise </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">entityName</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> string representing entity name whose character value is desired</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal static char</b> <a id="04f31b49bede4bed" href="../R/04f31b49bede4bed.html" target="n" data-glyph="74,1" class="i method">EntityCharacterValue</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r8 rd" class="r8 r">entityName</span>)
+        {
+            <b>if</b> (<a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>.<span class="i method">Contains</span>(<span class="r8 r">entityName</span>))
+            {
+                <b>return</b> (<b>char</b>) <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="r8 r">entityName</span>];
+            }
+            <b>else</b>
+            {
+                <b>return</b> (<b>char</b>)0;
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Internal Methods
+
+        
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">//  Internal Properties</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Internal Properties
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Internal Indexers
+
+
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Private Methods</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Methods
+
+        <b>private static void</b> <a id="c6cbf3545dd9efaa" href="../R/c6cbf3545dd9efaa.html" target="n" data-glyph="76,1" class="i method">InitializeInlineElements</a>()
+        {
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;a&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;abbr&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;acronym&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;address&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;b&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;bdo&quot;</span>); <span class="c">// ???</span>
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;big&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;button&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;code&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;del&quot;</span>); <span class="c">// deleted text</span>
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;dfn&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;em&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;font&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;i&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;ins&quot;</span>); <span class="c">// inserted text</span>
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;kbd&quot;</span>); <span class="c">// text to entered by a user</span>
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;label&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;legend&quot;</span>); <span class="c">// ???</span>
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;q&quot;</span>); <span class="c">// short inline quotation</span>
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;s&quot;</span>); <span class="c">// strike-through text style</span>
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;samp&quot;</span>); <span class="c">// Specifies a code sample</span>
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;small&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;span&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;strike&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;strong&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;sub&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;sup&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;u&quot;</span>);
+            <a href="#65b1ccb015db2be7" class="i field">_htmlInlineElements</a>.<span class="i method">Add</span>(<span class="s">&quot;var&quot;</span>); <span class="c">// indicates an instance of a program variable</span>
+        }
+
+        <b>private static void</b> <a id="e6410ea1826dd32f" href="../R/e6410ea1826dd32f.html" target="n" data-glyph="76,1" class="i method">InitializeBlockElements</a>()
+        {
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;blockquote&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;body&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;caption&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;center&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;cite&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;dd&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;dir&quot;</span>); <span class="c">// TODO: treat as UL element</span>
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;div&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;dl&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;dt&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;form&quot;</span>); <span class="c">// Not a block according to XHTML spec</span>
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;h1&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;h2&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;h3&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;h4&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;h5&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;h6&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;html&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;li&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;menu&quot;</span>); <span class="c">// TODO: treat as UL element</span>
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;ol&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;p&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;pre&quot;</span>); <span class="c">// Renders text in a fixed-width font</span>
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;table&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;tbody&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;td&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;textarea&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;tfoot&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;th&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;thead&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;tr&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;tt&quot;</span>);
+            <a href="#bb14f69a3198d918" class="i field">_htmlBlockElements</a>.<span class="i method">Add</span>(<span class="s">&quot;ul&quot;</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> initializes _htmlEmptyElements with empty elements in HTML 4 spec at</span>
+        <span class="c">///</span><span class="c"> http://www.w3.org/TR/REC-html40/index/elements.html</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static void</b> <a id="5edc91d0f84dbff3" href="../R/5edc91d0f84dbff3.html" target="n" data-glyph="76,1" class="i method">InitializeEmptyElements</a>()
+        {
+            <span class="c">// Build a list of empty (no-scope) elements </span>
+            <span class="c">// (element not requiring closing tags, and not accepting any content)</span>
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;area&quot;</span>);
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;base&quot;</span>);
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;basefont&quot;</span>);
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;br&quot;</span>);
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;col&quot;</span>);
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;frame&quot;</span>);
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;hr&quot;</span>);
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;img&quot;</span>);
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;input&quot;</span>);
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;isindex&quot;</span>);
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;link&quot;</span>);
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;meta&quot;</span>);
+            <a href="#b4ade7af09e566f5" class="i field">_htmlEmptyElements</a>.<span class="i method">Add</span>(<span class="s">&quot;param&quot;</span>);
+        }
+        
+        <b>private static void</b> <a id="c89d778a28b6f5b4" href="../R/c89d778a28b6f5b4.html" target="n" data-glyph="76,1" class="i method">InitializeOtherOpenableElements</a>()
+        {
+            <span class="c">// It is a list of known html elements which we</span>
+            <span class="c">// want to allow to produce bt HTML parser,</span>
+            <span class="c">// but don&#39;tt want to act as inline, block or no-scope.</span>
+            <span class="c">// Presence in this list will allow to open</span>
+            <span class="c">// elements during html parsing, and adding the</span>
+            <span class="c">// to a tree produced by html parser.</span>
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;applet&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;base&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;basefont&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;colgroup&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;fieldset&quot;</span>);
+            <span class="c">//_htmlOtherOpenableElements.Add(&quot;form&quot;); --&gt; treated as block</span>
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;frameset&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;head&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;iframe&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;map&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;noframes&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;noscript&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;object&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;optgroup&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;option&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;script&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;select&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;style&quot;</span>);
+            <a href="#49c55aa01d3d0af6" class="i field">_htmlOtherOpenableElements</a>.<span class="i method">Add</span>(<span class="s">&quot;title&quot;</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> initializes _htmlElementsClosingOnParentElementEnd with the list of HTML 4 elements for which closing tags are optional</span>
+        <span class="c">///</span><span class="c"> we assume that for any element for which closing tags are optional, the element closes when it&#39;s outer element</span>
+        <span class="c">///</span><span class="c"> (in which it is nested) does</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static void</b> <a id="d887e985868d032f" href="../R/d887e985868d032f.html" target="n" data-glyph="76,1" class="i method">InitializeElementsClosingOnParentElementEnd</a>()
+        {
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;body&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;colgroup&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;dd&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;dt&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;head&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;html&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;li&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;p&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;tbody&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;td&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;tfoot&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;thead&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;th&quot;</span>);
+            <a href="#d579b136b694d7b9" class="i field">_htmlElementsClosingOnParentElementEnd</a>.<span class="i method">Add</span>(<span class="s">&quot;tr&quot;</span>);
+        }
+
+        <b>private static void</b> <a id="0edbd7615981b5bb" href="../R/0edbd7615981b5bb.html" target="n" data-glyph="76,1" class="i method">InitializeElementsClosingOnNewElementStart</a>()
+        {
+            <a href="#7df0869b88bf57ad" class="i field">_htmlElementsClosingColgroup</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#7df0869b88bf57ad" class="i field">_htmlElementsClosingColgroup</a>.<span class="i method">Add</span>(<span class="s">&quot;colgroup&quot;</span>);
+            <a href="#7df0869b88bf57ad" class="i field">_htmlElementsClosingColgroup</a>.<span class="i method">Add</span>(<span class="s">&quot;tr&quot;</span>);
+            <a href="#7df0869b88bf57ad" class="i field">_htmlElementsClosingColgroup</a>.<span class="i method">Add</span>(<span class="s">&quot;thead&quot;</span>);
+            <a href="#7df0869b88bf57ad" class="i field">_htmlElementsClosingColgroup</a>.<span class="i method">Add</span>(<span class="s">&quot;tfoot&quot;</span>);
+            <a href="#7df0869b88bf57ad" class="i field">_htmlElementsClosingColgroup</a>.<span class="i method">Add</span>(<span class="s">&quot;tbody&quot;</span>);
+
+            <a href="#7c4a8c2e017fdf25" class="i field">_htmlElementsClosingDD</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#7c4a8c2e017fdf25" class="i field">_htmlElementsClosingDD</a>.<span class="i method">Add</span>(<span class="s">&quot;dd&quot;</span>);
+            <a href="#7c4a8c2e017fdf25" class="i field">_htmlElementsClosingDD</a>.<span class="i method">Add</span>(<span class="s">&quot;dt&quot;</span>);
+            <span class="c">// TODO: dd may end in other cases as well - if a new &quot;p&quot; starts, etc.</span>
+            <span class="c">// TODO: these are the basic &quot;legal&quot; cases but there may be more recovery</span>
+
+            <a href="#6862e088d71932c2" class="i field">_htmlElementsClosingDT</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#7c4a8c2e017fdf25" class="i field">_htmlElementsClosingDD</a>.<span class="i method">Add</span>(<span class="s">&quot;dd&quot;</span>);
+            <a href="#7c4a8c2e017fdf25" class="i field">_htmlElementsClosingDD</a>.<span class="i method">Add</span>(<span class="s">&quot;dt&quot;</span>);
+            <span class="c">// TODO: dd may end in other cases as well - if a new &quot;p&quot; starts, etc.</span>
+            <span class="c">// TODO: these are the basic &quot;legal&quot; cases but there may be more recovery</span>
+
+            <a href="#203b00ffc5865e47" class="i field">_htmlElementsClosingLI</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#203b00ffc5865e47" class="i field">_htmlElementsClosingLI</a>.<span class="i method">Add</span>(<span class="s">&quot;li&quot;</span>);
+            <span class="c">// TODO: more complex recovery</span>
+
+            <a href="#bc9f72d97e43f4ca" class="i field">_htmlElementsClosingTbody</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#bc9f72d97e43f4ca" class="i field">_htmlElementsClosingTbody</a>.<span class="i method">Add</span>(<span class="s">&quot;tbody&quot;</span>);
+            <a href="#bc9f72d97e43f4ca" class="i field">_htmlElementsClosingTbody</a>.<span class="i method">Add</span>(<span class="s">&quot;thead&quot;</span>);
+            <a href="#bc9f72d97e43f4ca" class="i field">_htmlElementsClosingTbody</a>.<span class="i method">Add</span>(<span class="s">&quot;tfoot&quot;</span>);
+            <span class="c">// TODO: more complex recovery</span>
+
+            <a href="#ec1e27f4e105c14f" class="i field">_htmlElementsClosingTR</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <span class="c">// NOTE: tr should not really close on a new thead</span>
+            <span class="c">// because if there are rows before a thead, it is assumed to be in tbody, whose start tag is optional</span>
+            <span class="c">// and thead can&#39;t come after tbody</span>
+            <span class="c">// however, if we do encounter this, it&#39;s probably best to end the row and ignore thead or treat</span>
+            <span class="c">// it as part of the table</span>
+            <a href="#ec1e27f4e105c14f" class="i field">_htmlElementsClosingTR</a>.<span class="i method">Add</span>(<span class="s">&quot;thead&quot;</span>);
+            <a href="#ec1e27f4e105c14f" class="i field">_htmlElementsClosingTR</a>.<span class="i method">Add</span>(<span class="s">&quot;tfoot&quot;</span>);
+            <a href="#ec1e27f4e105c14f" class="i field">_htmlElementsClosingTR</a>.<span class="i method">Add</span>(<span class="s">&quot;tbody&quot;</span>);
+            <a href="#ec1e27f4e105c14f" class="i field">_htmlElementsClosingTR</a>.<span class="i method">Add</span>(<span class="s">&quot;tr&quot;</span>);
+            <span class="c">// TODO: more complex recovery</span>
+
+            <a href="#7f4b13896d8315d0" class="i field">_htmlElementsClosingTD</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#7f4b13896d8315d0" class="i field">_htmlElementsClosingTD</a>.<span class="i method">Add</span>(<span class="s">&quot;td&quot;</span>);
+            <a href="#7f4b13896d8315d0" class="i field">_htmlElementsClosingTD</a>.<span class="i method">Add</span>(<span class="s">&quot;th&quot;</span>);
+            <a href="#7f4b13896d8315d0" class="i field">_htmlElementsClosingTD</a>.<span class="i method">Add</span>(<span class="s">&quot;tr&quot;</span>);
+            <a href="#7f4b13896d8315d0" class="i field">_htmlElementsClosingTD</a>.<span class="i method">Add</span>(<span class="s">&quot;tbody&quot;</span>);
+            <a href="#7f4b13896d8315d0" class="i field">_htmlElementsClosingTD</a>.<span class="i method">Add</span>(<span class="s">&quot;tfoot&quot;</span>);
+            <a href="#7f4b13896d8315d0" class="i field">_htmlElementsClosingTD</a>.<span class="i method">Add</span>(<span class="s">&quot;thead&quot;</span>);
+            <span class="c">// TODO: more complex recovery</span>
+
+            <a href="#1b374385542efa30" class="i field">_htmlElementsClosingTH</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#1b374385542efa30" class="i field">_htmlElementsClosingTH</a>.<span class="i method">Add</span>(<span class="s">&quot;td&quot;</span>);
+            <a href="#1b374385542efa30" class="i field">_htmlElementsClosingTH</a>.<span class="i method">Add</span>(<span class="s">&quot;th&quot;</span>);
+            <a href="#1b374385542efa30" class="i field">_htmlElementsClosingTH</a>.<span class="i method">Add</span>(<span class="s">&quot;tr&quot;</span>);
+            <a href="#1b374385542efa30" class="i field">_htmlElementsClosingTH</a>.<span class="i method">Add</span>(<span class="s">&quot;tbody&quot;</span>);
+            <a href="#1b374385542efa30" class="i field">_htmlElementsClosingTH</a>.<span class="i method">Add</span>(<span class="s">&quot;tfoot&quot;</span>);
+            <a href="#1b374385542efa30" class="i field">_htmlElementsClosingTH</a>.<span class="i method">Add</span>(<span class="s">&quot;thead&quot;</span>);
+            <span class="c">// TODO: more complex recovery</span>
+
+            <a href="#4e24d8cb70221365" class="i field">_htmlElementsClosingThead</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#4e24d8cb70221365" class="i field">_htmlElementsClosingThead</a>.<span class="i method">Add</span>(<span class="s">&quot;tbody&quot;</span>);
+            <a href="#4e24d8cb70221365" class="i field">_htmlElementsClosingThead</a>.<span class="i method">Add</span>(<span class="s">&quot;tfoot&quot;</span>);
+            <span class="c">// TODO: more complex recovery</span>
+
+            <a href="#7dab7832ceee853e" class="i field">_htmlElementsClosingTfoot</a> = <b>new</b> <span class="t constructor">ArrayList</span>();
+            <a href="#7dab7832ceee853e" class="i field">_htmlElementsClosingTfoot</a>.<span class="i method">Add</span>(<span class="s">&quot;tbody&quot;</span>);
+            <span class="c">// although thead comes before tfoot, we add it because if it is found the tfoot should close</span>
+            <span class="c">// and some recovery processing be done on thead</span>
+            <a href="#7dab7832ceee853e" class="i field">_htmlElementsClosingTfoot</a>.<span class="i method">Add</span>(<span class="s">&quot;thead&quot;</span>);
+            <span class="c">// TODO: more complex recovery</span>
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> initializes _htmlCharacterEntities hashtable with the character corresponding to entity names</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static void</b> <a id="c182c57da9ec92e6" href="../R/c182c57da9ec92e6.html" target="n" data-glyph="76,1" class="i method">InitializeHtmlCharacterEntities</a>()
+        {
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a> = <b>new</b> <span class="t constructor">Hashtable</span>();
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Aacute&quot;</span>] = (<b>char</b>)193;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;aacute&quot;</span>] = (<b>char</b>)225;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Acirc&quot;</span>] = (<b>char</b>)194;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;acirc&quot;</span>] = (<b>char</b>)226;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;acute&quot;</span>] = (<b>char</b>)180;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;AElig&quot;</span>] = (<b>char</b>)198;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;aelig&quot;</span>] = (<b>char</b>)230;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Agrave&quot;</span>] = (<b>char</b>)192;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;agrave&quot;</span>] = (<b>char</b>)224;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;alefsym&quot;</span>] = (<b>char</b>)8501;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Alpha&quot;</span>] = (<b>char</b>)913;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;alpha&quot;</span>] = (<b>char</b>)945;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;amp&quot;</span>] = (<b>char</b>)38;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;and&quot;</span>] = (<b>char</b>)8743;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ang&quot;</span>] = (<b>char</b>)8736;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Aring&quot;</span>] = (<b>char</b>)197;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;aring&quot;</span>] = (<b>char</b>)229;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;asymp&quot;</span>] = (<b>char</b>)8776;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Atilde&quot;</span>] = (<b>char</b>)195;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;atilde&quot;</span>] = (<b>char</b>)227;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Auml&quot;</span>] = (<b>char</b>)196;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;auml&quot;</span>] = (<b>char</b>)228;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;bdquo&quot;</span>] = (<b>char</b>)8222;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Beta&quot;</span>] = (<b>char</b>)914;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;beta&quot;</span>] = (<b>char</b>)946;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;brvbar&quot;</span>] = (<b>char</b>)166;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;bull&quot;</span>] = (<b>char</b>)8226;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;cap&quot;</span>] = (<b>char</b>)8745;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Ccedil&quot;</span>] = (<b>char</b>)199;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ccedil&quot;</span>] = (<b>char</b>)231;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;cent&quot;</span>] = (<b>char</b>)162;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Chi&quot;</span>] = (<b>char</b>)935;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;chi&quot;</span>] = (<b>char</b>)967;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;circ&quot;</span>] = (<b>char</b>)710;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;clubs&quot;</span>] = (<b>char</b>)9827;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;cong&quot;</span>] = (<b>char</b>)8773;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;copy&quot;</span>] = (<b>char</b>)169;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;crarr&quot;</span>] = (<b>char</b>)8629;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;cup&quot;</span>] = (<b>char</b>)8746;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;curren&quot;</span>] = (<b>char</b>)164;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;dagger&quot;</span>] = (<b>char</b>)8224;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Dagger&quot;</span>] = (<b>char</b>)8225;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;darr&quot;</span>] = (<b>char</b>)8595;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;dArr&quot;</span>] = (<b>char</b>)8659;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;deg&quot;</span>] = (<b>char</b>)176;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Delta&quot;</span>] = (<b>char</b>)916;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;delta&quot;</span>] = (<b>char</b>)948;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;diams&quot;</span>] = (<b>char</b>)9830;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;divide&quot;</span>] = (<b>char</b>)247;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Eacute&quot;</span>] = (<b>char</b>)201;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;eacute&quot;</span>] = (<b>char</b>)233;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Ecirc&quot;</span>] = (<b>char</b>)202;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ecirc&quot;</span>] = (<b>char</b>)234;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Egrave&quot;</span>] = (<b>char</b>)200;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;egrave&quot;</span>] = (<b>char</b>)232;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;empty&quot;</span>] = (<b>char</b>)8709;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;emsp&quot;</span>] = (<b>char</b>)8195;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ensp&quot;</span>] = (<b>char</b>)8194;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Epsilon&quot;</span>] = (<b>char</b>)917;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;epsilon&quot;</span>] = (<b>char</b>)949;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;equiv&quot;</span>] = (<b>char</b>)8801;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Eta&quot;</span>] = (<b>char</b>)919;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;eta&quot;</span>] = (<b>char</b>)951;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ETH&quot;</span>] = (<b>char</b>)208;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;eth&quot;</span>] = (<b>char</b>)240;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Euml&quot;</span>] = (<b>char</b>)203;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;euml&quot;</span>] = (<b>char</b>)235;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;euro&quot;</span>] = (<b>char</b>)8364;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;exist&quot;</span>] = (<b>char</b>)8707;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;fnof&quot;</span>] = (<b>char</b>)402;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;forall&quot;</span>] = (<b>char</b>)8704;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;frac12&quot;</span>] = (<b>char</b>)189;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;frac14&quot;</span>] = (<b>char</b>)188;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;frac34&quot;</span>] = (<b>char</b>)190;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;frasl&quot;</span>] = (<b>char</b>)8260;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Gamma&quot;</span>] = (<b>char</b>)915;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;gamma&quot;</span>] = (<b>char</b>)947;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ge&quot;</span>] = (<b>char</b>)8805;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;gt&quot;</span>] = (<b>char</b>)62;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;harr&quot;</span>] = (<b>char</b>)8596;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;hArr&quot;</span>] = (<b>char</b>)8660;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;hearts&quot;</span>] = (<b>char</b>)9829;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;hellip&quot;</span>] = (<b>char</b>)8230;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Iacute&quot;</span>] = (<b>char</b>)205;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;iacute&quot;</span>] = (<b>char</b>)237;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Icirc&quot;</span>] = (<b>char</b>)206;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;icirc&quot;</span>] = (<b>char</b>)238;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;iexcl&quot;</span>] = (<b>char</b>)161;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Igrave&quot;</span>] = (<b>char</b>)204;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;igrave&quot;</span>] = (<b>char</b>)236;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;image&quot;</span>] = (<b>char</b>)8465;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;infin&quot;</span>] = (<b>char</b>)8734;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;int&quot;</span>] = (<b>char</b>)8747;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Iota&quot;</span>] = (<b>char</b>)921;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;iota&quot;</span>] = (<b>char</b>)953;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;iquest&quot;</span>] = (<b>char</b>)191;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;isin&quot;</span>] = (<b>char</b>)8712;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Iuml&quot;</span>] = (<b>char</b>)207;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;iuml&quot;</span>] = (<b>char</b>)239;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Kappa&quot;</span>] = (<b>char</b>)922;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;kappa&quot;</span>] = (<b>char</b>)954;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Lambda&quot;</span>] = (<b>char</b>)923;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;lambda&quot;</span>] = (<b>char</b>)955;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;lang&quot;</span>] = (<b>char</b>)9001;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;laquo&quot;</span>] = (<b>char</b>)171;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;larr&quot;</span>] = (<b>char</b>)8592;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;lArr&quot;</span>] = (<b>char</b>)8656;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;lceil&quot;</span>] = (<b>char</b>)8968;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ldquo&quot;</span>] = (<b>char</b>)8220;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;le&quot;</span>] = (<b>char</b>)8804;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;lfloor&quot;</span>] = (<b>char</b>)8970;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;lowast&quot;</span>] = (<b>char</b>)8727;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;loz&quot;</span>] = (<b>char</b>)9674;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;lrm&quot;</span>] = (<b>char</b>)8206;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;lsaquo&quot;</span>] = (<b>char</b>)8249;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;lsquo&quot;</span>] = (<b>char</b>)8216;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;lt&quot;</span>] = (<b>char</b>)60;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;macr&quot;</span>] = (<b>char</b>)175;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;mdash&quot;</span>] = (<b>char</b>)8212;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;micro&quot;</span>] = (<b>char</b>)181;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;middot&quot;</span>] = (<b>char</b>)183;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;minus&quot;</span>] = (<b>char</b>)8722;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Mu&quot;</span>] = (<b>char</b>)924;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;mu&quot;</span>] = (<b>char</b>)956;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;nabla&quot;</span>] = (<b>char</b>)8711;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;nbsp&quot;</span>] = (<b>char</b>)160;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ndash&quot;</span>] = (<b>char</b>)8211;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ne&quot;</span>] = (<b>char</b>)8800;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ni&quot;</span>] = (<b>char</b>)8715;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;not&quot;</span>] = (<b>char</b>)172;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;notin&quot;</span>] = (<b>char</b>)8713;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;nsub&quot;</span>] = (<b>char</b>)8836;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Ntilde&quot;</span>] = (<b>char</b>)209;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ntilde&quot;</span>] = (<b>char</b>)241;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Nu&quot;</span>] = (<b>char</b>)925;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;nu&quot;</span>] = (<b>char</b>)957;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Oacute&quot;</span>] = (<b>char</b>)211;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ocirc&quot;</span>] = (<b>char</b>)244;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;OElig&quot;</span>] = (<b>char</b>)338;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;oelig&quot;</span>] = (<b>char</b>)339;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Ograve&quot;</span>] = (<b>char</b>)210;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ograve&quot;</span>] = (<b>char</b>)242;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;oline&quot;</span>] = (<b>char</b>)8254;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Omega&quot;</span>] = (<b>char</b>)937;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;omega&quot;</span>] = (<b>char</b>)969;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Omicron&quot;</span>] = (<b>char</b>)927;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;omicron&quot;</span>] = (<b>char</b>)959;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;oplus&quot;</span>] = (<b>char</b>)8853;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;or&quot;</span>] = (<b>char</b>)8744;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ordf&quot;</span>] = (<b>char</b>)170;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ordm&quot;</span>] = (<b>char</b>)186;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Oslash&quot;</span>] = (<b>char</b>)216;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;oslash&quot;</span>] = (<b>char</b>)248;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Otilde&quot;</span>] = (<b>char</b>)213;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;otilde&quot;</span>] = (<b>char</b>)245;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;otimes&quot;</span>] = (<b>char</b>)8855;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Ouml&quot;</span>] = (<b>char</b>)214;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ouml&quot;</span>] = (<b>char</b>)246;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;para&quot;</span>] = (<b>char</b>)182;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;part&quot;</span>] = (<b>char</b>)8706;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;permil&quot;</span>] = (<b>char</b>)8240;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;perp&quot;</span>] = (<b>char</b>)8869;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Phi&quot;</span>] = (<b>char</b>)934;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;phi&quot;</span>] = (<b>char</b>)966;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;pi&quot;</span>] = (<b>char</b>)960;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;piv&quot;</span>] = (<b>char</b>)982;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;plusmn&quot;</span>] = (<b>char</b>)177;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;pound&quot;</span>] = (<b>char</b>)163;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;prime&quot;</span>] = (<b>char</b>)8242;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Prime&quot;</span>] = (<b>char</b>)8243;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;prod&quot;</span>] = (<b>char</b>)8719;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;prop&quot;</span>] = (<b>char</b>)8733;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Psi&quot;</span>] = (<b>char</b>)936;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;psi&quot;</span>] = (<b>char</b>)968;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;quot&quot;</span>] = (<b>char</b>)34;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;radic&quot;</span>] = (<b>char</b>)8730;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;rang&quot;</span>] = (<b>char</b>)9002;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;raquo&quot;</span>] = (<b>char</b>)187;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;rarr&quot;</span>] = (<b>char</b>)8594;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;rArr&quot;</span>] = (<b>char</b>)8658;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;rceil&quot;</span>] = (<b>char</b>)8969;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;rdquo&quot;</span>] = (<b>char</b>)8221;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;real&quot;</span>] = (<b>char</b>)8476;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;reg&quot;</span>] = (<b>char</b>)174;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;rfloor&quot;</span>] = (<b>char</b>)8971;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Rho&quot;</span>] = (<b>char</b>)929;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;rho&quot;</span>] = (<b>char</b>)961;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;rlm&quot;</span>] = (<b>char</b>)8207;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;rsaquo&quot;</span>] = (<b>char</b>)8250;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;rsquo&quot;</span>] = (<b>char</b>)8217;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sbquo&quot;</span>] = (<b>char</b>)8218;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Scaron&quot;</span>] = (<b>char</b>)352;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;scaron&quot;</span>] = (<b>char</b>)353;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sdot&quot;</span>] = (<b>char</b>)8901;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sect&quot;</span>] = (<b>char</b>)167;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;shy&quot;</span>] = (<b>char</b>)173;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Sigma&quot;</span>] = (<b>char</b>)931;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sigma&quot;</span>] = (<b>char</b>)963;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sigmaf&quot;</span>] = (<b>char</b>)962;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sim&quot;</span>] = (<b>char</b>)8764;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;spades&quot;</span>] = (<b>char</b>)9824;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sub&quot;</span>] = (<b>char</b>)8834;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sube&quot;</span>] = (<b>char</b>)8838;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sum&quot;</span>] = (<b>char</b>)8721;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sup&quot;</span>] = (<b>char</b>)8835;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sup1&quot;</span>] = (<b>char</b>)185;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sup2&quot;</span>] = (<b>char</b>)178;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;sup3&quot;</span>] = (<b>char</b>)179;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;supe&quot;</span>] = (<b>char</b>)8839;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;szlig&quot;</span>] = (<b>char</b>)223;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Tau&quot;</span>] = (<b>char</b>)932;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;tau&quot;</span>] = (<b>char</b>)964;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;there4&quot;</span>] = (<b>char</b>)8756;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Theta&quot;</span>] = (<b>char</b>)920;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;theta&quot;</span>] = (<b>char</b>)952;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;thetasym&quot;</span>] = (<b>char</b>)977;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;thinsp&quot;</span>] = (<b>char</b>)8201;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;THORN&quot;</span>] = (<b>char</b>)222;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;thorn&quot;</span>] = (<b>char</b>)254;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;tilde&quot;</span>] = (<b>char</b>)732;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;times&quot;</span>] = (<b>char</b>)215;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;trade&quot;</span>] = (<b>char</b>)8482;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Uacute&quot;</span>] = (<b>char</b>)218;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;uacute&quot;</span>] = (<b>char</b>)250;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;uarr&quot;</span>] = (<b>char</b>)8593;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;uArr&quot;</span>] = (<b>char</b>)8657;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Ucirc&quot;</span>] = (<b>char</b>)219;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ucirc&quot;</span>] = (<b>char</b>)251;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Ugrave&quot;</span>] = (<b>char</b>)217;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;ugrave&quot;</span>] = (<b>char</b>)249;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;uml&quot;</span>] = (<b>char</b>)168;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;upsih&quot;</span>] = (<b>char</b>)978;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Upsilon&quot;</span>] = (<b>char</b>)933;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;upsilon&quot;</span>] = (<b>char</b>)965;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Uuml&quot;</span>] = (<b>char</b>)220;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;uuml&quot;</span>] = (<b>char</b>)252;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;weierp&quot;</span>] = (<b>char</b>)8472;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Xi&quot;</span>] = (<b>char</b>)926;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;xi&quot;</span>] = (<b>char</b>)958;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Yacute&quot;</span>] = (<b>char</b>)221;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;yacute&quot;</span>] = (<b>char</b>)253;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;yen&quot;</span>] = (<b>char</b>)165;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Yuml&quot;</span>] = (<b>char</b>)376;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;yuml&quot;</span>] = (<b>char</b>)255;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;Zeta&quot;</span>] = (<b>char</b>)918;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;zeta&quot;</span>] = (<b>char</b>)950;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;zwj&quot;</span>] = (<b>char</b>)8205;
+            <a href="#86881718d6a161c3" class="i field">_htmlCharacterEntities</a>[<span class="s">&quot;zwnj&quot;</span>] = (<b>char</b>)8204;
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Private Methods
+
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Private Fields</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Fields
+
+        <span class="c">// html element names</span>
+        <span class="c">// this is an array list now, but we may want to make it a hashtable later for better performance</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="65b1ccb015db2be7" href="../R/65b1ccb015db2be7.html" target="n" data-glyph="46,1" class="i field">_htmlInlineElements</a>;
+
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="bb14f69a3198d918" href="../R/bb14f69a3198d918.html" target="n" data-glyph="46,1" class="i field">_htmlBlockElements</a>;
+
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="49c55aa01d3d0af6" href="../R/49c55aa01d3d0af6.html" target="n" data-glyph="46,1" class="i field">_htmlOtherOpenableElements</a>;
+
+        <span class="c">// list of html empty element names</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="b4ade7af09e566f5" href="../R/b4ade7af09e566f5.html" target="n" data-glyph="46,1" class="i field">_htmlEmptyElements</a>;
+
+        <span class="c">// names of html elements for which closing tags are optional, and close when the outer nested element closes</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="d579b136b694d7b9" href="../R/d579b136b694d7b9.html" target="n" data-glyph="46,1" class="i field">_htmlElementsClosingOnParentElementEnd</a>;
+
+        <span class="c">// names of elements that close certain optional closing tag elements when they start</span>
+        
+        <span class="c">// names of elements closing the colgroup element</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="7df0869b88bf57ad" href="../R/7df0869b88bf57ad.html" target="n" data-glyph="46,1" class="i field">_htmlElementsClosingColgroup</a>;
+
+        <span class="c">// names of elements closing the dd element</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="7c4a8c2e017fdf25" href="../R/7c4a8c2e017fdf25.html" target="n" data-glyph="46,1" class="i field">_htmlElementsClosingDD</a>;
+
+        <span class="c">// names of elements closing the dt element</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="6862e088d71932c2" href="../R/6862e088d71932c2.html" target="n" data-glyph="46,1" class="i field">_htmlElementsClosingDT</a>;
+
+        <span class="c">// names of elements closing the li element</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="203b00ffc5865e47" href="../R/203b00ffc5865e47.html" target="n" data-glyph="46,1" class="i field">_htmlElementsClosingLI</a>;
+
+        <span class="c">// names of elements closing the tbody element</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="bc9f72d97e43f4ca" href="../R/bc9f72d97e43f4ca.html" target="n" data-glyph="46,1" class="i field">_htmlElementsClosingTbody</a>;
+
+        <span class="c">// names of elements closing the td element</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="7f4b13896d8315d0" href="../R/7f4b13896d8315d0.html" target="n" data-glyph="46,1" class="i field">_htmlElementsClosingTD</a>;
+
+        <span class="c">// names of elements closing the tfoot element</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="7dab7832ceee853e" href="../R/7dab7832ceee853e.html" target="n" data-glyph="46,1" class="i field">_htmlElementsClosingTfoot</a>;
+
+        <span class="c">// names of elements closing thead element</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="4e24d8cb70221365" href="../R/4e24d8cb70221365.html" target="n" data-glyph="46,1" class="i field">_htmlElementsClosingThead</a>;
+
+        <span class="c">// names of elements closing the th element</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="1b374385542efa30" href="../R/1b374385542efa30.html" target="n" data-glyph="46,1" class="i field">_htmlElementsClosingTH</a>;
+
+        <span class="c">// names of elements closing the tr element</span>
+        <b>private static</b> <span class="t t">ArrayList</span> <a id="ec1e27f4e105c14f" href="../R/ec1e27f4e105c14f.html" target="n" data-glyph="46,1" class="i field">_htmlElementsClosingTR</a>;
+
+        <span class="c">// html character entities hashtable</span>
+        <b>private static</b> <span class="t t">Hashtable</span> <a id="86881718d6a161c3" href="../R/86881718d6a161c3.html" target="n" data-glyph="46,1" class="i field">_htmlCharacterEntities</a>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Private Fields
+    }
+}
+
+</pre></td></tr></table></div></body></html>

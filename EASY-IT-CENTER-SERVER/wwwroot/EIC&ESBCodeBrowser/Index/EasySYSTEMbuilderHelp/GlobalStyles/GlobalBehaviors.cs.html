@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html><head><title>GlobalBehaviors.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(75);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasySYSTEMbuilderHelp/GlobalStyles/GlobalBehaviors.cs" target="_top">GlobalStyles\GlobalBehaviors.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasySYSTEMbuilderHelp" target="_top">HelpProjects\EasySYSTEMbuilderHelp\EasySYSTEMbuilderHelp.vbproj</a> (EasySYSTEMbuilderHelp)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i">EasyITSystemCenter</span>.<span class="i">Properties</span>;
+<b>using</b> <span class="i">System</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Collections</span>.<span class="i">Generic</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Controls</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Controls</span>.<span class="i">Primitives</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Interactivity</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Markup</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Media</span>;
+ 
+<b>namespace</b> <span class="i n">EasyITSystemCenter</span>.<span class="i n">ProgramaticXamlBehaviors</span> {
+ 
+ 
+    /// &lt;<span class="i">summary</span>&gt;
+    /// <span class="i">TextBox</span> <span class="i">Behavior</span> <span class="i">SelectAll</span> <b>on</b> <span class="i">Focus</span>
+    ///
+    /// <span class="i">Example</span> <b>of</b> <span class="i">Link</span> <b>in</b> <span class="i">XAML</span>
+    /// <span class="i">xmlns</span>:<span class="i">behaviors</span>=<span class="s">&quot;clr-namespace:EasyITSystemCenter.ProgramaticXamlBehaviors&quot;</span>
+    /// <b>in</b> <span class="i">TextBox</span> <span class="i">Add</span> <span class="i">behaviors</span>:<span class="i">TextBoxBehavior</span>.<span class="i">SelectAllTextOnFocus</span>=<span class="s">&quot;True&quot;</span>
+    /// &lt;/<span class="i">summary</span>&gt;
+    <b>public class</b> <a id="218f2df76b368f2b" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="25af0ae087d7ef28">TextBoxBehavior</span></a> : <span class="i">Behavior</span>&lt;<span class="i">TextBox</span>&gt; {
+ 
+        <b>public static</b> <a id="50d7fe983b70c760" href="../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">bool</a> <span class="i">GetSelectAllTextOnFocus</span>(<span class="i">TextBox</span> <span class="i">textBox</span>) {
+            <b>return</b> (<span class="i">bool</span>)<span class="i">textBox</span>.<span class="i">GetValue</span>(<span class="i">SelectAllTextOnFocusProperty</span>);
+        }
+ 
+        <b>public static</b> <a id="ee15f044a0e6f8b3" href="../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">void</a> <span class="i">SetSelectAllTextOnFocus</span>(<span class="i">TextBox</span> <span class="i">textBox</span>, <span class="i">bool</span> <span class="i">value</span>) {
+            <span class="i">textBox</span>.<span class="i">SetValue</span>(<span class="i">SelectAllTextOnFocusProperty</span>, <span class="i">value</span>);
+        }
+ 
+        <b>public static readonly</b> <a id="c26a508d8393d264" href="../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">DependencyProperty</a> <span class="i">SelectAllTextOnFocusProperty</span> =
+            <span class="i">DependencyProperty</span>.<span class="i">RegisterAttached</span>(
+                <span class="s">&quot;SelectAllTextOnFocus&quot;</span>,
+                <b>typeof</b>(<span class="i">bool</span>),
+                <b>typeof</b>(<span class="i">TextBoxBehavior</span>),
+                <b>new</b> <span class="i">UIPropertyMetadata</span>(<b>false</b>, <span class="i">OnSelectAllTextOnFocusChanged</span>));
+ 
+        <b>private static</b> <a id="ee15f044a0e6f8b3" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">OnSelectAllTextOnFocusChanged</span>(<span class="i">DependencyObject</span> <span class="i">d</span>, <span class="i">DependencyPropertyChangedEventArgs</span> <span class="i">e</span>) {
+            <span class="i">var</span> <a id="096b4e0b540051bd" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">textBox</a> = <span class="i">d</span> <b>as</b> <span class="i">TextBox</span>;
+            <b>if</b> (<span class="i">textBox</span> == <span class="i">null</span>) <b>return</b>;
+ 
+            <b>if</b> (<span class="i">e</span>.<span class="i">NewValue</span> <b>is</b> <span class="i">bool</span> == <b>false</b>) <b>return</b>;
+ 
+            <b>if</b> ((<span class="i">bool</span>)<span class="i">e</span>.<span class="i">NewValue</span>) {
+                <span class="i">textBox</span>.<span class="i">GotFocus</span> += <span class="i">SelectAll</span>;
+                <span class="i">textBox</span>.<span class="i">PreviewMouseDown</span> += <span class="i">IgnoreMouseButton</span>;
+            }
+            <b>else</b> {
+                <span class="i">textBox</span>.<span class="i">GotFocus</span> -= <span class="i">SelectAll</span>;
+                <span class="i">textBox</span>.<span class="i">PreviewMouseDown</span> -= <span class="i">IgnoreMouseButton</span>;
+            }
+        }
+ 
+        <b>private static</b> <a id="ee15f044a0e6f8b3" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">SelectAll</span>(<b>object</b> <span class="i">sender</span>, <span class="i">RoutedEventArgs</span> <span class="i">e</span>) {
+            <span class="i">var</span> <a id="096b4e0b540051bd" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">textBox</a> = <span class="i">e</span>.<span class="i">OriginalSource</span> <b>as</b> <span class="i">TextBox</span>;
+            <b>if</b> (<span class="i">textBox</span> == <span class="i">null</span>) <b>return</b>;
+            <span class="i">textBox</span>.<span class="i">SelectAll</span>();
+        }
+ 
+        <b>private static</b> <a id="ee15f044a0e6f8b3" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">IgnoreMouseButton</span>(<b>object</b> <span class="i">sender</span>, <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Input</span>.<span class="i">MouseButtonEventArgs</span> <span class="i">e</span>) {
+            <span class="i">var</span> <a id="096b4e0b540051bd" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">textBox</a> = <span class="i">sender</span> <b>as</b> <span class="i">TextBox</span>;
+            <b>if</b> (<span class="i">textBox</span> == <span class="i">null</span> || <span class="i">textBox</span>.<span class="i">IsKeyboardFocusWithin</span>) <b>return</b>;
+ 
+            <span class="i">e</span>.<span class="i">Handled</span> = <b>true</b>;
+            <span class="i">textBox</span>.<span class="i">Focus</span>();
+        }
+    }
+ 
+ 
+ 
+  
+ 
+   
+   
+}</pre></td></tr></table></div></body></html>

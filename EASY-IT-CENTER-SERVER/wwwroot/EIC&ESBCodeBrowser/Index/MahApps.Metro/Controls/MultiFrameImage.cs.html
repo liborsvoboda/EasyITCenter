@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html><head><title>MultiFrameImage.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(96);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/MultiFrameImage.cs" target="_top">Controls\MultiFrameImage.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <b>public class</b> <a id="868c38087a566f19" href="../R/868c38087a566f19.html" target="n" data-glyph="0,0" class="t t"><span id="cbdbe516d8a5344f">MultiFrameImage</span></a> : <a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="t t">Image</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#3297ac9223d9cdfb" class="i property">MultiFrameImageMode</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="723e24a5b2b2038f" href="../R/723e24a5b2b2038f.html" target="n" data-glyph="42,1" class="i field">MultiFrameImageModeProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#3297ac9223d9cdfb" class="i property">MultiFrameImageMode</a>),
+                                          <b>typeof</b>(<a href="#1098d6b88bc8902c" class="t t">MultiFrameImageMode</a>),
+                                          <b>typeof</b>(<a href="#868c38087a566f19" class="t t">MultiFrameImage</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<a href="#1098d6b88bc8902c" class="t t">MultiFrameImageMode</a>.<a href="#d02421a3a749a559" class="i field">ScaleDownLargerFrame</a>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the mode for the rendered image.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="#1098d6b88bc8902c" class="t t">MultiFrameImageMode</a> <a id="3297ac9223d9cdfb" href="../R/3297ac9223d9cdfb.html" target="n" data-glyph="102,1" class="i property">MultiFrameImageMode</a>
+        {
+            <b>get</b> =&gt; (<a href="#1098d6b88bc8902c" class="t t">MultiFrameImageMode</a>)<a href="#868c38087a566f19" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#723e24a5b2b2038f" class="i field">MultiFrameImageModeProperty</a>);
+            <b>set</b> =&gt; <a href="#868c38087a566f19" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#723e24a5b2b2038f" class="i field">MultiFrameImageModeProperty</a>, <b>value</b>);
+        }
+
+        <b>static</b> <a id="617e29f0887d6c0a" href="../R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">MultiFrameImage</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#f1b7f93e27aa8015" class="i field">SourceProperty</a>.<a href="@0@WindowsBase/A.html#fe43392fad81405d" class="i method">OverrideMetadata</a>(<b>typeof</b>(<a href="#868c38087a566f19" class="t t">MultiFrameImage</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#f0b5ca672c6f55d2" class="t constructor">FrameworkPropertyMetadata</a>(<a href="#df98a7438db681c1" class="i method">OnSourceChanged</a>));
+        }
+
+        <b>private static void</b> <a id="df98a7438db681c1" href="../R/df98a7438db681c1.html" target="n" data-glyph="76,1" class="i method">OnSourceChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <a href="#868c38087a566f19" class="k">var</a> <span id="r2 rd" class="r2 r">multiFrameImage</span> = (<a href="#868c38087a566f19" class="t t">MultiFrameImage</a>)<span class="r0 r">d</span>;
+            <span class="r2 r">multiFrameImage</span>.<a href="#8dc49bd247959bc7" class="i method">UpdateFrameList</a>();
+        }
+
+        <b>private readonly</b> <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="@0@PresentationCore/A.html#0423ed363f952960" class="t t">BitmapSource</a>&gt; <a id="635559045116b5c4" href="../R/635559045116b5c4.html" target="n" data-glyph="46,1" class="i field">frames</a> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<a href="@0@PresentationCore/A.html#0423ed363f952960" class="t t">BitmapSource</a>&gt;();
+
+        <b>private void</b> <a id="8dc49bd247959bc7" href="../R/8dc49bd247959bc7.html" target="n" data-glyph="76,1" class="i method">UpdateFrameList</a>()
+        {
+            <a href="#868c38087a566f19" class="k">this</a>.<a href="#635559045116b5c4" class="i field">frames</a>.<a href="@0@mscorlib/A.html#ca7bce81a50b0aeb" class="i method">Clear</a>();
+
+            <a href="@0@PresentationCore/A.html#85c70b93d5ea8a3b" class="k">var</a> <span id="r3 rd" class="r3 r">decoder</span> = (<a href="#868c38087a566f19" class="k">this</a>.<a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> <b>as</b> <a href="@0@PresentationCore/A.html#bad013e46489de54" class="t t">BitmapFrame</a>)?.<a href="@0@PresentationCore/A.html#c1ea59e4962017bd" class="i property">Decoder</a>;
+            <b>if</b> (<span class="r3 r">decoder</span> <b>is null</b> || <span class="r3 r">decoder</span>.<a href="@0@PresentationCore/A.html#ab0f1a0e8cde53f4" class="i property">Frames</a>.<a href="@0@mscorlib/A.html#7e2071514968aca1" class="i property">Count</a> == 0)
+            {
+                <b>return</b>;
+            }
+
+            <span class="c">// order all frames by size, take the frame with the highest color depth per size</span>
+            <a href="#868c38087a566f19" class="k">this</a>.<a href="#635559045116b5c4" class="i field">frames</a>.<a href="@0@mscorlib/A.html#e569d850a66a1771" class="i method">AddRange</a>(<span class="r3 r">decoder</span>
+                                 .<a href="@0@PresentationCore/A.html#ab0f1a0e8cde53f4" class="i property">Frames</a>
+                                 .<a href="@0@System.Core/A.html#a80c803cd6c25112" class="i method">GroupBy</a>(<span id="r4 rd" class="r4 r">f</span> =&gt; <span class="r4 r">f</span>.<a href="@0@PresentationCore/A.html#e88eaeb82217cab6" class="i property">PixelWidth</a> * <span class="r4 r">f</span>.<a href="@0@PresentationCore/A.html#0807be1f18d7aeef" class="i property">PixelHeight</a>)
+                                 .<a href="@0@System.Core/A.html#e449fbc07f49dc52" class="i method">OrderBy</a>(<span id="r5 rd" class="r5 r">g</span> =&gt; <span class="r5 r">g</span>.<a href="@0@System.Core/A.html#249797970861cc23" class="i property">Key</a>)
+                                 .<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>(<span id="r6 rd" class="r6 r">g</span> =&gt; <span class="r6 r">g</span>.<a href="@0@System.Core/A.html#7eec09816d04e761" class="i method">OrderByDescending</a>(<span id="r7 rd" class="r7 r">f</span> =&gt; <span class="r7 r">f</span>.<a href="@0@PresentationCore/A.html#fa5cb226c32ed3ed" class="i property">Format</a>.<a href="@0@PresentationCore/A.html#59299a1a19bc5fd9" class="i property">BitsPerPixel</a>).<a href="@0@System.Core/A.html#bc8ae402a61dd9d6" class="i method">First</a>())
+            );
+        }
+
+        <b>protected override void</b> <a id="12d4714a7c3f20e3" href="../R/12d4714a7c3f20e3.html" target="n" data-glyph="75,1" class="i method">OnRender</a>(<a href="@0@PresentationCore/A.html#e8d3760dcaccd8d8" class="t t">DrawingContext</a> <span id="r8 rd" class="r8 r">dc</span>)
+        {
+            <b>if</b> (<a href="#868c38087a566f19" class="k">this</a>.<a href="#635559045116b5c4" class="i field">frames</a>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a> == 0)
+            {
+                <a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="k">base</a>.<a href="@0@PresentationFramework/A.html#42efdd443a910188" class="i method">OnRender</a>(<span class="r8 r">dc</span>);
+                <b>return</b>;
+            }
+
+            <b>switch</b> (<a href="#868c38087a566f19" class="k">this</a>.<a href="#3297ac9223d9cdfb" class="i property">MultiFrameImageMode</a>)
+            {
+                <b>case</b> <a href="#1098d6b88bc8902c" class="t t">MultiFrameImageMode</a>.<a href="#d02421a3a749a559" class="i field">ScaleDownLargerFrame</a>:
+                    <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r9 rd" class="r9 r">minSize</span> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#e66bf1275e54a4bc" class="i method">Max</a>(<a href="#868c38087a566f19" class="k">this</a>.<a href="@0@PresentationCore/A.html#630885025f47613b" class="i property">RenderSize</a>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>, <a href="#868c38087a566f19" class="k">this</a>.<a href="@0@PresentationCore/A.html#630885025f47613b" class="i property">RenderSize</a>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>);
+                    <a href="@0@PresentationCore/A.html#0423ed363f952960" class="k">var</a> <span id="r10 rd" class="r10 r">minFrame</span> = <a href="#868c38087a566f19" class="k">this</a>.<a href="#635559045116b5c4" class="i field">frames</a>.<a href="@0@System.Core/A.html#b7e5965cab68b1cf" class="i method">FirstOrDefault</a>(<span id="r11 rd" class="r11 r">f</span> =&gt; <span class="r11 r">f</span>.<a href="@0@PresentationCore/A.html#fa4c13e2d0a42fff" class="i property">Width</a> &gt;= <span class="r9 r">minSize</span> &amp;&amp; <span class="r11 r">f</span>.<a href="@0@PresentationCore/A.html#d6a5cb6e52f2dd0d" class="i property">Height</a> &gt;= <span class="r9 r">minSize</span>) ?? <a href="#868c38087a566f19" class="k">this</a>.<a href="#635559045116b5c4" class="i field">frames</a>.<a href="@0@System.Core/A.html#75722fd194dc2e0e" class="i method">Last</a>();
+                    <span class="r8 r">dc</span>.<a href="@0@PresentationCore/A.html#ff877d4083c6ae89" class="i method">DrawImage</a>(<span class="r10 r">minFrame</span>, <b>new</b> <a href="@0@WindowsBase/A.html#299a3fd614724168" class="t constructor">Rect</a>(0, 0, <a href="#868c38087a566f19" class="k">this</a>.<a href="@0@PresentationCore/A.html#630885025f47613b" class="i property">RenderSize</a>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>, <a href="#868c38087a566f19" class="k">this</a>.<a href="@0@PresentationCore/A.html#630885025f47613b" class="i property">RenderSize</a>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>));
+                    <b>break</b>;
+                <b>case</b> <a href="#1098d6b88bc8902c" class="t t">MultiFrameImageMode</a>.<a href="#2c329461876df4d5" class="i field">NoScaleSmallerFrame</a>:
+                    <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r12 rd" class="r12 r">maxSize</span> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#e248b38c0156e9dd" class="i method">Min</a>(<a href="#868c38087a566f19" class="k">this</a>.<a href="@0@PresentationCore/A.html#630885025f47613b" class="i property">RenderSize</a>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>, <a href="#868c38087a566f19" class="k">this</a>.<a href="@0@PresentationCore/A.html#630885025f47613b" class="i property">RenderSize</a>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>);
+                    <a href="@0@PresentationCore/A.html#0423ed363f952960" class="k">var</a> <span id="r13 rd" class="r13 r">maxFrame</span> = <a href="#868c38087a566f19" class="k">this</a>.<a href="#635559045116b5c4" class="i field">frames</a>.<a href="@0@System.Core/A.html#3155d0589fd23593" class="i method">LastOrDefault</a>(<span id="r14 rd" class="r14 r">f</span> =&gt; <span class="r14 r">f</span>.<a href="@0@PresentationCore/A.html#fa4c13e2d0a42fff" class="i property">Width</a> &lt;= <span class="r12 r">maxSize</span> &amp;&amp; <span class="r14 r">f</span>.<a href="@0@PresentationCore/A.html#d6a5cb6e52f2dd0d" class="i property">Height</a> &lt;= <span class="r12 r">maxSize</span>) ?? <a href="#868c38087a566f19" class="k">this</a>.<a href="#635559045116b5c4" class="i field">frames</a>.<a href="@0@System.Core/A.html#bc8ae402a61dd9d6" class="i method">First</a>();
+                    <span class="r8 r">dc</span>.<a href="@0@PresentationCore/A.html#ff877d4083c6ae89" class="i method">DrawImage</a>(<span class="r13 r">maxFrame</span>, <b>new</b> <a href="@0@WindowsBase/A.html#299a3fd614724168" class="t constructor">Rect</a>((<a href="#868c38087a566f19" class="k">this</a>.<a href="@0@PresentationCore/A.html#630885025f47613b" class="i property">RenderSize</a>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a> - <span class="r13 r">maxFrame</span>.<a href="@0@PresentationCore/A.html#fa4c13e2d0a42fff" class="i property">Width</a>) / 2, (<a href="#868c38087a566f19" class="k">this</a>.<a href="@0@PresentationCore/A.html#630885025f47613b" class="i property">RenderSize</a>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a> - <span class="r13 r">maxFrame</span>.<a href="@0@PresentationCore/A.html#d6a5cb6e52f2dd0d" class="i property">Height</a>) / 2, <span class="r13 r">maxFrame</span>.<a href="@0@PresentationCore/A.html#fa4c13e2d0a42fff" class="i property">Width</a>, <span class="r13 r">maxFrame</span>.<a href="@0@PresentationCore/A.html#d6a5cb6e52f2dd0d" class="i property">Height</a>));
+                    <b>break</b>;
+                <b>default</b>:
+                    <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#337b690f0704f510" class="t constructor">ArgumentOutOfRangeException</a>();
+            }
+        }
+    }
+
+    <b>public enum</b> <a id="1098d6b88bc8902c" href="../R/1098d6b88bc8902c.html" target="n" data-glyph="18,0" class="t t"><span id="c0244ec26f5cdccf">MultiFrameImageMode</span></a>
+    {
+        <a id="d02421a3a749a559" href="../R/d02421a3a749a559.html" target="n" data-glyph="24,1" class="i field">ScaleDownLargerFrame</a>,
+        <a id="2c329461876df4d5" href="../R/2c329461876df4d5.html" target="n" data-glyph="24,1" class="i field">NoScaleSmallerFrame</a>,
+    }
+}</pre></td></tr></table></div></body></html>

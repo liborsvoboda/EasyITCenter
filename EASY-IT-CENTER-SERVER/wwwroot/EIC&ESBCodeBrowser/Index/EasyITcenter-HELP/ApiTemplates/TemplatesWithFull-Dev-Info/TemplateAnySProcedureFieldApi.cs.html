@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html><head><title>TemplateAnySProcedureFieldApi.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(84);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasyITcenter-HELP/ApiTemplates/TemplatesWithFull-Dev-Info/TemplateAnySProcedureFieldApi.cs" target="_top">ApiTemplates\TemplatesWithFull-Dev-Info\TemplateAnySProcedureFieldApi.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasyITcenter-HELP" target="_top">HelpProjects\EasyITcenter-HELP\EasyITcenter-HELP.csproj</a> (EasyITcenter-HELP)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">EASYDATACenter</span>.<span class="i n">DBModel</span>;
+ 
+<b>namespace</b> <span class="i n">EASYDATACenter</span>.<span class="i n">Controllers</span> {
+ 
+    [<span class="i">ApiController</span>]
+    [<span class="t">Route</span>(<span class="s">&quot;TemplateProcedure&quot;</span>)]
+    <b>public class</b> <a id="bd3a707f84fed5a8" href="../../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="e8785e2f756202b9">TemplateProcedureApi</span></a> : <span class="i">ControllerBase</span> {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> API With response from DATABASE STORED PROCEDURE Procedure use IN/OUT parameters In</span>
+        <span class="c">///</span><span class="c"> Database User must have right for Execute procedure</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">unlockCode</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">partNumber</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        [<span class="i">AllowAnonymous</span>]
+        [<span class="i">HttpGet</span>(<span class="s">&quot;/TemplateProcedure/{UnlockCode}/{PartNumber}&quot;</span>)]
+        <b>public async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="6e7413ded28c0faf" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetTemplateProcedure</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">unlockCode</span>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r1 rd" class="r1 r">partNumber</span>) {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r2 rd" class="r2 r">data</span> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a>; <span class="t t">List</span>&lt;<span class="i">SqlParameter</span>&gt; <span id="r3 rd" class="r3 r">parameters</span> = <b>new</b>(); <b>bool</b> <span id="r4 rd" class="r4 r">allowed</span> = <b>false</b>; <b>bool</b> <span id="r5 rd" class="r5 r">catched</span> = <b>false</b>;
+            <b>try</b> {
+                <b>if</b> (<span class="t t">HttpContext</span>.<span class="i">Connection</span>.<span class="i property">RemoteIpAddress</span> != <b>null</b>) {
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r6 rd" class="r6 r">clientIPAddr</span> = <span class="i n">System</span>.<span class="i n">Net</span>.<span class="t t">Dns</span>.<span class="i method">GetHostEntry</span>(<span class="t t">HttpContext</span>.<span class="i">Connection</span>.<span class="i property">RemoteIpAddress</span>).<span class="i property">AddressList</span>.<span class="i method">First</span>(<span id="r7 rd" class="r7 r">x</span> =&gt; <span class="r7 r">x</span>.<span class="i property">AddressFamily</span> == <span class="i n">System</span>.<span class="i n">Net</span>.<span class="i n">Sockets</span>.<span class="t t">AddressFamily</span>.<span class="i field">InterNetwork</span>).<span class="i method">ToString</span>();
+                    <b>if</b> (!<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r6 r">clientIPAddr</span>)) {
+                        <span class="r3 r">parameters</span> = <b>new</b> <span class="t constructor">List</span>&lt;<span class="i">SqlParameter</span>&gt; {
+                        <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@unlockCode&quot;</span>, <span class="i">Value</span> = <span class="r0 r">unlockCode</span> },
+                        <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@partNumber&quot;</span>, <span class="i">Value</span> = <span class="r1 r">partNumber</span> },
+                        <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@ipAddress&quot;</span>, <span class="i">Value</span> = <span class="r6 r">clientIPAddr</span> },
+                        <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@allowed&quot;</span> , <span class="i">Value</span> = <span class="r4 r">allowed</span>, <span class="i">Direction</span> = <span class="i n">System</span>.<span class="i n">Data</span>.<span class="t t">ParameterDirection</span>.<span class="i field">Output</span>} };
+ 
+                        <span class="r2 r">data</span> = <b>new</b> <span class="i">EASYDATACenterContext</span>().<span class="i">Database</span>.<span class="i">ExecuteSqlRaw</span>(<span class="s">&quot;exec CheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output&quot;</span>, <span class="r3 r">parameters</span>.<span class="i method">ToArray</span>()).<span class="i">ToString</span>();
+                        <span class="r4 r">allowed</span> = <b>bool</b>.<span class="i">Parse</span>(<span class="r3 r">parameters</span>[3].<span class="i">Value</span>.<span class="i">ToString</span>());
+                    }
+                }
+            } <b>catch</b> { <span class="r5 r">catched</span> = <b>true</b>; }
+            <b>try</b> {
+                <b>if</b> (<span class="r5 r">catched</span>) {
+                    <span class="r3 r">parameters</span> = <b>new</b> <span class="t constructor">List</span>&lt;<span class="i">SqlParameter</span>&gt; {
+                    <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@unlockCode&quot;</span>, <span class="i">Value</span> = <span class="r0 r">unlockCode</span> },
+                    <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@partNumber&quot;</span>, <span class="i">Value</span> = <span class="r1 r">partNumber</span> },
+                    <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@ipAddress&quot;</span>, <span class="i">Value</span> = <span class="s">&quot;Unknown&quot;</span> },
+                    <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@allowed&quot;</span> , <span class="i">Value</span> = <span class="r4 r">allowed</span>, <span class="i">Direction</span> = <span class="i n">System</span>.<span class="i n">Data</span>.<span class="t t">ParameterDirection</span>.<span class="i field">Output</span>} };
+ 
+                    <span class="r2 r">data</span> = <b>new</b> <span class="i">EASYDATACenterContext</span>().<span class="i">Database</span>.<span class="i">ExecuteSqlRaw</span>(<span class="s">&quot;exec CheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output&quot;</span>, <span class="r3 r">parameters</span>.<span class="i method">ToArray</span>()).<span class="i">ToString</span>();
+                    <span class="r4 r">allowed</span> = <b>bool</b>.<span class="i">Parse</span>(<span class="r3 r">parameters</span>[3].<span class="i">Value</span>.<span class="i">ToString</span>());
+                }
+            } <b>catch</b> { }
+            <b>return</b> <span class="i">JsonSerializer</span>.<span class="i">Serialize</span>(<span class="r4 r">allowed</span>);
+        }
+ 
+        [<span class="i">AllowAnonymous</span>]
+        [<span class="i">HttpPost</span>(<span class="s">&quot;TemplateProcedure&quot;</span>)]
+        [<span class="i">Consumes</span>(<span class="s">&quot;application/json&quot;</span>)]
+        <b>public async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="bfba4fc1f739070f" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">PostTemplateProcedure</a>([<span class="i">FromBody</span>] <span class="i">LicenseActivator</span> <span id="r8 rd" class="r8 r">record</span>) {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r9 rd" class="r9 r">data</span> = <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#c9f70a27facb27cf" class="i field">Empty</a>; <span class="t t">List</span>&lt;<span class="i">SqlParameter</span>&gt; <span id="r10 rd" class="r10 r">parameters</span> = <b>new</b>(); <b>bool</b> <span id="r11 rd" class="r11 r">allowed</span> = <b>false</b>; <b>bool</b> <span id="r12 rd" class="r12 r">catched</span> = <b>false</b>;
+            <b>try</b> {
+                <b>if</b> (<span class="t t">HttpContext</span>.<span class="i">Connection</span>.<span class="i property">RemoteIpAddress</span> != <b>null</b>) {
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r13 rd" class="r13 r">clientIPAddr</span> = <span class="i n">System</span>.<span class="i n">Net</span>.<span class="t t">Dns</span>.<span class="i method">GetHostEntry</span>(<span class="t t">HttpContext</span>.<span class="i">Connection</span>.<span class="i property">RemoteIpAddress</span>).<span class="i property">AddressList</span>.<span class="i method">First</span>(<span id="r14 rd" class="r14 r">x</span> =&gt; <span class="r14 r">x</span>.<span class="i property">AddressFamily</span> == <span class="i n">System</span>.<span class="i n">Net</span>.<span class="i n">Sockets</span>.<span class="t t">AddressFamily</span>.<span class="i field">InterNetwork</span>).<span class="i method">ToString</span>();
+                    <b>if</b> (!<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r13 r">clientIPAddr</span>)) {
+                        <span class="r10 r">parameters</span> = <b>new</b> <span class="t constructor">List</span>&lt;<span class="i">SqlParameter</span>&gt; {
+                        <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@unlockCode&quot;</span>, <span class="i">Value</span> = <span class="r8 r">record</span>.<span class="i">UnlockCode</span> },
+                        <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@partNumber&quot;</span>, <span class="i">Value</span> = <span class="r8 r">record</span>.<span class="i">PartNumber</span> },
+                        <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@ipAddress&quot;</span>, <span class="i">Value</span> = <span class="r13 r">clientIPAddr</span> },
+                        <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@allowed&quot;</span> , <span class="i">Value</span> = <span class="r11 r">allowed</span>, <span class="i">Direction</span> = <span class="i n">System</span>.<span class="i n">Data</span>.<span class="t t">ParameterDirection</span>.<span class="i field">Output</span>} };
+ 
+                        <span class="r9 r">data</span> = <b>new</b> <span class="i">EASYDATACenterContext</span>().<span class="i">Database</span>.<span class="i">ExecuteSqlRaw</span>(<span class="s">&quot;exec CheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output&quot;</span>, <span class="r10 r">parameters</span>.<span class="i method">ToArray</span>()).<span class="i">ToString</span>();
+                        <span class="r11 r">allowed</span> = <b>bool</b>.<span class="i">Parse</span>(<span class="r10 r">parameters</span>[3].<span class="i">Value</span>.<span class="i">ToString</span>());
+                    }
+                }
+            } <b>catch</b> { <span class="r12 r">catched</span> = <b>true</b>; }
+            <b>try</b> {
+                <b>if</b> (<span class="r12 r">catched</span>) {
+                    <span class="r10 r">parameters</span> = <b>new</b> <span class="t constructor">List</span>&lt;<span class="i">SqlParameter</span>&gt; {
+                        <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@unlockCode&quot;</span>, <span class="i">Value</span> = <span class="r8 r">record</span>.<span class="i">UnlockCode</span> },
+                        <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@partNumber&quot;</span>, <span class="i">Value</span> = <span class="r8 r">record</span>.<span class="i">PartNumber</span> },
+                        <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@ipAddress&quot;</span>, <span class="i">Value</span> = <span class="s">&quot;Unknown&quot;</span> },
+                        <b>new</b> <span class="i">SqlParameter</span> { <span class="i">ParameterName</span> = <span class="s">&quot;@allowed&quot;</span> , <span class="i">Value</span> = <span class="r11 r">allowed</span>, <span class="i">Direction</span> = <span class="i n">System</span>.<span class="i n">Data</span>.<span class="t t">ParameterDirection</span>.<span class="i field">Output</span>} };
+ 
+                    <span class="r9 r">data</span> = <b>new</b> <span class="i">EASYDATACenterContext</span>().<span class="i">Database</span>.<span class="i">ExecuteSqlRaw</span>(<span class="s">&quot;exec CheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output&quot;</span>, <span class="r10 r">parameters</span>.<span class="i method">ToArray</span>()).<span class="i">ToString</span>();
+                    <span class="r11 r">allowed</span> = <b>bool</b>.<span class="i">Parse</span>(<span class="r10 r">parameters</span>[3].<span class="i">Value</span>.<span class="i">ToString</span>());
+                }
+            } <b>catch</b> { }
+            <b>return</b> <span class="i">JsonSerializer</span>.<span class="i">Serialize</span>(<span class="r11 r">allowed</span>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

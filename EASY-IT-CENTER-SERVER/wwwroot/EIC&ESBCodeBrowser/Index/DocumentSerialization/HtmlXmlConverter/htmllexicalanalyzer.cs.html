@@ -1,0 +1,758 @@
+﻿<!DOCTYPE html>
+<html><head><title>htmllexicalanalyzer.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(749);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#DocumentSerialization/HtmlXmlConverter/htmllexicalanalyzer.cs" target="_top">HtmlXmlConverter\htmllexicalanalyzer.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#DocumentSerialization" target="_top">HelpProjects\WPF-MORE\Documents\Fixed Documents\DocumentSerialization\DocumentSerialization.csproj</a> (DocumentSerialization)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//---------------------------------------------------------------------------</span>
+<span class="c">// </span>
+<span class="c">// File: HtmlLexicalAnalyzer.cs</span>
+<span class="c">//</span>
+<span class="c">// Copyright (C) Microsoft Corporation.  All rights reserved.</span>
+<span class="c">//</span>
+<span class="c">// Description: Lexical analyzer for Html-to-Xaml converter</span>
+<span class="c">//</span>
+<span class="c">//---------------------------------------------------------------------------</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+
+<b>namespace</b> <span class="i n">DocumentSerialization</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> lexical analyzer class</span>
+    <span class="c">///</span><span class="c"> recognizes tokens as groups of characters separated by arbitrary amounts of whitespace</span>
+    <span class="c">///</span><span class="c"> also classifies tokens according to type</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>internal class</b> <a id="726110f5aeb3b1c0" href="../R/726110f5aeb3b1c0.html" target="n" data-glyph="2,0" class="t t">HtmlLexicalAnalyzer</a>
+    {
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Constructors</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructors
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> initializes the _inputStringReader member with the string to be read</span>
+        <span class="c">///</span><span class="c"> also sets initial values for _nextCharacterCode and _nextTokenType</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">inputTextString</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> text string to be parsed for xml content</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>internal</b> <a id="bcb79ea178324f32" href="../R/bcb79ea178324f32.html" target="n" data-glyph="74,1" class="t constructor">HtmlLexicalAnalyzer</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">inputTextString</span>)
+        {
+            <a href="#a65fb07de4e0cd17" class="i field">_inputStringReader</a> = <b>new</b> <span class="t constructor">StringReader</span>(<span class="r0 r">inputTextString</span>);
+            <a href="#ce6ab3fa5d43024b" class="i field">_nextCharacterCode</a> = 0;
+            <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> = <span class="s">&#39; &#39;</span>;
+            <a href="#e9e434b0986e2994" class="i field">_lookAheadCharacterCode</a> = <a href="#a65fb07de4e0cd17" class="i field">_inputStringReader</a>.<span class="i method">Read</span>();
+            <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> = (<b>char</b>)<a href="#e9e434b0986e2994" class="i field">_lookAheadCharacterCode</a>;
+            <a href="#7b343eb3f46187a7" class="i field">_previousCharacter</a> = <span class="s">&#39; &#39;</span>;
+            <a href="#326b50624ee1ed00" class="i field">_ignoreNextWhitespace</a> = <b>true</b>;
+            <a href="#5f92e1a5fe287416" class="i field">_nextToken</a> = <b>new</b> <a href="@1@System.Runtime/A.html#ec674e2123a44860" class="t constructor">StringBuilder</a>(100);
+            <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#c10740a05411f549" class="i field">Text</a>;
+            <span class="c">// read the first character so we have some value for the NextCharacter property</span>
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Constructors
+
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Internal methods</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Internal Methods
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> retrieves next recognizable token from input string </span>
+        <span class="c">///</span><span class="c"> and identifies its type</span>
+        <span class="c">///</span><span class="c"> if no valid token is found, the output parameters are set to null</span>
+        <span class="c">///</span><span class="c"> if end of stream is reached without matching any token, token type</span>
+        <span class="c">///</span><span class="c"> paramter is set to EOF</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal void</b> <a id="6171f04f1f3d5afe" href="../R/6171f04f1f3d5afe.html" target="n" data-glyph="74,1" class="i method">GetNextContentToken</a>()
+        {
+            <span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> != <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#40ad0846231926a5" class="i field">EOF</a>);
+            <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a> = 0;
+            <b>if</b> (<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a>)
+            {
+                <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#40ad0846231926a5" class="i field">EOF</a>;
+                <b>return</b>;
+            }
+
+            <b>if</b> (<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3f9c340d576fdfa3" class="i property">IsAtTagStart</a>)
+            {
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+
+                <b>if</b> (<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a> == <span class="s">&#39;/&#39;</span>)
+                {
+                    <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#e8eaef3c361184bc" class="i method">Append</a>(<span class="s">&quot;&lt;/&quot;</span>);
+                    <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#72f8ed1a3556ef7e" class="i field">ClosingTagStart</a>;
+
+                    <span class="c">// advance</span>
+                    <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                    <a href="#326b50624ee1ed00" class="i field">_ignoreNextWhitespace</a> = <b>false</b>; <span class="c">// Whitespaces after closing tags are significant</span>
+                }
+                <b>else</b>
+                {
+                    <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#f06f8fa2e3a59bf0" class="i field">OpeningTagStart</a>;
+                    <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#e8eaef3c361184bc" class="i method">Append</a>(<span class="s">&quot;&lt;&quot;</span>);
+                    <a href="#326b50624ee1ed00" class="i field">_ignoreNextWhitespace</a> = <b>true</b>; <span class="c">// Whitespaces after opening tags are insignificant</span>
+                }
+            }
+            <b>else</b> <b>if</b> (<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#9f761835131d0426" class="i property">IsAtDirectiveStart</a>)
+            {
+                <span class="c">// either a comment or CDATA</span>
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                <b>if</b> (<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;[&#39;</span>)
+                {
+                    <span class="c">// cdata</span>
+                    <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#2c816057f5cc8bf8" class="i method">ReadDynamicContent</a>();
+                }
+                <b>else</b> <b>if</b> (<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;-&#39;</span>)
+                {
+                    <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#a004c1406364fe5f" class="i method">ReadComment</a>();
+                }
+                <b>else</b>
+                {
+                    <span class="c">// neither a comment nor cdata, should be something like DOCTYPE</span>
+                    <span class="c">// skip till the next tag ender</span>
+                    <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#53275c54e0b11a39" class="i method">ReadUnknownDirective</a>();
+                }
+            }
+            <b>else</b>
+            {
+                <span class="c">// read text content, unless you encounter a tag</span>
+                <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#c10740a05411f549" class="i field">Text</a>;
+                <b>while</b> (!<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3f9c340d576fdfa3" class="i property">IsAtTagStart</a> &amp;&amp; !<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a> &amp;&amp; !<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#9f761835131d0426" class="i property">IsAtDirectiveStart</a>)
+                {
+                    <b>if</b> (<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a> == <span class="s">&#39;&lt;&#39;</span> &amp;&amp; !<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#51156a9e2d43dbf8" class="i property">IsNextCharacterEntity</a> &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;?&#39;</span>)
+                    {
+                        <span class="c">// ignore processing directive</span>
+                        <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#44be8f575a116a42" class="i method">SkipProcessingDirective</a>();
+                    }
+                    <b>else</b>
+                    {
+                        <b>if</b> (<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a> &lt;= <span class="s">&#39; &#39;</span>)
+                        {
+                            <span class="c">// TODO: Respect xml:preserve or its equivalents for whitespace processing</span>
+                            <b>if</b> (<a href="#326b50624ee1ed00" class="i field">_ignoreNextWhitespace</a>)
+                            {
+                                <span class="c">// Ignore repeated whitespaces</span>
+                            }
+                            <b>else</b>
+                            {
+                                <span class="c">// Treat any control character sequence as one whitespace</span>
+                                <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#a2e7c78d85807da5" class="i method">Append</a>(<span class="s">&#39; &#39;</span>);
+                            }
+                            <a href="#326b50624ee1ed00" class="i field">_ignoreNextWhitespace</a> = <b>true</b>; <span class="c">// and keep ignoring the following whitespaces</span>
+                        }
+                        <b>else</b>
+                        {
+                            <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#a2e7c78d85807da5" class="i method">Append</a>(<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a>);
+                            <a href="#326b50624ee1ed00" class="i field">_ignoreNextWhitespace</a> = <b>false</b>;
+                        }
+                        <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                    }
+                }
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Unconditionally returns a token which is one of: TagEnd, EmptyTagEnd, Name, Atom or EndOfStream</span>
+        <span class="c">///</span><span class="c"> Does not guarantee token reader advancing.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal void</b> <a id="2d43912ac2aae6a9" href="../R/2d43912ac2aae6a9.html" target="n" data-glyph="74,1" class="i method">GetNextTagToken</a>()
+        {
+            <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a> = 0;
+            <b>if</b> (<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a>)
+            {
+                <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#40ad0846231926a5" class="i field">EOF</a>;
+                <b>return</b>;
+            }
+
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#6136038a1e11aab1" class="i method">SkipWhiteSpace</a>();
+
+            <b>if</b> (<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a> == <span class="s">&#39;&gt;&#39;</span> &amp;&amp; !<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#51156a9e2d43dbf8" class="i property">IsNextCharacterEntity</a>)
+            {
+                <span class="c">// &amp;gt; should not end a tag, so make sure it&#39;s not an entity</span>
+                <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#19d1b2df1020ae2f" class="i field">TagEnd</a>;
+                <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#a2e7c78d85807da5" class="i method">Append</a>(<span class="s">&#39;&gt;&#39;</span>);
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                <span class="c">// Note: _ignoreNextWhitespace must be set appropriately on tag start processing</span>
+            }
+            <b>else</b> <b>if</b> (<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a> == <span class="s">&#39;/&#39;</span> &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;&gt;&#39;</span>)
+            {
+                <span class="c">// could be start of closing of empty tag</span>
+                <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#94ec740fa4a30b83" class="i field">EmptyTagEnd</a>;
+                <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#e8eaef3c361184bc" class="i method">Append</a>(<span class="s">&quot;/&gt;&quot;</span>);
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                <a href="#326b50624ee1ed00" class="i field">_ignoreNextWhitespace</a> = <b>false</b>; <span class="c">// Whitespace after no-scope tags are sifnificant</span>
+            }
+            <b>else</b> <b>if</b> (<a href="#7afe1707bb885ed4" class="i method">IsGoodForNameStart</a>(<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a>))
+            {
+                <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#61c7e5f93cda2e16" class="i field">Name</a>;
+
+                <span class="c">// starts a name</span>
+                <span class="c">// we allow character entities here</span>
+                <span class="c">// we do not throw exceptions here if end of stream is encountered</span>
+                <span class="c">// just stop and return whatever is in the token</span>
+                <span class="c">// if the parser is not expecting end of file after this it will call</span>
+                <span class="c">// the get next token function and throw an exception</span>
+                <b>while</b> (<a href="#5f665ac8fc07b7ea" class="i method">IsGoodForName</a>(<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a>) &amp;&amp; !<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a>)
+                {
+                    <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#a2e7c78d85807da5" class="i method">Append</a>(<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a>);
+                    <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                }
+            }
+            <b>else</b>
+            {
+                <span class="c">// Unexpected type of token for a tag. Reprot one character as Atom, expecting that HtmlParser will ignore it.</span>
+                <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#ef3f705039d25562" class="i field">Atom</a>;
+                <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#a2e7c78d85807da5" class="i method">Append</a>(<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a>);
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Unconditionally returns equal sign token. Even if there is no</span>
+        <span class="c">///</span><span class="c"> real equal sign in the stream, it behaves as if it were there.</span>
+        <span class="c">///</span><span class="c"> Does not guarantee token reader advancing.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal void</b> <a id="c319394503046655" href="../R/c319394503046655.html" target="n" data-glyph="74,1" class="i method">GetNextEqualSignToken</a>()
+        {
+            <span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> != <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#40ad0846231926a5" class="i field">EOF</a>);
+            <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a> = 0;
+
+            <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#a2e7c78d85807da5" class="i method">Append</a>(<span class="s">&#39;=&#39;</span>);
+            <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#db2ad012393f3a05" class="i field">EqualSign</a>;
+
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#6136038a1e11aab1" class="i method">SkipWhiteSpace</a>();
+
+            <b>if</b> (<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a> == <span class="s">&#39;=&#39;</span>)
+            {
+                <span class="c">// &#39;=&#39; is not in the list of entities, so no need to check for entities here</span>
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Unconditionally returns an atomic value for an attribute</span>
+        <span class="c">///</span><span class="c"> Even if there is no appropriate token it returns Atom value</span>
+        <span class="c">///</span><span class="c"> Does not guarantee token reader advancing.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal void</b> <a id="e5c1535f4a5bd807" href="../R/e5c1535f4a5bd807.html" target="n" data-glyph="74,1" class="i method">GetNextAtomToken</a>()
+        {
+            <span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> != <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#40ad0846231926a5" class="i field">EOF</a>);
+            <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a> = 0;
+
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#6136038a1e11aab1" class="i method">SkipWhiteSpace</a>();
+
+            <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#ef3f705039d25562" class="i field">Atom</a>;
+
+            <b>if</b> ((<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a> == <span class="s">&#39;\&#39;&#39;</span> || <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a> == <span class="s">&#39;&quot;&#39;</span>) &amp;&amp; !<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#51156a9e2d43dbf8" class="i property">IsNextCharacterEntity</a>)
+            {
+                <b>char</b> <span id="r1 rd" class="r1 r">startingQuote</span> = <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a>;
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+
+                <span class="c">// Consume all characters between quotes</span>
+                <b>while</b> (!(<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a> == <span class="r1 r">startingQuote</span> &amp;&amp; !<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#51156a9e2d43dbf8" class="i property">IsNextCharacterEntity</a>) &amp;&amp; !<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a>)
+                {
+                    <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#a2e7c78d85807da5" class="i method">Append</a>(<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a>);
+                    <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                }
+                <b>if</b> (<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a> == <span class="r1 r">startingQuote</span>)
+                {
+                    <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                }
+
+                <span class="c">// complete the quoted value</span>
+                <span class="c">// NOTE: our recovery here is different from IE&#39;s</span>
+                <span class="c">// IE keeps reading until it finds a closing quote or end of file</span>
+                <span class="c">// if end of file, it treats current value as text</span>
+                <span class="c">// if it finds a closing quote at any point within the text, it eats everything between the quotes</span>
+                <span class="c">// TODO: Suggestion:</span>
+                <span class="c">// however, we could stop when we encounter end of file or an angle bracket of any kind</span>
+                <span class="c">// and assume there was a quote there</span>
+                <span class="c">// so the attribute value may be meaningless but it is never treated as text</span>
+            }
+            <b>else</b>
+            {
+                <b>while</b> (!<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a> &amp;&amp; !<a href="@1@System.Runtime/A.html#02f2b1a33b09362d" class="t t">Char</a>.<a href="@1@System.Runtime/A.html#cda2cc9b76535970" class="i method">IsWhiteSpace</a>(<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a>) &amp;&amp; <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a> != <span class="s">&#39;&gt;&#39;</span>)
+                {
+                    <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#a2e7c78d85807da5" class="i method">Append</a>(<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a>);
+                    <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                }
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Internal Methods
+
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Internal Properties</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Internal Properties
+
+        <b>internal</b> <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a> <a id="5c8f1b97780993b4" href="../R/5c8f1b97780993b4.html" target="n" data-glyph="104,1" class="i property">NextTokenType</a> =&gt; <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a>;
+
+        <b>internal string</b> <a id="27ae9b5810cba18a" href="../R/27ae9b5810cba18a.html" target="n" data-glyph="104,1" class="i property">NextToken</a> =&gt; <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#5a97da49a158a3c9" class="i method">ToString</a>();
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Internal Properties
+
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Private methods</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Methods
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Advances a reading position by one character code</span>
+        <span class="c">///</span><span class="c"> and reads the next availbale character from a stream.</span>
+        <span class="c">///</span><span class="c"> This character becomes available as NextCharacter property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Throws InvalidOperationException if attempted to be called on EndOfStream</span>
+        <span class="c">///</span><span class="c"> condition.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="356f8684bbbd8d9f" href="../R/356f8684bbbd8d9f.html" target="n" data-glyph="76,1" class="i method">GetNextCharacter</a>()
+        {
+            <b>if</b> (<a href="#ce6ab3fa5d43024b" class="i field">_nextCharacterCode</a> == -1)
+            {
+                <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#265d72f49e915224" class="t constructor">InvalidOperationException</a>(<span class="s">&quot;GetNextCharacter method called at the end of a stream&quot;</span>);
+            }
+
+            <a href="#7b343eb3f46187a7" class="i field">_previousCharacter</a> = <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a>;
+
+            <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> = <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a>;
+            <a href="#ce6ab3fa5d43024b" class="i field">_nextCharacterCode</a> = <a href="#e9e434b0986e2994" class="i field">_lookAheadCharacterCode</a>;
+            <span class="c">// next character not an entity as of now</span>
+            <a href="#a410baf6c04f7baa" class="i field">_isNextCharacterEntity</a> = <b>false</b>;
+
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#c88686deaad8fe50" class="i method">ReadLookAheadCharacter</a>();
+
+            <b>if</b> (<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;&amp;&#39;</span>)
+            {
+                <b>if</b> (<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;#&#39;</span>)
+                {
+                    <span class="c">// numeric entity - parse digits - &amp;#DDDDD;</span>
+                    <b>int</b> <span id="r2 rd" class="r2 r">entityCode</span>;
+                    <span class="r2 r">entityCode</span> = 0;
+                    <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#c88686deaad8fe50" class="i method">ReadLookAheadCharacter</a>();
+
+                    <span class="c">// largest numeric entity is 7 characters</span>
+                    <b>for</b> (<b>int</b> <span id="r3 rd" class="r3 r">i</span> = 0; <span class="r3 r">i</span> &lt; 7 &amp;&amp; <a href="@1@System.Runtime/A.html#02f2b1a33b09362d" class="t t">Char</a>.<a href="@1@System.Runtime/A.html#041e77a953545d16" class="i method">IsDigit</a>(<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a>); <span class="r3 r">i</span>++)
+                    {
+                        <span class="r2 r">entityCode</span> = 10 * <span class="r2 r">entityCode</span> + (<a href="#e9e434b0986e2994" class="i field">_lookAheadCharacterCode</a> - (<b>int</b>)<span class="s">&#39;0&#39;</span>);
+                        <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#c88686deaad8fe50" class="i method">ReadLookAheadCharacter</a>();
+                    }
+                    <b>if</b> (<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;;&#39;</span>)
+                    {
+                        <span class="c">// correct format - advance</span>
+                        <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#c88686deaad8fe50" class="i method">ReadLookAheadCharacter</a>();
+                        <a href="#ce6ab3fa5d43024b" class="i field">_nextCharacterCode</a> = <span class="r2 r">entityCode</span>;
+
+                        <span class="c">// if this is out of range it will set the character to &#39;?&#39;</span>
+                        <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> = (<b>char</b>)<a href="#ce6ab3fa5d43024b" class="i field">_nextCharacterCode</a>;
+
+                        <span class="c">// as far as we are concerned, this is an entity</span>
+                        <a href="#a410baf6c04f7baa" class="i field">_isNextCharacterEntity</a> = <b>true</b>;
+                    }
+                    <b>else</b>
+                    {
+                        <span class="c">// not an entity, set next character to the current lookahread character</span>
+                        <span class="c">// we would have eaten up some digits</span>
+                        <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> = <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a>;
+                        <a href="#ce6ab3fa5d43024b" class="i field">_nextCharacterCode</a> = <a href="#e9e434b0986e2994" class="i field">_lookAheadCharacterCode</a>;
+                        <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#c88686deaad8fe50" class="i method">ReadLookAheadCharacter</a>();
+                        <a href="#a410baf6c04f7baa" class="i field">_isNextCharacterEntity</a> = <b>false</b>;
+                    }
+                }
+                <b>else</b> <b>if</b> (<a href="@1@System.Runtime/A.html#02f2b1a33b09362d" class="t t">Char</a>.<a href="@1@System.Runtime/A.html#b8204f6ff0a505a2" class="i method">IsLetter</a>(<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a>))
+                {
+                    <span class="c">// entity is written as a string</span>
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r4 rd" class="r4 r">entity</span> = <span class="s">&quot;&quot;</span>;
+
+                    <span class="c">// maximum length of string entities is 10 characters</span>
+                    <b>for</b> (<b>int</b> <span id="r5 rd" class="r5 r">i</span> = 0; <span class="r5 r">i</span> &lt; 10 &amp;&amp; (<a href="@1@System.Runtime/A.html#02f2b1a33b09362d" class="t t">Char</a>.<a href="@1@System.Runtime/A.html#b8204f6ff0a505a2" class="i method">IsLetter</a>(<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a>) || <a href="@1@System.Runtime/A.html#02f2b1a33b09362d" class="t t">Char</a>.<a href="@1@System.Runtime/A.html#041e77a953545d16" class="i method">IsDigit</a>(<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a>)); <span class="r5 r">i</span>++)
+                    {
+                        <span class="r4 r">entity</span> += <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a>;
+                        <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#c88686deaad8fe50" class="i method">ReadLookAheadCharacter</a>();
+                    }
+                    <b>if</b> (<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;;&#39;</span>)
+                    {
+                        <span class="c">// advance</span>
+                        <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#c88686deaad8fe50" class="i method">ReadLookAheadCharacter</a>();
+
+                        <b>if</b> (<a href="htmlschema.cs.html#9ea126cb1b0433ae" class="t t">HtmlSchema</a>.<a href="htmlschema.cs.html#3db2c277ed5d492b" class="i method">IsEntity</a>(<span class="r4 r">entity</span>))
+                        {
+                            <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> = <a href="htmlschema.cs.html#9ea126cb1b0433ae" class="t t">HtmlSchema</a>.<a href="htmlschema.cs.html#04f31b49bede4bed" class="i method">EntityCharacterValue</a>(<span class="r4 r">entity</span>);
+                            <a href="#ce6ab3fa5d43024b" class="i field">_nextCharacterCode</a> = (<b>int</b>)<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a>;
+                            <a href="#a410baf6c04f7baa" class="i field">_isNextCharacterEntity</a> = <b>true</b>;
+                        }
+                        <b>else</b>
+                        {
+                            <span class="c">// just skip the whole thing - invalid entity</span>
+                            <span class="c">// move on to the next character</span>
+                            <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> = <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a>;
+                            <a href="#ce6ab3fa5d43024b" class="i field">_nextCharacterCode</a> = <a href="#e9e434b0986e2994" class="i field">_lookAheadCharacterCode</a>;
+                            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#c88686deaad8fe50" class="i method">ReadLookAheadCharacter</a>();
+
+                            <span class="c">// not an entity</span>
+                            <a href="#a410baf6c04f7baa" class="i field">_isNextCharacterEntity</a> = <b>false</b>;
+                        }
+                    }
+                    <b>else</b>
+                    {
+                        <span class="c">// skip whatever we read after the ampersand</span>
+                        <span class="c">// set next character and move on</span>
+                        <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> = <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a>;
+                        <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#c88686deaad8fe50" class="i method">ReadLookAheadCharacter</a>();
+                        <a href="#a410baf6c04f7baa" class="i field">_isNextCharacterEntity</a> = <b>false</b>;
+                    }
+                }
+            }
+        }
+
+        <b>private void</b> <a id="c88686deaad8fe50" href="../R/c88686deaad8fe50.html" target="n" data-glyph="76,1" class="i method">ReadLookAheadCharacter</a>()
+        {
+            <b>if</b> (<a href="#e9e434b0986e2994" class="i field">_lookAheadCharacterCode</a> != -1)
+            {
+                <a href="#e9e434b0986e2994" class="i field">_lookAheadCharacterCode</a> = <a href="#a65fb07de4e0cd17" class="i field">_inputStringReader</a>.<span class="i method">Read</span>();
+                <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> = (<b>char</b>)<a href="#e9e434b0986e2994" class="i field">_lookAheadCharacterCode</a>;
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> skips whitespace in the input string</span>
+        <span class="c">///</span><span class="c"> leaves the first non-whitespace character available in the NextCharacter property</span>
+        <span class="c">///</span><span class="c"> this may be the end-of-file character, it performs no checking </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="6136038a1e11aab1" href="../R/6136038a1e11aab1.html" target="n" data-glyph="76,1" class="i method">SkipWhiteSpace</a>()
+        {
+            <span class="c">// TODO: handle character entities while processing comments, cdata, and directives</span>
+            <span class="c">// TODO: SUGGESTION: we could check if lookahead and previous characters are entities also</span>
+            <b>while</b> (<b>true</b>)
+            {
+                <b>if</b> (<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;&lt;&#39;</span> &amp;&amp; (<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;?&#39;</span> || <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;!&#39;</span>))
+                {
+                    <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+
+                    <b>if</b> (<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;[&#39;</span>)
+                    {
+                        <span class="c">// Skip CDATA block and DTDs(?)</span>
+                        <b>while</b> (!<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a> &amp;&amp; !(<a href="#7b343eb3f46187a7" class="i field">_previousCharacter</a> == <span class="s">&#39;]&#39;</span> &amp;&amp; <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;]&#39;</span> &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;&gt;&#39;</span>))
+                        {
+                            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                        }
+                        <b>if</b> (<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;&gt;&#39;</span>)
+                        {
+                            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                        }
+                    }
+                    <b>else</b>
+                    {
+                        <span class="c">// Skip processing instruction, comments</span>
+                        <b>while</b> (!<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a> &amp;&amp; <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> != <span class="s">&#39;&gt;&#39;</span>)
+                        {
+                            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                        }
+                        <b>if</b> (<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;&gt;&#39;</span>)
+                        {
+                            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                        }
+                    }
+                }
+
+
+                <b>if</b> (!<a href="@1@System.Runtime/A.html#02f2b1a33b09362d" class="t t">Char</a>.<a href="@1@System.Runtime/A.html#cda2cc9b76535970" class="i method">IsWhiteSpace</a>(<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a>))
+                {
+                    <b>break</b>;
+                }
+
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> checks if a character can be used to start a name</span>
+        <span class="c">///</span><span class="c"> if this check is true then the rest of the name can be read</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r6 r">character</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> character value to be checked</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> true if the character can be the first character in a name</span>
+        <span class="c">///</span><span class="c"> false otherwise</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private bool</b> <a id="7afe1707bb885ed4" href="../R/7afe1707bb885ed4.html" target="n" data-glyph="76,1" class="i method">IsGoodForNameStart</a>(<b>char</b> <span id="r6 rd" class="r6 r">character</span>) =&gt; <span class="r6 r">character</span> == <span class="s">&#39;_&#39;</span> || <a href="@1@System.Runtime/A.html#02f2b1a33b09362d" class="t t">Char</a>.<a href="@1@System.Runtime/A.html#b8204f6ff0a505a2" class="i method">IsLetter</a>(<span class="r6 r">character</span>);
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> checks if a character can be used as a non-starting character in a name</span>
+        <span class="c">///</span><span class="c"> uses the IsExtender and IsCombiningCharacter predicates to see</span>
+        <span class="c">///</span><span class="c"> if a character is an extender or a combining character</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">character</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> character to be checked for validity in a name</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> true if the character can be a valid part of a name</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private bool</b> <a id="5f665ac8fc07b7ea" href="../R/5f665ac8fc07b7ea.html" target="n" data-glyph="76,1" class="i method">IsGoodForName</a>(<b>char</b> <span id="r7 rd" class="r7 r">character</span>) =&gt; <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#7afe1707bb885ed4" class="i method">IsGoodForNameStart</a>(<span class="r7 r">character</span>) ||
+                <span class="r7 r">character</span> == <span class="s">&#39;.&#39;</span> ||
+                <span class="r7 r">character</span> == <span class="s">&#39;-&#39;</span> ||
+                <span class="r7 r">character</span> == <span class="s">&#39;:&#39;</span> ||
+                <a href="@1@System.Runtime/A.html#02f2b1a33b09362d" class="t t">Char</a>.<a href="@1@System.Runtime/A.html#041e77a953545d16" class="i method">IsDigit</a>(<span class="r7 r">character</span>) ||
+                <a href="#dd4c428bceb0107e" class="i method">IsCombiningCharacter</a>(<span class="r7 r">character</span>) ||
+                <a href="#5833403600c97dd5" class="i method">IsExtender</a>(<span class="r7 r">character</span>);
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> identifies a character as being a combining character, permitted in a name</span>
+        <span class="c">///</span><span class="c"> TODO: only a placeholder for now but later to be replaced with comparisons against</span>
+        <span class="c">///</span><span class="c"> the list of combining characters in the XML documentation</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">character</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> character to be checked</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> true if the character is a combining character, false otherwise</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private bool</b> <a id="dd4c428bceb0107e" href="../R/dd4c428bceb0107e.html" target="n" data-glyph="76,1" class="i method">IsCombiningCharacter</a>(<b>char</b> <span id="r8 rd" class="r8 r">character</span>) =&gt; <b>false</b>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> identifies a character as being an extender, permitted in a name</span>
+        <span class="c">///</span><span class="c"> TODO: only a placeholder for now but later to be replaced with comparisons against</span>
+        <span class="c">///</span><span class="c"> the list of extenders in the XML documentation</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">character</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> character to be checked</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> true if the character is an extender, false otherwise</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private bool</b> <a id="5833403600c97dd5" href="../R/5833403600c97dd5.html" target="n" data-glyph="76,1" class="i method">IsExtender</a>(<b>char</b> <span id="r9 rd" class="r9 r">character</span>) =&gt; <b>false</b>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> skips dynamic content starting with &#39;</span><span class="c">&lt;</span><span class="c">!</span><span class="c">[</span><span class="c">&#39;</span> <span class="c">and</span> <span class="c">ending</span> <span class="c">with</span> <span class="c">&#39;</span><span class="c">]</span><span class="c">&gt;</span><span class="c">&#39; </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="2c816057f5cc8bf8" href="../R/2c816057f5cc8bf8.html" target="n" data-glyph="76,1" class="i method">ReadDynamicContent</a>()
+        {
+            <span class="c">// verify that we are at dynamic content, which may include CDATA</span>
+            <span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="#7b343eb3f46187a7" class="i field">_previousCharacter</a> == <span class="s">&#39;&lt;&#39;</span> &amp;&amp; <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;!&#39;</span> &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;[&#39;</span>);
+
+            <span class="c">// Let&#39;s treat this as empty text</span>
+            <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#c10740a05411f549" class="i field">Text</a>;
+            <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a> = 0;
+
+            <span class="c">// advance twice, once to get the lookahead character and then to reach the start of the cdata</span>
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            
+            <span class="c">// NOTE: 10/12/2004: modified this function to check when called if&#39;s reading CDATA or something else</span>
+            <span class="c">// some directives may start with a &lt;![ and then have some data and they will just end with a ]&gt;</span>
+            <span class="c">// this function is modified to stop at the sequence ]&gt; and not ]]&gt;</span>
+            <span class="c">// this means that CDATA and anything else expressed in their own set of [] within the &lt;! [...]&gt;</span>
+            <span class="c">// directive cannot contain a ]&gt; sequence. However it is doubtful that cdata could contain such</span>
+            <span class="c">// sequence anyway, it probably stops at the first ]</span>
+            <b>while</b> (!(<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;]&#39;</span> &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;&gt;&#39;</span>) &amp;&amp; !<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a>)
+            {
+                <span class="c">// advance</span>
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            }
+
+            <b>if</b> (!<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a>)
+            {
+                <span class="c">// advance, first to the last &gt;</span>
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+
+                <span class="c">// then advance past it to the next character after processing directive</span>
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> skips comments starting with &#39;</span><span class="c">&lt;</span><span class="c">!</span><span class="c">-</span><span class="c">&#39;</span> <span class="c">and</span> <span class="c">ending</span> <span class="c">with</span> <span class="c">&#39;</span><span class="c">-</span><span class="c">-</span><span class="c">&gt;</span><span class="c">&#39; </span>
+        <span class="c">///</span><span class="c"> NOTE: 10/06/2004: processing changed, will now skip anything starting with</span>
+        <span class="c">///</span><span class="c"> the &quot;</span><span class="c">&lt;</span><span class="c">!</span><span class="c">-</span><span class="c">&quot;</span>  <span class="c">sequence</span> <span class="c">and</span> <span class="c">ending</span> <span class="c">in</span> <span class="c">&quot;</span><span class="c">!</span><span class="c">&gt;</span><span class="c">&quot; or &quot;-&gt;&quot;, because in practice many html pages do not</span>
+        <span class="c">///</span><span class="c"> use the full comment specifying conventions</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="a004c1406364fe5f" href="../R/a004c1406364fe5f.html" target="n" data-glyph="76,1" class="i method">ReadComment</a>()
+        {
+            <span class="c">// verify that we are at a comment</span>
+            <span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="#7b343eb3f46187a7" class="i field">_previousCharacter</a> == <span class="s">&#39;&lt;&#39;</span> &amp;&amp; <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;!&#39;</span> &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;-&#39;</span>);
+
+            <span class="c">// Initialize a token</span>
+            <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#c3b95e666d223e5f" class="i field">Comment</a>;
+            <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a> = 0;
+
+            <span class="c">// advance to the next character, so that to be at the start of comment value</span>
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>(); <span class="c">// get first &#39;-&#39;</span>
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>(); <span class="c">// get second &#39;-&#39;</span>
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>(); <span class="c">// get first character of comment content</span>
+ 
+            <b>while</b> (<b>true</b>)
+            {
+                <span class="c">// Read text until end of comment</span>
+                <span class="c">// Note that in many actual html pages comments end with &quot;!&gt;&quot; (while xml standard is &quot;--&gt;&quot;)</span>
+                <b>while</b> (!<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a> &amp;&amp; !(<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;-&#39;</span> &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;-&#39;</span> || <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;!&#39;</span> &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;&gt;&#39;</span>))
+                {
+                    <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#a2e7c78d85807da5" class="i method">Append</a>(<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#3092f3bbf9c4de0a" class="i property">NextCharacter</a>);
+                    <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                }
+
+                <span class="c">// Finish comment reading</span>
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+                <b>if</b> (<a href="#7b343eb3f46187a7" class="i field">_previousCharacter</a> == <span class="s">&#39;-&#39;</span> &amp;&amp; <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;-&#39;</span> &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;&gt;&#39;</span>)
+                {
+                    <span class="c">// Standard comment end. Eat it and exit the loop</span>
+                    <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>(); <span class="c">// get &#39;&gt;&#39;</span>
+                    <b>break</b>;
+                }
+                <b>else</b> <b>if</b> (<a href="#7b343eb3f46187a7" class="i field">_previousCharacter</a> == <span class="s">&#39;!&#39;</span> &amp;&amp; <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;&gt;&#39;</span>)
+                {
+                    <span class="c">// Nonstandard but possible comment end - &#39;!&gt;&#39;. Exit the loop</span>
+                    <b>break</b>;
+                }
+                <b>else</b>
+                {
+                    <span class="c">// Not an end. Save character and continue continue reading</span>
+                    <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#a2e7c78d85807da5" class="i method">Append</a>(<a href="#7b343eb3f46187a7" class="i field">_previousCharacter</a>);
+                    <b>continue</b>;
+                }
+            }
+
+            <span class="c">// Read end of comment combination</span>
+            <b>if</b> (<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;&gt;&#39;</span>)
+            {
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> skips past unknown directives that start with &quot;</span><span class="c">&lt;</span><span class="c">!</span><span class="c">&quot;</span> <span class="c">but</span> <span class="c">are</span> <span class="c">not</span> <span class="c">comments</span> <span class="c">or</span> <span class="c">Cdata</span>
+        <span class="c">///</span> <span class="c">ignores</span> <span class="c">content</span> <span class="c">of</span> <span class="c">such</span> <span class="c">directives</span> <span class="c">until</span> <span class="c">the</span> <span class="c">next</span> <span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&quot; character</span>
+        <span class="c">///</span><span class="c"> applies to directives such as DOCTYPE, etc that we do not presently support</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="53275c54e0b11a39" href="../R/53275c54e0b11a39.html" target="n" data-glyph="76,1" class="i method">ReadUnknownDirective</a>()
+        {
+            <span class="c">// verify that we are at an unknown directive</span>
+            <span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="#7b343eb3f46187a7" class="i field">_previousCharacter</a> == <span class="s">&#39;&lt;&#39;</span> &amp;&amp; <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;!&#39;</span> &amp;&amp; !(<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;-&#39;</span> || <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;[&#39;</span>));
+
+            <span class="c">// Let&#39;s treat this as empty text</span>
+            <a href="#edebfbd8b9003f1f" class="i field">_nextTokenType</a> = <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a>.<a href="htmltokentype.cs.html#c10740a05411f549" class="i field">Text</a>;
+            <a href="#5f92e1a5fe287416" class="i field">_nextToken</a>.<a href="@1@System.Runtime/A.html#7d7729bd88adac53" class="i property">Length</a> = 0;
+
+            <span class="c">// advance to the next character</span>
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+
+            <span class="c">// skip to the first tag end we find</span>
+            <b>while</b> (!(<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;&gt;&#39;</span> &amp;&amp; !<a href="#51156a9e2d43dbf8" class="i property">IsNextCharacterEntity</a>) &amp;&amp; !<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a>)
+            {
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            }
+
+            <b>if</b> (!<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a>)
+            {
+                <span class="c">// advance past the tag end</span>
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> skips processing directives starting with the characters &#39;</span><span class="unknownClassification">&lt;?</span><span class="unknownClassification">&#39; and ending with &#39;</span><span class="unknownClassification">?&gt;</span><span class="c">&#39; </span>
+        <span class="c">///</span><span class="c"> NOTE: 10/14/2004: IE also ends processing directives with a /&gt;, so this function is</span>
+        <span class="c">///</span><span class="c"> being modified to recognize that condition as well</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private void</b> <a id="44be8f575a116a42" href="../R/44be8f575a116a42.html" target="n" data-glyph="76,1" class="i method">SkipProcessingDirective</a>()
+        {
+            <span class="c">// verify that we are at a processing directive</span>
+            <span class="t t">Debug</span>.<span class="i method">Assert</span>(<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;&lt;&#39;</span> &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;?&#39;</span>);
+
+            <span class="c">// advance twice, once to get the lookahead character and then to reach the start of the drective</span>
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+
+            <b>while</b> (!((<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;?&#39;</span> || <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;/&#39;</span>) &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;&gt;&#39;</span>) &amp;&amp; !<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a>)
+            {
+                <span class="c">// advance</span>
+                <span class="c">// we don&#39;t need to check for entities here because &#39;?&#39; is not an entity</span>
+                <span class="c">// and even though &gt; is an entity there is no entity processing when reading lookahead character</span>
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            }
+
+            <b>if</b> (!<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#01533889e1991fa2" class="i property">IsAtEndOfStream</a>)
+            {
+                <span class="c">// advance, first to the last &gt;</span>
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+
+                <span class="c">// then advance past it to the next character after processing directive</span>
+                <a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#356f8684bbbd8d9f" class="i method">GetNextCharacter</a>();
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Private Methods
+
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Private Properties</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Properties
+
+        <b>private char</b> <a id="3092f3bbf9c4de0a" href="../R/3092f3bbf9c4de0a.html" target="n" data-glyph="106,1" class="i property">NextCharacter</a> =&gt; <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a>;
+
+        <b>private bool</b> <a id="01533889e1991fa2" href="../R/01533889e1991fa2.html" target="n" data-glyph="106,1" class="i property">IsAtEndOfStream</a> =&gt; <a href="#ce6ab3fa5d43024b" class="i field">_nextCharacterCode</a> == -1;
+
+        <b>private bool</b> <a id="3f9c340d576fdfa3" href="../R/3f9c340d576fdfa3.html" target="n" data-glyph="106,1" class="i property">IsAtTagStart</a> =&gt; <a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;&lt;&#39;</span> &amp;&amp; (<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;/&#39;</span> || <a href="#7afe1707bb885ed4" class="i method">IsGoodForNameStart</a>(<a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a>)) &amp;&amp; !<a href="#a410baf6c04f7baa" class="i field">_isNextCharacterEntity</a>;
+
+        <b>private bool</b> <a id="0b06ac087c979bab" href="../R/../../0000000000.html" target="n" data-glyph="106,1" class="i property">IsAtTagEnd</a> =&gt; (<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;&gt;&#39;</span> || (<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;/&#39;</span> &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;&gt;&#39;</span>)) &amp;&amp; !<a href="#a410baf6c04f7baa" class="i field">_isNextCharacterEntity</a>;
+
+        <b>private bool</b> <a id="9f761835131d0426" href="../R/9f761835131d0426.html" target="n" data-glyph="106,1" class="i property">IsAtDirectiveStart</a> =&gt; (<a href="#7735ec77aaf585b1" class="i field">_nextCharacter</a> == <span class="s">&#39;&lt;&#39;</span> &amp;&amp; <a href="#5d6fa24ee09d54de" class="i field">_lookAheadCharacter</a> == <span class="s">&#39;!&#39;</span> &amp;&amp; !<a href="#726110f5aeb3b1c0" class="k">this</a>.<a href="#51156a9e2d43dbf8" class="i property">IsNextCharacterEntity</a>);
+
+        <b>private bool</b> <a id="51156a9e2d43dbf8" href="../R/51156a9e2d43dbf8.html" target="n" data-glyph="106,1" class="i property">IsNextCharacterEntity</a> =&gt; <a href="#a410baf6c04f7baa" class="i field">_isNextCharacterEntity</a>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Private Properties
+
+        <span class="c">// ---------------------------------------------------------------------</span>
+        <span class="c">//</span>
+        <span class="c">// Private Fields</span>
+        <span class="c">//</span>
+        <span class="c">// ---------------------------------------------------------------------</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Fields
+
+        <span class="c">// string reader which will move over input text</span>
+        <b>private</b> <span class="t t">StringReader</span> <a id="a65fb07de4e0cd17" href="../R/a65fb07de4e0cd17.html" target="n" data-glyph="46,1" class="i field">_inputStringReader</a>;
+        <span class="c">// next character code read from input that is not yet part of any token</span>
+        <span class="c">// and the character it represents</span>
+        <b>private int</b> <a id="ce6ab3fa5d43024b" href="../R/ce6ab3fa5d43024b.html" target="n" data-glyph="46,1" class="i field">_nextCharacterCode</a>;
+        <b>private char</b> <a id="7735ec77aaf585b1" href="../R/7735ec77aaf585b1.html" target="n" data-glyph="46,1" class="i field">_nextCharacter</a>;
+        <b>private int</b> <a id="e9e434b0986e2994" href="../R/e9e434b0986e2994.html" target="n" data-glyph="46,1" class="i field">_lookAheadCharacterCode</a>;
+        <b>private char</b> <a id="5d6fa24ee09d54de" href="../R/5d6fa24ee09d54de.html" target="n" data-glyph="46,1" class="i field">_lookAheadCharacter</a>;
+        <b>private char</b> <a id="7b343eb3f46187a7" href="../R/7b343eb3f46187a7.html" target="n" data-glyph="46,1" class="i field">_previousCharacter</a>;
+        <b>private bool</b> <a id="326b50624ee1ed00" href="../R/326b50624ee1ed00.html" target="n" data-glyph="46,1" class="i field">_ignoreNextWhitespace</a>;
+        <b>private bool</b> <a id="a410baf6c04f7baa" href="../R/a410baf6c04f7baa.html" target="n" data-glyph="46,1" class="i field">_isNextCharacterEntity</a>;
+
+        <span class="c">// store token and type in local variables before copying them to output parameters</span>
+        <a href="@1@System.Runtime/A.html#adf60ee46ebd299f" class="t t">StringBuilder</a> <a id="5f92e1a5fe287416" href="../R/5f92e1a5fe287416.html" target="n" data-glyph="46,1" class="i field">_nextToken</a>;
+        <a href="htmltokentype.cs.html#e7c336f4ff7b384a" class="t t">HtmlTokenType</a> <a id="edebfbd8b9003f1f" href="../R/edebfbd8b9003f1f.html" target="n" data-glyph="46,1" class="i field">_nextTokenType</a>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span> Private Fields
+    }
+}
+</pre></td></tr></table></div></body></html>

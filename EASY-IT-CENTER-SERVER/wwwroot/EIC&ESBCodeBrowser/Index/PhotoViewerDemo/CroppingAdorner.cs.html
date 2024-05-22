@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<html><head><title>CroppingAdorner.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(173);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#PhotoViewerDemo/CroppingAdorner.cs" target="_top">CroppingAdorner.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#PhotoViewerDemo" target="_top">HelpProjects\WPF-MORE\Sample Applications\PhotoViewerDemo\PhotoViewerDemo.csproj</a> (PhotoViewerDemo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<span class="i n">Primitives</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+
+<b>namespace</b> <span class="i n">PhotoViewerDemo</span>
+{
+    <span class="c">// Adorner based on the ResizingAdorner in the SDK sample</span>
+    <b>public class</b> <a id="471cc8242c74501c" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">CroppingAdorner</a> : <a href="@0@PresentationFramework/A.html#77a0687d80209f70" class="t t">Adorner</a>
+    {
+        <b>private readonly</b> <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="t t">Thumb</a> <a id="4c0e88eb91536198" href="R/4c0e88eb91536198.html" target="n" data-glyph="46,1" class="i field">_bottomLeft</a>;
+        <b>private readonly</b> <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="t t">Thumb</a> <a id="a38e9d095ac51370" href="R/a38e9d095ac51370.html" target="n" data-glyph="46,1" class="i field">_bottomRight</a>;
+        <span class="c">// Cropping adorner uses Thumbs for visual elements.  </span>
+        <span class="c">// The Thumbs have built-in mouse input handling.</span>
+        <b>private readonly</b> <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="t t">Thumb</a> <a id="916215e5fd67fec5" href="R/916215e5fd67fec5.html" target="n" data-glyph="46,1" class="i field">_topLeft</a>;
+        <b>private readonly</b> <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="t t">Thumb</a> <a id="13917b8bd4bb5e1d" href="R/13917b8bd4bb5e1d.html" target="n" data-glyph="46,1" class="i field">_topRight</a>;
+        <span class="c">// To store and manage the adorner&#39;s visual children.</span>
+        <b>private readonly</b> <a href="@0@PresentationCore/A.html#1bafd2a0e01f3a5c" class="t t">VisualCollection</a> <a id="a464a9d4da3f5ce6" href="R/a464a9d4da3f5ce6.html" target="n" data-glyph="46,1" class="i field">_visualChildren</a>;
+        <span class="c">// Initialize the CroppingAdorner.</span>
+        <b>public</b> <a id="5b474d6903642145" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">CroppingAdorner</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r0 rd" class="r0 r">adornedElement</span>)
+            : <a href="@0@PresentationFramework/A.html#26547931ce09a781" class="k">base</a>(<span class="r0 r">adornedElement</span>)
+        {
+            <a href="#a464a9d4da3f5ce6" class="i field">_visualChildren</a> = <b>new</b> <a href="@0@PresentationCore/A.html#56c0428d88b78e26" class="t constructor">VisualCollection</a>(<a href="#471cc8242c74501c" class="k">this</a>);
+
+            <span class="c">// Call a helper method to initialize the Thumbs</span>
+            <span class="c">// with a customized cursors.</span>
+            <a href="#7eb33b263377c540" class="i method">BuildAdornerCorner</a>(<b>ref</b> <a href="#916215e5fd67fec5" class="i field">_topLeft</a>, <a href="@0@PresentationCore/A.html#09092748875d5e78" class="t t">Cursors</a>.<a href="@0@PresentationCore/A.html#779ecde26d1ca14b" class="i property">SizeNWSE</a>);
+            <a href="#7eb33b263377c540" class="i method">BuildAdornerCorner</a>(<b>ref</b> <a href="#13917b8bd4bb5e1d" class="i field">_topRight</a>, <a href="@0@PresentationCore/A.html#09092748875d5e78" class="t t">Cursors</a>.<a href="@0@PresentationCore/A.html#1d24e8286e816a6f" class="i property">SizeNESW</a>);
+            <a href="#7eb33b263377c540" class="i method">BuildAdornerCorner</a>(<b>ref</b> <a href="#4c0e88eb91536198" class="i field">_bottomLeft</a>, <a href="@0@PresentationCore/A.html#09092748875d5e78" class="t t">Cursors</a>.<a href="@0@PresentationCore/A.html#1d24e8286e816a6f" class="i property">SizeNESW</a>);
+            <a href="#7eb33b263377c540" class="i method">BuildAdornerCorner</a>(<b>ref</b> <a href="#a38e9d095ac51370" class="i field">_bottomRight</a>, <a href="@0@PresentationCore/A.html#09092748875d5e78" class="t t">Cursors</a>.<a href="@0@PresentationCore/A.html#779ecde26d1ca14b" class="i property">SizeNWSE</a>);
+
+            <span class="c">// Add handlers for resizing.</span>
+            <a href="#4c0e88eb91536198" class="i field">_bottomLeft</a>.<a href="@0@PresentationFramework/A.html#50365675c79d031a" class="i">DragDelta</a> += <a href="#1fdbb8da35f70c5b" class="i method">HandleBottomLeft</a>;
+            <a href="#a38e9d095ac51370" class="i field">_bottomRight</a>.<a href="@0@PresentationFramework/A.html#50365675c79d031a" class="i">DragDelta</a> += <a href="#9216cb8221eb837d" class="i method">HandleBottomRight</a>;
+            <a href="#916215e5fd67fec5" class="i field">_topLeft</a>.<a href="@0@PresentationFramework/A.html#50365675c79d031a" class="i">DragDelta</a> += <a href="#5d8dbc50652b79ee" class="i method">HandleTopLeft</a>;
+            <a href="#13917b8bd4bb5e1d" class="i field">_topRight</a>.<a href="@0@PresentationFramework/A.html#50365675c79d031a" class="i">DragDelta</a> += <a href="#c0a580abd1657d1b" class="i method">HandleTopRight</a>;
+        }
+
+        <span class="c">// Override the VisualChildrenCount and GetVisualChild properties to interface with </span>
+        <span class="c">// the adorner&#39;s visual collection.</span>
+        <b>protected override int</b> <a id="81aeecc4b6713dec" href="R/81aeecc4b6713dec.html" target="n" data-glyph="105,1" class="i property">VisualChildrenCount</a> =&gt; <a href="#a464a9d4da3f5ce6" class="i field">_visualChildren</a>.<a href="@0@PresentationCore/A.html#b32c1aef1da01613" class="i property">Count</a>;
+        <span class="c">// Handler for resizing from the bottom-right.</span>
+        <b>private void</b> <a id="9216cb8221eb837d" href="R/9216cb8221eb837d.html" target="n" data-glyph="76,1" class="i method">HandleBottomRight</a>(<b>object</b> <span id="r1 rd" class="r1 r">sender</span>, <a href="@0@PresentationFramework/A.html#8c5a24b56394fdf7" class="t t">DragDeltaEventArgs</a> <span id="r2 rd" class="r2 r">args</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="k">var</a> <span id="r3 rd" class="r3 r">adornedElement</span> = <a href="@0@PresentationFramework/A.html#5a368ecde44c949f" class="i property">AdornedElement</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+            <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="k">var</a> <span id="r4 rd" class="r4 r">hitThumb</span> = <span class="r1 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="t t">Thumb</a>;
+
+            <b>if</b> (<span class="r3 r">adornedElement</span> == <b>null</b> || <span class="r4 r">hitThumb</span> == <b>null</b>) <b>return</b>;
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="k">var</a> <span id="r5 rd" class="r5 r">parentElement</span> = <span class="r3 r">adornedElement</span>.<a href="@0@PresentationFramework/A.html#f649907cbc82d1a0" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+
+            <span class="c">// Ensure that the Width and Height are properly initialized after the resize.</span>
+            <a href="#b38b9e56dfc58ac4" class="i method">EnforceSize</a>(<span class="r3 r">adornedElement</span>);
+
+            <span class="c">// Change the size by the amount the user drags the mouse, as long as it&#39;s larger </span>
+            <span class="c">// than the width or height of an adorner, respectively.</span>
+            <span class="c">//adornedElement.Width = Math.Max(adornedElement.Width + args.HorizontalChange, hitThumb.DesiredSize.Width);</span>
+            <span class="c">//adornedElement.Height = Math.Max(args.VerticalChange + adornedElement.Height, hitThumb.DesiredSize.Height);</span>
+        }
+
+        <span class="c">// Handler for resizing from the bottom-left.</span>
+        <b>private void</b> <a id="1fdbb8da35f70c5b" href="R/1fdbb8da35f70c5b.html" target="n" data-glyph="76,1" class="i method">HandleBottomLeft</a>(<b>object</b> <span id="r6 rd" class="r6 r">sender</span>, <a href="@0@PresentationFramework/A.html#8c5a24b56394fdf7" class="t t">DragDeltaEventArgs</a> <span id="r7 rd" class="r7 r">args</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="k">var</a> <span id="r8 rd" class="r8 r">adornedElement</span> = <a href="@0@PresentationFramework/A.html#5a368ecde44c949f" class="i property">AdornedElement</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+            <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="k">var</a> <span id="r9 rd" class="r9 r">hitThumb</span> = <span class="r6 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="t t">Thumb</a>;
+
+            <b>if</b> (<span class="r8 r">adornedElement</span> == <b>null</b> || <span class="r9 r">hitThumb</span> == <b>null</b>) <b>return</b>;
+
+            <span class="c">// Ensure that the Width and Height are properly initialized after the resize.</span>
+            <a href="#b38b9e56dfc58ac4" class="i method">EnforceSize</a>(<span class="r8 r">adornedElement</span>);
+
+            <span class="c">// Change the size by the amount the user drags the mouse, as long as it&#39;s larger </span>
+            <span class="c">// than the width or height of an adorner, respectively.</span>
+            <span class="c">//adornedElement.Width = Math.Max(adornedElement.Width - args.HorizontalChange, hitThumb.DesiredSize.Width);</span>
+            <span class="c">//adornedElement.Height = Math.Max(args.VerticalChange + adornedElement.Height, hitThumb.DesiredSize.Height);</span>
+        }
+
+        <span class="c">// Handler for resizing from the top-right.</span>
+        <b>private void</b> <a id="c0a580abd1657d1b" href="R/c0a580abd1657d1b.html" target="n" data-glyph="76,1" class="i method">HandleTopRight</a>(<b>object</b> <span id="r10 rd" class="r10 r">sender</span>, <a href="@0@PresentationFramework/A.html#8c5a24b56394fdf7" class="t t">DragDeltaEventArgs</a> <span id="r11 rd" class="r11 r">args</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="k">var</a> <span id="r12 rd" class="r12 r">adornedElement</span> = <a href="@0@PresentationFramework/A.html#5a368ecde44c949f" class="i property">AdornedElement</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+            <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="k">var</a> <span id="r13 rd" class="r13 r">hitThumb</span> = <span class="r10 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="t t">Thumb</a>;
+
+            <b>if</b> (<span class="r12 r">adornedElement</span> == <b>null</b> || <span class="r13 r">hitThumb</span> == <b>null</b>) <b>return</b>;
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="k">var</a> <span id="r14 rd" class="r14 r">parentElement</span> = <span class="r12 r">adornedElement</span>.<a href="@0@PresentationFramework/A.html#f649907cbc82d1a0" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+
+            <span class="c">// Ensure that the Width and Height are properly initialized after the resize.</span>
+            <a href="#b38b9e56dfc58ac4" class="i method">EnforceSize</a>(<span class="r12 r">adornedElement</span>);
+
+            <span class="c">// Change the size by the amount the user drags the mouse, as long as it&#39;s larger </span>
+            <span class="c">// than the width or height of an adorner, respectively.</span>
+            <span class="c">//adornedElement.Width = Math.Max(adornedElement.Width + args.HorizontalChange, hitThumb.DesiredSize.Width);</span>
+            <span class="c">//adornedElement.Height = Math.Max(adornedElement.Height - args.VerticalChange, hitThumb.DesiredSize.Height);</span>
+        }
+
+        <span class="c">// Handler for resizing from the top-left.</span>
+        <b>private void</b> <a id="5d8dbc50652b79ee" href="R/5d8dbc50652b79ee.html" target="n" data-glyph="76,1" class="i method">HandleTopLeft</a>(<b>object</b> <span id="r15 rd" class="r15 r">sender</span>, <a href="@0@PresentationFramework/A.html#8c5a24b56394fdf7" class="t t">DragDeltaEventArgs</a> <span id="r16 rd" class="r16 r">args</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="k">var</a> <span id="r17 rd" class="r17 r">adornedElement</span> = <a href="@0@PresentationFramework/A.html#5a368ecde44c949f" class="i property">AdornedElement</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+            <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="k">var</a> <span id="r18 rd" class="r18 r">hitThumb</span> = <span class="r15 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="t t">Thumb</a>;
+
+            <b>if</b> (<span class="r17 r">adornedElement</span> == <b>null</b> || <span class="r18 r">hitThumb</span> == <b>null</b>) <b>return</b>;
+
+            <span class="c">// Ensure that the Width and Height are properly initialized after the resize.</span>
+            <a href="#b38b9e56dfc58ac4" class="i method">EnforceSize</a>(<span class="r17 r">adornedElement</span>);
+
+            <span class="c">// Change the size by the amount the user drags the mouse, as long as it&#39;s larger </span>
+            <span class="c">// than the width or height of an adorner, respectively.</span>
+            <span class="c">//adornedElement.Width = Math.Max(adornedElement.Width - args.HorizontalChange, hitThumb.DesiredSize.Width);</span>
+            <span class="c">//adornedElement.Height = Math.Max(adornedElement.Height - args.VerticalChange, hitThumb.DesiredSize.Height);</span>
+        }
+
+        <span class="c">// Arrange the Adorners.</span>
+        <b>protected override</b> <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="t t">Size</a> <a id="36eb35d2834a2cc3" href="R/36eb35d2834a2cc3.html" target="n" data-glyph="75,1" class="i method">ArrangeOverride</a>(<a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="t t">Size</a> <span id="r19 rd" class="r19 r">finalSize</span>)
+        {
+            <span class="c">// desiredWidth and desiredHeight are the width and height of the element that&#39;s being adorned.  </span>
+            <span class="c">// These will be used to place the ResizingAdorner at the corners of the adorned element.  </span>
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r20 rd" class="r20 r">desiredWidth</span> = <a href="@0@PresentationFramework/A.html#5a368ecde44c949f" class="i property">AdornedElement</a>.<a href="@0@PresentationCore/A.html#32042c7c3b8912f8" class="i property">DesiredSize</a>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r21 rd" class="r21 r">desiredHeight</span> = <a href="@0@PresentationFramework/A.html#5a368ecde44c949f" class="i property">AdornedElement</a>.<a href="@0@PresentationCore/A.html#32042c7c3b8912f8" class="i property">DesiredSize</a>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>;
+            <span class="c">// adornerWidth &amp; adornerHeight are used for placement as well.</span>
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r22 rd" class="r22 r">adornerWidth</span> = <a href="@0@PresentationCore/A.html#32042c7c3b8912f8" class="i property">DesiredSize</a>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>;
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r23 rd" class="r23 r">adornerHeight</span> = <a href="@0@PresentationCore/A.html#32042c7c3b8912f8" class="i property">DesiredSize</a>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>;
+
+            <a href="#916215e5fd67fec5" class="i field">_topLeft</a>.<a href="@0@PresentationCore/A.html#db317f34429aad8f" class="i method">Arrange</a>(<b>new</b> <a href="@0@WindowsBase/A.html#299a3fd614724168" class="t constructor">Rect</a>(-<span class="r22 r">adornerWidth</span>/2, -<span class="r23 r">adornerHeight</span>/2, <span class="r22 r">adornerWidth</span>, <span class="r23 r">adornerHeight</span>));
+            <a href="#13917b8bd4bb5e1d" class="i field">_topRight</a>.<a href="@0@PresentationCore/A.html#db317f34429aad8f" class="i method">Arrange</a>(<b>new</b> <a href="@0@WindowsBase/A.html#299a3fd614724168" class="t constructor">Rect</a>(<span class="r20 r">desiredWidth</span> - <span class="r22 r">adornerWidth</span>/2, -<span class="r23 r">adornerHeight</span>/2, <span class="r22 r">adornerWidth</span>, <span class="r23 r">adornerHeight</span>));
+            <a href="#4c0e88eb91536198" class="i field">_bottomLeft</a>.<a href="@0@PresentationCore/A.html#db317f34429aad8f" class="i method">Arrange</a>(<b>new</b> <a href="@0@WindowsBase/A.html#299a3fd614724168" class="t constructor">Rect</a>(-<span class="r22 r">adornerWidth</span>/2, <span class="r21 r">desiredHeight</span> - <span class="r23 r">adornerHeight</span>/2, <span class="r22 r">adornerWidth</span>, <span class="r23 r">adornerHeight</span>));
+            <a href="#a38e9d095ac51370" class="i field">_bottomRight</a>.<a href="@0@PresentationCore/A.html#db317f34429aad8f" class="i method">Arrange</a>(<b>new</b> <a href="@0@WindowsBase/A.html#299a3fd614724168" class="t constructor">Rect</a>(<span class="r20 r">desiredWidth</span> - <span class="r22 r">adornerWidth</span>/2, <span class="r21 r">desiredHeight</span> - <span class="r23 r">adornerHeight</span>/2, <span class="r22 r">adornerWidth</span>,
+                <span class="r23 r">adornerHeight</span>));
+
+            <span class="c">// Return the final size.</span>
+            <b>return</b> <span class="r19 r">finalSize</span>;
+        }
+
+        <span class="c">// Helper method to instantiate the corner Thumbs, set the Cursor property, </span>
+        <span class="c">// set some appearance properties, and add the elements to the visual tree.</span>
+        <b>private void</b> <a id="7eb33b263377c540" href="R/7eb33b263377c540.html" target="n" data-glyph="76,1" class="i method">BuildAdornerCorner</a>(<b>ref</b> <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="t t">Thumb</a> <span id="r24 rd" class="r24 r">cornerThumb</span>, <a href="@0@PresentationCore/A.html#5b9a694442f6e209" class="t t">Cursor</a> <span id="r25 rd" class="r25 r">customizedCursor</span>)
+        {
+            <b>if</b> (<span class="r24 r">cornerThumb</span> != <b>null</b>) <b>return</b>;
+
+            <span class="r24 r">cornerThumb</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#3a34d53369917197" class="t constructor">Thumb</a> {<a href="@0@PresentationFramework/A.html#63634408e3c1872a" class="i property">Cursor</a> = <span class="r25 r">customizedCursor</span>};
+
+            <span class="c">// Set some arbitrary visual characteristics.</span>
+            <span class="r24 r">cornerThumb</span>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <span class="r24 r">cornerThumb</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = 10;
+            <span class="r24 r">cornerThumb</span>.<a href="@0@PresentationCore/A.html#7ca23bf037950fa0" class="i property">Opacity</a> = 0.40;
+            <span class="r24 r">cornerThumb</span>.<a href="@0@PresentationFramework/A.html#4e6ce8c1fbfefae7" class="i property">Background</a> = <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<a href="@0@PresentationCore/A.html#0584e1e7d7fb612c" class="t t">Colors</a>.<a href="@0@PresentationCore/A.html#0a04648e087d9540" class="i property">MediumBlue</a>);
+
+            <a href="#a464a9d4da3f5ce6" class="i field">_visualChildren</a>.<a href="@0@PresentationCore/A.html#dff6edaf55d463d6" class="i method">Add</a>(<span class="r24 r">cornerThumb</span>);
+        }
+
+        <span class="c">// This method ensures that the Widths and Heights are initialized.  Sizing to content produces</span>
+        <span class="c">// Width and Height values of Double.NaN.  Because this Adorner explicitly resizes, the Width and Height</span>
+        <span class="c">// need to be set first.  It also sets the maximum size of the adorned element.</span>
+        <b>private void</b> <a id="b38b9e56dfc58ac4" href="R/b38b9e56dfc58ac4.html" target="n" data-glyph="76,1" class="i method">EnforceSize</a>(<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r26 rd" class="r26 r">adornedElement</span>)
+        {
+            <b>if</b> (<span class="r26 r">adornedElement</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a>.<a href="@1@System.Runtime/A.html#bceeea32c8ba20a7" class="i method">Equals</a>(<b>double</b>.<a href="@1@System.Runtime/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>))
+                <span class="r26 r">adornedElement</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <span class="r26 r">adornedElement</span>.<a href="@0@PresentationCore/A.html#32042c7c3b8912f8" class="i property">DesiredSize</a>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>;
+            <b>if</b> (<span class="r26 r">adornedElement</span>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a>.<a href="@1@System.Runtime/A.html#bceeea32c8ba20a7" class="i method">Equals</a>(<b>double</b>.<a href="@1@System.Runtime/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>))
+                <span class="r26 r">adornedElement</span>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <span class="r26 r">adornedElement</span>.<a href="@0@PresentationCore/A.html#32042c7c3b8912f8" class="i property">DesiredSize</a>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>;
+
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="k">var</a> <span id="r27 rd" class="r27 r">parent</span> = <span class="r26 r">adornedElement</span>.<a href="@0@PresentationFramework/A.html#f649907cbc82d1a0" class="i property">Parent</a> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>;
+            <b>if</b> (<span class="r27 r">parent</span> != <b>null</b>)
+            {
+                <span class="r26 r">adornedElement</span>.<a href="@0@PresentationFramework/A.html#5a7c1405bd87b81d" class="i property">MaxHeight</a> = <span class="r27 r">parent</span>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>;
+                <span class="r26 r">adornedElement</span>.<a href="@0@PresentationFramework/A.html#1941bc06ea9a414e" class="i property">MaxWidth</a> = <span class="r27 r">parent</span>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>;
+            }
+        }
+
+        <b>protected override</b> <a href="@0@PresentationCore/A.html#5dae7b267e6db0d6" class="t t">Visual</a> <a id="3c922028d0a10adf" href="R/3c922028d0a10adf.html" target="n" data-glyph="75,1" class="i method">GetVisualChild</a>(<b>int</b> <span id="r28 rd" class="r28 r">index</span>) =&gt; <a href="#a464a9d4da3f5ce6" class="i field">_visualChildren</a><a href="@0@PresentationCore/A.html#9d6d10816c790664">[</a><span class="r28 r">index</span>];
+    }
+}</pre></td></tr></table></div></body></html>

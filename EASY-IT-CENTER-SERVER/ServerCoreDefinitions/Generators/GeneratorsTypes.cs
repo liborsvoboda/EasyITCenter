@@ -1,6 +1,14 @@
 ﻿namespace EasyITCenter.ServerCoreStructure {
 
 
+    //public class ApiStructureGenerator {
+
+    //    public List<string> PanelPointList { get; set; }
+    //    public bool GeneratePanelGlobalView { get; set; } = false;
+    //    public List<string> PanelPointList { get; set; }
+
+    //}
+
 
     /// <summary>
     /// WebFile Generators Request Dataset
@@ -14,7 +22,10 @@
         public bool RewriteAllowed { get; set; }
         public string ServerLanguage { get; set; } = "cz";
         public bool IndexInFrameList { get; set; } = false;
+        public string genHtmlIndexFileSuffix { get; set; }
+        public bool FromSuffixOnly { get; set; } = false;
     }
+
 
 
     /// <summary>

@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html><head><title>InstantaneousModifierKey.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(31);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.TouchKeyboard/LogicalKeys/InstantaneousModifierKey.cs" target="_top">LogicalKeys\InstantaneousModifierKey.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.TouchKeyboard" target="_top">..\..\..\EASY-TOOLS\EASYTools.TouchKeyboard\EASYTools.TouchKeyboard.csproj</a> (EASYTools.TouchKeyboard)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">Input</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">LogicalKeys</span>
+{
+    <b>public class</b> <a id="a891401e3926e4fc" href="../R/a891401e3926e4fc.html" target="n" data-glyph="0,0" class="t t">InstantaneousModifierKey</a> : <a href="ModifierKeyBase.cs.html#16fe15948c21f909" class="t t">ModifierKeyBase</a>
+    {
+        <b>public</b> <a id="6c2d8c09ad552cdb" href="../R/6c2d8c09ad552cdb.html" target="n" data-glyph="72,1" class="t constructor">InstantaneousModifierKey</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">displayName</span>, <a href="../Input/VirtualKeyCode.cs.html#9a204ece043f95cc" class="t t">VirtualKeyCode</a> <span id="r1 rd" class="r1 r">keyCode</span>) :
+            <a href="ModifierKeyBase.cs.html#0598eaaafa8b1c59" class="k">base</a>(<span class="r1 r">keyCode</span>)
+        {
+            <a href="LogicalKeyBase.cs.html#37159948893ed23b" class="i property">DisplayName</a> = <span class="r0 r">displayName</span>;
+        }
+ 
+        <b>public override void</b> <a id="39d8abb1e02d8c3e" href="../R/39d8abb1e02d8c3e.html" target="n" data-glyph="72,1" class="i method">Press</a>()
+        {
+            <b>if</b> (<a href="ModifierKeyBase.cs.html#00e7e99c416c6623" class="i property">IsInEffect</a>) <a href="../Input/InputSimulator.cs.html#c0379545594653bc" class="t t">InputSimulator</a>.<a href="../Input/InputSimulator.cs.html#f5c78baf688ce1ad" class="i method">SimulateKeyUp</a>(<a href="VirtualKey.cs.html#42324c16dcf9c038" class="i property">KeyCode</a>);
+            <b>else</b> <a href="../Input/InputSimulator.cs.html#c0379545594653bc" class="t t">InputSimulator</a>.<a href="../Input/InputSimulator.cs.html#9a3fce71424c52e5" class="i method">SimulateKeyDown</a>(<a href="VirtualKey.cs.html#42324c16dcf9c038" class="i property">KeyCode</a>);
+ 
+            <span class="c">// We need to use IsKeyDownAsync here so we will know exactly what state the key will be in</span>
+            <span class="c">// once the active windows read the input from the MessagePump.  IsKeyDown will only report</span>
+            <span class="c">// the correct value after the input has been read from the MessagePump and will not be correct</span>
+            <span class="c">// by the time we set IsInEffect.</span>
+            <a href="ModifierKeyBase.cs.html#00e7e99c416c6623" class="i property">IsInEffect</a> = <a href="../Input/InputSimulator.cs.html#c0379545594653bc" class="t t">InputSimulator</a>.<a href="../Input/InputSimulator.cs.html#e5204e0f3a109bf2" class="i method">IsKeyDownAsync</a>(<a href="VirtualKey.cs.html#42324c16dcf9c038" class="i property">KeyCode</a>);
+            <a href="LogicalKeyBase.cs.html#5ed9b6bc6ed93221" class="i method">OnKeyPressed</a>();
+        }
+ 
+        <b>public override void</b> <a id="3b39dbd9074d7701" href="../R/3b39dbd9074d7701.html" target="n" data-glyph="72,1" class="i method">SynchroniseKeyState</a>()
+        {
+            <a href="ModifierKeyBase.cs.html#00e7e99c416c6623" class="i property">IsInEffect</a> = <a href="../Input/InputSimulator.cs.html#c0379545594653bc" class="t t">InputSimulator</a>.<a href="../Input/InputSimulator.cs.html#e5204e0f3a109bf2" class="i method">IsKeyDownAsync</a>(<a href="VirtualKey.cs.html#42324c16dcf9c038" class="i property">KeyCode</a>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

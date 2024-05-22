@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html><head><title>DBOperations.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(157);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasySYSTEMbuilderHelp/GlobalOperations/DBOperations.cs" target="_top">GlobalOperations\DBOperations.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasySYSTEMbuilderHelp" target="_top">HelpProjects\EasySYSTEMbuilderHelp\EasySYSTEMbuilderHelp.vbproj</a> (EasySYSTEMbuilderHelp)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i">EasyITSystemCenter</span>.<span class="i">Api</span>;
+<b>using</b> <span class="i">EasyITSystemCenter</span>.<span class="i">Classes</span>;
+<b>using</b> <span class="i">EasyITSystemCenter</span>.<span class="i">GlobalClasses</span>;
+<b>using</b> <span class="i">Newtonsoft</span>.<span class="i">Json</span>;
+<b>using</b> <span class="i">System</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Collections</span>.<span class="i">Generic</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Linq</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Net</span>.<span class="i">Http</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Text</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Threading</span>.<span class="i">Tasks</span>;
+ 
+<b>namespace</b> <span class="i n">EasyITSystemCenter</span>.<span class="i n">GlobalOperations</span> {
+ 
+    /// &lt;<span class="i">summary</span>&gt;
+    /// <span class="i">Centralised</span> <span class="i">DBFunctions</span> <b>as</b> <span class="i">Load</span> <span class="i">DB</span> <span class="i">Congig</span>, <span class="i">System</span> <span class="i">Dials</span> (<span class="i">Language</span>, <span class="i">Params</span>) <span class="i">Another</span> <span class="i">Db</span>
+    /// <span class="i">functions</span> <b>As</b> <span class="i">Saving</span> <span class="i">System</span> <span class="i">Loging</span>, <span class="i">Language</span> <span class="i">Dictionary</span> <span class="i">Autofiling</span>
+    /// &lt;/<span class="i">summary</span>&gt;
+    <span class="i">internal</span> <b>class</b> <a id="bdfbc8b8a4c98aeb" href="../R/../../0000000000.html" target="n" data-glyph="2,0" class="t t"><span id="01de8de319fb06b9">DBOperations</span></a> {
+ 
+        /// &lt;<span class="i">summary</span>&gt;
+        /// <span class="i">Startup</span> <span class="i">Load</span> <span class="i">System</span> <span class="i">Parameters</span> ,<span class="i">Languages</span>, <span class="i">System</span> <span class="i">Controlling</span>, <span class="i">Server</span> <span class="i">Setting</span>
+        /// &lt;/<span class="i">summary</span>&gt;
+        <b>public static async</b> <a id="32a482da2789d798" href="../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">void</a> <span class="i">LoadStartupDBData</span>() {
+            <b>try</b> {
+                <span class="i">App</span>.<span class="i">ServerSetting</span> = <span class="i">await</span> <span class="i">CommApi</span>.<span class="i">GetApiRequest</span>&lt;<span class="i">List</span>&lt;<span class="i">ServerServerSettingList</span>&gt;&gt;(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterServerSettingList</span>, <span class="i">null</span>, <span class="i">null</span>);
+                <span class="i">App</span>.<span class="i">IgnoredExceptionList</span> = <span class="i">await</span> <span class="i">CommApi</span>.<span class="i">GetApiRequest</span>&lt;<span class="i">List</span>&lt;<span class="i">SystemIgnoredExceptionList</span>&gt;&gt;(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterSystemIgnoredExceptionList</span>, <span class="i">null</span>, <span class="i">null</span>);
+                <span class="i">App</span>.<span class="i">LanguageList</span> = <span class="i">await</span> <span class="i">CommApi</span>.<span class="i">GetApiRequest</span>&lt;<span class="i">List</span>&lt;<span class="i">SystemTranslationList</span>&gt;&gt;(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterSystemTranslationList</span>, <span class="i">null</span>, <span class="i">null</span>);
+                <span class="i">App</span>.<span class="i">ParameterList</span> = <span class="i">await</span> <span class="i">CommApi</span>.<span class="i">GetApiRequest</span>&lt;<span class="i">List</span>&lt;<span class="i">SystemParameterList</span>&gt;&gt;(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterSystemParameterList</span>, <span class="i">null</span>, <span class="i">null</span>);
+                <span class="i">App</span>.<span class="i">ReloadLanguageListRequested</span> = <b>false</b>;
+            } <b>catch</b> { }
+        }
+ 
+        /// &lt;<span class="i">summary</span>&gt;
+        /// <span class="i">Reload</span> <span class="i">SYSTEM</span> <span class="i">Dials</span> <b>When</b> <span class="i">System</span> <span class="i">Sleep</span> <b>For</b> <span class="i">Non</span> <span class="i">Blocking</span> <span class="i">Work</span> <span class="i">Was</span> <span class="i">Problem</span> <b>For</b> <span class="i">More</span> <span class="i">Startup</span>
+        /// <span class="i">Saving</span> <b>and</b> <span class="i">Reloading</span> <b>with</b> <span class="i">Language</span> <span class="i">List</span>
+        /// &lt;/<span class="i">summary</span>&gt;
+        <b>public static async</b> <a id="a94feb9c5f561d70" href="../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">Task</a>&lt;<span class="i">bool</span>&gt; <span class="i">LoadWaitingDataInSleepMode</span>() {
+            <b>if</b> (<span class="i">App</span>.<span class="i">ReloadLanguageListRequested</span>) { <span class="i">App</span>.<span class="i">LanguageList</span> = <span class="i">await</span> <span class="i">CommApi</span>.<span class="i">GetApiRequest</span>&lt;<span class="i">List</span>&lt;<span class="i">SystemTranslationList</span>&gt;&gt;(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterSystemTranslationList</span>, <span class="i">null</span>, <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Token</span>); }
+ 
+            <span class="i">App</span>.<span class="i">ReloadLanguageListRequested</span> = <b>false</b>;
+            <b>return</b> <b>true</b>;
+        }
+ 
+        /// &lt;<span class="i">summary</span>&gt;
+        /// <span class="i">Centralised</span> <span class="i">Method</span> <b>for</b> <span class="i">Refresh</span> <span class="i">All</span> <span class="i">UserData</span> <span class="i">params</span>, <b>for</b> <span class="i">correct</span> <span class="i">App</span> <span class="i">running</span>. <span class="i">Thinking</span>
+        /// <b>for</b> <span class="i">remove</span> <b>and</b> <b>new</b> <span class="i">Load</span> <span class="i">Actualy</span> <span class="i">limited</span> <span class="i">by</span> <span class="i">DebugingHelpSetting</span> <span class="i">Itr</span> <span class="i">user</span> <span class="i">After</span> <span class="i">Succes</span>
+        /// <span class="i">User</span> <span class="i">Login</span>
+        /// &lt;/<span class="i">summary</span>&gt;
+        <b>public static async</b> <a id="a94feb9c5f561d70" href="../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">Task</a>&lt;<span class="i">bool</span>&gt; <span class="i">LoadOrRefreshUserData</span>() {
+            <span class="i">App</span>.<span class="i">ServerSetting</span> = <span class="i">await</span> <span class="i">CommApi</span>.<span class="i">GetApiRequest</span>&lt;<span class="i">List</span>&lt;<span class="i">ServerServerSettingList</span>&gt;&gt;(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterServerSettingList</span>, <span class="i">null</span>, <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Token</span>);
+            <span class="i">App</span>.<span class="i">IgnoredExceptionList</span> = <span class="i">await</span> <span class="i">CommApi</span>.<span class="i">GetApiRequest</span>&lt;<span class="i">List</span>&lt;<span class="i">SystemIgnoredExceptionList</span>&gt;&gt;(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterSystemIgnoredExceptionList</span>, <span class="i">null</span>, <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Token</span>);
+            <span class="i">App</span>.<span class="i">LanguageList</span> = <span class="i">await</span> <span class="i">CommApi</span>.<span class="i">GetApiRequest</span>&lt;<span class="i">List</span>&lt;<span class="i">SystemTranslationList</span>&gt;&gt;(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterSystemTranslationList</span>, <span class="i">null</span>, <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Token</span>);
+            <span class="i">App</span>.<span class="i">ParameterList</span> = <span class="i">await</span> <span class="i">CommApi</span>.<span class="i">GetApiRequest</span>&lt;<span class="i">List</span>&lt;<span class="i">SystemParameterList</span>&gt;&gt;(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterSystemParameterList</span>, <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Id</span>.<span class="i">ToString</span>(), <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Token</span>);
+            <span class="i">App</span>.<span class="i">SystemModuleList</span> = <span class="i">await</span> <span class="i">CommApi</span>.<span class="i">GetApiRequest</span>&lt;<span class="i">List</span>&lt;<span class="i">SystemModuleList</span>&gt;&gt;(<span class="i">ApiUrls</span>.<span class="i">SystemModuleList</span>, <span class="i">null</span>, <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Token</span>);
+            <span class="i">SetNonUserDataOnSuccessStartUp</span>();
+            <b>return</b> <b>true</b>;
+        }
+ 
+        /// &lt;<span class="i">summary</span>&gt;
+        /// <span class="i">SYSTEM</span>: <b>Set</b> <span class="i">NonUser</span> <span class="i">Startup</span> <span class="i">Data</span> <b>for</b> <span class="i">Correct</span> <span class="i">Prepare</span> <span class="i">System</span> <span class="i">Its</span> <b>for</b> <span class="i">All</span> <span class="i">Status</span> <span class="i">Possible</span>
+        /// - <span class="i">NODB</span>,<span class="i">OS</span>,<b>IS</b>,<span class="i">Network</span>,<span class="i">etc</span>. <b>For</b> <span class="i">check</span> <span class="i">ANY</span> <span class="i">possible</span> <span class="i">problems</span> <span class="i">out</span> <b>of</b> <span class="i">System</span>
+        /// &lt;/<span class="i">summary</span>&gt;
+        <b>private static async</b> <a id="32a482da2789d798" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">SetNonUserDataOnSuccessStartUp</span>() {
+            <b>try</b> {
+                <b>if</b> (<span class="i">App</span>.<span class="i">ParameterList</span> != <span class="i">null</span>) {
+                    //<span class="i">System</span> <span class="i">Logger</span> <span class="i">Socket</span> <span class="i">MainData</span>
+                    <span class="i">App</span>.<span class="i">SystemLoggerWebSocketMonitor</span>.<span class="i">Url</span> = <span class="i">App</span>.<span class="i">appRuntimeData</span>.<span class="i">AppClientSettings</span>.<span class="i">First</span>(<span class="i">b</span> =&gt; <span class="i">b</span>.<span class="i">Key</span> == <span class="s">&quot;conn_apiAddress&quot;</span>).<span class="i">Value</span>.<span class="i">ToLower</span>().<span class="i">Replace</span>(<span class="s">&quot;https:&quot;</span>, <span class="s">&quot;wss:&quot;</span>).<span class="i">Replace</span>(<span class="s">&quot;http:&quot;</span>, <span class="s">&quot;ws:&quot;</span>) + <span class="i">await</span> <span class="i">DataOperations</span>.<span class="i">ParameterCheck</span>(<span class="s">&quot;SystemLoggerServerWebSocketUrl&quot;</span>);
+                    <span class="i">App</span>.<span class="i">SystemLoggerWebSocketMonitor</span>.<span class="i">ShowSystemLogger</span> = <span class="i">bool</span>.<span class="i">Parse</span>(<span class="i">await</span> <span class="i">DataOperations</span>.<span class="i">ParameterCheck</span>(<span class="s">&quot;SystemLoggerAvailable&quot;</span>));
+                    <b>if</b> (<span class="i">App</span>.<span class="i">SystemLoggerWebSocketMonitor</span>.<span class="i">ShowSystemLogger</span>) { <span class="i">MainWindow</span>.<span class="i">ShowSystemLogger</span> = <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Visibility</span>.<span class="i">Visible</span>; }
+ 
+                    <span class="i">App</span>.<span class="i">appRuntimeData</span>.<span class="i">AppClientSettings</span>.<span class="i">Remove</span>(<span class="s">&quot;sys_imDeveloper&quot;</span>);
+                    <span class="i">App</span>.<span class="i">appRuntimeData</span>.<span class="i">AppClientSettings</span>.<span class="i">Add</span>(<span class="s">&quot;sys_imDeveloper&quot;</span>, <span class="i">bool</span>.<span class="i">Parse</span>(<span class="i">await</span> <span class="i">DataOperations</span>.<span class="i">ParameterCheck</span>(<span class="s">&quot;ImDeveloper&quot;</span>)).<span class="i">ToString</span>());
+                }
+            } <b>catch</b> { }
+        }
+ 
+        /// &lt;<span class="i">summary</span>&gt;
+        /// <span class="i">Save</span> <span class="i">Exception</span> <b>to</b> <span class="i">DB</span> <span class="i">Fail</span> <span class="i">List</span> (<span class="i">System</span> <span class="i">Log</span>) <span class="i">Write</span> <b>to</b> <span class="i">System</span> <span class="i">Logger</span>
+        /// &lt;/<span class="i">summary</span>&gt;
+        /// &lt;<span class="i">param</span> <span class="i">name</span>=<span class="s">&quot;message&quot;</span>&gt; &lt;/<span class="i">param</span>&gt;
+        /// &lt;<span class="i">param</span> <span class="i">name</span>=<span class="s">&quot;logLevel&quot;</span>&gt;&lt;/<span class="i">param</span>&gt;
+        <b>public static async</b> <a id="32a482da2789d798" href="../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">void</a> <span class="i">SaveSystemFailMessage</span>(<b>string</b> <span class="i">message</span>, <b>string</b> <span class="i">logLevel</span>) {
+            <b>if</b> (<span class="i">MainWindow</span>.<span class="i">ServiceRunning</span> &amp;&amp; <span class="i">MainWindow</span>.<span class="i">UserLogged</span>) {
+                <b>if</b> (<b>string</b>.<span class="i">IsNullOrWhiteSpace</span>(<span class="i">message</span>)) <b>return</b>;
+ 
+                <span class="i">SolutionFailList</span> <a id="18f40900ed11327c" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">SolutionFailList</a> = <b>new</b> <span class="i">SolutionFailList</span>() { <span class="i">Source</span> = <span class="s">&quot;System&quot;</span>, <span class="i">UserId</span> = <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Id</span>, <span class="i">UserName</span> = <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">UserName</span>, <span class="t">LogLevel</span> = <span class="t">logLevel</span>, <span class="i">Message</span> = <span class="i">message</span>, <span class="i">TimeStamp</span> = <a href="@0@mscorlib/A.html#68b4bb83ce8d1c31" class="t t">DateTimeOffset</a>.<a href="@0@mscorlib/A.html#c6573f48ac6bd630" class="i property">Now</a>.<a href="@0@mscorlib/A.html#3b9d9c959702c67b" class="i property">DateTime</a> };
+                <b>string</b> <span class="i">json</span> = <span class="i">JsonConvert</span>.<span class="i">SerializeObject</span>(<span class="i">SolutionFailList</span>);
+                <span class="i">StringContent</span> <a id="4ddfc6ee2a0b555a" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">httpContent</a> = <b>new</b> <span class="i">StringContent</span>(<span class="i">json</span>, <span class="i">Encoding</span>.<span class="i">UTF8</span>, <span class="s">&quot;application/json&quot;</span>);
+                <span class="i">await</span> <a id="1804b67aab75834b" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">CommApi</a>.<span class="i">PutApiRequest</span>(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterSolutionFailList</span>, <span class="i">httpContent</span>, <span class="i">null</span>, <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Token</span>);
+            }
+        }
+ 
+        /// &lt;<span class="i">summary</span>&gt;
+        /// <span class="i">Centralised</span> <span class="i">Method</span> <b>for</b> <span class="i">Translating</span> <span class="i">by</span> <span class="i">DB</span> <span class="i">Dictionary</span> <span class="i">Service</span> <span class="i">insert</span> <span class="i">the</span> <span class="i">news</span> <span class="i">words</span> <b>for</b>
+        /// <span class="i">translate</span> (<span class="i">After</span> <span class="i">translate</span> <span class="i">request</span>) <b>to</b> <span class="i">Database</span> <span class="i">Automaticaly</span> <b>with</b> <span class="i">Empty</span> <span class="i">Translate</span>.
+        /// <span class="i">Service</span> <b>return</b> <span class="i">translate</span> <b>if is</b> <span class="i">possible</span> <b>or</b> <span class="i">requested</span> <span class="i">word</span> <span class="i">send</span> <span class="i">back</span> <span class="i">CamelCase</span> <span class="i">ignored</span>
+        /// <b>Default</b> <span class="i">Language</span>: <span class="i">CZ</span>
+        /// &lt;/<span class="i">summary</span>&gt;
+        /// &lt;<span class="i">param</span> <span class="i">name</span>=<span class="s">&quot;systemName&quot;</span>&gt;  &lt;/<span class="i">param</span>&gt;
+        /// &lt;<span class="i">param</span> <span class="i">name</span>=<span class="s">&quot;notCreateNew&quot;</span>&gt;&lt;/<span class="i">param</span>&gt;
+        /// &lt;<span class="i">param</span> <span class="i">name</span>=<span class="s">&quot;comaList&quot;</span>&gt;    &lt;/<span class="i">param</span>&gt;
+        /// &lt;<span class="i">param</span> <span class="i">name</span>=<span class="s">&quot;lang&quot;</span>&gt;        &lt;/<span class="i">param</span>&gt;
+        /// &lt;<span class="i">returns</span>&gt;&lt;/<span class="i">returns</span>&gt;
+        <b>public static async</b> <a id="a94feb9c5f561d70" href="../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">Task</a>&lt;<b>string</b>&gt; <span class="i">DBTranslation</span>(<b>string</b> <span class="i">systemName</span>, <span class="i">bool</span> <span class="i">notCreateNew</span> = <b>false</b>, <span class="i">bool</span> <span class="i">comaList</span> = <b>false</b>, <b>string</b> <span class="i">lang</span> = <span class="i">null</span>) {
+            <span class="i">bool</span> <a id="a53874247810cf5a" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">dictionaryUpdated</a> = <b>false;
+            string</b> <span class="i">result</span> = <span class="s">&quot;&quot;</span>, <span class="i">translated</span> = <span class="s">&quot;&quot;</span>;
+            <b>if</b> (<span class="i">comaList</span>) {
+                <span class="i">systemName</span>.<span class="i">Split</span>(<span class="c">&#39;,&#39;).ToList().ForEach(async word =&gt; {</span>
+                    <b>try</b> {
+                        <b>if</b> (!<span class="i">string</span>.<span class="i">IsNullOrWhiteSpace</span>(<span class="i">word</span>)) {
+                            <b>if</b> (!<span class="i">App</span>.<span class="i">ReloadLanguageListRequested</span> &amp;&amp; <span class="i">App</span>.<span class="i">LanguageList</span>.<span class="i">Where</span>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>() == <span class="i">word</span>.<span class="i">ToLower</span>()).<span class="i">Count</span>() == 0) {
+                                <b>if</b> (!<span class="i">notCreateNew</span> &amp;&amp; <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span> != <span class="i">null</span>) {
+                                    <span class="i">dictionaryUpdated</span> = <b>true</b>; <span class="i">App</span>.<span class="i">ReloadLanguageListRequested</span> = <b>true</b>;
+                                    <span class="i">SystemTranslationList</span> <a id="e0e4834cc2e66735" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">newWord</a> = <b>new</b> <span class="i">SystemTranslationList</span>() { <span class="i">SystemName</span> = <span class="i">word</span>, <span class="i">DescriptionCz</span> = <span class="s">&quot;&quot;</span>, <span class="i">DescriptionEn</span> = <span class="s">&quot;&quot;</span>, <span class="i">UserId</span> = 1 };
+                                    <b>string</b> <span class="i">json</span> = <span class="i">JsonConvert</span>.<span class="i">SerializeObject</span>(<span class="i">newWord</span>);
+                                    <span class="i">StringContent</span> <a id="4ddfc6ee2a0b555a" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">httpContent</a> = <b>new</b> <span class="i">StringContent</span>(<span class="i">json</span>, <span class="i">Encoding</span>.<span class="i">UTF8</span>, <span class="s">&quot;application/json&quot;</span>);
+                                    <span class="i">await</span> <a id="1804b67aab75834b" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">CommApi</a>.<span class="i">PutApiRequest</span>(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterSystemTranslationList</span>, <span class="i">httpContent</span>, <span class="i">null</span>, <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Token</span>);
+                                }
+                                <span class="i">result</span> += <span class="i">word</span> + <span class="s">&quot;,&quot;</span>;
+                            }
+                            <b>else</b> {
+                                <span class="i">translated</span> = ((<span class="i">App</span>.<span class="i">appRuntimeData</span>.<span class="i">appStartupLanguage</span> == <span class="s">&quot;cs-CZ&quot;</span> &amp;&amp; <span class="i">lang</span> == <span class="i">null</span>) || <span class="i">lang</span> == <span class="s">&quot;cz&quot;</span>) ? <span class="i">App</span>.<span class="i">LanguageList</span>.<span class="i">Where</span>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>() == <span class="i">word</span>.<span class="i">ToLower</span>()).<b>Select</b>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">DescriptionCz</span>).<span class="i">FirstOrDefault</span>() : <span class="i">App</span>.<span class="i">LanguageList</span>.<span class="i">Where</span>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>() == <span class="i">word</span>.<span class="i">ToLower</span>()).<b>Select</b>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">DescriptionEn</span>).<span class="i">FirstOrDefault</span>();
+                                <span class="i">result</span> += (<b>string</b>.<span class="i">IsNullOrWhiteSpace</span>(<span class="i">translated</span>) ? <span class="i">word</span> : <span class="i">translated</span>) + <span class="s">&quot;,&quot;</span>;
+                            }
+                        }
+                    } <b>catch</b> { <span class="i">result</span> += <span class="i">word</span> + <span class="s">&quot;,&quot;</span>; }
+                });
+            }
+            <b>else</b> {
+                <b>try</b> {
+                    <b>if</b> (!<span class="i">string</span>.<span class="i">IsNullOrWhiteSpace</span>(<span class="i">systemName</span>) &amp;&amp; <span class="i">App</span>.<span class="i">LanguageList</span>.<span class="i">Where</span>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>() == <span class="i">systemName</span>.<span class="i">ToLower</span>()).<span class="i">Count</span>() == 0) {
+                        <b>if</b> (!<span class="i">App</span>.<span class="i">ReloadLanguageListRequested</span> &amp;&amp; !<span class="i">notCreateNew</span> &amp;&amp; <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span> != <span class="i">null</span>) {
+                            <span class="i">dictionaryUpdated</span> = <b>true</b>; <span class="i">App</span>.<span class="i">ReloadLanguageListRequested</span> = <b>true</b>;
+ 
+                            <span class="i">SystemTranslationList</span> <a id="e0e4834cc2e66735" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">newWord</a> = <b>new</b> <span class="i">SystemTranslationList</span>() { <span class="i">SystemName</span> = <span class="i">systemName</span>, <span class="i">DescriptionCz</span> = <span class="s">&quot;&quot;</span>, <span class="i">DescriptionEn</span> = <span class="s">&quot;&quot;</span>, <span class="i">UserId</span> = 1 };
+                            <b>string</b> <span class="i">json</span> = <span class="i">JsonConvert</span>.<span class="i">SerializeObject</span>(<span class="i">newWord</span>);
+                            <span class="i">StringContent</span> <a id="4ddfc6ee2a0b555a" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">httpContent</a> = <b>new</b> <span class="i">StringContent</span>(<span class="i">json</span>, <span class="i">Encoding</span>.<span class="i">UTF8</span>, <span class="s">&quot;application/json&quot;</span>);
+                            <span class="i">await</span> <a id="1804b67aab75834b" href="../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">CommApi</a>.<span class="i">PutApiRequest</span>(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterSystemTranslationList</span>, <span class="i">httpContent</span>, <span class="i">null</span>, <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Token</span>);
+                        }
+                        <span class="i">result</span> = <span class="i">systemName</span>;
+                    }
+                    <b>else if</b> (!<span class="i">string</span>.<span class="i">IsNullOrWhiteSpace</span>(<span class="i">systemName</span>)) {
+                        <span class="i">translated</span> = ((<span class="i">App</span>.<span class="i">appRuntimeData</span>.<span class="i">appStartupLanguage</span> == <span class="s">&quot;cs-CZ&quot;</span> &amp;&amp; <span class="i">lang</span> == <span class="i">null</span>) || <span class="i">lang</span> == <span class="s">&quot;cz&quot;</span>) ? <span class="i">App</span>.<span class="i">LanguageList</span>.<span class="i">Where</span>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>() == <span class="i">systemName</span>.<span class="i">ToLower</span>()).<b>Select</b>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">DescriptionCz</span>).<span class="i">FirstOrDefault</span>() : <span class="i">App</span>.<span class="i">LanguageList</span>.<span class="i">Where</span>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>() == <span class="i">systemName</span>.<span class="i">ToLower</span>()).<b>Select</b>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">DescriptionEn</span>).<span class="i">FirstOrDefault</span>();
+                        <span class="i">result</span> = <b>string</b>.<span class="i">IsNullOrWhiteSpace</span>(<span class="i">translated</span>) ? <span class="i">systemName</span> : <span class="i">translated</span>;
+                    }
+                } <b>catch</b> { <span class="i">result</span> = <span class="i">systemName</span>; }
+            }
+ 
+            <b>if</b> (<span class="i">dictionaryUpdated</span> &amp;&amp; !<span class="i">notCreateNew</span>) {
+                <span class="i">App</span>.<span class="i">LanguageList</span> = <span class="i">await</span> <span class="i">CommApi</span>.<span class="i">GetApiRequest</span>&lt;<span class="i">List</span>&lt;<span class="i">SystemTranslationList</span>&gt;&gt;(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterSystemTranslationList</span>, <span class="i">null</span>, <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Token</span>);
+                <span class="i">App</span>.<span class="i">ReloadLanguageListRequested</span> = <b>false</b>;
+            }
+ 
+            <b>return</b> <span class="i">result</span>.<span class="i">Length</span> == 0 ? <span class="i">systemName</span> : <span class="i">result</span>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

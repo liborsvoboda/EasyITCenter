@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html><head><title>MaterialCards.xaml.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(163);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#Wpf/CartesianChart/MaterialCards/MaterialCards.xaml.cs" target="_top">CartesianChart\MaterialCards\MaterialCards.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Examples\Wpf\Wpf.csproj</a> (Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Runtime</span>.<span class="i n">CompilerServices</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>.<span class="i n">Tasks</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Navigation</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Shapes</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">LiveCharts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Defaults</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">Annotations</span>;
+
+<b>namespace</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">MaterialCards</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Interaction logic for MaterialCards.xaml</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <b>partial</b> <b>class</b> <a id="5a0dfcf5faa38e1e" href="../../R/5a0dfcf5faa38e1e.html" target="n" data-glyph="0,0" class="t t">MaterialCards</a> : <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a>, <a href="@0@System/A.html#fd4b42d7e29d53e5" class="t t">INotifyPropertyChanged</a>
+    {
+        <b>private double</b> <a id="4a26599543ab34ad" href="../../R/4a26599543ab34ad.html" target="n" data-glyph="46,1" class="i field">_lastLecture</a>;
+        <b>private double</b> <a id="c7e4fe7742d2a967" href="../../R/c7e4fe7742d2a967.html" target="n" data-glyph="46,1" class="i field">_trend</a>;
+
+        <b>public</b> <a id="991b281aaee92744" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MaterialCards</a>()
+        {
+            <span class="i">InitializeComponent</span>();
+
+            <a href="#6433a8d1282cfe9a" class="i property">LastHourSeries</a> = <b>new</b> <a href="/LiveCharts/A.html#e05f0ac3c5ac3613" class="t constructor">SeriesCollection</a>
+            {
+                <b>new</b> <a href="/LiveCharts.Wpf/A.html#c8aa0c4dad3d2e0b" class="t constructor">LineSeries</a>
+                {
+                    <a href="/LiveCharts.Wpf/A.html#154bbdd6d9f21962" class="i property">AreaLimit</a> = -10,
+                    <a href="/LiveCharts.Wpf/A.html#ba565e37fd8fc84c" class="i property">Values</a> = <b>new</b> <a href="/LiveCharts/A.html#9dc8c197acdf6c12" class="t constructor">ChartValues</a>&lt;<a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a>&gt;
+                    {
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(3),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(5),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(6),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(7),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(3),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(4),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(2),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(5),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(8),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(3),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(5),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(6),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(7),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(3),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(4),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(2),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(5),
+                        <b>new</b> <a href="/LiveCharts/A.html#f3cfe1b44df69384" class="t constructor">ObservableValue</a>(8)
+                    }
+                }
+            };
+            <a href="#c7e4fe7742d2a967" class="i field">_trend</a> = 8;
+
+<span class="k preprocess">#</span><span class="k preprocess">if</span> <span class="i">NET40</span>
+<span class="e">            Task.Factory.StartNew(() =&gt;
+            {
+                var r = new Random();
+
+                Action action = delegate
+                {
+                    LastHourSeries[0].Values.Add(new ObservableValue(_trend));
+                    LastHourSeries[0].Values.RemoveAt(0);
+                    SetLecture();
+                };
+
+                while (true)
+                {
+                    Thread.Sleep(500);
+                    _trend += (r.NextDouble() &gt; 0.3 ? 1 : -1) * r.Next(0, 5);
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, action);
+                }
+            });
+</span><span class="k preprocess">#</span><span class="k preprocess">endif</span>
+<span class="k preprocess">#</span><span class="k preprocess">if</span> <span class="i">NET45</span>
+<span class="e">            Task.Run(() =&gt;
+            {
+                var r = new Random();
+                while (true)
+                {
+                    Thread.Sleep(500);
+                    _trend += (r.NextDouble() &gt; 0.3 ? 1 : -1)*r.Next(0, 5);
+                    Application.Current.Dispatcher.Invoke(() =&gt;
+                    {
+                        LastHourSeries[0].Values.Add(new ObservableValue(_trend));
+                        LastHourSeries[0].Values.RemoveAt(0);
+                        SetLecture();
+                    });
+                }
+            });
+</span><span class="k preprocess">#</span><span class="k preprocess">endif</span>
+
+            <a href="@0@PresentationFramework/A.html#e4aaca7514916173" class="i property">DataContext</a> = <a href="#5a0dfcf5faa38e1e" class="k">this</a>;
+        }
+
+        <b>public</b> <a href="/LiveCharts/A.html#90afae0d66da3706" class="t t">SeriesCollection</a> <a id="6433a8d1282cfe9a" href="../../R/6433a8d1282cfe9a.html" target="n" data-glyph="102,1" class="i property">LastHourSeries</a> { <b>get</b>; <b>set</b>; }
+        
+        <b>public double</b> <a id="9f16ef0dc13be479" href="../../R/../../0000000000.html" target="n" data-glyph="102,1" class="i property">LastLecture</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#4a26599543ab34ad" class="i field">_lastLecture</a>; }
+            <b>set</b>
+            {
+                <a href="#4a26599543ab34ad" class="i field">_lastLecture</a> = <b>value</b>;
+                <a href="#eb98ce849a5759f6" class="i method">OnPropertyChanged</a>(<span class="s">&quot;LastLecture&quot;</span>);
+            }
+        }
+
+        <b>private void</b> <a id="369dc2ee7c312617" href="../../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">SetLecture</a>()
+        {
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r0 rd" class="r0 r">target</span> = ((<a href="/LiveCharts/A.html#0a44fd13939b5dc3" class="t t">ChartValues</a>&lt;<a href="/LiveCharts/A.html#28fc9e4279907a1e" class="t t">ObservableValue</a>&gt;)<a href="#6433a8d1282cfe9a" class="i property">LastHourSeries</a>[0].<a href="/LiveCharts/A.html#ccd53d4aee7d99d6" class="i property">Values</a>).<a href="@0@System.Core/A.html#75722fd194dc2e0e" class="i method">Last</a>().<a href="/LiveCharts/A.html#ac007f195730c829" class="i property">Value</a>;
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r1 rd" class="r1 r">step</span> = (<span class="r0 r">target</span> - <a href="#4a26599543ab34ad" class="i field">_lastLecture</a>) / 4;
+<span class="k preprocess">#</span><span class="k preprocess">if</span> <span class="i">NET40</span>
+<span class="e">            Task.Factory.StartNew(() =&gt;
+            {
+                for (var i = 0; i &lt; 4; i++)
+                {
+                    Thread.Sleep(100);
+                    LastLecture += step;
+                }
+                LastLecture = target;
+            });
+</span><span class="k preprocess">#</span><span class="k preprocess">endif</span>
+<span class="k preprocess">#</span><span class="k preprocess">if</span> <span class="i">NET45</span>
+<span class="e">            Task.Run(() =&gt;
+            {
+                for (var i = 0; i &lt; 4; i++)
+                {
+                    Thread.Sleep(100);
+                    LastLecture += step;
+                }
+                LastLecture = target;
+            });
+</span><span class="k preprocess">#</span><span class="k preprocess">endif</span>
+        }
+
+        <b>public event</b> <a href="@0@System/A.html#670754815f6804ff" class="t t">PropertyChangedEventHandler</a> <a id="69974b6f9b92f875" href="../../R/69974b6f9b92f875.html" target="n" data-glyph="30,1" class="i">PropertyChanged</a>;
+
+        <b>protected virtual void</b> <a id="eb98ce849a5759f6" href="../../R/eb98ce849a5759f6.html" target="n" data-glyph="75,1" class="i method">OnPropertyChanged</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r2 rd" class="r2 r">propertyName</span> = <b>null</b>)
+        {
+            <a href="@0@System/A.html#670754815f6804ff" class="k">var</a> <span id="r3 rd" class="r3 r">handler</span> = <a href="#69974b6f9b92f875" class="i">PropertyChanged</a>;
+            <b>if</b> (<span class="r3 r">handler</span> != <b>null</b>) <span class="r3 r">handler</span>(<a href="#5a0dfcf5faa38e1e" class="k">this</a>, <b>new</b> <a href="@0@System/A.html#76958b0a96ed2a2e" class="t constructor">PropertyChangedEventArgs</a>(<span class="r2 r">propertyName</span>));
+        }
+
+        <b>private void</b> <a id="3fd0c1fda42cc3d3" href="../../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">UpdateOnclick</a>(<b>object</b> <span id="r4 rd" class="r4 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r5 rd" class="r5 r">e</span>)
+        {
+            <span class="i">TimePowerChart</span>.<span class="i">Update</span>(<b>true</b>);
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

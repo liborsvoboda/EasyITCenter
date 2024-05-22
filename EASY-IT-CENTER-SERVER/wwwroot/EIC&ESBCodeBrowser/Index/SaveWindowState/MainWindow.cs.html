@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html><head><title>MainWindow.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(68);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#SaveWindowState/MainWindow.cs" target="_top">MainWindow.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#SaveWindowState" target="_top">HelpProjects\WPF-MORE\Windows\SaveWindowState\SaveWindowState.csproj</a> (SaveWindowState)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Runtime</span>.<span class="i n">InteropServices</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Interop</span>;
+<b>using</b> <span class="i n">SaveWindowState</span>.<span class="i n">Properties</span>;
+
+<b>namespace</b> <span class="i n">SaveWindowState</span>
+{
+    <b>public</b> <a href="P/4505583f1a4f7eb7.html" target="s" class="k">partial</a> <b>class</b> <a id="4505583f1a4f7eb7" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">MainWindow</a> : <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>
+    {
+        <b>public</b> <a id="b381844e4395d1a1" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">MainWindow</a>()
+        {
+            <a href="obj/Debug/netcoreapp3.1/MainWindow.g.cs.html#4d8b6ed3ea0c6183" class="i method">InitializeComponent</a>();
+        }
+
+        <b>protected override void</b> <a id="bbe327462d5a9cd0" href="R/bbe327462d5a9cd0.html" target="n" data-glyph="75,1" class="i method">OnSourceInitialized</a>(<a href="@1@System.Runtime/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r0 rd" class="r0 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="k">base</a>.<a href="@0@PresentationFramework/A.html#abb01983162f59f2" class="i method">OnSourceInitialized</a>(<span class="r0 r">e</span>);
+
+            <b>try</b>
+            {
+                <span class="c">// Load window placement details for previous application session from application settings</span>
+                <span class="c">// Note - if window was closed on a monitor that is now disconnected from the computer,</span>
+                <span class="c">//        SetWindowPlacement will place the window onto a visible monitor.</span>
+                <a href="WindowPlacement.cs.html#42db05e0638cfead" class="k">var</a> <span id="r1 rd" class="r1 r">wp</span> = <a href="Properties/Settings.Designer.cs.html#e0676e3c1882275a" class="t t">Settings</a>.<a href="Properties/Settings.Designer.cs.html#48f03bf39d0dc27a" class="i property">Default</a>.<a href="Properties/Settings.Designer.cs.html#0c0f254a9403cd1e" class="i property">WindowPlacement</a>;
+                <span class="r1 r">wp</span>.<a href="WindowPlacement.cs.html#5ce3a4b228a2a520" class="i field">length</a> = <span class="t t">Marshal</span>.<span class="i method">SizeOf</span>(<b>typeof</b> (<a href="WindowPlacement.cs.html#42db05e0638cfead" class="t t">WindowPlacement</a>));
+                <span class="r1 r">wp</span>.<a href="WindowPlacement.cs.html#8b3ec4f11ed43a6b" class="i field">flags</a> = 0;
+                <span class="r1 r">wp</span>.<a href="WindowPlacement.cs.html#8c29877cfe1e1384" class="i field">showCmd</a> = (<span class="r1 r">wp</span>.<a href="WindowPlacement.cs.html#8c29877cfe1e1384" class="i field">showCmd</a> == <a href="#19968c540adf4ea7" class="i field">SwShowminimized</a> ? <a href="#00afdc77aad66c91" class="i field">SwShownormal</a> : <span class="r1 r">wp</span>.<a href="WindowPlacement.cs.html#8c29877cfe1e1384" class="i field">showCmd</a>);
+                <a href="@1@System.Runtime/A.html#d99bf6ad49979009" class="k">var</a> <span id="r2 rd" class="r2 r">hwnd</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#fdbf322c4b24b279" class="t constructor">WindowInteropHelper</a>(<a href="P/4505583f1a4f7eb7.html#4505583f1a4f7eb7" class="k">this</a>).<a href="@0@PresentationFramework/A.html#6fab6a7b546e26f8" class="i property">Handle</a>;
+                <a href="#fcb0dbf51867a9d1" class="i method">SetWindowPlacement</a>(<span class="r2 r">hwnd</span>, <b>ref</b> <span class="r1 r">wp</span>);
+            }
+            <b>catch</b>
+            {
+                <span class="c">// ignored</span>
+            }
+        }
+
+        <span class="c">// WARNING - Not fired when Application.SessionEnding is fired</span>
+        <b>protected override void</b> <a id="3cb3373280bbe993" href="R/3cb3373280bbe993.html" target="n" data-glyph="75,1" class="i method">OnClosing</a>(<span class="t t">CancelEventArgs</span> <span id="r3 rd" class="r3 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="k">base</a>.<a href="@0@PresentationFramework/A.html#1f99fde3b973072d" class="i method">OnClosing</a>(<span class="r3 r">e</span>);
+
+            <span class="c">// Persist window placement details to application settings</span>
+            <a href="WindowPlacement.cs.html#42db05e0638cfead" class="t t">WindowPlacement</a> <span id="r4 rd" class="r4 r">wp</span>;
+            <a href="@1@System.Runtime/A.html#d99bf6ad49979009" class="k">var</a> <span id="r5 rd" class="r5 r">hwnd</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#fdbf322c4b24b279" class="t constructor">WindowInteropHelper</a>(<a href="P/4505583f1a4f7eb7.html#4505583f1a4f7eb7" class="k">this</a>).<a href="@0@PresentationFramework/A.html#6fab6a7b546e26f8" class="i property">Handle</a>;
+            <a href="#85dc63e28062cbfd" class="i method">GetWindowPlacement</a>(<span class="r5 r">hwnd</span>, <b>out</b> <span class="r4 r">wp</span>);
+            <a href="Properties/Settings.Designer.cs.html#e0676e3c1882275a" class="t t">Settings</a>.<a href="Properties/Settings.Designer.cs.html#48f03bf39d0dc27a" class="i property">Default</a>.<a href="Properties/Settings.Designer.cs.html#0c0f254a9403cd1e" class="i property">WindowPlacement</a> = <span class="r4 r">wp</span>;
+            <a href="Properties/Settings.Designer.cs.html#e0676e3c1882275a" class="t t">Settings</a>.<a href="Properties/Settings.Designer.cs.html#48f03bf39d0dc27a" class="i property">Default</a>.<span class="i method">Save</span>();
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Win32 API declarations to set and get window placement
+
+        [<span class="t constructor">DllImport</span>(<span class="s">&quot;user32.dll&quot;</span>)]
+        <b>private static extern bool</b> <a id="fcb0dbf51867a9d1" href="R/fcb0dbf51867a9d1.html" target="n" data-glyph="76,1" class="i method">SetWindowPlacement</a>(<a href="@1@System.Runtime/A.html#d99bf6ad49979009" class="t t">IntPtr</a> <span id="r6 rd" class="r6 r">hWnd</span>, [<a href="@1@System.Runtime/A.html#ca1f72525eec46fb" class="t constructor">In</a>] <b>ref</b> <a href="WindowPlacement.cs.html#42db05e0638cfead" class="t t">WindowPlacement</a> <span id="r7 rd" class="r7 r">lpwndpl</span>);
+
+        [<span class="t constructor">DllImport</span>(<span class="s">&quot;user32.dll&quot;</span>)]
+        <b>private static extern bool</b> <a id="85dc63e28062cbfd" href="R/85dc63e28062cbfd.html" target="n" data-glyph="76,1" class="i method">GetWindowPlacement</a>(<a href="@1@System.Runtime/A.html#d99bf6ad49979009" class="t t">IntPtr</a> <span id="r8 rd" class="r8 r">hWnd</span>, <b>out</b> <a href="WindowPlacement.cs.html#42db05e0638cfead" class="t t">WindowPlacement</a> <span id="r9 rd" class="r9 r">lpwndpl</span>);
+
+        <b>private const int</b> <a id="00afdc77aad66c91" href="R/00afdc77aad66c91.html" target="n" data-glyph="10,1" class="i field">SwShownormal</a> = 1;
+        <b>private const int</b> <a id="19968c540adf4ea7" href="R/19968c540adf4ea7.html" target="n" data-glyph="10,1" class="i field">SwShowminimized</a> = 2;
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}</pre></td></tr></table></div></body></html>

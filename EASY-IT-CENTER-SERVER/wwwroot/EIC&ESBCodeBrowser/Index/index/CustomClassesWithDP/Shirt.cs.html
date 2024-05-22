@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html><head><title>Shirt.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(89);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#CustomClassesWithDP/Shirt.cs" target="_top">Shirt.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#CustomClassesWithDP" target="_top">HelpProjects\WPF-MORE\Properties\CustomClassesWithDP\CustomClassesWithDP.csproj</a> (CustomClassesWithDP)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// // Copyright (c) Microsoft. All rights reserved.</span>
+<span class="c">// // Licensed under the MIT license. See LICENSE file in the project root for full license information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+
+<b>namespace</b> <span class="i n">CustomClassesWithDP</span>
+{
+    <b>public class</b> <a id="a49fa39efcb06871" href="R/a49fa39efcb06871.html" target="n" data-glyph="0,0" class="t t"><span id="276ee133c0e76a9d">Shirt</span></a> : <a href="@0@PresentationFramework/A.html#a23db2d321823084" class="t t">Canvas</a>
+    {
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f13657f344a31fad" href="R/f13657f344a31fad.html" target="n" data-glyph="42,1" class="i field">ShirtColorProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;ShirtColor&quot;</span>,
+            <b>typeof</b> (<a href="ShirtColors.cs.html#2b562e6a517b9c9b" class="t t">ShirtColors</a>), <b>typeof</b> (<a href="#a49fa39efcb06871" class="t t">Shirt</a>), <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<a href="ShirtColors.cs.html#2b562e6a517b9c9b" class="t t">ShirtColors</a>.<a href="ShirtColors.cs.html#9055bc4da4dcbd5e" class="i field">None</a>));
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="928517c6074482f2" href="R/928517c6074482f2.html" target="n" data-glyph="42,1" class="i field">ShirtTypeProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#152066e4fc39e79a" class="i method">Register</a>(
+            <span class="s">&quot;ShirtType&quot;</span>,
+            <b>typeof</b> (<a href="ShirtTypes.cs.html#aede37a2307e0752" class="t t">ShirtTypes</a>),
+            <b>typeof</b> (<a href="#a49fa39efcb06871" class="t t">Shirt</a>),
+            <b>new</b> <a href="@0@PresentationFramework/A.html#f55eafbea6d9be21" class="t constructor">FrameworkPropertyMetadata</a>(
+                <a href="ShirtTypes.cs.html#aede37a2307e0752" class="t t">ShirtTypes</a>.<a href="ShirtTypes.cs.html#4f0fa0cb18559785" class="i field">None</a>,
+                <a href="#b4ad8cc361333bf9" class="i method">OnShirtTypeChangedCallback</a>
+                ), <a href="#5d6dd86119d10ac1" class="i method">ShirtValidateCallback</a>);
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="a142a8687e0bdaf4" href="R/a142a8687e0bdaf4.html" target="n" data-glyph="42,1" class="i field">ButtonColorProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;ButtonColor&quot;</span>,
+            <b>typeof</b> (<a href="ButtonColors.cs.html#00b775a09f733a66" class="t t">ButtonColors</a>),
+            <b>typeof</b> (<a href="#a49fa39efcb06871" class="t t">Shirt</a>),
+            <b>new</b> <a href="@0@PresentationFramework/A.html#1eac4672a3e1ee7a" class="t constructor">FrameworkPropertyMetadata</a>(
+                <a href="ButtonColors.cs.html#00b775a09f733a66" class="t t">ButtonColors</a>.<a href="ButtonColors.cs.html#ab8e4725f3f2afcd" class="i field">Black</a>,
+                <a href="#122fb9d583654f42" class="i method">OnButtonColorChangedCallback</a>,
+                <a href="#200819ebd4cbf40e" class="i method">CoerceButtonColor</a>)
+            );
+
+        <b>public static readonly</b> <a href="@0@PresentationCore/A.html#1494cfe9a0c5ee74" class="t t">RoutedEvent</a> <a id="fa3ba895e7041f74" href="R/fa3ba895e7041f74.html" target="n" data-glyph="42,1" class="i field">ButtonColorChangedEvent</a> =
+            <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#a5460796900a6473" class="i method">RegisterRoutedEvent</a>(<span class="s">&quot;ButtonColorChanged&quot;</span>, <a href="@0@PresentationCore/A.html#2144a30d9ece7dfe" class="t t">RoutingStrategy</a>.<a href="@0@PresentationCore/A.html#43b9d70d58d66c4c" class="i field">Bubble</a>,
+                <b>typeof</b> (<a href="@0@WindowsBase/A.html#86f07b2f562403b8" class="t t">DependencyPropertyChangedEventHandler</a>), <b>typeof</b> (<a href="#a49fa39efcb06871" class="t t">Shirt</a>));
+
+        <b>public</b> <a href="ShirtColors.cs.html#2b562e6a517b9c9b" class="t t">ShirtColors</a> <a id="c57910c2367621e1" href="R/c57910c2367621e1.html" target="n" data-glyph="102,1" class="i property">ShirtColor</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="ShirtColors.cs.html#2b562e6a517b9c9b" class="t t">ShirtColors</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f13657f344a31fad" class="i field">ShirtColorProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f13657f344a31fad" class="i field">ShirtColorProperty</a>, <b>value</b>); }
+        }
+
+        <b>public</b> <a href="ShirtTypes.cs.html#aede37a2307e0752" class="t t">ShirtTypes</a> <a id="d1e8ff6f8c8aad25" href="R/d1e8ff6f8c8aad25.html" target="n" data-glyph="102,1" class="i property">ShirtType</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="ShirtTypes.cs.html#aede37a2307e0752" class="t t">ShirtTypes</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#928517c6074482f2" class="i field">ShirtTypeProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#928517c6074482f2" class="i field">ShirtTypeProperty</a>, <b>value</b>); }
+        }
+
+        <b>public</b> <a href="ButtonColors.cs.html#00b775a09f733a66" class="t t">ButtonColors</a> <a id="72d668ea4755f798" href="R/72d668ea4755f798.html" target="n" data-glyph="102,1" class="i property">ButtonColor</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="ButtonColors.cs.html#00b775a09f733a66" class="t t">ButtonColors</a>) <a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#a142a8687e0bdaf4" class="i field">ButtonColorProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#a142a8687e0bdaf4" class="i field">ButtonColorProperty</a>, <b>value</b>); }
+        }
+
+        <b>private static bool</b> <a id="5d6dd86119d10ac1" href="R/5d6dd86119d10ac1.html" target="n" data-glyph="76,1" class="i method">ShirtValidateCallback</a>(<b>object</b> <span id="r0 rd" class="r0 r">value</span>)
+        {
+            <a href="ShirtTypes.cs.html#aede37a2307e0752" class="k">var</a> <span id="r1 rd" class="r1 r">sh</span> = (<a href="ShirtTypes.cs.html#aede37a2307e0752" class="t t">ShirtTypes</a>) <span class="r0 r">value</span>;
+            <b>return</b> (<span class="r1 r">sh</span> == <a href="ShirtTypes.cs.html#aede37a2307e0752" class="t t">ShirtTypes</a>.<a href="ShirtTypes.cs.html#4f0fa0cb18559785" class="i field">None</a> || <span class="r1 r">sh</span> == <a href="ShirtTypes.cs.html#aede37a2307e0752" class="t t">ShirtTypes</a>.<a href="ShirtTypes.cs.html#12b8c94c3f9c79eb" class="i field">Bowling</a> || <span class="r1 r">sh</span> == <a href="ShirtTypes.cs.html#aede37a2307e0752" class="t t">ShirtTypes</a>.<a href="ShirtTypes.cs.html#82fb0bdf66a52a03" class="i field">Dress</a> ||
+                    <span class="r1 r">sh</span> == <a href="ShirtTypes.cs.html#aede37a2307e0752" class="t t">ShirtTypes</a>.<a href="ShirtTypes.cs.html#b4f4af70c41099e3" class="i field">Rugby</a> || <span class="r1 r">sh</span> == <a href="ShirtTypes.cs.html#aede37a2307e0752" class="t t">ShirtTypes</a>.<a href="ShirtTypes.cs.html#6f779b248c1627b4" class="i field">Tee</a>);
+        }
+
+        <b>private static void</b> <a id="b4ad8cc361333bf9" href="R/b4ad8cc361333bf9.html" target="n" data-glyph="76,1" class="i method">OnShirtTypeChangedCallback</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r2 rd" class="r2 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r3 rd" class="r3 r">e</span>)
+        {
+            <span class="r2 r">d</span>.<a href="@0@WindowsBase/A.html#d7d60b06f633a857" class="i method">CoerceValue</a>(<a href="#a142a8687e0bdaf4" class="i field">ButtonColorProperty</a>);
+        }
+
+        <b>private static void</b> <a id="122fb9d583654f42" href="R/122fb9d583654f42.html" target="n" data-glyph="76,1" class="i method">OnButtonColorChangedCallback</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r4 rd" class="r4 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r5 rd" class="r5 r">e</span>)
+        {
+            <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="k">var</a> <span id="r6 rd" class="r6 r">newargs</span> = <b>new</b> <a href="@0@PresentationCore/A.html#ee90c9b45d5a95f4" class="t constructor">RoutedEventArgs</a>(<a href="#fa3ba895e7041f74" class="i field">ButtonColorChangedEvent</a>);
+            (<span class="r4 r">d</span> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>).<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<span class="r6 r">newargs</span>);
+        }
+
+        <b>private static object</b> <a id="200819ebd4cbf40e" href="R/200819ebd4cbf40e.html" target="n" data-glyph="76,1" class="i method">CoerceButtonColor</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r7 rd" class="r7 r">d</span>, <b>object</b> <span id="r8 rd" class="r8 r">value</span>)
+        {
+            <a href="ShirtTypes.cs.html#aede37a2307e0752" class="k">var</a> <span id="r9 rd" class="r9 r">newShirtType</span> = (<span class="r7 r">d</span> <b>as</b> <a href="#a49fa39efcb06871" class="t t">Shirt</a>).<a href="#d1e8ff6f8c8aad25" class="i property">ShirtType</a>;
+            <b>if</b> (<span class="r9 r">newShirtType</span> == <a href="ShirtTypes.cs.html#aede37a2307e0752" class="t t">ShirtTypes</a>.<a href="ShirtTypes.cs.html#82fb0bdf66a52a03" class="i field">Dress</a> || <span class="r9 r">newShirtType</span> == <a href="ShirtTypes.cs.html#aede37a2307e0752" class="t t">ShirtTypes</a>.<a href="ShirtTypes.cs.html#12b8c94c3f9c79eb" class="i field">Bowling</a>)
+            {
+                <b>return</b> <a href="ButtonColors.cs.html#00b775a09f733a66" class="t t">ButtonColors</a>.<a href="ButtonColors.cs.html#ab8e4725f3f2afcd" class="i field">Black</a>;
+            }
+            <b>return</b> <a href="ButtonColors.cs.html#00b775a09f733a66" class="t t">ButtonColors</a>.<a href="ButtonColors.cs.html#e9046c321da10ddc" class="i field">None</a>;
+        }
+
+        <b>public event</b> <a href="@0@PresentationCore/A.html#af107ecb60427a17" class="t t">RoutedEventHandler</a> <a id="15f55437726116ef" href="R/15f55437726116ef.html" target="n" data-glyph="30,1" class="i">ButtonColorChanged</a>
+        {
+            <b>add</b> { <a href="@0@PresentationCore/A.html#18cd7adc001fa956" class="i method">AddHandler</a>(<a href="#fa3ba895e7041f74" class="i field">ButtonColorChangedEvent</a>, <b>value</b>); }
+            <b>remove</b> { <a href="@0@PresentationCore/A.html#221a746a1b193eb1" class="i method">RemoveHandler</a>(<a href="#fa3ba895e7041f74" class="i field">ButtonColorChangedEvent</a>, <b>value</b>); }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

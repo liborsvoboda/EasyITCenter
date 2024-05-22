@@ -1,0 +1,329 @@
+﻿<!DOCTYPE html>
+<html><head><title>ImageDialog.xaml.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(320);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.HTMLFullEditor/Dialogs/ImageDialog.xaml.cs" target="_top">Dialogs\ImageDialog.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.HTMLFullEditor" target="_top">..\..\..\EASY-TOOLS\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor.csproj</a> (EASYTools.HTMLFullEditor)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Runtime</span>.<span class="i n">CompilerServices</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+<b>using</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Localization</span>;
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Win32</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Dialogs</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Interaction logic for ImageDialog.xaml</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public</b> <a href="../P/c487daa01a7b0a0e.html" target="s" class="k">partial</a> <b>class</b> <a id="c487daa01a7b0a0e" href="../R/c487daa01a7b0a0e.html" target="n" data-glyph="0,0" class="t t">ImageDialog</a> : <a href="DialogBase.cs.html#47728d7c217f5602" class="t t">DialogBase</a>
+    {
+        <b>private</b> <a href="@0@PresentationFramework/A.html#abaa785ee8266b3d" class="t t">OpenFileDialog</a> <a id="5041c10c24deb8e4" href="../R/5041c10c24deb8e4.html" target="n" data-glyph="46,1" class="i field">_openFileDialog</a>;
+        <b>private bool</b> <a id="54a3af4ba3e056d9" href="../R/54a3af4ba3e056d9.html" target="n" data-glyph="46,1" class="i field">_isSuccess</a>;
+        <b>private string</b> <a id="634e83e263b6439f" href="../R/634e83e263b6439f.html" target="n" data-glyph="46,1" class="i field">_imagePath</a>;
+        <b>private</b> <a href="@0@PresentationCore/A.html#4c9ecb6081c6998f" class="t t">ImageSource</a> <a id="06236be13a6daea7" href="../R/06236be13a6daea7.html" target="n" data-glyph="46,1" class="i field">_imageSource</a>;
+        <b>private string</b> <a id="e53a395b47fff13c" href="../R/e53a395b47fff13c.html" target="n" data-glyph="46,1" class="i field">_imageTitle</a>;
+        <b>private double</b> <a id="6c3b72f854cc8aa9" href="../R/6c3b72f854cc8aa9.html" target="n" data-glyph="46,1" class="i field">_imageWidth</a>;
+        <b>private double</b> <a id="e3b6f805da453a60" href="../R/e3b6f805da453a60.html" target="n" data-glyph="46,1" class="i field">_imageHeight</a>;
+        <b>private int</b> <a id="ce5ed936989ab034" href="../R/ce5ed936989ab034.html" target="n" data-glyph="46,1" class="i field">_reduceCoefficient</a>;
+ 
+        <b>public</b> <a id="c2182587f693a373" href="../R/c2182587f693a373.html" target="n" data-glyph="72,1" class="t constructor">ImageDialog</a>()
+        {
+            <a href="../obj/Debug/Dialogs/ImageDialog.g.cs.html#55ba58278bffbf49" class="i method">InitializeComponent</a>();
+ 
+            <span class="c">// Self DataContext</span>
+            <a href="@0@PresentationFramework/A.html#e4aaca7514916173" class="i property">DataContext</a> = <a href="../P/c487daa01a7b0a0e.html#c487daa01a7b0a0e" class="k">this</a>;
+        }
+ 
+        <b>protected override void</b> <a id="0b3f170cee0bf65f" href="../R/0b3f170cee0bf65f.html" target="n" data-glyph="75,1" class="i method">OnPropertyChanged</a>([<a href="@0@mscorlib/A.html#3b59f8cb5102fd8b" class="t constructor">CallerMemberName</a>]<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">propertyName</span> = <b>null</b>)
+        {
+            <a href="DialogBase.cs.html#47728d7c217f5602" class="k">base</a>.<a href="DialogBase.cs.html#b1d9d67d3811ed98" class="i method">OnPropertyChanged</a>(<span class="r0 r">propertyName</span>);
+ 
+            <span class="c">// Preview resize dependency</span>
+            <b>switch</b> (<span class="r0 r">propertyName</span>)
+            {
+                <b>case</b> <b>nameof</b>(<a href="#db0b406c1a42532d" class="i property">ImageWidth</a>):
+                <b>case</b> <b>nameof</b>(<a href="#f19d84a23d30ad51" class="i property">ImageHeight</a>):
+                <b>case</b> <b>nameof</b>(<a href="#48ec9beab7397ab4" class="i property">ShowRealSize</a>):
+                    <a href="#c1327e8a664938a8" class="i method">ResizePreview</a>();
+                    <b>break</b>;
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets whether the image selection was successful.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="cf68b554c943a9cd" href="../R/cf68b554c943a9cd.html" target="n" data-glyph="102,1" class="i property">IsSuccess</a>
+        {
+            <b>get</b> =&gt; <a href="#54a3af4ba3e056d9" class="i field">_isSuccess</a>;
+            <b>private set</b>
+            {
+                <b>if</b> (<a href="#54a3af4ba3e056d9" class="i field">_isSuccess</a> == <b>value</b>) <b>return</b>;
+                <a href="#54a3af4ba3e056d9" class="i field">_isSuccess</a> = <b>value</b>;
+                <a href="#0b3f170cee0bf65f" class="i method">OnPropertyChanged</a>();
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets file path of selected image.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="6af47216a517a5a7" href="../R/6af47216a517a5a7.html" target="n" data-glyph="102,1" class="i property">ImagePath</a>
+        {
+            <b>get</b> =&gt; <a href="#634e83e263b6439f" class="i field">_imagePath</a>;
+            <b>private set</b>
+            {
+                <b>if</b> (<a href="#634e83e263b6439f" class="i field">_imagePath</a> == <b>value</b>) <b>return</b>;
+                <a href="#634e83e263b6439f" class="i field">_imagePath</a> = <b>value</b>;
+                <a href="#0b3f170cee0bf65f" class="i method">OnPropertyChanged</a>();
+            }
+        }
+ 
+        <b>public</b> <a href="@0@PresentationCore/A.html#4c9ecb6081c6998f" class="t t">ImageSource</a> <a id="bca1766e05cadf9c" href="../R/bca1766e05cadf9c.html" target="n" data-glyph="102,1" class="i property">ImageSource</a>
+        {
+            <b>get</b> =&gt; <a href="#06236be13a6daea7" class="i field">_imageSource</a>;
+            <b>private set</b>
+            {
+                <b>if</b> (<a href="#06236be13a6daea7" class="i field">_imageSource</a> == <b>value</b>) <b>return</b>;
+                <a href="#06236be13a6daea7" class="i field">_imageSource</a> = <b>value</b>;
+                <a href="#0b3f170cee0bf65f" class="i method">OnPropertyChanged</a>();
+            }
+        }
+ 
+        <b>public string</b> <a id="502673d3a0164210" href="../R/502673d3a0164210.html" target="n" data-glyph="102,1" class="i property">ImageTitle</a>
+        {
+            <b>get</b> =&gt; <a href="#e53a395b47fff13c" class="i field">_imageTitle</a>;
+            <b>set</b>
+            {
+                <b>if</b> (<a href="#e53a395b47fff13c" class="i field">_imageTitle</a> == <b>value</b>) <b>return</b>;
+                <a href="#e53a395b47fff13c" class="i field">_imageTitle</a> = <b>value</b>;
+                <a href="#0b3f170cee0bf65f" class="i method">OnPropertyChanged</a>();
+            }
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Image size
+ 
+        <b>private int</b> <a id="659e2e971ca57f86" href="../R/659e2e971ca57f86.html" target="n" data-glyph="46,1" class="i field">_originalWidth</a>;
+        <b>private int</b> <a id="ba50a521196ae3f0" href="../R/ba50a521196ae3f0.html" target="n" data-glyph="46,1" class="i field">_originalHeight</a>;
+        <b>private bool</b> <a id="c4764b1d3240aaa1" href="../R/c4764b1d3240aaa1.html" target="n" data-glyph="46,1" class="i field">_sizeIsChanging</a>;
+        <b>private bool</b> <a id="3d218345568e35c2" href="../R/3d218345568e35c2.html" target="n" data-glyph="46,1" class="i field">_showRealSize</a>;
+        <b>private bool</b> <a id="d981b1124258701a" href="../R/d981b1124258701a.html" target="n" data-glyph="46,1" class="i field">_doPhysicalResize</a> = <b>true</b>; <span class="c">// in default we want the HTML make the smallest possible</span>
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets final width of selected image.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="db0b406c1a42532d" href="../R/db0b406c1a42532d.html" target="n" data-glyph="102,1" class="i property">ImageWidth</a>
+        {
+            <b>get</b> =&gt; <a href="#6c3b72f854cc8aa9" class="i field">_imageWidth</a>;
+            <b>set</b>
+            {
+                <b>if</b> (<a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#36d8f3b3bd14bad6" class="i method">Abs</a>(<a href="#6c3b72f854cc8aa9" class="i field">_imageWidth</a> - <b>value</b>) &lt; 0.01) <b>return</b>;
+                <a href="#6c3b72f854cc8aa9" class="i field">_imageWidth</a> = <b>value</b>;
+                <a href="#98627b9d7675014c" class="i method">RecalculateSize</a>();
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets final height of selected image.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="f19d84a23d30ad51" href="../R/f19d84a23d30ad51.html" target="n" data-glyph="102,1" class="i property">ImageHeight</a>
+        {
+            <b>get</b> =&gt; <a href="#e3b6f805da453a60" class="i field">_imageHeight</a>;
+            <b>set</b>
+            {
+                <b>if</b> (<a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#36d8f3b3bd14bad6" class="i method">Abs</a>(<a href="#e3b6f805da453a60" class="i field">_imageHeight</a> - <b>value</b>) &lt; 0.01) <b>return</b>;
+                <a href="#e3b6f805da453a60" class="i field">_imageHeight</a> = <b>value</b>;
+                <a href="#98627b9d7675014c" class="i method">RecalculateSize</a>();
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets coefficient, which is reducing size of the final image.</span>
+        <span class="c">///</span><span class="c"> Range: 1-100.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public int</b> <a id="6e4c89a1a9949623" href="../R/6e4c89a1a9949623.html" target="n" data-glyph="102,1" class="i property">ReduceCoefficient</a>
+        {
+            <b>get</b> =&gt; <a href="#ce5ed936989ab034" class="i field">_reduceCoefficient</a>;
+            <b>set</b>
+            {
+                <b>if</b> (<b>value</b> == <a href="#ce5ed936989ab034" class="i field">_reduceCoefficient</a>) <b>return</b>;
+                <a href="#ce5ed936989ab034" class="i field">_reduceCoefficient</a> = <b>value</b>;
+                <a href="#98627b9d7675014c" class="i method">RecalculateSize</a>();
+            }
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets, whether the image should have physically reduced size.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="67bd9c41a03c2c15" href="../R/67bd9c41a03c2c15.html" target="n" data-glyph="102,1" class="i property">DoPhysicalResize</a>
+        {
+            <b>get</b> =&gt; <a href="#d981b1124258701a" class="i field">_doPhysicalResize</a>;
+            <b>set</b>
+            {
+                <b>if</b> (<b>value</b> == <a href="#d981b1124258701a" class="i field">_doPhysicalResize</a>) <b>return</b>;
+                <a href="#d981b1124258701a" class="i field">_doPhysicalResize</a> = <b>value</b>;
+                <a href="#0b3f170cee0bf65f" class="i method">OnPropertyChanged</a>();
+            }
+        }
+ 
+        <b>private void</b> <a id="98627b9d7675014c" href="../R/98627b9d7675014c.html" target="n" data-glyph="76,1" class="i method">RecalculateSize</a>([<a href="@0@mscorlib/A.html#3b59f8cb5102fd8b" class="t constructor">CallerMemberName</a>]<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r1 rd" class="r1 r">changedProperty</span> = <b>null</b>)
+        {
+            <b>if</b> (<a href="#c4764b1d3240aaa1" class="i field">_sizeIsChanging</a>)
+            {
+                <a href="#0b3f170cee0bf65f" class="i method">OnPropertyChanged</a>(<span class="r1 r">changedProperty</span>);
+                <b>return</b>;
+            }
+ 
+            <b>try</b>
+            {
+                <a href="#c4764b1d3240aaa1" class="i field">_sizeIsChanging</a> = <b>true</b>;
+ 
+                <b>double</b> <span id="r2 rd" class="r2 r">coef</span>;
+                <b>switch</b> (<span class="r1 r">changedProperty</span>)
+                {
+                    <b>case</b> <b>nameof</b>(<a href="#6e4c89a1a9949623" class="i property">ReduceCoefficient</a>):
+                        <span class="r2 r">coef</span> = <a href="#6e4c89a1a9949623" class="i property">ReduceCoefficient</a> * 0.01;
+                        <a href="#db0b406c1a42532d" class="i property">ImageWidth</a> = <a href="#659e2e971ca57f86" class="i field">_originalWidth</a> * <span class="r2 r">coef</span>;
+                        <a href="#f19d84a23d30ad51" class="i property">ImageHeight</a> = <a href="#ba50a521196ae3f0" class="i field">_originalHeight</a> * <span class="r2 r">coef</span>;
+ 
+                        <b>break</b>;
+ 
+                    <b>case</b> <b>nameof</b>(<a href="#db0b406c1a42532d" class="i property">ImageWidth</a>):
+                        <span class="r2 r">coef</span> = <a href="#db0b406c1a42532d" class="i property">ImageWidth</a> / <a href="#659e2e971ca57f86" class="i field">_originalWidth</a>;
+                        <b>if</b> (<span class="r2 r">coef</span> &gt; 1)
+                        {
+                            <span class="r2 r">coef</span> = 1;
+                            <a href="#db0b406c1a42532d" class="i property">ImageWidth</a> = <a href="#659e2e971ca57f86" class="i field">_originalWidth</a>;
+                        }
+ 
+                        <a href="#f19d84a23d30ad51" class="i property">ImageHeight</a> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#fccc5332aa0c1a68" class="i method">Round</a>(<a href="#ba50a521196ae3f0" class="i field">_originalHeight</a> * <span class="r2 r">coef</span>, 2);
+                        <a href="#6e4c89a1a9949623" class="i property">ReduceCoefficient</a> = (<b>int</b>)(<span class="r2 r">coef</span> * 100);
+                        <b>break</b>;
+ 
+                    <b>case</b> <b>nameof</b>(<a href="#f19d84a23d30ad51" class="i property">ImageHeight</a>):
+                        <span class="r2 r">coef</span> = <a href="#f19d84a23d30ad51" class="i property">ImageHeight</a> / <a href="#ba50a521196ae3f0" class="i field">_originalHeight</a>;
+                        <b>if</b> (<span class="r2 r">coef</span> &gt; 1)
+                        {
+                            <span class="r2 r">coef</span> = 1;
+                            <a href="#f19d84a23d30ad51" class="i property">ImageHeight</a> = <a href="#ba50a521196ae3f0" class="i field">_originalHeight</a>;
+                        }
+ 
+                        <a href="#db0b406c1a42532d" class="i property">ImageWidth</a> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#fccc5332aa0c1a68" class="i method">Round</a>(<a href="#659e2e971ca57f86" class="i field">_originalWidth</a> * <span class="r2 r">coef</span>, 2);
+                        <a href="#6e4c89a1a9949623" class="i property">ReduceCoefficient</a> = (<b>int</b>)(<span class="r2 r">coef</span> * 100);
+                        <b>break</b>;
+                }
+ 
+                <span class="c">// after changing size - show real image size</span>
+                <a href="#48ec9beab7397ab4" class="i property">ShowRealSize</a> = <b>true</b>;
+            }
+            <b>finally</b>
+            {
+                <a href="#c4764b1d3240aaa1" class="i field">_sizeIsChanging</a> = <b>false</b>;
+            }
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Preview
+ 
+        <b>public bool</b> <a id="48ec9beab7397ab4" href="../R/48ec9beab7397ab4.html" target="n" data-glyph="102,1" class="i property">ShowRealSize</a>
+        {
+            <b>get</b> =&gt; <a href="#3d218345568e35c2" class="i field">_showRealSize</a>;
+            <b>set</b>
+            {
+                <b>if</b> (<b>value</b> == <a href="#3d218345568e35c2" class="i field">_showRealSize</a>) <b>return</b>;
+                <a href="#3d218345568e35c2" class="i field">_showRealSize</a> = <b>value</b>;
+                <a href="#0b3f170cee0bf65f" class="i method">OnPropertyChanged</a>();
+            }
+        }
+ 
+        <b>private void</b> <a id="c1327e8a664938a8" href="../R/c1327e8a664938a8.html" target="n" data-glyph="76,1" class="i method">ResizePreview</a>()
+        {
+            <a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="k">var</a> <span id="r3 rd" class="r3 r">scrollView</span> = (<a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>)<a href="../obj/Debug/Dialogs/ImageDialog.g.cs.html#dfd66032e4def71e" class="i field">ImagePreview</a>.<a href="@0@PresentationFramework/A.html#f649907cbc82d1a0" class="i property">Parent</a>;
+ 
+            <b>if</b> (<a href="#48ec9beab7397ab4" class="i property">ShowRealSize</a>)
+            {
+                <span class="r3 r">scrollView</span>.<a href="@0@PresentationFramework/A.html#1ad4e0e9b72d0a71" class="i property">HorizontalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#0ac97049b1a1ea41" class="i field">Auto</a>;
+                <span class="r3 r">scrollView</span>.<a href="@0@PresentationFramework/A.html#28ce83b7afba6596" class="i property">VerticalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#0ac97049b1a1ea41" class="i field">Auto</a>;
+ 
+                <a href="../obj/Debug/Dialogs/ImageDialog.g.cs.html#dfd66032e4def71e" class="i field">ImagePreview</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="#db0b406c1a42532d" class="i property">ImageWidth</a>;
+                <a href="../obj/Debug/Dialogs/ImageDialog.g.cs.html#dfd66032e4def71e" class="i field">ImagePreview</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <a href="#f19d84a23d30ad51" class="i property">ImageHeight</a>;
+            }
+            <b>else</b>
+            {
+                <span class="r3 r">scrollView</span>.<a href="@0@PresentationFramework/A.html#1ad4e0e9b72d0a71" class="i property">HorizontalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#13762237907098f4" class="i field">Disabled</a>;
+                <span class="r3 r">scrollView</span>.<a href="@0@PresentationFramework/A.html#28ce83b7afba6596" class="i property">VerticalScrollBarVisibility</a> = <a href="@0@PresentationFramework/A.html#cc606f9d55be03ae" class="t t">ScrollBarVisibility</a>.<a href="@0@PresentationFramework/A.html#13762237907098f4" class="i field">Disabled</a>;
+ 
+                <a href="../obj/Debug/Dialogs/ImageDialog.g.cs.html#dfd66032e4def71e" class="i field">ImagePreview</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <span class="r3 r">scrollView</span>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>;
+                <a href="../obj/Debug/Dialogs/ImageDialog.g.cs.html#dfd66032e4def71e" class="i field">ImagePreview</a>.<a href="@0@PresentationFramework/A.html#df2641c07f10d929" class="i property">Height</a> = <span class="r3 r">scrollView</span>.<a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>;
+            }
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Load image
+ 
+        <b>private void</b> <a id="ce6b8be55a73bada" href="../R/ce6b8be55a73bada.html" target="n" data-glyph="76,1" class="i method">BrowseClick</a>(<b>object</b> <span id="r4 rd" class="r4 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r5 rd" class="r5 r">e</span>)
+        {
+            <a href="#50591490a7285c9e" class="i method">EnsureFileDialog</a>();
+ 
+            <b>if</b> (<a href="#5041c10c24deb8e4" class="i field">_openFileDialog</a>.<a href="@0@PresentationFramework/A.html#0223c1563184cfac" class="i method">ShowDialog</a>(<a href="../P/c487daa01a7b0a0e.html#c487daa01a7b0a0e" class="k">this</a>) == <b>true</b>)
+            {
+                <a href="#6af47216a517a5a7" class="i property">ImagePath</a> = <a href="#5041c10c24deb8e4" class="i field">_openFileDialog</a>.<a href="@0@PresentationFramework/A.html#df29941779e9aecf" class="i property">FileName</a>;
+                <a href="#74afcf105855fa71" class="i method">LoadImage</a>();
+            }
+        }
+ 
+        <b>private void</b> <a id="74afcf105855fa71" href="../R/74afcf105855fa71.html" target="n" data-glyph="76,1" class="i method">LoadImage</a>()
+        {
+            <b>try</b>
+            {
+                <a href="@0@PresentationCore/A.html#ee8d0deab0e263b7" class="t t">BitmapImage</a> <span id="r6 rd" class="r6 r">image</span> = <b>new</b> <a href="@0@PresentationCore/A.html#940e003698ec4c39" class="t constructor">BitmapImage</a>();
+                <span class="r6 r">image</span>.<a href="@0@PresentationCore/A.html#ff48844d9c3da581" class="i method">BeginInit</a>();
+                <span class="r6 r">image</span>.<a href="@0@PresentationCore/A.html#0ad8e1450035960b" class="i property">CacheOption</a> = <a href="@0@PresentationCore/A.html#2892a7144be883ba" class="t t">BitmapCacheOption</a>.<a href="@0@PresentationCore/A.html#5fdb13813fd17def" class="i field">OnLoad</a>; <span class="c">// so the image file wouldn&#39;t hang</span>
+                <span class="r6 r">image</span>.<a href="@0@PresentationCore/A.html#54d23d015e762014" class="i property">UriSource</a> = <b>new</b> <a href="@0@System/A.html#d9fc45d783ee73ff" class="t constructor">Uri</a>(<a href="#6af47216a517a5a7" class="i property">ImagePath</a>, <a href="@0@System/A.html#ac43655101ad74be" class="t t">UriKind</a>.<a href="@0@System/A.html#d734108197254429" class="i field">Absolute</a>);
+                <span class="r6 r">image</span>.<a href="@0@PresentationCore/A.html#f13ebd618e2e92dd" class="i method">EndInit</a>();
+ 
+                <a href="#bca1766e05cadf9c" class="i property">ImageSource</a> = <span class="r6 r">image</span>;
+                <a href="#cf68b554c943a9cd" class="i property">IsSuccess</a> = <b>true</b>;
+ 
+                <a href="#502673d3a0164210" class="i property">ImageTitle</a> = <a href="@0@mscorlib/A.html#090eca8621a248ee" class="t t">Path</a>.<a href="@0@mscorlib/A.html#e36b3edc1f3e2c8d" class="i method">GetFileNameWithoutExtension</a>(<a href="#6af47216a517a5a7" class="i property">ImagePath</a>);
+                <a href="#6c3b72f854cc8aa9" class="i field">_imageWidth</a> = <a href="#659e2e971ca57f86" class="i field">_originalWidth</a> = <span class="r6 r">image</span>.<a href="@0@PresentationCore/A.html#e88eaeb82217cab6" class="i property">PixelWidth</a>;
+                <a href="#e3b6f805da453a60" class="i field">_imageHeight</a> = <a href="#ba50a521196ae3f0" class="i field">_originalHeight</a> = <span class="r6 r">image</span>.<a href="@0@PresentationCore/A.html#0807be1f18d7aeef" class="i property">PixelHeight</a>;
+                <a href="#ce5ed936989ab034" class="i field">_reduceCoefficient</a> = 100;
+                <a href="#0b3f170cee0bf65f" class="i method">OnPropertyChanged</a>(<b>nameof</b>(<a href="#db0b406c1a42532d" class="i property">ImageWidth</a>));
+                <a href="#0b3f170cee0bf65f" class="i method">OnPropertyChanged</a>(<b>nameof</b>(<a href="#f19d84a23d30ad51" class="i property">ImageHeight</a>));
+                <a href="#0b3f170cee0bf65f" class="i method">OnPropertyChanged</a>(<b>nameof</b>(<a href="#6e4c89a1a9949623" class="i property">ReduceCoefficient</a>));
+ 
+                <span class="c">// first preview show whole image</span>
+                <a href="#48ec9beab7397ab4" class="i property">ShowRealSize</a> = <b>false</b>;
+            }
+            <b>catch</b>
+            {
+                <a href="#cf68b554c943a9cd" class="i property">IsSuccess</a> = <b>false</b>;
+                <a href="#6af47216a517a5a7" class="i property">ImagePath</a> = <a href="../P/00a5e5d95784141b.html#00a5e5d95784141b" class="t t">ResourceManager</a>.<a href="../Localization/ResourceManager.Texts.cs.html#14321b8d5f7e598e" class="i property">ImageForm_ErrorImage</a>;
+                <a href="#bca1766e05cadf9c" class="i property">ImageSource</a> = <b>new</b> <a href="@0@PresentationCore/A.html#940e003698ec4c39" class="t constructor">BitmapImage</a>(); <span class="c">// empty</span>
+ 
+            }
+        }
+ 
+        <b>private void</b> <a id="50591490a7285c9e" href="../R/50591490a7285c9e.html" target="n" data-glyph="76,1" class="i method">EnsureFileDialog</a>()
+        {
+            <b>if</b> (<a href="#5041c10c24deb8e4" class="i field">_openFileDialog</a> == <b>null</b>)
+            {
+                <a href="#5041c10c24deb8e4" class="i field">_openFileDialog</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#007fad921b514290" class="t constructor">OpenFileDialog</a>();
+                <a href="#5041c10c24deb8e4" class="i field">_openFileDialog</a>.<a href="@0@PresentationFramework/A.html#08ecdb64d5a0df3e" class="i property">Title</a> = <a href="../P/c487daa01a7b0a0e.html#c487daa01a7b0a0e" class="k">this</a>.<a href="@0@PresentationFramework/A.html#5002b3a8c196a7d1" class="i property">Title</a>;
+                <a href="#5041c10c24deb8e4" class="i field">_openFileDialog</a>.<a href="@0@PresentationFramework/A.html#592779c62eeddaa8" class="i property">Filter</a> = <a href="../P/00a5e5d95784141b.html#00a5e5d95784141b" class="t t">ResourceManager</a>.<a href="../Localization/ResourceManager.Texts.cs.html#3ed9eb50d349bc5f" class="i property">ImageForm_Filter</a> + <span class="s">&quot; (*.png, *.jpg, *.jpeg, *.bmp)|*.png;*.jpg;*.jpeg;*.bmp;&quot;</span>;
+            }
+        }
+ 
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}
+</pre></td></tr></table></div></body></html>

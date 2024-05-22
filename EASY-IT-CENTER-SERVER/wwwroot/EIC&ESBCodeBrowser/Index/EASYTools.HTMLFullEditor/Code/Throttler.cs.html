@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html><head><title>Throttler.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(73);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.HTMLFullEditor/Code/Throttler.cs" target="_top">Code\Throttler.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.HTMLFullEditor" target="_top">..\..\..\EASY-TOOLS\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor\EASYTools.HTMLFullEditor.csproj</a> (EASYTools.HTMLFullEditor)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Threading</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">HTMLFullEditor</span>.<span class="i n">Code</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> This class adds the possibility to throttle repeated function calling.</span>
+    <span class="c">///</span><span class="c"> When the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#9d0c64743375bdc3" class="i method">Fire</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> function is called repeatedly, will only actually call the original function at most once per every interval.</span>
+    <span class="c">///</span><span class="c"> Useful for rate-limiting events that occur faster than you can keep up with.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Will execute the function as soon as you call it for the first time, and, if you call it again any number of times during the wait period, as soon as that period is over.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <b>internal class</b> <a id="8477271ea48609e1" href="../R/8477271ea48609e1.html" target="n" data-glyph="2,0" class="t t">Throttler</a>
+    {
+        <b>private readonly</b> <a href="@0@WindowsBase/A.html#85652fc45bd4a61e" class="t t">DispatcherTimer</a> <a id="1ff5d31eb1e1d140" href="../R/1ff5d31eb1e1d140.html" target="n" data-glyph="46,1" class="i field">_throttleTimer</a>;
+        <b>private readonly object</b> <a id="4d85f4c350816a2e" href="../R/4d85f4c350816a2e.html" target="n" data-glyph="46,1" class="i field">_actionLock</a> = <b>new</b> <b>object</b>();
+        <b>private</b> <a href="@0@mscorlib/A.html#9147ae6f76643aae" class="t t">Action</a> <a id="97af7ed31ef1953a" href="../R/97af7ed31ef1953a.html" target="n" data-glyph="46,1" class="i field">_queuedAction</a>;
+ 
+        <b>public</b> <a id="535fd42cc99d27c4" href="../R/535fd42cc99d27c4.html" target="n" data-glyph="72,1" class="t constructor">Throttler</a>(<a href="@0@mscorlib/A.html#865ef7b89f41b632" class="t t">TimeSpan</a> <span id="r0 rd" class="r0 r">interval</span>)
+        {
+            <a href="#1ff5d31eb1e1d140" class="i field">_throttleTimer</a> = <b>new</b> <a href="@0@WindowsBase/A.html#44f66f3c4d0fdf15" class="t constructor">DispatcherTimer</a>();
+            <a href="#1ff5d31eb1e1d140" class="i field">_throttleTimer</a>.<a href="@0@WindowsBase/A.html#b3c72778b0b80320" class="i property">Interval</a> = <span class="r0 r">interval</span>;
+            <a href="#1ff5d31eb1e1d140" class="i field">_throttleTimer</a>.<a href="@0@WindowsBase/A.html#ef26184523c318d3" class="i">Tick</a> += <a href="#26e2202cfcc75f7c" class="i method">TimerTick</a>;
+        }
+ 
+        <b>private void</b> <a id="26e2202cfcc75f7c" href="../R/26e2202cfcc75f7c.html" target="n" data-glyph="76,1" class="i method">TimerTick</a>(<b>object</b> <span id="r1 rd" class="r1 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r2 rd" class="r2 r">e</span>)
+        {
+            <span class="c">// stop the timer immediately</span>
+            <a href="#1ff5d31eb1e1d140" class="i field">_throttleTimer</a>.<a href="@0@WindowsBase/A.html#b0381f60d6038d6e" class="i method">Stop</a>();
+ 
+            <span class="c">// invoke and clear the action</span>
+            <b>lock</b> (<a href="#4d85f4c350816a2e" class="i field">_actionLock</a>)
+            {
+                <b>if</b> (<a href="#97af7ed31ef1953a" class="i field">_queuedAction</a> != <b>null</b>)
+                {
+                    <a href="#97af7ed31ef1953a" class="i field">_queuedAction</a>();
+                    <a href="#97af7ed31ef1953a" class="i field">_queuedAction</a> = <b>null</b>;
+                }
+            }
+        }
+ 
+        <b>public void</b> <a id="9d0c64743375bdc3" href="../R/9d0c64743375bdc3.html" target="n" data-glyph="72,1" class="i method">Fire</a>(<a href="@0@mscorlib/A.html#9147ae6f76643aae" class="t t">Action</a> <span id="r3 rd" class="r3 r">action</span>)
+        {
+            <span class="c">// the timer is not running, invoking action immediately and starting the timer</span>
+            <b>if</b> (!<a href="#1ff5d31eb1e1d140" class="i field">_throttleTimer</a>.<a href="@0@WindowsBase/A.html#81aa4c1d6752e30e" class="i property">IsEnabled</a>)
+            {
+                <span class="r3 r">action</span>();
+                <a href="#1ff5d31eb1e1d140" class="i field">_throttleTimer</a>.<a href="@0@WindowsBase/A.html#a3450586a3e54079" class="i method">Start</a>();
+            }
+            <span class="c">// timer is already running - queueing the action</span>
+            <b>else</b>
+            {
+                <b>lock</b> (<a href="#4d85f4c350816a2e" class="i field">_actionLock</a>)
+                {
+                    <span class="c">// is the timer still running?</span>
+                    <b>if</b> (<a href="#1ff5d31eb1e1d140" class="i field">_throttleTimer</a>.<a href="@0@WindowsBase/A.html#81aa4c1d6752e30e" class="i property">IsEnabled</a>)
+                    {
+                        <span class="c">// if so, queue the action</span>
+                        <a href="#97af7ed31ef1953a" class="i field">_queuedAction</a> = <span class="r3 r">action</span>;
+                    }
+                    <b>else</b>
+                    {
+                        <span class="c">// if the timer is off - invoke the action and start the timer</span>
+                        <span class="r3 r">action</span>();
+                        <a href="#1ff5d31eb1e1d140" class="i field">_throttleTimer</a>.<a href="@0@WindowsBase/A.html#a3450586a3e54079" class="i method">Start</a>();
+                    }
+                }
+            }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

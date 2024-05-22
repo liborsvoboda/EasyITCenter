@@ -1,0 +1,403 @@
+﻿<!DOCTYPE html>
+<html><head><title>SyntaxBox.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(394);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.HighlightTextBox/SyntaxBox.cs" target="_top">SyntaxBox.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.HighlightTextBox" target="_top">..\..\..\EASY-TOOLS\EASYTool.HighlightTextBox\EASYTools.HighlightTextBox.csproj</a> (EASYTools.HighlightTextBox)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">HighlightTextBox</span>
+{
+    <b>public class</b> <a id="78ee2bfbc46ac014" href="R/78ee2bfbc46ac014.html" target="n" data-glyph="0,0" class="t t">SyntaxBox</a> : <a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a>
+    {
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="9f0c26db1a7fb9ce" href="R/9f0c26db1a7fb9ce.html" target="n" data-glyph="42,1" class="i field">IsLineNumbersMarginVisibleProperty</a> = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(
+            <span class="s">&quot;IsLineNumbersMarginVisible&quot;</span>, <b>typeof</b>(<b>bool</b>), <b>typeof</b>(<a href="#78ee2bfbc46ac014" class="t t">SyntaxBox</a>), <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>true</b>));
+ 
+        <b>public</b> <a id="d289e6fb23b73ab2" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">SyntaxBox</a>()
+        {
+            <a href="#d75b2db753578bce" class="i property">MaxLineCountInBlock</a> = 100;
+            <a href="#98bacb0ec0efc4c7" class="i property">LineHeight</a> = <a href="@0@PresentationFramework/A.html#06c25cfb99769839" class="i property">FontSize</a> * 1.2;
+            <a href="#f5a46e2f718e13c8" class="i property">TotalLineCount</a> = 1;
+            <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<a href="#c8f152cdec60fe6e" class="t t">InnerTextBlock</a>&gt;();
+ 
+            <a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += (<span id="r0 rd" class="r0 r">s</span>, <span id="r1 rd" class="r1 r">e</span>) =&gt;
+            {
+                <a href="#5820562738ac34df" class="i property">RenderCanvas</a> = (<a href="DrawingControl.cs.html#292222d29106d835" class="t t">DrawingControl</a>)<a href="@0@PresentationFramework/A.html#daecaeeeebb2beb9" class="i property">Template</a>.<a href="@0@PresentationFramework/A.html#e5c8679caf5f914f" class="i method">FindName</a>(<span class="s">&quot;PART_RenderCanvas&quot;</span>, <a href="#78ee2bfbc46ac014" class="k">this</a>);
+                <a href="#02a071acf43cb3e6" class="i property">LineNumbersCanvas</a> = (<a href="DrawingControl.cs.html#292222d29106d835" class="t t">DrawingControl</a>)<a href="@0@PresentationFramework/A.html#daecaeeeebb2beb9" class="i property">Template</a>.<a href="@0@PresentationFramework/A.html#e5c8679caf5f914f" class="i method">FindName</a>(<span class="s">&quot;PART_LineNumbersCanvas&quot;</span>, <a href="#78ee2bfbc46ac014" class="k">this</a>);
+                <a href="#c5418a1798fa168a" class="i property">ScrollerView</a> = (<a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a>)<a href="@0@PresentationFramework/A.html#daecaeeeebb2beb9" class="i property">Template</a>.<a href="@0@PresentationFramework/A.html#e5c8679caf5f914f" class="i method">FindName</a>(<span class="s">&quot;PART_ContentHost&quot;</span>, <a href="#78ee2bfbc46ac014" class="k">this</a>);
+ 
+                <a href="#02a071acf43cb3e6" class="i property">LineNumbersCanvas</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="#9fc0a233f7e76320" class="i method">GetFormattedTextWidth</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9d5604d4425b216f" class="i method">Format</a>(<span class="s">&quot;{0:0000}&quot;</span>, <a href="#f5a46e2f718e13c8" class="i property">TotalLineCount</a>)) + 5;
+ 
+                <a href="#c5418a1798fa168a" class="i property">ScrollerView</a>.<a href="@0@PresentationFramework/A.html#46795889bc55ea98" class="i">ScrollChanged</a> += <a href="#493b6d19394d086f" class="i method">OnScrollChanged</a>;
+ 
+                <a href="#719f492112e0e710" class="i method">InvalidateBlocks</a>(0);
+                <a href="@0@PresentationCore/A.html#fdda546b8cd3480c" class="i method">InvalidateVisual</a>();
+            };
+ 
+            <a href="@0@PresentationFramework/A.html#ec1a90b4f82457bf" class="i">SizeChanged</a> += (<span id="r2 rd" class="r2 r">s</span>, <span id="r3 rd" class="r3 r">e</span>) =&gt;
+            {
+                <b>if</b> (!<span class="r3 r">e</span>.<a href="@0@PresentationFramework/A.html#5f8ac74a4799accf" class="i property">HeightChanged</a>) <b>return</b>;
+                <a href="#f276046aaa87db35" class="i method">UpdateBlocks</a>();
+                <a href="@0@PresentationCore/A.html#fdda546b8cd3480c" class="i method">InvalidateVisual</a>();
+            };
+ 
+            <a href="@0@PresentationFramework/A.html#22cd61fb3203047e" class="i">TextChanged</a> += (<span id="r4 rd" class="r4 r">s</span>, <span id="r5 rd" class="r5 r">e</span>) =&gt;
+            {
+                <a href="#74b12186333b75a6" class="i method">UpdateTotalLineCount</a>();
+                <a href="#719f492112e0e710" class="i method">InvalidateBlocks</a>(<span class="r5 r">e</span>.<a href="@0@PresentationFramework/A.html#1afa9c9f0efdaf39" class="i property">Changes</a>.<a href="@0@System.Core/A.html#bc8ae402a61dd9d6" class="i method">First</a>().<a href="@0@PresentationFramework/A.html#9a805439d71ae883" class="i property">Offset</a>);
+                <a href="@0@PresentationCore/A.html#fdda546b8cd3480c" class="i method">InvalidateVisual</a>();
+            };
+        }
+ 
+        <b>public</b> <a href="IHighlighter.cs.html#8ec12bf84f531ecf" class="t t">IHighlighter</a> <a id="4f214c5b65e0731b" href="R/4f214c5b65e0731b.html" target="n" data-glyph="102,1" class="i property">CurrentHighlighter</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>public bool</b> <a id="836152083df370cc" href="R/836152083df370cc.html" target="n" data-glyph="102,1" class="i property">IsLineNumbersMarginVisible</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#9f0c26db1a7fb9ce" class="i field">IsLineNumbersMarginVisibleProperty</a>);
+            <b>set</b> =&gt; <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#9f0c26db1a7fb9ce" class="i field">IsLineNumbersMarginVisibleProperty</a>, <b>value</b>);
+        }
+ 
+        <b>public double</b> <a id="98bacb0ec0efc4c7" href="R/98bacb0ec0efc4c7.html" target="n" data-glyph="102,1" class="i property">LineHeight</a>
+        {
+            <b>get</b> =&gt; <a href="#d025ba52b1ab9472" class="i property">AdjustedLineHeight</a>;
+            <b>set</b>
+            {
+                <b>if</b> (<b>value</b> == <a href="#d025ba52b1ab9472" class="i property">AdjustedLineHeight</a>) <b>return</b>;
+                <a href="#d025ba52b1ab9472" class="i property">AdjustedLineHeight</a> = <b>value</b>;
+                <a href="#9f2eed4897bce690" class="i property">BlockHeight</a> = <a href="#d75b2db753578bce" class="i property">MaxLineCountInBlock</a> * <b>value</b>;
+                <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#241ee1a0062f4bb5" class="i method">SetLineStackingStrategy</a>(<a href="#78ee2bfbc46ac014" class="k">this</a>, <a href="@0@PresentationFramework/A.html#3245bf1ae0ab3c66" class="t t">LineStackingStrategy</a>.<a href="@0@PresentationFramework/A.html#328260b45db0f743" class="i field">BlockLineHeight</a>);
+                <a href="@0@PresentationFramework/A.html#f469b4aeb3697bb8" class="t t">TextBlock</a>.<a href="@0@PresentationFramework/A.html#159f20a2ffbc0308" class="i method">SetLineHeight</a>(<a href="#78ee2bfbc46ac014" class="k">this</a>, <a href="#d025ba52b1ab9472" class="i property">AdjustedLineHeight</a>);
+            }
+        }
+ 
+        <b>public int</b> <a id="d75b2db753578bce" href="R/d75b2db753578bce.html" target="n" data-glyph="102,1" class="i property">MaxLineCountInBlock</a>
+        {
+            <b>get</b> =&gt; <a href="#44c8101b474e176f" class="i property">MaximumLineCountInBlock</a>;
+            <b>set</b>
+            {
+                <a href="#44c8101b474e176f" class="i property">MaximumLineCountInBlock</a> = <b>value</b> &gt; 0 ? <b>value</b> : 0;
+                <a href="#9f2eed4897bce690" class="i property">BlockHeight</a> = <b>value</b> * <a href="#98bacb0ec0efc4c7" class="i property">LineHeight</a>;
+            }
+        }
+ 
+        <b>private double</b> <a id="d025ba52b1ab9472" href="R/d025ba52b1ab9472.html" target="n" data-glyph="106,1" class="i property">AdjustedLineHeight</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>private double</b> <a id="9f2eed4897bce690" href="R/9f2eed4897bce690.html" target="n" data-glyph="106,1" class="i property">BlockHeight</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>private</b> <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="#c8f152cdec60fe6e" class="t t">InnerTextBlock</a>&gt; <a id="e4d12bb5faa0b28f" href="R/e4d12bb5faa0b28f.html" target="n" data-glyph="106,1" class="i property">Blocks</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>private</b> <a href="DrawingControl.cs.html#292222d29106d835" class="t t">DrawingControl</a> <a id="02a071acf43cb3e6" href="R/02a071acf43cb3e6.html" target="n" data-glyph="106,1" class="i property">LineNumbersCanvas</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>private int</b> <a id="44c8101b474e176f" href="R/44c8101b474e176f.html" target="n" data-glyph="106,1" class="i property">MaximumLineCountInBlock</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>private</b> <a href="DrawingControl.cs.html#292222d29106d835" class="t t">DrawingControl</a> <a id="5820562738ac34df" href="R/5820562738ac34df.html" target="n" data-glyph="106,1" class="i property">RenderCanvas</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#488ab4a977a015eb" class="t t">ScrollViewer</a> <a id="c5418a1798fa168a" href="R/c5418a1798fa168a.html" target="n" data-glyph="106,1" class="i property">ScrollerView</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>private int</b> <a id="f5a46e2f718e13c8" href="R/f5a46e2f718e13c8.html" target="n" data-glyph="106,1" class="i property">TotalLineCount</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>public int</b> <a id="baebee7dd4c3db0d" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetIndexOfFirstVisibleLine</a>()
+        {
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r6 rd" class="r6 r">line</span> = (<b>int</b>)(<a href="@0@PresentationFramework/A.html#34dd5562d2bffb24" class="i property">VerticalOffset</a> / <a href="#d025ba52b1ab9472" class="i property">AdjustedLineHeight</a>);
+            <b>return</b> <span class="r6 r">line</span> &gt; <a href="#f5a46e2f718e13c8" class="i property">TotalLineCount</a> ? <a href="#f5a46e2f718e13c8" class="i property">TotalLineCount</a> : <span class="r6 r">line</span>;
+        }
+ 
+        <b>public int</b> <a id="a51283dc3d73ad51" href="R/a51283dc3d73ad51.html" target="n" data-glyph="72,1" class="i method">GetIndexOfLastVisibleLine</a>()
+        {
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r7 rd" class="r7 r">height</span> = <a href="@0@PresentationFramework/A.html#34dd5562d2bffb24" class="i property">VerticalOffset</a> + <a href="@0@PresentationFramework/A.html#1970b52f719c929c" class="i property">ViewportHeight</a>;
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r8 rd" class="r8 r">line</span> = (<b>int</b>)(<span class="r7 r">height</span> / <a href="#d025ba52b1ab9472" class="i property">AdjustedLineHeight</a>);
+            <b>return</b> <span class="r8 r">line</span> &gt; <a href="#f5a46e2f718e13c8" class="i property">TotalLineCount</a> - 1 ? <a href="#f5a46e2f718e13c8" class="i property">TotalLineCount</a> - 1 : <span class="r8 r">line</span>;
+        }
+ 
+        <b>protected override void</b> <a id="2e93a7b3790bb8b2" href="R/2e93a7b3790bb8b2.html" target="n" data-glyph="75,1" class="i method">OnRender</a>(<a href="@0@PresentationCore/A.html#e8d3760dcaccd8d8" class="t t">DrawingContext</a> <span id="r9 rd" class="r9 r">drawingContext</span>)
+        {
+            <a href="#27311b0edf938672" class="i method">DrawBlocks</a>();
+            <a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="k">base</a>.<a href="@0@PresentationCore/A.html#2c25e3db1be0d435" class="i method">OnRender</a>(<span class="r9 r">drawingContext</span>);
+        }
+ 
+        <b>private void</b> <a id="27311b0edf938672" href="R/27311b0edf938672.html" target="n" data-glyph="76,1" class="i method">DrawBlocks</a>()
+        {
+            <b>if</b> (!<a href="@0@PresentationFramework/A.html#b05bbe3100c43c82" class="i property">IsLoaded</a> || <a href="#5820562738ac34df" class="i property">RenderCanvas</a> == <b>null</b> || <a href="#02a071acf43cb3e6" class="i property">LineNumbersCanvas</a> == <b>null</b>)
+                <b>return</b>;
+ 
+            <a href="@0@PresentationCore/A.html#e8d3760dcaccd8d8" class="k">var</a> <span id="r10 rd" class="r10 r">dc</span> = <a href="#5820562738ac34df" class="i property">RenderCanvas</a>.<a href="DrawingControl.cs.html#3c04d157d60ea96b" class="i method">GetContext</a>();
+            <a href="@0@PresentationCore/A.html#e8d3760dcaccd8d8" class="k">var</a> <span id="r11 rd" class="r11 r">dc2</span> = <a href="#02a071acf43cb3e6" class="i property">LineNumbersCanvas</a>.<a href="DrawingControl.cs.html#3c04d157d60ea96b" class="i method">GetContext</a>();
+            <b>foreach</b> (<a href="#c8f152cdec60fe6e" class="k">var</a> <span id="r12 rd" class="r12 r">block</span> <b>in</b> <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>)
+            {
+                <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r13 rd" class="r13 r">blockPos</span> = <span class="r12 r">block</span>.<a href="#7a8d48afd0467235" class="i property">Position</a>;
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r14 rd" class="r14 r">top</span> = <span class="r13 r">blockPos</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <a href="@0@PresentationFramework/A.html#34dd5562d2bffb24" class="i property">VerticalOffset</a>;
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r15 rd" class="r15 r">bottom</span> = <span class="r14 r">top</span> + <a href="#9f2eed4897bce690" class="i property">BlockHeight</a>;
+                <b>if</b> ((<span class="r14 r">top</span> &gt;= <a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>) || (<span class="r15 r">bottom</span> &lt;= 0)) <b>continue</b>;
+                <b>try</b>
+                {
+                    <span class="r10 r">dc</span>.<a href="@0@PresentationCore/A.html#c670b9cc2f69f176" class="i method">DrawText</a>(<span class="r12 r">block</span>.<a href="#bd2ec81ea26bffe5" class="i property">FormattedText</a>, <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(2 - <a href="@0@PresentationFramework/A.html#d330e2bd7fe133b6" class="i property">HorizontalOffset</a>, <span class="r12 r">block</span>.<a href="#7a8d48afd0467235" class="i property">Position</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <a href="@0@PresentationFramework/A.html#34dd5562d2bffb24" class="i property">VerticalOffset</a>));
+                    <b>if</b> (<a href="#836152083df370cc" class="i property">IsLineNumbersMarginVisible</a>)
+                    {
+                        <a href="#02a071acf43cb3e6" class="i property">LineNumbersCanvas</a>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <a href="#9fc0a233f7e76320" class="i method">GetFormattedTextWidth</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9d5604d4425b216f" class="i method">Format</a>(<span class="s">&quot;{0:0000}&quot;</span>, <a href="#f5a46e2f718e13c8" class="i property">TotalLineCount</a>)) + 5;
+                        <span class="r11 r">dc2</span>.<a href="@0@PresentationCore/A.html#c670b9cc2f69f176" class="i method">DrawText</a>(<span class="r12 r">block</span>.<a href="#9825797529e76d4c" class="i property">LineNumbers</a>, <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<a href="#02a071acf43cb3e6" class="i property">LineNumbersCanvas</a>.<a href="@0@PresentationFramework/A.html#7cc64ed9667c9f70" class="i property">ActualWidth</a>, 1 + <span class="r12 r">block</span>.<a href="#7a8d48afd0467235" class="i property">Position</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <a href="@0@PresentationFramework/A.html#34dd5562d2bffb24" class="i property">VerticalOffset</a>));
+                    }
+                }
+                <b>catch</b>
+                {
+                    <span class="c">// ignored</span>
+                }
+            }
+            <span class="r10 r">dc</span>.<a href="@0@PresentationCore/A.html#d8e2a5793db9d674" class="i method">Close</a>();
+            <span class="r11 r">dc2</span>.<a href="@0@PresentationCore/A.html#d8e2a5793db9d674" class="i method">Close</a>();
+        }
+ 
+        <b>private void</b> <a id="3782a261461a34eb" href="R/3782a261461a34eb.html" target="n" data-glyph="76,1" class="i method">FormatBlock</a>(<a href="#c8f152cdec60fe6e" class="t t">InnerTextBlock</a> <span id="r16 rd" class="r16 r">currentBlock</span>, <a href="#c8f152cdec60fe6e" class="t t">InnerTextBlock</a> <span id="r17 rd" class="r17 r">previousBlock</span>)
+        {
+            <span class="r16 r">currentBlock</span>.<a href="#bd2ec81ea26bffe5" class="i property">FormattedText</a> = <a href="#a6ff3b492a92b288" class="i method">GetFormattedText</a>(<span class="r16 r">currentBlock</span>.<a href="#3040d3045b769a0b" class="i property">RawText</a>);
+            <b>if</b> (<a href="#4f214c5b65e0731b" class="i property">CurrentHighlighter</a> != <b>null</b>)
+            {
+                <a href="@0@mscorlib/A.html#8449b4bfef11bfa3" class="t t">ThreadPool</a>.<a href="@0@mscorlib/A.html#59750145eb10bef7" class="i method">QueueUserWorkItem</a>(<span id="r18 rd" class="r18 r">p</span> =&gt;
+                {
+                    <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r19 rd" class="r19 r">previousCode</span> = <span class="r17 r">previousBlock</span>?.<a href="#36c88ab2e5725de9" class="i property">Code</a>
+                                       ?? -1;
+                    <span class="r16 r">currentBlock</span>.<a href="#36c88ab2e5725de9" class="i property">Code</a> = <a href="#4f214c5b65e0731b" class="i property">CurrentHighlighter</a>.<a href="IHighlighter.cs.html#5d254e56be682690" class="i method">Highlight</a>(<span class="r16 r">currentBlock</span>.<a href="#bd2ec81ea26bffe5" class="i property">FormattedText</a>, <span class="r19 r">previousCode</span>);
+                });
+            }
+        }
+ 
+        <b>private</b> <a href="@0@PresentationCore/A.html#6e6924d547946932" class="t t">FormattedText</a> <a id="bed371687a69b3f1" href="R/bed371687a69b3f1.html" target="n" data-glyph="76,1" class="i method">GetFormattedLineNumbers</a>(<b>int</b> <span id="r20 rd" class="r20 r">firstIndex</span>, <b>int</b> <span id="r21 rd" class="r21 r">lastIndex</span>)
+        {
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r22 rd" class="r22 r">text</span> = <span class="s">&quot;&quot;</span>;
+            <a href="@0@mscorlib/A.html#adf60ee46ebd299f" class="k">var</a> <span id="r23 rd" class="r23 r">builder</span> = <b>new</b> <a href="@0@mscorlib/A.html#6e631639c1e2746b" class="t constructor">StringBuilder</a>();
+            <b>for</b> (<a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r24 rd" class="r24 r">i</span> = <span class="r20 r">firstIndex</span> + 1; <span class="r24 r">i</span> &lt;= <span class="r21 r">lastIndex</span> + 1; <span class="r24 r">i</span>++)
+            {
+                <span class="r23 r">builder</span>.<a href="@0@mscorlib/A.html#73bc75596acbac77" class="i method">AppendLine</a>(<span class="s">$&quot;</span>{<span class="r22 r">text</span>}{<span class="r24 r">i</span>}<span class="s">&quot;</span>);
+            }
+ 
+            <span class="r22 r">text</span> = <span class="r22 r">text</span>.<a href="@0@mscorlib/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+ 
+            <a href="@0@PresentationCore/A.html#6e6924d547946932" class="k">var</a> <span id="r25 rd" class="r25 r">formattedText</span> = <b>new</b> <a href="@0@PresentationCore/A.html#22a55c9be2478977" class="t constructor">FormattedText</a>(<span class="r22 r">text</span>, <span class="i n">System</span>.<span class="i n">Globalization</span>.<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>,
+                <a href="@0@PresentationCore/A.html#3f1d3dfbcfcc8977" class="t t">FlowDirection</a>.<a href="@0@PresentationCore/A.html#47c46056d47e6cd5" class="i field">LeftToRight</a>, <b>new</b> <a href="@0@PresentationCore/A.html#1683bc48bb73b417" class="t constructor">Typeface</a>(<a href="@0@PresentationFramework/A.html#9de10c4240af355e" class="i property">FontFamily</a>, <a href="@0@PresentationFramework/A.html#7ff112e7fd3d2a6c" class="i property">FontStyle</a>, <a href="@0@PresentationFramework/A.html#9010668f3342fa65" class="i property">FontWeight</a>, <a href="@0@PresentationFramework/A.html#afc6052df2fbc888" class="i property">FontStretch</a>), 16,
+                <b>new</b> <a href="@0@PresentationCore/A.html#28be7a261187a210" class="t constructor">SolidColorBrush</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#c0c2e7d2eff59dd2" class="i method">FromRgb</a>(0x21, 0xA1, 0xD8)),
+                <a href="@0@PresentationCore/A.html#7f1e2538afba01e7" class="t t">VisualTreeHelper</a>.<a href="@0@PresentationCore/A.html#6018c348adaeec6c" class="i method">GetDpi</a>(<a href="#78ee2bfbc46ac014" class="k">this</a>).<a href="@0@PresentationCore/A.html#8c0e9d6735d8e200" class="i property">PixelsPerDip</a>)
+            {
+                <a href="@0@PresentationCore/A.html#2d20742972e69d73" class="i property">Trimming</a> = <a href="@0@PresentationCore/A.html#98947646308d12be" class="t t">TextTrimming</a>.<a href="@0@PresentationCore/A.html#3fef0c84ff6c8cff" class="i field">None</a>,
+                <a href="@0@PresentationCore/A.html#2ae510a1d96229dc" class="i property">LineHeight</a> = <a href="#d025ba52b1ab9472" class="i property">AdjustedLineHeight</a>,
+                <a href="@0@PresentationCore/A.html#5e58aa13e8151878" class="i property">TextAlignment</a> = <a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a>.<a href="@0@PresentationCore/A.html#f204055029188379" class="i field">Right</a>
+            };
+ 
+            <b>return</b> <span class="r25 r">formattedText</span>;
+        }
+ 
+        <b>private</b> <a href="@0@PresentationCore/A.html#6e6924d547946932" class="t t">FormattedText</a> <a id="a6ff3b492a92b288" href="R/a6ff3b492a92b288.html" target="n" data-glyph="76,1" class="i method">GetFormattedText</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r26 rd" class="r26 r">text</span>)
+        {
+            <a href="@0@PresentationCore/A.html#6e6924d547946932" class="k">var</a> <span id="r27 rd" class="r27 r">formattedText</span> = <b>new</b> <a href="@0@PresentationCore/A.html#22a55c9be2478977" class="t constructor">FormattedText</a>(<span class="r26 r">text</span>, <span class="i n">System</span>.<span class="i n">Globalization</span>.<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>,
+                <a href="@0@PresentationCore/A.html#3f1d3dfbcfcc8977" class="t t">FlowDirection</a>.<a href="@0@PresentationCore/A.html#47c46056d47e6cd5" class="i field">LeftToRight</a>, <b>new</b> <a href="@0@PresentationCore/A.html#1683bc48bb73b417" class="t constructor">Typeface</a>(<a href="@0@PresentationFramework/A.html#9de10c4240af355e" class="i property">FontFamily</a>, <a href="@0@PresentationFramework/A.html#7ff112e7fd3d2a6c" class="i property">FontStyle</a>, <a href="@0@PresentationFramework/A.html#9010668f3342fa65" class="i property">FontWeight</a>, <a href="@0@PresentationFramework/A.html#afc6052df2fbc888" class="i property">FontStretch</a>), 16,
+                <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#4c63c441ae36a080" class="i property">Black</a>,
+                <a href="@0@PresentationCore/A.html#7f1e2538afba01e7" class="t t">VisualTreeHelper</a>.<a href="@0@PresentationCore/A.html#6018c348adaeec6c" class="i method">GetDpi</a>(<a href="#78ee2bfbc46ac014" class="k">this</a>).<a href="@0@PresentationCore/A.html#8c0e9d6735d8e200" class="i property">PixelsPerDip</a>)
+            {
+                <a href="@0@PresentationCore/A.html#2d20742972e69d73" class="i property">Trimming</a> = <a href="@0@PresentationCore/A.html#98947646308d12be" class="t t">TextTrimming</a>.<a href="@0@PresentationCore/A.html#3fef0c84ff6c8cff" class="i field">None</a>,
+                <a href="@0@PresentationCore/A.html#2ae510a1d96229dc" class="i property">LineHeight</a> = <a href="#d025ba52b1ab9472" class="i property">AdjustedLineHeight</a>
+            };
+ 
+            <b>return</b> <span class="r27 r">formattedText</span>;
+        }
+ 
+        <b>private double</b> <a id="9fc0a233f7e76320" href="R/9fc0a233f7e76320.html" target="n" data-glyph="76,1" class="i method">GetFormattedTextWidth</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r28 rd" class="r28 r">text</span>)
+        {
+            <a href="@0@PresentationCore/A.html#6e6924d547946932" class="k">var</a> <span id="r29 rd" class="r29 r">formattedText</span> = <b>new</b> <a href="@0@PresentationCore/A.html#22a55c9be2478977" class="t constructor">FormattedText</a>(<span class="r28 r">text</span>, <span class="i n">System</span>.<span class="i n">Globalization</span>.<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>,
+                <a href="@0@PresentationCore/A.html#3f1d3dfbcfcc8977" class="t t">FlowDirection</a>.<a href="@0@PresentationCore/A.html#47c46056d47e6cd5" class="i field">LeftToRight</a>,
+                <b>new</b> <a href="@0@PresentationCore/A.html#1683bc48bb73b417" class="t constructor">Typeface</a>(<a href="@0@PresentationFramework/A.html#9de10c4240af355e" class="i property">FontFamily</a>, <a href="@0@PresentationFramework/A.html#7ff112e7fd3d2a6c" class="i property">FontStyle</a>, <a href="@0@PresentationFramework/A.html#9010668f3342fa65" class="i property">FontWeight</a>, <a href="@0@PresentationFramework/A.html#afc6052df2fbc888" class="i property">FontStretch</a>), 16,
+                <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#4c63c441ae36a080" class="i property">Black</a>,
+                <a href="@0@PresentationCore/A.html#7f1e2538afba01e7" class="t t">VisualTreeHelper</a>.<a href="@0@PresentationCore/A.html#6018c348adaeec6c" class="i method">GetDpi</a>(<a href="#78ee2bfbc46ac014" class="k">this</a>).<a href="@0@PresentationCore/A.html#8c0e9d6735d8e200" class="i property">PixelsPerDip</a>)
+            {
+                <a href="@0@PresentationCore/A.html#2d20742972e69d73" class="i property">Trimming</a> = <a href="@0@PresentationCore/A.html#98947646308d12be" class="t t">TextTrimming</a>.<a href="@0@PresentationCore/A.html#3fef0c84ff6c8cff" class="i field">None</a>,
+                <a href="@0@PresentationCore/A.html#2ae510a1d96229dc" class="i property">LineHeight</a> = <a href="#d025ba52b1ab9472" class="i property">AdjustedLineHeight</a>
+            };
+ 
+            <span class="r29 r">formattedText</span>.<a href="@0@PresentationCore/A.html#2d20742972e69d73" class="i property">Trimming</a> = <a href="@0@PresentationCore/A.html#98947646308d12be" class="t t">TextTrimming</a>.<a href="@0@PresentationCore/A.html#3fef0c84ff6c8cff" class="i field">None</a>;
+            <span class="r29 r">formattedText</span>.<a href="@0@PresentationCore/A.html#2ae510a1d96229dc" class="i property">LineHeight</a> = <a href="#d025ba52b1ab9472" class="i property">AdjustedLineHeight</a>;
+ 
+            <b>return</b> <span class="r29 r">formattedText</span>.<a href="@0@PresentationCore/A.html#a693c997d8cf2999" class="i property">Width</a>;
+        }
+ 
+        <b>private void</b> <a id="719f492112e0e710" href="R/719f492112e0e710.html" target="n" data-glyph="76,1" class="i method">InvalidateBlocks</a>(<b>int</b> <span id="r30 rd" class="r30 r">changeOffset</span>)
+        {
+            <a href="#c8f152cdec60fe6e" class="t t">InnerTextBlock</a> <span id="r31 rd" class="r31 r">blockChanged</span> = <b>null</b>;
+            <b>foreach</b> (<a href="#c8f152cdec60fe6e" class="k">var</a> <span id="r32 rd" class="r32 r">block</span> <b>in</b> <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>)
+            {
+                <b>if</b> (<span class="r32 r">block</span>.<a href="#ba5e95ed82244100" class="i property">CharStartIndex</a> &gt; <span class="r30 r">changeOffset</span> || <span class="r30 r">changeOffset</span> &gt; <span class="r32 r">block</span>.<a href="#f93e9b4ebc9f9b88" class="i property">CharEndIndex</a> + 1) <b>continue</b>;
+                <span class="r31 r">blockChanged</span> = <span class="r32 r">block</span>;
+                <b>break</b>;
+            }
+ 
+            <b>if</b> (<span class="r31 r">blockChanged</span> == <b>null</b> &amp;&amp; <span class="r30 r">changeOffset</span> &gt; 0)
+                <span class="r31 r">blockChanged</span> = <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@System.Core/A.html#75722fd194dc2e0e" class="i method">Last</a>();
+ 
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r33 rd" class="r33 r">fvline</span> = <span class="r31 r">blockChanged</span>?.<a href="#59854bc47ba1e458" class="i property">LineStartIndex</a> ?? 0;
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r34 rd" class="r34 r">lvline</span> = <a href="#a51283dc3d73ad51" class="i method">GetIndexOfLastVisibleLine</a>();
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r35 rd" class="r35 r">fvchar</span> = <span class="r31 r">blockChanged</span>?.<a href="#ba5e95ed82244100" class="i property">CharStartIndex</a> ?? 0;
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r36 rd" class="r36 r">lvchar</span> = <a href="TextUtilities.cs.html#cccfde088b1032bb" class="t t">TextUtilities</a>.<a href="TextUtilities.cs.html#691630395491287e" class="i method">GetLastCharIndexFromLineIndex</a>(<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>, <span class="r34 r">lvline</span>);
+ 
+            <b>if</b> (<span class="r31 r">blockChanged</span> != <b>null</b>)
+                <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#1f0a5b4e108afc08" class="i method">RemoveRange</a>(<a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#242756beb6e8749e" class="i method">IndexOf</a>(<span class="r31 r">blockChanged</span>), <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a> - <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#242756beb6e8749e" class="i method">IndexOf</a>(<span class="r31 r">blockChanged</span>));
+ 
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r37 rd" class="r37 r">localLineCount</span> = 1;
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r38 rd" class="r38 r">charStart</span> = <span class="r35 r">fvchar</span>;
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r39 rd" class="r39 r">lineStart</span> = <span class="r33 r">fvline</span>;
+            <b>for</b> (<a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r40 rd" class="r40 r">i</span> = <span class="r35 r">fvchar</span>; <span class="r40 r">i</span> &lt; <a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a>; <span class="r40 r">i</span>++)
+            {
+                <b>if</b> (<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a><a href="@0@mscorlib/A.html#8307d03426b56fe1">[</a><span class="r40 r">i</span>] == <span class="s">&#39;\n&#39;</span>)
+                {
+                    <span class="r37 r">localLineCount</span> += 1;
+                }
+                <b>if</b> (<span class="r40 r">i</span> == <a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a> - 1)
+                {
+                    <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r41 rd" class="r41 r">blockText</span> = <a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>.<a href="@0@mscorlib/A.html#882fa7998d6ca35a" class="i method">Substring</a>(<span class="r38 r">charStart</span>);
+                    <a href="#c8f152cdec60fe6e" class="k">var</a> <span id="r42 rd" class="r42 r">block</span> = <b>new</b> <a href="#b92b9e929c1118bb" class="t constructor">InnerTextBlock</a>(
+                        <span class="r38 r">charStart</span>,
+                        <span class="r40 r">i</span>, <span class="r39 r">lineStart</span>,
+                        <span class="r39 r">lineStart</span> + <a href="TextUtilities.cs.html#cccfde088b1032bb" class="t t">TextUtilities</a>.<a href="TextUtilities.cs.html#b1c021e0d4d05307" class="i method">GetLineCount</a>(<span class="r41 r">blockText</span>) - 1,
+                        <a href="#98bacb0ec0efc4c7" class="i property">LineHeight</a>);
+                    <span class="r42 r">block</span>.<a href="#3040d3045b769a0b" class="i property">RawText</a> = <span class="r42 r">block</span>.<a href="#98126ba96961ae93" class="i method">GetSubString</a>(<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>);
+                    <span class="r42 r">block</span>.<a href="#9825797529e76d4c" class="i property">LineNumbers</a> = <a href="#bed371687a69b3f1" class="i method">GetFormattedLineNumbers</a>(<span class="r42 r">block</span>.<a href="#59854bc47ba1e458" class="i property">LineStartIndex</a>, <span class="r42 r">block</span>.<a href="#7139ddca9c94d48b" class="i property">LineEndIndex</a>);
+                    <span class="r42 r">block</span>.<a href="#d3c47746b1bbe4f5" class="i property">IsLast</a> = <b>true</b>;
+ 
+                    <b>foreach</b> (<a href="#c8f152cdec60fe6e" class="k">var</a> <span id="r43 rd" class="r43 r">b</span> <b>in</b> <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>)
+                        <b>if</b> (<span class="r43 r">b</span>.<a href="#59854bc47ba1e458" class="i property">LineStartIndex</a> == <span class="r42 r">block</span>.<a href="#59854bc47ba1e458" class="i property">LineStartIndex</a>)
+                        {
+                            <a href="@0@mscorlib/A.html#f092fb2b893a0162" class="k">var</a> <span id="r44 rd" class="r44 r">exception</span> = <b>new</b> <a href="@0@mscorlib/A.html#5ee7f173f9e53170" class="t constructor">Exception</a>();
+                            <b>throw</b> <span class="r44 r">exception</span>;
+                        }
+ 
+                    <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<span class="r42 r">block</span>);
+                    <a href="#3782a261461a34eb" class="i method">FormatBlock</a>(<span class="r42 r">block</span>, <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a> &gt; 1 ? <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a><a href="@0@mscorlib/A.html#0c65bec4d3fac21e">[</a><a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a> - 2] : <b>null</b>);
+                    <b>break</b>;
+                }
+                <b>if</b> (<span class="r37 r">localLineCount</span> &gt; <a href="#44c8101b474e176f" class="i property">MaximumLineCountInBlock</a>)
+                {
+                    <a href="#c8f152cdec60fe6e" class="k">var</a> <span id="r45 rd" class="r45 r">block</span> = <b>new</b> <a href="#b92b9e929c1118bb" class="t constructor">InnerTextBlock</a>(
+                        <span class="r38 r">charStart</span>,
+                        <span class="r40 r">i</span>,
+                        <span class="r39 r">lineStart</span>,
+                        <span class="r39 r">lineStart</span> + <a href="#44c8101b474e176f" class="i property">MaximumLineCountInBlock</a> - 1,
+                        <a href="#98bacb0ec0efc4c7" class="i property">LineHeight</a>);
+                    <span class="r45 r">block</span>.<a href="#3040d3045b769a0b" class="i property">RawText</a> = <span class="r45 r">block</span>.<a href="#98126ba96961ae93" class="i method">GetSubString</a>(<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>);
+                    <span class="r45 r">block</span>.<a href="#9825797529e76d4c" class="i property">LineNumbers</a> = <a href="#bed371687a69b3f1" class="i method">GetFormattedLineNumbers</a>(<span class="r45 r">block</span>.<a href="#59854bc47ba1e458" class="i property">LineStartIndex</a>, <span class="r45 r">block</span>.<a href="#7139ddca9c94d48b" class="i property">LineEndIndex</a>);
+ 
+                    <b>foreach</b> (<a href="#c8f152cdec60fe6e" class="k">var</a> <span id="r46 rd" class="r46 r">b</span> <b>in</b> <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>)
+                        <b>if</b> (<span class="r46 r">b</span>.<a href="#59854bc47ba1e458" class="i property">LineStartIndex</a> == <span class="r45 r">block</span>.<a href="#59854bc47ba1e458" class="i property">LineStartIndex</a>)
+                        {
+                            <a href="@0@mscorlib/A.html#f092fb2b893a0162" class="k">var</a> <span id="r47 rd" class="r47 r">exception1</span> = <b>new</b> <a href="@0@mscorlib/A.html#5ee7f173f9e53170" class="t constructor">Exception</a>();
+                            <b>throw</b> <span class="r47 r">exception1</span>;
+                        }
+ 
+                    <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<span class="r45 r">block</span>);
+                    <a href="#3782a261461a34eb" class="i method">FormatBlock</a>(<span class="r45 r">block</span>, <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a> &gt; 1 ? <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a><a href="@0@mscorlib/A.html#0c65bec4d3fac21e">[</a><a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a> - 2] : <b>null</b>);
+ 
+                    <span class="r38 r">charStart</span> = <span class="r40 r">i</span> + 1;
+                    <span class="r39 r">lineStart</span> += <a href="#44c8101b474e176f" class="i property">MaximumLineCountInBlock</a>;
+                    <span class="r37 r">localLineCount</span> = 1;
+ 
+                    <b>if</b> (<span class="r40 r">i</span> &gt; <span class="r36 r">lvchar</span>)
+                        <b>break</b>;
+                }
+            }
+        }
+ 
+        <b>private void</b> <a id="493b6d19394d086f" href="R/493b6d19394d086f.html" target="n" data-glyph="76,1" class="i method">OnScrollChanged</a>(<b>object</b> <span id="r48 rd" class="r48 r">sender</span>, <a href="@0@PresentationFramework/A.html#e2b36b41803b1a00" class="t t">ScrollChangedEventArgs</a> <span id="r49 rd" class="r49 r">e</span>)
+        {
+            <b>if</b> (<span class="r49 r">e</span>.<a href="@0@PresentationFramework/A.html#12e2fa49a2f123b0" class="i property">VerticalChange</a> != 0.00)
+                <a href="#f276046aaa87db35" class="i method">UpdateBlocks</a>();
+            <a href="@0@PresentationCore/A.html#fdda546b8cd3480c" class="i method">InvalidateVisual</a>();
+        }
+ 
+        <b>private void</b> <a id="f276046aaa87db35" href="R/f276046aaa87db35.html" target="n" data-glyph="76,1" class="i method">UpdateBlocks</a>()
+        {
+            <b>if</b> (<a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a> == 0)
+                <b>return</b>;
+ 
+            <b>while</b> (!<a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@System.Core/A.html#75722fd194dc2e0e" class="i method">Last</a>().<a href="#d3c47746b1bbe4f5" class="i property">IsLast</a> &amp;&amp; <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@System.Core/A.html#75722fd194dc2e0e" class="i method">Last</a>().<a href="#7a8d48afd0467235" class="i property">Position</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> + <a href="#9f2eed4897bce690" class="i property">BlockHeight</a> - <a href="@0@PresentationFramework/A.html#34dd5562d2bffb24" class="i property">VerticalOffset</a> &lt; <a href="@0@PresentationFramework/A.html#5554a4892ffe2cfc" class="i property">ActualHeight</a>)
+            {
+                <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r50 rd" class="r50 r">firstLineIndex</span> = <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@System.Core/A.html#75722fd194dc2e0e" class="i method">Last</a>().<a href="#7139ddca9c94d48b" class="i property">LineEndIndex</a> + 1;
+                <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r51 rd" class="r51 r">lastLineIndex</span> = <span class="r50 r">firstLineIndex</span> + <a href="#44c8101b474e176f" class="i property">MaximumLineCountInBlock</a> - 1;
+                <span class="r51 r">lastLineIndex</span> = <span class="r51 r">lastLineIndex</span> &lt;= <a href="#f5a46e2f718e13c8" class="i property">TotalLineCount</a> - 1 ? <span class="r51 r">lastLineIndex</span> : <a href="#f5a46e2f718e13c8" class="i property">TotalLineCount</a> - 1;
+ 
+                <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r52 rd" class="r52 r">fisrCharIndex</span> = <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@System.Core/A.html#75722fd194dc2e0e" class="i method">Last</a>().<a href="#f93e9b4ebc9f9b88" class="i property">CharEndIndex</a> + 1;
+                <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r53 rd" class="r53 r">lastCharIndex</span> = <a href="TextUtilities.cs.html#cccfde088b1032bb" class="t t">TextUtilities</a>.<a href="TextUtilities.cs.html#691630395491287e" class="i method">GetLastCharIndexFromLineIndex</a>(<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>, <span class="r51 r">lastLineIndex</span>); <span class="c">// to be optimized (forward search)</span>
+ 
+                <b>if</b> (<span class="r53 r">lastCharIndex</span> &lt;= <span class="r52 r">fisrCharIndex</span>)
+                {
+                    <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@System.Core/A.html#75722fd194dc2e0e" class="i method">Last</a>().<a href="#d3c47746b1bbe4f5" class="i property">IsLast</a> = <b>true</b>;
+                    <b>return</b>;
+                }
+ 
+                <a href="#c8f152cdec60fe6e" class="k">var</a> <span id="r54 rd" class="r54 r">block</span> = <b>new</b> <a href="#b92b9e929c1118bb" class="t constructor">InnerTextBlock</a>(
+                    <span class="r52 r">fisrCharIndex</span>,
+                    <span class="r53 r">lastCharIndex</span>,
+                    <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@System.Core/A.html#75722fd194dc2e0e" class="i method">Last</a>().<a href="#7139ddca9c94d48b" class="i property">LineEndIndex</a> + 1,
+                    <span class="r51 r">lastLineIndex</span>,
+                    <a href="#98bacb0ec0efc4c7" class="i property">LineHeight</a>);
+                <span class="r54 r">block</span>.<a href="#3040d3045b769a0b" class="i property">RawText</a> = <span class="r54 r">block</span>.<a href="#98126ba96961ae93" class="i method">GetSubString</a>(<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>);
+                <span class="r54 r">block</span>.<a href="#9825797529e76d4c" class="i property">LineNumbers</a> = <a href="#bed371687a69b3f1" class="i method">GetFormattedLineNumbers</a>(<span class="r54 r">block</span>.<a href="#59854bc47ba1e458" class="i property">LineStartIndex</a>, <span class="r54 r">block</span>.<a href="#7139ddca9c94d48b" class="i property">LineEndIndex</a>);
+                <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<span class="r54 r">block</span>);
+                <a href="#3782a261461a34eb" class="i method">FormatBlock</a>(<span class="r54 r">block</span>, <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a> &gt; 1 ? <a href="#e4d12bb5faa0b28f" class="i property">Blocks</a><a href="@0@mscorlib/A.html#0c65bec4d3fac21e">[</a><a href="#e4d12bb5faa0b28f" class="i property">Blocks</a>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a> - 2] : <b>null</b>);
+            }
+        }
+ 
+        <b>private void</b> <a id="74b12186333b75a6" href="R/74b12186333b75a6.html" target="n" data-glyph="76,1" class="i method">UpdateTotalLineCount</a>()
+        {
+            <a href="#f5a46e2f718e13c8" class="i property">TotalLineCount</a> = <a href="TextUtilities.cs.html#cccfde088b1032bb" class="t t">TextUtilities</a>.<a href="TextUtilities.cs.html#b1c021e0d4d05307" class="i method">GetLineCount</a>(<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>);
+        }
+ 
+        <b>private class</b> <a id="c8f152cdec60fe6e" href="R/c8f152cdec60fe6e.html" target="n" data-glyph="4,1" class="t t">InnerTextBlock</a>
+        {
+            <b>public</b> <a id="b92b9e929c1118bb" href="R/b92b9e929c1118bb.html" target="n" data-glyph="72,2" class="t constructor">InnerTextBlock</a>(<b>int</b> <span id="r55 rd" class="r55 r">charStart</span>, <b>int</b> <span id="r56 rd" class="r56 r">charEnd</span>, <b>int</b> <span id="r57 rd" class="r57 r">lineStart</span>, <b>int</b> <span id="r58 rd" class="r58 r">lineEnd</span>, <b>double</b> <span id="r59 rd" class="r59 r">lineHeight</span>)
+            {
+                <a href="#ba5e95ed82244100" class="i property">CharStartIndex</a> = <span class="r55 r">charStart</span>;
+                <a href="#f93e9b4ebc9f9b88" class="i property">CharEndIndex</a> = <span class="r56 r">charEnd</span>;
+                <a href="#59854bc47ba1e458" class="i property">LineStartIndex</a> = <span class="r57 r">lineStart</span>;
+                <a href="#7139ddca9c94d48b" class="i property">LineEndIndex</a> = <span class="r58 r">lineEnd</span>;
+                <a href="#ab046ab8bef7f7cb" class="i property">LineHeight</a> = <span class="r59 r">lineHeight</span>;
+                <a href="#d3c47746b1bbe4f5" class="i property">IsLast</a> = <b>false</b>;
+            }
+ 
+            <b>public int</b> <a id="f93e9b4ebc9f9b88" href="R/f93e9b4ebc9f9b88.html" target="n" data-glyph="102,2" class="i property">CharEndIndex</a> { <b>get</b>; }
+ 
+            <b>public int</b> <a id="ba5e95ed82244100" href="R/ba5e95ed82244100.html" target="n" data-glyph="102,2" class="i property">CharStartIndex</a> { <b>get</b>; }
+ 
+            <b>public int</b> <a id="36c88ab2e5725de9" href="R/36c88ab2e5725de9.html" target="n" data-glyph="102,2" class="i property">Code</a> { <b>get</b>; <b>set</b>; }
+ 
+            <b>public</b> <a href="@0@PresentationCore/A.html#6e6924d547946932" class="t t">FormattedText</a> <a id="bd2ec81ea26bffe5" href="R/bd2ec81ea26bffe5.html" target="n" data-glyph="102,2" class="i property">FormattedText</a> { <b>get</b>; <b>set</b>; }
+ 
+            <b>public bool</b> <a id="d3c47746b1bbe4f5" href="R/d3c47746b1bbe4f5.html" target="n" data-glyph="102,2" class="i property">IsLast</a> { <b>get</b>; <b>set</b>; }
+ 
+            <b>public int</b> <a id="7139ddca9c94d48b" href="R/7139ddca9c94d48b.html" target="n" data-glyph="102,2" class="i property">LineEndIndex</a> { <b>get</b>; }
+ 
+            <b>public</b> <a href="@0@PresentationCore/A.html#6e6924d547946932" class="t t">FormattedText</a> <a id="9825797529e76d4c" href="R/9825797529e76d4c.html" target="n" data-glyph="102,2" class="i property">LineNumbers</a> { <b>get</b>; <b>set</b>; }
+ 
+            <b>public int</b> <a id="59854bc47ba1e458" href="R/59854bc47ba1e458.html" target="n" data-glyph="102,2" class="i property">LineStartIndex</a> { <b>get</b>; }
+ 
+            <b>public</b> <a href="@0@WindowsBase/A.html#9120327717fc513d" class="t t">Point</a> <a id="7a8d48afd0467235" href="R/7a8d48afd0467235.html" target="n" data-glyph="102,2" class="i property">Position</a> =&gt; <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, <a href="#59854bc47ba1e458" class="i property">LineStartIndex</a> * <a href="#ab046ab8bef7f7cb" class="i property">LineHeight</a>);
+ 
+            <b>public string</b> <a id="3040d3045b769a0b" href="R/3040d3045b769a0b.html" target="n" data-glyph="102,2" class="i property">RawText</a> { <b>get</b>; <b>set</b>; }
+ 
+            <b>private double</b> <a id="ab046ab8bef7f7cb" href="R/ab046ab8bef7f7cb.html" target="n" data-glyph="106,2" class="i property">LineHeight</a> { <b>get</b>; <b>set</b>; }
+ 
+            <b>public string</b> <a id="98126ba96961ae93" href="R/98126ba96961ae93.html" target="n" data-glyph="72,2" class="i method">GetSubString</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r60 rd" class="r60 r">text</span>)
+            {
+                <b>return</b> <span class="r60 r">text</span>.<a href="@0@mscorlib/A.html#8124961f027d9ac9" class="i method">Substring</a>(<a href="#ba5e95ed82244100" class="i property">CharStartIndex</a>, <a href="#f93e9b4ebc9f9b88" class="i property">CharEndIndex</a> - <a href="#ba5e95ed82244100" class="i property">CharStartIndex</a> + 1);
+            }
+ 
+            <b>public override string</b> <a id="a45a0bf7d9af4ac4" href="R/a45a0bf7d9af4ac4.html" target="n" data-glyph="72,2" class="i method">ToString</a>()
+            {
+                <b>return</b> <span class="s">$&quot;</span><span class="s">L:</span>{<a href="#59854bc47ba1e458" class="i property">LineStartIndex</a>}<span class="s">/</span>{<a href="#7139ddca9c94d48b" class="i property">LineEndIndex</a>}<span class="s"> C:</span>{<a href="#ba5e95ed82244100" class="i property">CharStartIndex</a>}<span class="s">/</span>{<a href="#f93e9b4ebc9f9b88" class="i property">CharEndIndex</a>}<span class="s"> </span>{<a href="#bd2ec81ea26bffe5" class="i property">FormattedText</a>.<a href="@0@PresentationCore/A.html#be6d9c4ee670e9fc" class="i property">Text</a>}<span class="s">&quot;</span>;
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html>
+<html><head><title>HomeViewModel.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(239);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#Wpf/Home/HomeViewModel.cs" target="_top">Home\HomeViewModel.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Examples\Wpf\Wpf.csproj</a> (Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Runtime</span>.<span class="i n">CompilerServices</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Defaults</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">BasicLine</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Basic_Bars</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Basic_Stacked_Bar</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Bubbles</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Chart_to_Image</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">ConstantChanges</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Customized_Line_Series</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">CustomTooltipAndLegend</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">DataLabelTemplate</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">DateAxis</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">DynamicVisibility</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Energy_Predictions</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Events</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Financial</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">FullyResponsive</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Funnel_Chart</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">GanttChart</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">HeatChart</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Inverted_Series</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Irregular_Intervals</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">LogarithmScale</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">ManualZAndP</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">MaterialCards</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Missing_Line_Points</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">NegativeStackedRow</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">PointState</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">ScatterPlot</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Scatter_With_Pies</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Sections</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">SectionsDragable</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">SectionsMouseMove</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">SolidColorChart</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">StackedArea</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">StepLine</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">ThreadSafe</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">UIElements</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">WindowAxis</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">ZoomingAndPanning</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">Gauges</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">Maps</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">PieChart</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">PieChart</span>.<span class="i n">DropDowns</span>;
+
+<b>namespace</b> <span class="i n">Wpf</span>.<span class="i n">Home</span>
+{
+    <b>public class</b> <a id="3d78d8f7f27bc309" href="../R/3d78d8f7f27bc309.html" target="n" data-glyph="0,0" class="t t">HomeViewModel</a> : <a href="@0@System/A.html#fd4b42d7e29d53e5" class="t t">INotifyPropertyChanged</a>
+    {
+        <b>private</b> <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a> <a id="55f34179af3ddb8c" href="../R/55f34179af3ddb8c.html" target="n" data-glyph="46,1" class="i field">_content</a>;
+        <b>private bool</b> <a id="8bed3a94770b7184" href="../R/8bed3a94770b7184.html" target="n" data-glyph="46,1" class="i field">_isMenuOpen</a>;
+        <b>private string</b> <a id="848ed933b1ff020f" href="../R/848ed933b1ff020f.html" target="n" data-glyph="46,1" class="i field">_criteria</a>;
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="SampleGroupVm.cs.html#e96f6cbc2e8a4e94" class="t t">SampleGroupVm</a>&gt; <a id="38e9696a3355c9ee" href="../R/38e9696a3355c9ee.html" target="n" data-glyph="46,1" class="i field">_samples</a>;
+        <b>private readonly</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="SampleGroupVm.cs.html#e96f6cbc2e8a4e94" class="t t">SampleGroupVm</a>&gt; <a id="fe224adb83d6a618" href="../R/fe224adb83d6a618.html" target="n" data-glyph="46,1" class="i field">_dataSource</a>;
+
+        <b>public</b> <a id="5721ae6c4e368d22" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">HomeViewModel</a>()
+        {
+            <a href="#e5ba147dd03e262b" class="i property">IsMenuOpen</a> = <b>true</b>;
+            <a href="#fe224adb83d6a618" class="i field">_dataSource</a> = <b>new</b>[]
+            {
+                <b>new</b> <a href="SampleGroupVm.cs.html#e96f6cbc2e8a4e94" class="t constructor">SampleGroupVm</a>
+                {
+                    <a href="SampleGroupVm.cs.html#6fd37e3234d42619" class="i property">Name</a> = <span class="s">&quot;Customizing&quot;</span>,
+                    <a href="SampleGroupVm.cs.html#9147f502a41800ad" class="i property">Items</a> = <b>new</b>[]
+                    {
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Series&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Customized Series/CustomizedLineSeries.xaml.cs.html#1203bd7c5932191b" class="t t">CustomizedLineSeries</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Tooltips/Legends&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/CustomTooltipAndLegend/CustomTooltipAndLegendExample.xaml.cs.html#366f85c95d60b8e9" class="t t">CustomTooltipAndLegendExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Material Design&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/MaterialCards/MaterialCards.xaml.cs.html#5a0dfcf5faa38e1e" class="t t">MaterialCards</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Solid Color&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/SolidColorChart/SolidColorExample.xaml.cs.html#81717214cead7d0f" class="t t">SolidColorExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Energy Predictions&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Energy Predictions/EnergyPredictionExample.xaml.cs.html#33bb183fb10e0719" class="t t">EnergyPredictionExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Funnel Chart&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Funnel Chart/FunnelExample.xaml.cs.html#3c29e67e6075882d" class="t t">FunnelExample</a>))
+                    }
+                },
+                <b>new</b> <a href="SampleGroupVm.cs.html#e96f6cbc2e8a4e94" class="t constructor">SampleGroupVm</a>
+                {
+                    <a href="SampleGroupVm.cs.html#6fd37e3234d42619" class="i property">Name</a> = <span class="s">&quot;Basic Plots&quot;</span>,
+                    <a href="SampleGroupVm.cs.html#9147f502a41800ad" class="i property">Items</a> = <b>new</b>[]
+                    {
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Lines&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/BasicLine/BasicLineExample.xaml.cs.html#5a1f558150ea928f" class="t t">BasicLineExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Columns&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Basic Bars/BasicColumn.xaml.cs.html#3e4e98f61cda52c4" class="t t">BasicColumn</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Stacked Columns&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/StackedBar/StackedColumnExample.xaml.cs.html#ecbd9235cf93c033" class="t t">StackedColumnExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Grouped Stacked Columns&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/StackedBar/GroupedStackedColumnExample.xaml.cs.html#1cb5416c6ec5d1f5" class="t t">GroupedStackedColumnExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Stacked Rows&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/StackedBar/StackedRowExample.xaml.cs.html#26527093cc6a768b" class="t t">StackedRowExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Grouped Stacked Rows&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/StackedBar/GroupedStackedRowExample.xaml.cs.html#ad0923865b390165" class="t t">GroupedStackedRowExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Rows&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Basic Bars/BasicRowExample.xaml.cs.html#bd0605d352af3d58" class="t t">BasicRowExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Stacked Area&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/StackedArea/StackedAreaExample.xaml.cs.html#67689a4c774426c9" class="t t">StackedAreaExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Step Line&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/StepLine/StepLineExample.xaml.cs.html#4b063a11a82e3229" class="t t">StepLineExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Scatter&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/ScatterPlot/ScatterExample.xaml.cs.html#100f74d0515aad07" class="t t">ScatterExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Bubbles&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Bubbles/BubblesExample.xaml.cs.html#8f48565850ca8b85" class="t t">BubblesExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;OHCL Series&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Financial/OhclExample.xaml.cs.html#d5639bd3b3cc325c" class="t t">OhclExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Candle Series&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Financial/CandleStickExample.xaml.cs.html#2382102c4626e0c8" class="t t">CandleStickExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Pie Chart&quot;</span>, <b>typeof</b>(<a href="../PieChart/PieChartExample.xaml.cs.html#0daa43d6236a7d68" class="t t">PieChartExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Doughnut Chart&quot;</span>, <b>typeof</b>(<a href="../PieChart/DoughnutChartExample.xaml.cs.html#5263646fa896b8ac" class="t t">DoughnutChartExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Solid Gauges&quot;</span>, <b>typeof</b>(<a href="../Gauges/Gauge360.xaml.cs.html#d5058c9bb1f423c0" class="t t">Gauge360</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Angular Gauge&quot;</span>, <b>typeof</b>(<a href="../Gauges/AngularGaugeExmple.xaml.cs.html#d8fc4177c54fe7f5" class="t t">AngularGaugeExmple</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Heat Series&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/HeatChart/HeatSeriesExample.xaml.cs.html#5ab317d73c03b382" class="t t">HeatSeriesExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;GeoHeatMap&quot;</span>, <b>typeof</b>(<a href="../Maps/GeoMapExample.xaml.cs.html#caf7835b774db192" class="t t">GeoMapExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Gantt Chart&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/GanttChart/GanttExample.xaml.cs.html#176b27703a6dcb75" class="t t">GanttExample</a>))
+                    }
+                },
+                <b>new</b> <a href="SampleGroupVm.cs.html#e96f6cbc2e8a4e94" class="t constructor">SampleGroupVm</a>
+                {
+                    <a href="SampleGroupVm.cs.html#6fd37e3234d42619" class="i property">Name</a> = <span class="s">&quot;Features&quot;</span>,
+                    <a href="SampleGroupVm.cs.html#9147f502a41800ad" class="i property">Items</a> = <b>new</b>[]
+                    {
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Inverted Series&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Inverted Series/Inverted Example.xaml.cs.html#8b788940a81475be" class="t t">InvertedExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Sections&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Sections/SectionsExample.xaml.cs.html#2ee48c7b96d8be3f" class="t t">SectionsExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Dragable Sections&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/SectionsDragable/DragableSections.xaml.cs.html#55070800489175aa" class="t t">DragableSections</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Section Mouse Move&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/SectionsMouseMove/SectionMouseMoveSample.xaml.cs.html#c477784f07e63121" class="t t">SectionMouseMoveSample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Multiple Axes&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/MultiAxes/MultiAxesChart.xaml.cs.html#6a28a21d2255d2f7" class="t t">MultiAxesChart</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Events&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Events/EventsExample.xaml.cs.html#063c79fd3cacfbe3" class="t t">EventsExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Visual Elements&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/UIElements/UiElementsAndEventsExample.xaml.cs.html#c4a034eed0088dce" class="t t">UiElementsAndEventsExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Chart to Image&quot;</span>, <b>typeof</b>(<a href="../P/3add082111b0bdfd.html#3add082111b0bdfd" class="t t">ChartToImageSample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;DataLabelTemplate&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/DataLabelTemplate/DataLabelTemplateSample.xaml.cs.html#ef198f20a0d480b1" class="t t">DataLabelTemplateSample</a>))
+                    }
+                },
+                <b>new</b> <a href="SampleGroupVm.cs.html#e96f6cbc2e8a4e94" class="t constructor">SampleGroupVm</a>
+                {
+                    <a href="SampleGroupVm.cs.html#6fd37e3234d42619" class="i property">Name</a> = <span class="s">&quot;More&quot;</span>,
+                    <a href="SampleGroupVm.cs.html#9147f502a41800ad" class="i property">Items</a> = <b>new</b>[]
+                    {
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Irregular intervals&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Irregular Intervals/IrregularIntervalsExample.xaml.cs.html#5809d746563c0d1d" class="t t">IrregularIntervalsExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Pie with drop downs&quot;</span>, <b>typeof</b>(<a href="../PieChart/DropDowns/PieDropDownSample.xaml.cs.html#5710557de3284ebe" class="t t">PieDropDownSample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Missing Points&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Missing Line Points/MissingPointsExample.xaml.cs.html#0d6a948d13c9b72b" class="t t">MissingPointsExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Constant Changes&quot;</span>, <b>typeof</b>(<span class="i">ConstantChangesChart</span>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Thread Safe&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/ThreadSafe/ThreadSafeExample.xaml.cs.html#2c92782acfaf8a72" class="t t">ThreadSafeExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Zooming/Panning&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/ZoomingAndPanning/ZoomingAndPanning.xaml.cs.html#f7036c7abcc27647" class="t t">ZoomingAndPanning</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Data Pagination&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/ManualZAndP/ManualZAndPExample.xaml.cs.html#56e638872ce74c19" class="t t">ManualZAndPExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Scattered Pie&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Scatter With Pies/Scatter With Pies.xaml.cs.html#6661faf37ff86b8c" class="t t">Scatter_With_Pies</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Observable point&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/FullyResponsive/FullyResponsiveExample.xaml.cs.html#a943deb69f50175f" class="t t">FullyResponsiveExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Point State&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/PointState/PointStateExample.xaml.cs.html#5a5af91e0046499c" class="t t">PointStateExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Negative Stacked&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/NegativeStackedRow/NegativeStackedRowExample.xaml.cs.html#9465a0208ce4ae45" class="t t">NegativeStackedRowExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Dynamic Visibility&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/DynamicVisibility/DynamicVisibilityExample.xaml.cs.html#998708e92965e1be" class="t t">DynamicVisibilityExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Filtering Data&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Linq/LinqExample.xaml.cs.html#32c0cb019fc89618" class="t t">LinqExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Percentage Stacked&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/Basic Stacked Bar/BasicStackedRowPercentageExample.xaml.cs.html#e8dd6e51a3fef987" class="t t">BasicStackedRowPercentageExample</a>))
+                    }
+                },
+                <b>new</b> <a href="SampleGroupVm.cs.html#e96f6cbc2e8a4e94" class="t constructor">SampleGroupVm</a>
+                {
+                    <a href="SampleGroupVm.cs.html#6fd37e3234d42619" class="i property">Name</a> = <span class="s">&quot;Special axes&quot;</span>,
+                    <a href="SampleGroupVm.cs.html#9147f502a41800ad" class="i property">Items</a> = <b>new</b>[]
+                    {
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Window Axis&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/WindowAxis/WindowAxisExample.xaml.cs.html#2dc32c159e08b6aa" class="t t">WindowAxisExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Date Axis&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/DateAxis/DateAxisExample.xaml.cs.html#f89be279ed6ed676" class="t t">DateAxisExample</a>)),
+                        <b>new</b> <a href="SampleVm.cs.html#f092055ba1e07352" class="t constructor">SampleVm</a>(<span class="s">&quot;Logarithmic Axis&quot;</span>, <b>typeof</b>(<a href="../CartesianChart/LogarithmScale/LogarithmScaleExample.xaml.cs.html#a51346f4f064bbf4" class="t t">LogarithmScaleExample</a>))
+                    }
+                }
+            };
+
+            <a href="#38e9696a3355c9ee" class="i field">_samples</a> = <a href="#fe224adb83d6a618" class="i field">_dataSource</a>;
+        }
+
+        <b>public</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="SampleGroupVm.cs.html#e96f6cbc2e8a4e94" class="t t">SampleGroupVm</a>&gt; <a id="97d43c84d42308e5" href="../R/97d43c84d42308e5.html" target="n" data-glyph="102,1" class="i property">Samples</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#38e9696a3355c9ee" class="i field">_samples</a>; }
+            <b>set</b>
+            {
+                <a href="#38e9696a3355c9ee" class="i field">_samples</a> = <b>value</b>;
+                <a href="#6efd0379291013f9" class="i method">OnPropertyChanged</a>(<span class="s">&quot;Samples&quot;</span>);
+            }
+        }
+        <b>public</b> <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a> <a id="6c27adde15f9ce50" href="../R/6c27adde15f9ce50.html" target="n" data-glyph="102,1" class="i property">Content</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#55f34179af3ddb8c" class="i field">_content</a>; }
+            <b>set</b>
+            {
+                <a href="#55f34179af3ddb8c" class="i field">_content</a> = <b>value</b>;
+                <a href="#6efd0379291013f9" class="i method">OnPropertyChanged</a>(<span class="s">&quot;Content&quot;</span>);
+            }
+        }
+        <b>public bool</b> <a id="e5ba147dd03e262b" href="../R/e5ba147dd03e262b.html" target="n" data-glyph="102,1" class="i property">IsMenuOpen</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#8bed3a94770b7184" class="i field">_isMenuOpen</a>; }
+            <b>set</b>
+            {
+                <a href="#8bed3a94770b7184" class="i field">_isMenuOpen</a> = <b>value</b>;
+                <a href="#6efd0379291013f9" class="i method">OnPropertyChanged</a>(<span class="s">&quot;IsMenuOpen&quot;</span>);
+            }
+        }
+        <b>public string</b> <a id="cc2966947a53e1a1" href="../R/cc2966947a53e1a1.html" target="n" data-glyph="102,1" class="i property">Criteria</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#848ed933b1ff020f" class="i field">_criteria</a>; }
+            <b>set</b>
+            {
+                <a href="#848ed933b1ff020f" class="i field">_criteria</a> = <b>value</b>;
+                <a href="#6efd0379291013f9" class="i method">OnPropertyChanged</a>(<span class="s">&quot;Criteria&quot;</span>);
+                <a href="#7c72c24d5651f0db" class="i method">OnCriteriaChanged</a>();
+            }
+        }
+
+        <b>public event</b> <a href="@0@System/A.html#670754815f6804ff" class="t t">PropertyChangedEventHandler</a> <a id="6bfc2a30ba47c276" href="../R/6bfc2a30ba47c276.html" target="n" data-glyph="30,1" class="i">PropertyChanged</a>;
+
+        <b>protected virtual void</b> <a id="6efd0379291013f9" href="../R/6efd0379291013f9.html" target="n" data-glyph="75,1" class="i method">OnPropertyChanged</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">propertyName</span>)
+        {
+            <b>if</b> (<a href="#6bfc2a30ba47c276" class="i">PropertyChanged</a> != <b>null</b>)
+                <a href="#6bfc2a30ba47c276" class="i">PropertyChanged</a>.<a href="@0@System/A.html#c66222f7abfe2e28" class="i method">Invoke</a>(<a href="#3d78d8f7f27bc309" class="k">this</a>, <b>new</b> <a href="@0@System/A.html#76958b0a96ed2a2e" class="t constructor">PropertyChangedEventArgs</a>(<span class="r0 r">propertyName</span>));
+        }
+
+        <b>private void</b> <a id="7c72c24d5651f0db" href="../R/7c72c24d5651f0db.html" target="n" data-glyph="76,1" class="i method">OnCriteriaChanged</a>()
+        {
+            <b>if</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<a href="#cc2966947a53e1a1" class="i property">Criteria</a>))
+            {
+                <a href="#97d43c84d42308e5" class="i property">Samples</a> = <a href="#fe224adb83d6a618" class="i field">_dataSource</a>;
+                <b>return</b>;
+            }
+
+            <a href="#97d43c84d42308e5" class="i property">Samples</a> = <a href="#97d43c84d42308e5" class="i property">Samples</a>.<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>(<span id="r1 rd" class="r1 r">x</span> =&gt; <b>new</b> <a href="SampleGroupVm.cs.html#e96f6cbc2e8a4e94" class="t constructor">SampleGroupVm</a>
+            {
+                <a href="SampleGroupVm.cs.html#6fd37e3234d42619" class="i property">Name</a> = <span class="r1 r">x</span>.<a href="SampleGroupVm.cs.html#6fd37e3234d42619" class="i property">Name</a>,
+                <a href="SampleGroupVm.cs.html#9147f502a41800ad" class="i property">Items</a> = <span class="r1 r">x</span>.<a href="SampleGroupVm.cs.html#9147f502a41800ad" class="i property">Items</a>.<a href="@0@System.Core/A.html#e73922753675387a" class="i method">Where</a>(<span id="r2 rd" class="r2 r">y</span> =&gt; <span class="r2 r">y</span>.<a href="SampleVm.cs.html#3a38f09b3b7fc57d" class="i property">Title</a>.<a href="@0@mscorlib/A.html#2d51c212cb09178e" class="i method">ToLowerInvariant</a>().<a href="@0@mscorlib/A.html#428c5c9954dea844" class="i method">Contains</a>(<a href="#cc2966947a53e1a1" class="i property">Criteria</a>.<a href="@0@mscorlib/A.html#2d51c212cb09178e" class="i method">ToLowerInvariant</a>()) ||
+                                           <span class="r2 r">y</span>.<a href="SampleVm.cs.html#72b4ac03a19c5a6a" class="i property">Tags</a>.<a href="@0@mscorlib/A.html#2d51c212cb09178e" class="i method">ToLowerInvariant</a>().<a href="@0@mscorlib/A.html#428c5c9954dea844" class="i method">Contains</a>(<a href="#cc2966947a53e1a1" class="i property">Criteria</a>.<a href="@0@mscorlib/A.html#2d51c212cb09178e" class="i method">ToLowerInvariant</a>()))
+            });
+        }
+    }
+
+    <b>public class</b> <a id="fe8618ecbde09cec" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="e8538492a50fd7db">IsNullConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <b>public object</b> <a id="8d17541efc9b03c7" href="../R/8d17541efc9b03c7.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b> <span id="r3 rd" class="r3 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r4 rd" class="r4 r">targetType</span>, <b>object</b> <span id="r5 rd" class="r5 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r6 rd" class="r6 r">culture</span>)
+        {
+            <b>return</b> <span class="r3 r">value</span> == <b>null</b>;
+        }
+
+        <b>public object</b> <a id="95e9dff2bfe1f268" href="../R/95e9dff2bfe1f268.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r7 rd" class="r7 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r8 rd" class="r8 r">targetType</span>, <b>object</b> <span id="r9 rd" class="r9 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r10 rd" class="r10 r">culture</span>)
+        {
+            <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#085d4139ffb78d13" class="t constructor">NotImplementedException</a>();
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

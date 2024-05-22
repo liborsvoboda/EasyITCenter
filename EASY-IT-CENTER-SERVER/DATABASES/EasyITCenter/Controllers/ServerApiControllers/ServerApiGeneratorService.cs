@@ -39,7 +39,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
                 if (ServerApiServiceExtension.IsAdmin()) {
                     string resultMessage = DbOperations.DBTranslate("ProcessSucessfullyCompleted", webfilesrequest.ServerLanguage);
 
-                    List<string> filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath), "*." + webfilesrequest.FromType.ToString().ToLower(), webfilesrequest.ScanRootOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
+                    List<string> filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath), $"*." + webfilesrequest.FromType.ToString().ToLower(), webfilesrequest.ScanRootOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
 
                     if (filelist.Count == 0) { 
                         return BadRequest(new { message = DbOperations.DBTranslate("NoFiles Found", webfilesrequest.ServerLanguage) }); 
@@ -51,14 +51,15 @@ namespace EasyITCenter.ServerCoreDBSettings {
                             if (!webfilesrequest.RewriteAllowed && FileOperations.CheckFile(webfilesrequest.WebRootFilePath + $"index.{webfilesrequest.ToType.ToString()}")) {
                                 resultMessage = resultMessage == DbOperations.DBTranslate("ProcessSucessfullyCompleted", webfilesrequest.ServerLanguage) ? $"Failed on Exist File: index.{webfilesrequest.ToType.ToString()}" : resultMessage + $"Failed on Exist File index.{webfilesrequest.ToType.ToString()}";
                             } else {
-                                filelist.ForEach(file => {
+                                filelist.AsEnumerable().Where(a => (webfilesrequest.FromSuffixOnly && a.Contains(webfilesrequest.genHtmlIndexFileSuffix)) || !webfilesrequest.FromSuffixOnly).ToList().ForEach(
+                                    file => {
                                     generatedFile += webfilesrequest.ToType == SupportGenFileTypes.Md ? $"[{Path.GetFileNameWithoutExtension(file)}]({webfilesrequest.WebRootFilePath + file.Split(Path.Combine(FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath)))[1]})" + Environment.NewLine :
                                     webfilesrequest.IndexInFrameList ?
                                     $"<span style='margin:10px'><iframe src='{webfilesrequest.WebRootFilePath + file.Split(Path.Combine(FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath)))[1]}' width='600px' height='400px' onclick=window.open('{webfilesrequest.WebRootFilePath + file.Split(Path.Combine(FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath)))[1]}','_blank') >{Path.GetFileNameWithoutExtension(file)}</iframe></span>" + Environment.NewLine
                                     : $"<p><a href='{webfilesrequest.WebRootFilePath + file.Split(Path.Combine(FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath)))[1]}' target='blank'>{Path.GetFileNameWithoutExtension(file)}</a></p>" + Environment.NewLine;
                                 });
                                 if (webfilesrequest.ToType == SupportGenFileTypes.Md) { generatedFile = DataOperations.MarkDownLineEndSpacesResolve(generatedFile); }
-                                FileOperations.WriteToFile(Path.Combine(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath), $"index.{webfilesrequest.ToType.ToString()}"), generatedFile);
+                                FileOperations.WriteToFile(Path.Combine(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath), $"index{webfilesrequest.genHtmlIndexFileSuffix}.{webfilesrequest.ToType.ToString()}"), generatedFile);
                             }
 
                         }

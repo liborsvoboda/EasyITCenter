@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html><head><title>VncDefaultInputPolicy.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(49);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#RemoteDesktopWpf/VncDefaultInputPolicy.cs" target="_top">VncDefaultInputPolicy.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#RemoteDesktopWpf" target="_top">..\..\..\EASY-TOOLS\EASYTools.VNCLib\EASYTools.VNCLib.csproj</a> (RemoteDesktopWpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// RemoteDesktopWpf - .NET VNC Client for WPF Library</span>
+<span class="c">// Copyright (C) 2008 David Humphrey</span>
+<span class="c">//</span>
+<span class="c">// This program is free software; you can redistribute it and/or modify</span>
+<span class="c">// it under the terms of the GNU General Public License as published by</span>
+<span class="c">// the Free Software Foundation; either version 2 of the License, or</span>
+<span class="c">// (at your option) any later version.</span>
+<span class="c">//</span>
+<span class="c">// This program is distributed in the hope that it will be useful,</span>
+<span class="c">// but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c">// GNU General Public License for more details.</span>
+<span class="c">//</span>
+<span class="c">// You should have received a copy of the GNU General Public License</span>
+<span class="c">// along with this program; if not, write to the Free Software</span>
+<span class="c">// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</span>
+ 
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Drawing</span>;
+ 
+<b>namespace</b> <span class="i n">RemoteDesktopWpf</span>
+{
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+	<span class="c">///</span><span class="c"> A view-only version of IVncInputPolicy.</span>
+	<span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+	<b>public sealed class</b> <a id="2eefdae20ee2b333" href="R/2eefdae20ee2b333.html" target="n" data-glyph="0,0" class="t t">VncDefaultInputPolicy</a> : <a href="IVncInputPolicy.cs.html#0142566818bdb77d" class="t t">IVncInputPolicy</a>
+	{
+		<b>private</b> <a href="RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a> <a id="7778813b91fefeba" href="R/7778813b91fefeba.html" target="n" data-glyph="46,1" class="i field">rfb</a>;
+		
+		<b>public</b> <a id="3fd666b23527e4a1" href="R/3fd666b23527e4a1.html" target="n" data-glyph="72,1" class="t constructor">VncDefaultInputPolicy</a>(<a href="RfbProtocol.cs.html#3f12a63f7e6564da" class="t t">RfbProtocol</a> <span id="r0 rd" class="r0 r">rfb</span>)
+		{
+			<a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#74ae7c85c0e36e34" class="i method">Assert</a>(<span class="r0 r">rfb</span> != <b>null</b>);
+			<a href="#2eefdae20ee2b333" class="k">this</a>.<a href="#7778813b91fefeba" class="i field">rfb</a> = <span class="r0 r">rfb</span>;
+		}
+ 
+		<span class="c">// Let all exceptions get caught in VncClient</span>
+ 
+		<b>public void</b> <a id="cdf17da9a2229d7b" href="R/cdf17da9a2229d7b.html" target="n" data-glyph="72,1" class="i method">WriteKeyboardEvent</a>(<b>uint</b> <span id="r1 rd" class="r1 r">keysym</span>, <b>bool</b> <span id="r2 rd" class="r2 r">pressed</span>)
+		{
+			<a href="#7778813b91fefeba" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#6391aec89e968a11" class="i method">WriteKeyEvent</a>(<span class="r1 r">keysym</span>, <span class="r2 r">pressed</span>);
+		}
+ 
+		<b>public void</b> <a id="0657addc5d07f5ca" href="R/0657addc5d07f5ca.html" target="n" data-glyph="72,1" class="i method">WritePointerEvent</a>(<b>byte</b> <span id="r3 rd" class="r3 r">buttonMask</span>, <a href="@0@System.Drawing/A.html#a041be61667d4c9a" class="t t">Point</a> <span id="r4 rd" class="r4 r">point</span>)
+		{
+			<a href="#7778813b91fefeba" class="i field">rfb</a>.<a href="RfbProtocol.cs.html#fbb3f7368b992647" class="i method">WritePointerEvent</a>(<span class="r3 r">buttonMask</span>, <span class="r4 r">point</span>);
+		}
+	}
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html><head><title>WebSocketServerMonitorDefs.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(70);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasyITcenter-HELP/ServerCore/Interfaces/WebSocketServerMonitorDefs.cs" target="_top">ServerCore\Interfaces\WebSocketServerMonitorDefs.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasyITcenter-HELP" target="_top">HelpProjects\EasyITcenter-HELP\EasyITcenter-HELP.csproj</a> (EasyITcenter-HELP)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="i n">CodeAnalysis</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>.<span class="i n">Json</span>;
+ 
+<b>namespace</b> <span class="i n">EasyITCenter</span>.<span class="i n">ServerCoreStructure</span> {
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> !!! Implemented Server Core WebSocket System LogProvider Stream This Is Special Serice For</span>
+    <span class="c">///</span><span class="c"> Remote Monitoring On More Devices in OneTime</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="t t">ILoggerProvider</span><span class="c">&quot;</span><span class="c">/&gt;</span>
+    <b>public class</b> <a id="aae333dffa6678e2" href="../../R/aae333dffa6678e2.html" target="n" data-glyph="0,0" class="t t"><span id="6277ce1b5f0c2d59">WebSocketLogProvider</span></a> : <span class="t t">ILoggerProvider</span> {
+        <b>public</b> <a href="#fb453950baaffb3a" class="t t">WebSocketLogger</a> <a id="be1b42208e261e3a" href="../../R/be1b42208e261e3a.html" target="n" data-glyph="42,1" class="i field">webSocketLogger</a>;
+ 
+        <b>private bool</b> <a id="d9ee66f9c3bb3a89" href="../../R/d9ee66f9c3bb3a89.html" target="n" data-glyph="46,1" class="i field">disposedValue</a>;
+ 
+        <b>public</b> <span class="t t">ILogger</span> <a id="aa36ba5916724e71" href="../../R/aa36ba5916724e71.html" target="n" data-glyph="72,1" class="i method">CreateLogger</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">categoryName</span>) {
+            <b>return</b> <a href="#be1b42208e261e3a" class="i field">webSocketLogger</a> = <b>new</b> <a href="#d9e644aaf6c112c3" class="t constructor">WebSocketLogger</a>(<a href="#aae333dffa6678e2" class="k">this</a>);
+        }
+ 
+        <b>protected virtual void</b> <a id="afd880aec8aab232" href="../../R/afd880aec8aab232.html" target="n" data-glyph="75,1" class="i method">Dispose</a>(<b>bool</b> <span id="r1 rd" class="r1 r">disposing</span>) {
+            <b>if</b> (<a href="../WebSocketManager.cs.html#abc9b696d8dfe043" class="t t">ServerCoreWebHelpers</a>.<a href="../WebSocketManager.cs.html#0060b73fded0f7f1" class="i method">DisposeSocketConnectionsWithTimeOut</a>() == 0) { <a href="#d9ee66f9c3bb3a89" class="i field">disposedValue</a> = <b>true</b>; }
+        }
+ 
+        <b>public void</b> <a id="068b343686f12f3d" href="../../R/068b343686f12f3d.html" target="n" data-glyph="72,1" class="i method">Dispose</a>() {
+            <a href="#afd880aec8aab232" class="i method">Dispose</a>(<span class="r1 r">disposing</span>: <b>true</b>);
+            <a href="@1@System.Runtime/A.html#25d9c1e022317a99" class="t t">GC</a>.<a href="@1@System.Runtime/A.html#2673f5220a565bf2" class="i method">SuppressFinalize</a>(<a href="#aae333dffa6678e2" class="k">this</a>);
+        }
+    }
+ 
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Server Core WebSocket System Logger Interface</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">seealso</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="t t">ILogger</span><span class="c">&quot;</span><span class="c">/&gt;</span>
+    <b>public class</b> <a id="fb453950baaffb3a" href="../../R/fb453950baaffb3a.html" target="n" data-glyph="0,0" class="t t">WebSocketLogger</a> : <span class="t t">ILogger</span> {
+        <b>private readonly</b> <a href="#aae333dffa6678e2" class="t t">WebSocketLogProvider</a> <a id="76f12d4ecbcaa92b" href="../../R/76f12d4ecbcaa92b.html" target="n" data-glyph="46,1" class="i field">_webSocketLogProvider</a>;
+ 
+        <b>public</b> <a id="d9e644aaf6c112c3" href="../../R/d9e644aaf6c112c3.html" target="n" data-glyph="72,1" class="t constructor">WebSocketLogger</a>([<a href="@1@System.Runtime/A.html#7130aa7546b65d0a" class="t constructor">NotNull</a>] <a href="#aae333dffa6678e2" class="t t">WebSocketLogProvider</a> <span id="r2 rd" class="r2 r">webSocketLogProvider</span>) {
+            <a href="#76f12d4ecbcaa92b" class="i field">_webSocketLogProvider</a> = <span class="r2 r">webSocketLogProvider</span>;
+        }
+ 
+        <b>public</b> <a href="@1@System.Runtime/A.html#1f55292c3174123d" class="t t">IDisposable</a>? <a id="2c2904bc4de3b355" href="../../R/2c2904bc4de3b355.html" target="n" data-glyph="72,1" class="i method">BeginScope</a>&lt;<span id="r3 rd t" class="r3 r t">TState</span>&gt;(<span class="r3 r t">TState</span> <span id="r4 rd" class="r4 r">state</span>) {
+            <a href="#76f12d4ecbcaa92b" class="i field">_webSocketLogProvider</a>.<a href="#068b343686f12f3d" class="i method">Dispose</a>(); <b>return</b> <b>null</b>;
+        }
+ 
+        <b>public bool</b> <a id="cb23a710c4431029" href="../../R/cb23a710c4431029.html" target="n" data-glyph="72,1" class="i method">IsEnabled</a>(<span class="t t">LogLevel</span> <span id="r5 rd" class="r5 r">logLevel</span>) {
+            <b>return</b> <span class="r5 r">logLevel</span> != <span class="t t">LogLevel</span>.<span class="i field">None</span>;
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Used to log the entry.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">typeparam</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r6 r t">TState</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">typeparam</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">logLevel</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c"> An instance of </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="t t">LogLevel</span><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">eventId</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">  The event&#39;s ID. An instance of </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="t t">EventId</span><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">state</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">    The event&#39;s state.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r10 r">exception</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The event&#39;s exception. An instance of </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r11 r">formatter</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">A delegate that formats</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public void</b> <a id="525302dd573b4df1" href="../../R/525302dd573b4df1.html" target="n" data-glyph="72,1" class="i method">Log</a>&lt;<span id="r6 rd t" class="r6 r t">TState</span>&gt;(<span class="t t">LogLevel</span> <span id="r7 rd" class="r7 r">logLevel</span>, <span class="t t">EventId</span> <span id="r8 rd" class="r8 r">eventId</span>, <span class="r6 r t">TState</span> <span id="r9 rd" class="r9 r">state</span>, <a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a>? <span id="r10 rd" class="r10 r">exception</span>, <a href="@1@System.Runtime/A.html#8adbe0476ca899db" class="t t">Func</a>&lt;<span class="r6 r t">TState</span>, <a href="@1@System.Runtime/A.html#f092fb2b893a0162" class="t t">Exception</a>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <span id="r11 rd" class="r11 r">formatter</span>) {
+            <b>try</b> {
+                <b>if</b> (<a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#b22b05b0ecb479ff" class="t t">ServerRuntimeData</a>.<a href="../Classes/ServerCoreRuntimeDefinitions.cs.html#e0dbbb5577682e9d" class="i field">ServerCoreStatus</a> == <a href="../Classes/ServerCoreClassesDefinitions.cs.html#4cc3aa46754eee66" class="t t">ServerStatuses</a>.<a href="../Classes/ServerCoreClassesDefinitions.cs.html#ee947d78a976688d" class="i field">Running</a>.<a href="@1@System.Runtime/A.html#1365cfeffd45409d" class="i method">ToString</a>()) {
+                    <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>? <span id="r12 rd" class="r12 r">json</span> = <span class="s">&quot;&quot;</span>;
+                    <b>if</b> (<a href="#cb23a710c4431029" class="i method">IsEnabled</a>(<span class="r7 r">logLevel</span>)) {
+                        <span class="r12 r">json</span> = <span class="t t">JsonSerializer</span>.<span class="i method">Serialize</span>(<span class="r7 r">logLevel</span>.<a href="@1@System.Runtime/A.html#1365cfeffd45409d" class="i method">ToString</a>()) + <span class="t t">JsonSerializer</span>.<span class="i method">Serialize</span>(<span class="r8 r">eventId</span>) + <span class="t t">JsonSerializer</span>.<span class="i method">Serialize</span>(<span class="r9 r">state</span>) + <span class="t t">JsonSerializer</span>.<span class="i method">Serialize</span>(<span class="r10 r">exception</span>);
+                        <b>if</b> (!<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@1@System.Runtime/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r12 r">json</span>)) { <a href="../WebSocketManager.cs.html#abc9b696d8dfe043" class="t t">ServerCoreWebHelpers</a>.<a href="../WebSocketManager.cs.html#71f01787c52f4e9b" class="i method">SendMessageAndUpdateWebSocketsInSpecificPath</a>(<span class="s">&quot;ServerCoreMonitor&quot;</span>, <span class="r12 r">json</span>); }
+                    }
+                }
+            } <b>catch</b> { <a href="#76f12d4ecbcaa92b" class="i field">_webSocketLogProvider</a>.<a href="#068b343686f12f3d" class="i method">Dispose</a>(); }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

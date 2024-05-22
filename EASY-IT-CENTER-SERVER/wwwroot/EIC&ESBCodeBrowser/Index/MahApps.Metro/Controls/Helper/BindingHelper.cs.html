@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html><head><title>BindingHelper.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(129);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/Helper/BindingHelper.cs" target="_top">Controls\Helper\BindingHelper.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>.<span class="i n">Helper</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> A helper class to evaluate Bindings in code behind</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public static class</b> <a id="3608ad8ae3f56528" href="../../R/3608ad8ae3f56528.html" target="n" data-glyph="0,0" class="t t">BindingHelper</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A dummy property to initialize the binding to evaluate</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="03ecddfd75f55718" href="../../R/03ecddfd75f55718.html" target="n" data-glyph="46,1" class="i field">DummyProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(<span class="s">&quot;Dummy&quot;</span>,
+                                                  <b>typeof</b>(<b>object</b>),
+                                                  <b>typeof</b>(<a href="#3608ad8ae3f56528" class="t t">BindingHelper</a>),
+                                                  <b>new</b> <a href="@0@PresentationCore/A.html#de250674de661b24" class="t constructor">UIPropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> A dummy property to initialize the binding to evaluate. This property supports also string format.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="083e5827edc2c926" href="../../R/083e5827edc2c926.html" target="n" data-glyph="46,1" class="i field">DummyTextProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(<span class="s">&quot;DummyText&quot;</span>,
+                                                  <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>),
+                                                  <b>typeof</b>(<a href="#3608ad8ae3f56528" class="t t">BindingHelper</a>),
+                                                  <b>new</b> <a href="@0@PresentationCore/A.html#de250674de661b24" class="t constructor">UIPropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Evaluates a defined </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">-path on the given object</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">source</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">the object to evaluate</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">expression</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">the binding expression to evaluate</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">the result of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public static object</b>? <a id="835505b5ffbfba05" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Eval</a>(<b>object</b>? <span id="r0 rd" class="r0 r">source</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>? <span id="r1 rd" class="r1 r">expression</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a> <span id="r2 rd" class="r2 r">binding</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#94f69147a4e4e69b" class="t constructor">Binding</a>(<span class="r1 r">expression</span>) { <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <span class="r0 r">source</span> };
+            <b>return</b> <a href="#cb70053137b89a20" class="i method">Eval</a>(<span class="r2 r">binding</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Evaluates a defined </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">-path on the given object</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r3 r">source</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">the object to evaluate</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r4 r">expression</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">the binding expression to evaluate</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r5 r">format</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">the string format to use</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">the result of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public static object</b>? <a id="bdee68bad24d1201" href="../../R/bdee68bad24d1201.html" target="n" data-glyph="72,1" class="i method">Eval</a>(<b>object</b>? <span id="r3 rd" class="r3 r">source</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>? <span id="r4 rd" class="r4 r">expression</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>? <span id="r5 rd" class="r5 r">format</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a> <span id="r6 rd" class="r6 r">binding</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#94f69147a4e4e69b" class="t constructor">Binding</a>(<span class="r4 r">expression</span>) { <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <span class="r3 r">source</span>, <a href="@0@PresentationFramework/A.html#4a34ddabc44d93d9" class="i property">StringFormat</a> = <span class="r5 r">format</span> };
+            <b>return</b> <a href="#cb70053137b89a20" class="i method">Eval</a>(<span class="r6 r">binding</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Evaluates a defined </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> on the given object</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">binding</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> to evaluate</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">source</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">the object to evaluate</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public static object</b>? <a id="c3fb18b2864afa1a" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Eval</a>(<a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>? <span id="r7 rd" class="r7 r">binding</span>, <b>object</b>? <span id="r8 rd" class="r8 r">source</span>)
+        {
+            <b>if</b> (<span class="r7 r">binding</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r7 r">binding</span>));
+            }
+
+            <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a> <span id="r9 rd" class="r9 r">newBinding</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#2f6293d3ae26068b" class="t constructor">Binding</a>
+                                 {
+                                     <a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <span class="r8 r">source</span>,
+                                     <a href="@0@PresentationFramework/A.html#088488eb16d60a60" class="i property">AsyncState</a> = <span class="r7 r">binding</span>.<a href="@0@PresentationFramework/A.html#088488eb16d60a60" class="i property">AsyncState</a>,
+                                     <a href="@0@PresentationFramework/A.html#f8d4b5f1b13a8272" class="i property">BindingGroupName</a> = <span class="r7 r">binding</span>.<a href="@0@PresentationFramework/A.html#f8d4b5f1b13a8272" class="i property">BindingGroupName</a>,
+                                     <a href="@0@PresentationFramework/A.html#31d63270b277fa4d" class="i property">BindsDirectlyToSource</a> = <span class="r7 r">binding</span>.<a href="@0@PresentationFramework/A.html#31d63270b277fa4d" class="i property">BindsDirectlyToSource</a>,
+                                     <a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a> = <span class="r7 r">binding</span>.<a href="@0@PresentationFramework/A.html#09b16a18c3d55db0" class="i property">Path</a>,
+                                     <a href="@0@PresentationFramework/A.html#8ec0eeebd514597f" class="i property">Converter</a> = <span class="r7 r">binding</span>.<a href="@0@PresentationFramework/A.html#8ec0eeebd514597f" class="i property">Converter</a>,
+                                     <a href="@0@PresentationFramework/A.html#20d7b7f1b6bf1c18" class="i property">ConverterCulture</a> = <span class="r7 r">binding</span>.<a href="@0@PresentationFramework/A.html#20d7b7f1b6bf1c18" class="i property">ConverterCulture</a>,
+                                     <a href="@0@PresentationFramework/A.html#85857fc123108b49" class="i property">ConverterParameter</a> = <span class="r7 r">binding</span>.<a href="@0@PresentationFramework/A.html#85857fc123108b49" class="i property">ConverterParameter</a>,
+                                     <a href="@0@PresentationFramework/A.html#16d1158ebaab214b" class="i property">FallbackValue</a> = <span class="r7 r">binding</span>.<a href="@0@PresentationFramework/A.html#16d1158ebaab214b" class="i property">FallbackValue</a>,
+                                     <a href="@0@PresentationFramework/A.html#69ecfef7c0d60ad5" class="i property">IsAsync</a> = <span class="r7 r">binding</span>.<a href="@0@PresentationFramework/A.html#69ecfef7c0d60ad5" class="i property">IsAsync</a>,
+                                     <a href="@0@PresentationFramework/A.html#85a5cd1ab2a52ca1" class="i property">Mode</a> = <a href="@0@PresentationFramework/A.html#8958b7cd4de86635" class="t t">BindingMode</a>.<a href="@0@PresentationFramework/A.html#d8c0c0945280d35d" class="i field">OneWay</a>,
+                                     <a href="@0@PresentationFramework/A.html#4a34ddabc44d93d9" class="i property">StringFormat</a> = <span class="r7 r">binding</span>.<a href="@0@PresentationFramework/A.html#4a34ddabc44d93d9" class="i property">StringFormat</a>,
+                                     <a href="@0@PresentationFramework/A.html#dff555a1dea5f20e" class="i property">TargetNullValue</a> = <span class="r7 r">binding</span>.<a href="@0@PresentationFramework/A.html#dff555a1dea5f20e" class="i property">TargetNullValue</a>
+                                 };
+
+            <b>return</b> <a href="#cb70053137b89a20" class="i method">Eval</a>(<span class="r9 r">newBinding</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Evaluates a defined </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> on the given </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a><span class="c">&quot;</span><span class="c">/&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r10 r">binding</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> to evaluate</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r11 r">dependencyObject</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">optional: The </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> to evaluate</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">The resulting object</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public static object</b>? <a id="9f4bfe4a0a73c0d2" href="../../R/9f4bfe4a0a73c0d2.html" target="n" data-glyph="72,1" class="i method">Eval</a>(<a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>? <span id="r10 rd" class="r10 r">binding</span>, <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>? <span id="r11 rd" class="r11 r">dependencyObject</span>)
+        {
+            <b>if</b> (<span class="r10 r">binding</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r10 r">binding</span>));
+            }
+
+            <span class="r11 r">dependencyObject</span> ??= <b>new</b> <a href="@0@WindowsBase/A.html#f40533475afbae8b" class="t constructor">DependencyObject</a>();
+
+            <b>if</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<span class="r10 r">binding</span>.<a href="@0@PresentationFramework/A.html#4a34ddabc44d93d9" class="i property">StringFormat</a>))
+            {
+                <a href="@0@PresentationFramework/A.html#1630c30289beaec7" class="t t">BindingOperations</a>.<a href="@0@PresentationFramework/A.html#59fadf12efc18884" class="i method">SetBinding</a>(<span class="r11 r">dependencyObject</span>, <a href="#03ecddfd75f55718" class="i field">DummyProperty</a>, <span class="r10 r">binding</span>);
+                <b>return</b> <span class="r11 r">dependencyObject</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#03ecddfd75f55718" class="i field">DummyProperty</a>);
+            }
+            <b>else</b>
+            {
+                <a href="@0@PresentationFramework/A.html#1630c30289beaec7" class="t t">BindingOperations</a>.<a href="@0@PresentationFramework/A.html#59fadf12efc18884" class="i method">SetBinding</a>(<span class="r11 r">dependencyObject</span>, <a href="#083e5827edc2c926" class="i field">DummyTextProperty</a>, <span class="r10 r">binding</span>);
+                <b>return</b> <span class="r11 r">dependencyObject</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#083e5827edc2c926" class="i field">DummyTextProperty</a>);
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Evaluates a defined </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> on the given </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a><span class="c">&quot;</span><span class="c">/&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r12 r">binding</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> to evaluate</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">The resulting object</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>public static object</b>? <a id="cb70053137b89a20" href="../../R/cb70053137b89a20.html" target="n" data-glyph="72,1" class="i method">Eval</a>(<a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a>? <span id="r12 rd" class="r12 r">binding</span>)
+        {
+            <b>return</b> <a href="#9f4bfe4a0a73c0d2" class="i method">Eval</a>(<span class="r12 r">binding</span>, <b>null</b>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

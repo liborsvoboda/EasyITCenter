@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html><head><title>MetroThumb.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(57);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/MetroThumb.cs" target="_top">Controls\MetroThumb.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<span class="i n">Primitives</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <b>public class</b> <a id="5d7a672b5830536d" href="../R/5d7a672b5830536d.html" target="n" data-glyph="0,0" class="t t"><span id="4b1c4fd08a2370c8">MetroThumb</span></a> : <a href="@0@PresentationFramework/A.html#1625c1c79837b8ee" class="t t">Thumb</a>, <a href="IMetroThumb.cs.html#38e9bbc32885bfc0" class="t t">IMetroThumb</a>
+    {
+        <b>private</b> <a href="@0@PresentationCore/A.html#d65c6f7bcbe6468a" class="t t">TouchDevice</a>? <a id="52915d80f2346956" href="../R/52915d80f2346956.html" target="n" data-glyph="46,1" class="i field">currentDevice</a> = <b>null</b>;
+
+        <b>protected override void</b> <a id="72e0df746a1f4051" href="../R/72e0df746a1f4051.html" target="n" data-glyph="75,1" class="i method">OnPreviewTouchDown</a>(<a href="@0@PresentationCore/A.html#76c6614c37e1600c" class="t t">TouchEventArgs</a> <span id="r0 rd" class="r0 r">e</span>)
+        {
+            <span class="c">// Release any previous capture</span>
+            <a href="#5d7a672b5830536d" class="k">this</a>.<a href="#d2fa10c6bae477f7" class="i method">ReleaseCurrentDevice</a>();
+            <span class="c">// Capture the new touch</span>
+            <a href="#5d7a672b5830536d" class="k">this</a>.<a href="#b0b970f5d0168488" class="i method">CaptureCurrentDevice</a>(<span class="r0 r">e</span>);
+        }
+
+        <b>protected override void</b> <a id="41c90f4a32af1c02" href="../R/41c90f4a32af1c02.html" target="n" data-glyph="75,1" class="i method">OnPreviewTouchUp</a>(<a href="@0@PresentationCore/A.html#76c6614c37e1600c" class="t t">TouchEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <a href="#5d7a672b5830536d" class="k">this</a>.<a href="#d2fa10c6bae477f7" class="i method">ReleaseCurrentDevice</a>();
+        }
+
+        <b>protected override void</b> <a id="6033489d95ef4ef2" href="../R/6033489d95ef4ef2.html" target="n" data-glyph="75,1" class="i method">OnLostTouchCapture</a>(<a href="@0@PresentationCore/A.html#76c6614c37e1600c" class="t t">TouchEventArgs</a> <span id="r2 rd" class="r2 r">e</span>)
+        {
+            <span class="c">// Only re-capture if the reference is not null</span>
+            <span class="c">// This way we avoid re-capturing after calling ReleaseCurrentDevice()</span>
+            <b>if</b> (<a href="#5d7a672b5830536d" class="k">this</a>.<a href="#52915d80f2346956" class="i field">currentDevice</a> != <b>null</b>)
+            {
+                <a href="#5d7a672b5830536d" class="k">this</a>.<a href="#b0b970f5d0168488" class="i method">CaptureCurrentDevice</a>(<span class="r2 r">e</span>);
+            }
+        }
+
+        <b>private void</b> <a id="d2fa10c6bae477f7" href="../R/d2fa10c6bae477f7.html" target="n" data-glyph="76,1" class="i method">ReleaseCurrentDevice</a>()
+        {
+            <b>if</b> (<a href="#5d7a672b5830536d" class="k">this</a>.<a href="#52915d80f2346956" class="i field">currentDevice</a> != <b>null</b>)
+            {
+                <span class="c">// Set the reference to null so that we don&#39;t re-capture in the OnLostTouchCapture() method</span>
+                <a href="@0@PresentationCore/A.html#d65c6f7bcbe6468a" class="k">var</a> <span id="r3 rd" class="r3 r">temp</span> = <a href="#5d7a672b5830536d" class="k">this</a>.<a href="#52915d80f2346956" class="i field">currentDevice</a>;
+                <a href="#5d7a672b5830536d" class="k">this</a>.<a href="#52915d80f2346956" class="i field">currentDevice</a> = <b>null</b>;
+                <a href="#5d7a672b5830536d" class="k">this</a>.<a href="@0@PresentationCore/A.html#a0911d363699c24b" class="i method">ReleaseTouchCapture</a>(<span class="r3 r">temp</span>);
+            }
+        }
+
+        <b>private void</b> <a id="b0b970f5d0168488" href="../R/b0b970f5d0168488.html" target="n" data-glyph="76,1" class="i method">CaptureCurrentDevice</a>(<a href="@0@PresentationCore/A.html#76c6614c37e1600c" class="t t">TouchEventArgs</a> <span id="r4 rd" class="r4 r">e</span>)
+        {
+            <b>bool</b> <span id="r5 rd" class="r5 r">gotTouch</span> = <a href="#5d7a672b5830536d" class="k">this</a>.<a href="@0@PresentationCore/A.html#75a2e4883dc22d84" class="i method">CaptureTouch</a>(<span class="r4 r">e</span>.<a href="@0@PresentationCore/A.html#44bfa68616932cdc" class="i property">TouchDevice</a>);
+            <b>if</b> (<span class="r5 r">gotTouch</span>)
+            {
+                <a href="#5d7a672b5830536d" class="k">this</a>.<a href="#52915d80f2346956" class="i field">currentDevice</a> = <span class="r4 r">e</span>.<a href="@0@PresentationCore/A.html#44bfa68616932cdc" class="i property">TouchDevice</a>;
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

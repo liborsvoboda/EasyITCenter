@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html><head><title>AlbumPriceIsTooMuchConverter.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(51);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro.Demo/ValueConverter/AlbumPriceIsTooMuchConverter.cs" target="_top">ValueConverter\AlbumPriceIsTooMuchConverter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro.Demo" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro.Samples\MahApps.Metro.Demo\MahApps.Metro.Demo.csproj</a> (MahApps.Metro.Demo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">MetroDemo</span>.<span class="i n">Models</span>;
+
+<b>namespace</b> <span class="i n">MetroDemo</span>.<span class="i n">ValueConverter</span>
+{
+    <b>public class</b> <a id="a579cf8e02d8f50a" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="7c36e97ac335aa43">AlbumPriceIsTooMuchConverter</span></a> : <a href="@0@PresentationFramework/A.html#cce33419dc533659" class="t t">IValueConverter</a>
+    {
+        <b>public object</b> <a id="76550d06e952d62a" href="../R/76550d06e952d62a.html" target="n" data-glyph="72,1" class="i method">Convert</a>(<b>object</b> <span id="r0 rd" class="r0 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r1 rd" class="r1 r">targetType</span>, <b>object</b> <span id="r2 rd" class="r2 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r3 rd" class="r3 r">culture</span>)
+        {
+            <b>if</b> (<span class="r0 r">value</span> <b>is decimal</b>)
+            {
+                <a href="@0@mscorlib/A.html#1b2858baf311cbf9" class="k">var</a> <span id="r4 rd" class="r4 r">price</span> = (<b>decimal</b>)<span class="r0 r">value</span>;
+                <b>if</b> (<span class="r4 r">price</span> &gt; 15 &amp;&amp; <span class="r4 r">price</span> &lt; 20)
+                {
+                    <b>return</b> <b>true</b>;
+                }
+            }
+
+            <b>return</b> <b>false</b>;
+        }
+
+        <b>public object</b> <a id="e3479b030c2bee45" href="../R/e3479b030c2bee45.html" target="n" data-glyph="72,1" class="i method">ConvertBack</a>(<b>object</b> <span id="r5 rd" class="r5 r">value</span>, <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <span id="r6 rd" class="r6 r">targetType</span>, <b>object</b> <span id="r7 rd" class="r7 r">parameter</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r8 rd" class="r8 r">culture</span>)
+        {
+            <b>return</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#ee7f3b3d5828e7ab" class="i field">UnsetValue</a>;
+        }
+    }
+
+    <b>public class</b> <a id="7f15717252b0767b" href="../R/../../0000000000.html" target="n" data-glyph="0,0" class="t t"><span id="7c5808f2391d856b">AlbumPriceIsReallyTooMuchValidation</span></a> : <a href="@0@PresentationFramework/A.html#8d9199b8be6d367d" class="t t">ValidationRule</a>
+    {
+        <b>public override</b> <a href="@0@PresentationFramework/A.html#20adb82bc05377ef" class="t t">ValidationResult</a> <a id="00d356caece927f2" href="../R/00d356caece927f2.html" target="n" data-glyph="72,1" class="i method">Validate</a>(<b>object</b> <span id="r9 rd" class="r9 r">value</span>, <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a> <span id="r10 rd" class="r10 r">cultureInfo</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#d73570d4d97f185d" class="k">var</a> <span id="r11 rd" class="r11 r">bindingGroup</span> = <span class="r9 r">value</span> <b>as</b> <a href="@0@PresentationFramework/A.html#d73570d4d97f185d" class="t t">BindingGroup</a>;
+            <a href="../Models/Album.cs.html#c4a22bede40f2cad" class="k">var</a> <span id="r12 rd" class="r12 r">album</span> = <span class="r11 r">bindingGroup</span>?.<a href="@0@PresentationFramework/A.html#0a9833ecb068f0eb" class="i property">Items</a>.<a href="@0@System.Core/A.html#4ba4a3f8a5530e33" class="i method">OfType</a>&lt;<a href="../Models/Album.cs.html#c4a22bede40f2cad" class="t t">Album</a>&gt;().<a href="@0@System.Core/A.html#0bd04e5c179c3c7d" class="i method">ElementAtOrDefault</a>(0);
+            <b>if</b> (<span class="r12 r">album</span> != <b>null</b> &amp;&amp; <span class="r12 r">album</span>.<a href="../Models/Album.cs.html#e7b07ce319a2d3df" class="i property">Price</a> &gt;= 20)
+            {
+                <b>return</b> <b>new</b> <a href="@0@PresentationFramework/A.html#cc3dd7da2428d68a" class="t constructor">ValidationResult</a>(<b>false</b>, <span class="s">$&quot;</span><span class="s">The price </span>{<span class="r12 r">album</span>.<a href="../Models/Album.cs.html#e7b07ce319a2d3df" class="i property">Price</a>}<span class="s"> of the album &#39;</span>{<span class="r12 r">album</span>.<a href="../Models/Album.cs.html#17cad32441246584" class="i property">Title</a>}<span class="s">&#39; by &#39;</span>{<span class="r12 r">album</span>.<a href="../Models/Album.cs.html#ed66d1fca7cf0ce2" class="i property">Artist</a>?.<a href="../Models/Artist.cs.html#6fb9c0385fb2b69f" class="i property">Name</a>}<span class="s">&#39; is too much!</span><span class="s">&quot;</span>);
+            }
+
+            <b>return</b> <a href="@0@PresentationFramework/A.html#20adb82bc05377ef" class="t t">ValidationResult</a>.<a href="@0@PresentationFramework/A.html#b75503ac9049a4e0" class="i property">ValidResult</a>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

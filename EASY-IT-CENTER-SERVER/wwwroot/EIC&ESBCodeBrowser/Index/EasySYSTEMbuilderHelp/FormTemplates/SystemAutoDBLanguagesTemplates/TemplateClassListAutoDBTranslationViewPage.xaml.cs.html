@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html><head><title>TemplateClassListAutoDBTranslationViewPage.xaml.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(78);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasySYSTEMbuilderHelp/FormTemplates/SystemAutoDBLanguagesTemplates/TemplateClassListAutoDBTranslationViewPage.xaml.cs" target="_top">FormTemplates\SystemAutoDBLanguagesTemplates\TemplateClassListAutoDBTranslationViewPage.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasySYSTEMbuilderHelp" target="_top">HelpProjects\EasySYSTEMbuilderHelp\EasySYSTEMbuilderHelp.vbproj</a> (EasySYSTEMbuilderHelp)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i">EasyITSystemCenter</span>.<span class="i">Api</span>;
+<b>using</b> <span class="i">EasyITSystemCenter</span>.<span class="i">Classes</span>;
+<b>using</b> <span class="i">EasyITSystemCenter</span>.<span class="i">GlobalOperations</span>;
+<b>using</b> <span class="i">EasyITSystemCenter</span>.<span class="i">GlobalStyles</span>;
+<b>using</b> <span class="i">System</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Collections</span>.<span class="i">Generic</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Linq</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Net</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Threading</span>.<span class="i">Tasks</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Controls</span>;
+<b>using</b> <span class="i">System</span>.<span class="i">Windows</span>.<span class="i">Input</span>;
+ 
+<b>namespace</b> <span class="i n">EasyITSystemCenter</span>.<span class="i n">Pages</span> {
+ 
+    <b>public</b> <a href="../../P/e9e1f7efe9b176b6.html" target="s" class="k">partial</a> <b>class</b> <a id="e9e1f7efe9b176b6" href="../../R/e9e1f7efe9b176b6.html" target="n" data-glyph="0,0" class="t t"><span id="77307233c9f790fe">TemplateClassListAutoDBTranslationViewPage</span></a> : <span class="i">UserControl</span> {
+        <b>public static</b> <a id="0d86032a1f286d41" href="../../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">DataViewSupport</a> <span class="i">dataViewSupport</span> = <b>new</b> <span class="i">DataViewSupport</span>();
+ 
+        <b>public static</b> <a id="23287450529a7c0f" href="../../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">TemplateClassList</a> <span class="i">selectedRecord</span> = <b>new</b> <span class="i">TemplateClassList</span>();
+ 
+        <b>public</b> <a id="e1462957369dafd0" href="../../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">TemplateClassListAutoDBTranslationViewPage</a>() {
+            <span class="i">InitializeComponent</span>();
+            _ = <span class="i">SystemOperations</span>.<span class="i">SetLanguageDictionary</span>(<span class="i">Resources</span>, <span class="i">App</span>.<span class="i">appRuntimeData</span>.<span class="i">AppClientSettings</span>.<span class="i">First</span>(<span class="i">a</span> =&gt; <span class="i">a</span>.<span class="i">Key</span> == <span class="s">&quot;sys_defaultLanguage&quot;</span>).<span class="i">Value</span>);
+ 
+            _ = <span class="i">LoadDataList</span>();
+            <span class="i">SetRecord</span>();
+        }
+ 
+        <b>public async</b> <a id="281d3c482b095558" href="../../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">Task</a>&lt;<span class="i">bool</span>&gt; <span class="i">LoadDataList</span>() {
+            <span class="i">MainWindow</span>.<span class="i">ProgressRing</span> = <span class="i">Visibility</span>.<span class="i">Visible</span>;
+            <b>try</b> { <b>if</b> (<span class="i">MainWindow</span>.<span class="i">serviceRunning</span>) <span class="i">DgListView</span>.<span class="i">ItemsSource</span> = <span class="i">await</span> <span class="i">CommApi</span>.<span class="i">GetApiRequest</span>&lt;<span class="i">List</span>&lt;<span class="i">TemplateClassList</span>&gt;&gt;(<span class="i">ApiUrls</span>.<span class="i">EasyITCenterTemplateClassList</span>, (<span class="i">dataViewSupport</span>.<span class="i">AdvancedFilter</span> == <span class="i">null</span>) ? <span class="i">null</span> : <span class="s">&quot;Filter/&quot;</span> + <span class="i">WebUtility</span>.<span class="i">UrlEncode</span>(<span class="i">dataViewSupport</span>.<span class="i">AdvancedFilter</span>.<span class="i">Replace</span>(<span class="s">&quot;[!]&quot;</span>, <span class="s">&quot;&quot;</span>).<span class="i">Replace</span>(<span class="s">&quot;{!}&quot;</span>, <span class="s">&quot;&quot;</span>)), <span class="i">App</span>.<span class="i">UserData</span>.<span class="i">Authentification</span>.<span class="i">Token</span>); } <b>catch</b> (<span class="i">Exception</span> <span class="i">autoEx</span>) { <span class="i">App</span>.<span class="i">ApplicationLogging</span>(<span class="i">autoEx</span>); }
+            <span class="i">MainWindow</span>.<span class="i">ProgressRing</span> = <span class="i">Visibility</span>.<span class="i">Hidden</span>; <b>return true</b>;
+        }
+ 
+        <b>private async</b> <a id="a521beeb6ab30180" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">DgListView_Translate</span>(<b>object</b> <span class="i">sender</span>, <span class="i">EventArgs</span> <span class="i">ex</span>) {
+            <b>try</b> {
+                ((<span class="i">DataGrid</span>)<span class="i">sender</span>).<span class="i">Columns</span>.<span class="i">ToList</span>().<span class="i">ForEach</span>(<span class="i">async</span> <span class="i">e</span> =&gt; {
+                    <b>string</b> <span class="i">headername</span> = <span class="i">e</span>.<span class="i">Header</span>.<span class="i">ToString</span>();
+                    <b>if</b> (<span class="i">headername</span> == <span class="s">&quot;Active&quot;</span>) { <span class="i">e</span>.<span class="i">Header</span> = <span class="i">await</span> <span class="i">DBOperations</span>.<span class="i">DBTranslation</span>(<span class="i">headername</span>); <span class="i">e</span>.<span class="i">CellStyle</span> = <span class="i">ProgramaticStyles</span>.<span class="i">gridTextRightAligment</span>; <span class="i">e</span>.<span class="i">DisplayIndex</span> = <span class="i">DgListView</span>.<span class="i">Columns</span>.<span class="i">Count</span> - 2; }
+                    <b>else if</b> (<span class="i">headername</span> == <span class="s">&quot;Timestamp&quot;</span>) { <span class="i">e</span>.<span class="i">Header</span> = <span class="i">await</span> <span class="i">DBOperations</span>.<span class="i">DBTranslation</span>(<span class="i">headername</span>); <span class="i">e</span>.<span class="i">CellStyle</span> = <span class="i">ProgramaticStyles</span>.<span class="i">gridTextRightAligment</span>; <span class="i">e</span>.<span class="i">DisplayIndex</span> = <span class="i">DgListView</span>.<span class="i">Columns</span>.<span class="i">Count</span> - 1; }
+                    <b>else if</b> (<span class="i">headername</span> == <span class="s">&quot;Id&quot;</span>) <span class="i">e</span>.<span class="i">DisplayIndex</span> = 0;
+                    <b>else if</b> (<span class="i">headername</span> == <span class="s">&quot;UserId&quot;</span>) <span class="i">e</span>.<span class="i">Visibility</span> = <span class="i">Visibility</span>.<span class="i">Hidden</span>;
+                });
+            } <b>catch</b> (<span class="i">Exception</span> <span class="i">autoEx</span>) { <span class="i">App</span>.<span class="i">ApplicationLogging</span>(<span class="i">autoEx</span>); }
+        }
+ 
+        <b>public</b> <a id="a521beeb6ab30180" href="../../R/../../0000000000.html" target="n" data-glyph="42,1" class="i field">void</a> <span class="i">Filter</span>(<b>string</b> <span class="i">filter</span>) {
+            <b>try</b> {
+                <b>if</b> (<span class="i">filter</span>.<span class="i">Length</span> == 0) { <span class="i">dataViewSupport</span>.<span class="i">FilteredValue</span> = <span class="i">null</span>; <span class="i">DgListView</span>.<span class="i">Items</span>.<span class="i">Filter</span> = <span class="i">null</span>; <b>return</b>; }
+                <span class="i">dataViewSupport</span>.<span class="i">FilteredValue</span> = <span class="i">filter</span>;
+                <span class="i">DgListView</span>.<span class="i">Items</span>.<span class="i">Filter</span> = (<span class="i">e</span>) =&gt; {
+                    <span class="i">TemplateClassList</span> <a id="a330342383c5c392" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">user</a> = <span class="i">e</span> <b>as</b> <span class="i">TemplateClassList</span>;
+                    <b>return</b> <span class="i">user</span>.<span class="i">SystemName</span>.<span class="i">ToLower</span>().<span class="i">Contains</span>(<span class="i">filter</span>.<span class="i">ToLower</span>())
+                    || <span class="i">user</span>.<span class="i">Description</span>.<span class="i">ToLower</span>().<span class="i">Contains</span>(<span class="i">filter</span>.<span class="i">ToLower</span>());
+                };
+            } <b>catch</b> (<span class="i">Exception</span> <span class="i">autoEx</span>) { <span class="i">App</span>.<span class="i">ApplicationLogging</span>(<span class="i">autoEx</span>); }
+        }
+ 
+        <b>private</b> <a id="a521beeb6ab30180" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">DgListView_MouseDoubleClick</span>(<b>object</b> <span class="i">sender</span>, <span class="i">MouseButtonEventArgs</span> <span class="i">e</span>) {
+            <b>if</b> (<span class="i">DgListView</span>.<span class="i">SelectedItems</span>.<span class="i">Count</span> == 0) <b>return</b>;
+            <span class="i">selectedRecord</span> = (<span class="i">TemplateClassList</span>)<span class="i">DgListView</span>.<span class="i">SelectedItem</span>;
+            <span class="i">dataViewSupport</span>.<span class="i">SelectedRecordId</span> = <span class="i">selectedRecord</span>.<span class="i">Id</span>;
+            <span class="i">SetRecord</span>();
+        }
+ 
+        <b>private</b> <a id="a521beeb6ab30180" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">DgListView_SelectionChanged</span>(<b>object</b> <span class="i">sender</span>, <span class="i">SelectionChangedEventArgs</span> <span class="i">e</span>) {
+            <b>if</b> (<span class="i">DgListView</span>.<span class="i">SelectedItems</span>.<span class="i">Count</span> &gt; 0) { <span class="i">selectedRecord</span> = (<span class="i">TemplateClassList</span>)<span class="i">DgListView</span>.<span class="i">SelectedItem</span>; }
+            <b>else</b> { <span class="i">selectedRecord</span> = <b>new</b> <span class="i">TemplateClassList</span>(); }
+            <span class="i">dataViewSupport</span>.<span class="i">SelectedRecordId</span> = <span class="i">selectedRecord</span>.<span class="i">Id</span>;
+            <span class="i">SetRecord</span>();
+        }
+ 
+        <b>private</b> <a id="a521beeb6ab30180" href="../../R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">void</a> <span class="i">SetRecord</span>() {
+            <span class="i">MainWindow</span>.<span class="i">DataGridSelected</span> = <b>true</b>; <span class="i">MainWindow</span>.<span class="i">DataGridSelectedIdListIndicator</span> = <b>false</b>; <span class="i">MainWindow</span>.<span class="i">dataGridSelectedId</span> = <span class="i">selectedRecord</span>.<span class="i">Id</span>; <span class="i">MainWindow</span>.<span class="i">DgRefresh</span> = <b>true</b>;
+            <span class="i">ListView</span>.<span class="i">Visibility</span> = <span class="i">Visibility</span>.<span class="i">Visible</span>; <span class="i">dataViewSupport</span>.<span class="i">FormShown</span> = <b>false</b>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

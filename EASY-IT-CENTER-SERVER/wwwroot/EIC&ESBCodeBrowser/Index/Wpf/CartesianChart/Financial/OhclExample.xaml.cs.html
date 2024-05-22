@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html><head><title>OhclExample.xaml.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(92);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#Wpf/CartesianChart/Financial/OhclExample.xaml.cs" target="_top">CartesianChart\Financial\OhclExample.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Examples\Wpf\Wpf.csproj</a> (Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">LiveCharts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Defaults</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Wpf</span>;
+<b>using</b> <span class="i n">Wpf</span>.<span class="i n">Annotations</span>;
+
+<b>namespace</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">Financial</span>
+{
+    <b>public</b> <b>partial</b> <b>class</b> <a id="d5639bd3b3cc325c" href="../../R/d5639bd3b3cc325c.html" target="n" data-glyph="0,0" class="t t">OhclExample</a> : <a href="@0@PresentationFramework/A.html#ef80474a10d9350f" class="t t">UserControl</a>, <a href="@0@System/A.html#fd4b42d7e29d53e5" class="t t">INotifyPropertyChanged</a>
+    {
+        <b>private string</b>[] <a id="79647f1551bcbe22" href="../../R/79647f1551bcbe22.html" target="n" data-glyph="46,1" class="i field">_labels</a>;
+
+        <b>public</b> <a id="8375967cce8c4fa6" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">OhclExample</a>()
+        {
+            <span class="i">InitializeComponent</span>();
+
+            <a href="#30a3773044db1c71" class="i property">SeriesCollection</a> = <b>new</b> <a href="/LiveCharts/A.html#e05f0ac3c5ac3613" class="t constructor">SeriesCollection</a>
+            {
+                <b>new</b> <a href="/LiveCharts.Wpf/A.html#567bf31091c464bd" class="t constructor">OhlcSeries</a>()
+                {
+                    <a href="/LiveCharts.Wpf/A.html#ba565e37fd8fc84c" class="i property">Values</a> = <b>new</b> <a href="/LiveCharts/A.html#9dc8c197acdf6c12" class="t constructor">ChartValues</a>&lt;<a href="/LiveCharts/A.html#fc18be5f840fe72c" class="t t">OhlcPoint</a>&gt;
+                    {
+                        <b>new</b> <a href="/LiveCharts/A.html#0cbe5b7bd37aff3c" class="t constructor">OhlcPoint</a>(32, 35, 30, 32),
+                        <b>new</b> <a href="/LiveCharts/A.html#0cbe5b7bd37aff3c" class="t constructor">OhlcPoint</a>(33, 38, 31, 37),
+                        <b>new</b> <a href="/LiveCharts/A.html#0cbe5b7bd37aff3c" class="t constructor">OhlcPoint</a>(35, 42, 30, 40),
+                        <b>new</b> <a href="/LiveCharts/A.html#0cbe5b7bd37aff3c" class="t constructor">OhlcPoint</a>(37, 40, 35, 38),
+                        <b>new</b> <a href="/LiveCharts/A.html#0cbe5b7bd37aff3c" class="t constructor">OhlcPoint</a>(35, 38, 32, 33)
+                    }
+                },
+                <b>new</b> <a href="/LiveCharts.Wpf/A.html#c8aa0c4dad3d2e0b" class="t constructor">LineSeries</a>
+                {
+                    <a href="/LiveCharts.Wpf/A.html#ba565e37fd8fc84c" class="i property">Values</a> = <b>new</b> <a href="/LiveCharts/A.html#9dc8c197acdf6c12" class="t constructor">ChartValues</a>&lt;<b>double</b>&gt; {30, 32, 35, 30, 28},
+                    <a href="/LiveCharts.Wpf/A.html#a6f44874beaa1a39" class="i property">Fill</a> = <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#8131d3ac109ee20d" class="i property">Transparent</a>
+                }
+            };
+
+            <span class="c">//based on https://github.com/beto-rodriguez/Live-Charts/issues/166 </span>
+            <span class="c">//The Ohcl point X property is zero based indexed.</span>
+            <span class="c">//this means the first point is 0, second 1, third 2.... and so on</span>
+            <span class="c">//then you can use the Axis.Labels properties to map the chart X with a label in the array.</span>
+            <span class="c">//for more info see (mapped labels section) </span>
+            <span class="c">//http://lvcharts.net/#/examples/v1/labels-wpf?path=WPF-Components-Labels</span>
+            
+            <a href="#d4f99c39531d3ba9" class="i property">Labels</a> = <b>new</b> []
+            {
+                <a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@0@mscorlib/A.html#1cd5dd408a32124f" class="i property">Now</a>.<a href="@0@mscorlib/A.html#5088b43558351160" class="i method">ToString</a>(<span class="s">&quot;dd MMM&quot;</span>),
+                <a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@0@mscorlib/A.html#1cd5dd408a32124f" class="i property">Now</a>.<a href="@0@mscorlib/A.html#f5cb6edd98581ca2" class="i method">AddDays</a>(1).<a href="@0@mscorlib/A.html#5088b43558351160" class="i method">ToString</a>(<span class="s">&quot;dd MMM&quot;</span>),
+                <a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@0@mscorlib/A.html#1cd5dd408a32124f" class="i property">Now</a>.<a href="@0@mscorlib/A.html#f5cb6edd98581ca2" class="i method">AddDays</a>(2).<a href="@0@mscorlib/A.html#5088b43558351160" class="i method">ToString</a>(<span class="s">&quot;dd MMM&quot;</span>),
+                <a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@0@mscorlib/A.html#1cd5dd408a32124f" class="i property">Now</a>.<a href="@0@mscorlib/A.html#f5cb6edd98581ca2" class="i method">AddDays</a>(3).<a href="@0@mscorlib/A.html#5088b43558351160" class="i method">ToString</a>(<span class="s">&quot;dd MMM&quot;</span>),
+                <a href="@0@mscorlib/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@0@mscorlib/A.html#1cd5dd408a32124f" class="i property">Now</a>.<a href="@0@mscorlib/A.html#f5cb6edd98581ca2" class="i method">AddDays</a>(4).<a href="@0@mscorlib/A.html#5088b43558351160" class="i method">ToString</a>(<span class="s">&quot;dd MMM&quot;</span>),
+            };
+
+            <a href="@0@PresentationFramework/A.html#e4aaca7514916173" class="i property">DataContext</a> = <a href="#d5639bd3b3cc325c" class="k">this</a>;
+        }
+
+        <b>public</b> <a href="/LiveCharts/A.html#90afae0d66da3706" class="t t">SeriesCollection</a> <a id="30a3773044db1c71" href="../../R/30a3773044db1c71.html" target="n" data-glyph="102,1" class="i property">SeriesCollection</a> { <b>get</b>; <b>set</b>; }
+
+        <b>public string</b>[] <a id="d4f99c39531d3ba9" href="../../R/d4f99c39531d3ba9.html" target="n" data-glyph="102,1" class="i property">Labels</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#79647f1551bcbe22" class="i field">_labels</a>; }
+            <b>set</b>
+            {
+                <a href="#79647f1551bcbe22" class="i field">_labels</a> = <b>value</b>;
+                <a href="#725a6aacce01263c" class="i method">OnPropertyChanged</a>(<span class="s">&quot;Labels&quot;</span>);
+            }
+        }
+
+        <b>private void</b> <a id="725a1aa5ee0af328" href="../../R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">UpdateAllOnClick</a>(<b>object</b> <span id="r0 rd" class="r0 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <a href="@0@mscorlib/A.html#bb77e610694e64ca" class="k">var</a> <span id="r2 rd" class="r2 r">r</span> = <b>new</b> <a href="@0@mscorlib/A.html#5d22f8880fc9f8d9" class="t constructor">Random</a>();
+
+            <b>foreach</b> (<a href="/LiveCharts/A.html#fc18be5f840fe72c" class="k">var</a> <span id="r3 rd" class="r3 r">point</span> <b>in</b> <a href="#30a3773044db1c71" class="i property">SeriesCollection</a>[0].<a href="/LiveCharts/A.html#ccd53d4aee7d99d6" class="i property">Values</a>.<a href="@0@System.Core/A.html#27bb217a6d5457ec" class="i method">Cast</a>&lt;<a href="/LiveCharts/A.html#fc18be5f840fe72c" class="t t">OhlcPoint</a>&gt;())
+            {
+                <span class="r3 r">point</span>.<a href="/LiveCharts/A.html#39a825a62fa04f73" class="i property">Open</a> = <span class="r2 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>((<b>int</b>) <span class="r3 r">point</span>.<a href="/LiveCharts/A.html#443cb1267623b2f4" class="i property">Low</a>, (<b>int</b>) <span class="r3 r">point</span>.<a href="/LiveCharts/A.html#1ae42bec9e205355" class="i property">High</a>);
+                <span class="r3 r">point</span>.<a href="/LiveCharts/A.html#fb4cea09a10d069d" class="i property">Close</a> = <span class="r2 r">r</span>.<a href="@0@mscorlib/A.html#ddd1e9e09c70bab5" class="i method">Next</a>((<b>int</b>) <span class="r3 r">point</span>.<a href="/LiveCharts/A.html#443cb1267623b2f4" class="i property">Low</a>, (<b>int</b>) <span class="r3 r">point</span>.<a href="/LiveCharts/A.html#1ae42bec9e205355" class="i property">High</a>);
+            }
+        }
+
+        <b>public event</b> <a href="@0@System/A.html#670754815f6804ff" class="t t">PropertyChangedEventHandler</a> <a id="a3c27add9b481a3b" href="../../R/a3c27add9b481a3b.html" target="n" data-glyph="30,1" class="i">PropertyChanged</a>;
+
+        <b>protected virtual void</b> <a id="725a6aacce01263c" href="../../R/725a6aacce01263c.html" target="n" data-glyph="75,1" class="i method">OnPropertyChanged</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r4 rd" class="r4 r">propertyName</span> = <b>null</b>)
+        {
+            <b>if</b> (<a href="#a3c27add9b481a3b" class="i">PropertyChanged</a> != <b>null</b>) <a href="#a3c27add9b481a3b" class="i">PropertyChanged</a>.<a href="@0@System/A.html#c66222f7abfe2e28" class="i method">Invoke</a>(<a href="#d5639bd3b3cc325c" class="k">this</a>, <b>new</b> <a href="@0@System/A.html#76958b0a96ed2a2e" class="t constructor">PropertyChangedEventArgs</a>(<span class="r4 r">propertyName</span>));
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

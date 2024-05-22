@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html><head><title>RepositoryAsync.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(119);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EasyITcenter-HELP/ServerCore/Repositories/RepositoryAsync.cs" target="_top">ServerCore\Repositories\RepositoryAsync.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EasyITcenter-HELP" target="_top">HelpProjects\EasyITcenter-HELP\EasyITcenter-HELP.csproj</a> (EasyITcenter-HELP)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>.<span class="i n">Expressions</span>;
+
+<b>namespace</b> <span class="i n">EasyITCenter</span>.<span class="i n">Services</span> {
+
+    <span class="c">// Generic Repository implementing generic interface takes two generic paremeters DbContext and</span>
+    <span class="c">// model class type</span>
+    <b>public class</b> <a id="77049596f0959a6d" href="../../R/77049596f0959a6d.html" target="n" data-glyph="0,0" class="t t">RepositoryAsync</a>&lt;<span id="r0 rd t" class="r0 r t">DbEntity</span>, <span id="r1 rd t" class="r1 r t">Tentity</span>&gt; : <a href="IRepositoryAsync.cs.html#6c09706f13c0395d" class="t t">IRepositoryAsync</a>&lt;<span class="r0 r t">DbEntity</span>, <span class="r1 r t">Tentity</span>&gt; <b>where</b> <span class="r0 r t">DbEntity</span> : <span class="i">EasyITCenterContext</span> <b>where</b> <span class="r1 r t">Tentity</span> : <b>class</b> {
+        <b>private readonly</b> <span class="i">DbContext</span> <a id="da4f22d2e4c997c4" href="../../R/da4f22d2e4c997c4.html" target="n" data-glyph="46,1" class="i field">_context</a>;
+        <b>private readonly</b> <span class="i">DbSet</span>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="b71bbb497b7f7e1c" href="../../R/b71bbb497b7f7e1c.html" target="n" data-glyph="46,1" class="i field">dbSet</a>;
+ 
+        <b>public</b> <a id="ec742cc33e10f871" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">RepositoryAsync</a>(<span class="r0 r t">DbEntity</span> <span id="r2 rd" class="r2 r">context</span>) {
+            <a href="#da4f22d2e4c997c4" class="i field">_context</a> = <span class="r2 r">context</span>;
+            <a href="#b71bbb497b7f7e1c" class="i field">dbSet</a> = <span class="r2 r">context</span>.<span class="i">Set</span>&lt;<span class="r1 r t">Tentity</span>&gt;();
+            <a href="#961f45ce7dd620e8" class="i property">Query</a> = <a href="#b71bbb497b7f7e1c" class="i field">dbSet</a>.<span class="i">AsQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt;();
+        }
+
+        <b>internal</b> <span class="t t">IQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="961f45ce7dd620e8" href="../../R/961f45ce7dd620e8.html" target="n" data-glyph="104,1" class="i property">Query</a> { <b>get</b>; <b>set</b>; }
+
+        <b>public virtual async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="1a532f9106167319" href="../../R/1a532f9106167319.html" target="n" data-glyph="72,1" class="i method">GetByIdAsync</a>(<b>int</b> <span id="r3 rd" class="r3 r">id</span>) {
+            <b>return</b> <b>await</b> <a href="#b71bbb497b7f7e1c" class="i field">dbSet</a>.<span class="i">FindAsync</span>(<span class="r3 r">id</span>);
+        }
+
+        <b>public virtual async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="6a94e0cc5ebcdc7c" href="../../R/6a94e0cc5ebcdc7c.html" target="n" data-glyph="72,1" class="i method">GetAsync</a>(<span class="t t">Expression</span>&lt;<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r1 r t">Tentity</span>, <b>bool</b>&gt;&gt; <span id="r4 rd" class="r4 r">predicate</span>) {
+            <b>return</b> <b>await</b> <a href="#961f45ce7dd620e8" class="i property">Query</a>.<span class="i">FirstOrDefaultAsync</span>(<span class="r4 r">predicate</span>);
+        }
+
+        <b>public virtual async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt;&gt; <a id="bae44b60548e6051" href="../../R/bae44b60548e6051.html" target="n" data-glyph="72,1" class="i method">AddAsync</a>(<span class="r1 r t">Tentity</span> <span id="r5 rd" class="r5 r">entity</span>) {
+            <span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt; <span id="r6 rd" class="r6 r">eentity</span> = <b>await</b> <a href="#b71bbb497b7f7e1c" class="i field">dbSet</a>.<span class="i">AddAsync</span>(<span class="r5 r">entity</span>);
+            <span class="r6 r">eentity</span>.<span class="i">State</span> = <span class="i">EntityState</span>.<span class="i">Added</span>;
+            <b>return</b> <span class="r6 r">eentity</span>;
+        }
+ 
+        <b>public virtual async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt;&gt; <a id="0c4c56a692ae2b33" href="../../R/0c4c56a692ae2b33.html" target="n" data-glyph="72,1" class="i method">UpdateAsync</a>(<span class="r1 r t">Tentity</span> <span id="r7 rd" class="r7 r">entity</span>) {
+            <span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt; <span id="r8 rd" class="r8 r">eentity</span> = <a href="#b71bbb497b7f7e1c" class="i field">dbSet</a>.<span class="i">Update</span>(<span class="r7 r">entity</span>);
+            <a href="#da4f22d2e4c997c4" class="i field">_context</a>.<span class="i">Entry</span>(<span class="r7 r">entity</span>).<span class="i">State</span> = <span class="i">EntityState</span>.<span class="i">Modified</span>;
+            <b>return</b> <span class="r8 r">eentity</span>;
+        }
+
+        <b>public virtual async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt;&gt; <a id="7926ecadb7d1c83e" href="../../R/7926ecadb7d1c83e.html" target="n" data-glyph="72,1" class="i method">DeleteAsync</a>(<b>int</b> <span id="r9 rd" class="r9 r">id</span>) {
+            <span class="r1 r t">Tentity</span> <span id="r10 rd" class="r10 r">entityToDelete</span> = <b>await</b> <a href="#1a532f9106167319" class="i method">GetByIdAsync</a>(<span class="r9 r">id</span>)!;
+            <a href="#da4f22d2e4c997c4" class="i field">_context</a>.<span class="i">Entry</span>(<span class="r10 r">entityToDelete</span>).<span class="i">State</span> = <span class="i">EntityState</span>.<span class="i">Deleted</span>;
+            <span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt; <span id="r11 rd" class="r11 r">eentity</span> = <b>await</b> <a href="#e2eb62ee795ab221" class="i method">DeleteAsync</a>(<span class="r10 r">entityToDelete</span>!);
+            <b>return</b> <span class="r11 r">eentity</span>;
+        }
+
+        <b>public virtual async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt;&gt; <a id="e2eb62ee795ab221" href="../../R/e2eb62ee795ab221.html" target="n" data-glyph="72,1" class="i method">DeleteAsync</a>(<span class="r1 r t">Tentity</span> <span id="r12 rd" class="r12 r">entityToDelete</span>) {
+            <span class="i">EntityEntry</span>&lt;<span class="r1 r t">Tentity</span>&gt; <span id="r13 rd" class="r13 r">eentity</span> = <a href="#b71bbb497b7f7e1c" class="i field">dbSet</a>.<span class="i">Remove</span>(<span class="r12 r">entityToDelete</span>);
+            <a href="#da4f22d2e4c997c4" class="i field">_context</a>.<span class="i">Entry</span>(<span class="r12 r">entityToDelete</span>).<span class="i">State</span> = <span class="i">EntityState</span>.<span class="i">Deleted</span>;
+            <b>return</b> <span class="r13 r">eentity</span>;
+        }
+
+        <b>public virtual async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<b>int</b>&gt; <a id="20637d31dfcab64f" href="../../R/20637d31dfcab64f.html" target="n" data-glyph="72,1" class="i method">TotalAsync</a>(<span class="t t">Expression</span>&lt;<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r1 r t">Tentity</span>, <b>bool</b>&gt;&gt; <span id="r14 rd" class="r14 r">predicate</span>) {
+            <b>return</b> <b>await</b> <a href="#961f45ce7dd620e8" class="i property">Query</a>.<span class="i">CountAsync</span>(<span class="r14 r">predicate</span>);
+        }
+
+        <b>public virtual async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<b>bool</b>&gt; <a id="f47382777ae49723" href="../../R/f47382777ae49723.html" target="n" data-glyph="72,1" class="i method">ExistAsync</a>(<span class="t t">Expression</span>&lt;<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r1 r t">Tentity</span>, <b>bool</b>&gt;&gt; <span id="r15 rd" class="r15 r">predicate</span>) {
+            <b>return</b> <b>await</b> <a href="#961f45ce7dd620e8" class="i property">Query</a>.<span class="i">AnyAsync</span>(<span class="r15 r">predicate</span>);
+        }
+
+        <b>public virtual async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<b>int</b>&gt; <a id="27dcd59fcf722807" href="../../R/27dcd59fcf722807.html" target="n" data-glyph="72,1" class="i method">SaveChangesAsync</a>() {
+            <b>return</b> <b>await</b> <a href="#da4f22d2e4c997c4" class="i field">_context</a>.<span class="i">SaveChangesAsync</span>();
+        }
+
+        <span class="c">// =============================== Async version</span>
+        <b>public virtual async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<span class="t t">List</span>&lt;<span class="r1 r t">Tentity</span>&gt;&gt; <a id="1763ae892071b74a" href="../../R/1763ae892071b74a.html" target="n" data-glyph="72,1" class="i method">GetListAsync</a>(
+            <span class="t t">Expression</span>&lt;<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r1 r t">Tentity</span>, <b>bool</b>&gt;&gt;? <span id="r16 rd" class="r16 r">filter</span> = <b>null</b>,
+            <a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="t t">IQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt;, <span class="t t">IOrderedQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt;&gt;? <span id="r17 rd" class="r17 r">orderBy</span> = <b>null</b>,
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r18 rd" class="r18 r">includeProperties</span> = <span class="s">&quot;&quot;</span>, <b>int</b> <span id="r19 rd" class="r19 r">PageNo</span> = 0, <b>int</b> <span id="r20 rd" class="r20 r">PageSize</span> = 0) {
+            <span class="c">//return await QueryEntity(filter, orderBy, includeProperties).ToListAsync();</span>
+            <b>var</b> <span id="r21 rd" class="r21 r">query</span> = <a href="#be2d73f755751964" class="i method">QueryEntity</a>(<span class="r16 r">filter</span>, <span class="r17 r">orderBy</span>, <span class="r18 r">includeProperties</span>);
+            <b>if</b> (<span class="r20 r">PageSize</span> + <span class="r19 r">PageNo</span> &gt; 0) {
+                <b>return</b> <b>await</b> <span class="r21 r">query</span>.<span class="i method">Skip</span>(<span class="r19 r">PageNo</span> * <span class="r20 r">PageSize</span>).<span class="i method">Take</span>(<span class="r20 r">PageSize</span>).<span class="i">ToListAsync</span>();
+            }
+            <b>return</b> <b>await</b> <span class="r21 r">query</span>.<span class="i">ToListAsync</span>();
+        }
+ 
+        <b>public virtual async</b> <a href="@1@System.Runtime/A.html#5ca7b77f3df89fc6" class="t t">Task</a>&lt;<span class="t t">List</span>&lt;<span class="r1 r t">Tentity</span>&gt;&gt; <a id="b8008edc16d9c7d1" href="../../R/b8008edc16d9c7d1.html" target="n" data-glyph="72,1" class="i method">GetFromSqlAsync</a>(<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r22 rd" class="r22 r">sql</span>) {
+            <b>return</b> <a href="#b71bbb497b7f7e1c" class="i field">dbSet</a>.<span class="i">FromSqlRaw</span>(<span class="r22 r">sql</span>).<span class="i">ToList</span>();
+        }
+ 
+        <b>private</b> <span class="t t">IQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt; <a id="be2d73f755751964" href="../../R/be2d73f755751964.html" target="n" data-glyph="76,1" class="i method">QueryEntity</a>(
+            <span class="t t">Expression</span>&lt;<a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r1 r t">Tentity</span>, <b>bool</b>&gt;&gt;? <span id="r23 rd" class="r23 r">filter</span> = <b>null</b>,
+            <a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="t t">IQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt;, <span class="t t">IOrderedQueryable</span>&lt;<span class="r1 r t">Tentity</span>&gt;&gt;? <span id="r24 rd" class="r24 r">orderBy</span> = <b>null</b>,
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r25 rd" class="r25 r">includeProperties</span> = <span class="s">&quot;&quot;</span>) {
+            <span class="c">//IQueryable&lt;Tentity&gt; query = dbSet;</span>
+
+            <b>if</b> (<span class="r23 r">filter</span> != <b>null</b>) {
+                <a href="#961f45ce7dd620e8" class="i property">Query</a> = <a href="#961f45ce7dd620e8" class="i property">Query</a>.<span class="i method">Where</span>(<span class="r23 r">filter</span>);
+            }
+
+            <b>foreach</b> (<a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r26 rd" class="r26 r">includeProperty</span> <b>in</b> <span class="r25 r">includeProperties</span>.<a href="@1@System.Runtime/A.html#1ff97959e1d46a53" class="i method">Split</a>(<b>new</b> <b>char</b>[] { <span class="s">&#39;,&#39;</span> }, <a href="@1@System.Runtime/A.html#a948431c3f385783" class="t t">StringSplitOptions</a>.<a href="@1@System.Runtime/A.html#249c323b50d44651" class="i field">RemoveEmptyEntries</a>)) {
+                <a href="#961f45ce7dd620e8" class="i property">Query</a> = <a href="#961f45ce7dd620e8" class="i property">Query</a>.<span class="i">Include</span>(<span class="r26 r">includeProperty</span>);
+            }
+
+            <b>if</b> (<span class="r24 r">orderBy</span> != <b>null</b>) {
+                <b>return</b> <span class="r24 r">orderBy</span>(<a href="#961f45ce7dd620e8" class="i property">Query</a>);
+            }
+            <b>else</b> {
+                <b>return</b> <a href="#961f45ce7dd620e8" class="i property">Query</a>;
+            }
+        }
+ 
+        <b>private bool</b> <a id="4ad45e536cff414f" href="../../R/4ad45e536cff414f.html" target="n" data-glyph="46,1" class="i field">disposed</a> = <b>false</b>;
+
+        <b>protected virtual void</b> <a id="e24c7f0470bd048c" href="../../R/e24c7f0470bd048c.html" target="n" data-glyph="75,1" class="i method">Dispose</a>(<b>bool</b> <span id="r27 rd" class="r27 r">disposing</span>) {
+            <b>if</b> (!<a href="#4ad45e536cff414f" class="i field">disposed</a>) {
+                <b>if</b> (<span class="r27 r">disposing</span>) {
+                    <a href="#da4f22d2e4c997c4" class="i field">_context</a>.<span class="i">Dispose</span>();
+                }
+            }
+            <a href="#4ad45e536cff414f" class="i field">disposed</a> = <b>true</b>;
+        }
+
+        <b>public void</b> <a id="3855103abef06212" href="../../R/3855103abef06212.html" target="n" data-glyph="72,1" class="i method">Dispose</a>() {
+            <a href="#e24c7f0470bd048c" class="i method">Dispose</a>(<b>true</b>);
+            <a href="@1@System.Runtime/A.html#25d9c1e022317a99" class="t t">GC</a>.<a href="@1@System.Runtime/A.html#2673f5220a565bf2" class="i method">SuppressFinalize</a>(<a href="#77049596f0959a6d" class="k">this</a>);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

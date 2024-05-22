@@ -1,0 +1,375 @@
+﻿<!DOCTYPE html>
+<html><head><title>TouchKeyboardEventManager.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(366);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#TouchKeyboardNotifier/TouchKeyboardEventManager.cs" target="_top">TouchKeyboardEventManager.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#TouchKeyboardNotifier" target="_top">HelpProjects\WPF-MORE\Input and Commands\TouchKeyboard\TouchKeyboardNotifier\TouchKeyboardNotifier.csproj</a> (TouchKeyboardNotifier)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// THIS CODE AND INFORMATION IS PROVIDED &quot;AS IS&quot; WITHOUT WARRANTY OF</span>
+<span class="c">// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO</span>
+<span class="c">// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A</span>
+<span class="c">// PARTICULAR PURPOSE.</span>
+<span class="c">//</span>
+<span class="c">// Copyright (c) Microsoft Corporation. All rights reserved</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>.<span class="i n">CodeAnalysis</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Reflection</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Runtime</span>.<span class="i n">InteropServices</span>.<span class="i n">WindowsRuntime</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Interop</span>;
+<b>using</b> <span class="i n">Windows</span>.<span class="i n">Foundation</span>;
+<b>using</b> <span class="i n">Windows</span>.<span class="i n">UI</span>.<span class="i n">ViewManagement</span>;
+<b>using static</b> <span class="i n">Microsoft</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>.<span class="i n">TouchKeyboard</span>.<span class="i n">Rcw</span>.<a href="InputPaneRcw.cs.html#eded0c2ea6379c4c" class="t t">InputPaneRcw</a>;
+
+<b>namespace</b> <span class="i n">Microsoft</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>.<span class="i n">TouchKeyboard</span>
+{
+    <span class="c">// Alias for neatness</span>
+    <b>using</b> <span class="t">WinRTVisibilityHandler</span> = <span class="t t">TypedEventHandler</span>&lt;<span class="t t">InputPane</span>, <span class="t t">InputPaneVisibilityEventArgs</span>&gt;;
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> A delegate for handlers to the showing and hiding events</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">occludedWindow</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window that is being occluded</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r1 r">occludedRect</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The rectangle that represents the occluded region</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+    <b>public delegate void</b> <a id="075ef4b6a8214b54" href="R/075ef4b6a8214b54.html" target="n" data-glyph="12,0" class="t t"><span id="73cec36a7ce6c6a4">TouchKeyboardVisibilityHandler</span></a>(<a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r0 rd" class="r0 r">occludedWindow</span>, <span class="i n">System</span>.<span class="i n">Windows</span>.<a href="@0@WindowsBase/A.html#fc387a6f7a1c2856" class="t t">Rect</a> <span id="r1 rd" class="r1 r">occludedRect</span>);
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Provides access to registering a WPF window for notifications from the </span>
+    <span class="c">///</span><span class="c"> touch keyboard.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    [<a href="@0@mscorlib/A.html#59e5b9def9db9228" class="t constructor">CLSCompliant</a>(<b>true</b>)]
+    <b>public static class</b> <a id="2de03d9f6b33cbce" href="R/2de03d9f6b33cbce.html" target="n" data-glyph="0,0" class="t t">TouchKeyboardEventManager</a>
+    {
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Helper Classes
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Hold event handlers for the WinRT events</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private class</b> <a id="838b30bdd1ee202c" href="R/838b30bdd1ee202c.html" target="n" data-glyph="4,1" class="t t"><span id="65e036918fd8a2fa">WinRTEventHandlers</span></a>
+        {
+            <b>public</b> <span class="t t">WinRTVisibilityHandler</span> <a id="b3c6d9a5e7b31621" href="R/b3c6d9a5e7b31621.html" target="n" data-glyph="42,2" class="i field">Showing</a>;
+            <b>public</b> <span class="t t">WinRTVisibilityHandler</span> <a id="bc8f97eb7d427607" href="R/bc8f97eb7d427607.html" target="n" data-glyph="42,2" class="i field">Hiding</a>;
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constants
+
+        <b>private const string</b> <a id="8af2257053c1c163" href="R/8af2257053c1c163.html" target="n" data-glyph="10,1" class="i field">ShowingEventName</a> = <span class="s">&quot;Showing&quot;</span>;
+        <b>private const string</b> <a id="817f59b906148fd7" href="R/817f59b906148fd7.html" target="n" data-glyph="10,1" class="i field">HidingEventName</a> = <span class="s">&quot;Hiding&quot;</span>;
+        <b>private const string</b> <a id="6094e6141f1625ea" href="R/6094e6141f1625ea.html" target="n" data-glyph="10,1" class="i field">InputPaneTypeName</a> = <span class="s">&quot;Windows.UI.ViewManagement.InputPane, Windows, ContentType=WindowsRuntime&quot;</span>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Member Variables
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Holds an association from a window to the WinRT event handlers used to register for the showing/hiding events</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static</b> <a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>, <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="#838b30bdd1ee202c" class="t t">WinRTEventHandlers</a>&gt;&gt; <a id="20b493e75b438e7e" href="R/20b493e75b438e7e.html" target="n" data-glyph="46,1" class="i field">_registrationTokens</a> = <b>new</b> <a href="@0@mscorlib/A.html#bf6849e410b43c4c" class="t constructor">Dictionary</a>&lt;<a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>, <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="#838b30bdd1ee202c" class="t t">WinRTEventHandlers</a>&gt;&gt;();
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The WinRT InputPane type.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static</b> <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a> <a id="45dcb634d008fc98" href="R/45dcb634d008fc98.html" target="n" data-glyph="46,1" class="i field">_inputPaneType</a> = <b>null</b>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Holds the event info queried from the InputPane type</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static</b> <a href="@0@mscorlib/A.html#fa5077d5073fbcd1" class="t t">EventInfo</a> <a id="3f68a8f7f0cf8cdf" href="R/3f68a8f7f0cf8cdf.html" target="n" data-glyph="46,1" class="i field">_showingEvent</a> = <b>null</b>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Holds the event info queried from the InputPane type</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static</b> <a href="@0@mscorlib/A.html#fa5077d5073fbcd1" class="t t">EventInfo</a> <a id="093e612d7fcd7525" href="R/093e612d7fcd7525.html" target="n" data-glyph="46,1" class="i field">_hidingEvent</a> = <b>null</b>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Indicates if calling the touch keyboard is supported</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static bool</b> <a id="eb987116cdc39e03" href="R/eb987116cdc39e03.html" target="n" data-glyph="46,1" class="i field">_touchKeyboardSupported</a> = <b>false</b>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Constructors
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Creates and caches some reflection</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@mscorlib/A.html#5e00de6576fb9ce7" class="t constructor">SuppressMessage</a>(<span class="s">&quot;Microsoft.Performance&quot;</span>, <span class="s">&quot;CA1810:InitializeReferenceTypeStaticFieldsInline&quot;</span>)]
+        <b>static</b> <a id="20a110bc9667a982" href="R/../../0000000000.html" target="n" data-glyph="76,1" class="t method">TouchKeyboardEventManager</a>()
+        {
+            <a href="#45dcb634d008fc98" class="i field">_inputPaneType</a> = <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>.<a href="@0@mscorlib/A.html#ba8d29b0ddf9aaa0" class="i method">GetType</a>(<a href="#6094e6141f1625ea" class="i field">InputPaneTypeName</a>);
+
+            <b>if</b> (<a href="#45dcb634d008fc98" class="i field">_inputPaneType</a> != <b>null</b>)
+            {
+                <a href="#3f68a8f7f0cf8cdf" class="i field">_showingEvent</a> = <a href="#45dcb634d008fc98" class="i field">_inputPaneType</a>.<a href="@0@mscorlib/A.html#058326e88d841886" class="i method">GetRuntimeEvent</a>(<a href="#8af2257053c1c163" class="i field">ShowingEventName</a>);
+                <a href="#093e612d7fcd7525" class="i field">_hidingEvent</a> = <a href="#45dcb634d008fc98" class="i field">_inputPaneType</a>.<a href="@0@mscorlib/A.html#058326e88d841886" class="i method">GetRuntimeEvent</a>(<a href="#817f59b906148fd7" class="i field">HidingEventName</a>);
+            }
+
+            <a href="#eb987116cdc39e03" class="i field">_touchKeyboardSupported</a> = (<a href="@0@mscorlib/A.html#b2771ab918fba376" class="t t">WindowsRuntimeMarshal</a>.<a href="@0@mscorlib/A.html#f86d43e295f384c3" class="i method">GetActivationFactory</a>(<a href="#45dcb634d008fc98" class="i field">_inputPaneType</a>) <b>as</b> <a href="InputPaneRcw.cs.html#e5ea4dcb82a6304f" class="t t">IInputPaneInterop</a>) != <b>null</b>;
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Event Registration
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Adds handlers for the showing and hiding events from the touch keyboard for the specific window.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">window</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window to add handlers for</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r3 r">showingHandler</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The handler for the showing event</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r4 r">hidingHandler</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The handler for the hiding event</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        [<a href="@0@mscorlib/A.html#5e00de6576fb9ce7" class="t constructor">SuppressMessage</a>(<span class="s">&quot;Microsoft.Usage&quot;</span>, <span class="s">&quot;CA2208:InstantiateArgumentExceptionsCorrectly&quot;</span>)]
+        [<a href="@0@mscorlib/A.html#5e00de6576fb9ce7" class="t constructor">SuppressMessage</a>(<span class="s">&quot;Microsoft.Globalization&quot;</span>, <span class="s">&quot;CA1305:SpecifyIFormatProvider&quot;</span>, <a href="@0@mscorlib/A.html#ce02a652a479502a" class="i property">Justification</a> = <span class="s">&quot;String interoplation is CurrentCulture by default.&quot;</span>)]
+        <b>public static void</b> <a id="97d6f9a0b07d1347" href="R/97d6f9a0b07d1347.html" target="n" data-glyph="72,1" class="i method">AddHandlers</a>(<a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r2 rd" class="r2 r">window</span>, <a href="#075ef4b6a8214b54" class="t t">TouchKeyboardVisibilityHandler</a> <span id="r3 rd" class="r3 r">showingHandler</span>, <a href="#075ef4b6a8214b54" class="t t">TouchKeyboardVisibilityHandler</a> <span id="r4 rd" class="r4 r">hidingHandler</span>)
+        {
+            <a href="#50d00323ab242d16" class="i method">VerifySupported</a>();
+
+            <b>if</b> (<span class="r2 r">window</span> == <b>null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r2 r">window</span>));
+            }
+
+            <b>if</b> (<span class="r3 r">showingHandler</span> == <b>null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r3 r">showingHandler</span>));
+            }
+
+            <b>if</b> (<span class="r4 r">hidingHandler</span> == <b>null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r4 r">hidingHandler</span>));
+            }
+
+            <b>var</b> <span id="r5 rd" class="r5 r">winRtShowingHandler</span> = <a href="#b04da15193d881e6" class="i method">AddShowingHandler</a>(<span class="r2 r">window</span>, <span class="r3 r">showingHandler</span>);
+            <b>var</b> <span id="r6 rd" class="r6 r">winRtHidingHandler</span> = <a href="#6e4c50ec0451a76b" class="i method">AddHidingHandler</a>(<span class="r2 r">window</span>, <span class="r4 r">hidingHandler</span>);
+
+            <span class="c">// Register to unregister the handlers if needed</span>
+            <span class="r2 r">window</span>.<a href="@0@PresentationFramework/A.html#b6174546060fdecd" class="i">Closing</a> += <a href="#528fac9f0dd1bea8" class="i method">Window_Closing</a>;
+
+            <b>if</b> (!<a href="#20b493e75b438e7e" class="i field">_registrationTokens</a>.<a href="@0@mscorlib/A.html#22fd7cd7408aed6e" class="i method">ContainsKey</a>(<span class="r2 r">window</span>))
+            {
+                <a href="#20b493e75b438e7e" class="i field">_registrationTokens</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="r2 r">window</span>] = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<a href="#838b30bdd1ee202c" class="t t">WinRTEventHandlers</a>&gt;();
+            }
+
+            <span class="c">// Keep track of the WinRT handlers</span>
+            <a href="#20b493e75b438e7e" class="i field">_registrationTokens</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="r2 r">window</span>].<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<b>new</b> <a href="#838b30bdd1ee202c" class="t constructor">WinRTEventHandlers</a>()
+            {
+                <a href="#b3c6d9a5e7b31621" class="i field">Showing</a> = <span class="r5 r">winRtShowingHandler</span>,
+                <a href="#bc8f97eb7d427607" class="i field">Hiding</a> = <span class="r6 r">winRtHidingHandler</span>
+            });
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Removes all touch keyboad showing/hiding handlers for the specific window.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r7 r">window</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window to remove handlers for</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        [<a href="@0@mscorlib/A.html#5e00de6576fb9ce7" class="t constructor">SuppressMessage</a>(<span class="s">&quot;Microsoft.Usage&quot;</span>, <span class="s">&quot;CA2208:InstantiateArgumentExceptionsCorrectly&quot;</span>)]
+        [<a href="@0@mscorlib/A.html#5e00de6576fb9ce7" class="t constructor">SuppressMessage</a>(<span class="s">&quot;Microsoft.Globalization&quot;</span>, <span class="s">&quot;CA1305:SpecifyIFormatProvider&quot;</span>, <a href="@0@mscorlib/A.html#ce02a652a479502a" class="i property">Justification</a> = <span class="s">&quot;String interoplation is CurrentCulture by default.&quot;</span>)]
+        <b>public static void</b> <a id="7584364322c104b0" href="R/7584364322c104b0.html" target="n" data-glyph="72,1" class="i method">RemoveHandlers</a>(<a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r7 rd" class="r7 r">window</span>)
+        {
+            <a href="#50d00323ab242d16" class="i method">VerifySupported</a>();
+
+            <b>if</b> (<span class="r7 r">window</span> == <b>null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r7 r">window</span>));
+            }
+
+            <b>if</b> (<a href="#20b493e75b438e7e" class="i field">_registrationTokens</a>.<a href="@0@mscorlib/A.html#22fd7cd7408aed6e" class="i method">ContainsKey</a>(<span class="r7 r">window</span>))
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#4b20cd3790b6426a" class="t constructor">ArgumentException</a>(<b>nameof</b>(<span class="r7 r">window</span>), <span class="s">$&quot;</span>{<b>nameof</b>(<span class="r7 r">window</span>)}<span class="s">: </span>{<span class="r7 r">window</span>.<a href="@0@PresentationFramework/A.html#5002b3a8c196a7d1" class="i property">Title</a>}<span class="s"> is not registered for visibility events!</span><span class="s">&quot;</span>);
+            }
+
+            <a href="#c98a543a384e1b12" class="i method">RemoveShowingHandler</a>(<span class="r7 r">window</span>);
+            <a href="#f0509f21d6f5bc98" class="i method">RemoveHidingHandler</a>(<span class="r7 r">window</span>);
+
+            <span class="r7 r">window</span>.<a href="@0@PresentationFramework/A.html#b6174546060fdecd" class="i">Closing</a> -= <a href="#528fac9f0dd1bea8" class="i method">Window_Closing</a>;
+            <a href="#20b493e75b438e7e" class="i field">_registrationTokens</a>.<a href="@0@mscorlib/A.html#a6db5ffdec557169" class="i method">Remove</a>(<span class="r7 r">window</span>);
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Window Handlers
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Subscribed on adding handlers for a window.  This function cleans up any references to that</span>
+        <span class="c">///</span><span class="c"> window and removes all event registrations as needed.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r8 r">sender</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window that is closing</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r9 r">e</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        [<a href="@0@mscorlib/A.html#5e00de6576fb9ce7" class="t constructor">SuppressMessage</a>(<span class="s">&quot;Microsoft.Design&quot;</span>, <span class="s">&quot;CA1031:DoNotCatchGeneralExceptionTypes&quot;</span>)]
+        <b>private static void</b> <a id="528fac9f0dd1bea8" href="R/528fac9f0dd1bea8.html" target="n" data-glyph="76,1" class="i method">Window_Closing</a>(<b>object</b> <span id="r8 rd" class="r8 r">sender</span>, <span class="i n">System</span>.<span class="i n">ComponentModel</span>.<a href="@0@System/A.html#f3f0af957be5a083" class="t t">CancelEventArgs</a> <span id="r9 rd" class="r9 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r10 rd" class="r10 r">w</span> = <span class="r8 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a>;
+
+            <b>if</b> (<span class="r10 r">w</span> != <b>null</b>)
+            {
+                <b>try</b>
+                {
+                    <a href="#7584364322c104b0" class="i method">RemoveHandlers</a>(<span class="r10 r">w</span>);
+                }
+                <b>catch</b>
+                {
+                    <span class="c">// Don&#39;t want exceptions in the closing handler so eat them</span>
+                }
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Handler Utility Functions
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Adds a handler for the showing event</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r11 r">window</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window to add the handler for</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r12 r">handler</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The handler</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">The WinRT handler</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private static</b> <span class="t t">WinRTVisibilityHandler</span> <a id="b04da15193d881e6" href="R/b04da15193d881e6.html" target="n" data-glyph="76,1" class="i method">AddShowingHandler</a>(<a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r11 rd" class="r11 r">window</span>, <a href="#075ef4b6a8214b54" class="t t">TouchKeyboardVisibilityHandler</a> <span id="r12 rd" class="r12 r">handler</span>)
+        {
+            <b>return</b> <a href="#adbd0364a57c95c0" class="i method">AddVisibilityHandler</a>(<a href="#3f68a8f7f0cf8cdf" class="i field">_showingEvent</a>, <span class="r11 r">window</span>, <span class="r12 r">handler</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Adds a handler for the hiding event</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r13 r">window</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window to add the handler for</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r14 r">handler</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The handler</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">The WinRT handler</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private static</b> <span class="t t">WinRTVisibilityHandler</span> <a id="6e4c50ec0451a76b" href="R/6e4c50ec0451a76b.html" target="n" data-glyph="76,1" class="i method">AddHidingHandler</a>(<a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r13 rd" class="r13 r">window</span>, <a href="#075ef4b6a8214b54" class="t t">TouchKeyboardVisibilityHandler</a> <span id="r14 rd" class="r14 r">handler</span>)
+        {
+            <b>return</b> <a href="#adbd0364a57c95c0" class="i method">AddVisibilityHandler</a>(<a href="#093e612d7fcd7525" class="i field">_hidingEvent</a>, <span class="r13 r">window</span>, <span class="r14 r">handler</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Remove the handler for the showing event.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r15 r">window</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window to remove the handler for</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private static void</b> <a id="c98a543a384e1b12" href="R/c98a543a384e1b12.html" target="n" data-glyph="76,1" class="i method">RemoveShowingHandler</a>(<a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r15 rd" class="r15 r">window</span>)
+        {
+            <b>foreach</b> (<a href="#838b30bdd1ee202c" class="t t">WinRTEventHandlers</a> <span id="r16 rd" class="r16 r">handlers</span> <b>in</b> <a href="#20b493e75b438e7e" class="i field">_registrationTokens</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="r15 r">window</span>])
+            {
+                <a href="#825bad74a6be8ea7" class="i method">RemoveVisibilityHandler</a>(<a href="#3f68a8f7f0cf8cdf" class="i field">_showingEvent</a>, <span class="r15 r">window</span>, <span class="r16 r">handlers</span>.<a href="#b3c6d9a5e7b31621" class="i field">Showing</a>);
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Remove the handler for the hiding event.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r17 r">window</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window to remove the handler for</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private static void</b> <a id="f0509f21d6f5bc98" href="R/f0509f21d6f5bc98.html" target="n" data-glyph="76,1" class="i method">RemoveHidingHandler</a>(<a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r17 rd" class="r17 r">window</span>)
+        {
+            <b>foreach</b> (<a href="#838b30bdd1ee202c" class="t t">WinRTEventHandlers</a> <span id="r18 rd" class="r18 r">handlers</span> <b>in</b> <a href="#20b493e75b438e7e" class="i field">_registrationTokens</a><a href="@0@mscorlib/A.html#49962975508e2d83">[</a><span class="r17 r">window</span>])
+            {
+                <a href="#825bad74a6be8ea7" class="i method">RemoveVisibilityHandler</a>(<a href="#093e612d7fcd7525" class="i field">_hidingEvent</a>, <span class="r17 r">window</span>, <span class="r18 r">handlers</span>.<a href="#bc8f97eb7d427607" class="i field">Hiding</a>);
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Adds a handler for the specific visibility event</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r19 r">visibilityEvent</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The event to add a handler for</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r20 r">window</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window to add the handler for</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r21 r">handler</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The handler</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">The WinRT handler</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private static</b> <span class="t t">WinRTVisibilityHandler</span> <a id="adbd0364a57c95c0" href="R/adbd0364a57c95c0.html" target="n" data-glyph="76,1" class="i method">AddVisibilityHandler</a>(<a href="@0@mscorlib/A.html#fa5077d5073fbcd1" class="t t">EventInfo</a> <span id="r19 rd" class="r19 r">visibilityEvent</span>, <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r20 rd" class="r20 r">window</span>, <a href="#075ef4b6a8214b54" class="t t">TouchKeyboardVisibilityHandler</a> <span id="r21 rd" class="r21 r">handler</span>)
+        {
+            <a href="InputPaneRcw.cs.html#aa54e8853ee282c4" class="t t">IInputPane2</a> <span id="r22 rd" class="r22 r">inputPane</span> = <a href="#e4227f3a00eed4d3" class="i method">GetInputPane</a>(<span class="r20 r">window</span>);
+
+            <span class="c">// This adds the event handler to the visibility event</span>
+            <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="t t">WinRTVisibilityHandler</span>, <a href="@0@mscorlib/A.html#c5874e1f47084589" class="t t">EventRegistrationToken</a>&gt; <span id="r23 rd" class="r23 r">add</span> =
+                (<span id="r24 rd" class="r24 r">addHandler</span>) =&gt;
+                {
+                    <b>return</b> (<a href="@0@mscorlib/A.html#c5874e1f47084589" class="t t">EventRegistrationToken</a>)<span class="r19 r">visibilityEvent</span>.<a href="@0@mscorlib/A.html#0427d7de7bcf579b" class="i property">AddMethod</a>.<a href="@0@mscorlib/A.html#c8277ed81262a367" class="i method">Invoke</a>(<span class="r22 r">inputPane</span>, <b>new</b> <b>object</b>[] { <span class="r24 r">addHandler</span> });
+                };
+
+            <span class="c">// This removes the handler from the visibility event</span>
+            <a href="@0@mscorlib/A.html#486d58da4553e12d" class="t t">Action</a>&lt;<a href="@0@mscorlib/A.html#c5874e1f47084589" class="t t">EventRegistrationToken</a>&gt; <span id="r25 rd" class="r25 r">remove</span> =
+                (<span id="r26 rd" class="r26 r">removeHandler</span>) =&gt;
+                {
+                    <span class="r19 r">visibilityEvent</span>.<a href="@0@mscorlib/A.html#5f00226ebfa4a01d" class="i property">RemoveMethod</a>.<a href="@0@mscorlib/A.html#c8277ed81262a367" class="i method">Invoke</a>(<span class="r22 r">inputPane</span>, <b>new</b> <b>object</b>[] { <span class="r26 r">removeHandler</span> });
+                };
+
+            <span class="c">// This is the WinRT called handler to translate to the local WPF delegate</span>
+            <span class="t t">WinRTVisibilityHandler</span> <span id="r27 rd" class="r27 r">localHandler</span> =
+                (<span id="r28 rd" class="r28 r">inputPaneInstance</span>, <span id="r29 rd" class="r29 r">visArgs</span>) =&gt;
+                {
+                    <span class="c">// We cannot reference System.Runtime.WindowsRuntime directly, so only access the Rect type via</span>
+                    <span class="c">// reflection to ensure the proper assembly loads with no issues.</span>
+                    <a href="@0@mscorlib/A.html#d9262ceecc1719ab" class="k">var</a> <span id="r30 rd" class="r30 r">rect</span> = <span class="r29 r">visArgs</span>.<a href="@0@mscorlib/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@0@mscorlib/A.html#fabf683030a6ad8d" class="i method">GetProperty</a>(<span class="s">&quot;OccludedRect&quot;</span>).<a href="@0@mscorlib/A.html#7f41c0c1ebadcc33" class="i method">GetValue</a>(<span class="r29 r">visArgs</span>);
+
+                    <span class="c">// Invoke the WPF specific handler to pass the occluded rectangle information</span>
+                    <span class="r21 r">handler</span>?.<a href="#f539b814c5f0ab9e" class="i method">Invoke</a>(
+                        <span class="r20 r">window</span>,
+                        <b>new</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<a href="@0@WindowsBase/A.html#299a3fd614724168" class="t constructor">Rect</a>(
+                            (<b>double</b>)<span class="r30 r">rect</span>.<a href="@0@mscorlib/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@0@mscorlib/A.html#506f11c4d3c5f8f2" class="i method">GetRuntimeProperty</a>(<span class="s">&quot;X&quot;</span>).<a href="@0@mscorlib/A.html#7f41c0c1ebadcc33" class="i method">GetValue</a>(<span class="r30 r">rect</span>),
+                            (<b>double</b>)<span class="r30 r">rect</span>.<a href="@0@mscorlib/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@0@mscorlib/A.html#506f11c4d3c5f8f2" class="i method">GetRuntimeProperty</a>(<span class="s">&quot;Y&quot;</span>).<a href="@0@mscorlib/A.html#7f41c0c1ebadcc33" class="i method">GetValue</a>(<span class="r30 r">rect</span>),
+                            (<b>double</b>)<span class="r30 r">rect</span>.<a href="@0@mscorlib/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@0@mscorlib/A.html#506f11c4d3c5f8f2" class="i method">GetRuntimeProperty</a>(<span class="s">&quot;Width&quot;</span>).<a href="@0@mscorlib/A.html#7f41c0c1ebadcc33" class="i method">GetValue</a>(<span class="r30 r">rect</span>),
+                            (<b>double</b>)<span class="r30 r">rect</span>.<a href="@0@mscorlib/A.html#4d73eb225aef8a61" class="i method">GetType</a>().<a href="@0@mscorlib/A.html#506f11c4d3c5f8f2" class="i method">GetRuntimeProperty</a>(<span class="s">&quot;Height&quot;</span>).<a href="@0@mscorlib/A.html#7f41c0c1ebadcc33" class="i method">GetValue</a>(<span class="r30 r">rect</span>)));
+                };
+
+            <span class="c">// Add the event handlers</span>
+            <a href="@0@mscorlib/A.html#b2771ab918fba376" class="t t">WindowsRuntimeMarshal</a>.<a href="@0@mscorlib/A.html#d7c671e36e26569b" class="i method">AddEventHandler</a>&lt;<span class="t t">WinRTVisibilityHandler</span>&gt;(<span class="r23 r">add</span>, <span class="r25 r">remove</span>, <span class="r27 r">localHandler</span>);
+
+            <span class="c">// Return the WinRT handler in order to use it to un-register later</span>
+            <b>return</b> <span class="r27 r">localHandler</span>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Removes a handler for the specific visibility event</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r31 r">visibilityEvent</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The event to remove the handler for</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r32 r">window</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window to remove the handler for</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r33 r">winRtHandler</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The WinRT handler</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>private static void</b> <a id="825bad74a6be8ea7" href="R/825bad74a6be8ea7.html" target="n" data-glyph="76,1" class="i method">RemoveVisibilityHandler</a>(<a href="@0@mscorlib/A.html#fa5077d5073fbcd1" class="t t">EventInfo</a> <span id="r31 rd" class="r31 r">visibilityEvent</span>, <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r32 rd" class="r32 r">window</span>, <span class="t t">WinRTVisibilityHandler</span> <span id="r33 rd" class="r33 r">winRtHandler</span>)
+        {
+            <a href="InputPaneRcw.cs.html#aa54e8853ee282c4" class="t t">IInputPane2</a> <span id="r34 rd" class="r34 r">inputPane</span> = <a href="#e4227f3a00eed4d3" class="i method">GetInputPane</a>(<span class="r32 r">window</span>);
+
+            <a href="@0@mscorlib/A.html#486d58da4553e12d" class="t t">Action</a>&lt;<a href="@0@mscorlib/A.html#c5874e1f47084589" class="t t">EventRegistrationToken</a>&gt; <span id="r35 rd" class="r35 r">remove</span> =
+                (<span id="r36 rd" class="r36 r">removeHandler</span>) =&gt;
+                {
+                    <span class="r31 r">visibilityEvent</span>.<a href="@0@mscorlib/A.html#5f00226ebfa4a01d" class="i property">RemoveMethod</a>.<a href="@0@mscorlib/A.html#c8277ed81262a367" class="i method">Invoke</a>(<span class="r34 r">inputPane</span>, <b>new</b> <b>object</b>[] { <span class="r36 r">removeHandler</span> });
+                };
+
+            <a href="@0@mscorlib/A.html#b2771ab918fba376" class="t t">WindowsRuntimeMarshal</a>.<a href="@0@mscorlib/A.html#7159af1c38c050b8" class="i method">RemoveEventHandler</a>&lt;<span class="t t">WinRTVisibilityHandler</span>&gt;(<span class="r35 r">remove</span>, <span class="r33 r">winRtHandler</span>);
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Utility Functions
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Returns an instance of the InputPane</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r37 r">window</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The window to get the InputPane for</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">The InputPane</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private static</b> <a href="InputPaneRcw.cs.html#aa54e8853ee282c4" class="t t">IInputPane2</a> <a id="e4227f3a00eed4d3" href="R/e4227f3a00eed4d3.html" target="n" data-glyph="76,1" class="i method">GetInputPane</a>(<a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <span id="r37 rd" class="r37 r">window</span>)
+        {
+            <span class="c">// Need the HWND for the native interop call into IInputPaneInterop</span>
+            <a href="@0@mscorlib/A.html#d99bf6ad49979009" class="t t">IntPtr</a> <span id="r38 rd" class="r38 r">handle</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#fdbf322c4b24b279" class="t constructor">WindowInteropHelper</a>(<span class="r37 r">window</span>).<a href="@0@PresentationFramework/A.html#6fab6a7b546e26f8" class="i property">Handle</a>;
+
+            <span class="c">// Get and cast an InputPane COM instance</span>
+            <a href="InputPaneRcw.cs.html#e5ea4dcb82a6304f" class="k">var</a> <span id="r39 rd" class="r39 r">inputPaneInterop</span> = <a href="@0@mscorlib/A.html#b2771ab918fba376" class="t t">WindowsRuntimeMarshal</a>.<a href="@0@mscorlib/A.html#f86d43e295f384c3" class="i method">GetActivationFactory</a>(<a href="#45dcb634d008fc98" class="i field">_inputPaneType</a>) <b>as</b> <a href="InputPaneRcw.cs.html#e5ea4dcb82a6304f" class="t t">IInputPaneInterop</a>;
+
+            <span class="c">// Get the actual input pane for this HWND</span>
+            <b>return</b> <span class="r39 r">inputPaneInterop</span>.<a href="InputPaneRcw.cs.html#b5200ae6abc81379" class="i method">GetForWindow</a>(<span class="r38 r">handle</span>, <b>typeof</b>(<a href="InputPaneRcw.cs.html#aa54e8853ee282c4" class="t t">IInputPane2</a>).<a href="@0@mscorlib/A.html#5fd76396d28b8072" class="i property">GUID</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Determines if the calls to the touch keyboard APIs are supported.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static void</b> <a id="50d00323ab242d16" href="R/50d00323ab242d16.html" target="n" data-glyph="76,1" class="i method">VerifySupported</a>()
+        {
+            <b>if</b> (!<a href="#eb987116cdc39e03" class="i field">_touchKeyboardSupported</a>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#db107a1c43e88816" class="t constructor">PlatformNotSupportedException</a>(<span class="s">&quot;Native access to touch keyboard APIs not supported on this OS!&quot;</span>);
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}
+</pre></td></tr></table></div></body></html>

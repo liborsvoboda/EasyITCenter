@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html><head><title>XmlHighlighter.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(89);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.HighlightTextBox/XmlHighlighter.cs" target="_top">XmlHighlighter.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.HighlightTextBox" target="_top">..\..\..\EASY-TOOLS\EASYTool.HighlightTextBox\EASYTools.HighlightTextBox.csproj</a> (EASYTools.HighlightTextBox)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>.<span class="i n">RegularExpressions</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Xml</span>.<span class="i n">Linq</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">HighlightTextBox</span>
+{
+    <b>public class</b> <a id="b20b1a118953b5bd" href="R/b20b1a118953b5bd.html" target="n" data-glyph="0,0" class="t t">XmlHighlighter</a> : <a href="IHighlighter.cs.html#8ec12bf84f531ecf" class="t t">IHighlighter</a>
+    {
+        <b>public</b> <a id="8513363e45db4aaf" href="R/8513363e45db4aaf.html" target="n" data-glyph="72,1" class="t constructor">XmlHighlighter</a>(<a href="@0@System.Xml.Linq/A.html#3367036406d1344a" class="t t">XElement</a> <span id="r0 rd" class="r0 r">root</span>)
+        {
+            <a href="#d68e288547a4243d" class="i property">WordsRules</a> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<a href="Rules/HighlightWordsRule.cs.html#77075b5cd5ce63fb" class="t t">HighlightWordsRule</a>&gt;();
+            <a href="#b85febd67963bbb1" class="i property">LineRules</a> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<a href="Rules/HighlightLineRule.cs.html#2894abf26451d885" class="t t">HighlightLineRule</a>&gt;();
+            <a href="#2b7edc4a7bc5144c" class="i property">RegexRules</a> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<a href="Rules/AdvancedHighlightRule.cs.html#57fed5017b1ae469" class="t t">AdvancedHighlightRule</a>&gt;();
+ 
+            <b>foreach</b> (<a href="@0@System.Xml.Linq/A.html#3367036406d1344a" class="k">var</a> <span id="r1 rd" class="r1 r">elem</span> <b>in</b> <span class="r0 r">root</span>.<a href="@0@System.Xml.Linq/A.html#ba924793743a69b6" class="i method">Elements</a>())
+            {
+                <b>switch</b> (<span class="r1 r">elem</span>.<a href="@0@System.Xml.Linq/A.html#21efc1834aa7f4ac" class="i property">Name</a>.<a href="@0@System.Xml.Linq/A.html#1cb91d234fed5eb2" class="i method">ToString</a>())
+                {
+                    <b>case</b> <span class="s">&quot;HighlightWordsRule&quot;</span>: <a href="#d68e288547a4243d" class="i property">WordsRules</a>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<b>new</b> <a href="Rules/HighlightWordsRule.cs.html#a1551aeac8971f31" class="t constructor">HighlightWordsRule</a>(<span class="r1 r">elem</span>)); <b>break</b>;
+                    <b>case</b> <span class="s">&quot;HighlightLineRule&quot;</span>: <a href="#b85febd67963bbb1" class="i property">LineRules</a>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<b>new</b> <a href="Rules/HighlightLineRule.cs.html#e369b0b78473695e" class="t constructor">HighlightLineRule</a>(<span class="r1 r">elem</span>)); <b>break</b>;
+                    <b>case</b> <span class="s">&quot;AdvancedHighlightRule&quot;</span>: <a href="#2b7edc4a7bc5144c" class="i property">RegexRules</a>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<b>new</b> <a href="Rules/AdvancedHighlightRule.cs.html#385a4e6da694a057" class="t constructor">AdvancedHighlightRule</a>(<span class="r1 r">elem</span>)); <b>break</b>;
+                }
+            }
+        }
+ 
+        <b>private</b> <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="Rules/HighlightLineRule.cs.html#2894abf26451d885" class="t t">HighlightLineRule</a>&gt; <a id="b85febd67963bbb1" href="R/b85febd67963bbb1.html" target="n" data-glyph="106,1" class="i property">LineRules</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>private</b> <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="Rules/AdvancedHighlightRule.cs.html#57fed5017b1ae469" class="t t">AdvancedHighlightRule</a>&gt; <a id="2b7edc4a7bc5144c" href="R/2b7edc4a7bc5144c.html" target="n" data-glyph="106,1" class="i property">RegexRules</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>private</b> <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="Rules/HighlightWordsRule.cs.html#77075b5cd5ce63fb" class="t t">HighlightWordsRule</a>&gt; <a id="d68e288547a4243d" href="R/d68e288547a4243d.html" target="n" data-glyph="106,1" class="i property">WordsRules</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>public int</b> <a id="a7414dd13c230272" href="R/a7414dd13c230272.html" target="n" data-glyph="72,1" class="i method">Highlight</a>(<a href="@0@PresentationCore/A.html#6e6924d547946932" class="t t">FormattedText</a> <span id="r2 rd" class="r2 r">text</span>, <b>int</b> <span id="r3 rd" class="r3 r">previousBlockCode</span>)
+        {
+            <span class="c">// words</span>
+            <a href="@0@System/A.html#bbe3b2eb80ae5526" class="k">var</a> <span id="r4 rd" class="r4 r">wordsRgx</span> = <b>new</b> <a href="@0@System/A.html#71b5945bb883860b" class="t constructor">Regex</a>(<span class="s">&quot;[a-zA-Z_][a-zA-Z0-9_]*&quot;</span>);
+            <b>foreach</b> (<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r5 rd" class="r5 r">m</span> <b>in</b> <span class="r4 r">wordsRgx</span>.<a href="@0@System/A.html#eee0fd08a857f828" class="i method">Matches</a>(<span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#be6d9c4ee670e9fc" class="i property">Text</a>))
+            {
+                <b>foreach</b> (<a href="Rules/HighlightWordsRule.cs.html#77075b5cd5ce63fb" class="k">var</a> <span id="r6 rd" class="r6 r">rule</span> <b>in</b> <a href="#d68e288547a4243d" class="i property">WordsRules</a>)
+                {
+                    <b>foreach</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r7 rd" class="r7 r">word</span> <b>in</b> <span class="r6 r">rule</span>.<a href="Rules/HighlightWordsRule.cs.html#cc52bcc0df91d859" class="i property">Words</a>)
+                    {
+                        <b>if</b> (<span class="r6 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#8bd05154779df5bd" class="i property">IgnoreCase</a>)
+                        {
+                            <b>if</b> (!<span class="r5 r">m</span>.<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>.<a href="@0@mscorlib/A.html#b98069ccbe2d3960" class="i method">Equals</a>(<span class="r7 r">word</span>, <a href="@0@mscorlib/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@0@mscorlib/A.html#eabf4db5f5c52b6a" class="i field">InvariantCultureIgnoreCase</a>)) <b>continue</b>;
+                            <span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#1739d828319e9618" class="i method">SetForegroundBrush</a>(<span class="r6 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#cb99c071bd102746" class="i property">Foreground</a>, <span class="r5 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a>, <span class="r5 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>);
+                            <span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#49139e10a0bb7b4b" class="i method">SetFontWeight</a>(<span class="r6 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#e786e65c4f6b2fd7" class="i property">FontWeight</a>, <span class="r5 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a>, <span class="r5 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>);
+                            <span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#f1a7b4ab96905e72" class="i method">SetFontStyle</a>(<span class="r6 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#6c8b878abadc463f" class="i property">FontStyle</a>, <span class="r5 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a>, <span class="r5 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>);
+                        }
+                        <b>else</b>
+                        {
+                            <b>if</b> (<span class="r5 r">m</span>.<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a> != <span class="r7 r">word</span>) <b>continue</b>;
+                            <span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#1739d828319e9618" class="i method">SetForegroundBrush</a>(<span class="r6 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#cb99c071bd102746" class="i property">Foreground</a>, <span class="r5 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a>, <span class="r5 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>);
+                            <span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#49139e10a0bb7b4b" class="i method">SetFontWeight</a>(<span class="r6 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#e786e65c4f6b2fd7" class="i property">FontWeight</a>, <span class="r5 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a>, <span class="r5 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>);
+                            <span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#f1a7b4ab96905e72" class="i method">SetFontStyle</a>(<span class="r6 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#6c8b878abadc463f" class="i property">FontStyle</a>, <span class="r5 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a>, <span class="r5 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>);
+                        }
+                    }
+                }
+            }
+ 
+            <span class="c">// regex</span>
+            <b>foreach</b> (<a href="Rules/AdvancedHighlightRule.cs.html#57fed5017b1ae469" class="k">var</a> <span id="r8 rd" class="r8 r">rule</span> <b>in</b> <a href="#2b7edc4a7bc5144c" class="i property">RegexRules</a>)
+            {
+                <a href="@0@System/A.html#bbe3b2eb80ae5526" class="k">var</a> <span id="r9 rd" class="r9 r">regexRgx</span> = <b>new</b> <a href="@0@System/A.html#71b5945bb883860b" class="t constructor">Regex</a>(<span class="r8 r">rule</span>.<a href="Rules/AdvancedHighlightRule.cs.html#fc875199a7e41c7d" class="i property">Expression</a>);
+                <b>foreach</b> (<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r10 rd" class="r10 r">m</span> <b>in</b> <span class="r9 r">regexRgx</span>.<a href="@0@System/A.html#eee0fd08a857f828" class="i method">Matches</a>(<span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#be6d9c4ee670e9fc" class="i property">Text</a>))
+                {
+                    <span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#1739d828319e9618" class="i method">SetForegroundBrush</a>(<span class="r8 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#cb99c071bd102746" class="i property">Foreground</a>, <span class="r10 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a>, <span class="r10 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>);
+                    <span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#49139e10a0bb7b4b" class="i method">SetFontWeight</a>(<span class="r8 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#e786e65c4f6b2fd7" class="i property">FontWeight</a>, <span class="r10 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a>, <span class="r10 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>);
+                    <span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#f1a7b4ab96905e72" class="i method">SetFontStyle</a>(<span class="r8 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#6c8b878abadc463f" class="i property">FontStyle</a>, <span class="r10 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a>, <span class="r10 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>);
+                }
+            }
+ 
+            <span class="c">// lines</span>
+            <b>foreach</b> (<a href="Rules/HighlightLineRule.cs.html#2894abf26451d885" class="k">var</a> <span id="r11 rd" class="r11 r">rule</span> <b>in</b> <a href="#b85febd67963bbb1" class="i property">LineRules</a>)
+            {
+                <a href="@0@System/A.html#bbe3b2eb80ae5526" class="k">var</a> <span id="r12 rd" class="r12 r">lineRgx</span> = <b>new</b> <a href="@0@System/A.html#71b5945bb883860b" class="t constructor">Regex</a>(<a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a>.<a href="@0@System/A.html#70ce8540b4508f2d" class="i method">Escape</a>(<span class="r11 r">rule</span>.<a href="Rules/HighlightLineRule.cs.html#b45a1db88a6eb30f" class="i property">LineStart</a>) + <span class="s">&quot;.*&quot;</span>);
+                <b>foreach</b> (<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r13 rd" class="r13 r">m</span> <b>in</b> <span class="r12 r">lineRgx</span>.<a href="@0@System/A.html#eee0fd08a857f828" class="i method">Matches</a>(<span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#be6d9c4ee670e9fc" class="i property">Text</a>))
+                {
+                    <span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#1739d828319e9618" class="i method">SetForegroundBrush</a>(<span class="r11 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#cb99c071bd102746" class="i property">Foreground</a>, <span class="r13 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a>, <span class="r13 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>);
+                    <span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#49139e10a0bb7b4b" class="i method">SetFontWeight</a>(<span class="r11 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#e786e65c4f6b2fd7" class="i property">FontWeight</a>, <span class="r13 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a>, <span class="r13 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>);
+                    <span class="r2 r">text</span>.<a href="@0@PresentationCore/A.html#f1a7b4ab96905e72" class="i method">SetFontStyle</a>(<span class="r11 r">rule</span>.<a href="Rules/Rule.cs.html#d67016c96a2c76cb" class="i property">Options</a>.<a href="Rules/RuleOptions.cs.html#6c8b878abadc463f" class="i property">FontStyle</a>, <span class="r13 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a>, <span class="r13 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>);
+                }
+            }
+ 
+            <b>return</b> -1;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html><head><title>PersistAndRestoreService.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(48);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#NavigationPane/Services/PersistAndRestoreService.cs" target="_top">Services\PersistAndRestoreService.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#NavigationPane" target="_top">HelpProjects\WPF-MAIN\WPFprism\NavigationPane\NavigationPane\NavigationPane.csproj</a> (NavigationPane)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">Contracts</span>.<span class="i n">Services</span>;
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">Core</span>.<span class="i n">Contracts</span>.<span class="i n">Services</span>;
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">Models</span>;
+
+<b>namespace</b> <span class="i n">NavigationPane</span>.<span class="i n">Services</span>
+{
+    <b>public class</b> <a id="521c890b1475af45" href="../R/521c890b1475af45.html" target="n" data-glyph="0,0" class="t t">PersistAndRestoreService</a> : <a href="../Contracts/Services/IPersistAndRestoreService.cs.html#2d209c3ef22eca2f" class="t t">IPersistAndRestoreService</a>
+    {
+        <b>private readonly</b> <a href="/NavigationPane.Core/A.html#1eb8c5715cc5aa80" class="t t">IFileService</a> <a id="5acaa8ab50250aa9" href="../R/5acaa8ab50250aa9.html" target="n" data-glyph="46,1" class="i field">_fileService</a>;
+        <b>private readonly</b> <a href="../Models/AppConfig.cs.html#1b526ce2ea90219e" class="t t">AppConfig</a> <a id="7f0e62b5a3c96d79" href="../R/7f0e62b5a3c96d79.html" target="n" data-glyph="46,1" class="i field">_config</a>;
+        <b>private readonly string</b> <a id="5924cec3f9233d78" href="../R/5924cec3f9233d78.html" target="n" data-glyph="46,1" class="i field">_localAppData</a> = <span class="t t">Environment</span>.<span class="i method">GetFolderPath</span>(<span class="t t">Environment</span>.<span class="t t">SpecialFolder</span>.<span class="i field">LocalApplicationData</span>);
+
+        <b>public</b> <a id="876e4928de65d0a4" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">PersistAndRestoreService</a>(<a href="/NavigationPane.Core/A.html#1eb8c5715cc5aa80" class="t t">IFileService</a> <span id="r0 rd" class="r0 r">fileService</span>, <a href="../Models/AppConfig.cs.html#1b526ce2ea90219e" class="t t">AppConfig</a> <span id="r1 rd" class="r1 r">config</span>)
+        {
+            <a href="#5acaa8ab50250aa9" class="i field">_fileService</a> = <span class="r0 r">fileService</span>;
+            <a href="#7f0e62b5a3c96d79" class="i field">_config</a> = <span class="r1 r">config</span>;
+        }
+
+        <b>public void</b> <a id="babc696e6d8e2a7e" href="../R/babc696e6d8e2a7e.html" target="n" data-glyph="72,1" class="i method">PersistData</a>()
+        {
+            <b>if</b> (<a href="../P/685ecc1ee194aeb0.html#685ecc1ee194aeb0" class="t t">App</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>.<a href="@0@PresentationFramework/A.html#61c9e4f4b42c5fa0" class="i property">Properties</a> != <b>null</b>)
+            {
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r2 rd" class="r2 r">folderPath</span> = <span class="t t">Path</span>.<span class="i method">Combine</span>(<a href="#5924cec3f9233d78" class="i field">_localAppData</a>, <a href="#7f0e62b5a3c96d79" class="i field">_config</a>.<a href="../Models/AppConfig.cs.html#8f1950a5c4069c32" class="i property">ConfigurationsFolder</a>);
+                <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r3 rd" class="r3 r">fileName</span> = <a href="#7f0e62b5a3c96d79" class="i field">_config</a>.<a href="../Models/AppConfig.cs.html#763703d02d6ddb5f" class="i property">AppPropertiesFileName</a>;
+                <a href="#5acaa8ab50250aa9" class="i field">_fileService</a>.<a href="/NavigationPane.Core/A.html#f44a219909db5194" class="i method">Save</a>(<span class="r2 r">folderPath</span>, <span class="r3 r">fileName</span>, <a href="../P/685ecc1ee194aeb0.html#685ecc1ee194aeb0" class="t t">App</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>.<a href="@0@PresentationFramework/A.html#61c9e4f4b42c5fa0" class="i property">Properties</a>);
+            }
+        }
+
+        <b>public void</b> <a id="72d84f72644d3fca" href="../R/72d84f72644d3fca.html" target="n" data-glyph="72,1" class="i method">RestoreData</a>()
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r4 rd" class="r4 r">folderPath</span> = <span class="t t">Path</span>.<span class="i method">Combine</span>(<a href="#5924cec3f9233d78" class="i field">_localAppData</a>, <a href="#7f0e62b5a3c96d79" class="i field">_config</a>.<a href="../Models/AppConfig.cs.html#8f1950a5c4069c32" class="i property">ConfigurationsFolder</a>);
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r5 rd" class="r5 r">fileName</span> = <a href="#7f0e62b5a3c96d79" class="i field">_config</a>.<a href="../Models/AppConfig.cs.html#763703d02d6ddb5f" class="i property">AppPropertiesFileName</a>;
+            <a href="@1@System.Runtime/A.html#ea6b36745fa51e08" class="k">var</a> <span id="r6 rd" class="r6 r">properties</span> = <a href="#5acaa8ab50250aa9" class="i field">_fileService</a>.<a href="/NavigationPane.Core/A.html#cc1a3df6cae5a3d3" class="i method">Read</a>&lt;<a href="@1@System.Runtime/A.html#ea6b36745fa51e08" class="t t">IDictionary</a>&gt;(<span class="r4 r">folderPath</span>, <span class="r5 r">fileName</span>);
+            <b>if</b> (<span class="r6 r">properties</span> != <b>null</b>)
+            {
+                <b>foreach</b> (<a href="@1@System.Runtime/A.html#bc17973c0d3568e6" class="t t">DictionaryEntry</a> <span id="r7 rd" class="r7 r">property</span> <b>in</b> <span class="r6 r">properties</span>)
+                {
+                    <a href="../P/685ecc1ee194aeb0.html#685ecc1ee194aeb0" class="t t">App</a>.<a href="@0@PresentationFramework/A.html#e6ee08846cb73154" class="i property">Current</a>.<a href="@0@PresentationFramework/A.html#61c9e4f4b42c5fa0" class="i property">Properties</a>.<a href="@1@System.Runtime/A.html#4f1ea5f681bcefd1" class="i method">Add</a>(<span class="r7 r">property</span>.<a href="@1@System.Runtime/A.html#e1f68d163a367e29" class="i property">Key</a>, <span class="r7 r">property</span>.<a href="@1@System.Runtime/A.html#63e5445c29844588" class="i property">Value</a>);
+                }
+            }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

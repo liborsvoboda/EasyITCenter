@@ -1,0 +1,689 @@
+﻿<!DOCTYPE html>
+<html><head><title>ClipBorder.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(680);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/ClipBorder.cs" target="_top">Controls\ClipBorder.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Represents a border whose contents are clipped within the bounds</span>
+    <span class="c">///</span><span class="c"> of the border. The border may have rounded corners.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public sealed class</b> <a id="9a2d2256b2f9774c" href="../R/9a2d2256b2f9774c.html" target="n" data-glyph="0,0" class="t t"><span id="390c82a407711999">ClipBorder</span></a> : <a href="@0@PresentationFramework/A.html#69b4bdadbc461ce5" class="t t">Decorator</a>
+    {
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Fields
+
+        <b>private</b> <a href="@0@PresentationCore/A.html#6830d8329536bfed" class="t t">StreamGeometry</a>? <a id="cefa4df628bb1ceb" href="../R/cefa4df628bb1ceb.html" target="n" data-glyph="46,1" class="i field">_backgroundGeometryCache</a>;
+        <b>private</b> <a href="@0@PresentationCore/A.html#6830d8329536bfed" class="t t">StreamGeometry</a>? <a id="c0fc2220500b4539" href="../R/c0fc2220500b4539.html" target="n" data-glyph="46,1" class="i field">_borderGeometryCache</a>;
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Dependency Properties
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> BorderThickness
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> BorderThickness Dependency Property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="7e6bb499a6bc18fa" href="../R/7e6bb499a6bc18fa.html" target="n" data-glyph="42,1" class="i field">BorderThicknessProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#152066e4fc39e79a" class="i method">Register</a>(<b>nameof</b>(<a href="#26e8e9354dae15d2" class="i property">BorderThickness</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a>),
+                                          <b>typeof</b>(<a href="#9a2d2256b2f9774c" class="t t">ClipBorder</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t constructor">Thickness</a>(), <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a>),
+                                          <a href="#b93aba638996b757" class="i method">OnValidateThickness</a>);
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the BorderThickness property. This dependency property </span>
+        <span class="c">///</span><span class="c"> indicates the BorderThickness.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a> <a id="26e8e9354dae15d2" href="../R/26e8e9354dae15d2.html" target="n" data-glyph="102,1" class="i property">BorderThickness</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a>)<a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#7e6bb499a6bc18fa" class="i field">BorderThicknessProperty</a>);
+            <b>set</b> =&gt; <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#7e6bb499a6bc18fa" class="i field">BorderThicknessProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Checks if the given Thickness is valid or not</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Thickness</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private static bool</b> <a id="b93aba638996b757" href="../R/b93aba638996b757.html" target="n" data-glyph="76,1" class="i method">OnValidateThickness</a>(<b>object</b>? <span id="r0 rd" class="r0 r">value</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="k">var</a> <span id="r1 rd" class="r1 r">th</span> = (<a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a>)(<span class="r0 r">value</span> ?? <b>default</b>(<a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a>));
+            <b>return</b> <span class="r1 r">th</span>.<a href="ClipBorder.Utils.cs.html#c83d0c252f7316d1" class="i method">IsValid</a>(<b>false</b>, <b>false</b>, <b>false</b>, <b>false</b>);
+        }
+
+        <span class="c">//      /// &lt;summary&gt;</span>
+        <span class="c">//      /// Provides derived classes an opportunity to handle changes to the BorderThickness property.</span>
+        <span class="c">//      /// &lt;/summary&gt;</span>
+        <span class="c">///// &lt;param name=&quot;oldBorderThickness&quot;&gt;Old Value&lt;/param&gt;</span>
+        <span class="c">///// &lt;param name=&quot;newBorderThickness&quot;&gt;New Value&lt;/param&gt;</span>
+        <span class="c">//      void OnBorderThicknessChanged(Thickness oldBorderThickness, Thickness newBorderThickness)</span>
+        <span class="c">//      {</span>
+
+        <span class="c">//      }</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Padding
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Padding Dependency Property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="1318d148be8233de" href="../R/1318d148be8233de.html" target="n" data-glyph="42,1" class="i field">PaddingProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#152066e4fc39e79a" class="i method">Register</a>(<b>nameof</b>(<a href="#4c84d02e242538c2" class="i property">Padding</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a>),
+                                          <b>typeof</b>(<a href="#9a2d2256b2f9774c" class="t t">ClipBorder</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t constructor">Thickness</a>(), <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a>),
+                                          <a href="#b93aba638996b757" class="i method">OnValidateThickness</a>);
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Padding property. This dependency property </span>
+        <span class="c">///</span><span class="c"> indicates the Padding.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a> <a id="4c84d02e242538c2" href="../R/4c84d02e242538c2.html" target="n" data-glyph="102,1" class="i property">Padding</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a>)<a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#1318d148be8233de" class="i field">PaddingProperty</a>);
+            <b>set</b> =&gt; <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#1318d148be8233de" class="i field">PaddingProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">//      /// &lt;summary&gt;</span>
+        <span class="c">//      /// Provides derived classes an opportunity to handle changes to the Padding property.</span>
+        <span class="c">//      /// &lt;/summary&gt;</span>
+        <span class="c">///// &lt;param name=&quot;oldPadding&quot;&gt;Old Value&lt;/param&gt;</span>
+        <span class="c">///// &lt;param name=&quot;newPadding&quot;&gt;New Value&lt;/param&gt;</span>
+        <span class="c">//      void OnPaddingChanged(Thickness oldPadding, Thickness newPadding)</span>
+        <span class="c">//      {</span>
+
+        <span class="c">//      }</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> CornerRadius
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> CornerRadius Dependency Property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="fa58a70c692df7ff" href="../R/fa58a70c692df7ff.html" target="n" data-glyph="42,1" class="i field">CornerRadiusProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#152066e4fc39e79a" class="i method">Register</a>(<b>nameof</b>(<a href="#5af142522e1fb1f0" class="i property">CornerRadius</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationFramework/A.html#9fd36772b228e5d0" class="t t">CornerRadius</a>),
+                                          <b>typeof</b>(<a href="#9a2d2256b2f9774c" class="t t">ClipBorder</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#9fd36772b228e5d0" class="t constructor">CornerRadius</a>(), <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a>),
+                                          <a href="#c9fd84cf2fa2a378" class="i method">OnValidateCornerRadius</a>);
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the CornerRadius property. This dependency property </span>
+        <span class="c">///</span><span class="c"> indicates the CornerRadius of the border.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#9fd36772b228e5d0" class="t t">CornerRadius</a> <a id="5af142522e1fb1f0" href="../R/5af142522e1fb1f0.html" target="n" data-glyph="102,1" class="i property">CornerRadius</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationFramework/A.html#9fd36772b228e5d0" class="t t">CornerRadius</a>)<a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#fa58a70c692df7ff" class="i field">CornerRadiusProperty</a>);
+            <b>set</b> =&gt; <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#fa58a70c692df7ff" class="i field">CornerRadiusProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Checks if the given CornerRadius is valid or not</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r2 r">value</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">CornerRadius</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private static bool</b> <a id="c9fd84cf2fa2a378" href="../R/c9fd84cf2fa2a378.html" target="n" data-glyph="76,1" class="i method">OnValidateCornerRadius</a>(<b>object</b>? <span id="r2 rd" class="r2 r">value</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#9fd36772b228e5d0" class="k">var</a> <span id="r3 rd" class="r3 r">cr</span> = (<a href="@0@PresentationFramework/A.html#9fd36772b228e5d0" class="t t">CornerRadius</a>)(<span class="r2 r">value</span> ?? <b>default</b>(<a href="@0@PresentationFramework/A.html#9fd36772b228e5d0" class="t t">CornerRadius</a>));
+            <b>return</b> <span class="r3 r">cr</span>.<a href="ClipBorder.Utils.cs.html#457c085ccfa75fbd" class="i method">IsValid</a>(<b>false</b>, <b>false</b>, <b>false</b>, <b>false</b>);
+        }
+
+        <span class="c">//      /// &lt;summary&gt;</span>
+        <span class="c">//      /// Provides derived classes an opportunity to handle changes to the CornerRadius property.</span>
+        <span class="c">//      /// &lt;/summary&gt;</span>
+        <span class="c">///// &lt;param name=&quot;oldCornerRadius&quot;&gt;Old Value&lt;/param&gt;</span>
+        <span class="c">///// &lt;param name=&quot;newCornerRadius&quot;&gt;New Value&lt;/param&gt;</span>
+        <span class="c">//      void OnCornerRadiusChanged(CornerRadius oldCornerRadius, CornerRadius newCornerRadius)</span>
+        <span class="c">//      {</span>
+
+        <span class="c">//      }</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> BorderBrush
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> BorderBrush Dependency Property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="d85380767dc16fa6" href="../R/d85380767dc16fa6.html" target="n" data-glyph="42,1" class="i field">BorderBrushProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#1755876e9cbb5fb8" class="i property">BorderBrush</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>),
+                                          <b>typeof</b>(<a href="#9a2d2256b2f9774c" class="t t">ClipBorder</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#03a875b9fd90f742" class="i field">SubPropertiesDoNotAffectRender</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the BorderBrush property. This dependency property </span>
+        <span class="c">///</span><span class="c"> indicates the BorderBrush with which the Border is drawn.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <a id="1755876e9cbb5fb8" href="../R/1755876e9cbb5fb8.html" target="n" data-glyph="102,1" class="i property">BorderBrush</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>?)<a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#d85380767dc16fa6" class="i field">BorderBrushProperty</a>);
+            <b>set</b> =&gt; <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#d85380767dc16fa6" class="i field">BorderBrushProperty</a>, <b>value</b>);
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Background
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Background Dependency Property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="141559974251e3f3" href="../R/141559974251e3f3.html" target="n" data-glyph="42,1" class="i field">BackgroundProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#1354a42bff69773e" class="i property">Background</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>),
+                                          <b>typeof</b>(<a href="#9a2d2256b2f9774c" class="t t">ClipBorder</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#03a875b9fd90f742" class="i field">SubPropertiesDoNotAffectRender</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Background property. This dependency property </span>
+        <span class="c">///</span><span class="c"> indicates the Background with which the Background is drawn.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>? <a id="1354a42bff69773e" href="../R/1354a42bff69773e.html" target="n" data-glyph="102,1" class="i property">Background</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="t t">Brush</a>?)<a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#141559974251e3f3" class="i field">BackgroundProperty</a>);
+            <b>set</b> =&gt; <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#141559974251e3f3" class="i field">BackgroundProperty</a>, <b>value</b>);
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> OptimizeClipRendering
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> OptimizeClipRendering Dependency Property</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="51ac927124dfe824" href="../R/51ac927124dfe824.html" target="n" data-glyph="42,1" class="i field">OptimizeClipRenderingProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#e2404ad5e8fa897e" class="i property">OptimizeClipRendering</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#9a2d2256b2f9774c" class="t t">ClipBorder</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the OptimizeClipRendering property. This dependency property </span>
+        <span class="c">///</span><span class="c"> indicates whether the rendering of the clip should be optimized. When set to true,</span>
+        <span class="c">///</span><span class="c"> In order to optimize the rendering of the clipped Child,</span>
+        <span class="c">///</span><span class="c"> the background is rendered with the same brush as the border. Any other brush set for</span>
+        <span class="c">///</span><span class="c"> the background will be ignored. The Child will be rendered on top of it. </span>
+        <span class="c">///</span><span class="c"> This is done to prevent any gaps between the border the the clipped Child (this is </span>
+        <span class="c">///</span><span class="c"> evidently visible if both the Border and the Child are of same color).</span>
+        <span class="c">///</span><span class="c"> This works best when the Child does not have any level of transparency and is opaque.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="e2404ad5e8fa897e" href="../R/e2404ad5e8fa897e.html" target="n" data-glyph="102,1" class="i property">OptimizeClipRendering</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#51ac927124dfe824" class="i field">OptimizeClipRenderingProperty</a>);
+            <b>set</b> =&gt; <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#51ac927124dfe824" class="i field">OptimizeClipRenderingProperty</a>, <a href="../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Protected Methods
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Updates DesiredSize of the ClipBorder.  Called by parent UIElement.  This is the first pass of layout.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Border determines its desired size it needs from the specified border the child: its sizing</span>
+        <span class="c">///</span><span class="c"> properties, margin, and requested size.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r4 r">constraint</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Constraint size is an &quot;upper limit&quot; that the return value should not exceed.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">The Decorator&#39;s desired size.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>protected override</b> <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="t t">Size</a> <a id="433101a2dcfb2a9a" href="../R/433101a2dcfb2a9a.html" target="n" data-glyph="75,1" class="i method">MeasureOverride</a>(<a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="t t">Size</a> <span id="r4 rd" class="r4 r">constraint</span>)
+        {
+            <a href="@0@PresentationCore/A.html#7911653ccb506216" class="k">var</a> <span id="r5 rd" class="r5 r">child</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#2a880652079bdb31" class="i property">Child</a>;
+            <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="k">var</a> <span id="r6 rd" class="r6 r">desiredSize</span> = <b>new</b> <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="t constructor">Size</a>();
+            <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="k">var</a> <span id="r7 rd" class="r7 r">borders</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#26e8e9354dae15d2" class="i property">BorderThickness</a>;
+
+            <span class="c">// Compute the total size required</span>
+            <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="k">var</a> <span id="r8 rd" class="r8 r">borderSize</span> = <span class="r7 r">borders</span>.<a href="ClipBorder.Utils.cs.html#1f2c9f0aba50609e" class="i method">CollapseThickness</a>();
+            <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="k">var</a> <span id="r9 rd" class="r9 r">paddingSize</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#4c84d02e242538c2" class="i property">Padding</a>.<a href="ClipBorder.Utils.cs.html#1f2c9f0aba50609e" class="i method">CollapseThickness</a>();
+
+            <span class="c">// Does the ClipBorder have a child?</span>
+            <b>if</b> (<span class="r5 r">child</span> != <b>null</b>)
+            {
+                <span class="c">// Combine into total decorating size</span>
+                <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="k">var</a> <span id="r10 rd" class="r10 r">combined</span> = <b>new</b> <a href="@0@WindowsBase/A.html#a9e92f9d82abccc2" class="t constructor">Size</a>(<span class="r8 r">borderSize</span>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a> + <span class="r9 r">paddingSize</span>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>, <span class="r8 r">borderSize</span>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a> + <span class="r9 r">paddingSize</span>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>);
+
+                <span class="c">// Remove size of border only from child&#39;s reference size.</span>
+                <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="k">var</a> <span id="r11 rd" class="r11 r">childConstraint</span> = <b>new</b> <a href="@0@WindowsBase/A.html#a9e92f9d82abccc2" class="t constructor">Size</a>(<a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#e66bf1275e54a4bc" class="i method">Max</a>(0.0, <span class="r4 r">constraint</span>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a> - <span class="r10 r">combined</span>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>),
+                                               <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#e66bf1275e54a4bc" class="i method">Max</a>(0.0, <span class="r4 r">constraint</span>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a> - <span class="r10 r">combined</span>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>));
+
+                <span class="r5 r">child</span>.<a href="@0@PresentationCore/A.html#0e6c09a4266b5db0" class="i method">Measure</a>(<span class="r11 r">childConstraint</span>);
+                <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="k">var</a> <span id="r12 rd" class="r12 r">childSize</span> = <span class="r5 r">child</span>.<a href="@0@PresentationCore/A.html#32042c7c3b8912f8" class="i property">DesiredSize</a>;
+
+                <span class="c">// Now use the returned size to drive our size, by adding back the margins, etc.</span>
+                <span class="r6 r">desiredSize</span>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a> = <span class="r12 r">childSize</span>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a> + <span class="r10 r">combined</span>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>;
+                <span class="r6 r">desiredSize</span>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a> = <span class="r12 r">childSize</span>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a> + <span class="r10 r">combined</span>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>;
+            }
+            <b>else</b>
+            {
+                <span class="c">// Since there is no child, the border requires only the size occupied by the BorderThickness</span>
+                <span class="c">// and the Padding</span>
+                <span class="r6 r">desiredSize</span> = <b>new</b> <a href="@0@WindowsBase/A.html#a9e92f9d82abccc2" class="t constructor">Size</a>(<span class="r8 r">borderSize</span>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a> + <span class="r9 r">paddingSize</span>.<a href="@0@WindowsBase/A.html#6889b81bbde81637" class="i property">Width</a>, <span class="r8 r">borderSize</span>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a> + <span class="r9 r">paddingSize</span>.<a href="@0@WindowsBase/A.html#5c5d17caa72f2875" class="i property">Height</a>);
+            }
+
+            <b>return</b> <span class="r6 r">desiredSize</span>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> ClipBorder computes the position of its single child and applies its child&#39;s alignments to the child.</span>
+        <span class="c">///</span><span class="c"> </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r13 r">finalSize</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The size reserved for this element by the parent</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">The actual ink area of the element, typically the same as finalSize</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>protected override</b> <a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="t t">Size</a> <a id="61ea63e6f05f6654" href="../R/61ea63e6f05f6654.html" target="n" data-glyph="75,1" class="i method">ArrangeOverride</a>(<a href="@0@WindowsBase/A.html#a844b9b525c2088c" class="t t">Size</a> <span id="r13 rd" class="r13 r">finalSize</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="k">var</a> <span id="r14 rd" class="r14 r">borders</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#26e8e9354dae15d2" class="i property">BorderThickness</a>;
+            <a href="@0@WindowsBase/A.html#fc387a6f7a1c2856" class="k">var</a> <span id="r15 rd" class="r15 r">boundRect</span> = <b>new</b> <a href="@0@WindowsBase/A.html#76998d12a82ab004" class="t constructor">Rect</a>(<span class="r13 r">finalSize</span>);
+            <a href="@0@WindowsBase/A.html#fc387a6f7a1c2856" class="k">var</a> <span id="r16 rd" class="r16 r">innerRect</span> = <span class="r15 r">boundRect</span>.<a href="ClipBorder.Utils.cs.html#8fdafd9e38558489" class="i method">Deflate</a>(<span class="r14 r">borders</span>);
+            <a href="@0@PresentationFramework/A.html#9fd36772b228e5d0" class="k">var</a> <span id="r17 rd" class="r17 r">corners</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#5af142522e1fb1f0" class="i property">CornerRadius</a>;
+            <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="k">var</a> <span id="r18 rd" class="r18 r">padding</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#4c84d02e242538c2" class="i property">Padding</a>;
+            <a href="@0@WindowsBase/A.html#fc387a6f7a1c2856" class="k">var</a> <span id="r19 rd" class="r19 r">childRect</span> = <span class="r16 r">innerRect</span>.<a href="ClipBorder.Utils.cs.html#8fdafd9e38558489" class="i method">Deflate</a>(<span class="r18 r">padding</span>);
+
+            <span class="c">//  calculate border rendering geometry</span>
+            <b>if</b> (!<span class="r15 r">boundRect</span>.<a href="@0@WindowsBase/A.html#fcc6efd876cb44c2" class="i property">Width</a>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>() &amp;&amp; !<span class="r15 r">boundRect</span>.<a href="@0@WindowsBase/A.html#fc918653cc6706b1" class="i property">Height</a>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>())
+            {
+                <a href="#f33c21f45836a181" class="k">var</a> <span id="r20 rd" class="r20 r">outerBorderInfo</span> = <b>new</b> <a href="#e1d8c63e4c67ab61" class="t constructor">BorderInfo</a>(<span class="r17 r">corners</span>, <span class="r14 r">borders</span>, <b>new</b> <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t constructor">Thickness</a>(), <b>true</b>);
+                <a href="@0@PresentationCore/A.html#6830d8329536bfed" class="k">var</a> <span id="r21 rd" class="r21 r">borderGeometry</span> = <b>new</b> <a href="@0@PresentationCore/A.html#4630f4b0285e2693" class="t constructor">StreamGeometry</a>();
+
+                <b>using</b> (<a href="@0@PresentationCore/A.html#eb15aef1af2349ff" class="k">var</a> <span id="r22 rd" class="r22 r">ctx</span> = <span class="r21 r">borderGeometry</span>.<a href="@0@PresentationCore/A.html#adaa40c9b12b00b1" class="i method">Open</a>())
+                {
+                    <a href="#479f44bb4458d689" class="i method">GenerateGeometry</a>(<span class="r22 r">ctx</span>, <span class="r15 r">boundRect</span>, <span class="r20 r">outerBorderInfo</span>);
+                }
+
+                <span class="c">// Freeze the geometry for better perfomance</span>
+                <span class="r21 r">borderGeometry</span>.<a href="@0@WindowsBase/A.html#75947ff41474f34b" class="i method">Freeze</a>();
+                <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#c0fc2220500b4539" class="i field">_borderGeometryCache</a> = <span class="r21 r">borderGeometry</span>;
+            }
+            <b>else</b>
+            {
+                <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#c0fc2220500b4539" class="i field">_borderGeometryCache</a> = <b>null</b>;
+            }
+
+            <span class="c">//  calculate background rendering geometry</span>
+            <b>if</b> (!<span class="r16 r">innerRect</span>.<a href="@0@WindowsBase/A.html#fcc6efd876cb44c2" class="i property">Width</a>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>() &amp;&amp; !<span class="r16 r">innerRect</span>.<a href="@0@WindowsBase/A.html#fc918653cc6706b1" class="i property">Height</a>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>())
+            {
+                <a href="#f33c21f45836a181" class="k">var</a> <span id="r23 rd" class="r23 r">innerBorderInfo</span> = <b>new</b> <a href="#e1d8c63e4c67ab61" class="t constructor">BorderInfo</a>(<span class="r17 r">corners</span>, <span class="r14 r">borders</span>, <b>new</b> <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t constructor">Thickness</a>(), <b>false</b>);
+                <a href="@0@PresentationCore/A.html#6830d8329536bfed" class="k">var</a> <span id="r24 rd" class="r24 r">backgroundGeometry</span> = <b>new</b> <a href="@0@PresentationCore/A.html#4630f4b0285e2693" class="t constructor">StreamGeometry</a>();
+
+                <b>using</b> (<a href="@0@PresentationCore/A.html#eb15aef1af2349ff" class="k">var</a> <span id="r25 rd" class="r25 r">ctx</span> = <span class="r24 r">backgroundGeometry</span>.<a href="@0@PresentationCore/A.html#adaa40c9b12b00b1" class="i method">Open</a>())
+                {
+                    <a href="#479f44bb4458d689" class="i method">GenerateGeometry</a>(<span class="r25 r">ctx</span>, <span class="r16 r">innerRect</span>, <span class="r23 r">innerBorderInfo</span>);
+                }
+
+                <span class="c">// Freeze the geometry for better perfomance</span>
+                <span class="r24 r">backgroundGeometry</span>.<a href="@0@WindowsBase/A.html#75947ff41474f34b" class="i method">Freeze</a>();
+                <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#cefa4df628bb1ceb" class="i field">_backgroundGeometryCache</a> = <span class="r24 r">backgroundGeometry</span>;
+            }
+            <b>else</b>
+            {
+                <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#cefa4df628bb1ceb" class="i field">_backgroundGeometryCache</a> = <b>null</b>;
+            }
+
+            <span class="c">//  Arrange the Child and set its clip</span>
+            <a href="@0@PresentationCore/A.html#7911653ccb506216" class="k">var</a> <span id="r26 rd" class="r26 r">child</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="@0@PresentationFramework/A.html#2a880652079bdb31" class="i property">Child</a>;
+            <b>if</b> (<span class="r26 r">child</span> != <b>null</b>)
+            {
+                <span class="r26 r">child</span>.<a href="@0@PresentationCore/A.html#db317f34429aad8f" class="i method">Arrange</a>(<span class="r19 r">childRect</span>);
+                <span class="c">// Calculate the Clipping Geometry</span>
+                <a href="@0@PresentationCore/A.html#6830d8329536bfed" class="k">var</a> <span id="r27 rd" class="r27 r">clipGeometry</span> = <b>new</b> <a href="@0@PresentationCore/A.html#4630f4b0285e2693" class="t constructor">StreamGeometry</a>();
+                <a href="#f33c21f45836a181" class="k">var</a> <span id="r28 rd" class="r28 r">childBorderInfo</span> = <b>new</b> <a href="#e1d8c63e4c67ab61" class="t constructor">BorderInfo</a>(<span class="r17 r">corners</span>, <span class="r14 r">borders</span>, <span class="r18 r">padding</span>, <b>false</b>);
+                <b>using</b> (<a href="@0@PresentationCore/A.html#eb15aef1af2349ff" class="k">var</a> <span id="r29 rd" class="r29 r">ctx</span> = <span class="r27 r">clipGeometry</span>.<a href="@0@PresentationCore/A.html#adaa40c9b12b00b1" class="i method">Open</a>())
+                {
+                    <a href="#479f44bb4458d689" class="i method">GenerateGeometry</a>(<span class="r29 r">ctx</span>, <b>new</b> <a href="@0@WindowsBase/A.html#299a3fd614724168" class="t constructor">Rect</a>(0, 0, <span class="r19 r">childRect</span>.<a href="@0@WindowsBase/A.html#fcc6efd876cb44c2" class="i property">Width</a>, <span class="r19 r">childRect</span>.<a href="@0@WindowsBase/A.html#fc918653cc6706b1" class="i property">Height</a>), <span class="r28 r">childBorderInfo</span>);
+                }
+
+                <span class="c">// Freeze the geometry for better perfomance</span>
+                <span class="r27 r">clipGeometry</span>.<a href="@0@WindowsBase/A.html#75947ff41474f34b" class="i method">Freeze</a>();
+                <span class="c">// Apply the clip to the Child</span>
+                <span class="r26 r">child</span>.<a href="@0@PresentationCore/A.html#3904383ef1cd7b75" class="i property">Clip</a> = <span class="r27 r">clipGeometry</span>;
+            }
+
+            <b>return</b> <span class="r13 r">finalSize</span>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Here the ClipBorder&#39;s Child, Border and Background are rendered.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r30 r">dc</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Drawing Context</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>protected override void</b> <a id="0d8aa9d04d671352" href="../R/0d8aa9d04d671352.html" target="n" data-glyph="75,1" class="i method">OnRender</a>(<a href="@0@PresentationCore/A.html#e8d3760dcaccd8d8" class="t t">DrawingContext</a> <span id="r30 rd" class="r30 r">dc</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="k">var</a> <span id="r31 rd" class="r31 r">borders</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#26e8e9354dae15d2" class="i property">BorderThickness</a>;
+            <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="k">var</a> <span id="r32 rd" class="r32 r">borderBrush</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#1755876e9cbb5fb8" class="i property">BorderBrush</a>;
+            <a href="@0@PresentationCore/A.html#2753d3468fd36b9f" class="k">var</a> <span id="r33 rd" class="r33 r">bgBrush</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#1354a42bff69773e" class="i property">Background</a>;
+            <a href="@0@PresentationCore/A.html#6830d8329536bfed" class="k">var</a> <span id="r34 rd" class="r34 r">borderGeometry</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#c0fc2220500b4539" class="i field">_borderGeometryCache</a>;
+            <a href="@0@PresentationCore/A.html#6830d8329536bfed" class="k">var</a> <span id="r35 rd" class="r35 r">backgroundGeometry</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#cefa4df628bb1ceb" class="i field">_backgroundGeometryCache</a>;
+            <a href="@0@mscorlib/A.html#f1b135ff6c380b37" class="k">var</a> <span id="r36 rd" class="r36 r">optimizeClipRendering</span> = <a href="#9a2d2256b2f9774c" class="k">this</a>.<a href="#e2404ad5e8fa897e" class="i property">OptimizeClipRendering</a>;
+
+            <span class="c">// First check if the user wants optimized rendering of the clipped Child</span>
+            <b>if</b> (<span class="r36 r">optimizeClipRendering</span>)
+            {
+                <span class="c">// In order to optimize the rendering of the clipped Child,</span>
+                <span class="c">// just draw the borderGeometry filled with BorderBrush. The Child</span>
+                <span class="c">// will be rendered on top of it. This is done to prevent any gaps</span>
+                <span class="c">// between the border the the clipped Child (this is evidently visible</span>
+                <span class="c">// if both the Border and the Child are of same color)</span>
+                <span class="r30 r">dc</span>.<a href="@0@PresentationCore/A.html#df17a06759a7dc74" class="i method">DrawGeometry</a>(<span class="r32 r">borderBrush</span>, <b>null</b>, <span class="r34 r">borderGeometry</span>);
+
+                <b>return</b>;
+            }
+
+            <span class="c">// If both Border and Background are valid</span>
+            <b>if</b> ((<span class="r32 r">borderBrush</span> != <b>null</b>) &amp;&amp; (!<span class="r31 r">borders</span>.<a href="ClipBorder.Utils.cs.html#57db77d769241b29" class="i method">IsZero</a>()) &amp;&amp; (<span class="r33 r">bgBrush</span> != <b>null</b>))
+            {
+                <span class="c">// If both the background and border brushes are same,</span>
+                <span class="c">// just draw the filled borderGeometry</span>
+                <b>if</b> (<span class="r32 r">borderBrush</span>.<a href="ClipBorder.Utils.cs.html#e98df0d901dd5662" class="i method">IsEqualTo</a>(<span class="r33 r">bgBrush</span>))
+                {
+                    <span class="r30 r">dc</span>.<a href="@0@PresentationCore/A.html#df17a06759a7dc74" class="i method">DrawGeometry</a>(<span class="r32 r">borderBrush</span>, <b>null</b>, <span class="r34 r">borderGeometry</span>);
+                }
+                <span class="c">// If both are opaque SolidColorBrushes, first draw the borderGeometry filled</span>
+                <span class="c">// with borderbrush and then draw the backgroundGeometry filled with background brush</span>
+                <b>else</b> <b>if</b> (<span class="r32 r">borderBrush</span>.<a href="ClipBorder.Utils.cs.html#a5d73bafb21c4652" class="i method">IsOpaqueSolidColorBrush</a>() &amp;&amp; <span class="r33 r">bgBrush</span>.<a href="ClipBorder.Utils.cs.html#a5d73bafb21c4652" class="i method">IsOpaqueSolidColorBrush</a>())
+                {
+                    <span class="r30 r">dc</span>.<a href="@0@PresentationCore/A.html#df17a06759a7dc74" class="i method">DrawGeometry</a>(<span class="r32 r">borderBrush</span>, <b>null</b>, <span class="r34 r">borderGeometry</span>);
+                    <span class="r30 r">dc</span>.<a href="@0@PresentationCore/A.html#df17a06759a7dc74" class="i method">DrawGeometry</a>(<span class="r33 r">bgBrush</span>, <b>null</b>, <span class="r35 r">backgroundGeometry</span>);
+                }
+                <span class="c">// If only the border is opaque, then first draw the borderGeometry filled with</span>
+                <span class="c">// background brush and then draw ONLY the borderOutlineGeometry (obtained by excluding </span>
+                <span class="c">// backgroundGeometry from borderGeometry) with the border brush.</span>
+                <span class="c">// This will prevent gaps between the border and the background while rendering.</span>
+                <b>else</b> <b>if</b> (<span class="r32 r">borderBrush</span>.<a href="ClipBorder.Utils.cs.html#a5d73bafb21c4652" class="i method">IsOpaqueSolidColorBrush</a>())
+                {
+                    <b>if</b> ((<span class="r34 r">borderGeometry</span> == <b>null</b>) || (<span class="r35 r">backgroundGeometry</span> == <b>null</b>))
+                    {
+                        <b>return</b>;
+                    }
+
+                    <a href="@0@PresentationCore/A.html#e4d72d28528823ae" class="k">var</a> <span id="r37 rd" class="r37 r">borderOutlinePath</span> = <span class="r34 r">borderGeometry</span>.<a href="@0@PresentationCore/A.html#4c041dea09510caf" class="i method">GetOutlinedPathGeometry</a>();
+                    <a href="@0@PresentationCore/A.html#e4d72d28528823ae" class="k">var</a> <span id="r38 rd" class="r38 r">backgroundOutlinePath</span> = <span class="r35 r">backgroundGeometry</span>.<a href="@0@PresentationCore/A.html#4c041dea09510caf" class="i method">GetOutlinedPathGeometry</a>();
+                    <a href="@0@PresentationCore/A.html#e4d72d28528823ae" class="k">var</a> <span id="r39 rd" class="r39 r">borderOutlineGeometry</span> = <a href="@0@PresentationCore/A.html#22ca37af0d997a39" class="t t">Geometry</a>.<a href="@0@PresentationCore/A.html#a162ec921fb52c95" class="i method">Combine</a>(<span class="r37 r">borderOutlinePath</span>, <span class="r38 r">backgroundOutlinePath</span>,
+                                                                 <a href="@0@PresentationCore/A.html#24e675996a009837" class="t t">GeometryCombineMode</a>.<a href="@0@PresentationCore/A.html#b262959949eb3c8c" class="i field">Exclude</a>, <b>null</b>);
+
+                    <span class="r30 r">dc</span>.<a href="@0@PresentationCore/A.html#df17a06759a7dc74" class="i method">DrawGeometry</a>(<span class="r33 r">bgBrush</span>, <b>null</b>, <span class="r34 r">borderGeometry</span>);
+                    <span class="r30 r">dc</span>.<a href="@0@PresentationCore/A.html#df17a06759a7dc74" class="i method">DrawGeometry</a>(<span class="r32 r">borderBrush</span>, <b>null</b>, <span class="r39 r">borderOutlineGeometry</span>);
+                }
+                <span class="c">// If none of the above, then it means that the border and the background must be separately drawn.</span>
+                <span class="c">// This might result in small gaps between the border and the background</span>
+                <span class="c">// Draw the borderOutlineGeometry and backgroundGeometry separately with their respective brushes</span>
+                <b>else</b>
+                {
+                    <b>if</b> ((<span class="r34 r">borderGeometry</span> == <b>null</b>) || (<span class="r35 r">backgroundGeometry</span> == <b>null</b>))
+                    {
+                        <b>return</b>;
+                    }
+
+                    <a href="@0@PresentationCore/A.html#e4d72d28528823ae" class="k">var</a> <span id="r40 rd" class="r40 r">borderOutlinePath</span> = <span class="r34 r">borderGeometry</span>.<a href="@0@PresentationCore/A.html#4c041dea09510caf" class="i method">GetOutlinedPathGeometry</a>();
+                    <a href="@0@PresentationCore/A.html#e4d72d28528823ae" class="k">var</a> <span id="r41 rd" class="r41 r">backgroundOutlinePath</span> = <span class="r35 r">backgroundGeometry</span>.<a href="@0@PresentationCore/A.html#4c041dea09510caf" class="i method">GetOutlinedPathGeometry</a>();
+                    <a href="@0@PresentationCore/A.html#e4d72d28528823ae" class="k">var</a> <span id="r42 rd" class="r42 r">borderOutlineGeometry</span> = <a href="@0@PresentationCore/A.html#22ca37af0d997a39" class="t t">Geometry</a>.<a href="@0@PresentationCore/A.html#a162ec921fb52c95" class="i method">Combine</a>(<span class="r40 r">borderOutlinePath</span>, <span class="r41 r">backgroundOutlinePath</span>,
+                                                                 <a href="@0@PresentationCore/A.html#24e675996a009837" class="t t">GeometryCombineMode</a>.<a href="@0@PresentationCore/A.html#b262959949eb3c8c" class="i field">Exclude</a>, <b>null</b>);
+
+                    <span class="r30 r">dc</span>.<a href="@0@PresentationCore/A.html#df17a06759a7dc74" class="i method">DrawGeometry</a>(<span class="r32 r">borderBrush</span>, <b>null</b>, <span class="r42 r">borderOutlineGeometry</span>);
+                    <span class="r30 r">dc</span>.<a href="@0@PresentationCore/A.html#df17a06759a7dc74" class="i method">DrawGeometry</a>(<span class="r33 r">bgBrush</span>, <b>null</b>, <span class="r35 r">backgroundGeometry</span>);
+                }
+
+                <b>return</b>;
+            }
+
+            <span class="c">// Only Border is valid</span>
+            <b>if</b> ((<span class="r32 r">borderBrush</span> != <b>null</b>) &amp;&amp; (!<span class="r31 r">borders</span>.<a href="ClipBorder.Utils.cs.html#57db77d769241b29" class="i method">IsZero</a>()))
+            {
+                <b>if</b> ((<span class="r34 r">borderGeometry</span> != <b>null</b>) &amp;&amp; (<span class="r35 r">backgroundGeometry</span> != <b>null</b>))
+                {
+                    <a href="@0@PresentationCore/A.html#e4d72d28528823ae" class="k">var</a> <span id="r43 rd" class="r43 r">borderOutlinePath</span> = <span class="r34 r">borderGeometry</span>.<a href="@0@PresentationCore/A.html#4c041dea09510caf" class="i method">GetOutlinedPathGeometry</a>();
+                    <a href="@0@PresentationCore/A.html#e4d72d28528823ae" class="k">var</a> <span id="r44 rd" class="r44 r">backgroundOutlinePath</span> = <span class="r35 r">backgroundGeometry</span>.<a href="@0@PresentationCore/A.html#4c041dea09510caf" class="i method">GetOutlinedPathGeometry</a>();
+                    <a href="@0@PresentationCore/A.html#e4d72d28528823ae" class="k">var</a> <span id="r45 rd" class="r45 r">borderOutlineGeometry</span> = <a href="@0@PresentationCore/A.html#22ca37af0d997a39" class="t t">Geometry</a>.<a href="@0@PresentationCore/A.html#a162ec921fb52c95" class="i method">Combine</a>(<span class="r43 r">borderOutlinePath</span>, <span class="r44 r">backgroundOutlinePath</span>,
+                                                                 <a href="@0@PresentationCore/A.html#24e675996a009837" class="t t">GeometryCombineMode</a>.<a href="@0@PresentationCore/A.html#b262959949eb3c8c" class="i field">Exclude</a>, <b>null</b>);
+
+                    <span class="r30 r">dc</span>.<a href="@0@PresentationCore/A.html#df17a06759a7dc74" class="i method">DrawGeometry</a>(<span class="r32 r">borderBrush</span>, <b>null</b>, <span class="r45 r">borderOutlineGeometry</span>);
+                }
+                <b>else</b>
+                {
+                    <span class="r30 r">dc</span>.<a href="@0@PresentationCore/A.html#df17a06759a7dc74" class="i method">DrawGeometry</a>(<span class="r32 r">borderBrush</span>, <b>null</b>, <span class="r34 r">borderGeometry</span>);
+                }
+            }
+
+            <span class="c">// Only Background is valid</span>
+            <b>if</b> (<span class="r33 r">bgBrush</span> != <b>null</b>)
+            {
+                <span class="r30 r">dc</span>.<a href="@0@PresentationCore/A.html#df17a06759a7dc74" class="i method">DrawGeometry</a>(<span class="r33 r">bgBrush</span>, <b>null</b>, <span class="r35 r">backgroundGeometry</span>);
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Helpers
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Generates a StreamGeometry.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r46 r">ctx</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">An already opened StreamGeometryContext.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r47 r">rect</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Rectangle for geomentry conversion.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r48 r">borderInfo</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The core points of the border which needs to be used to create</span>
+        <span class="c">///</span><span class="c"> the geometry</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">Result geometry.</span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        <b>private static void</b> <a id="479f44bb4458d689" href="../R/479f44bb4458d689.html" target="n" data-glyph="76,1" class="i method">GenerateGeometry</a>(<a href="@0@PresentationCore/A.html#eb15aef1af2349ff" class="t t">StreamGeometryContext</a> <span id="r46 rd" class="r46 r">ctx</span>, <a href="@0@WindowsBase/A.html#fc387a6f7a1c2856" class="t t">Rect</a> <span id="r47 rd" class="r47 r">rect</span>, <a href="#f33c21f45836a181" class="t t">BorderInfo</a> <span id="r48 rd" class="r48 r">borderInfo</span>)
+        {
+            <span class="c">//  compute the coordinates of the key points</span>
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r49 rd" class="r49 r">leftTop</span> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r48 r">borderInfo</span>.<a href="#7a412b5cff2aa460" class="i field">LeftTop</a>, 0);
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r50 rd" class="r50 r">rightTop</span> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#fcc6efd876cb44c2" class="i property">Width</a> - <span class="r48 r">borderInfo</span>.<a href="#426bceba84eaf0d3" class="i field">RightTop</a>, 0);
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r51 rd" class="r51 r">topRight</span> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#fcc6efd876cb44c2" class="i property">Width</a>, <span class="r48 r">borderInfo</span>.<a href="#4a7cd17e6f8374ab" class="i field">TopRight</a>);
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r52 rd" class="r52 r">bottomRight</span> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#fcc6efd876cb44c2" class="i property">Width</a>, <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#fc918653cc6706b1" class="i property">Height</a> - <span class="r48 r">borderInfo</span>.<a href="#99d5cdd8226f6e88" class="i field">BottomRight</a>);
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r53 rd" class="r53 r">rightBottom</span> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#fcc6efd876cb44c2" class="i property">Width</a> - <span class="r48 r">borderInfo</span>.<a href="#c449eb7ac45f2cbb" class="i field">RightBottom</a>, <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#fc918653cc6706b1" class="i property">Height</a>);
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r54 rd" class="r54 r">leftBottom</span> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(<span class="r48 r">borderInfo</span>.<a href="#3b9eb6869bdf50f0" class="i field">LeftBottom</a>, <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#fc918653cc6706b1" class="i property">Height</a>);
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r55 rd" class="r55 r">bottomLeft</span> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#fc918653cc6706b1" class="i property">Height</a> - <span class="r48 r">borderInfo</span>.<a href="#203d329dacbfc463" class="i field">BottomLeft</a>);
+            <a href="@0@WindowsBase/A.html#9120327717fc513d" class="k">var</a> <span id="r56 rd" class="r56 r">topLeft</span> = <b>new</b> <a href="@0@WindowsBase/A.html#df31222d1f00fae5" class="t constructor">Point</a>(0, <span class="r48 r">borderInfo</span>.<a href="#da781f0c731c17c0" class="i field">TopLeft</a>);
+
+            <span class="c">//  check keypoints for overlap and resolve by partitioning corners according to</span>
+            <span class="c">//  the percentage of each one.  </span>
+
+            <span class="c">//  top edge</span>
+            <b>if</b> (<span class="r49 r">leftTop</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> &gt; <span class="r50 r">rightTop</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>)
+            {
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r57 rd" class="r57 r">v</span> = (<span class="r48 r">borderInfo</span>.<a href="#7a412b5cff2aa460" class="i field">LeftTop</a>) / (<span class="r48 r">borderInfo</span>.<a href="#7a412b5cff2aa460" class="i field">LeftTop</a> + <span class="r48 r">borderInfo</span>.<a href="#426bceba84eaf0d3" class="i field">RightTop</a>) * <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#fcc6efd876cb44c2" class="i property">Width</a>;
+                <span class="r49 r">leftTop</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> = <span class="r57 r">v</span>;
+                <span class="r50 r">rightTop</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> = <span class="r57 r">v</span>;
+            }
+
+            <span class="c">//  right edge</span>
+            <b>if</b> (<span class="r51 r">topRight</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> &gt; <span class="r52 r">bottomRight</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>)
+            {
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r58 rd" class="r58 r">v</span> = (<span class="r48 r">borderInfo</span>.<a href="#4a7cd17e6f8374ab" class="i field">TopRight</a>) / (<span class="r48 r">borderInfo</span>.<a href="#4a7cd17e6f8374ab" class="i field">TopRight</a> + <span class="r48 r">borderInfo</span>.<a href="#99d5cdd8226f6e88" class="i field">BottomRight</a>) * <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#fc918653cc6706b1" class="i property">Height</a>;
+                <span class="r51 r">topRight</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> = <span class="r58 r">v</span>;
+                <span class="r52 r">bottomRight</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> = <span class="r58 r">v</span>;
+            }
+
+            <span class="c">//  bottom edge</span>
+            <b>if</b> (<span class="r54 r">leftBottom</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> &gt; <span class="r53 r">rightBottom</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>)
+            {
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r59 rd" class="r59 r">v</span> = (<span class="r48 r">borderInfo</span>.<a href="#3b9eb6869bdf50f0" class="i field">LeftBottom</a>) / (<span class="r48 r">borderInfo</span>.<a href="#3b9eb6869bdf50f0" class="i field">LeftBottom</a> + <span class="r48 r">borderInfo</span>.<a href="#c449eb7ac45f2cbb" class="i field">RightBottom</a>) * <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#fcc6efd876cb44c2" class="i property">Width</a>;
+                <span class="r53 r">rightBottom</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> = <span class="r59 r">v</span>;
+                <span class="r54 r">leftBottom</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> = <span class="r59 r">v</span>;
+            }
+
+            <span class="c">// left edge</span>
+            <b>if</b> (<span class="r56 r">topLeft</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> &gt; <span class="r55 r">bottomLeft</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>)
+            {
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r60 rd" class="r60 r">v</span> = (<span class="r48 r">borderInfo</span>.<a href="#da781f0c731c17c0" class="i field">TopLeft</a>) / (<span class="r48 r">borderInfo</span>.<a href="#da781f0c731c17c0" class="i field">TopLeft</a> + <span class="r48 r">borderInfo</span>.<a href="#203d329dacbfc463" class="i field">BottomLeft</a>) * <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#fc918653cc6706b1" class="i property">Height</a>;
+                <span class="r55 r">bottomLeft</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> = <span class="r60 r">v</span>;
+                <span class="r56 r">topLeft</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> = <span class="r60 r">v</span>;
+            }
+
+            <span class="c">// Apply offset</span>
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r61 rd" class="r61 r">offsetX</span> = <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#4748ebef467797c7" class="i property">TopLeft</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>;
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r62 rd" class="r62 r">offsetY</span> = <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#4748ebef467797c7" class="i property">TopLeft</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+            <a href="@0@WindowsBase/A.html#43edd1f4217470d4" class="k">var</a> <span id="r63 rd" class="r63 r">offset</span> = <b>new</b> <a href="@0@WindowsBase/A.html#ce728c5ff6d4ce18" class="t constructor">Vector</a>(<span class="r61 r">offsetX</span>, <span class="r62 r">offsetY</span>);
+            <span class="r49 r">leftTop</span> += <span class="r63 r">offset</span>;
+            <span class="r50 r">rightTop</span> += <span class="r63 r">offset</span>;
+            <span class="r51 r">topRight</span> += <span class="r63 r">offset</span>;
+            <span class="r52 r">bottomRight</span> += <span class="r63 r">offset</span>;
+            <span class="r53 r">rightBottom</span> += <span class="r63 r">offset</span>;
+            <span class="r54 r">leftBottom</span> += <span class="r63 r">offset</span>;
+            <span class="r55 r">bottomLeft</span> += <span class="r63 r">offset</span>;
+            <span class="r56 r">topLeft</span> += <span class="r63 r">offset</span>;
+
+            <span class="c">//  create the border geometry</span>
+            <span class="r46 r">ctx</span>.<a href="@0@PresentationCore/A.html#3ceabebcddf93cde" class="i method">BeginFigure</a>(<span class="r49 r">leftTop</span>, <b>true</b> <span class="c">/* is filled */</span>, <b>true</b> <span class="c">/* is closed */</span>);
+
+            <span class="c">// Top line</span>
+            <span class="r46 r">ctx</span>.<a href="@0@PresentationCore/A.html#dd2a8ffaf4397f75" class="i method">LineTo</a>(<span class="r50 r">rightTop</span>, <b>true</b> <span class="c">/* is stroked */</span>, <b>false</b> <span class="c">/* is smooth join */</span>);
+
+            <span class="c">// Upper-right corners</span>
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r64 rd" class="r64 r">radiusX</span> = <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#241419f13803ee02" class="i property">TopRight</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> - <span class="r50 r">rightTop</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>;
+            <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r65 rd" class="r65 r">radiusY</span> = <span class="r51 r">topRight</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#241419f13803ee02" class="i property">TopRight</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+            <b>if</b> (!<span class="r64 r">radiusX</span>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>() || !<span class="r65 r">radiusY</span>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>())
+            {
+                <span class="r46 r">ctx</span>.<a href="@0@PresentationCore/A.html#19bc0301b56b301f" class="i method">ArcTo</a>(<span class="r51 r">topRight</span>, <b>new</b> <a href="@0@WindowsBase/A.html#a9e92f9d82abccc2" class="t constructor">Size</a>(<span class="r64 r">radiusX</span>, <span class="r65 r">radiusY</span>), 0, <b>false</b>, <a href="@0@PresentationCore/A.html#2d9493a64c6ac8ec" class="t t">SweepDirection</a>.<a href="@0@PresentationCore/A.html#3dfdad4160966cdd" class="i field">Clockwise</a>, <b>true</b>, <b>false</b>);
+            }
+
+            <span class="c">// Right line</span>
+            <span class="r46 r">ctx</span>.<a href="@0@PresentationCore/A.html#dd2a8ffaf4397f75" class="i method">LineTo</a>(<span class="r52 r">bottomRight</span>, <b>true</b> <span class="c">/* is stroked */</span>, <b>false</b> <span class="c">/* is smooth join */</span>);
+
+            <span class="c">// Lower-right corners</span>
+            <span class="r64 r">radiusX</span> = <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#f74865aa6b2411f3" class="i property">BottomRight</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> - <span class="r53 r">rightBottom</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>;
+            <span class="r65 r">radiusY</span> = <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#f74865aa6b2411f3" class="i property">BottomRight</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <span class="r52 r">bottomRight</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+            <b>if</b> (!<span class="r64 r">radiusX</span>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>() || !<span class="r65 r">radiusY</span>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>())
+            {
+                <span class="r46 r">ctx</span>.<a href="@0@PresentationCore/A.html#19bc0301b56b301f" class="i method">ArcTo</a>(<span class="r53 r">rightBottom</span>, <b>new</b> <a href="@0@WindowsBase/A.html#a9e92f9d82abccc2" class="t constructor">Size</a>(<span class="r64 r">radiusX</span>, <span class="r65 r">radiusY</span>), 0, <b>false</b>, <a href="@0@PresentationCore/A.html#2d9493a64c6ac8ec" class="t t">SweepDirection</a>.<a href="@0@PresentationCore/A.html#3dfdad4160966cdd" class="i field">Clockwise</a>, <b>true</b>, <b>false</b>);
+            }
+
+            <span class="c">// Bottom line</span>
+            <span class="r46 r">ctx</span>.<a href="@0@PresentationCore/A.html#dd2a8ffaf4397f75" class="i method">LineTo</a>(<span class="r54 r">leftBottom</span>, <b>true</b> <span class="c">/* is stroked */</span>, <b>false</b> <span class="c">/* is smooth join */</span>);
+
+            <span class="c">// Lower-left corners</span>
+            <span class="r64 r">radiusX</span> = <span class="r54 r">leftBottom</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> - <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#61226787c2796004" class="i property">BottomLeft</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>;
+            <span class="r65 r">radiusY</span> = <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#61226787c2796004" class="i property">BottomLeft</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <span class="r55 r">bottomLeft</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+            <b>if</b> (!<span class="r64 r">radiusX</span>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>() || !<span class="r65 r">radiusY</span>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>())
+            {
+                <span class="r46 r">ctx</span>.<a href="@0@PresentationCore/A.html#19bc0301b56b301f" class="i method">ArcTo</a>(<span class="r55 r">bottomLeft</span>, <b>new</b> <a href="@0@WindowsBase/A.html#a9e92f9d82abccc2" class="t constructor">Size</a>(<span class="r64 r">radiusX</span>, <span class="r65 r">radiusY</span>), 0, <b>false</b>, <a href="@0@PresentationCore/A.html#2d9493a64c6ac8ec" class="t t">SweepDirection</a>.<a href="@0@PresentationCore/A.html#3dfdad4160966cdd" class="i field">Clockwise</a>, <b>true</b>, <b>false</b>);
+            }
+
+            <span class="c">// Left line</span>
+            <span class="r46 r">ctx</span>.<a href="@0@PresentationCore/A.html#dd2a8ffaf4397f75" class="i method">LineTo</a>(<span class="r56 r">topLeft</span>, <b>true</b> <span class="c">/* is stroked */</span>, <b>false</b> <span class="c">/* is smooth join */</span>);
+
+            <span class="c">// Upper-left corners</span>
+            <span class="r64 r">radiusX</span> = <span class="r49 r">leftTop</span>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a> - <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#4748ebef467797c7" class="i property">TopLeft</a>.<a href="@0@WindowsBase/A.html#556ea90344bfb3ea" class="i property">X</a>;
+            <span class="r65 r">radiusY</span> = <span class="r56 r">topLeft</span>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a> - <span class="r47 r">rect</span>.<a href="@0@WindowsBase/A.html#4748ebef467797c7" class="i property">TopLeft</a>.<a href="@0@WindowsBase/A.html#0a42b94edb8c27ab" class="i property">Y</a>;
+            <b>if</b> (!<span class="r64 r">radiusX</span>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>() || !<span class="r65 r">radiusY</span>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>())
+            {
+                <span class="r46 r">ctx</span>.<a href="@0@PresentationCore/A.html#19bc0301b56b301f" class="i method">ArcTo</a>(<span class="r49 r">leftTop</span>, <b>new</b> <a href="@0@WindowsBase/A.html#a9e92f9d82abccc2" class="t constructor">Size</a>(<span class="r64 r">radiusX</span>, <span class="r65 r">radiusY</span>), 0, <b>false</b>, <a href="@0@PresentationCore/A.html#2d9493a64c6ac8ec" class="t t">SweepDirection</a>.<a href="@0@PresentationCore/A.html#3dfdad4160966cdd" class="i field">Clockwise</a>, <b>true</b>, <b>false</b>);
+            }
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> Private Structures
+
+        <b>private struct</b> <a id="f33c21f45836a181" href="../R/f33c21f45836a181.html" target="n" data-glyph="112,1" class="t t"><span id="39a9e51f33ce5514">BorderInfo</span></a>
+        {
+            <span class="k preprocess">#</span><span class="k preprocess">region</span> Fields
+
+            <b>internal readonly double</b> <a id="7a412b5cff2aa460" href="../R/7a412b5cff2aa460.html" target="n" data-glyph="44,2" class="i field">LeftTop</a>;
+            <b>internal readonly double</b> <a id="da781f0c731c17c0" href="../R/da781f0c731c17c0.html" target="n" data-glyph="44,2" class="i field">TopLeft</a>;
+            <b>internal readonly double</b> <a id="4a7cd17e6f8374ab" href="../R/4a7cd17e6f8374ab.html" target="n" data-glyph="44,2" class="i field">TopRight</a>;
+            <b>internal readonly double</b> <a id="426bceba84eaf0d3" href="../R/426bceba84eaf0d3.html" target="n" data-glyph="44,2" class="i field">RightTop</a>;
+            <b>internal readonly double</b> <a id="c449eb7ac45f2cbb" href="../R/c449eb7ac45f2cbb.html" target="n" data-glyph="44,2" class="i field">RightBottom</a>;
+            <b>internal readonly double</b> <a id="99d5cdd8226f6e88" href="../R/99d5cdd8226f6e88.html" target="n" data-glyph="44,2" class="i field">BottomRight</a>;
+            <b>internal readonly double</b> <a id="203d329dacbfc463" href="../R/203d329dacbfc463.html" target="n" data-glyph="44,2" class="i field">BottomLeft</a>;
+            <b>internal readonly double</b> <a id="3b9eb6869bdf50f0" href="../R/3b9eb6869bdf50f0.html" target="n" data-glyph="44,2" class="i field">LeftBottom</a>;
+
+            <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+
+            <span class="k preprocess">#</span><span class="k preprocess">region</span> Construction / Initialization
+
+            <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+            <span class="c">///</span><span class="c"> Encapsulates the details of each of the core points of the border which is calculated</span>
+            <span class="c">///</span><span class="c"> based on the given CornerRadius, BorderThickness, Padding and a flag to indicate whether</span>
+            <span class="c">///</span><span class="c"> the inner or outer border is to be calculated.</span>
+            <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+            <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r66 r">corners</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">CornerRadius</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+            <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r67 r">borders</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">BorderThickness</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+            <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r68 r">padding</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Padding</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+            <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r69 r">isOuterBorder</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Flag to indicate whether outer or inner border needs </span>
+            <span class="c">///</span><span class="c"> to be calculated</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+            <b>internal</b> <a id="e1d8c63e4c67ab61" href="../R/e1d8c63e4c67ab61.html" target="n" data-glyph="74,2" class="t constructor">BorderInfo</a>(<a href="@0@PresentationFramework/A.html#9fd36772b228e5d0" class="t t">CornerRadius</a> <span id="r66 rd" class="r66 r">corners</span>, <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a> <span id="r67 rd" class="r67 r">borders</span>, <a href="@0@PresentationFramework/A.html#109d8135ab5a3074" class="t t">Thickness</a> <span id="r68 rd" class="r68 r">padding</span>, <b>bool</b> <span id="r69 rd" class="r69 r">isOuterBorder</span>)
+            {
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r70 rd" class="r70 r">left</span> = 0.5 * <span class="r67 r">borders</span>.<a href="@0@PresentationFramework/A.html#db037f9d297086b1" class="i property">Left</a> + <span class="r68 r">padding</span>.<a href="@0@PresentationFramework/A.html#db037f9d297086b1" class="i property">Left</a>;
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r71 rd" class="r71 r">top</span> = 0.5 * <span class="r67 r">borders</span>.<a href="@0@PresentationFramework/A.html#418e667eaed60f22" class="i property">Top</a> + <span class="r68 r">padding</span>.<a href="@0@PresentationFramework/A.html#418e667eaed60f22" class="i property">Top</a>;
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r72 rd" class="r72 r">right</span> = 0.5 * <span class="r67 r">borders</span>.<a href="@0@PresentationFramework/A.html#ff5d952a7181fe7a" class="i property">Right</a> + <span class="r68 r">padding</span>.<a href="@0@PresentationFramework/A.html#ff5d952a7181fe7a" class="i property">Right</a>;
+                <a href="@0@mscorlib/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r73 rd" class="r73 r">bottom</span> = 0.5 * <span class="r67 r">borders</span>.<a href="@0@PresentationFramework/A.html#9b97a54a0ee0d6ac" class="i property">Bottom</a> + <span class="r68 r">padding</span>.<a href="@0@PresentationFramework/A.html#9b97a54a0ee0d6ac" class="i property">Bottom</a>;
+
+                <b>if</b> (<span class="r69 r">isOuterBorder</span>)
+                {
+                    <b>if</b> (<span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#c4e4e61111f1305b" class="i property">TopLeft</a>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>())
+                    {
+                        <a href="#f33c21f45836a181" class="k">this</a>.<a href="#7a412b5cff2aa460" class="i field">LeftTop</a> = <a href="#f33c21f45836a181" class="k">this</a>.<a href="#da781f0c731c17c0" class="i field">TopLeft</a> = 0.0;
+                    }
+                    <b>else</b>
+                    {
+                        <a href="#f33c21f45836a181" class="k">this</a>.<a href="#7a412b5cff2aa460" class="i field">LeftTop</a> = <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#c4e4e61111f1305b" class="i property">TopLeft</a> + <span class="r70 r">left</span>;
+                        <a href="#f33c21f45836a181" class="k">this</a>.<a href="#da781f0c731c17c0" class="i field">TopLeft</a> = <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#c4e4e61111f1305b" class="i property">TopLeft</a> + <span class="r71 r">top</span>;
+                    }
+
+                    <b>if</b> (<span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#2a1089951304727b" class="i property">TopRight</a>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>())
+                    {
+                        <a href="#f33c21f45836a181" class="k">this</a>.<a href="#4a7cd17e6f8374ab" class="i field">TopRight</a> = <a href="#f33c21f45836a181" class="k">this</a>.<a href="#426bceba84eaf0d3" class="i field">RightTop</a> = 0.0;
+                    }
+                    <b>else</b>
+                    {
+                        <a href="#f33c21f45836a181" class="k">this</a>.<a href="#4a7cd17e6f8374ab" class="i field">TopRight</a> = <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#2a1089951304727b" class="i property">TopRight</a> + <span class="r71 r">top</span>;
+                        <a href="#f33c21f45836a181" class="k">this</a>.<a href="#426bceba84eaf0d3" class="i field">RightTop</a> = <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#2a1089951304727b" class="i property">TopRight</a> + <span class="r72 r">right</span>;
+                    }
+
+                    <b>if</b> (<span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#ea567a22f5bd35c2" class="i property">BottomRight</a>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>())
+                    {
+                        <a href="#f33c21f45836a181" class="k">this</a>.<a href="#c449eb7ac45f2cbb" class="i field">RightBottom</a> = <a href="#f33c21f45836a181" class="k">this</a>.<a href="#99d5cdd8226f6e88" class="i field">BottomRight</a> = 0.0;
+                    }
+                    <b>else</b>
+                    {
+                        <a href="#f33c21f45836a181" class="k">this</a>.<a href="#c449eb7ac45f2cbb" class="i field">RightBottom</a> = <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#ea567a22f5bd35c2" class="i property">BottomRight</a> + <span class="r72 r">right</span>;
+                        <a href="#f33c21f45836a181" class="k">this</a>.<a href="#99d5cdd8226f6e88" class="i field">BottomRight</a> = <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#ea567a22f5bd35c2" class="i property">BottomRight</a> + <span class="r73 r">bottom</span>;
+                    }
+
+                    <b>if</b> (<span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#46f7284be17eb5b2" class="i property">BottomLeft</a>.<a href="ClipBorder.Utils.cs.html#48402999c4cfb68f" class="i method">IsZero</a>())
+                    {
+                        <a href="#f33c21f45836a181" class="k">this</a>.<a href="#203d329dacbfc463" class="i field">BottomLeft</a> = <a href="#f33c21f45836a181" class="k">this</a>.<a href="#3b9eb6869bdf50f0" class="i field">LeftBottom</a> = 0.0;
+                    }
+                    <b>else</b>
+                    {
+                        <a href="#f33c21f45836a181" class="k">this</a>.<a href="#203d329dacbfc463" class="i field">BottomLeft</a> = <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#46f7284be17eb5b2" class="i property">BottomLeft</a> + <span class="r73 r">bottom</span>;
+                        <a href="#f33c21f45836a181" class="k">this</a>.<a href="#3b9eb6869bdf50f0" class="i field">LeftBottom</a> = <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#46f7284be17eb5b2" class="i property">BottomLeft</a> + <span class="r70 r">left</span>;
+                    }
+                }
+                <b>else</b>
+                {
+                    <a href="#f33c21f45836a181" class="k">this</a>.<a href="#7a412b5cff2aa460" class="i field">LeftTop</a> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#e66bf1275e54a4bc" class="i method">Max</a>(0.0, <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#c4e4e61111f1305b" class="i property">TopLeft</a> - <span class="r70 r">left</span>);
+                    <a href="#f33c21f45836a181" class="k">this</a>.<a href="#da781f0c731c17c0" class="i field">TopLeft</a> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#e66bf1275e54a4bc" class="i method">Max</a>(0.0, <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#c4e4e61111f1305b" class="i property">TopLeft</a> - <span class="r71 r">top</span>);
+                    <a href="#f33c21f45836a181" class="k">this</a>.<a href="#4a7cd17e6f8374ab" class="i field">TopRight</a> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#e66bf1275e54a4bc" class="i method">Max</a>(0.0, <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#2a1089951304727b" class="i property">TopRight</a> - <span class="r71 r">top</span>);
+                    <a href="#f33c21f45836a181" class="k">this</a>.<a href="#426bceba84eaf0d3" class="i field">RightTop</a> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#e66bf1275e54a4bc" class="i method">Max</a>(0.0, <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#2a1089951304727b" class="i property">TopRight</a> - <span class="r72 r">right</span>);
+                    <a href="#f33c21f45836a181" class="k">this</a>.<a href="#c449eb7ac45f2cbb" class="i field">RightBottom</a> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#e66bf1275e54a4bc" class="i method">Max</a>(0.0, <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#ea567a22f5bd35c2" class="i property">BottomRight</a> - <span class="r72 r">right</span>);
+                    <a href="#f33c21f45836a181" class="k">this</a>.<a href="#99d5cdd8226f6e88" class="i field">BottomRight</a> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#e66bf1275e54a4bc" class="i method">Max</a>(0.0, <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#ea567a22f5bd35c2" class="i property">BottomRight</a> - <span class="r73 r">bottom</span>);
+                    <a href="#f33c21f45836a181" class="k">this</a>.<a href="#203d329dacbfc463" class="i field">BottomLeft</a> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#e66bf1275e54a4bc" class="i method">Max</a>(0.0, <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#46f7284be17eb5b2" class="i property">BottomLeft</a> - <span class="r73 r">bottom</span>);
+                    <a href="#f33c21f45836a181" class="k">this</a>.<a href="#3b9eb6869bdf50f0" class="i field">LeftBottom</a> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#e66bf1275e54a4bc" class="i method">Max</a>(0.0, <span class="r66 r">corners</span>.<a href="@0@PresentationFramework/A.html#46f7284be17eb5b2" class="i property">BottomLeft</a> - <span class="r70 r">left</span>);
+                }
+            }
+
+            <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}</pre></td></tr></table></div></body></html>

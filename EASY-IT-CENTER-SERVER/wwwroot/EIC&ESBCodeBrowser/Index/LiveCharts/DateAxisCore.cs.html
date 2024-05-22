@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html><head><title>DateAxisCore.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(123);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts/DateAxisCore.cs" target="_top">DateAxisCore.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Core\Core.csproj</a> (LiveCharts)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Charts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Charts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Dtos</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Helpers</span>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="bb0ce7d4e37f419a" href="R/bb0ce7d4e37f419a.html" target="n" data-glyph="0,0" class="t t">DateAxisCore</a> : <a href="WindowAxisCore.cs.html#f97614c13ee23ff8" class="t t">WindowAxisCore</a>
+    {
+        <b>private</b> <a href="@1@System.Runtime/A.html#df6b1eba7461813b" class="t t">DateTime</a> <a id="50323e0d79cd13b4" href="R/50323e0d79cd13b4.html" target="n" data-glyph="46,1" class="i field">_initialDateTime</a> = <a href="@1@System.Runtime/A.html#df6b1eba7461813b" class="t t">DateTime</a>.<a href="@1@System.Runtime/A.html#e7670be8111807d6" class="i field">MinValue</a>;
+        <b>private</b> <a href="PeriodUnits.cs.html#3acbe3558d8680f9" class="t t">PeriodUnits</a> <a id="82f61ce5f8b9c658" href="R/82f61ce5f8b9c658.html" target="n" data-glyph="46,1" class="i field">_period</a> = <a href="PeriodUnits.cs.html#3acbe3558d8680f9" class="t t">PeriodUnits</a>.<a href="PeriodUnits.cs.html#0e403c786bc431fe" class="i field">Milliseconds</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Initializes a new instance of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#bb0ce7d4e37f419a" class="t t">DateAxisCore</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> class.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">view</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">The view.</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public</b> <a id="5c26423bc4445fcd" href="R/5c26423bc4445fcd.html" target="n" data-glyph="72,1" class="t constructor">DateAxisCore</a>(<a href="Definitions/Charts/IWindowAxisView.cs.html#1ad3f71155515a20" class="t t">IWindowAxisView</a> <span id="r0 rd" class="r0 r">view</span>) : <a href="WindowAxisCore.cs.html#356cef7896ce6b9e" class="k">base</a>(<span class="r0 r">view</span>)
+        {
+            <a href="AxisCore.cs.html#f8aa9568d681fca9" class="i property">CleanFactor</a> = 3;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span> <span class="c">/&gt;</span>
+        <b>public override</b> <a href="@1@System.Runtime/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<b>double</b>, <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="9d6058b060ff51b2" href="R/9d6058b060ff51b2.html" target="n" data-glyph="72,1" class="i method">GetFormatter</a>()
+        {
+            <b>return</b> <a href="#52ab799ec2282da4" class="i method">FormatLabel</a>;
+        }
+
+        <b>internal override</b> <a href="Dtos/CoreMargin.cs.html#d5baae022c21faf0" class="t t">CoreMargin</a> <a id="f0bfb4e89f55bbb3" href="R/f0bfb4e89f55bbb3.html" target="n" data-glyph="74,1" class="i method">PrepareChart</a>(<a href="AxisOrientation.cs.html#294f3d11a155a9e1" class="t t">AxisOrientation</a> <span id="r1 rd" class="r1 r">source</span>, <a href="Charts/ChartCore.cs.html#2c3f1a2f79f08d10" class="t t">ChartCore</a> <span id="r2 rd" class="r2 r">chart</span>)
+        {
+            <span class="c">// Get the current configued values from the view</span>
+            <a href="#50323e0d79cd13b4" class="i field">_initialDateTime</a> = ((<a href="Definitions/Charts/IDateAxisView.cs.html#2272578aae09f0dc" class="t t">IDateAxisView</a>) <a href="AxisCore.cs.html#46d6d919d1a17160" class="i property">View</a>).<a href="Definitions/Charts/IDateAxisView.cs.html#ab0a56b91106dd69" class="i property">InitialDateTime</a>;
+            <a href="#82f61ce5f8b9c658" class="i field">_period</a> = ((<a href="Definitions/Charts/IDateAxisView.cs.html#2272578aae09f0dc" class="t t">IDateAxisView</a>)<a href="AxisCore.cs.html#46d6d919d1a17160" class="i property">View</a>).<a href="Definitions/Charts/IDateAxisView.cs.html#89320c423883a643" class="i property">Period</a>;
+
+            <b>return</b> <a href="WindowAxisCore.cs.html#f97614c13ee23ff8" class="k">base</a>.<a href="WindowAxisCore.cs.html#111fcee17b1d433d" class="i method">PrepareChart</a>(<span class="r1 r">source</span>, <span class="r2 r">chart</span>);
+        }
+
+        <b>private string</b> <a id="52ab799ec2282da4" href="R/52ab799ec2282da4.html" target="n" data-glyph="76,1" class="i method">FormatLabel</a>(<b>double</b> <span id="r3 rd" class="r3 r">x</span>)
+        {
+            <span class="c">// For the points, we use the actual value based upon the period</span>
+            <a href="@1@System.Runtime/A.html#df6b1eba7461813b" class="k">var</a> <span id="r4 rd" class="r4 r">dateTime</span> = <a href="#cf2ee394120d51b1" class="i method">GetdateTime</a>(<span class="r3 r">x</span>);
+
+            <b>switch</b> (((<a href="Definitions/Charts/IDateAxisView.cs.html#2272578aae09f0dc" class="t t">IDateAxisView</a>)<a href="AxisCore.cs.html#46d6d919d1a17160" class="i property">View</a>).<a href="Definitions/Charts/IDateAxisView.cs.html#89320c423883a643" class="i property">Period</a>)
+            {
+                <b>case</b> <a href="PeriodUnits.cs.html#3acbe3558d8680f9" class="t t">PeriodUnits</a>.<a href="PeriodUnits.cs.html#dc807fac146f24a4" class="i field">Seconds</a>:
+                    <b>return</b> <span class="r4 r">dateTime</span>.<a href="@1@System.Runtime/A.html#5088b43558351160" class="i method">ToString</a>(<span class="s">&quot;G&quot;</span>);
+
+                <b>case</b> <a href="PeriodUnits.cs.html#3acbe3558d8680f9" class="t t">PeriodUnits</a>.<a href="PeriodUnits.cs.html#6205072775982c7e" class="i field">Minutes</a>:
+                    <b>return</b> <span class="r4 r">dateTime</span>.<a href="@1@System.Runtime/A.html#5088b43558351160" class="i method">ToString</a>(<span class="s">&quot;g&quot;</span>);
+
+                <b>case</b> <a href="PeriodUnits.cs.html#3acbe3558d8680f9" class="t t">PeriodUnits</a>.<a href="PeriodUnits.cs.html#af3734f2c236994f" class="i field">Hours</a>:
+                    <b>return</b> <span class="r4 r">dateTime</span>.<a href="@1@System.Runtime/A.html#5088b43558351160" class="i method">ToString</a>(<span class="s">&quot;g&quot;</span>);
+
+                <b>case</b> <a href="PeriodUnits.cs.html#3acbe3558d8680f9" class="t t">PeriodUnits</a>.<a href="PeriodUnits.cs.html#b15fcec5c3807a14" class="i field">Days</a>:
+                    <b>return</b> <span class="r4 r">dateTime</span>.<a href="@1@System.Runtime/A.html#5088b43558351160" class="i method">ToString</a>(<span class="s">&quot;d&quot;</span>);
+
+                <b>case</b> <a href="PeriodUnits.cs.html#3acbe3558d8680f9" class="t t">PeriodUnits</a>.<a href="PeriodUnits.cs.html#0e403c786bc431fe" class="i field">Milliseconds</a>:
+                    <b>return</b> <span class="r4 r">dateTime</span>.<a href="@1@System.Runtime/A.html#5088b43558351160" class="i method">ToString</a>(<span class="s">&quot;G&quot;</span>) + <span class="r4 r">dateTime</span>.<a href="@1@System.Runtime/A.html#5088b43558351160" class="i method">ToString</a>(<span class="s">&quot;.fff&quot;</span>);
+
+                <b>default</b>:
+                    <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#337b690f0704f510" class="t constructor">ArgumentOutOfRangeException</a>();
+            }
+        }
+
+        <b>internal</b> <a href="@1@System.Runtime/A.html#df6b1eba7461813b" class="t t">DateTime</a> <a id="cf2ee394120d51b1" href="R/cf2ee394120d51b1.html" target="n" data-glyph="74,1" class="i method">GetdateTime</a>(<b>double</b> <span id="r5 rd" class="r5 r">x</span>)
+        {
+            <span class="c">// All our X values are based upon this starting point (configured by the user)</span>
+            <span class="c">// Using this starting point, we can calculate the DateTime represented by this X value           </span>
+            
+            <span class="c">// We use the series period (configured by the user) to determine which period unit to use to increase the reference date.</span>
+            <a href="@1@System.Runtime/A.html#df6b1eba7461813b" class="t t">DateTime</a> <span id="r6 rd" class="r6 r">dateTime</span>;
+
+            <b>switch</b> (<a href="#82f61ce5f8b9c658" class="i field">_period</a>)
+            {
+                <b>case</b> <a href="PeriodUnits.cs.html#3acbe3558d8680f9" class="t t">PeriodUnits</a>.<a href="PeriodUnits.cs.html#0e403c786bc431fe" class="i field">Milliseconds</a>:
+                    <span class="r6 r">dateTime</span> = <a href="#50323e0d79cd13b4" class="i field">_initialDateTime</a>.<a href="@1@System.Runtime/A.html#6ab0bc8b0fc7eb33" class="i method">AddMilliseconds</a>(<span class="t t">Math</span>.<span class="i method">Floor</span>(<span class="r5 r">x</span>));
+                    <b>break</b>;
+                <b>case</b> <a href="PeriodUnits.cs.html#3acbe3558d8680f9" class="t t">PeriodUnits</a>.<a href="PeriodUnits.cs.html#dc807fac146f24a4" class="i field">Seconds</a>:
+                    <span class="r6 r">dateTime</span> = <a href="#50323e0d79cd13b4" class="i field">_initialDateTime</a>.<a href="@1@System.Runtime/A.html#4a8bd6c0b5c72d81" class="i method">AddSeconds</a>(<span class="t t">Math</span>.<span class="i method">Floor</span>(<span class="r5 r">x</span>));
+                    <b>break</b>;
+                <b>case</b> <a href="PeriodUnits.cs.html#3acbe3558d8680f9" class="t t">PeriodUnits</a>.<a href="PeriodUnits.cs.html#6205072775982c7e" class="i field">Minutes</a>:
+                    <span class="r6 r">dateTime</span> = <a href="#50323e0d79cd13b4" class="i field">_initialDateTime</a>.<a href="@1@System.Runtime/A.html#569965820bb5ae3d" class="i method">AddMinutes</a>(<span class="t t">Math</span>.<span class="i method">Floor</span>(<span class="r5 r">x</span>));
+                    <b>break</b>;
+                <b>case</b> <a href="PeriodUnits.cs.html#3acbe3558d8680f9" class="t t">PeriodUnits</a>.<a href="PeriodUnits.cs.html#af3734f2c236994f" class="i field">Hours</a>:
+                    <span class="r6 r">dateTime</span> = <a href="#50323e0d79cd13b4" class="i field">_initialDateTime</a>.<a href="@1@System.Runtime/A.html#1673702782a58887" class="i method">AddHours</a>(<span class="t t">Math</span>.<span class="i method">Floor</span>(<span class="r5 r">x</span>));
+                    <b>break</b>;
+                <b>case</b> <a href="PeriodUnits.cs.html#3acbe3558d8680f9" class="t t">PeriodUnits</a>.<a href="PeriodUnits.cs.html#b15fcec5c3807a14" class="i field">Days</a>:
+                    <span class="r6 r">dateTime</span> = <a href="#50323e0d79cd13b4" class="i field">_initialDateTime</a>.<a href="@1@System.Runtime/A.html#f5cb6edd98581ca2" class="i method">AddDays</a>(<span class="t t">Math</span>.<span class="i method">Floor</span>(<span class="r5 r">x</span>));
+                    <b>break</b>;
+
+                <b>default</b>:
+                    <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#71d200dcf0047f8b" class="t constructor">ArgumentException</a>();
+            }
+
+            <b>return</b> <span class="r6 r">dateTime</span>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html><head><title>ViewModel.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(55);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#Wpf/CartesianChart/SectionsMouseMove/ViewModel.cs" target="_top">CartesianChart\SectionsMouseMove\ViewModel.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#Wpf" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Examples\Wpf\Wpf.csproj</a> (Wpf)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+
+<b>namespace</b> <span class="i n">Wpf</span>.<span class="i n">CartesianChart</span>.<span class="i n">SectionsMouseMove</span>
+{
+    <b>public class</b> <a id="7d51922d3d6c742c" href="../../R/7d51922d3d6c742c.html" target="n" data-glyph="0,0" class="t t">ViewModel</a> : <a href="@0@System/A.html#fd4b42d7e29d53e5" class="t t">INotifyPropertyChanged</a>
+    {
+        <b>private double</b> <a id="1b40c30f7e45e27b" href="../../R/1b40c30f7e45e27b.html" target="n" data-glyph="46,1" class="i field">_xPointer</a>;
+        <b>private double</b> <a id="e654b2b03548784f" href="../../R/e654b2b03548784f.html" target="n" data-glyph="46,1" class="i field">_yPointer</a>;
+
+        <b>public</b> <a id="be896171535b437d" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">ViewModel</a>()
+        {
+            <span class="c">//lets initialize in an invisible location</span>
+            <a href="#286c0cefa05b15b4" class="i property">XPointer</a> = -5;
+            <a href="#4f41d08018732655" class="i property">YPointer</a> = -5;
+
+            <span class="c">//the formatter or labels property is shared </span>
+            <a href="#d84d6f4e33bc5319" class="i property">Formatter</a> = <span id="r0 rd" class="r0 r">x</span> =&gt; <span class="r0 r">x</span>.<a href="@0@mscorlib/A.html#0e003048b54ae390" class="i method">ToString</a>(<span class="s">&quot;N2&quot;</span>);
+        }
+
+        <b>public double</b> <a id="286c0cefa05b15b4" href="../../R/286c0cefa05b15b4.html" target="n" data-glyph="102,1" class="i property">XPointer</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#1b40c30f7e45e27b" class="i field">_xPointer</a>; }
+            <b>set</b>
+            {
+                <a href="#1b40c30f7e45e27b" class="i field">_xPointer</a> = <b>value</b>;
+                <a href="#c3a206422d46e310" class="i method">OnPropertyChanged</a>(<span class="s">&quot;XPointer&quot;</span>);
+            }
+        }
+
+        <b>public double</b> <a id="4f41d08018732655" href="../../R/4f41d08018732655.html" target="n" data-glyph="102,1" class="i property">YPointer</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#e654b2b03548784f" class="i field">_yPointer</a>; }
+            <b>set</b>
+            {
+                <a href="#e654b2b03548784f" class="i field">_yPointer</a> = <b>value</b>;
+                <a href="#c3a206422d46e310" class="i method">OnPropertyChanged</a>(<span class="s">&quot;YPointer&quot;</span>);
+            }
+        }
+
+        <b>public</b> <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<b>double</b>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt; <a id="d84d6f4e33bc5319" href="../../R/d84d6f4e33bc5319.html" target="n" data-glyph="102,1" class="i property">Formatter</a> { <b>get</b>; <b>set</b>; }
+
+        <span class="k preprocess">#</span><span class="k preprocess">region</span> INotifyPropertyChanged implementation
+
+        <b>public event</b> <a href="@0@System/A.html#670754815f6804ff" class="t t">PropertyChangedEventHandler</a> <a id="c9f4917436135fe9" href="../../R/c9f4917436135fe9.html" target="n" data-glyph="30,1" class="i">PropertyChanged</a>;
+
+        <b>protected virtual void</b> <a id="c3a206422d46e310" href="../../R/c3a206422d46e310.html" target="n" data-glyph="75,1" class="i method">OnPropertyChanged</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r1 rd" class="r1 r">propertyName</span>)
+        {
+            <b>if</b> (<a href="#c9f4917436135fe9" class="i">PropertyChanged</a> != <b>null</b>) <a href="#c9f4917436135fe9" class="i">PropertyChanged</a>.<a href="@0@System/A.html#c66222f7abfe2e28" class="i method">Invoke</a>(<a href="#7d51922d3d6c742c" class="k">this</a>, <b>new</b> <a href="@0@System/A.html#76958b0a96ed2a2e" class="t constructor">PropertyChangedEventArgs</a>(<span class="r1 r">propertyName</span>));
+        }
+
+        <span class="k preprocess">#</span><span class="k preprocess">endregion</span>
+    }
+}
+</pre></td></tr></table></div></body></html>

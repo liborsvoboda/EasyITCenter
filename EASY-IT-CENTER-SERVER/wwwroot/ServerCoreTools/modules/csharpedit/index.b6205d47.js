@@ -31783,24 +31783,22 @@ function $3ccb937df588619c$export$2e2bcd8739ae039(container, options) {
 const $79fb2cae732db7bd$var$getCode = (language, mode)=>{
     if (mode === "script") return "var messages = Context.Messages;";
     else if (language == "C#") return `using System;
+using EasyData;
+using EasyITCenter;
+using EasyITCenter.Services;
+using EasyITCenter.MessageModuleClasses;
 
-        class C {
-            const int C2 = 5;
-            string f;
-            string P { get; set; }
-            event EventHandler e;
-            event EventHandler E { add {} remove {} }
+namespace EasyITCenter{
 
-            C() {
-            }
+static class ExtendedTemplateClassList {
+    public static string test { get; set; }
+}
 
-            void M(int p) {
-                var l = p;
-            }
-        }
-
-        class G<T> {
-        }`.replace(/(\r\n|\r|\n)/g, "\r\n") // Parcel changes newlines to LF
+void Main(object v DbSetExtensions) {
+        
+    
+}
+`.replace(/(\r\n|\r|\n)/g, "\r\n") // Parcel changes newlines to LF
     .replace(/^        /gm, "");
     else if (language === "F#") return "[<EntryPoint>]\r\nlet main argv = \r\n    0";
     else if (language === "IL") return ".class private auto ansi '<Module>'\r\n{\r\n}";

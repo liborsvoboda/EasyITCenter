@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<html><head><title>MetroDialogSettings.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(168);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/Dialogs/MetroDialogSettings.cs" target="_top">Controls\Dialogs\MetroDialogSettings.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>.<span class="i n">Dialogs</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> A class that represents the settings used by Metro Dialogs.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="28729669bd8ecc77" href="../../R/28729669bd8ecc77.html" target="n" data-glyph="0,0" class="t t">MetroDialogSettings</a>
+    {
+        <b>private const string</b> <a id="9c6a1ce6aaa16100" href="../../R/9c6a1ce6aaa16100.html" target="n" data-glyph="10,1" class="i field">DefaultAffirmativeButtonText</a> = <span class="s">&quot;OK&quot;</span>;
+        <b>private const string</b> <a id="63fd0da11f17e325" href="../../R/63fd0da11f17e325.html" target="n" data-glyph="10,1" class="i field">DefaultNegativeButtonText</a> = <span class="s">&quot;Cancel&quot;</span>;
+
+        <b>public</b> <a id="2553e0aff2ee74ad" href="../../R/2553e0aff2ee74ad.html" target="n" data-glyph="72,1" class="t constructor">MetroDialogSettings</a>()
+        {
+        }
+
+        <b>public</b> <a id="1a83ce740f2e1c71" href="../../R/1a83ce740f2e1c71.html" target="n" data-glyph="72,1" class="t constructor">MetroDialogSettings</a>(<a href="#28729669bd8ecc77" class="t t">MetroDialogSettings</a>? <span id="r0 rd" class="r0 r">source</span>)
+            : <a href="#2553e0aff2ee74ad" class="k">this</a>()
+        {
+            <b>if</b> (<span class="r0 r">source</span> <b>is null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#2624f3cd3670184c" class="i property">OwnerCanCloseWithDialog</a> = <span class="r0 r">source</span>.<a href="#2624f3cd3670184c" class="i property">OwnerCanCloseWithDialog</a>;
+
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#b4939d811931c91e" class="i property">AffirmativeButtonText</a> = <span class="r0 r">source</span>.<a href="#b4939d811931c91e" class="i property">AffirmativeButtonText</a>;
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#fd38781fbc020095" class="i property">NegativeButtonText</a> = <span class="r0 r">source</span>.<a href="#fd38781fbc020095" class="i property">NegativeButtonText</a>;
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#d5e612a0061a0a3e" class="i property">DefaultText</a> = <span class="r0 r">source</span>.<a href="#d5e612a0061a0a3e" class="i property">DefaultText</a>;
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#2c6d3deee7c1c2b4" class="i property">FirstAuxiliaryButtonText</a> = <span class="r0 r">source</span>.<a href="#2c6d3deee7c1c2b4" class="i property">FirstAuxiliaryButtonText</a>;
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#4c4005bf8a82dfe8" class="i property">SecondAuxiliaryButtonText</a> = <span class="r0 r">source</span>.<a href="#4c4005bf8a82dfe8" class="i property">SecondAuxiliaryButtonText</a>;
+
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#15ae1ebd13e1e8c4" class="i property">ColorScheme</a> = <span class="r0 r">source</span>.<a href="#15ae1ebd13e1e8c4" class="i property">ColorScheme</a>;
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#2b4cdc6e051f4ec4" class="i property">CustomResourceDictionary</a> = <span class="r0 r">source</span>.<a href="#2b4cdc6e051f4ec4" class="i property">CustomResourceDictionary</a>;
+
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#44c796260114c1e2" class="i property">AnimateShow</a> = <span class="r0 r">source</span>.<a href="#44c796260114c1e2" class="i property">AnimateShow</a>;
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#764b1358a446c40e" class="i property">AnimateHide</a> = <span class="r0 r">source</span>.<a href="#764b1358a446c40e" class="i property">AnimateHide</a>;
+
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#01b519f67e6070ac" class="i property">MaximumBodyHeight</a> = <span class="r0 r">source</span>.<a href="#01b519f67e6070ac" class="i property">MaximumBodyHeight</a>;
+
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#c8c1fdb4aa4ac82b" class="i property">DefaultButtonFocus</a> = <span class="r0 r">source</span>.<a href="#c8c1fdb4aa4ac82b" class="i property">DefaultButtonFocus</a>;
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#dc088b316c8947bc" class="i property">CancellationToken</a> = <span class="r0 r">source</span>.<a href="#dc088b316c8947bc" class="i property">CancellationToken</a>;
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#3f164a34cfacf505" class="i property">DialogTitleFontSize</a> = <span class="r0 r">source</span>.<a href="#3f164a34cfacf505" class="i property">DialogTitleFontSize</a>;
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#79e3128e51724a11" class="i property">DialogMessageFontSize</a> = <span class="r0 r">source</span>.<a href="#79e3128e51724a11" class="i property">DialogMessageFontSize</a>;
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#dc3e2dd2a27c4cad" class="i property">DialogButtonFontSize</a> = <span class="r0 r">source</span>.<a href="#dc3e2dd2a27c4cad" class="i property">DialogButtonFontSize</a>;
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#c1bdf457f6d2e0c1" class="i property">DialogResultOnCancel</a> = <span class="r0 r">source</span>.<a href="#c1bdf457f6d2e0c1" class="i property">DialogResultOnCancel</a>;
+
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#dc27ee6e58cdec9e" class="i property">Icon</a> = <span class="r0 r">source</span>.<a href="#dc27ee6e58cdec9e" class="i property">Icon</a>;
+            <a href="#28729669bd8ecc77" class="k">this</a>.<a href="#16e735b8eea48e19" class="i property">IconTemplate</a> = <span class="r0 r">source</span>.<a href="#16e735b8eea48e19" class="i property">IconTemplate</a>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the owner of the dialog can be closed.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="2624f3cd3670184c" href="../../R/2624f3cd3670184c.html" target="n" data-glyph="102,1" class="i property">OwnerCanCloseWithDialog</a> { <b>get</b>; <b>set</b>; }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the text used for the Affirmative button. For example: &quot;OK&quot; or &quot;Yes&quot;.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="b4939d811931c91e" href="../../R/b4939d811931c91e.html" target="n" data-glyph="102,1" class="i property">AffirmativeButtonText</a> { <b>get</b>; <b>set</b>; } = <a href="#9c6a1ce6aaa16100" class="i field">DefaultAffirmativeButtonText</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Enable or disable dialog hiding animation</span>
+        <span class="c">///</span><span class="c"> &quot;True&quot; - play hiding animation.</span>
+        <span class="c">///</span><span class="c"> &quot;False&quot; - skip hiding animation.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="764b1358a446c40e" href="../../R/764b1358a446c40e.html" target="n" data-glyph="102,1" class="i property">AnimateHide</a> { <b>get</b>; <b>set</b>; } = <b>true</b>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Enable or disable dialog showing animation.</span>
+        <span class="c">///</span><span class="c"> &quot;True&quot; - play showing animation.</span>
+        <span class="c">///</span><span class="c"> &quot;False&quot; - skip showing animation.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="44c796260114c1e2" href="../../R/44c796260114c1e2.html" target="n" data-glyph="102,1" class="i property">AnimateShow</a> { <b>get</b>; <b>set</b>; } = <b>true</b>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a token to cancel the dialog.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#36b17ded8b1a228c" class="t t">CancellationToken</a> <a id="dc088b316c8947bc" href="../../R/dc088b316c8947bc.html" target="n" data-glyph="102,1" class="i property">CancellationToken</a> { <b>get</b>; <b>set</b>; } = <a href="@0@mscorlib/A.html#36b17ded8b1a228c" class="t t">CancellationToken</a>.<a href="@0@mscorlib/A.html#ec32c41597007382" class="i property">None</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the metro dialog should use the default black/white appearance (theme) or try to use the current accent.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="MetroDialogColorScheme.cs.html#313c2674079046cd" class="t t">MetroDialogColorScheme</a> <a id="15ae1ebd13e1e8c4" href="../../R/15ae1ebd13e1e8c4.html" target="n" data-glyph="102,1" class="i property">ColorScheme</a> { <b>get</b>; <b>set</b>; } = <a href="MetroDialogColorScheme.cs.html#313c2674079046cd" class="t t">MetroDialogColorScheme</a>.<a href="MetroDialogColorScheme.cs.html#e8b4adc318f35d13" class="i field">Theme</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a custom resource dictionary which can contains custom styles, brushes or something else.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#08d992ee7e0a1516" class="t t">ResourceDictionary</a>? <a id="2b4cdc6e051f4ec4" href="../../R/2b4cdc6e051f4ec4.html" target="n" data-glyph="102,1" class="i property">CustomResourceDictionary</a> { <b>get</b>; <b>set</b>; }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets which button should be focused by default</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a> <a id="c8c1fdb4aa4ac82b" href="../../R/c8c1fdb4aa4ac82b.html" target="n" data-glyph="102,1" class="i property">DefaultButtonFocus</a> { <b>get</b>; <b>set</b>; } = <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="MessageDialogResult.cs.html#667b1f7550ad1bd5" class="i field">Negative</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the default text for </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="InputDialog.cs.html#56efd989e280c631" class="t t">InputDialog</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="d5e612a0061a0a3e" href="../../R/d5e612a0061a0a3e.html" target="n" data-glyph="102,1" class="i property">DefaultText</a> { <b>get</b>; <b>set</b>; } = <span class="s">&quot;&quot;</span>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the size of the dialog message font.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The size of the dialog message font.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="79e3128e51724a11" href="../../R/79e3128e51724a11.html" target="n" data-glyph="102,1" class="i property">DialogMessageFontSize</a> { <b>get</b>; <b>set</b>; } = <b>double</b>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the size of the dialog button font.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The size of the dialog button font.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="dc3e2dd2a27c4cad" href="../../R/dc3e2dd2a27c4cad.html" target="n" data-glyph="102,1" class="i property">DialogButtonFontSize</a> { <b>get</b>; <b>set</b>; } = <b>double</b>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the message dialog result when the user cancelled the dialog with &#39;ESC&#39; key</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> If the value is </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">langword</span><span class="c">=</span><span class="c">&quot;</span><span class="c">null</span><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> the default behavior is determined by the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="MessageDialogStyle.cs.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>public</b> <a href="MessageDialogResult.cs.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>? <a id="c1bdf457f6d2e0c1" href="../../R/c1bdf457f6d2e0c1.html" target="n" data-glyph="102,1" class="i property">DialogResultOnCancel</a> { <b>get</b>; <b>set</b>; } = <b>null</b>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the size of the dialog title font.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">value</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> The size of the dialog title font.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">value</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="3f164a34cfacf505" href="../../R/3f164a34cfacf505.html" target="n" data-glyph="102,1" class="i property">DialogTitleFontSize</a> { <b>get</b>; <b>set</b>; } = <b>double</b>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the text used for the first auxiliary button.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b>? <a id="2c6d3deee7c1c2b4" href="../../R/2c6d3deee7c1c2b4.html" target="n" data-glyph="102,1" class="i property">FirstAuxiliaryButtonText</a> { <b>get</b>; <b>set</b>; }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the maximum height. (Default is unlimited height, </span><span class="c">&lt;</span><span class="c">a</span> <span class="c">href</span><span class="c">=</span><span class="c">&quot;</span><span class="c">http://msdn.microsoft.com/de-de/library/system.double.nan</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">Double.NaN</span><span class="c">&lt;/</span><span class="c">a</span><span class="c">&gt;</span><span class="c">)</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="01b519f67e6070ac" href="../../R/01b519f67e6070ac.html" target="n" data-glyph="102,1" class="i property">MaximumBodyHeight</a> { <b>get</b>; <b>set</b>; } = <b>double</b>.<a href="@0@mscorlib/A.html#dcd7a869fad1e6bb" class="i field">NaN</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the text used for the Negative button. For example: &quot;Cancel&quot; or &quot;No&quot;.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b> <a id="fd38781fbc020095" href="../../R/fd38781fbc020095.html" target="n" data-glyph="102,1" class="i property">NegativeButtonText</a> { <b>get</b>; <b>set</b>; } = <a href="#63fd0da11f17e325" class="i field">DefaultNegativeButtonText</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the text used for the second auxiliary button.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b>? <a id="4c4005bf8a82dfe8" href="../../R/4c4005bf8a82dfe8.html" target="n" data-glyph="102,1" class="i property">SecondAuxiliaryButtonText</a> { <b>get</b>; <b>set</b>; }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the content used for the Icon ContentPresenter.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b>? <a id="dc27ee6e58cdec9e" href="../../R/dc27ee6e58cdec9e.html" target="n" data-glyph="102,1" class="i property">Icon</a> { <b>get</b>; <b>set</b>; }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the DataTemplate used for the Icon ContentPresenter.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>? <a id="16e735b8eea48e19" href="../../R/16e735b8eea48e19.html" target="n" data-glyph="102,1" class="i property">IconTemplate</a> { <b>get</b>; <b>set</b>; }
+    }
+}</pre></td></tr></table></div></body></html>

@@ -1,0 +1,515 @@
+﻿<!DOCTYPE html>
+<html><head><title>RgbImage.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(506);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.ImageEffectLibrary/RgbImage.cs" target="_top">RgbImage.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.ImageEffectLibrary" target="_top">..\..\..\EASY-TOOLS\EASYTools.ImageEffectLibrary\EASYTools.ImageEffectLibrary.csproj</a> (EASYTools.ImageEffectLibrary)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">ImageEffectLibrary</span>
+{
+    <b>public class</b> <a id="2f253f640af01fc1" href="R/2f253f640af01fc1.html" target="n" data-glyph="0,0" class="t t">RgbImage</a> : <a href="Image.cs.html#ae7b6f60d70a2351" class="t t">Image</a>&lt;<a href="Pixels.cs.html#3b9b2a93c350d275" class="t t">RgbPixel</a>?&gt;, <a href="Image.cs.html#b42336e7ea1e790b" class="t t">ITransformableImage</a>, <a href="Image.cs.html#eac4ea18336e3a94" class="t t">IBitmapSource</a>, <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a>
+    {
+        <b>public</b> <a id="d251975d196396ec" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">RgbImage</a>(<a href="Pixels.cs.html#3b9b2a93c350d275" class="t t">RgbPixel</a>?[,] <span id="r0 rd" class="r0 r">pixels</span>) : <a href="Image.cs.html#31a77774dc323871" class="k">base</a>(<span class="r0 r">pixels</span>)
+        {
+        }
+ 
+        <b>public</b> <a id="6831ce3880ee1090" href="R/6831ce3880ee1090.html" target="n" data-glyph="72,1" class="t constructor">RgbImage</a>(<b>int</b> <span id="r1 rd" class="r1 r">pixelWidth</span>, <b>int</b> <span id="r2 rd" class="r2 r">pixelHeight</span>) : <a href="Image.cs.html#6f7b6d48e70d4091" class="k">base</a>(<span class="r1 r">pixelWidth</span>, <span class="r2 r">pixelHeight</span>)
+        {
+        }
+ 
+        <b>public</b> <a id="ced69117e0c54295" href="R/ced69117e0c54295.html" target="n" data-glyph="72,1" class="t constructor">RgbImage</a>(<b>byte</b>[] <span id="r3 rd" class="r3 r">bgraPixels</span>, <b>int</b> <span id="r4 rd" class="r4 r">pixelWidth</span>, <b>int</b> <span id="r5 rd" class="r5 r">pixelHeight</span>) : <a href="Image.cs.html#6f7b6d48e70d4091" class="k">base</a>(<span class="r4 r">pixelWidth</span>, <span class="r5 r">pixelHeight</span>)
+        {
+            <b>for</b> (<b>int</b> <span id="r6 rd" class="r6 r">x</span> = 0; <span class="r6 r">x</span> &lt; <span class="r4 r">pixelWidth</span>; <span class="r6 r">x</span>++)
+            {
+                <b>for</b> (<b>int</b> <span id="r7 rd" class="r7 r">y</span> = 0; <span class="r7 r">y</span> &lt; <span class="r5 r">pixelHeight</span>; <span class="r7 r">y</span>++)
+                {
+                    <b>int</b> <span id="r8 rd" class="r8 r">offset</span> = <span class="r7 r">y</span> * <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> * 4 + <span class="r6 r">x</span> * 4;
+ 
+                    <span class="c">// offset + 0: B</span>
+                    <span class="c">// offset + 1: G</span>
+                    <span class="c">// offset + 2: R</span>
+                    <span class="c">// offset + 3: A</span>
+                    <a href="Image.cs.html#5651742cc0b908e4" class="i property">Pixels</a>[<span class="r6 r">x</span>, <span class="r7 r">y</span>] = <b>new</b> <a href="Pixels.cs.html#25df8e276ae33f67" class="t constructor">RgbPixel</a>(<span class="r3 r">bgraPixels</span>[<span class="r8 r">offset</span> + 2], <span class="r3 r">bgraPixels</span>[<span class="r8 r">offset</span> + 1], <span class="r3 r">bgraPixels</span>[<span class="r8 r">offset</span> + 0],
+                        <span class="r3 r">bgraPixels</span>[<span class="r8 r">offset</span> + 3]);
+                }
+            }
+        }
+ 
+        <b>private float</b> <a id="973de69ea4ae5b85" href="R/973de69ea4ae5b85.html" target="n" data-glyph="76,1" class="i method">GetMaxLuminance</a>()
+        {
+            <b>float</b> <span id="r9 rd" class="r9 r">max</span> = 0;
+            <b>foreach</b> (<a href="@0@mscorlib/A.html#ffebe438fd9cbf0e" class="k">var</a> <span id="r10 rd" class="r10 r">pixel</span> <b>in</b> <a href="#2f253f640af01fc1" class="k">this</a>)
+            {
+                <a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<span class="r10 r">pixel</span> != <b>null</b>, <b>nameof</b>(<span class="r10 r">pixel</span>) + <span class="s">&quot; != null&quot;</span>);
+                <b>float</b> <span id="r11 rd" class="r11 r">l</span> = <span class="r10 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#96b4daabc4e4091b" class="i method">ToHsl</a>().<a href="Pixels.cs.html#e3a2d6418e9c86d7" class="i property">L</a>;
+                <b>if</b> (<span class="r11 r">l</span> &gt; <span class="r9 r">max</span>) <span class="r9 r">max</span> = <span class="r11 r">l</span>;
+            }
+ 
+            <b>return</b> <span class="r9 r">max</span>;
+        }
+ 
+        <b>private float</b> <a id="59bcce5cab0e7505" href="R/59bcce5cab0e7505.html" target="n" data-glyph="76,1" class="i method">GetMinLuminance</a>()
+        {
+            <b>float</b> <span id="r12 rd" class="r12 r">min</span> = 1;
+            <b>foreach</b> (<a href="@0@mscorlib/A.html#ffebe438fd9cbf0e" class="k">var</a> <span id="r13 rd" class="r13 r">pixel</span> <b>in</b> <a href="#2f253f640af01fc1" class="k">this</a>)
+            {
+                <a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<span class="r13 r">pixel</span> != <b>null</b>, <b>nameof</b>(<span class="r13 r">pixel</span>) + <span class="s">&quot; != null&quot;</span>);
+                <b>float</b> <span id="r14 rd" class="r14 r">l</span> = <span class="r13 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#96b4daabc4e4091b" class="i method">ToHsl</a>().<a href="Pixels.cs.html#e3a2d6418e9c86d7" class="i property">L</a>;
+                <b>if</b> (<span class="r14 r">l</span> &lt; <span class="r12 r">min</span>) <span class="r12 r">min</span> = <span class="r14 r">l</span>;
+            }
+ 
+            <b>return</b> <span class="r12 r">min</span>;
+        }
+ 
+        <b>public void</b> <a id="db8ec6ea59e9e1f5" href="R/db8ec6ea59e9e1f5.html" target="n" data-glyph="72,1" class="i method">EnhanceVisibility</a>()
+        {
+            <b>double</b> <span id="r15 rd" class="r15 r">logMax</span> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#efb60ccdb679e617" class="i method">Log10</a>(<a href="#973de69ea4ae5b85" class="i method">GetMaxLuminance</a>() + 1);
+            <a href="Image.cs.html#2360fa3da3fd1e02" class="i method">Pipeline</a>((<span id="r16 rd" class="r16 r">pixel</span>) =&gt;
+            {
+                <a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<span class="r16 r">pixel</span> != <b>null</b>, <b>nameof</b>(<span class="r16 r">pixel</span>) + <span class="s">&quot; != null&quot;</span>);
+                <a href="Pixels.cs.html#e817a0bc15fc0d0f" class="k">var</a> <span id="r17 rd" class="r17 r">hsl</span> = <span class="r16 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#96b4daabc4e4091b" class="i method">ToHsl</a>();
+                <span class="r17 r">hsl</span>.<a href="Pixels.cs.html#e3a2d6418e9c86d7" class="i property">L</a> = <a href="@0@mscorlib/A.html#fc990bd1275d43d6" class="t t">Convert</a>.<a href="@0@mscorlib/A.html#6703790b38af05ce" class="i method">ToSingle</a>(<a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#efb60ccdb679e617" class="i method">Log10</a>(<span class="r17 r">hsl</span>.<a href="Pixels.cs.html#e3a2d6418e9c86d7" class="i property">L</a> + 1) / <span class="r15 r">logMax</span>);
+                <b>return</b> <span class="r17 r">hsl</span>.<a href="Pixels.cs.html#a9b0563c689b7321" class="i method">ToRgb</a>();
+            });
+        }
+ 
+        <b>public void</b> <a id="45dce8ae73cec9b6" href="R/45dce8ae73cec9b6.html" target="n" data-glyph="72,1" class="i method">LightnessLinearStretch</a>()
+        {
+            <b>float</b> <span id="r18 rd" class="r18 r">min</span> = <a href="#59bcce5cab0e7505" class="i method">GetMinLuminance</a>();
+            <b>float</b> <span id="r19 rd" class="r19 r">k</span> = <a href="#973de69ea4ae5b85" class="i method">GetMaxLuminance</a>() - <span class="r18 r">min</span>;
+            <a href="Image.cs.html#2360fa3da3fd1e02" class="i method">Pipeline</a>((<span id="r20 rd" class="r20 r">pixel</span>) =&gt;
+            {
+                <a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<span class="r20 r">pixel</span> != <b>null</b>, <b>nameof</b>(<span class="r20 r">pixel</span>) + <span class="s">&quot; != null&quot;</span>);
+                <a href="Pixels.cs.html#e817a0bc15fc0d0f" class="k">var</a> <span id="r21 rd" class="r21 r">hsl</span> = <span class="r20 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#96b4daabc4e4091b" class="i method">ToHsl</a>();
+                <span class="r21 r">hsl</span>.<a href="Pixels.cs.html#e3a2d6418e9c86d7" class="i property">L</a> = (<span class="r21 r">hsl</span>.<a href="Pixels.cs.html#e3a2d6418e9c86d7" class="i property">L</a> - <span class="r18 r">min</span>) / <span class="r19 r">k</span>;
+                <b>return</b> <span class="r21 r">hsl</span>.<a href="Pixels.cs.html#a9b0563c689b7321" class="i method">ToRgb</a>();
+            });
+        }
+ 
+        <b>private long</b>[] <a id="45e99b69eeb57204" href="R/45e99b69eeb57204.html" target="n" data-glyph="76,1" class="i method">GetHistogramOfSaturation</a>(<b>int</b> <span id="r22 rd" class="r22 r">levels</span>)
+        {
+            <b>var</b> <span id="r23 rd" class="r23 r">res</span> = <b>new</b> <b>long</b>[<span class="r22 r">levels</span>];
+            <b>foreach</b> (<a href="@0@mscorlib/A.html#ffebe438fd9cbf0e" class="k">var</a> <span id="r24 rd" class="r24 r">pixel</span> <b>in</b> <a href="#2f253f640af01fc1" class="k">this</a>)
+            {
+                <a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<span class="r24 r">pixel</span> != <b>null</b>, <b>nameof</b>(<span class="r24 r">pixel</span>) + <span class="s">&quot; != null&quot;</span>);
+                <b>int</b> <span id="r25 rd" class="r25 r">level</span> = (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r24 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#96b4daabc4e4091b" class="i method">ToHsl</a>().<a href="Pixels.cs.html#499d88bd7d098056" class="i property">S</a> * (<span class="r22 r">levels</span> - 1));
+                <span class="r23 r">res</span>[<span class="r25 r">level</span>]++;
+            }
+ 
+            <b>return</b> <span class="r23 r">res</span>;
+        }
+ 
+        <b>private long</b>[] <a id="e19b7e5f1ea88259" href="R/e19b7e5f1ea88259.html" target="n" data-glyph="76,1" class="i method">GetHistogramCdfOfSaturation</a>(<b>int</b> <span id="r26 rd" class="r26 r">levels</span>)
+        {
+            <b>var</b> <span id="r27 rd" class="r27 r">histogram</span> = <a href="#45e99b69eeb57204" class="i method">GetHistogramOfSaturation</a>(<span class="r26 r">levels</span>);
+            <b>var</b> <span id="r28 rd" class="r28 r">res</span> = <b>new</b> <b>long</b>[<span class="r26 r">levels</span>];
+            <b>long</b> <span id="r29 rd" class="r29 r">sum</span> = 0;
+            <b>for</b> (<b>int</b> <span id="r30 rd" class="r30 r">i</span> = 0; <span class="r30 r">i</span> &lt; <span class="r26 r">levels</span>; <span class="r30 r">i</span>++)
+            {
+                <span class="r28 r">res</span>[<span class="r30 r">i</span>] = <span class="r27 r">histogram</span>[<span class="r30 r">i</span>] + <span class="r29 r">sum</span>;
+                <span class="r29 r">sum</span> += <span class="r27 r">histogram</span>[<span class="r30 r">i</span>];
+            }
+ 
+            <b>return</b> <span class="r28 r">res</span>;
+        }
+ 
+        <b>public void</b> <a id="412c7a1fda410bd7" href="R/412c7a1fda410bd7.html" target="n" data-glyph="72,1" class="i method">SaturationHistogramEqualization</a>(<b>int</b> <span id="r31 rd" class="r31 r">levels</span>)
+        {
+            <b>var</b> <span id="r32 rd" class="r32 r">cdf</span> = <a href="#e19b7e5f1ea88259" class="i method">GetHistogramCdfOfSaturation</a>(<span class="r31 r">levels</span>);
+            <a href="@0@mscorlib/A.html#e566178cce890c36" class="k">var</a> <span id="r33 rd" class="r33 r">minCdf</span> = <span class="r32 r">cdf</span>.<a href="@0@System.Core/A.html#b14a5fd4649622df" class="i method">Min</a>();
+            <b>double</b> <span id="r34 rd" class="r34 r">denominator</span> = <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> * <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> - <span class="r33 r">minCdf</span>;
+            <a href="Image.cs.html#2360fa3da3fd1e02" class="i method">Pipeline</a>((<span id="r35 rd" class="r35 r">pixel</span>) =&gt;
+            {
+                <a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<span class="r35 r">pixel</span> != <b>null</b>, <b>nameof</b>(<span class="r35 r">pixel</span>) + <span class="s">&quot; != null&quot;</span>);
+                <a href="Pixels.cs.html#e817a0bc15fc0d0f" class="k">var</a> <span id="r36 rd" class="r36 r">hsl</span> = <span class="r35 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#96b4daabc4e4091b" class="i method">ToHsl</a>();
+                <b>int</b> <span id="r37 rd" class="r37 r">level</span> = (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r36 r">hsl</span>.<a href="Pixels.cs.html#499d88bd7d098056" class="i property">S</a> * (<span class="r31 r">levels</span> - 1));
+                <span class="r36 r">hsl</span>.<a href="Pixels.cs.html#499d88bd7d098056" class="i property">S</a> = <a href="@0@mscorlib/A.html#fc990bd1275d43d6" class="t t">Convert</a>.<a href="@0@mscorlib/A.html#6703790b38af05ce" class="i method">ToSingle</a>((<span class="r32 r">cdf</span>[<span class="r37 r">level</span>] - <span class="r33 r">minCdf</span>) / <span class="r34 r">denominator</span>);
+                <b>return</b> <span class="r36 r">hsl</span>.<a href="Pixels.cs.html#a9b0563c689b7321" class="i method">ToRgb</a>();
+            });
+        }
+ 
+        <b>private long</b>[] <a id="abf4099ed4d82c60" href="R/abf4099ed4d82c60.html" target="n" data-glyph="76,1" class="i method">GetHistogramOfLightness</a>(<b>int</b> <span id="r38 rd" class="r38 r">levels</span>)
+        {
+            <b>var</b> <span id="r39 rd" class="r39 r">res</span> = <b>new</b> <b>long</b>[<span class="r38 r">levels</span>];
+            <b>foreach</b> (<a href="@0@mscorlib/A.html#ffebe438fd9cbf0e" class="k">var</a> <span id="r40 rd" class="r40 r">pixel</span> <b>in</b> <a href="#2f253f640af01fc1" class="k">this</a>)
+            {
+                <a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<span class="r40 r">pixel</span> != <b>null</b>, <b>nameof</b>(<span class="r40 r">pixel</span>) + <span class="s">&quot; != null&quot;</span>);
+                <b>int</b> <span id="r41 rd" class="r41 r">level</span> = (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r40 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#96b4daabc4e4091b" class="i method">ToHsl</a>().<a href="Pixels.cs.html#e3a2d6418e9c86d7" class="i property">L</a> * (<span class="r38 r">levels</span> - 1));
+                <span class="r39 r">res</span>[<span class="r41 r">level</span>]++;
+            }
+ 
+            <b>return</b> <span class="r39 r">res</span>;
+        }
+ 
+        <b>private long</b>[] <a id="e660d548523b3058" href="R/e660d548523b3058.html" target="n" data-glyph="76,1" class="i method">GetHistogramCdfOfLightness</a>(<b>int</b> <span id="r42 rd" class="r42 r">levels</span>)
+        {
+            <b>var</b> <span id="r43 rd" class="r43 r">histogram</span> = <a href="#abf4099ed4d82c60" class="i method">GetHistogramOfLightness</a>(<span class="r42 r">levels</span>);
+            <b>var</b> <span id="r44 rd" class="r44 r">res</span> = <b>new</b> <b>long</b>[<span class="r42 r">levels</span>];
+            <b>long</b> <span id="r45 rd" class="r45 r">sum</span> = 0;
+            <b>for</b> (<b>int</b> <span id="r46 rd" class="r46 r">i</span> = 0; <span class="r46 r">i</span> &lt; <span class="r42 r">levels</span>; <span class="r46 r">i</span>++)
+            {
+                <span class="r44 r">res</span>[<span class="r46 r">i</span>] = <span class="r43 r">histogram</span>[<span class="r46 r">i</span>] + <span class="r45 r">sum</span>;
+                <span class="r45 r">sum</span> += <span class="r43 r">histogram</span>[<span class="r46 r">i</span>];
+            }
+ 
+            <b>return</b> <span class="r44 r">res</span>;
+        }
+ 
+        <b>public void</b> <a id="6ce2f3a6d1bfa21b" href="R/6ce2f3a6d1bfa21b.html" target="n" data-glyph="72,1" class="i method">LightnessHistogramEqualization</a>(<b>int</b> <span id="r47 rd" class="r47 r">levels</span>)
+        {
+            <b>var</b> <span id="r48 rd" class="r48 r">cdf</span> = <a href="#e660d548523b3058" class="i method">GetHistogramCdfOfLightness</a>(<span class="r47 r">levels</span>);
+            <a href="@0@mscorlib/A.html#e566178cce890c36" class="k">var</a> <span id="r49 rd" class="r49 r">minCdf</span> = <span class="r48 r">cdf</span>.<a href="@0@System.Core/A.html#b14a5fd4649622df" class="i method">Min</a>();
+            <b>double</b> <span id="r50 rd" class="r50 r">denominator</span> = <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> * <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> - <span class="r49 r">minCdf</span>;
+            <a href="Image.cs.html#2360fa3da3fd1e02" class="i method">Pipeline</a>((<span id="r51 rd" class="r51 r">pixel</span>) =&gt;
+            {
+                <a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<span class="r51 r">pixel</span> != <b>null</b>, <b>nameof</b>(<span class="r51 r">pixel</span>) + <span class="s">&quot; != null&quot;</span>);
+                <a href="Pixels.cs.html#e817a0bc15fc0d0f" class="k">var</a> <span id="r52 rd" class="r52 r">hsl</span> = <span class="r51 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#96b4daabc4e4091b" class="i method">ToHsl</a>();
+                <b>int</b> <span id="r53 rd" class="r53 r">level</span> = (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r52 r">hsl</span>.<a href="Pixels.cs.html#e3a2d6418e9c86d7" class="i property">L</a> * (<span class="r47 r">levels</span> - 1));
+                <span class="r52 r">hsl</span>.<a href="Pixels.cs.html#e3a2d6418e9c86d7" class="i property">L</a> = <a href="@0@mscorlib/A.html#fc990bd1275d43d6" class="t t">Convert</a>.<a href="@0@mscorlib/A.html#6703790b38af05ce" class="i method">ToSingle</a>((<span class="r48 r">cdf</span>[<span class="r53 r">level</span>] - <span class="r49 r">minCdf</span>) / <span class="r50 r">denominator</span>);
+                <b>return</b> <span class="r52 r">hsl</span>.<a href="Pixels.cs.html#a9b0563c689b7321" class="i method">ToRgb</a>();
+            });
+        }
+ 
+        <b>public</b> <a href="#2f253f640af01fc1" class="t t">RgbImage</a> <a id="b64f60e78fff7666" href="R/b64f60e78fff7666.html" target="n" data-glyph="72,1" class="i method">Transform</a>(<b>int</b> <span id="r54 rd" class="r54 r">newWidth</span>, <b>int</b> <span id="r55 rd" class="r55 r">newHeight</span>, <a href="Image.cs.html#f159d272c6de641f" class="t t">TransformDelegate</a> <span id="r56 rd" class="r56 r">transform</span>)
+        {
+            <a href="#2f253f640af01fc1" class="k">var</a> <span id="r57 rd" class="r57 r">res</span> = <b>new</b> <a href="#6831ce3880ee1090" class="t constructor">RgbImage</a>(<span class="r54 r">newWidth</span>, <span class="r55 r">newHeight</span>);
+            <b>for</b> (<b>int</b> <span id="r58 rd" class="r58 r">y</span> = 0; <span class="r58 r">y</span> &lt; <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>; <span class="r58 r">y</span>++)
+            {
+                <b>for</b> (<b>int</b> <span id="r59 rd" class="r59 r">x</span> = 0; <span class="r59 r">x</span> &lt; <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>; <span class="r59 r">x</span>++)
+                {
+                    <a href="Utils.cs.html#f3050fa26e1403a8" class="k">var</a> <span id="r60 rd" class="r60 r">newPos</span> = <span class="r56 r">transform</span>(<b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(<span class="r59 r">x</span>, <span class="r58 r">y</span>));
+                    <b>if</b> (<span class="r60 r">newPos</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a> &lt; 0 || <span class="r60 r">newPos</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a> &gt;= <span class="r54 r">newWidth</span>) <b>continue</b>;
+                    <b>if</b> (<span class="r60 r">newPos</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a> &lt; 0 || <span class="r60 r">newPos</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a> &gt;= <span class="r55 r">newHeight</span>) <b>continue</b>;
+                    <span class="r57 r">res</span><a href="Image.cs.html#49934ec4274bca7d">[</a><span class="r60 r">newPos</span>] = <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r59 r">x</span>, <span class="r58 r">y</span>];
+                }
+            }
+ 
+            <b>return</b> <span class="r57 r">res</span>;
+        }
+ 
+        <b>public</b> <a href="Image.cs.html#b42336e7ea1e790b" class="t t">ITransformableImage</a> <a id="c463c6deb1927b22" href="R/c463c6deb1927b22.html" target="n" data-glyph="72,1" class="i method">Translate</a>(<b>int</b> <span id="r61 rd" class="r61 r">dx</span>, <b>int</b> <span id="r62 rd" class="r62 r">dy</span>)
+        {
+            <b>return</b> <a href="#b64f60e78fff7666" class="i method">Transform</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> + <span class="r61 r">dx</span>, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> + <span class="r62 r">dy</span>, (<span id="r63 rd" class="r63 r">point</span>) =&gt; <span class="r63 r">point</span> + <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(<span class="r61 r">dx</span>, <span class="r62 r">dy</span>));
+        }
+ 
+        <b>public void</b> <a id="9cfeca3e430175c5" href="R/9cfeca3e430175c5.html" target="n" data-glyph="72,1" class="i method">MirrorHorizontally</a>()
+        {
+            <b>for</b> (<b>int</b> <span id="r64 rd" class="r64 r">x</span> = 0; <span class="r64 r">x</span> &lt; <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> / 2; <span class="r64 r">x</span>++)
+            {
+                <b>for</b> (<b>int</b> <span id="r65 rd" class="r65 r">y</span> = 0; <span class="r65 r">y</span> &lt; <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>; <span class="r65 r">y</span>++)
+                {
+                    <a href="@0@mscorlib/A.html#ffebe438fd9cbf0e" class="k">var</a> <span id="r66 rd" class="r66 r">temp</span> = <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r64 r">x</span>, <span class="r65 r">y</span>];
+                    <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r64 r">x</span>, <span class="r65 r">y</span>] = <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> - 1 - <span class="r64 r">x</span>, <span class="r65 r">y</span>];
+                    <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> - 1 - <span class="r64 r">x</span>, <span class="r65 r">y</span>] = <span class="r66 r">temp</span>;
+                }
+            }
+        }
+ 
+        <b>public void</b> <a id="d8bb19cbfe345a91" href="R/d8bb19cbfe345a91.html" target="n" data-glyph="72,1" class="i method">MirrorVertically</a>()
+        {
+            <b>for</b> (<b>int</b> <span id="r67 rd" class="r67 r">x</span> = 0; <span class="r67 r">x</span> &lt; <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>; <span class="r67 r">x</span>++)
+            {
+                <b>for</b> (<b>int</b> <span id="r68 rd" class="r68 r">y</span> = 0; <span class="r68 r">y</span> &lt; <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> / 2; <span class="r68 r">y</span>++)
+                {
+                    <a href="@0@mscorlib/A.html#ffebe438fd9cbf0e" class="k">var</a> <span id="r69 rd" class="r69 r">temp</span> = <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r67 r">x</span>, <span class="r68 r">y</span>];
+                    <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r67 r">x</span>, <span class="r68 r">y</span>] = <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r67 r">x</span>, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> - 1 - <span class="r68 r">y</span>];
+                    <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r67 r">x</span>, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> - 1 - <span class="r68 r">y</span>] = <span class="r69 r">temp</span>;
+                }
+            }
+        }
+ 
+        <b>public</b> <a href="Image.cs.html#b42336e7ea1e790b" class="t t">ITransformableImage</a> <a id="8100f2ec7ec70fff" href="R/8100f2ec7ec70fff.html" target="n" data-glyph="72,1" class="i method">RotateD</a>(<a href="Utils.cs.html#f3050fa26e1403a8" class="t t">Point</a> <span id="r70 rd" class="r70 r">origin</span>, <b>double</b> <span id="r71 rd" class="r71 r">angle</span>)
+        {
+            <b>var</b> <span id="r72 rd" class="r72 r">vertices</span> = <b>new</b> <a href="Utils.cs.html#f3050fa26e1403a8" class="t t">Point</a>[]
+            {
+                <a href="Utils.cs.html#f3050fa26e1403a8" class="t t">Point</a>.<a href="Utils.cs.html#f715cc1ee07fcf50" class="i property">Zeros</a>.<a href="Utils.cs.html#5810f75f4c19f277" class="i method">RotateD</a>(<span class="r70 r">origin</span>, <span class="r71 r">angle</span>),
+                <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> - 1, 0).<a href="Utils.cs.html#5810f75f4c19f277" class="i method">RotateD</a>(<span class="r70 r">origin</span>, <span class="r71 r">angle</span>),
+                <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> - 1, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> - 1).<a href="Utils.cs.html#5810f75f4c19f277" class="i method">RotateD</a>(<span class="r70 r">origin</span>, <span class="r71 r">angle</span>),
+                <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(0, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> - 1).<a href="Utils.cs.html#5810f75f4c19f277" class="i method">RotateD</a>(<span class="r70 r">origin</span>, <span class="r71 r">angle</span>)
+            };
+ 
+            <b>var</b> <span id="r73 rd" class="r73 r">xs</span> = <span class="r72 r">vertices</span>.<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>((<span id="r74 rd" class="r74 r">point</span>) =&gt; <span class="r74 r">point</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a>).<a href="@0@System.Core/A.html#783a052330e7d48d" class="i method">ToArray</a>();
+            <b>var</b> <span id="r75 rd" class="r75 r">ys</span> = <span class="r72 r">vertices</span>.<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>((<span id="r76 rd" class="r76 r">point</span>) =&gt; <span class="r76 r">point</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a>).<a href="@0@System.Core/A.html#783a052330e7d48d" class="i method">ToArray</a>();
+ 
+            <b>int</b> <span id="r77 rd" class="r77 r">left</span> = <span class="r73 r">xs</span>.<a href="@0@System.Core/A.html#cf911055616ac194" class="i method">Min</a>(), <span id="r78 rd" class="r78 r">right</span> = <span class="r73 r">xs</span>.<a href="@0@System.Core/A.html#6ca1a80e1f22e519" class="i method">Max</a>(), <span id="r79 rd" class="r79 r">top</span> = <span class="r75 r">ys</span>.<a href="@0@System.Core/A.html#cf911055616ac194" class="i method">Min</a>(), <span id="r80 rd" class="r80 r">bottom</span> = <span class="r75 r">ys</span>.<a href="@0@System.Core/A.html#6ca1a80e1f22e519" class="i method">Max</a>();
+ 
+            <a href="Utils.cs.html#f3050fa26e1403a8" class="k">var</a> <span id="r81 rd" class="r81 r">newOrigin</span> = <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(<span class="r77 r">left</span>, <span class="r79 r">top</span>);
+            <a href="#2f253f640af01fc1" class="k">var</a> <span id="r82 rd" class="r82 r">res</span> = <a href="#b64f60e78fff7666" class="i method">Transform</a>(
+                <span class="r78 r">right</span> - <span class="r77 r">left</span> + 1,
+                <span class="r80 r">bottom</span> - <span class="r79 r">top</span> + 1,
+                (<span id="r83 rd" class="r83 r">point</span>) =&gt; <span class="r83 r">point</span>.<a href="Utils.cs.html#5810f75f4c19f277" class="i method">RotateD</a>(<span class="r70 r">origin</span>, <span class="r71 r">angle</span>) - <span class="r81 r">newOrigin</span>
+            );
+ 
+            <b>for</b> (<b>int</b> <span id="r84 rd" class="r84 r">i</span> = 0; <span class="r84 r">i</span> &lt; <span class="r72 r">vertices</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>; <span class="r84 r">i</span>++) <span class="r72 r">vertices</span>[<span class="r84 r">i</span>] -= <span class="r81 r">newOrigin</span>;
+ 
+            <b>var</b> <span id="r85 rd" class="r85 r">borders</span> = <b>new</b> <a href="Utils.cs.html#05814ead58f0a8a3" class="t t">Line</a>[]
+            {
+                <b>new</b> <a href="Utils.cs.html#d9de9a29bc0a390b" class="t constructor">Line</a>(<span class="r72 r">vertices</span>[3], <span class="r72 r">vertices</span>[0]),
+                <b>new</b> <a href="Utils.cs.html#d9de9a29bc0a390b" class="t constructor">Line</a>(<span class="r72 r">vertices</span>[0], <span class="r72 r">vertices</span>[1]),
+                <b>new</b> <a href="Utils.cs.html#d9de9a29bc0a390b" class="t constructor">Line</a>(<span class="r72 r">vertices</span>[1], <span class="r72 r">vertices</span>[2]),
+                <b>new</b> <a href="Utils.cs.html#d9de9a29bc0a390b" class="t constructor">Line</a>(<span class="r72 r">vertices</span>[2], <span class="r72 r">vertices</span>[3])
+            };
+ 
+            <b>for</b> (<a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r86 rd" class="r86 r">y</span> = 0; <span class="r86 r">y</span> &lt; <span class="r82 r">res</span>.<a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>; <span class="r86 r">y</span>++)
+            {
+                <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="k">var</a> <span id="r87 rd" class="r87 r">inters</span> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<b>int</b>&gt;();
+                <b>foreach</b> (<a href="Utils.cs.html#05814ead58f0a8a3" class="k">var</a> <span id="r88 rd" class="r88 r">border</span> <b>in</b> <span class="r85 r">borders</span>)
+                {
+                    <a href="@0@mscorlib/A.html#ffebe438fd9cbf0e" class="k">var</a> <span id="r89 rd" class="r89 r">inter</span> = <a href="Utils.cs.html#05814ead58f0a8a3" class="t t">Line</a>.<a href="Utils.cs.html#bed33787207fd673" class="i method">Intersection</a>(<span class="r88 r">border</span>, <b>new</b> <a href="Utils.cs.html#0516a770e5080f7e" class="t constructor">Line</a>(<span class="r86 r">y</span>, <a href="Utils.cs.html#05814ead58f0a8a3" class="t t">Line</a>.<a href="Utils.cs.html#fd3d556cd7e27673" class="t t">Axis</a>.<a href="Utils.cs.html#28eb1bb34afcf9f0" class="i field">Y</a>));
+                    <b>if</b> (<span class="r89 r">inter</span> == <b>null</b>) <b>continue</b>;
+                    <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r90 rd" class="r90 r">x</span> = <span class="r89 r">inter</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a>;
+                    <b>if</b> (<span class="r90 r">x</span> &lt; 0 || <span class="r90 r">x</span> &gt;= <span class="r82 r">res</span>.<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>) <b>continue</b>;
+                    <span class="r87 r">inters</span>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<span class="r90 r">x</span>);
+                }
+ 
+                <span class="r82 r">res</span>.<a href="#6243bd35976a2618" class="i method">RowInterpolation</a>(<span class="r86 r">y</span>, <span class="r87 r">inters</span>.<a href="@0@System.Core/A.html#cf911055616ac194" class="i method">Min</a>(), <span class="r87 r">inters</span>.<a href="@0@System.Core/A.html#6ca1a80e1f22e519" class="i method">Max</a>());
+            }
+ 
+            <span class="r82 r">res</span>.<a href="#3c2a5c39bf3f9efa" class="i method">FillNullPixels</a>();
+            <b>return</b> <span class="r82 r">res</span>;
+        }
+ 
+        <b>private void</b> <a id="6243bd35976a2618" href="R/6243bd35976a2618.html" target="n" data-glyph="76,1" class="i method">RowInterpolation</a>(<b>int</b> <span id="r91 rd" class="r91 r">y</span>, <b>int</b> <span id="r92 rd" class="r92 r">start</span>, <b>int</b> <span id="r93 rd" class="r93 r">end</span>)
+        {
+            <b>for</b> (<b>int</b> <span id="r94 rd" class="r94 r">x</span> = <span class="r92 r">start</span>; <span class="r94 r">x</span> &lt;= <span class="r93 r">end</span>; <span class="r94 r">x</span>++)
+            {
+                <b>if</b> (<a href="Image.cs.html#5651742cc0b908e4" class="i property">Pixels</a>[<span class="r94 r">x</span>, <span class="r91 r">y</span>] != <b>null</b>) <b>continue</b>;
+                <a href="Image.cs.html#5651742cc0b908e4" class="i property">Pixels</a>[<span class="r94 r">x</span>, <span class="r91 r">y</span>] = <a href="#4a1ab71fe82a7051" class="i method">FindNearestInRow</a>(<span class="r94 r">x</span>, <span class="r91 r">y</span>, <span class="r92 r">start</span>, <span class="r93 r">end</span>);
+            }
+        }
+ 
+        <b>private</b> <a href="Pixels.cs.html#3b9b2a93c350d275" class="t t">RgbPixel</a> <a id="4a1ab71fe82a7051" href="R/4a1ab71fe82a7051.html" target="n" data-glyph="76,1" class="i method">FindNearestInRow</a>(<b>int</b> <span id="r95 rd" class="r95 r">x</span>, <b>int</b> <span id="r96 rd" class="r96 r">y</span>, <b>int</b> <span id="r97 rd" class="r97 r">start</span>, <b>int</b> <span id="r98 rd" class="r98 r">end</span>)
+        {
+            <b>for</b> (<b>int</b> <span id="r99 rd" class="r99 r">cursor</span> = 1;; <span class="r99 r">cursor</span>++)
+            {
+                <b>if</b> (<span class="r95 r">x</span> - <span class="r99 r">cursor</span> &gt;= <span class="r97 r">start</span> &amp;&amp; <a href="Image.cs.html#5651742cc0b908e4" class="i property">Pixels</a>[<span class="r95 r">x</span> - <span class="r99 r">cursor</span>, <span class="r96 r">y</span>] != <b>null</b>) <b>return</b> <a href="Image.cs.html#5651742cc0b908e4" class="i property">Pixels</a>[<span class="r95 r">x</span> - <span class="r99 r">cursor</span>, <span class="r96 r">y</span>].<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>;
+                <b>if</b> (<span class="r95 r">x</span> + <span class="r99 r">cursor</span> &lt;= <span class="r98 r">end</span> &amp;&amp; <a href="Image.cs.html#5651742cc0b908e4" class="i property">Pixels</a>[<span class="r95 r">x</span> + <span class="r99 r">cursor</span>, <span class="r96 r">y</span>] != <b>null</b>) <b>return</b> <a href="Image.cs.html#5651742cc0b908e4" class="i property">Pixels</a>[<span class="r95 r">x</span> + <span class="r99 r">cursor</span>, <span class="r96 r">y</span>].<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>;
+            }
+        }
+ 
+        <b>private void</b> <a id="3c2a5c39bf3f9efa" href="R/3c2a5c39bf3f9efa.html" target="n" data-glyph="76,1" class="i method">FillNullPixels</a>() =&gt; <a href="Image.cs.html#2360fa3da3fd1e02" class="i method">Pipeline</a>((<span id="r100 rd" class="r100 r">pixel</span>) =&gt; <span class="r100 r">pixel</span> ?? <a href="Pixels.cs.html#c978e53c12650322" class="t t">RgbColors</a>.<a href="Pixels.cs.html#85ba4ea528986faf" class="i property">Transparent</a>);
+ 
+        <b>public</b> <a href="Image.cs.html#b42336e7ea1e790b" class="t t">ITransformableImage</a> <a id="f61acadd282026ec" href="R/f61acadd282026ec.html" target="n" data-glyph="72,1" class="i method">Shear</a>(<b>double</b> <span id="r101 rd" class="r101 r">dx</span>, <b>double</b> <span id="r102 rd" class="r102 r">dy</span>)
+        {
+            <a href="#2f253f640af01fc1" class="k">var</a> <span id="r103 rd" class="r103 r">res</span> = <a href="#b64f60e78fff7666" class="i method">Transform</a>(
+                (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#1841a5ce24ed9fb3" class="i method">Ceiling</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> + <span class="r101 r">dx</span> * <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>),
+                (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#1841a5ce24ed9fb3" class="i method">Ceiling</a>(<a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> + <span class="r102 r">dy</span> * <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>),
+                (<span id="r104 rd" class="r104 r">point</span>) =&gt; <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(
+                    (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r104 r">point</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a> + <span class="r101 r">dx</span> * <span class="r104 r">point</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a>),
+                    (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r104 r">point</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a> + <span class="r102 r">dy</span> * <span class="r104 r">point</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a>)
+                )
+            );
+ 
+            <b>for</b> (<b>int</b> <span id="r105 rd" class="r105 r">x</span> = 0; <span class="r105 r">x</span> &lt; <span class="r103 r">res</span>.<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>; <span class="r105 r">x</span>++)
+            {
+                <b>for</b> (<b>int</b> <span id="r106 rd" class="r106 r">y</span> = 0; <span class="r106 r">y</span> &lt; <span class="r103 r">res</span>.<a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>; <span class="r106 r">y</span>++)
+                {
+                    <b>if</b> (<span class="r103 r">res</span><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r105 r">x</span>, <span class="r106 r">y</span>] != <b>null</b>) <b>continue</b>;
+                    <b>int</b> <span id="r107 rd" class="r107 r">x0</span> = (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>((<span class="r105 r">x</span> - <span class="r106 r">y</span> * <span class="r101 r">dx</span>) / (1 - <span class="r101 r">dx</span> * <span class="r102 r">dy</span>));
+                    <b>if</b> (<span class="r107 r">x0</span> &lt; 0 || <span class="r107 r">x0</span> &gt;= <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>) <b>continue</b>;
+                    <b>int</b> <span id="r108 rd" class="r108 r">y0</span> = (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>((<span class="r106 r">y</span> - <span class="r105 r">x</span> * <span class="r102 r">dy</span>) / (1 - <span class="r101 r">dx</span> * <span class="r102 r">dy</span>));
+                    <b>if</b> (<span class="r108 r">y0</span> &lt; 0 || <span class="r108 r">y0</span> &gt;= <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>) <b>continue</b>;
+                    <span class="r103 r">res</span><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r105 r">x</span>, <span class="r106 r">y</span>] = <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r107 r">x0</span>, <span class="r108 r">y0</span>];
+                }
+            }
+ 
+            <span class="r103 r">res</span>.<a href="#3c2a5c39bf3f9efa" class="i method">FillNullPixels</a>();
+            <b>return</b> <span class="r103 r">res</span>;
+        }
+ 
+        <b>public</b> <a href="Image.cs.html#b42336e7ea1e790b" class="t t">ITransformableImage</a> <a id="04a29f9574b0ed6d" href="R/04a29f9574b0ed6d.html" target="n" data-glyph="72,1" class="i method">Scale</a>(<b>double</b> <span id="r109 rd" class="r109 r">kx</span>, <b>double</b> <span id="r110 rd" class="r110 r">ky</span>, <a href="Image.cs.html#c6f6dfb078fa22ab" class="t t">Interpolation</a> <span id="r111 rd" class="r111 r">interpolation</span>)
+        {
+            <a href="#2f253f640af01fc1" class="t t">RgbImage</a> <span id="r112 rd" class="r112 r">res</span>;
+            <b>switch</b> (<span class="r111 r">interpolation</span>)
+            {
+                <b>case</b> <a href="Image.cs.html#c6f6dfb078fa22ab" class="t t">Interpolation</a>.<a href="Image.cs.html#5ff96db0be6ba450" class="i field">NearestNeighborInterpolation</a>:
+                    <span class="r112 r">res</span> = <a href="#b64f60e78fff7666" class="i method">Transform</a>(
+                        (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#1841a5ce24ed9fb3" class="i method">Ceiling</a>(<span class="r109 r">kx</span> * <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>),
+                        (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#1841a5ce24ed9fb3" class="i method">Ceiling</a>(<span class="r110 r">ky</span> * <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>),
+                        (<span id="r113 rd" class="r113 r">point</span>) =&gt; <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(
+                            (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r109 r">kx</span> * <span class="r113 r">point</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a>),
+                            (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r110 r">ky</span> * <span class="r113 r">point</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a>)
+                        )
+                    );
+                    <span class="r112 r">res</span>.<a href="#9694f0fbdd972900" class="i method">NearestNeighborInterpolation</a>(<a href="#2f253f640af01fc1" class="k">this</a>, <span class="r109 r">kx</span>, <span class="r110 r">ky</span>);
+                    <b>break</b>;
+                <b>case</b> <a href="Image.cs.html#c6f6dfb078fa22ab" class="t t">Interpolation</a>.<a href="Image.cs.html#cabbe1875354cf09" class="i field">BilinearInterpolation</a>:
+                    <span class="r112 r">res</span> = <a href="#03a86ed22759d146" class="i method">ScaleWithBilinearInterpolation</a>(<span class="r109 r">kx</span>, <span class="r110 r">ky</span>);
+                    <b>break</b>;
+                <b>default</b>:
+                    <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#c524af42f1a5665e" class="t constructor">ArgumentOutOfRangeException</a>(<b>nameof</b>(<span class="r111 r">interpolation</span>), <span class="r111 r">interpolation</span>, <b>null</b>);
+            }
+ 
+            <span class="r112 r">res</span>.<a href="#3c2a5c39bf3f9efa" class="i method">FillNullPixels</a>();
+            <b>return</b> <span class="r112 r">res</span>;
+        }
+ 
+        <b>private void</b> <a id="9694f0fbdd972900" href="R/9694f0fbdd972900.html" target="n" data-glyph="76,1" class="i method">NearestNeighborInterpolation</a>(<a href="#2f253f640af01fc1" class="t t">RgbImage</a> <span id="r114 rd" class="r114 r">origin</span>, <b>double</b> <span id="r115 rd" class="r115 r">kx</span>, <b>double</b> <span id="r116 rd" class="r116 r">ky</span>)
+        {
+            <b>for</b> (<b>int</b> <span id="r117 rd" class="r117 r">x</span> = 0; <span class="r117 r">x</span> &lt; <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>; <span class="r117 r">x</span>++)
+            {
+                <b>for</b> (<b>int</b> <span id="r118 rd" class="r118 r">y</span> = 0; <span class="r118 r">y</span> &lt; <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>; <span class="r118 r">y</span>++)
+                {
+                    <b>if</b> (<a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r117 r">x</span>, <span class="r118 r">y</span>] != <b>null</b>) <b>continue</b>;
+                    <b>int</b> <span id="r119 rd" class="r119 r">x0</span> = (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r117 r">x</span> / <span class="r115 r">kx</span>);
+                    <b>if</b> (<span class="r119 r">x0</span> &lt; 0 || <span class="r119 r">x0</span> &gt;= <span class="r114 r">origin</span>.<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>) <b>continue</b>;
+                    <b>int</b> <span id="r120 rd" class="r120 r">y0</span> = (<b>int</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r118 r">y</span> / <span class="r116 r">ky</span>);
+                    <b>if</b> (<span class="r120 r">y0</span> &lt; 0 || <span class="r120 r">y0</span> &gt;= <span class="r114 r">origin</span>.<a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>) <b>continue</b>;
+                    <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r117 r">x</span>, <span class="r118 r">y</span>] = <span class="r114 r">origin</span><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r119 r">x0</span>, <span class="r120 r">y0</span>];
+                }
+            }
+        }
+ 
+        <b>private</b> <a href="#2f253f640af01fc1" class="t t">RgbImage</a> <a id="03a86ed22759d146" href="R/03a86ed22759d146.html" target="n" data-glyph="76,1" class="i method">ScaleWithBilinearInterpolation</a>(<b>double</b> <span id="r121 rd" class="r121 r">kx</span>, <b>double</b> <span id="r122 rd" class="r122 r">ky</span>)
+        {
+            <a href="#2f253f640af01fc1" class="k">var</a> <span id="r123 rd" class="r123 r">res</span> = <b>new</b> <a href="#6831ce3880ee1090" class="t constructor">RgbImage</a>((<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> * <span class="r121 r">kx</span>).<a href="Utils.cs.html#71e128219b260741" class="i method">Round</a>(), (<a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> * <span class="r122 r">ky</span>).<a href="Utils.cs.html#71e128219b260741" class="i method">Round</a>());
+            <b>for</b> (<b>int</b> <span id="r124 rd" class="r124 r">x</span> = 0; <span class="r124 r">x</span> &lt; <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> - 1; <span class="r124 r">x</span>++)
+            {
+                <b>for</b> (<b>int</b> <span id="r125 rd" class="r125 r">y</span> = 0; <span class="r125 r">y</span> &lt; <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> - 1; <span class="r125 r">y</span>++)
+                {
+                    <b>int</b> <span id="r126 rd" class="r126 r">nx1</span> = (<span class="r121 r">kx</span> * <span class="r124 r">x</span>).<a href="Utils.cs.html#71e128219b260741" class="i method">Round</a>(), <span id="r127 rd" class="r127 r">ny1</span> = (<span class="r122 r">ky</span> * <span class="r125 r">y</span>).<a href="Utils.cs.html#71e128219b260741" class="i method">Round</a>();
+                    <b>int</b> <span id="r128 rd" class="r128 r">nx2</span> = (<span class="r121 r">kx</span> * (<span class="r124 r">x</span> + 1)).<a href="Utils.cs.html#71e128219b260741" class="i method">Round</a>(), <span id="r129 rd" class="r129 r">ny2</span> = (<span class="r122 r">ky</span> * (<span class="r125 r">y</span> + 1)).<a href="Utils.cs.html#71e128219b260741" class="i method">Round</a>();
+                    <a href="Pixels.cs.html#3b9b2a93c350d275" class="t t">RgbPixel</a> <span id="r130 rd" class="r130 r">p11</span> = <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r124 r">x</span>, <span class="r125 r">y</span>].<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>,
+                        <span id="r131 rd" class="r131 r">p12</span> = <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r124 r">x</span>, <span class="r125 r">y</span> + 1].<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>,
+                        <span id="r132 rd" class="r132 r">p21</span> = <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r124 r">x</span> + 1, <span class="r125 r">y</span>].<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>,
+                        <span id="r133 rd" class="r133 r">p22</span> = <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r124 r">x</span> + 1, <span class="r125 r">y</span> + 1].<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>;
+                    <b>for</b> (<b>int</b> <span id="r134 rd" class="r134 r">nx</span> = <span class="r126 r">nx1</span>; <span class="r134 r">nx</span> &lt;= <span class="r128 r">nx2</span>; <span class="r134 r">nx</span>++)
+                    {
+                        <b>for</b> (<b>int</b> <span id="r135 rd" class="r135 r">ny</span> = <span class="r127 r">ny1</span>; <span class="r135 r">ny</span> &lt;= <span class="r129 r">ny2</span>; <span class="r135 r">ny</span>++)
+                        {
+                            <b>double</b> <span id="r136 rd" class="r136 r">k</span> = (<span class="r128 r">nx2</span> - <span class="r126 r">nx1</span>) * (<span class="r129 r">ny2</span> - <span class="r127 r">ny1</span>);
+                            <b>double</b> <span id="r137 rd" class="r137 r">m1</span> = <span class="r128 r">nx2</span> - <span class="r134 r">nx</span>, <span id="r138 rd" class="r138 r">m2</span> = <span class="r134 r">nx</span> - <span class="r126 r">nx1</span>;
+                            <b>double</b> <span id="r139 rd" class="r139 r">n1</span> = <span class="r129 r">ny2</span> - <span class="r135 r">ny</span>, <span id="r140 rd" class="r140 r">n2</span> = <span class="r135 r">ny</span> - <span class="r127 r">ny1</span>;
+                            <span class="r123 r">res</span><a href="Image.cs.html#9c349052b81e5e7e">[</a><span class="r134 r">nx</span>, <span class="r135 r">ny</span>] = <span class="r138 r">m2</span> * <span class="r140 r">n2</span> / <span class="r136 r">k</span> * <span class="r130 r">p11</span> + <span class="r137 r">m1</span> * <span class="r140 r">n2</span> / <span class="r136 r">k</span> * <span class="r132 r">p21</span> + <span class="r138 r">m2</span> * <span class="r139 r">n1</span> / <span class="r136 r">k</span> * <span class="r131 r">p12</span> + <span class="r137 r">m1</span> * <span class="r139 r">n1</span> / <span class="r136 r">k</span> * <span class="r133 r">p22</span>;
+                        }
+                    }
+                }
+            }
+ 
+            <b>return</b> <span class="r123 r">res</span>;
+        }
+ 
+        <b>public byte</b>[] <a id="529dd3ed7a3c6994" href="R/529dd3ed7a3c6994.html" target="n" data-glyph="72,1" class="i method">ToBrgaPixelsData</a>()
+        {
+            <b>byte</b>[] <span id="r141 rd" class="r141 r">data</span> = <b>new</b> <b>byte</b>[<a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> * <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> * 4];
+            <b>for</b> (<b>int</b> <span id="r142 rd" class="r142 r">x</span> = 0; <span class="r142 r">x</span> &lt; <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>; <span class="r142 r">x</span>++)
+            {
+                <b>for</b> (<b>int</b> <span id="r143 rd" class="r143 r">y</span> = 0; <span class="r143 r">y</span> &lt; <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>; <span class="r143 r">y</span>++)
+                {
+                    <a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#74ae7c85c0e36e34" class="i method">Assert</a>(<a href="Image.cs.html#5651742cc0b908e4" class="i property">Pixels</a>[<span class="r142 r">x</span>, <span class="r143 r">y</span>] != <b>null</b>);
+                    <a href="Pixels.cs.html#3b9b2a93c350d275" class="k">var</a> <span id="r144 rd" class="r144 r">pixel</span> = <a href="Image.cs.html#5651742cc0b908e4" class="i property">Pixels</a>[<span class="r142 r">x</span>, <span class="r143 r">y</span>].<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>;
+                    <b>int</b> <span id="r145 rd" class="r145 r">offset</span> = <span class="r143 r">y</span> * <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> * 4 + <span class="r142 r">x</span> * 4;
+                    <span class="r141 r">data</span>[<span class="r145 r">offset</span>] = <span class="r144 r">pixel</span>.<a href="Pixels.cs.html#42641b60e9a0f254" class="i property">B</a>;
+                    <span class="r141 r">data</span>[<span class="r145 r">offset</span> + 1] = <span class="r144 r">pixel</span>.<a href="Pixels.cs.html#4a4f4508a71940a4" class="i property">G</a>;
+                    <span class="r141 r">data</span>[<span class="r145 r">offset</span> + 2] = <span class="r144 r">pixel</span>.<a href="Pixels.cs.html#fe62a6e935fdb94a" class="i property">R</a>;
+                    <span class="r141 r">data</span>[<span class="r145 r">offset</span> + 3] = <span class="r144 r">pixel</span>.<a href="Pixels.cs.html#968fe0353a77decb" class="i property">A</a>;
+                }
+            }
+ 
+            <b>return</b> <span class="r141 r">data</span>;
+        }
+ 
+        <b>public</b> <a href="@0@PresentationCore/A.html#0423ed363f952960" class="t t">BitmapSource</a> <a id="cd8cb43bb62d51ff" href="R/cd8cb43bb62d51ff.html" target="n" data-glyph="72,1" class="i method">ToBitmapSource</a>(<b>double</b> <span id="r146 rd" class="r146 r">dpiX</span>, <b>double</b> <span id="r147 rd" class="r147 r">dpiY</span>)
+        {
+            <b>return</b> <a href="@0@PresentationCore/A.html#0423ed363f952960" class="t t">BitmapSource</a>.<a href="@0@PresentationCore/A.html#773efce8ba35b36e" class="i method">Create</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>, <span class="r146 r">dpiX</span>, <span class="r147 r">dpiY</span>, <a href="@0@PresentationCore/A.html#8f8a28423b24bd8e" class="t t">PixelFormats</a>.<a href="@0@PresentationCore/A.html#e4979f3dd8817adb" class="i property">Bgra32</a>, <b>null</b>,
+                <a href="#529dd3ed7a3c6994" class="i method">ToBrgaPixelsData</a>(), <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> * 4);
+        }
+ 
+        <b>public</b> <a href="#2f253f640af01fc1" class="t t">RgbImage</a> <a id="f88d32cec33bb055" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Map</a>(<a href="Image.cs.html#68b1a73ba385ffc9" class="t t">PixelPipelineDelegate</a> <span id="r148 rd" class="r148 r">process</span>)
+        {
+            <a href="#2f253f640af01fc1" class="k">var</a> <span id="r149 rd" class="r149 r">res</span> = <b>new</b> <a href="#6831ce3880ee1090" class="t constructor">RgbImage</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>);
+            <a href="Image.cs.html#26eab92f4647f857" class="i method">ForEach</a>((<span id="r150 rd" class="r150 r">pixel</span>, <span id="r151 rd" class="r151 r">position</span>) =&gt; <span class="r149 r">res</span><a href="Image.cs.html#49934ec4274bca7d">[</a><span class="r151 r">position</span>] = <span class="r148 r">process</span>(<span class="r150 r">pixel</span>));
+            <b>return</b> <span class="r149 r">res</span>;
+        }
+ 
+        <b>public</b> <a href="#2f253f640af01fc1" class="t t">RgbImage</a> <a id="1fd119cc34c372fa" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">Map</a>(<a href="Image.cs.html#2d90157ac923278a" class="t t">PixelPositionPipelineDelegate</a> <span id="r152 rd" class="r152 r">process</span>)
+        {
+            <a href="#2f253f640af01fc1" class="k">var</a> <span id="r153 rd" class="r153 r">res</span> = <b>new</b> <a href="#6831ce3880ee1090" class="t constructor">RgbImage</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>);
+            <a href="Image.cs.html#26eab92f4647f857" class="i method">ForEach</a>((<span id="r154 rd" class="r154 r">pixel</span>, <span id="r155 rd" class="r155 r">position</span>) =&gt; <span class="r153 r">res</span><a href="Image.cs.html#49934ec4274bca7d">[</a><span class="r155 r">position</span>] = <span class="r152 r">process</span>(<span class="r154 r">pixel</span>, <span class="r155 r">position</span>));
+            <b>return</b> <span class="r153 r">res</span>;
+        }
+ 
+        <b>public</b> <a href="#2f253f640af01fc1" class="t t">RgbImage</a> <a id="ce002e0527b3d918" href="R/ce002e0527b3d918.html" target="n" data-glyph="72,1" class="i method">ParallelMap</a>(<a href="Image.cs.html#2d90157ac923278a" class="t t">PixelPositionPipelineDelegate</a> <span id="r156 rd" class="r156 r">process</span>)
+        {
+            <a href="#2f253f640af01fc1" class="k">var</a> <span id="r157 rd" class="r157 r">res</span> = <b>new</b> <a href="#6831ce3880ee1090" class="t constructor">RgbImage</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>);
+            <a href="Image.cs.html#ad6cfd45f71fd573" class="i method">ParallelForEach</a>((<span id="r158 rd" class="r158 r">pixel</span>, <span id="r159 rd" class="r159 r">position</span>) =&gt; <span class="r157 r">res</span><a href="Image.cs.html#49934ec4274bca7d">[</a><span class="r159 r">position</span>] = <span class="r156 r">process</span>(<span class="r158 r">pixel</span>, <span class="r159 r">position</span>));
+            <b>return</b> <span class="r157 r">res</span>;
+        }
+        
+        <b>public</b> <a href="#2f253f640af01fc1" class="t t">RgbImage</a> <a id="64f9d3b53ca36529" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">PixelParallelMap</a>(<a href="Image.cs.html#2d90157ac923278a" class="t t">PixelPositionPipelineDelegate</a> <span id="r160 rd" class="r160 r">process</span>)
+        {
+            <a href="#2f253f640af01fc1" class="k">var</a> <span id="r161 rd" class="r161 r">res</span> = <b>new</b> <a href="#6831ce3880ee1090" class="t constructor">RgbImage</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>);
+            <a href="Image.cs.html#3862b7b515daa4cf" class="i method">PixelParallelForEach</a>((<span id="r162 rd" class="r162 r">pixel</span>, <span id="r163 rd" class="r163 r">position</span>) =&gt; <span class="r161 r">res</span><a href="Image.cs.html#49934ec4274bca7d">[</a><span class="r163 r">position</span>] = <span class="r160 r">process</span>(<span class="r162 r">pixel</span>, <span class="r163 r">position</span>));
+            <b>return</b> <span class="r161 r">res</span>;
+        }
+ 
+        <b>public</b> <a href="HslImage.cs.html#36f1ed19d0c76ce6" class="t t">HslImage</a> <a id="2748fe76a20ea79f" href="R/2748fe76a20ea79f.html" target="n" data-glyph="72,1" class="i method">ToHslImage</a>()
+        {
+            <a href="HslImage.cs.html#36f1ed19d0c76ce6" class="k">var</a> <span id="r164 rd" class="r164 r">res</span> = <b>new</b> <a href="HslImage.cs.html#eaed559d119859bd" class="t constructor">HslImage</a>(<a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a>, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a>);
+            <a href="Image.cs.html#26eab92f4647f857" class="i method">ForEach</a>((<span id="r165 rd" class="r165 r">pixel</span>, <span id="r166 rd" class="r166 r">position</span>) =&gt; <span class="r164 r">res</span><a href="Image.cs.html#49934ec4274bca7d">[</a><span class="r166 r">position</span>] = <span class="r165 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#96b4daabc4e4091b" class="i method">ToHsl</a>());
+            <b>return</b> <span class="r164 r">res</span>;
+        }
+ 
+        <b>public</b> <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="9430c19f346960e7" href="R/9430c19f346960e7.html" target="n" data-glyph="72,1" class="i method">Filter</a>(<a href="Filtering.cs.html#f9b842dedcd23fa6" class="t t">Filter</a> <span id="r167 rd" class="r167 r">filter</span>) =&gt; ((<a href="HslImage.cs.html#36f1ed19d0c76ce6" class="t t">HslImage</a>) <a href="#2748fe76a20ea79f" class="i method">ToHslImage</a>().<a href="HslImage.cs.html#148b852d20cbfb27" class="i method">Filter</a>(<span class="r167 r">filter</span>)).<a href="HslImage.cs.html#da9ce856a5d82ca5" class="i method">ToRgbImage</a>();
+ 
+        <b>public</b> <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="d4edd8f069070b38" href="R/d4edd8f069070b38.html" target="n" data-glyph="72,1" class="i method">MeanFilter</a>(<b>int</b> <span id="r168 rd" class="r168 r">size</span>) =&gt; <a href="#9430c19f346960e7" class="i method">Filter</a>(<a href="Filtering.cs.html#96681fcf33d11ce9" class="t t">Filters</a>.<a href="Filtering.cs.html#e14220af6370571b" class="i method">Mean</a>(<span class="r168 r">size</span>));
+ 
+        <b>public</b> <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="5b1f139d5e19bfaf" href="R/5b1f139d5e19bfaf.html" target="n" data-glyph="72,1" class="i method">LaplacianFilter</a>() =&gt; <a href="#9430c19f346960e7" class="i method">Filter</a>(<a href="Filtering.cs.html#96681fcf33d11ce9" class="t t">Filters</a>.<a href="Filtering.cs.html#77666bfe21029f43" class="i property">Laplacian</a>);
+ 
+        <b>public</b> <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="c486b85732efcfbd" href="R/c486b85732efcfbd.html" target="n" data-glyph="72,1" class="i method">ExtendedLaplacianFilter</a>() =&gt; <a href="#9430c19f346960e7" class="i method">Filter</a>(<a href="Filtering.cs.html#96681fcf33d11ce9" class="t t">Filters</a>.<a href="Filtering.cs.html#59447110b736bd65" class="i property">ExtendedLaplacian</a>);
+ 
+        <b>public</b> <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="d363096aeb0047c0" href="R/d363096aeb0047c0.html" target="n" data-glyph="72,1" class="i method">BilateralFilter</a>(<b>int</b> <span id="r169 rd" class="r169 r">size</span>, <b>double</b> <span id="r170 rd" class="r170 r">sigmaD</span>, <b>double</b> <span id="r171 rd" class="r171 r">sigmaR</span>) =&gt;
+            <a href="#cfed538a460080f4" class="i method">BilateralFilterRgb</a>(<span class="r169 r">size</span>, <span class="r170 r">sigmaD</span>, <span class="r171 r">sigmaR</span>);
+ 
+        <b>public</b> <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="5f0fe82698628d35" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">BilateralFilterL</a>(<b>int</b> <span id="r172 rd" class="r172 r">size</span>, <b>double</b> <span id="r173 rd" class="r173 r">sigmaD</span>, <b>double</b> <span id="r174 rd" class="r174 r">sigmaR</span>) =&gt;
+            ((<a href="HslImage.cs.html#36f1ed19d0c76ce6" class="t t">HslImage</a>) <a href="#2748fe76a20ea79f" class="i method">ToHslImage</a>().<a href="HslImage.cs.html#3772ec88dc006bee" class="i method">BilateralFilter</a>(<span class="r172 r">size</span>, <span class="r173 r">sigmaD</span>, <span class="r174 r">sigmaR</span>)).<a href="HslImage.cs.html#da9ce856a5d82ca5" class="i method">ToRgbImage</a>();
+ 
+        <b>public</b> <a href="Filtering.cs.html#841281dd3c3566d3" class="t t">IFilterableImage</a> <a id="cfed538a460080f4" href="R/cfed538a460080f4.html" target="n" data-glyph="72,1" class="i method">BilateralFilterRgb</a>(<b>int</b> <span id="r175 rd" class="r175 r">size</span>, <b>double</b> <span id="r176 rd" class="r176 r">sigmaD</span>, <b>double</b> <span id="r177 rd" class="r177 r">sigmaR</span>)
+        {
+            <a href="Utils.cs.html#f3050fa26e1403a8" class="k">var</a> <span id="r178 rd" class="r178 r">origin</span> = <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(<span class="r175 r">size</span> / 2, <span class="r175 r">size</span> / 2);
+            <b>return</b> <a href="#ce002e0527b3d918" class="i method">ParallelMap</a>((<span id="r179 rd" class="r179 r">pixel</span>, <span id="r180 rd" class="r180 r">position</span>) =&gt;
+            {
+                <b>double</b> <span id="r181 rd" class="r181 r">weightR</span> = 0, <span id="r182 rd" class="r182 r">weightG</span> = 0, <span id="r183 rd" class="r183 r">weightB</span> = 0, <span id="r184 rd" class="r184 r">sumR</span> = 0, <span id="r185 rd" class="r185 r">sumG</span> = 0, <span id="r186 rd" class="r186 r">sumB</span> = 0;
+                <b>for</b> (<b>int</b> <span id="r187 rd" class="r187 r">x</span> = 0; <span class="r187 r">x</span> &lt; <span class="r175 r">size</span>; <span class="r187 r">x</span>++)
+                {
+                    <b>for</b> (<b>int</b> <span id="r188 rd" class="r188 r">y</span> = 0; <span class="r188 r">y</span> &lt; <span class="r175 r">size</span>; <span class="r188 r">y</span>++)
+                    {
+                        <a href="Utils.cs.html#f3050fa26e1403a8" class="k">var</a> <span id="r189 rd" class="r189 r">neighborPos</span> = <span class="r180 r">position</span> - <span class="r178 r">origin</span> + <b>new</b> <a href="Utils.cs.html#c4c1324ab234eec1" class="t constructor">Point</a>(<span class="r187 r">x</span>, <span class="r188 r">y</span>);
+                        <span class="r189 r">neighborPos</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a> = <span class="r189 r">neighborPos</span>.<a href="Utils.cs.html#5076fe065fd29731" class="i property">X</a>.<a href="Utils.cs.html#b521acf8bcaaeab7" class="i method">LimitTo</a>(0, <a href="Image.cs.html#54ade488d528add0" class="i property">PixelWidth</a> - 1);
+                        <span class="r189 r">neighborPos</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a> = <span class="r189 r">neighborPos</span>.<a href="Utils.cs.html#51414d1ba3c71184" class="i property">Y</a>.<a href="Utils.cs.html#b521acf8bcaaeab7" class="i method">LimitTo</a>(0, <a href="Image.cs.html#a7d6e0fa5506e0af" class="i property">PixelHeight</a> - 1);
+ 
+                        <a href="Pixels.cs.html#3b9b2a93c350d275" class="t t">RgbPixel</a> <span id="r190 rd" class="r190 r">neighborPixel</span> = <a href="#2f253f640af01fc1" class="k">this</a><a href="Image.cs.html#49934ec4274bca7d">[</a><span class="r189 r">neighborPos</span>].<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>;
+                        <b>double</b> <span id="r191 rd" class="r191 r">distFactor</span> = -<span class="r180 r">position</span>.<a href="Utils.cs.html#f0d7ec017ff2c4b4" class="i method">GetSquaredDistance</a>(<span class="r189 r">neighborPos</span>) / (2 * <span class="r176 r">sigmaD</span>);
+                        <b>double</b> <span id="r192 rd" class="r192 r">rw</span> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#c8aee4c4f9b1c95a" class="i method">Exp</a>(<span class="r191 r">distFactor</span> - (<span class="r179 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#fe62a6e935fdb94a" class="i property">R</a> - <span class="r190 r">neighborPixel</span>.<a href="Pixels.cs.html#fe62a6e935fdb94a" class="i property">R</a>).<a href="Utils.cs.html#51dd28bd2f8c72a6" class="i method">Squared</a>() / (2 * <span class="r177 r">sigmaR</span>));
+                        <b>double</b> <span id="r193 rd" class="r193 r">gw</span> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#c8aee4c4f9b1c95a" class="i method">Exp</a>(<span class="r191 r">distFactor</span> - (<span class="r179 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#4a4f4508a71940a4" class="i property">G</a> - <span class="r190 r">neighborPixel</span>.<a href="Pixels.cs.html#4a4f4508a71940a4" class="i property">G</a>).<a href="Utils.cs.html#51dd28bd2f8c72a6" class="i method">Squared</a>() / (2 * <span class="r177 r">sigmaR</span>));
+                        <b>double</b> <span id="r194 rd" class="r194 r">bw</span> = <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#c8aee4c4f9b1c95a" class="i method">Exp</a>(<span class="r191 r">distFactor</span> - (<span class="r179 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#42641b60e9a0f254" class="i property">B</a> - <span class="r190 r">neighborPixel</span>.<a href="Pixels.cs.html#42641b60e9a0f254" class="i property">B</a>).<a href="Utils.cs.html#51dd28bd2f8c72a6" class="i method">Squared</a>() / (2 * <span class="r177 r">sigmaR</span>));
+ 
+                        <span class="r181 r">weightR</span> += <span class="r192 r">rw</span>;
+                        <span class="r182 r">weightG</span> += <span class="r193 r">gw</span>;
+                        <span class="r183 r">weightB</span> += <span class="r194 r">bw</span>;
+                        <span class="r184 r">sumR</span> += <span class="r192 r">rw</span> * <span class="r190 r">neighborPixel</span>.<a href="Pixels.cs.html#fe62a6e935fdb94a" class="i property">R</a>;
+                        <span class="r185 r">sumG</span> += <span class="r193 r">gw</span> * <span class="r190 r">neighborPixel</span>.<a href="Pixels.cs.html#4a4f4508a71940a4" class="i property">G</a>;
+                        <span class="r186 r">sumB</span> += <span class="r194 r">bw</span> * <span class="r190 r">neighborPixel</span>.<a href="Pixels.cs.html#42641b60e9a0f254" class="i property">B</a>;
+                    }
+                }
+ 
+                <b>return</b> <b>new</b> <a href="Pixels.cs.html#25df8e276ae33f67" class="t constructor">RgbPixel</a>(
+                    (<b>byte</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r184 r">sumR</span> / <span class="r181 r">weightR</span>).<a href="Utils.cs.html#70a1cda323202aef" class="i method">LimitTo</a>(0, 255),
+                    (<b>byte</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r185 r">sumG</span> / <span class="r182 r">weightG</span>).<a href="Utils.cs.html#70a1cda323202aef" class="i method">LimitTo</a>(0, 255),
+                    (<b>byte</b>) <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#cd022f3da68060cf" class="i method">Round</a>(<span class="r186 r">sumB</span> / <span class="r183 r">weightB</span>).<a href="Utils.cs.html#70a1cda323202aef" class="i method">LimitTo</a>(0, 255),
+                    <span class="r179 r">pixel</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>.<a href="Pixels.cs.html#968fe0353a77decb" class="i property">A</a>
+                );
+            });
+        }
+    }
+}</pre></td></tr></table></div></body></html>

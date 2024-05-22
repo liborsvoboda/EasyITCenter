@@ -1,0 +1,617 @@
+﻿<!DOCTYPE html>
+<html><head><title>ColorPickerBase.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(608);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/ColorPicker/ColorPickerBase.cs" target="_top">Controls\ColorPicker\ColorPickerBase.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">JetBrains</span>.<span class="i n">Annotations</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    [<a href="@0@System/A.html#68d6193971b8ba14" class="t constructor">DefaultEvent</a>(<span class="s">&quot;SelectedColorChanged&quot;</span>)]
+    <b>public class</b> <a id="66c8ef13517405b4" href="../../R/66c8ef13517405b4.html" target="n" data-glyph="0,0" class="t t"><span id="ef3e734d9c36565a">ColorPickerBase</span></a> : <a href="@0@PresentationFramework/A.html#6750b721a2294fc5" class="t t">Control</a>
+    {
+        <b>protected bool</b> <a id="884bc56165f6d4bc" href="../../R/884bc56165f6d4bc.html" target="n" data-glyph="45,1" class="i field">ColorIsUpdating</a>;
+        <b>protected bool</b> <a id="cb3036a07c42662c" href="../../R/cb3036a07c42662c.html" target="n" data-glyph="45,1" class="i field">UpdateHsvValues</a> = <b>true</b>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7f810099763f6fa5" class="i property">SelectedColor</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="d437f564c4110bf3" href="../../R/d437f564c4110bf3.html" target="n" data-glyph="42,1" class="i field">SelectedColorProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#7f810099763f6fa5" class="i property">SelectedColor</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#b6b338786522e5c6" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>, <a href="#6dba1f45f2e24603" class="i method">OnSelectedColorPropertyChanged</a>, <a href="#68b270201d182436" class="i method">CoerceSelectedColorProperty</a>));
+
+        <b>private static void</b> <a id="6dba1f45f2e24603" href="../../R/6dba1f45f2e24603.html" target="n" data-glyph="76,1" class="i method">OnSelectedColorPropertyChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r0 rd" class="r0 r">dependencyObject</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r1 rd" class="r1 r">e</span>)
+        {
+            <b>if</b> (<span class="r0 r">dependencyObject</span> <b>is</b> <a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a> <span id="r2 rd" class="r2 r">colorPicker</span> &amp;&amp; <span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a> != <span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a> &amp;&amp; !<span class="r2 r">colorPicker</span>.<a href="#884bc56165f6d4bc" class="i field">ColorIsUpdating</a>)
+            {
+                <span class="r2 r">colorPicker</span>.<a href="#884bc56165f6d4bc" class="i field">ColorIsUpdating</a> = <b>true</b>;
+                <b>try</b>
+                {
+                    <span class="r2 r">colorPicker</span>.<a href="#c21e1a6a264892b1" class="i method">OnSelectedColorChanged</a>(<span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a> <b>as</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?, <span class="r1 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a> <b>as</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>? ?? <span class="r2 r">colorPicker</span>.<a href="#b55dc04be1bb053a" class="i property">DefaultColor</a>);
+                }
+                <b>finally</b>
+                {
+                    <span class="r2 r">colorPicker</span>.<a href="#884bc56165f6d4bc" class="i field">ColorIsUpdating</a> = <b>false</b>;
+                }
+            }
+        }
+
+        [<span class="t constructor">MustUseReturnValue</span>]
+        <b>private static object</b>? <a id="68b270201d182436" href="../../R/68b270201d182436.html" target="n" data-glyph="76,1" class="i method">CoerceSelectedColorProperty</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r3 rd" class="r3 r">dependencyObject</span>, <b>object</b>? <span id="r4 rd" class="r4 r">basevalue</span>)
+        {
+            <b>if</b> (<span class="r3 r">dependencyObject</span> <b>is</b> <a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a> <span id="r5 rd" class="r5 r">colorPicker</span>)
+            {
+                <span class="r4 r">basevalue</span> ??= <span class="r5 r">colorPicker</span>.<a href="#b55dc04be1bb053a" class="i property">DefaultColor</a>;
+            }
+
+            <b>return</b> <span class="r4 r">basevalue</span>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the selected </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>? <a id="7f810099763f6fa5" href="../../R/7f810099763f6fa5.html" target="n" data-glyph="102,1" class="i property">SelectedColor</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#d437f564c4110bf3" class="i field">SelectedColorProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#d437f564c4110bf3" class="i field">SelectedColorProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#b55dc04be1bb053a" class="i property">DefaultColor</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="d9663843f6d8515f" href="../../R/d9663843f6d8515f.html" target="n" data-glyph="42,1" class="i field">DefaultColorProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#b55dc04be1bb053a" class="i property">DefaultColor</a>),
+                                          <b>typeof</b>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#f55eafbea6d9be21" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>, <a href="#c3ecb4b0eebd208e" class="i method">OnDefaultColorPropertyChanged</a>));
+
+        <b>private static void</b> <a id="c3ecb4b0eebd208e" href="../../R/c3ecb4b0eebd208e.html" target="n" data-glyph="76,1" class="i method">OnDefaultColorPropertyChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r6 rd" class="r6 r">dependencyObject</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r7 rd" class="r7 r">e</span>)
+        {
+            <b>if</b> (<span class="r6 r">dependencyObject</span> <b>is</b> <a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a> <span id="r8 rd" class="r8 r">colorPicker</span> &amp;&amp; <span class="r7 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a> != <span class="r7 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>)
+            {
+                <span class="r8 r">colorPicker</span>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#d437f564c4110bf3" class="i field">SelectedColorProperty</a>, <span class="r7 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a> ?? <span class="r8 r">colorPicker</span>.<a href="#7f810099763f6fa5" class="i property">SelectedColor</a>);
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a default selected </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a><span class="c">&quot;</span><span class="c">/&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>? <a id="b55dc04be1bb053a" href="../../R/b55dc04be1bb053a.html" target="n" data-glyph="102,1" class="i property">DefaultColor</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#d9663843f6d8515f" class="i field">DefaultColorProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#d9663843f6d8515f" class="i field">DefaultColorProperty</a>, <b>value</b>);
+        }
+
+        <b>private static readonly</b> <a href="@0@WindowsBase/A.html#380f95e0ba8ab2a0" class="t t">DependencyPropertyKey</a> <a id="d770e9d77b5b6bc8" href="../../R/d770e9d77b5b6bc8.html" target="n" data-glyph="46,1" class="i field">SelectedHSVColorPropertyKey</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#25c0b2e1e0148e79" class="i method">RegisterReadOnly</a>(<b>nameof</b>(<a href="#1969c5a241ac9a9d" class="i property">SelectedHSVColor</a>),
+                                                  <b>typeof</b>(<a href="HSVColor.cs.html#660b07de7e9bab89" class="t t">HSVColor</a>),
+                                                  <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                                  <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<b>new</b> <a href="HSVColor.cs.html#fd7cfd0144b0b542" class="t constructor">HSVColor</a>(<a href="@0@PresentationCore/A.html#0584e1e7d7fb612c" class="t t">Colors</a>.<a href="@0@PresentationCore/A.html#8f0ba43d1a961d20" class="i property">Black</a>)));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#1969c5a241ac9a9d" class="i property">SelectedHSVColor</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="fa4a687d847f9e67" href="../../R/fa4a687d847f9e67.html" target="n" data-glyph="42,1" class="i field">SelectedHSVColorProperty</a> = <a href="#d770e9d77b5b6bc8" class="i field">SelectedHSVColorPropertyKey</a>.<a href="@0@WindowsBase/A.html#d39196af37a6f1cf" class="i property">DependencyProperty</a>;
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7f810099763f6fa5" class="i property">SelectedColor</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> as </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="HSVColor.cs.html#660b07de7e9bab89" class="t t">HSVColor</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">. This property is read only.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="HSVColor.cs.html#660b07de7e9bab89" class="t t">HSVColor</a> <a id="1969c5a241ac9a9d" href="../../R/1969c5a241ac9a9d.html" target="n" data-glyph="102,1" class="i property">SelectedHSVColor</a> =&gt; (<a href="HSVColor.cs.html#660b07de7e9bab89" class="t t">HSVColor</a>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#fa4a687d847f9e67" class="i field">SelectedHSVColorProperty</a>);
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#44fca09838a4689e" class="i property">ColorName</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="91e443ab06a89c3a" href="../../R/91e443ab06a89c3a.html" target="n" data-glyph="42,1" class="i field">ColorNameProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#44fca09838a4689e" class="i property">ColorName</a>),
+                                          <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#cfed8906a2f8b7f6" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>, <a href="#b73115bf31e6340b" class="i method">OnColorNamePropertyChanged</a>));
+
+        <b>private static void</b> <a id="b73115bf31e6340b" href="../../R/b73115bf31e6340b.html" target="n" data-glyph="76,1" class="i method">OnColorNamePropertyChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r9 rd" class="r9 r">dependencyObject</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r10 rd" class="r10 r">e</span>)
+        {
+            <b>if</b> (<span class="r9 r">dependencyObject</span> <b>is</b> <a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a> <span id="r11 rd" class="r11 r">colorPicker</span> &amp;&amp; !<span class="r11 r">colorPicker</span>.<a href="#884bc56165f6d4bc" class="i field">ColorIsUpdating</a>)
+            {
+                <b>if</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<span class="r10 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>?.<a href="@0@mscorlib/A.html#ff31a6bf27c58f89" class="i method">ToString</a>()))
+                {
+                    <span class="r11 r">colorPicker</span>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#d437f564c4110bf3" class="i field">SelectedColorProperty</a>, <b>null</b>);
+                }
+                <b>else</b> <b>if</b> ((<span class="r11 r">colorPicker</span>.<a href="#7f2d13f782018460" class="i property">ColorHelper</a> ?? <a href="ColorHelper.cs.html#34ad30a0c46f0fac" class="t t">ColorHelper</a>.<a href="ColorHelper.cs.html#0686cf3b13928c36" class="i field">DefaultInstance</a>).<a href="ColorHelper.cs.html#60ee0f3c6907c24d" class="i method">ColorFromString</a>(<span class="r10 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>?.<a href="@0@mscorlib/A.html#ff31a6bf27c58f89" class="i method">ToString</a>(), <span class="r11 r">colorPicker</span>.<a href="#86f7d2946c9f26a5" class="i property">ColorNamesDictionary</a>) <b>is</b> { } <span id="r12 rd" class="r12 r">color</span>)
+                {
+                    <b>if</b> (<span class="r11 r">colorPicker</span>.<a href="#7f810099763f6fa5" class="i property">SelectedColor</a> != <span class="r12 r">color</span>)
+                    {
+                        <span class="r11 r">colorPicker</span>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#d437f564c4110bf3" class="i field">SelectedColorProperty</a>, <span class="r12 r">color</span>);
+                    }
+                    <b>else</b> <span class="c">// if the color stayed the same we still have to update the displayed name</span>
+                    {
+                        <span class="r11 r">colorPicker</span>.<a href="#884bc56165f6d4bc" class="i field">ColorIsUpdating</a> = <b>true</b>;
+                        <b>try</b>
+                        {
+                            <span class="r11 r">colorPicker</span>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#91e443ab06a89c3a" class="i field">ColorNameProperty</a>, (<span class="r11 r">colorPicker</span>.<a href="#7f2d13f782018460" class="i property">ColorHelper</a> ?? <a href="ColorHelper.cs.html#34ad30a0c46f0fac" class="t t">ColorHelper</a>.<a href="ColorHelper.cs.html#0686cf3b13928c36" class="i field">DefaultInstance</a>).<a href="ColorHelper.cs.html#19dd9aea9b0f1051" class="i method">GetColorName</a>(<span class="r12 r">color</span>, <span class="r11 r">colorPicker</span>.<a href="#86f7d2946c9f26a5" class="i property">ColorNamesDictionary</a>, <span class="r11 r">colorPicker</span>.<a href="#a7fbfbc7bbb8a6dc" class="i property">IsAlphaChannelVisible</a>));
+                        }
+                        <b>finally</b>
+                        {
+                            <span class="r11 r">colorPicker</span>.<a href="#884bc56165f6d4bc" class="i field">ColorIsUpdating</a> = <b>false</b>;
+                        }
+                    }
+                }
+                <b>else</b>
+                {
+                    <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#31581f63da77e005" class="t constructor">InvalidCastException</a>(<span class="s">&quot;Cannot convert the given input to a valid color&quot;</span>);
+                }
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the name of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7f810099763f6fa5" class="i property">SelectedColor</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public string</b>? <a id="44fca09838a4689e" href="../../R/44fca09838a4689e.html" target="n" data-glyph="102,1" class="i property">ColorName</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>?)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#91e443ab06a89c3a" class="i field">ColorNameProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#91e443ab06a89c3a" class="i field">ColorNameProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#86f7d2946c9f26a5" class="i property">ColorNamesDictionary</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="00ee7678d90f6cbc" href="../../R/00ee7678d90f6cbc.html" target="n" data-glyph="42,1" class="i field">ColorNamesDictionaryProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#86f7d2946c9f26a5" class="i property">ColorNamesDictionary</a>),
+                                          <b>typeof</b>(<a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt;),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets a </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>{<span class="r13 r t">TKey</span>, <span class="r14 r t">TValue</span>}<span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> for looking up the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#44fca09838a4689e" class="i property">ColorName</a><span class="c">&quot;</span><span class="c">/&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt;? <a id="86f7d2946c9f26a5" href="../../R/86f7d2946c9f26a5.html" target="n" data-glyph="102,1" class="i property">ColorNamesDictionary</a>
+        {
+            <b>get</b> =&gt; (<a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>&gt;?)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#00ee7678d90f6cbc" class="i field">ColorNamesDictionaryProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#00ee7678d90f6cbc" class="i field">ColorNamesDictionaryProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7f2d13f782018460" class="i property">ColorHelper</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="bf9247bdb6616128" href="../../R/bf9247bdb6616128.html" target="n" data-glyph="42,1" class="i field">ColorHelperProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#7f2d13f782018460" class="i property">ColorHelper</a>),
+                                        <b>typeof</b>(<a href="ColorHelper.cs.html#34ad30a0c46f0fac" class="t t">ColorHelper</a>),
+                                        <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                        <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<b>null</b>, <a href="#88fefe1c3141b2c9" class="i method">OnUpdateColorNameProperty</a>));
+
+        <b>private static void</b> <a id="88fefe1c3141b2c9" href="../../R/88fefe1c3141b2c9.html" target="n" data-glyph="76,1" class="i method">OnUpdateColorNameProperty</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r15 rd" class="r15 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r16 rd" class="r16 r">_</span>)
+        {
+            <b>if</b> (<span class="r15 r">d</span> <b>is</b> <a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a> <span id="r17 rd" class="r17 r">colorPicker</span>)
+            {
+                <span class="r17 r">colorPicker</span>.<a href="#884bc56165f6d4bc" class="i field">ColorIsUpdating</a> = <b>true</b>;
+
+                <b>try</b>
+                {
+                    <span class="r17 r">colorPicker</span>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#91e443ab06a89c3a" class="i field">ColorNameProperty</a>, (<span class="r17 r">colorPicker</span>.<a href="#7f2d13f782018460" class="i property">ColorHelper</a> ?? <a href="ColorHelper.cs.html#34ad30a0c46f0fac" class="t t">ColorHelper</a>.<a href="ColorHelper.cs.html#0686cf3b13928c36" class="i field">DefaultInstance</a>).<a href="ColorHelper.cs.html#19dd9aea9b0f1051" class="i method">GetColorName</a>(<span class="r17 r">colorPicker</span>.<a href="#7f810099763f6fa5" class="i property">SelectedColor</a>, <span class="r17 r">colorPicker</span>.<a href="#86f7d2946c9f26a5" class="i property">ColorNamesDictionary</a>, <span class="r17 r">colorPicker</span>.<a href="#a7fbfbc7bbb8a6dc" class="i property">IsAlphaChannelVisible</a>));
+                }
+                <b>finally</b>
+                {
+                    <span class="r17 r">colorPicker</span>.<a href="#884bc56165f6d4bc" class="i field">ColorIsUpdating</a> = <b>false</b>;
+                }
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or Sets the helper class which is used to convert the color from or to string</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <a href="ColorHelper.cs.html#34ad30a0c46f0fac" class="t t">ColorHelper</a>? <a id="7f2d13f782018460" href="../../R/7f2d13f782018460.html" target="n" data-glyph="102,1" class="i property">ColorHelper</a>
+        {
+            <b>get</b> =&gt; (<a href="ColorHelper.cs.html#34ad30a0c46f0fac" class="t t">ColorHelper</a>?)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#bf9247bdb6616128" class="i field">ColorHelperProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#bf9247bdb6616128" class="i field">ColorHelperProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#a3abbd5ac48a9d9c" class="i property">A</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="cc36ff2ef6393507" href="../../R/cc36ff2ef6393507.html" target="n" data-glyph="42,1" class="i field">AProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#a3abbd5ac48a9d9c" class="i property">A</a>),
+                                          <b>typeof</b>(<b>byte</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#cfed8906a2f8b7f6" class="t constructor">FrameworkPropertyMetadata</a>((<b>byte</b>)255, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>, <a href="#ce031af670c15b5e" class="i method">OnColorChannelChanged</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Alpha-Channel</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public byte</b> <a id="a3abbd5ac48a9d9c" href="../../R/a3abbd5ac48a9d9c.html" target="n" data-glyph="102,1" class="i property">A</a>
+        {
+            <b>get</b> =&gt; (<b>byte</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#cc36ff2ef6393507" class="i field">AProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#cc36ff2ef6393507" class="i field">AProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7254118ba8812f37" class="i property">R</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f22e5ee749d8d4dc" href="../../R/f22e5ee749d8d4dc.html" target="n" data-glyph="42,1" class="i field">RProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#7254118ba8812f37" class="i property">R</a>),
+                                          <b>typeof</b>(<b>byte</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#cfed8906a2f8b7f6" class="t constructor">FrameworkPropertyMetadata</a>((<b>byte</b>)0, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>, <a href="#ce031af670c15b5e" class="i method">OnColorChannelChanged</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Red-Channel</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public byte</b> <a id="7254118ba8812f37" href="../../R/7254118ba8812f37.html" target="n" data-glyph="102,1" class="i property">R</a>
+        {
+            <b>get</b> =&gt; (<b>byte</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f22e5ee749d8d4dc" class="i field">RProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f22e5ee749d8d4dc" class="i field">RProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#ee3d30bfab111f1e" class="i property">G</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="dbad0c69788a22f7" href="../../R/dbad0c69788a22f7.html" target="n" data-glyph="42,1" class="i field">GProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#ee3d30bfab111f1e" class="i property">G</a>),
+                                          <b>typeof</b>(<b>byte</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#cfed8906a2f8b7f6" class="t constructor">FrameworkPropertyMetadata</a>((<b>byte</b>)0, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>, <a href="#ce031af670c15b5e" class="i method">OnColorChannelChanged</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Green-Channel</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public byte</b> <a id="ee3d30bfab111f1e" href="../../R/ee3d30bfab111f1e.html" target="n" data-glyph="102,1" class="i property">G</a>
+        {
+            <b>get</b> =&gt; (<b>byte</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#dbad0c69788a22f7" class="i field">GProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#dbad0c69788a22f7" class="i field">GProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#3825bb70d71d5b0e" class="i property">B</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="ce7cff36873527de" href="../../R/ce7cff36873527de.html" target="n" data-glyph="42,1" class="i field">BProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#3825bb70d71d5b0e" class="i property">B</a>),
+                                          <b>typeof</b>(<b>byte</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#cfed8906a2f8b7f6" class="t constructor">FrameworkPropertyMetadata</a>((<b>byte</b>)0, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>, <a href="#ce031af670c15b5e" class="i method">OnColorChannelChanged</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Blue-Channel</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public byte</b> <a id="3825bb70d71d5b0e" href="../../R/3825bb70d71d5b0e.html" target="n" data-glyph="102,1" class="i property">B</a>
+        {
+            <b>get</b> =&gt; (<b>byte</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#ce7cff36873527de" class="i field">BProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#ce7cff36873527de" class="i field">BProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#cdc810637635cd69" class="i property">Hue</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="3f5424a4e19c3e01" href="../../R/3f5424a4e19c3e01.html" target="n" data-glyph="42,1" class="i field">HueProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#cdc810637635cd69" class="i property">Hue</a>),
+                                          <b>typeof</b>(<b>double</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#cfed8906a2f8b7f6" class="t constructor">FrameworkPropertyMetadata</a>(0d, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>, <a href="#b502ea39a4127040" class="i method">OnHSVValuesChanged</a>));
+
+        <b>private static void</b> <a id="b502ea39a4127040" href="../../R/b502ea39a4127040.html" target="n" data-glyph="76,1" class="i method">OnHSVValuesChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r18 rd" class="r18 r">dependencyObject</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r19 rd" class="r19 r">e</span>)
+        {
+            <b>if</b> (<span class="r18 r">dependencyObject</span> <b>is</b> <a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a> <span id="r20 rd" class="r20 r">colorPicker</span> &amp;&amp; !<span class="r20 r">colorPicker</span>.<a href="#884bc56165f6d4bc" class="i field">ColorIsUpdating</a>)
+            {
+                <a href="HSVColor.cs.html#660b07de7e9bab89" class="k">var</a> <span id="r21 rd" class="r21 r">hsv</span> = <b>new</b> <a href="HSVColor.cs.html#45647a9ad3677115" class="t constructor">HSVColor</a>(<span class="r20 r">colorPicker</span>.<a href="#a3abbd5ac48a9d9c" class="i property">A</a> / 255d, <span class="r20 r">colorPicker</span>.<a href="#cdc810637635cd69" class="i property">Hue</a>, <span class="r20 r">colorPicker</span>.<a href="#a559db548043b74a" class="i property">Saturation</a>, <span class="r20 r">colorPicker</span>.<a href="#bac574cfd92f08f5" class="i property">Value</a>);
+
+                <span class="r20 r">colorPicker</span>.<a href="#cb3036a07c42662c" class="i field">UpdateHsvValues</a> = <b>false</b>;
+                <b>try</b>
+                {
+                    <span class="r20 r">colorPicker</span>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#d437f564c4110bf3" class="i field">SelectedColorProperty</a>, <span class="r21 r">hsv</span>.<a href="HSVColor.cs.html#95428ca91e939a72" class="i method">ToColor</a>());
+                }
+                <b>finally</b>
+                {
+                    <span class="r20 r">colorPicker</span>.<a href="#cb3036a07c42662c" class="i field">UpdateHsvValues</a> = <b>true</b>;
+                }
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Hue-Channel</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="cdc810637635cd69" href="../../R/cdc810637635cd69.html" target="n" data-glyph="102,1" class="i property">Hue</a>
+        {
+            <b>get</b> =&gt; (<b>double</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#3f5424a4e19c3e01" class="i field">HueProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#3f5424a4e19c3e01" class="i field">HueProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#a559db548043b74a" class="i property">Saturation</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="3cbbd6054bb34c8a" href="../../R/3cbbd6054bb34c8a.html" target="n" data-glyph="42,1" class="i field">SaturationProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#a559db548043b74a" class="i property">Saturation</a>),
+                                          <b>typeof</b>(<b>double</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#cfed8906a2f8b7f6" class="t constructor">FrameworkPropertyMetadata</a>(0d, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>, <a href="#b502ea39a4127040" class="i method">OnHSVValuesChanged</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Saturation-Channel</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="a559db548043b74a" href="../../R/a559db548043b74a.html" target="n" data-glyph="102,1" class="i property">Saturation</a>
+        {
+            <b>get</b> =&gt; (<b>double</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#3cbbd6054bb34c8a" class="i field">SaturationProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#3cbbd6054bb34c8a" class="i field">SaturationProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#bac574cfd92f08f5" class="i property">Value</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="869f254a95787baf" href="../../R/869f254a95787baf.html" target="n" data-glyph="42,1" class="i field">ValueProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#bac574cfd92f08f5" class="i property">Value</a>),
+                                          <b>typeof</b>(<b>double</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@PresentationFramework/A.html#cfed8906a2f8b7f6" class="t constructor">FrameworkPropertyMetadata</a>(0d, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#e51fa78b6081296d" class="i field">BindsTwoWayByDefault</a>, <a href="#b502ea39a4127040" class="i method">OnHSVValuesChanged</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the Value-Channel</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public double</b> <a id="bac574cfd92f08f5" href="../../R/bac574cfd92f08f5.html" target="n" data-glyph="102,1" class="i property">Value</a>
+        {
+            <b>get</b> =&gt; (<b>double</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#869f254a95787baf" class="i field">ValueProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#869f254a95787baf" class="i field">ValueProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#62d9a102318769b6" class="i property">LabelAlphaChannel</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="3ff6b94e711c0e0c" href="../../R/3ff6b94e711c0e0c.html" target="n" data-glyph="42,1" class="i field">LabelAlphaChannelProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#62d9a102318769b6" class="i property">LabelAlphaChannel</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<span class="s">&quot;A&quot;</span>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the label for the Alpha-Channel in the UI</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="62d9a102318769b6" href="../../R/62d9a102318769b6.html" target="n" data-glyph="102,1" class="i property">LabelAlphaChannel</a>
+        {
+            <b>get</b> =&gt; (<b>object</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#3ff6b94e711c0e0c" class="i field">LabelAlphaChannelProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#3ff6b94e711c0e0c" class="i field">LabelAlphaChannelProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#a9b1d09b50a27817" class="i property">LabelRedChannel</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f34f06cb932321b8" href="../../R/f34f06cb932321b8.html" target="n" data-glyph="42,1" class="i field">LabelRedChannelProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#a9b1d09b50a27817" class="i property">LabelRedChannel</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<span class="s">&quot;R&quot;</span>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the label for the Red-Channel in the UI</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="a9b1d09b50a27817" href="../../R/a9b1d09b50a27817.html" target="n" data-glyph="102,1" class="i property">LabelRedChannel</a>
+        {
+            <b>get</b> =&gt; (<b>object</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f34f06cb932321b8" class="i field">LabelRedChannelProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f34f06cb932321b8" class="i field">LabelRedChannelProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#043d2f8dbfaed5c4" class="i property">LabelGreenChannel</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="9ab9debc75f79584" href="../../R/9ab9debc75f79584.html" target="n" data-glyph="42,1" class="i field">LabelGreenChannelProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#043d2f8dbfaed5c4" class="i property">LabelGreenChannel</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<span class="s">&quot;G&quot;</span>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the label for the Green-Channel in the UI</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="043d2f8dbfaed5c4" href="../../R/043d2f8dbfaed5c4.html" target="n" data-glyph="102,1" class="i property">LabelGreenChannel</a>
+        {
+            <b>get</b> =&gt; (<b>object</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#9ab9debc75f79584" class="i field">LabelGreenChannelProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#9ab9debc75f79584" class="i field">LabelGreenChannelProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7c266bce1a053bce" class="i property">LabelBlueChannel</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="6e4631586c7916fd" href="../../R/6e4631586c7916fd.html" target="n" data-glyph="42,1" class="i field">LabelBlueChannelProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#7c266bce1a053bce" class="i property">LabelBlueChannel</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<span class="s">&quot;B&quot;</span>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the label for the Blue-Channel in the UI</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="7c266bce1a053bce" href="../../R/7c266bce1a053bce.html" target="n" data-glyph="102,1" class="i property">LabelBlueChannel</a>
+        {
+            <b>get</b> =&gt; (<b>object</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#6e4631586c7916fd" class="i field">LabelBlueChannelProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#6e4631586c7916fd" class="i field">LabelBlueChannelProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#6ad2aaaba2859510" class="i property">LabelColorPreview</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f431bc2cb6ecf911" href="../../R/f431bc2cb6ecf911.html" target="n" data-glyph="42,1" class="i field">LabelColorPreviewProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#6ad2aaaba2859510" class="i property">LabelColorPreview</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<span class="s">&quot;Preview&quot;</span>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the label for the Preview in the UI</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="6ad2aaaba2859510" href="../../R/6ad2aaaba2859510.html" target="n" data-glyph="102,1" class="i property">LabelColorPreview</a>
+        {
+            <b>get</b> =&gt; (<b>object</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f431bc2cb6ecf911" class="i field">LabelColorPreviewProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f431bc2cb6ecf911" class="i field">LabelColorPreviewProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7f55cb7b61370c85" class="i property">LabelHueChannel</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="8750b11f6f7b2e46" href="../../R/8750b11f6f7b2e46.html" target="n" data-glyph="42,1" class="i field">LabelHueChannelProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#7f55cb7b61370c85" class="i property">LabelHueChannel</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<span class="s">&quot;H&quot;</span>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the label for the Hue-Channel in the UI</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="7f55cb7b61370c85" href="../../R/7f55cb7b61370c85.html" target="n" data-glyph="102,1" class="i property">LabelHueChannel</a>
+        {
+            <b>get</b> =&gt; (<b>object</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#8750b11f6f7b2e46" class="i field">LabelHueChannelProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#8750b11f6f7b2e46" class="i field">LabelHueChannelProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#44437171a7be8715" class="i property">LabelSaturationChannel</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b282092195d65237" href="../../R/b282092195d65237.html" target="n" data-glyph="42,1" class="i field">LabelSaturationChannelProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#44437171a7be8715" class="i property">LabelSaturationChannel</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<span class="s">&quot;S&quot;</span>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the label for the Saturation-Channel in the UI</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="44437171a7be8715" href="../../R/44437171a7be8715.html" target="n" data-glyph="102,1" class="i property">LabelSaturationChannel</a>
+        {
+            <b>get</b> =&gt; (<b>object</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b282092195d65237" class="i field">LabelSaturationChannelProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b282092195d65237" class="i field">LabelSaturationChannelProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#3473538cd47d8489" class="i property">LabelValueChannel</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="aa1fcf3fbe64049f" href="../../R/aa1fcf3fbe64049f.html" target="n" data-glyph="42,1" class="i field">LabelValueChannelProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#3473538cd47d8489" class="i property">LabelValueChannel</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<span class="s">&quot;V&quot;</span>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the label for the Value-Channel in the UI</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="3473538cd47d8489" href="../../R/3473538cd47d8489.html" target="n" data-glyph="102,1" class="i property">LabelValueChannel</a>
+        {
+            <b>get</b> =&gt; (<b>object</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#aa1fcf3fbe64049f" class="i field">LabelValueChannelProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#aa1fcf3fbe64049f" class="i field">LabelValueChannelProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#4637c21289e5b03b" class="i property">LabelColorName</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="540c84f252479e09" href="../../R/540c84f252479e09.html" target="n" data-glyph="42,1" class="i field">LabelColorNameProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#4637c21289e5b03b" class="i property">LabelColorName</a>),
+                                          <b>typeof</b>(<b>object</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<span class="s">&quot;Name&quot;</span>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets the label for the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#44fca09838a4689e" class="i property">ColorName</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> in the UI</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public object</b> <a id="4637c21289e5b03b" href="../../R/4637c21289e5b03b.html" target="n" data-glyph="102,1" class="i property">LabelColorName</a>
+        {
+            <b>get</b> =&gt; (<b>object</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#540c84f252479e09" class="i field">LabelColorNameProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#540c84f252479e09" class="i field">LabelColorNameProperty</a>, <b>value</b>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#2875d795174727b4" class="i property">AreRgbChannelsVisible</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="1770620f53e63fe0" href="../../R/1770620f53e63fe0.html" target="n" data-glyph="42,1" class="i field">AreRgbChannelsVisibleProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#2875d795174727b4" class="i property">AreRgbChannelsVisible</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the RGB-Channels are visible</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="2875d795174727b4" href="../../R/2875d795174727b4.html" target="n" data-glyph="102,1" class="i property">AreRgbChannelsVisible</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#1770620f53e63fe0" class="i field">AreRgbChannelsVisibleProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#1770620f53e63fe0" class="i field">AreRgbChannelsVisibleProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#c0249657117daedd" class="i property">AreHsvChannelsVisible</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="4261b5da45e3d8e2" href="../../R/4261b5da45e3d8e2.html" target="n" data-glyph="42,1" class="i field">AreHsvChannelsVisibleProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#c0249657117daedd" class="i property">AreHsvChannelsVisible</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the HSV-Channels are visible</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="c0249657117daedd" href="../../R/c0249657117daedd.html" target="n" data-glyph="102,1" class="i property">AreHsvChannelsVisible</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#4261b5da45e3d8e2" class="i field">AreHsvChannelsVisibleProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#4261b5da45e3d8e2" class="i field">AreHsvChannelsVisibleProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#a7fbfbc7bbb8a6dc" class="i property">IsAlphaChannelVisible</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="5de4bda49f7de2ff" href="../../R/5de4bda49f7de2ff.html" target="n" data-glyph="42,1" class="i field">IsAlphaChannelVisibleProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#a7fbfbc7bbb8a6dc" class="i property">IsAlphaChannelVisible</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>, <a href="#88fefe1c3141b2c9" class="i method">OnUpdateColorNameProperty</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the Alpha-Channel is visible</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="a7fbfbc7bbb8a6dc" href="../../R/a7fbfbc7bbb8a6dc.html" target="n" data-glyph="102,1" class="i property">IsAlphaChannelVisible</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#5de4bda49f7de2ff" class="i field">IsAlphaChannelVisibleProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#5de4bda49f7de2ff" class="i field">IsAlphaChannelVisibleProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#1c04c2a4b58181e0" class="i property">IsColorNameVisible</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="5c7bae195df33a7b" href="../../R/5c7bae195df33a7b.html" target="n" data-glyph="42,1" class="i field">IsColorNameVisibleProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#1c04c2a4b58181e0" class="i property">IsColorNameVisible</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the field for the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#44fca09838a4689e" class="i property">ColorName</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> is visible</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="1c04c2a4b58181e0" href="../../R/1c04c2a4b58181e0.html" target="n" data-glyph="102,1" class="i property">IsColorNameVisible</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#5c7bae195df33a7b" class="i field">IsColorNameVisibleProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#5c7bae195df33a7b" class="i field">IsColorNameVisibleProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#10aa33aed0ac3f2f" class="i property">IsEyeDropperVisible</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> dependency property.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="ada2675f83723709" href="../../R/ada2675f83723709.html" target="n" data-glyph="42,1" class="i field">IsEyeDropperVisibleProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<b>nameof</b>(<a href="#10aa33aed0ac3f2f" class="i property">IsEyeDropperVisible</a>),
+                                          <b>typeof</b>(<b>bool</b>),
+                                          <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>),
+                                          <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#f14369a9faa136f8" class="i field">TrueBox</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets or sets whether the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="ColorEyeDropper.cs.html#ad215b920c6442a2" class="t t">ColorEyeDropper</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> is visible</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public bool</b> <a id="10aa33aed0ac3f2f" href="../../R/10aa33aed0ac3f2f.html" target="n" data-glyph="102,1" class="i property">IsEyeDropperVisible</a>
+        {
+            <b>get</b> =&gt; (<b>bool</b>)<a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#ada2675f83723709" class="i field">IsEyeDropperVisibleProperty</a>);
+            <b>set</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#ada2675f83723709" class="i field">IsEyeDropperVisibleProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<b>value</b>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c">Identifies the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#a6f615efd49510d5" class="i">SelectedColorChanged</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> routed event.</span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@PresentationCore/A.html#1494cfe9a0c5ee74" class="t t">RoutedEvent</a> <a id="e9e2bba1f4b545ef" href="../../R/e9e2bba1f4b545ef.html" target="n" data-glyph="42,1" class="i field">SelectedColorChangedEvent</a>
+            = <a href="@0@PresentationCore/A.html#957201b984f3254f" class="t t">EventManager</a>.<a href="@0@PresentationCore/A.html#a5460796900a6473" class="i method">RegisterRoutedEvent</a>(<b>nameof</b>(<a href="#a6f615efd49510d5" class="i">SelectedColorChanged</a>),
+                                               <a href="@0@PresentationCore/A.html#2144a30d9ece7dfe" class="t t">RoutingStrategy</a>.<a href="@0@PresentationCore/A.html#43b9d70d58d66c4c" class="i field">Bubble</a>,
+                                               <b>typeof</b>(<a href="@0@PresentationFramework/A.html#e61bd13757853714" class="t t">RoutedPropertyChangedEventHandler</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?&gt;),
+                                               <b>typeof</b>(<a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c">     Occurs when the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="#7f810099763f6fa5" class="i property">SelectedColor</a><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> property is changed.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public event</b> <a href="@0@PresentationFramework/A.html#e61bd13757853714" class="t t">RoutedPropertyChangedEventHandler</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?&gt; <a id="a6f615efd49510d5" href="../../R/a6f615efd49510d5.html" target="n" data-glyph="30,1" class="i">SelectedColorChanged</a>
+        {
+            <b>add</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#18cd7adc001fa956" class="i method">AddHandler</a>(<a href="#e9e2bba1f4b545ef" class="i field">SelectedColorChangedEvent</a>, <b>value</b>);
+            <b>remove</b> =&gt; <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#221a746a1b193eb1" class="i method">RemoveHandler</a>(<a href="#e9e2bba1f4b545ef" class="i field">SelectedColorChangedEvent</a>, <b>value</b>);
+        }
+
+        <b>internal virtual void</b> <a id="c21e1a6a264892b1" href="../../R/c21e1a6a264892b1.html" target="n" data-glyph="74,1" class="i method">OnSelectedColorChanged</a>(<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>? <span id="r22 rd" class="r22 r">oldValue</span>, <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>? <span id="r23 rd" class="r23 r">newValue</span>)
+        {
+            <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#91e443ab06a89c3a" class="i field">ColorNameProperty</a>, (<a href="#66c8ef13517405b4" class="k">this</a>.<a href="#7f2d13f782018460" class="i property">ColorHelper</a> ?? <a href="ColorHelper.cs.html#34ad30a0c46f0fac" class="t t">ColorHelper</a>.<a href="ColorHelper.cs.html#0686cf3b13928c36" class="i field">DefaultInstance</a>).<a href="ColorHelper.cs.html#19dd9aea9b0f1051" class="i method">GetColorName</a>(<span class="r23 r">newValue</span>, <a href="#66c8ef13517405b4" class="k">this</a>.<a href="#86f7d2946c9f26a5" class="i property">ColorNamesDictionary</a>, <a href="#66c8ef13517405b4" class="k">this</a>.<a href="#a7fbfbc7bbb8a6dc" class="i property">IsAlphaChannelVisible</a>));
+
+            <span class="c">// We just update the following lines if we have a Color.</span>
+            <b>if</b> (<span class="r23 r">newValue</span> != <b>null</b>)
+            {
+                <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="k">var</a> <span id="r24 rd" class="r24 r">color</span> = (<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>)<span class="r23 r">newValue</span>;
+
+                <b>if</b> (<a href="#66c8ef13517405b4" class="k">this</a>.<a href="#cb3036a07c42662c" class="i field">UpdateHsvValues</a>)
+                {
+                    <a href="HSVColor.cs.html#660b07de7e9bab89" class="k">var</a> <span id="r25 rd" class="r25 r">hsv</span> = <b>new</b> <a href="HSVColor.cs.html#fd7cfd0144b0b542" class="t constructor">HSVColor</a>(<span class="r24 r">color</span>);
+                    <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#3f5424a4e19c3e01" class="i field">HueProperty</a>, <span class="r25 r">hsv</span>.<a href="HSVColor.cs.html#522396cb9a726539" class="i property">Hue</a>);
+                    <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#3cbbd6054bb34c8a" class="i field">SaturationProperty</a>, <span class="r25 r">hsv</span>.<a href="HSVColor.cs.html#9dbf83a963fbae21" class="i property">Saturation</a>);
+                    <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#869f254a95787baf" class="i field">ValueProperty</a>, <span class="r25 r">hsv</span>.<a href="HSVColor.cs.html#1bfca96ba0d50570" class="i property">Value</a>);
+                }
+
+                <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#d770e9d77b5b6bc8" class="i field">SelectedHSVColorPropertyKey</a>, <b>new</b> <a href="HSVColor.cs.html#45647a9ad3677115" class="t constructor">HSVColor</a>(<a href="#66c8ef13517405b4" class="k">this</a>.<a href="#a3abbd5ac48a9d9c" class="i property">A</a> / 255d, <a href="#66c8ef13517405b4" class="k">this</a>.<a href="#cdc810637635cd69" class="i property">Hue</a>, <a href="#66c8ef13517405b4" class="k">this</a>.<a href="#a559db548043b74a" class="i property">Saturation</a>, <a href="#66c8ef13517405b4" class="k">this</a>.<a href="#bac574cfd92f08f5" class="i property">Value</a>));
+
+                <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#cc36ff2ef6393507" class="i field">AProperty</a>, <span class="r24 r">color</span>.<a href="@0@PresentationCore/A.html#e05e060db7ea2081" class="i property">A</a>);
+                <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#f22e5ee749d8d4dc" class="i field">RProperty</a>, <span class="r24 r">color</span>.<a href="@0@PresentationCore/A.html#d246b8d820bbb159" class="i property">R</a>);
+                <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#dbad0c69788a22f7" class="i field">GProperty</a>, <span class="r24 r">color</span>.<a href="@0@PresentationCore/A.html#43ce155a9e42470e" class="i property">G</a>);
+                <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#ce7cff36873527de" class="i field">BProperty</a>, <span class="r24 r">color</span>.<a href="@0@PresentationCore/A.html#f91c424cd2ddcd6a" class="i property">B</a>);
+            }
+
+            <a href="#66c8ef13517405b4" class="k">this</a>.<a href="@0@PresentationCore/A.html#ea67939118c04293" class="i method">RaiseEvent</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#7202de3595cf1de3" class="t constructor">RoutedPropertyChangedEventArgs</a>&lt;<a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>?&gt;(<span class="r22 r">oldValue</span>, <span class="r23 r">newValue</span>, <a href="#e9e2bba1f4b545ef" class="i field">SelectedColorChangedEvent</a>));
+        }
+
+        <b>internal static void</b> <a id="ce031af670c15b5e" href="../../R/ce031af670c15b5e.html" target="n" data-glyph="74,1" class="i method">OnColorChannelChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r26 rd" class="r26 r">dependencyObject</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r27 rd" class="r27 r">e</span>)
+        {
+            <b>if</b> (<span class="r26 r">dependencyObject</span> <b>is</b> <a href="#66c8ef13517405b4" class="t t">ColorPickerBase</a> <span id="r28 rd" class="r28 r">colorPicker</span> &amp;&amp; !<span class="r28 r">colorPicker</span>.<a href="#884bc56165f6d4bc" class="i field">ColorIsUpdating</a>)
+            {
+                <span class="r28 r">colorPicker</span>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#d437f564c4110bf3" class="i field">SelectedColorProperty</a>, <a href="@0@PresentationCore/A.html#9c469acbf7b2cb81" class="t t">Color</a>.<a href="@0@PresentationCore/A.html#9289c34fb9030bfd" class="i method">FromArgb</a>(<span class="r28 r">colorPicker</span>.<a href="#a3abbd5ac48a9d9c" class="i property">A</a>, <span class="r28 r">colorPicker</span>.<a href="#7254118ba8812f37" class="i property">R</a>, <span class="r28 r">colorPicker</span>.<a href="#ee3d30bfab111f1e" class="i property">G</a>, <span class="r28 r">colorPicker</span>.<a href="#3825bb70d71d5b0e" class="i property">B</a>));
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

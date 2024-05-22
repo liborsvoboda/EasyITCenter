@@ -1,0 +1,1281 @@
+﻿<!DOCTYPE html>
+<html><head><title>Markdown.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(1272);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#EASYTools.MarkdownToFlow/Markdown.cs" target="_top">Markdown.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#EASYTools.MarkdownToFlow" target="_top">..\..\..\EASY-TOOLS\EASYTools.MarkdownToFlow\EASYTools.MarkdownToFlow.csproj</a> (EASYTools.MarkdownToFlow)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Net</span>.<span class="i n">Cache</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Text</span>.<span class="i n">RegularExpressions</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Markup</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>.<span class="i n">Imaging</span>;
+ 
+<b>namespace</b> <span class="i n">EASYTools</span>.<span class="i n">MarkdownToFlow</span> {
+ 
+    <b>public class</b> <a id="dd77a29c705d6373" href="R/dd77a29c705d6373.html" target="n" data-glyph="0,0" class="t t">Markdown</a> : <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>
+    {
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> maximum nested depth of [] and () supported by the transform; implementation detail</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private const int</b> <a id="033a9e8f9f9210bb" href="R/033a9e8f9f9210bb.html" target="n" data-glyph="10,1" class="i field">_nestDepth</a> = 6;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Tabs are automatically converted to spaces as part of the transform  </span>
+        <span class="c">///</span><span class="c"> this constant determines how &quot;wide&quot; those tabs become in spaces  </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private const int</b> <a id="86bcafb9230e933a" href="R/86bcafb9230e933a.html" target="n" data-glyph="10,1" class="i field">_tabWidth</a> = 4;
+ 
+        <b>private const string</b> <a id="a1e3a67977e73a5c" href="R/a1e3a67977e73a5c.html" target="n" data-glyph="10,1" class="i field">_markerUL</a> = <span class="s">@&quot;[*+-]&quot;</span>;
+        <b>private const string</b> <a id="7afc3626f3bd9e1a" href="R/7afc3626f3bd9e1a.html" target="n" data-glyph="10,1" class="i field">_markerOL</a> = <span class="s">@&quot;\d+[.]&quot;</span>;
+ 
+        <b>private int</b> <a id="29d9702b7c1fea66" href="R/29d9702b7c1fea66.html" target="n" data-glyph="46,1" class="i field">_listLevel</a>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> when true, bold and italic require non-word characters on either side  </span>
+        <span class="c">///</span><span class="c"> WARNING: this is a significant deviation from the markdown spec</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span>
+        <b>public bool</b> <a id="e89578184deca979" href="R/e89578184deca979.html" target="n" data-glyph="102,1" class="i property">StrictBoldItalic</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>public</b> <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a> <a id="6c7281dceef8b226" href="R/6c7281dceef8b226.html" target="n" data-glyph="102,1" class="i property">HyperlinkCommand</a> { <b>get</b>; <b>set</b>; }
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="7c5dcb1752c1a97b" href="R/7c5dcb1752c1a97b.html" target="n" data-glyph="102,1" class="i property">DocumentStyle</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#192a82ce1fbd0cf2" class="i field">DocumentStyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#192a82ce1fbd0cf2" class="i field">DocumentStyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="5064391744c443b0" href="R/5064391744c443b0.html" target="n" data-glyph="102,1" class="i property">NormalParagraphStyle</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#14763b106f2afeff" class="i field">NormalParagraphStyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#14763b106f2afeff" class="i field">NormalParagraphStyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">// Using a DependencyProperty as the backing store for NormalParagraphStyle.  This enables animation, styling, binding, etc...</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="14763b106f2afeff" href="R/14763b106f2afeff.html" target="n" data-glyph="42,1" class="i field">NormalParagraphStyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;NormalParagraphStyle&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <span class="c">// Using a DependencyProperty as the backing store for DocumentStyle.  This enables animation, styling, binding, etc...</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="192a82ce1fbd0cf2" href="R/192a82ce1fbd0cf2.html" target="n" data-glyph="42,1" class="i field">DocumentStyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;DocumentStyle&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="edb06a205ebfb3ef" href="R/edb06a205ebfb3ef.html" target="n" data-glyph="102,1" class="i property">Heading1Style</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#32878b0c4ec5ec4a" class="i field">Heading1StyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#32878b0c4ec5ec4a" class="i field">Heading1StyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">// Using a DependencyProperty as the backing store for Heading1Style.  This enables animation, styling, binding, etc...</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="32878b0c4ec5ec4a" href="R/32878b0c4ec5ec4a.html" target="n" data-glyph="42,1" class="i field">Heading1StyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;Heading1Style&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="cbf2c8701c756994" href="R/cbf2c8701c756994.html" target="n" data-glyph="102,1" class="i property">Heading2Style</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#5b31abe85c427be0" class="i field">Heading2StyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#5b31abe85c427be0" class="i field">Heading2StyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">// Using a DependencyProperty as the backing store for Heading2Style.  This enables animation, styling, binding, etc...</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="5b31abe85c427be0" href="R/5b31abe85c427be0.html" target="n" data-glyph="42,1" class="i field">Heading2StyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;Heading2Style&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="7bd551fc849c7e9c" href="R/7bd551fc849c7e9c.html" target="n" data-glyph="102,1" class="i property">Heading3Style</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#03d13409e1ac9554" class="i field">Heading3StyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#03d13409e1ac9554" class="i field">Heading3StyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">// Using a DependencyProperty as the backing store for Heading3Style.  This enables animation, styling, binding, etc...</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="03d13409e1ac9554" href="R/03d13409e1ac9554.html" target="n" data-glyph="42,1" class="i field">Heading3StyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;Heading3Style&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="731dd0bf6a7930e6" href="R/731dd0bf6a7930e6.html" target="n" data-glyph="102,1" class="i property">Heading4Style</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#db64dfdcb0637e65" class="i field">Heading4StyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#db64dfdcb0637e65" class="i field">Heading4StyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">// Using a DependencyProperty as the backing store for Heading4Style.  This enables animation, styling, binding, etc...</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="db64dfdcb0637e65" href="R/db64dfdcb0637e65.html" target="n" data-glyph="42,1" class="i field">Heading4StyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;Heading4Style&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="5e4a798c75916b8b" href="R/5e4a798c75916b8b.html" target="n" data-glyph="102,1" class="i property">CodeStyle</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#83c21b2b85316e78" class="i field">CodeStyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#83c21b2b85316e78" class="i field">CodeStyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">// Using a DependencyProperty as the backing store for CodeStyle.  This enables animation, styling, binding, etc...</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="83c21b2b85316e78" href="R/83c21b2b85316e78.html" target="n" data-glyph="42,1" class="i field">CodeStyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;CodeStyle&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="5f746974727dfec4" href="R/5f746974727dfec4.html" target="n" data-glyph="102,1" class="i property">LinkStyle</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#790d4296fd6a4822" class="i field">LinkStyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#790d4296fd6a4822" class="i field">LinkStyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">// Using a DependencyProperty as the backing store for LinkStyle.  This enables animation, styling, binding, etc...</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="790d4296fd6a4822" href="R/790d4296fd6a4822.html" target="n" data-glyph="42,1" class="i field">LinkStyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;LinkStyle&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="34a18d89a2439022" href="R/34a18d89a2439022.html" target="n" data-glyph="102,1" class="i property">ImageStyle</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b8918974a70ef8a7" class="i field">ImageStyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b8918974a70ef8a7" class="i field">ImageStyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">// Using a DependencyProperty as the backing store for ImageStyle.  This enables animation, styling, binding, etc...</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b8918974a70ef8a7" href="R/b8918974a70ef8a7.html" target="n" data-glyph="42,1" class="i field">ImageStyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;ImageStyle&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="e5a26fffecbb80cf" href="R/e5a26fffecbb80cf.html" target="n" data-glyph="102,1" class="i property">SeparatorStyle</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b6298709ee67c192" class="i field">SeparatorStyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b6298709ee67c192" class="i field">SeparatorStyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <span class="c">// Using a DependencyProperty as the backing store for SeparatorStyle.  This enables animation, styling, binding, etc...</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b6298709ee67c192" href="R/b6298709ee67c192.html" target="n" data-glyph="42,1" class="i field">SeparatorStyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;SeparatorStyle&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public string</b> <a id="0042f8acda9f66d5" href="R/0042f8acda9f66d5.html" target="n" data-glyph="102,1" class="i property">AssetPathRoot</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#996d5c51e2e8ec17" class="i field">AssetPathRootProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#996d5c51e2e8ec17" class="i field">AssetPathRootProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="996d5c51e2e8ec17" href="R/996d5c51e2e8ec17.html" target="n" data-glyph="42,1" class="i field">AssetPathRootProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;AssetPathRootRoot&quot;</span>, <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="43fd44f7f31dd6aa" href="R/43fd44f7f31dd6aa.html" target="n" data-glyph="102,1" class="i property">TableStyle</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#032d2fa460ea2a0f" class="i field">TableStyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#032d2fa460ea2a0f" class="i field">TableStyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="032d2fa460ea2a0f" href="R/032d2fa460ea2a0f.html" target="n" data-glyph="42,1" class="i field">TableStyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;TableStyle&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="d5f0e41a7b4d9b1c" href="R/d5f0e41a7b4d9b1c.html" target="n" data-glyph="102,1" class="i property">TableHeaderStyle</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#1b8987497869c1c8" class="i field">TableHeaderStyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#1b8987497869c1c8" class="i field">TableHeaderStyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="1b8987497869c1c8" href="R/1b8987497869c1c8.html" target="n" data-glyph="42,1" class="i field">TableHeaderStyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;TableHeaderStyle&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a> <a id="46f327abcfbe9d1d" href="R/46f327abcfbe9d1d.html" target="n" data-glyph="102,1" class="i property">TableBodyStyle</a>
+        {
+            <b>get</b> { <b>return</b> (<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>)<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#dbc5abd54c124667" class="i field">TableBodyStyleProperty</a>); }
+            <b>set</b> { <a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#dbc5abd54c124667" class="i field">TableBodyStyleProperty</a>, <b>value</b>); }
+        }
+ 
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="dbc5abd54c124667" href="R/dbc5abd54c124667.html" target="n" data-glyph="42,1" class="i field">TableBodyStyleProperty</a> =
+            <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#3f509a22032d7071" class="i method">Register</a>(<span class="s">&quot;TableBodyStyle&quot;</span>, <b>typeof</b>(<a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>), <b>typeof</b>(<a href="#dd77a29c705d6373" class="t t">Markdown</a>), <b>new</b> <a href="@0@WindowsBase/A.html#905d5d4d07083f4b" class="t constructor">PropertyMetadata</a>(<b>null</b>));
+ 
+        <b>public</b> <a id="c2eb422027419e24" href="R/c2eb422027419e24.html" target="n" data-glyph="72,1" class="t constructor">Markdown</a>()
+        {
+            <a href="#6c7281dceef8b226" class="i property">HyperlinkCommand</a> = <a href="@0@PresentationCore/A.html#b5e97b9c09439a24" class="t t">NavigationCommands</a>.<a href="@0@PresentationCore/A.html#f0683789eebfdc14" class="i property">GoToPage</a>;
+        }
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a> <a id="0fb038378a653e71" href="R/0fb038378a653e71.html" target="n" data-glyph="72,1" class="i method">Transform</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r0 rd" class="r0 r">text</span>)
+        {
+            <b>if</b> (<span class="r0 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r0 r">text</span>));
+            }
+ 
+            <span class="r0 r">text</span> = <a href="#6c964f2ea5859adc" class="i method">Normalize</a>(<span class="r0 r">text</span>);
+            <a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="k">var</a> <span id="r1 rd" class="r1 r">document</span> = <a href="#44c9ed945ef2ddf1" class="i method">Create</a>&lt;<a href="@0@PresentationFramework/A.html#7049d8a35db73d0e" class="t t">FlowDocument</a>, <a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt;(<a href="#217f6d8039fa7919" class="i method">RunBlockGamut</a>(<span class="r0 r">text</span>));
+ 
+            <b>if</b> (<a href="#7c5dcb1752c1a97b" class="i property">DocumentStyle</a> != <b>null</b>)
+            {
+                <span class="r1 r">document</span>.<a href="@0@PresentationFramework/A.html#411271c79e6005e9" class="i property">Style</a> = <a href="#7c5dcb1752c1a97b" class="i property">DocumentStyle</a>;
+            }
+            <b>else</b>
+            {
+                <span class="r1 r">document</span>.<a href="@0@PresentationFramework/A.html#855d93d79ad76072" class="i property">PagePadding</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#f24f92e6dee837d3" class="t constructor">Thickness</a>(0);
+            }
+ 
+            <b>return</b> <span class="r1 r">document</span>;
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Perform transformations that form block-level tags like paragraphs, headers, and list items.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt; <a id="217f6d8039fa7919" href="R/217f6d8039fa7919.html" target="n" data-glyph="76,1" class="i method">RunBlockGamut</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r2 rd" class="r2 r">text</span>)
+        {
+            <b>if</b> (<span class="r2 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r2 r">text</span>));
+            }
+ 
+            <b>return</b> <a href="#990620b6dec6459c" class="i method">DoHeaders</a>(<span class="r2 r">text</span>,
+                <span id="r3 rd" class="r3 r">s1</span> =&gt; <a href="#01399ddf9ec9e86a" class="i method">DoHorizontalRules</a>(<span class="r3 r">s1</span>,
+                    <span id="r4 rd" class="r4 r">s2</span> =&gt; <a href="#c0f3d98e11dc4f39" class="i method">DoLists</a>(<span class="r4 r">s2</span>,
+                    <span id="r5 rd" class="r5 r">s3</span> =&gt; <a href="#2a3d66a3e875d1f0" class="i method">DoTable</a>(<span class="r5 r">s3</span>,
+                    <span id="r6 rd" class="r6 r">sn</span> =&gt; <a href="#f12ab847cd4e550b" class="i method">FormParagraphs</a>(<span class="r6 r">sn</span>)))));
+ 
+            <span class="c">//text = DoCodeBlocks(text);</span>
+            <span class="c">//text = DoBlockQuotes(text);</span>
+ 
+            <span class="c">//// We already ran HashHTMLBlocks() before, in Markdown(), but that</span>
+            <span class="c">//// was to escape raw HTML in the original Markdown source. This time,</span>
+            <span class="c">//// we&#39;re escaping the markup we&#39;ve just created, so that we don&#39;t wrap</span>
+            <span class="c">//// &lt;p&gt; tags around block-level tags.</span>
+            <span class="c">//text = HashHTMLBlocks(text);</span>
+ 
+            <span class="c">//text = FormParagraphs(text);</span>
+ 
+            <span class="c">//return text;</span>
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Perform transformations that occur *within* block-level tags like paragraphs, headers, and list items.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt; <a id="f736551831170eb3" href="R/f736551831170eb3.html" target="n" data-glyph="76,1" class="i method">RunSpanGamut</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r7 rd" class="r7 r">text</span>)
+        {
+            <b>if</b> (<span class="r7 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r7 r">text</span>));
+            }
+ 
+            <b>return</b> <a href="#e0e3919f12c2dfce" class="i method">DoCodeSpans</a>(<span class="r7 r">text</span>,
+                <span id="r8 rd" class="r8 r">s0</span> =&gt; <a href="#3c5a0afb525b7154" class="i method">DoImages</a>(<span class="r8 r">s0</span>,
+                <span id="r9 rd" class="r9 r">s1</span> =&gt; <a href="#e3477e9fd0b51733" class="i method">DoAnchors</a>(<span class="r9 r">s1</span>,
+                <span id="r10 rd" class="r10 r">s2</span> =&gt; <a href="#216dabdaeeaddadd" class="i method">DoItalicsAndBold</a>(<span class="r10 r">s2</span>,
+                <span id="r11 rd" class="r11 r">s3</span> =&gt; <a href="#775dc7d2c5492482" class="i method">DoText</a>(<span class="r11 r">s3</span>)))));
+ 
+            <span class="c">//text = EscapeSpecialCharsWithinTagAttributes(text);</span>
+            <span class="c">//text = EscapeBackslashes(text);</span>
+ 
+            <span class="c">//// Images must come first, because ![foo][f] looks like an anchor.</span>
+            <span class="c">//text = DoImages(text);</span>
+            <span class="c">//text = DoAnchors(text);</span>
+ 
+            <span class="c">//// Must come after DoAnchors(), because you can use &lt; and &gt;</span>
+            <span class="c">//// delimiters in inline links like [this](&lt;url&gt;).</span>
+            <span class="c">//text = DoAutoLinks(text);</span>
+ 
+            <span class="c">//text = EncodeAmpsAndAngles(text);</span>
+            <span class="c">//text = DoItalicsAndBold(text);</span>
+            <span class="c">//text = DoHardBreaks(text);</span>
+ 
+            <span class="c">//return text;</span>
+        }
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="fd68b47dd969907c" href="R/fd68b47dd969907c.html" target="n" data-glyph="46,1" class="i field">_newlinesLeadingTrailing</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;^\n+|\n+\z&quot;</span>, <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="6428f9a5312a1c6b" href="R/6428f9a5312a1c6b.html" target="n" data-glyph="46,1" class="i field">_newlinesMultiple</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;\n{2,}&quot;</span>, <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="bb2e82aead4271fd" href="R/../../0000000000.html" target="n" data-glyph="46,1" class="i field">_leadingWhitespace</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;^[ ]*&quot;</span>, <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> splits on two or more newlines, to form &quot;paragraphs&quot;;    </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt; <a id="f12ab847cd4e550b" href="R/f12ab847cd4e550b.html" target="n" data-glyph="76,1" class="i method">FormParagraphs</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r12 rd" class="r12 r">text</span>)
+        {
+            <b>if</b> (<span class="r12 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r12 r">text</span>));
+            }
+ 
+            <span class="c">// split on two or more newlines</span>
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>[] <span id="r13 rd" class="r13 r">grafs</span> = <a href="#6428f9a5312a1c6b" class="i field">_newlinesMultiple</a>.<a href="@0@System/A.html#0703e29d2bf2dff7" class="i method">Split</a>(<a href="#fd68b47dd969907c" class="i field">_newlinesLeadingTrailing</a>.<a href="@0@System/A.html#1f2acfa32796faaa" class="i method">Replace</a>(<span class="r12 r">text</span>, <span class="s">&quot;&quot;</span>));
+ 
+            <b>foreach</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r14 rd" class="r14 r">g</span> <b>in</b> <span class="r13 r">grafs</span>)
+            {
+                <a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="k">var</a> <span id="r15 rd" class="r15 r">block</span> = <a href="#44c9ed945ef2ddf1" class="i method">Create</a>&lt;<a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="t t">Paragraph</a>, <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;(<a href="#f736551831170eb3" class="i method">RunSpanGamut</a>(<span class="r14 r">g</span>));
+                <span class="r15 r">block</span>.<a href="@0@PresentationFramework/A.html#411271c79e6005e9" class="i property">Style</a> = <a href="#dd77a29c705d6373" class="k">this</a>.<a href="#5064391744c443b0" class="i property">NormalParagraphStyle</a>;
+                <b>yield</b> <b>return</b> <span class="r15 r">block</span>;
+            }
+        }
+ 
+        <b>private static string</b> <a id="35bac2bb9c729da4" href="R/35bac2bb9c729da4.html" target="n" data-glyph="46,1" class="i field">_nestedBracketsPattern</a>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Reusable pattern to match balanced [brackets]. See Friedl&#39;s </span>
+        <span class="c">///</span><span class="c"> &quot;Mastering Regular Expressions&quot;, 2nd Ed., pp. 328-331.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static string</b> <a id="2c093e292d7dd2a7" href="R/2c093e292d7dd2a7.html" target="n" data-glyph="76,1" class="i method">GetNestedBracketsPattern</a>()
+        {
+            <span class="c">// in other words [this] and [this[also]] and [this[also[too]]]</span>
+            <span class="c">// up to _nestDepth</span>
+            <b>if</b> (<a href="#35bac2bb9c729da4" class="i field">_nestedBracketsPattern</a> <b>is null</b>)
+                <a href="#35bac2bb9c729da4" class="i field">_nestedBracketsPattern</a> =
+                    <a href="#141f889bef9f4164" class="i method">RepeatString</a>(<span class="s">@&quot;
+                    (?&gt;              # Atomic matching
+                       [^\[\]]+      # Anything other than brackets
+                     |
+                       \[
+                           &quot;</span>, <a href="#033a9e8f9f9210bb" class="i field">_nestDepth</a>) + <a href="#141f889bef9f4164" class="i method">RepeatString</a>(
+                    <span class="s">@&quot; \]
+                    )*&quot;</span>
+                    , <a href="#033a9e8f9f9210bb" class="i field">_nestDepth</a>);
+            <b>return</b> <a href="#35bac2bb9c729da4" class="i field">_nestedBracketsPattern</a>;
+        }
+ 
+        <b>private static string</b> <a id="67e8e59bb67f5260" href="R/67e8e59bb67f5260.html" target="n" data-glyph="46,1" class="i field">_nestedParensPattern</a>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Reusable pattern to match balanced (parens). See Friedl&#39;s </span>
+        <span class="c">///</span><span class="c"> &quot;Mastering Regular Expressions&quot;, 2nd Ed., pp. 328-331.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static string</b> <a id="d83da1936291abe9" href="R/d83da1936291abe9.html" target="n" data-glyph="76,1" class="i method">GetNestedParensPattern</a>()
+        {
+            <span class="c">// in other words (this) and (this(also)) and (this(also(too)))</span>
+            <span class="c">// up to _nestDepth</span>
+            <b>if</b> (<a href="#67e8e59bb67f5260" class="i field">_nestedParensPattern</a> <b>is null</b>)
+                <a href="#67e8e59bb67f5260" class="i field">_nestedParensPattern</a> =
+                    <a href="#141f889bef9f4164" class="i method">RepeatString</a>(<span class="s">@&quot;
+                    (?&gt;              # Atomic matching
+                       [^()\s]+      # Anything other than parens or whitespace
+                     |
+                       \(
+                           &quot;</span>, <a href="#033a9e8f9f9210bb" class="i field">_nestDepth</a>) + <a href="#141f889bef9f4164" class="i method">RepeatString</a>(
+                    <span class="s">@&quot; \)
+                    )*&quot;</span>
+                    , <a href="#033a9e8f9f9210bb" class="i field">_nestDepth</a>);
+            <b>return</b> <a href="#67e8e59bb67f5260" class="i field">_nestedParensPattern</a>;
+        }
+ 
+        <b>private static string</b> <a id="67ce4833ddcb9bed" href="R/67ce4833ddcb9bed.html" target="n" data-glyph="46,1" class="i field">_nestedParensPatternWithWhiteSpace</a>;
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Reusable pattern to match balanced (parens), including whitespace. See Friedl&#39;s </span>
+        <span class="c">///</span><span class="c"> &quot;Mastering Regular Expressions&quot;, 2nd Ed., pp. 328-331.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static string</b> <a id="81dd56e19c1fe528" href="R/81dd56e19c1fe528.html" target="n" data-glyph="76,1" class="i method">GetNestedParensPatternWithWhiteSpace</a>()
+        {
+            <span class="c">// in other words (this) and (this(also)) and (this(also(too)))</span>
+            <span class="c">// up to _nestDepth</span>
+            <b>if</b> (<a href="#67ce4833ddcb9bed" class="i field">_nestedParensPatternWithWhiteSpace</a> <b>is null</b>)
+                <a href="#67ce4833ddcb9bed" class="i field">_nestedParensPatternWithWhiteSpace</a> =
+                    <a href="#141f889bef9f4164" class="i method">RepeatString</a>(<span class="s">@&quot;
+                    (?&gt;              # Atomic matching
+                       [^()]+      # Anything other than parens
+                     |
+                       \(
+                           &quot;</span>, <a href="#033a9e8f9f9210bb" class="i field">_nestDepth</a>) + <a href="#141f889bef9f4164" class="i method">RepeatString</a>(
+                    <span class="s">@&quot; \)
+                    )*&quot;</span>
+                    , <a href="#033a9e8f9f9210bb" class="i field">_nestDepth</a>);
+            <b>return</b> <a href="#67ce4833ddcb9bed" class="i field">_nestedParensPatternWithWhiteSpace</a>;
+        }
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="a4b3f42243f85085" href="R/a4b3f42243f85085.html" target="n" data-glyph="46,1" class="i field">_imageInline</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9726f19207b91186" class="i method">Format</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>, <span class="s">@&quot;
+                (                           # wrap whole match in $1
+                    !\[
+                        ({0})               # link text = $2
+                    \]
+                    \(                      # literal paren
+                        [ ]*
+                        ({1})               # href = $3
+                        [ ]*
+                        (                   # $4
+                        ([&#39;&quot;&quot;])           # quote char = $5
+                        (.*?)               # title = $6
+                        \5                  # matching quote
+                        #[ ]*                # ignore any spaces between closing quote and )
+                        )?                  # title is optional
+                    \)
+                )&quot;</span>,
+            <a href="#2c093e292d7dd2a7" class="i method">GetNestedBracketsPattern</a>(),
+            <a href="#81dd56e19c1fe528" class="i method">GetNestedParensPatternWithWhiteSpace</a>()),
+                  <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#edddd4e8e2241e93" class="i field">Singleline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="12e0604f226d5bda" href="R/12e0604f226d5bda.html" target="n" data-glyph="46,1" class="i field">_anchorInline</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9726f19207b91186" class="i method">Format</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>, <span class="s">@&quot;
+                (                           # wrap whole match in $1
+                    \[
+                        ({0})               # link text = $2
+                    \]
+                    \(                      # literal paren
+                        [ ]*
+                        ({1})               # href = $3
+                        [ ]*
+                        (                   # $4
+                        ([&#39;&quot;&quot;])           # quote char = $5
+                        (.*?)               # title = $6
+                        \5                  # matching quote
+                        [ ]*                # ignore any spaces between closing quote and )
+                        )?                  # title is optional
+                    \)
+                )&quot;</span>, <a href="#2c093e292d7dd2a7" class="i method">GetNestedBracketsPattern</a>(), <a href="#d83da1936291abe9" class="i method">GetNestedParensPattern</a>()),
+                  <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#edddd4e8e2241e93" class="i field">Singleline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Turn Markdown images into images</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> ![image alt](url) </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt; <a id="3c5a0afb525b7154" href="R/3c5a0afb525b7154.html" target="n" data-glyph="76,1" class="i method">DoImages</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r16 rd" class="r16 r">text</span>, <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;&gt; <span id="r17 rd" class="r17 r">defaultHandler</span>)
+        {
+            <b>if</b> (<span class="r16 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r16 r">text</span>));
+            }
+ 
+            <b>return</b> <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>(<span class="r16 r">text</span>, <a href="#a4b3f42243f85085" class="i field">_imageInline</a>, <a href="#483aa5407a3f23e6" class="i method">ImageInlineEvaluator</a>, <span class="r17 r">defaultHandler</span>);
+        }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a> <a id="483aa5407a3f23e6" href="R/483aa5407a3f23e6.html" target="n" data-glyph="76,1" class="i method">ImageInlineEvaluator</a>(<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r18 rd" class="r18 r">match</span>)
+        {
+            <b>if</b> (<span class="r18 r">match</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r18 r">match</span>));
+            }
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r19 rd" class="r19 r">linkText</span> = <span class="r18 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[2].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r20 rd" class="r20 r">url</span> = <span class="r18 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[3].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+            <a href="@0@PresentationCore/A.html#ee8d0deab0e263b7" class="t t">BitmapImage</a> <span id="r21 rd" class="r21 r">imgSource</span> = <b>null</b>;
+            <b>try</b>
+            {
+                <b>if</b> (!<a href="@0@System/A.html#991565dd25f47c90" class="t t">Uri</a>.<a href="@0@System/A.html#24b1613846e7f879" class="i method">IsWellFormedUriString</a>(<span class="r20 r">url</span>, <a href="@0@System/A.html#ac43655101ad74be" class="t t">UriKind</a>.<a href="@0@System/A.html#d734108197254429" class="i field">Absolute</a>) &amp;&amp; !<span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#090eca8621a248ee" class="t t">Path</a>.<a href="@0@mscorlib/A.html#807960f08fca497d" class="i method">IsPathRooted</a>(<span class="r20 r">url</span>))
+                {
+                    <span class="r20 r">url</span> = <span class="i n">System</span>.<span class="i n">IO</span>.<a href="@0@mscorlib/A.html#090eca8621a248ee" class="t t">Path</a>.<a href="@0@mscorlib/A.html#2d7263f86a526264" class="i method">Combine</a>(<a href="#0042f8acda9f66d5" class="i property">AssetPathRoot</a> ?? <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>, <span class="r20 r">url</span>);
+                }
+ 
+                <span class="r21 r">imgSource</span> = <b>new</b> <a href="@0@PresentationCore/A.html#940e003698ec4c39" class="t constructor">BitmapImage</a>();
+                <span class="r21 r">imgSource</span>.<a href="@0@PresentationCore/A.html#ff48844d9c3da581" class="i method">BeginInit</a>();
+                <span class="r21 r">imgSource</span>.<a href="@0@PresentationCore/A.html#0ad8e1450035960b" class="i property">CacheOption</a> = <a href="@0@PresentationCore/A.html#2892a7144be883ba" class="t t">BitmapCacheOption</a>.<a href="@0@PresentationCore/A.html#557dbcdc4959d599" class="i field">None</a>;
+                <span class="r21 r">imgSource</span>.<a href="@0@PresentationCore/A.html#5cdb1922c7e0098a" class="i property">UriCachePolicy</a> = <b>new</b> <a href="@0@System/A.html#063f03977bf9aef2" class="t constructor">RequestCachePolicy</a>(<a href="@0@System/A.html#d4b648b9a220e04e" class="t t">RequestCacheLevel</a>.<a href="@0@System/A.html#ed41341941eb248f" class="i field">BypassCache</a>);
+                <span class="r21 r">imgSource</span>.<a href="@0@PresentationCore/A.html#0ad8e1450035960b" class="i property">CacheOption</a> = <a href="@0@PresentationCore/A.html#2892a7144be883ba" class="t t">BitmapCacheOption</a>.<a href="@0@PresentationCore/A.html#5fdb13813fd17def" class="i field">OnLoad</a>;
+                <span class="r21 r">imgSource</span>.<a href="@0@PresentationCore/A.html#8c171628237c51e9" class="i property">CreateOptions</a> = <a href="@0@PresentationCore/A.html#f16ee6363903c31c" class="t t">BitmapCreateOptions</a>.<a href="@0@PresentationCore/A.html#4f125224c88858ec" class="i field">IgnoreImageCache</a>;
+                <span class="r21 r">imgSource</span>.<a href="@0@PresentationCore/A.html#54d23d015e762014" class="i property">UriSource</a> = <b>new</b> <a href="@0@System/A.html#9e1bb2fef0d1159b" class="t constructor">Uri</a>(<span class="r20 r">url</span>);
+                <span class="r21 r">imgSource</span>.<a href="@0@PresentationCore/A.html#f13ebd618e2e92dd" class="i method">EndInit</a>();
+            }
+            <b>catch</b> (<a href="@0@mscorlib/A.html#f092fb2b893a0162" class="t t">Exception</a>)
+            {
+                <b>return</b> <b>new</b> <a href="@0@PresentationFramework/A.html#b8abdcbfcb7b7da9" class="t constructor">Run</a>(<span class="s">&quot;!&quot;</span> + <span class="r20 r">url</span>) { <a href="@0@PresentationFramework/A.html#8904cbacad6f430c" class="i property">Foreground</a> = <a href="@0@PresentationCore/A.html#0110a86641bd833b" class="t t">Brushes</a>.<a href="@0@PresentationCore/A.html#171db3d6b44cb67a" class="i property">Red</a> };
+            }
+ 
+            <a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="t t">Image</a> <span id="r22 rd" class="r22 r">image</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#11dd36f90cfdae62" class="t constructor">Image</a> { <a href="@0@PresentationFramework/A.html#695847c6a393b6c9" class="i property">Source</a> = <span class="r21 r">imgSource</span>, <a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> = <span class="r19 r">linkText</span> };
+            <b>if</b> (<a href="#34a18d89a2439022" class="i property">ImageStyle</a> <b>is null</b>)
+            {
+                <span class="r22 r">image</span>.<a href="@0@PresentationFramework/A.html#8aedc94268115177" class="i property">Margin</a> = <b>new</b> <a href="@0@PresentationFramework/A.html#f24f92e6dee837d3" class="t constructor">Thickness</a>(0);
+            }
+            <b>else</b>
+            {
+                <span class="r22 r">image</span>.<a href="@0@PresentationFramework/A.html#9e86dfc6412c0fe7" class="i property">Style</a> = <a href="#34a18d89a2439022" class="i property">ImageStyle</a>;
+            }
+ 
+            <span class="c">// Bind size so document is updated when image is downloaded</span>
+            <b>if</b> (<span class="r21 r">imgSource</span>.<a href="@0@PresentationCore/A.html#db12f08a6ee241c8" class="i property">IsDownloading</a>)
+            {
+                <a href="@0@PresentationFramework/A.html#2e068a13b9bdd228" class="t t">Binding</a> <span id="r23 rd" class="r23 r">binding</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#94f69147a4e4e69b" class="t constructor">Binding</a>(<b>nameof</b>(<a href="@0@PresentationCore/A.html#ee8d0deab0e263b7" class="t t">BitmapImage</a>.<a href="@0@PresentationCore/A.html#fa4c13e2d0a42fff" class="i property">Width</a>));
+                <span class="r23 r">binding</span>.<a href="@0@PresentationFramework/A.html#c2d2f9da2dfc5332" class="i property">Source</a> = <span class="r21 r">imgSource</span>;
+                <span class="r23 r">binding</span>.<a href="@0@PresentationFramework/A.html#85a5cd1ab2a52ca1" class="i property">Mode</a> = <a href="@0@PresentationFramework/A.html#8958b7cd4de86635" class="t t">BindingMode</a>.<a href="@0@PresentationFramework/A.html#d8c0c0945280d35d" class="i field">OneWay</a>;
+ 
+                <a href="@0@PresentationFramework/A.html#f4a0b647e1032931" class="t t">BindingExpressionBase</a> <span id="r24 rd" class="r24 r">bindingExpression</span> = <a href="@0@PresentationFramework/A.html#1630c30289beaec7" class="t t">BindingOperations</a>.<a href="@0@PresentationFramework/A.html#59fadf12efc18884" class="i method">SetBinding</a>(<span class="r22 r">image</span>, <a href="@0@PresentationFramework/A.html#ea65ed9300b0595d" class="t t">Image</a>.<a href="@0@PresentationFramework/A.html#eab43ecf1e67f8ba" class="i field">WidthProperty</a>, <span class="r23 r">binding</span>);
+                
+                <b>void</b> <a id="0ffea41c28d066fd" href="R/0ffea41c28d066fd.html" target="n" data-glyph="76,2" class="i method">downloadCompletedHandler</a>(<b>object</b> <span id="r25 rd" class="r25 r">sender</span>, <a href="@0@mscorlib/A.html#9a1496aa60befd10" class="t t">EventArgs</a> <span id="r26 rd" class="r26 r">e</span>)
+                {
+                    <span class="r21 r">imgSource</span>.<a href="@0@PresentationCore/A.html#cdb89cfecbc93f50" class="i">DownloadCompleted</a> -= <a href="#0ffea41c28d066fd" class="i method">downloadCompletedHandler</a>;
+                    <span class="r24 r">bindingExpression</span>.<a href="@0@PresentationFramework/A.html#39eb442d49846521" class="i method">UpdateTarget</a>();
+                }
+ 
+                <span class="r21 r">imgSource</span>.<a href="@0@PresentationCore/A.html#cdb89cfecbc93f50" class="i">DownloadCompleted</a> += <a href="#0ffea41c28d066fd" class="i method">downloadCompletedHandler</a>;
+            }
+            <b>else</b>
+            {
+                <span class="r22 r">image</span>.<a href="@0@PresentationFramework/A.html#d0e1f940abafebe8" class="i property">Width</a> = <span class="r21 r">imgSource</span>.<a href="@0@PresentationCore/A.html#fa4c13e2d0a42fff" class="i property">Width</a>;
+            }
+ 
+            <b>return</b> <b>new</b> <a href="@0@PresentationFramework/A.html#ccc5f001978c6efd" class="t constructor">InlineUIContainer</a>(<span class="r22 r">image</span>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Turn Markdown link shortcuts into hyperlinks</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> [link text](url &quot;title&quot;) </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt; <a id="e3477e9fd0b51733" href="R/e3477e9fd0b51733.html" target="n" data-glyph="76,1" class="i method">DoAnchors</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r27 rd" class="r27 r">text</span>, <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;&gt; <span id="r28 rd" class="r28 r">defaultHandler</span>)
+        {
+            <b>if</b> (<span class="r27 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r27 r">text</span>));
+            }
+ 
+            <span class="c">// Next, inline-style links: [link text](url &quot;optional title&quot;) or [link text](url &quot;optional title&quot;)</span>
+            <b>return</b> <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>(<span class="r27 r">text</span>, <a href="#12e0604f226d5bda" class="i field">_anchorInline</a>, <a href="#f8337c43535a4e5d" class="i method">AnchorInlineEvaluator</a>, <span class="r28 r">defaultHandler</span>);
+        }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a> <a id="f8337c43535a4e5d" href="R/f8337c43535a4e5d.html" target="n" data-glyph="76,1" class="i method">AnchorInlineEvaluator</a>(<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r29 rd" class="r29 r">match</span>)
+        {
+            <b>if</b> (<span class="r29 r">match</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r29 r">match</span>));
+            }
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r30 rd" class="r30 r">linkText</span> = <span class="r29 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[2].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r31 rd" class="r31 r">url</span> = <span class="r29 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[3].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r32 rd" class="r32 r">title</span> = <span class="r29 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[6].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+ 
+            <a href="@0@PresentationFramework/A.html#2c1c85ab1e41c25a" class="k">var</a> <span id="r33 rd" class="r33 r">result</span> = <a href="#44c9ed945ef2ddf1" class="i method">Create</a>&lt;<a href="@0@PresentationFramework/A.html#2c1c85ab1e41c25a" class="t t">Hyperlink</a>, <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;(<a href="#f736551831170eb3" class="i method">RunSpanGamut</a>(<span class="r30 r">linkText</span>));
+            <span class="r33 r">result</span>.<a href="@0@PresentationFramework/A.html#d577c661b367518d" class="i property">Command</a> = <a href="#6c7281dceef8b226" class="i property">HyperlinkCommand</a>;
+            <span class="r33 r">result</span>.<a href="@0@PresentationFramework/A.html#8b8e8bad22fb8bdc" class="i property">CommandParameter</a> = <span class="r31 r">url</span>;
+            <b>if</b> (!<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r32 r">title</span>))
+            {
+                <span class="r33 r">result</span>.<a href="@0@PresentationFramework/A.html#9363549a5e0741b7" class="i property">ToolTip</a> = <span class="r32 r">title</span>;
+            }
+            <b>if</b> (<a href="#5f746974727dfec4" class="i property">LinkStyle</a> != <b>null</b>)
+            {
+                <span class="r33 r">result</span>.<a href="@0@PresentationFramework/A.html#411271c79e6005e9" class="i property">Style</a> = <a href="#5f746974727dfec4" class="i property">LinkStyle</a>;
+            }
+ 
+            <b>return</b> <span class="r33 r">result</span>;
+        }
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="115836f8bb281b26" href="R/115836f8bb281b26.html" target="n" data-glyph="46,1" class="i field">_headerSetext</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;
+                ^(.+?)
+                [ ]*
+                \n
+                (=+|-+)     # $1 = string of =&#39;s or -&#39;s
+                [ ]*
+                \n+&quot;</span>,
+    <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#58cb536c9fb96071" class="i field">Multiline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="345f275ef2b55d88" href="R/345f275ef2b55d88.html" target="n" data-glyph="46,1" class="i field">_headerAtx</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;
+                ^(\#{1,6})  # $1 = string of #&#39;s
+                [ ]*
+                (.+?)       # $2 = Header text
+                [ ]*
+                \#*         # optional closing #&#39;s (not counted)
+                \n+&quot;</span>,
+            <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#58cb536c9fb96071" class="i field">Multiline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Turn Markdown headers into HTML header tags</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Header 1  </span>
+        <span class="c">///</span><span class="c"> ========  </span>
+        <span class="c">///</span><span class="c"> </span>
+        <span class="c">///</span><span class="c"> Header 2  </span>
+        <span class="c">///</span><span class="c"> --------  </span>
+        <span class="c">///</span><span class="c"> </span>
+        <span class="c">///</span><span class="c"> # Header 1  </span>
+        <span class="c">///</span><span class="c"> ## Header 2  </span>
+        <span class="c">///</span><span class="c"> ## Header 2 with closing hashes ##  </span>
+        <span class="c">///</span><span class="c"> ...  </span>
+        <span class="c">///</span><span class="c"> ###### Header 6  </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt; <a id="990620b6dec6459c" href="R/990620b6dec6459c.html" target="n" data-glyph="76,1" class="i method">DoHeaders</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r34 rd" class="r34 r">text</span>, <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt;&gt; <span id="r35 rd" class="r35 r">defaultHandler</span>)
+        {
+            <b>if</b> (<span class="r34 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r34 r">text</span>));
+            }
+ 
+            <b>return</b> <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>&lt;<a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt;(<span class="r34 r">text</span>, <a href="#115836f8bb281b26" class="i field">_headerSetext</a>, <span id="r36 rd" class="r36 r">m</span> =&gt; <a href="#53c87a357b7e0b01" class="i method">SetextHeaderEvaluator</a>(<span class="r36 r">m</span>),
+                <span id="r37 rd" class="r37 r">s</span> =&gt; <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>&lt;<a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt;(<span class="r37 r">s</span>, <a href="#345f275ef2b55d88" class="i field">_headerAtx</a>, <span id="r38 rd" class="r38 r">m</span> =&gt; <a href="#064e2d5b0a0bbb18" class="i method">AtxHeaderEvaluator</a>(<span class="r38 r">m</span>), <span class="r35 r">defaultHandler</span>));
+        }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a> <a id="53c87a357b7e0b01" href="R/53c87a357b7e0b01.html" target="n" data-glyph="76,1" class="i method">SetextHeaderEvaluator</a>(<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r39 rd" class="r39 r">match</span>)
+        {
+            <b>if</b> (<span class="r39 r">match</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r39 r">match</span>));
+            }
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r40 rd" class="r40 r">header</span> = <span class="r39 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[1].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+            <b>int</b> <span id="r41 rd" class="r41 r">level</span> = <span class="r39 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[2].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>.<a href="@0@mscorlib/A.html#1c787ba07a7b11ab" class="i method">StartsWith</a>(<span class="s">&quot;=&quot;</span>, <a href="@0@mscorlib/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@0@mscorlib/A.html#87891a6d28c64c9b" class="i field">Ordinal</a>) ? 1 : 2;
+ 
+            <span class="c">//TODO: Style the paragraph based on the header level</span>
+            <b>return</b> <a href="#8d4d2f6f30215682" class="i method">CreateHeader</a>(<span class="r41 r">level</span>, <a href="#f736551831170eb3" class="i method">RunSpanGamut</a>(<span class="r40 r">header</span>.<a href="@0@mscorlib/A.html#06a5f7c688e69307" class="i method">Trim</a>()));
+        }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a> <a id="064e2d5b0a0bbb18" href="R/064e2d5b0a0bbb18.html" target="n" data-glyph="76,1" class="i method">AtxHeaderEvaluator</a>(<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r42 rd" class="r42 r">match</span>)
+        {
+            <b>if</b> (<span class="r42 r">match</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r42 r">match</span>));
+            }
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r43 rd" class="r43 r">header</span> = <span class="r42 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[2].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+            <b>int</b> <span id="r44 rd" class="r44 r">level</span> = <span class="r42 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[1].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a>;
+            <b>return</b> <a href="#8d4d2f6f30215682" class="i method">CreateHeader</a>(<span class="r44 r">level</span>, <a href="#f736551831170eb3" class="i method">RunSpanGamut</a>(<span class="r43 r">header</span>));
+        }
+ 
+        <b>public</b> <a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a> <a id="8d4d2f6f30215682" href="R/8d4d2f6f30215682.html" target="n" data-glyph="72,1" class="i method">CreateHeader</a>(<b>int</b> <span id="r45 rd" class="r45 r">level</span>, <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt; <span id="r46 rd" class="r46 r">content</span>)
+        {
+            <b>if</b> (<span class="r46 r">content</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r46 r">content</span>));
+            }
+ 
+            <a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="k">var</a> <span id="r47 rd" class="r47 r">block</span> = <a href="#44c9ed945ef2ddf1" class="i method">Create</a>&lt;<a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="t t">Paragraph</a>, <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;(<span class="r46 r">content</span>);
+ 
+            <b>switch</b> (<span class="r45 r">level</span>)
+            {
+                <b>case</b> 1:
+                    <b>if</b> (<a href="#edb06a205ebfb3ef" class="i property">Heading1Style</a> != <b>null</b>)
+                    {
+                        <span class="r47 r">block</span>.<a href="@0@PresentationFramework/A.html#411271c79e6005e9" class="i property">Style</a> = <a href="#edb06a205ebfb3ef" class="i property">Heading1Style</a>;
+                    }
+                    <b>break</b>;
+ 
+                <b>case</b> 2:
+                    <b>if</b> (<a href="#cbf2c8701c756994" class="i property">Heading2Style</a> != <b>null</b>)
+                    {
+                        <span class="r47 r">block</span>.<a href="@0@PresentationFramework/A.html#411271c79e6005e9" class="i property">Style</a> = <a href="#cbf2c8701c756994" class="i property">Heading2Style</a>;
+                    }
+                    <b>break</b>;
+ 
+                <b>case</b> 3:
+                    <b>if</b> (<a href="#7bd551fc849c7e9c" class="i property">Heading3Style</a> != <b>null</b>)
+                    {
+                        <span class="r47 r">block</span>.<a href="@0@PresentationFramework/A.html#411271c79e6005e9" class="i property">Style</a> = <a href="#7bd551fc849c7e9c" class="i property">Heading3Style</a>;
+                    }
+                    <b>break</b>;
+ 
+                <b>case</b> 4:
+                    <b>if</b> (<a href="#731dd0bf6a7930e6" class="i property">Heading4Style</a> != <b>null</b>)
+                    {
+                        <span class="r47 r">block</span>.<a href="@0@PresentationFramework/A.html#411271c79e6005e9" class="i property">Style</a> = <a href="#731dd0bf6a7930e6" class="i property">Heading4Style</a>;
+                    }
+                    <b>break</b>;
+            }
+ 
+            <b>return</b> <span class="r47 r">block</span>;
+        }
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="45b519e5066ee66a" href="R/45b519e5066ee66a.html" target="n" data-glyph="46,1" class="i field">_horizontalRules</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;
+            ^[ ]{0,3}         # Leading space
+                ([-*_])       # $1: First marker
+                (?&gt;           # Repeated marker group
+                    [ ]{0,2}  # Zero, one, or two spaces.
+                    \1        # Marker character
+                ){2,}         # Group repeated at least twice
+                [ ]*          # Trailing spaces
+                $             # End of line.
+            &quot;</span>, <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#58cb536c9fb96071" class="i field">Multiline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Turn Markdown horizontal rules into HTML hr tags</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> ***  </span>
+        <span class="c">///</span><span class="c"> * * *  </span>
+        <span class="c">///</span><span class="c"> ---</span>
+        <span class="c">///</span><span class="c"> - - -</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt; <a id="01399ddf9ec9e86a" href="R/01399ddf9ec9e86a.html" target="n" data-glyph="76,1" class="i method">DoHorizontalRules</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r48 rd" class="r48 r">text</span>, <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt;&gt; <span id="r49 rd" class="r49 r">defaultHandler</span>)
+        {
+            <b>if</b> (<span class="r48 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r48 r">text</span>));
+            }
+ 
+            <b>return</b> <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>(<span class="r48 r">text</span>, <a href="#45b519e5066ee66a" class="i field">_horizontalRules</a>, <a href="#7d4bc1de26468aa1" class="i method">RuleEvaluator</a>, <span class="r49 r">defaultHandler</span>);
+        }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a> <a id="7d4bc1de26468aa1" href="R/7d4bc1de26468aa1.html" target="n" data-glyph="76,1" class="i method">RuleEvaluator</a>(<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r50 rd" class="r50 r">match</span>)
+        {
+            <b>if</b> (<span class="r50 r">match</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r50 r">match</span>));
+            }
+ 
+            <a href="@0@PresentationFramework/A.html#e4f7bb78d8bf8015" class="k">var</a> <span id="r51 rd" class="r51 r">separator</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#9c69be9934fa8f24" class="t constructor">Separator</a>();
+            <b>if</b> (<a href="#e5a26fffecbb80cf" class="i property">SeparatorStyle</a> != <b>null</b>)
+            {
+                <span class="r51 r">separator</span>.<a href="@0@PresentationFramework/A.html#9e86dfc6412c0fe7" class="i property">Style</a> = <a href="#e5a26fffecbb80cf" class="i property">SeparatorStyle</a>;
+            }
+ 
+            <a href="@0@PresentationFramework/A.html#449f969a87850c76" class="k">var</a> <span id="r52 rd" class="r52 r">container</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#331409f8eeb01090" class="t constructor">BlockUIContainer</a>(<span class="r51 r">separator</span>);
+            <b>return</b> <span class="r52 r">container</span>;
+        }
+ 
+        <b>private static readonly string</b> <a id="77f2e3b03c586a69" href="R/77f2e3b03c586a69.html" target="n" data-glyph="46,1" class="i field">_wholeList</a>
+            = <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9726f19207b91186" class="i method">Format</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>, <span class="s">@&quot;
+            (                               # $1 = whole list
+              (                             # $2
+                [ ]{{0,{1}}}
+                ({0})                       # $3 = first list item marker
+                [ ]+
+              )
+              (?s:.+?)
+              (                             # $4
+                  \z
+                |
+                  \n{{2,}}
+                  (?=\S)
+                  (?!                       # Negative lookahead for another list item marker
+                    [ ]*
+                    {0}[ ]+
+                  )
+              )
+            )&quot;</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#9726f19207b91186" class="i method">Format</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>, <span class="s">&quot;(?:{0}|{1})&quot;</span>, <a href="#a1e3a67977e73a5c" class="i field">_markerUL</a>, <a href="#7afc3626f3bd9e1a" class="i field">_markerOL</a>), <a href="#86bcafb9230e933a" class="i field">_tabWidth</a> - 1);
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="20b434201d44e43e" href="R/20b434201d44e43e.html" target="n" data-glyph="46,1" class="i field">_listNested</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;^&quot;</span> + <a href="#77f2e3b03c586a69" class="i field">_wholeList</a>,
+            <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#58cb536c9fb96071" class="i field">Multiline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="ff29b02dcd0538b2" href="R/ff29b02dcd0538b2.html" target="n" data-glyph="46,1" class="i field">_listTopLevel</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;(?:(?&lt;=\n\n)|\A\n?)&quot;</span> + <a href="#77f2e3b03c586a69" class="i field">_wholeList</a>,
+            <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#58cb536c9fb96071" class="i field">Multiline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Turn Markdown lists into HTML ul and ol and li tags</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt; <a id="c0f3d98e11dc4f39" href="R/c0f3d98e11dc4f39.html" target="n" data-glyph="76,1" class="i method">DoLists</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r53 rd" class="r53 r">text</span>, <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt;&gt; <span id="r54 rd" class="r54 r">defaultHandler</span>)
+        {
+            <b>if</b> (<span class="r53 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r53 r">text</span>));
+            }
+ 
+            <span class="c">// We use a different prefix before nested lists than top-level lists.</span>
+            <span class="c">// See extended comment in _ProcessListItems().</span>
+            <b>if</b> (<a href="#29d9702b7c1fea66" class="i field">_listLevel</a> &gt; 0)
+                <b>return</b> <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>(<span class="r53 r">text</span>, <a href="#20b434201d44e43e" class="i field">_listNested</a>, <a href="#c9315d40653302df" class="i method">ListEvaluator</a>, <span class="r54 r">defaultHandler</span>);
+            <b>else</b>
+                <b>return</b> <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>(<span class="r53 r">text</span>, <a href="#ff29b02dcd0538b2" class="i field">_listTopLevel</a>, <a href="#c9315d40653302df" class="i method">ListEvaluator</a>, <span class="r54 r">defaultHandler</span>);
+        }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a> <a id="c9315d40653302df" href="R/c9315d40653302df.html" target="n" data-glyph="76,1" class="i method">ListEvaluator</a>(<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r55 rd" class="r55 r">match</span>)
+        {
+            <b>if</b> (<span class="r55 r">match</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r55 r">match</span>));
+            }
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r56 rd" class="r56 r">list</span> = <span class="r55 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[1].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r57 rd" class="r57 r">listType</span> = <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a>.<a href="@0@System/A.html#ffaf97ebd1d02f3c" class="i method">IsMatch</a>(<span class="r55 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[3].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>, <a href="#a1e3a67977e73a5c" class="i field">_markerUL</a>) ? <span class="s">&quot;ul&quot;</span> : <span class="s">&quot;ol&quot;</span>;
+ 
+            <span class="c">// Turn double returns into triple returns, so that we can make a</span>
+            <span class="c">// paragraph for the last item in a list, if necessary:</span>
+            <span class="r56 r">list</span> = <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a>.<a href="@0@System/A.html#825196ff9130bce9" class="i method">Replace</a>(<span class="r56 r">list</span>, <span class="s">@&quot;\n{2,}&quot;</span>, <span class="s">&quot;\n\n\n&quot;</span>);
+ 
+            <a href="@0@PresentationFramework/A.html#eabc7101897ec6e6" class="k">var</a> <span id="r58 rd" class="r58 r">resultList</span> = <a href="#44c9ed945ef2ddf1" class="i method">Create</a>&lt;<a href="@0@PresentationFramework/A.html#eabc7101897ec6e6" class="t t">List</a>, <a href="@0@PresentationFramework/A.html#a7410ebbf0d73f2d" class="t t">ListItem</a>&gt;(<a href="#bf9a36f429242e95" class="i method">ProcessListItems</a>(<span class="r56 r">list</span>, <span class="r57 r">listType</span> == <span class="s">&quot;ul&quot;</span> ? <a href="#a1e3a67977e73a5c" class="i field">_markerUL</a> : <a href="#7afc3626f3bd9e1a" class="i field">_markerOL</a>));
+ 
+            <span class="r58 r">resultList</span>.<a href="@0@PresentationFramework/A.html#1edb540a314d8df3" class="i property">MarkerStyle</a> = <span class="r57 r">listType</span> == <span class="s">&quot;ul&quot;</span> ? <a href="@0@PresentationCore/A.html#5303a6b94ad57db6" class="t t">TextMarkerStyle</a>.<a href="@0@PresentationCore/A.html#fe6dcd7023c06de3" class="i field">Disc</a> : <a href="@0@PresentationCore/A.html#5303a6b94ad57db6" class="t t">TextMarkerStyle</a>.<a href="@0@PresentationCore/A.html#cd93a57ff55602b6" class="i field">Decimal</a>;
+ 
+            <b>return</b> <span class="r58 r">resultList</span>;
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Process the contents of a single ordered or unordered list, splitting it</span>
+        <span class="c">///</span><span class="c"> into individual list items.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#a7410ebbf0d73f2d" class="t t">ListItem</a>&gt; <a id="bf9a36f429242e95" href="R/bf9a36f429242e95.html" target="n" data-glyph="76,1" class="i method">ProcessListItems</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r59 rd" class="r59 r">list</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r60 rd" class="r60 r">marker</span>)
+        {
+            <span class="c">// The listLevel global keeps track of when we&#39;re inside a list.</span>
+            <span class="c">// Each time we enter a list, we increment it; when we leave a list,</span>
+            <span class="c">// we decrement. If it&#39;s zero, we&#39;re not in a list anymore.</span>
+ 
+            <span class="c">// We do this because when we&#39;re not inside a list, we want to treat</span>
+            <span class="c">// something like this:</span>
+ 
+            <span class="c">//    I recommend upgrading to version</span>
+            <span class="c">//    8. Oops, now this line is treated</span>
+            <span class="c">//    as a sub-list.</span>
+ 
+            <span class="c">// As a single paragraph, despite the fact that the second line starts</span>
+            <span class="c">// with a digit-period-space sequence.</span>
+ 
+            <span class="c">// Whereas when we&#39;re inside a list (or sub-list), that line will be</span>
+            <span class="c">// treated as the start of a sub-list. What a kludge, huh? This is</span>
+            <span class="c">// an aspect of Markdown&#39;s syntax that&#39;s hard to parse perfectly</span>
+            <span class="c">// without resorting to mind-reading. Perhaps the solution is to</span>
+            <span class="c">// change the syntax rules such that sub-lists must start with a</span>
+            <span class="c">// starting cardinal number; e.g. &quot;1.&quot; or &quot;a.&quot;.</span>
+ 
+            <a href="#29d9702b7c1fea66" class="i field">_listLevel</a>++;
+            <b>try</b>
+            {
+                <span class="c">// Trim trailing blank lines:</span>
+                <span class="r59 r">list</span> = <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a>.<a href="@0@System/A.html#825196ff9130bce9" class="i method">Replace</a>(<span class="r59 r">list</span>, <span class="s">@&quot;\n{2,}\z&quot;</span>, <span class="s">&quot;\n&quot;</span>);
+ 
+                <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r61 rd" class="r61 r">pattern</span> = <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c07c3772222caaff" class="i method">Format</a>(<a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>.<a href="@0@mscorlib/A.html#26ef1c020f0dbb7a" class="i property">InvariantCulture</a>,
+                  <span class="s">@&quot;(\n)?                      # leading line = $1
+                (^[ ]*)                    # leading whitespace = $2
+                ({0}) [ ]+                 # list marker = $3
+                ((?s:.+?)                  # list item text = $4
+                (\n{{1,2}}))      
+                (?= \n* (\z | \2 ({0}) [ ]+))&quot;</span>, <span class="r60 r">marker</span>);
+ 
+                <a href="@0@System/A.html#bbe3b2eb80ae5526" class="k">var</a> <span id="r62 rd" class="r62 r">regex</span> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="r61 r">pattern</span>, <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#58cb536c9fb96071" class="i field">Multiline</a>);
+                <a href="@0@System/A.html#7376f85d6ff213d1" class="k">var</a> <span id="r63 rd" class="r63 r">matches</span> = <span class="r62 r">regex</span>.<a href="@0@System/A.html#eee0fd08a857f828" class="i method">Matches</a>(<span class="r59 r">list</span>);
+                <b>foreach</b> (<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r64 rd" class="r64 r">m</span> <b>in</b> <span class="r63 r">matches</span>)
+                {
+                    <b>yield</b> <b>return</b> <a href="#ded332c0a66f0b6f" class="i method">ListItemEvaluator</a>(<span class="r64 r">m</span>);
+                }
+            }
+            <b>finally</b>
+            {
+                <a href="#29d9702b7c1fea66" class="i field">_listLevel</a>--;
+            }
+        }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#a7410ebbf0d73f2d" class="t t">ListItem</a> <a id="ded332c0a66f0b6f" href="R/ded332c0a66f0b6f.html" target="n" data-glyph="76,1" class="i method">ListItemEvaluator</a>(<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r65 rd" class="r65 r">match</span>)
+        {
+            <b>if</b> (<span class="r65 r">match</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r65 r">match</span>));
+            }
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r66 rd" class="r66 r">item</span> = <span class="r65 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[4].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r67 rd" class="r67 r">leadingLine</span> = <span class="r65 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[1].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+ 
+            <b>if</b> (!<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="t t">String</a>.<a href="@0@mscorlib/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<span class="r67 r">leadingLine</span>) || <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a>.<a href="@0@System/A.html#ffaf97ebd1d02f3c" class="i method">IsMatch</a>(<span class="r66 r">item</span>, <span class="s">@&quot;\n{2,}&quot;</span>))
+                <span class="c">// we could correct any bad indentation here..</span>
+                <b>return</b> <a href="#44c9ed945ef2ddf1" class="i method">Create</a>&lt;<a href="@0@PresentationFramework/A.html#a7410ebbf0d73f2d" class="t t">ListItem</a>, <a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt;(<a href="#217f6d8039fa7919" class="i method">RunBlockGamut</a>(<span class="r66 r">item</span>));
+            <b>else</b>
+            {
+                <span class="c">// recursion for sub-lists</span>
+                <b>return</b> <a href="#44c9ed945ef2ddf1" class="i method">Create</a>&lt;<a href="@0@PresentationFramework/A.html#a7410ebbf0d73f2d" class="t t">ListItem</a>, <a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt;(<a href="#217f6d8039fa7919" class="i method">RunBlockGamut</a>(<span class="r66 r">item</span>));
+            }
+        }
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="474125fb0c15d201" href="R/474125fb0c15d201.html" target="n" data-glyph="46,1" class="i field">_table</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;
+            (                               # $1 = whole table
+                [ \r\n]*
+                (                           # $2 = table header
+                    \|([^|\r\n]*\|)+        # $3
+                )
+                [ ]*\r?\n[ ]*
+                (                           # $4 = column style
+                    \|(:?-+:?\|)+           # $5
+                )
+                (                           # $6 = table row
+                    (                       # $7
+                        [ ]*\r?\n[ ]*
+                        \|([^|\r\n]*\|)+    # $8
+                    )+
+                )
+            )&quot;</span>,
+            <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#58cb536c9fb96071" class="i field">Multiline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <b>public</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt; <a id="2a3d66a3e875d1f0" href="R/2a3d66a3e875d1f0.html" target="n" data-glyph="72,1" class="i method">DoTable</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r68 rd" class="r68 r">text</span>, <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a>&gt;&gt; <span id="r69 rd" class="r69 r">defaultHandler</span>)
+        {
+            <b>if</b> (<span class="r68 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r68 r">text</span>));
+            }
+ 
+            <b>return</b> <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>(<span class="r68 r">text</span>, <a href="#474125fb0c15d201" class="i field">_table</a>, <a href="#9ea187a1a110911d" class="i method">TableEvalutor</a>, <span class="r69 r">defaultHandler</span>);
+        }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#2cd3f1000bf3b562" class="t t">Block</a> <a id="9ea187a1a110911d" href="R/9ea187a1a110911d.html" target="n" data-glyph="76,1" class="i method">TableEvalutor</a>(<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r70 rd" class="r70 r">match</span>)
+        {
+            <b>if</b> (<span class="r70 r">match</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r70 r">match</span>));
+            }
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r71 rd" class="r71 r">wholeTable</span> = <span class="r70 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[1].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r72 rd" class="r72 r">header</span> = <span class="r70 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[2].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>.<a href="@0@mscorlib/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r73 rd" class="r73 r">style</span> = <span class="r70 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[4].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>.<a href="@0@mscorlib/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r74 rd" class="r74 r">row</span> = <span class="r70 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[6].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>.<a href="@0@mscorlib/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+ 
+            <b>var</b> <span id="r75 rd" class="r75 r">styles</span> = <span class="r73 r">style</span>.<a href="@0@mscorlib/A.html#8124961f027d9ac9" class="i method">Substring</a>(1, <span class="r73 r">style</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a> - 2).<a href="@0@mscorlib/A.html#1c4a9dc78ba38999" class="i method">Split</a>(<span class="s">&#39;|&#39;</span>);
+            <b>var</b> <span id="r76 rd" class="r76 r">headers</span> = <span class="r72 r">header</span>.<a href="@0@mscorlib/A.html#8124961f027d9ac9" class="i method">Substring</a>(1, <span class="r72 r">header</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a> - 2).<a href="@0@mscorlib/A.html#1c4a9dc78ba38999" class="i method">Split</a>(<span class="s">&#39;|&#39;</span>);
+            <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="k">var</a> <span id="r77 rd" class="r77 r">rowList</span> = <span class="r74 r">row</span>.<a href="@0@mscorlib/A.html#1c4a9dc78ba38999" class="i method">Split</a>(<span class="s">&#39;\n&#39;</span>).<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>(<span id="r78 rd" class="r78 r">ritm</span> =&gt;
+            {
+                <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r79 rd" class="r79 r">trimRitm</span> = <span class="r78 r">ritm</span>.<a href="@0@mscorlib/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+                <b>return</b> <span class="r79 r">trimRitm</span>.<a href="@0@mscorlib/A.html#8124961f027d9ac9" class="i method">Substring</a>(1, <span class="r79 r">trimRitm</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a> - 2).<a href="@0@mscorlib/A.html#1c4a9dc78ba38999" class="i method">Split</a>(<span class="s">&#39;|&#39;</span>);
+            }).<a href="@0@System.Core/A.html#e276d6892241255b" class="i method">ToList</a>();
+ 
+            <b>int</b> <span id="r80 rd" class="r80 r">maxColCount</span> =
+                <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#80ff956e9ca8e414" class="i method">Max</a>(
+                    <a href="@0@mscorlib/A.html#a4407e67b9a5afad" class="t t">Math</a>.<a href="@0@mscorlib/A.html#80ff956e9ca8e414" class="i method">Max</a>(<span class="r75 r">styles</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>, <span class="r76 r">headers</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>),
+                    <span class="r77 r">rowList</span>.<a href="@0@System.Core/A.html#5c652c53e80df013" class="i method">Select</a>(<span id="r81 rd" class="r81 r">ritm</span> =&gt; <span class="r81 r">ritm</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>).<a href="@0@System.Core/A.html#6ca1a80e1f22e519" class="i method">Max</a>()
+                );
+ 
+ 
+            <span class="c">// table style</span>
+            <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="k">var</a> <span id="r82 rd" class="r82 r">aligns</span> = <b>new</b> <a href="@0@mscorlib/A.html#9e5352b2b304ceba" class="t constructor">List</a>&lt;<a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a>?&gt;();
+            <b>foreach</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r83 rd" class="r83 r">colStyleTxt</span> <b>in</b> <span class="r75 r">styles</span>)
+            {
+                <a href="@0@mscorlib/A.html#02f2b1a33b09362d" class="k">var</a> <span id="r84 rd" class="r84 r">firstChar</span> = <span class="r83 r">colStyleTxt</span>.<a href="@0@System.Core/A.html#bc8ae402a61dd9d6" class="i method">First</a>();
+                <a href="@0@mscorlib/A.html#02f2b1a33b09362d" class="k">var</a> <span id="r85 rd" class="r85 r">lastChar</span> = <span class="r83 r">colStyleTxt</span>.<a href="@0@System.Core/A.html#75722fd194dc2e0e" class="i method">Last</a>();
+                <span class="c">// center</span>
+                <b>if</b> (<span class="r84 r">firstChar</span> == <span class="s">&#39;:&#39;</span> &amp;&amp; <span class="r85 r">lastChar</span> == <span class="s">&#39;:&#39;</span>)
+                {
+                    <span class="r82 r">aligns</span>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a>.<a href="@0@PresentationCore/A.html#1f34d220316f37dd" class="i field">Center</a>);
+                }
+                <span class="c">// right</span>
+                <b>else</b> <b>if</b> (<span class="r85 r">lastChar</span> == <span class="s">&#39;:&#39;</span>)
+                {
+                    <span class="r82 r">aligns</span>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a>.<a href="@0@PresentationCore/A.html#f204055029188379" class="i field">Right</a>);
+                }
+                <span class="c">// left</span>
+                <b>else</b> <b>if</b> (<span class="r84 r">firstChar</span> == <span class="s">&#39;:&#39;</span>)
+                {
+                    <span class="r82 r">aligns</span>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a>.<a href="@0@PresentationCore/A.html#c8dd48b7f3f297d3" class="i field">Left</a>);
+                }
+                <span class="c">// default</span>
+                <b>else</b>
+                {
+                    <span class="r82 r">aligns</span>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<b>null</b>);
+                }
+            }
+            <b>while</b> (<span class="r82 r">aligns</span>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a> &lt; <span class="r80 r">maxColCount</span>)
+            {
+                <span class="r82 r">aligns</span>.<a href="@0@mscorlib/A.html#9cc11588bffd57c1" class="i method">Add</a>(<b>null</b>);
+            }
+ 
+            <span class="c">// table</span>
+            <a href="@0@PresentationFramework/A.html#5e2adb14c87526f9" class="k">var</a> <span id="r86 rd" class="r86 r">table</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#b025426b4d713516" class="t constructor">Table</a>();
+            <b>if</b> (<a href="#43fd44f7f31dd6aa" class="i property">TableStyle</a> != <b>null</b>)
+            {
+                <span class="r86 r">table</span>.<a href="@0@PresentationFramework/A.html#411271c79e6005e9" class="i property">Style</a> = <a href="#43fd44f7f31dd6aa" class="i property">TableStyle</a>;
+            }
+ 
+            <span class="c">// table columns</span>
+            <b>while</b> (<span class="r86 r">table</span>.<a href="@0@PresentationFramework/A.html#6c6b16d885c99a9b" class="i property">Columns</a>.<a href="@0@PresentationFramework/A.html#28aa0f3995f210bf" class="i property">Count</a> &lt; <span class="r80 r">maxColCount</span>)
+            {
+                <span class="r86 r">table</span>.<a href="@0@PresentationFramework/A.html#6c6b16d885c99a9b" class="i property">Columns</a>.<a href="@0@PresentationFramework/A.html#f5122ee129128fe3" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#29abf24bbf54f8b6" class="t constructor">TableColumn</a>());
+            }
+ 
+            <span class="c">// table header</span>
+            <a href="@0@PresentationFramework/A.html#0591802947e281eb" class="k">var</a> <span id="r87 rd" class="r87 r">tableHeaderRG</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#0246809089bd8542" class="t constructor">TableRowGroup</a>();
+            <b>if</b> (<a href="#d5f0e41a7b4d9b1c" class="i property">TableHeaderStyle</a> != <b>null</b>)
+            {
+                <span class="r87 r">tableHeaderRG</span>.<a href="@0@PresentationFramework/A.html#411271c79e6005e9" class="i property">Style</a> = <a href="#d5f0e41a7b4d9b1c" class="i property">TableHeaderStyle</a>;
+            }
+ 
+            <a href="@0@PresentationFramework/A.html#dc188c848b66134c" class="k">var</a> <span id="r88 rd" class="r88 r">tableHeader</span> = <a href="#fc83592f4a484434" class="i method">CreateTableRow</a>(<span class="r76 r">headers</span>, <span class="r82 r">aligns</span>);
+            <span class="r87 r">tableHeaderRG</span>.<a href="@0@PresentationFramework/A.html#62f8e42e87617c49" class="i property">Rows</a>.<a href="@0@PresentationFramework/A.html#95acf9179feed33b" class="i method">Add</a>(<span class="r88 r">tableHeader</span>);
+            <span class="r86 r">table</span>.<a href="@0@PresentationFramework/A.html#c008f1ef4f5a7cdc" class="i property">RowGroups</a>.<a href="@0@PresentationFramework/A.html#6ebd445b53ccf872" class="i method">Add</a>(<span class="r87 r">tableHeaderRG</span>);
+ 
+            <span class="c">// row</span>
+            <a href="@0@PresentationFramework/A.html#0591802947e281eb" class="k">var</a> <span id="r89 rd" class="r89 r">tableBodyRG</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#0246809089bd8542" class="t constructor">TableRowGroup</a>();
+            <b>if</b> (<a href="#46f327abcfbe9d1d" class="i property">TableBodyStyle</a> != <b>null</b>)
+            {
+                <span class="r89 r">tableBodyRG</span>.<a href="@0@PresentationFramework/A.html#411271c79e6005e9" class="i property">Style</a> = <a href="#46f327abcfbe9d1d" class="i property">TableBodyStyle</a>;
+            }
+            <b>foreach</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>[] <span id="r90 rd" class="r90 r">rowAry</span> <b>in</b> <span class="r77 r">rowList</span>)
+            {
+                <a href="@0@PresentationFramework/A.html#dc188c848b66134c" class="k">var</a> <span id="r91 rd" class="r91 r">tableBody</span> = <a href="#fc83592f4a484434" class="i method">CreateTableRow</a>(<span class="r90 r">rowAry</span>, <span class="r82 r">aligns</span>);
+                <span class="r89 r">tableBodyRG</span>.<a href="@0@PresentationFramework/A.html#62f8e42e87617c49" class="i property">Rows</a>.<a href="@0@PresentationFramework/A.html#95acf9179feed33b" class="i method">Add</a>(<span class="r91 r">tableBody</span>);
+            }
+            <span class="r86 r">table</span>.<a href="@0@PresentationFramework/A.html#c008f1ef4f5a7cdc" class="i property">RowGroups</a>.<a href="@0@PresentationFramework/A.html#6ebd445b53ccf872" class="i method">Add</a>(<span class="r89 r">tableBodyRG</span>);
+ 
+            <b>return</b> <span class="r86 r">table</span>;
+        }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#dc188c848b66134c" class="t t">TableRow</a> <a id="fc83592f4a484434" href="R/fc83592f4a484434.html" target="n" data-glyph="76,1" class="i method">CreateTableRow</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>[] <span id="r92 rd" class="r92 r">txts</span>, <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="t t">List</a>&lt;<a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a>?&gt; <span id="r93 rd" class="r93 r">aligns</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#dc188c848b66134c" class="k">var</a> <span id="r94 rd" class="r94 r">tableRow</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#2536dc958d683969" class="t constructor">TableRow</a>();
+ 
+            <b>foreach</b> (<a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r95 rd" class="r95 r">idx</span> <b>in</b> <a href="@0@System.Core/A.html#577032c8811e20d3" class="t t">Enumerable</a>.<a href="@0@System.Core/A.html#fda9d378095a6464" class="i method">Range</a>(0, <span class="r92 r">txts</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a>))
+            {
+                <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r96 rd" class="r96 r">txt</span> = <span class="r92 r">txts</span>[<span class="r95 r">idx</span>];
+                <a href="@0@mscorlib/A.html#ffebe438fd9cbf0e" class="k">var</a> <span id="r97 rd" class="r97 r">align</span> = <span class="r93 r">aligns</span><a href="@0@mscorlib/A.html#0c65bec4d3fac21e">[</a><span class="r95 r">idx</span>];
+ 
+                <a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="k">var</a> <span id="r98 rd" class="r98 r">paragraph</span> = <a href="#44c9ed945ef2ddf1" class="i method">Create</a>&lt;<a href="@0@PresentationFramework/A.html#feb5610da409b1b7" class="t t">Paragraph</a>, <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;(<a href="#f736551831170eb3" class="i method">RunSpanGamut</a>(<span class="r96 r">txt</span>));
+                <a href="@0@PresentationFramework/A.html#45e31fb36c2fff62" class="k">var</a> <span id="r99 rd" class="r99 r">cell</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#6253a3f6acf9173c" class="t constructor">TableCell</a>(<span class="r98 r">paragraph</span>);
+ 
+                <b>if</b> (<span class="r97 r">align</span>.<a href="@0@mscorlib/A.html#7bbe60e33e857298" class="i property">HasValue</a>)
+                {
+                    <span class="r99 r">cell</span>.<a href="@0@PresentationFramework/A.html#04fccd9d53facb91" class="i property">TextAlignment</a> = <span class="r97 r">align</span>.<a href="@0@mscorlib/A.html#7b38d1fa76071c95" class="i property">Value</a>;
+                }
+ 
+                <span class="r94 r">tableRow</span>.<a href="@0@PresentationFramework/A.html#20561d178fac29b6" class="i property">Cells</a>.<a href="@0@PresentationFramework/A.html#b70291d78a98ede7" class="i method">Add</a>(<span class="r99 r">cell</span>);
+            }
+ 
+            <b>while</b> (<span class="r94 r">tableRow</span>.<a href="@0@PresentationFramework/A.html#20561d178fac29b6" class="i property">Cells</a>.<a href="@0@PresentationFramework/A.html#59bee4a729d6ebf5" class="i property">Count</a> &lt; <span class="r93 r">aligns</span>.<a href="@0@mscorlib/A.html#78a69d857716bc68" class="i property">Count</a>)
+            {
+                <span class="r94 r">tableRow</span>.<a href="@0@PresentationFramework/A.html#20561d178fac29b6" class="i property">Cells</a>.<a href="@0@PresentationFramework/A.html#b70291d78a98ede7" class="i method">Add</a>(<b>new</b> <a href="@0@PresentationFramework/A.html#493aaf0ca9bd8065" class="t constructor">TableCell</a>());
+            }
+ 
+            <b>return</b> <span class="r94 r">tableRow</span>;
+        }
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="aae54b99dcdcb9cf" href="R/aae54b99dcdcb9cf.html" target="n" data-glyph="46,1" class="i field">_codeSpan</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;
+                    (?&lt;!\\)   # Character before opening ` can&#39;t be a backslash
+                    (`+)      # $1 = Opening run of `
+                    (.+?)     # $2 = The code block
+                    (?&lt;!`)
+                    \1
+                    (?!`)&quot;</span>, <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#edddd4e8e2241e93" class="i field">Singleline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Turn Markdown `code spans` into HTML code tags</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt; <a id="e0e3919f12c2dfce" href="R/e0e3919f12c2dfce.html" target="n" data-glyph="76,1" class="i method">DoCodeSpans</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r100 rd" class="r100 r">text</span>, <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;&gt; <span id="r101 rd" class="r101 r">defaultHandler</span>)
+        {
+            <b>if</b> (<span class="r100 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r100 r">text</span>));
+            }
+ 
+            <span class="c">//    * You can use multiple backticks as the delimiters if you want to</span>
+            <span class="c">//        include literal backticks in the code span. So, this input:</span>
+            <span class="c">//</span>
+            <span class="c">//        Just type ``foo `bar` baz`` at the prompt.</span>
+            <span class="c">//</span>
+            <span class="c">//        Will translate to:</span>
+            <span class="c">//</span>
+            <span class="c">//          &lt;p&gt;Just type &lt;code&gt;foo `bar` baz&lt;/code&gt; at the prompt.&lt;/p&gt;</span>
+            <span class="c">//</span>
+            <span class="c">//        There&#39;s no arbitrary limit to the number of backticks you</span>
+            <span class="c">//        can use as delimters. If you need three consecutive backticks</span>
+            <span class="c">//        in your code, use four for delimiters, etc.</span>
+            <span class="c">//</span>
+            <span class="c">//    * You can use spaces to get literal backticks at the edges:</span>
+            <span class="c">//</span>
+            <span class="c">//          ... type `` `bar` `` ...</span>
+            <span class="c">//</span>
+            <span class="c">//        Turns to:</span>
+            <span class="c">//</span>
+            <span class="c">//          ... type &lt;code&gt;`bar`&lt;/code&gt; ...         </span>
+            <span class="c">//</span>
+ 
+            <b>return</b> <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>(<span class="r100 r">text</span>, <a href="#aae54b99dcdcb9cf" class="i field">_codeSpan</a>, <a href="#3678c3ea9680f3ee" class="i method">CodeSpanEvaluator</a>, <span class="r101 r">defaultHandler</span>);
+        }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a> <a id="3678c3ea9680f3ee" href="R/3678c3ea9680f3ee.html" target="n" data-glyph="76,1" class="i method">CodeSpanEvaluator</a>(<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r102 rd" class="r102 r">match</span>)
+        {
+            <b>if</b> (<span class="r102 r">match</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r102 r">match</span>));
+            }
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r103 rd" class="r103 r">span</span> = <span class="r102 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a>[2].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+            <span class="r103 r">span</span> = <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a>.<a href="@0@System/A.html#825196ff9130bce9" class="i method">Replace</a>(<span class="r103 r">span</span>, <span class="s">@&quot;^[ ]*&quot;</span>, <span class="s">&quot;&quot;</span>); <span class="c">// leading whitespace</span>
+            <span class="r103 r">span</span> = <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a>.<a href="@0@System/A.html#825196ff9130bce9" class="i method">Replace</a>(<span class="r103 r">span</span>, <span class="s">@&quot;[ ]*$&quot;</span>, <span class="s">&quot;&quot;</span>); <span class="c">// trailing whitespace</span>
+ 
+            <a href="@0@PresentationFramework/A.html#1ac1e72ace7cb608" class="k">var</a> <span id="r104 rd" class="r104 r">result</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#b8abdcbfcb7b7da9" class="t constructor">Run</a>(<span class="r103 r">span</span>);
+            <b>if</b> (<a href="#5e4a798c75916b8b" class="i property">CodeStyle</a> != <b>null</b>)
+            {
+                <span class="r104 r">result</span>.<a href="@0@PresentationFramework/A.html#411271c79e6005e9" class="i property">Style</a> = <a href="#5e4a798c75916b8b" class="i property">CodeStyle</a>;
+            }
+ 
+            <b>return</b> <span class="r104 r">result</span>;
+        }
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="892fa1798ddd8c1b" href="R/892fa1798ddd8c1b.html" target="n" data-glyph="46,1" class="i field">_bold</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;(\*\*|__) (?=\S) (.+?[*_]*) (?&lt;=\S) \1&quot;</span>,
+            <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#edddd4e8e2241e93" class="i field">Singleline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="e0a2b190c855c28b" href="R/e0a2b190c855c28b.html" target="n" data-glyph="46,1" class="i field">_strictBold</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;([\W_]|^) (\*\*|__) (?=\S) ([^\r]*?\S[\*_]*) \2 ([\W_]|$)&quot;</span>,
+            <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#edddd4e8e2241e93" class="i field">Singleline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="ebac678dc2eb7339" href="R/ebac678dc2eb7339.html" target="n" data-glyph="46,1" class="i field">_italic</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;(\*|_) (?=\S) (.+?) (?&lt;=\S) \1&quot;</span>,
+            <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#edddd4e8e2241e93" class="i field">Singleline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="9645fe893c9e2db0" href="R/9645fe893c9e2db0.html" target="n" data-glyph="46,1" class="i field">_strictItalic</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;([\W_]|^) (\*|_) (?=\S) ([^\r\*_]*?\S) \2 ([\W_]|$)&quot;</span>,
+            <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#3ab76ad67a735d21" class="i field">IgnorePatternWhitespace</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#edddd4e8e2241e93" class="i field">Singleline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Turn Markdown *italics* and **bold** into HTML strong and em tags</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt; <a id="216dabdaeeaddadd" href="R/216dabdaeeaddadd.html" target="n" data-glyph="76,1" class="i method">DoItalicsAndBold</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r105 rd" class="r105 r">text</span>, <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;&gt; <span id="r106 rd" class="r106 r">defaultHandler</span>)
+        {
+            <b>if</b> (<span class="r105 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r105 r">text</span>));
+            }
+ 
+            <span class="c">// &lt;strong&gt; must go first, then &lt;em&gt;</span>
+            <b>if</b> (<a href="#e89578184deca979" class="i property">StrictBoldItalic</a>)
+            {
+                <b>return</b> <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;(<span class="r105 r">text</span>, <a href="#e0a2b190c855c28b" class="i field">_strictBold</a>, <span id="r107 rd" class="r107 r">m</span> =&gt; <a href="#3c973692b9b901fa" class="i method">BoldEvaluator</a>(<span class="r107 r">m</span>, 3),
+                    <span id="r108 rd" class="r108 r">s1</span> =&gt; <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;(<span class="r108 r">s1</span>, <a href="#9645fe893c9e2db0" class="i field">_strictItalic</a>, <span id="r109 rd" class="r109 r">m</span> =&gt; <a href="#9e68a51083e67c17" class="i method">ItalicEvaluator</a>(<span class="r109 r">m</span>, 3),
+                    <span id="r110 rd" class="r110 r">s2</span> =&gt; <span class="r106 r">defaultHandler</span>(<span class="r110 r">s2</span>)));
+            }
+            <b>else</b>
+            {
+                <b>return</b> <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;(<span class="r105 r">text</span>, <a href="#892fa1798ddd8c1b" class="i field">_bold</a>, <span id="r111 rd" class="r111 r">m</span> =&gt; <a href="#3c973692b9b901fa" class="i method">BoldEvaluator</a>(<span class="r111 r">m</span>, 2),
+                   <span id="r112 rd" class="r112 r">s1</span> =&gt; <a href="#32dda8a4b55243d2" class="i method">Evaluate</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;(<span class="r112 r">s1</span>, <a href="#ebac678dc2eb7339" class="i field">_italic</a>, <span id="r113 rd" class="r113 r">m</span> =&gt; <a href="#9e68a51083e67c17" class="i method">ItalicEvaluator</a>(<span class="r113 r">m</span>, 2),
+                   <span id="r114 rd" class="r114 r">s2</span> =&gt; <span class="r106 r">defaultHandler</span>(<span class="r114 r">s2</span>)));
+            }
+        }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a> <a id="9e68a51083e67c17" href="R/9e68a51083e67c17.html" target="n" data-glyph="76,1" class="i method">ItalicEvaluator</a>(<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r115 rd" class="r115 r">match</span>, <b>int</b> <span id="r116 rd" class="r116 r">contentGroup</span>)
+        {
+            <b>if</b> (<span class="r115 r">match</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r115 r">match</span>));
+            }
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r117 rd" class="r117 r">content</span> = <span class="r115 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a><a href="@0@System/A.html#5af51f07f920f6bb">[</a><span class="r116 r">contentGroup</span>].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+            <b>return</b> <a href="#44c9ed945ef2ddf1" class="i method">Create</a>&lt;<a href="@0@PresentationFramework/A.html#e330f3014ea99d71" class="t t">Italic</a>, <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;(<a href="#f736551831170eb3" class="i method">RunSpanGamut</a>(<span class="r117 r">content</span>));
+        }
+ 
+        <b>private</b> <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a> <a id="3c973692b9b901fa" href="R/3c973692b9b901fa.html" target="n" data-glyph="76,1" class="i method">BoldEvaluator</a>(<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r118 rd" class="r118 r">match</span>, <b>int</b> <span id="r119 rd" class="r119 r">contentGroup</span>)
+        {
+            <b>if</b> (<span class="r118 r">match</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r118 r">match</span>));
+            }
+ 
+            <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r120 rd" class="r120 r">content</span> = <span class="r118 r">match</span>.<a href="@0@System/A.html#882064d8e42ed216" class="i property">Groups</a><a href="@0@System/A.html#5af51f07f920f6bb">[</a><span class="r119 r">contentGroup</span>].<a href="@0@System/A.html#5cf0d171c91c6cc1" class="i property">Value</a>;
+            <b>return</b> <a href="#44c9ed945ef2ddf1" class="i method">Create</a>&lt;<a href="@0@PresentationFramework/A.html#98a23862cf4787ff" class="t t">Bold</a>, <a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt;(<a href="#f736551831170eb3" class="i method">RunSpanGamut</a>(<span class="r120 r">content</span>));
+        }
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="91c0c089ffc99a3b" href="R/91c0c089ffc99a3b.html" target="n" data-glyph="46,1" class="i field">_outDent</a> = <b>new</b> <a href="@0@System/A.html#b3bb3375cf8e8736" class="t constructor">Regex</a>(<span class="s">@&quot;^[ ]{1,&quot;</span> + <a href="#86bcafb9230e933a" class="i field">_tabWidth</a> + <span class="s">@&quot;}&quot;</span>, <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#58cb536c9fb96071" class="i field">Multiline</a> | <a href="@0@System/A.html#09480297afa1a686" class="t t">RegexOptions</a>.<a href="@0@System/A.html#469792903a91e65e" class="i field">Compiled</a>);
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Remove one level of line-leading spaces</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private string</b> <a id="18914b6e8c42f7ba" href="R/../../0000000000.html" target="n" data-glyph="76,1" class="i method">Outdent</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r121 rd" class="r121 r">block</span>)
+        {
+            <b>return</b> <a href="#91c0c089ffc99a3b" class="i field">_outDent</a>.<a href="@0@System/A.html#1f2acfa32796faaa" class="i method">Replace</a>(<span class="r121 r">block</span>, <span class="s">&quot;&quot;</span>);
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> convert all tabs to _tabWidth spaces; </span>
+        <span class="c">///</span><span class="c"> standardizes line endings from DOS (CR LF) or Mac (CR) to UNIX (LF); </span>
+        <span class="c">///</span><span class="c"> makes sure text ends with a couple of newlines; </span>
+        <span class="c">///</span><span class="c"> removes any blank lines (only spaces) in the text</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private string</b> <a id="6c964f2ea5859adc" href="R/6c964f2ea5859adc.html" target="n" data-glyph="76,1" class="i method">Normalize</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r122 rd" class="r122 r">text</span>)
+        {
+            <b>if</b> (<span class="r122 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r122 r">text</span>));
+            }
+ 
+            <a href="@0@mscorlib/A.html#adf60ee46ebd299f" class="k">var</a> <span id="r123 rd" class="r123 r">output</span> = <b>new</b> <a href="@0@mscorlib/A.html#ec674e2123a44860" class="t constructor">StringBuilder</a>(<span class="r122 r">text</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a>);
+            <a href="@0@mscorlib/A.html#adf60ee46ebd299f" class="k">var</a> <span id="r124 rd" class="r124 r">line</span> = <b>new</b> <a href="@0@mscorlib/A.html#6e631639c1e2746b" class="t constructor">StringBuilder</a>();
+            <b>bool</b> <span id="r125 rd" class="r125 r">valid</span> = <b>false</b>;
+ 
+            <b>for</b> (<b>int</b> <span id="r126 rd" class="r126 r">i</span> = 0; <span class="r126 r">i</span> &lt; <span class="r122 r">text</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a>; <span class="r126 r">i</span>++)
+            {
+                <b>switch</b> (<span class="r122 r">text</span><a href="@0@mscorlib/A.html#8307d03426b56fe1">[</a><span class="r126 r">i</span>])
+                {
+                    <b>case</b> <span class="s">&#39;\n&#39;</span>:
+                        <b>if</b> (<span class="r125 r">valid</span>)
+                            <span class="r123 r">output</span>.<a href="@0@mscorlib/A.html#7685cb28f3648166" class="i method">Append</a>(<span class="r124 r">line</span>);
+                        <span class="r123 r">output</span>.<a href="@0@mscorlib/A.html#a2e7c78d85807da5" class="i method">Append</a>(<span class="s">&#39;\n&#39;</span>);
+                        <span class="r124 r">line</span>.<a href="@0@mscorlib/A.html#7d7729bd88adac53" class="i property">Length</a> = 0;
+                        <span class="r125 r">valid</span> = <b>false</b>;
+                        <b>break</b>;
+                    <b>case</b> <span class="s">&#39;\r&#39;</span>:
+                        <b>if</b> ((<span class="r126 r">i</span> &lt; <span class="r122 r">text</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a> - 1) &amp;&amp; (<span class="r122 r">text</span><a href="@0@mscorlib/A.html#8307d03426b56fe1">[</a><span class="r126 r">i</span> + 1] != <span class="s">&#39;\n&#39;</span>))
+                        {
+                            <b>if</b> (<span class="r125 r">valid</span>)
+                                <span class="r123 r">output</span>.<a href="@0@mscorlib/A.html#7685cb28f3648166" class="i method">Append</a>(<span class="r124 r">line</span>);
+                            <span class="r123 r">output</span>.<a href="@0@mscorlib/A.html#a2e7c78d85807da5" class="i method">Append</a>(<span class="s">&#39;\n&#39;</span>);
+                            <span class="r124 r">line</span>.<a href="@0@mscorlib/A.html#7d7729bd88adac53" class="i property">Length</a> = 0;
+                            <span class="r125 r">valid</span> = <b>false</b>;
+                        }
+                        <b>break</b>;
+                    <b>case</b> <span class="s">&#39;\t&#39;</span>:
+                        <b>int</b> <span id="r127 rd" class="r127 r">width</span> = (<a href="#86bcafb9230e933a" class="i field">_tabWidth</a> - <span class="r124 r">line</span>.<a href="@0@mscorlib/A.html#7d7729bd88adac53" class="i property">Length</a> % <a href="#86bcafb9230e933a" class="i field">_tabWidth</a>);
+                        <b>for</b> (<b>int</b> <span id="r128 rd" class="r128 r">k</span> = 0; <span class="r128 r">k</span> &lt; <span class="r127 r">width</span>; <span class="r128 r">k</span>++)
+                            <span class="r124 r">line</span>.<a href="@0@mscorlib/A.html#a2e7c78d85807da5" class="i method">Append</a>(<span class="s">&#39; &#39;</span>);
+                        <b>break</b>;
+                    <b>case</b> <span class="s">&#39;\x1A&#39;</span>:
+                        <b>break</b>;
+                    <b>default</b>:
+                        <b>if</b> (!<span class="r125 r">valid</span> &amp;&amp; <span class="r122 r">text</span><a href="@0@mscorlib/A.html#8307d03426b56fe1">[</a><span class="r126 r">i</span>] != <span class="s">&#39; &#39;</span>)
+                            <span class="r125 r">valid</span> = <b>true</b>;
+                        <span class="r124 r">line</span>.<a href="@0@mscorlib/A.html#a2e7c78d85807da5" class="i method">Append</a>(<span class="r122 r">text</span><a href="@0@mscorlib/A.html#8307d03426b56fe1">[</a><span class="r126 r">i</span>]);
+                        <b>break</b>;
+                }
+            }
+ 
+            <b>if</b> (<span class="r125 r">valid</span>)
+                <span class="r123 r">output</span>.<a href="@0@mscorlib/A.html#7685cb28f3648166" class="i method">Append</a>(<span class="r124 r">line</span>);
+            <span class="r123 r">output</span>.<a href="@0@mscorlib/A.html#a2e7c78d85807da5" class="i method">Append</a>(<span class="s">&#39;\n&#39;</span>);
+ 
+            <span class="c">// add two newlines to the end before return</span>
+            <b>return</b> <span class="r123 r">output</span>.<a href="@0@mscorlib/A.html#e8eaef3c361184bc" class="i method">Append</a>(<span class="s">&quot;\n\n&quot;</span>).<a href="@0@mscorlib/A.html#5a97da49a158a3c9" class="i method">ToString</a>();
+        }
+ 
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> this is to emulate what&#39;s available in PHP</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>private static string</b> <a id="141f889bef9f4164" href="R/141f889bef9f4164.html" target="n" data-glyph="76,1" class="i method">RepeatString</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r129 rd" class="r129 r">value</span>, <b>int</b> <span id="r130 rd" class="r130 r">count</span>)
+        {
+            <b>if</b> (<span class="r129 r">value</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r129 r">value</span>));
+            }
+ 
+            <a href="@0@mscorlib/A.html#adf60ee46ebd299f" class="k">var</a> <span id="r131 rd" class="r131 r">sb</span> = <b>new</b> <a href="@0@mscorlib/A.html#ec674e2123a44860" class="t constructor">StringBuilder</a>(<span class="r129 r">value</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a> * <span class="r130 r">count</span>);
+            <b>for</b> (<b>int</b> <span id="r132 rd" class="r132 r">i</span> = 0; <span class="r132 r">i</span> &lt; <span class="r130 r">count</span>; <span class="r132 r">i</span>++)
+                <span class="r131 r">sb</span>.<a href="@0@mscorlib/A.html#e8eaef3c361184bc" class="i method">Append</a>(<span class="r129 r">value</span>);
+            <b>return</b> <span class="r131 r">sb</span>.<a href="@0@mscorlib/A.html#5a97da49a158a3c9" class="i method">ToString</a>();
+        }
+ 
+        <b>private</b> <span class="r133 r t">TResult</span> <a id="44c9ed945ef2ddf1" href="R/44c9ed945ef2ddf1.html" target="n" data-glyph="76,1" class="i method">Create</a>&lt;<span id="r133 rd t" class="r133 r t">TResult</span>, <span id="r134 rd t" class="r134 r t">TContent</span>&gt;(<a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<span class="r134 r t">TContent</span>&gt; <span id="r135 rd" class="r135 r">content</span>)
+            <b>where</b> <span class="r133 r t">TResult</span> : <a href="@0@PresentationCore/A.html#03573354299330dc" class="t t">IAddChild</a>, <b>new</b>()
+        {
+            <span class="r133 r t">var</span> <span id="r136 rd" class="r136 r">result</span> = <b>new</b> <span class="t">TResult</span>();
+            <b>foreach</b> (<span class="r134 r t">var</span> <span id="r137 rd" class="r137 r">c</span> <b>in</b> <span class="r135 r">content</span>)
+            {
+                <span class="r136 r">result</span>.<a href="@0@PresentationCore/A.html#7dca04e049e17ecb" class="i method">AddChild</a>(<span class="r137 r">c</span>);
+            }
+ 
+            <b>return</b> <span class="r136 r">result</span>;
+        }
+ 
+        <b>private</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<span class="r138 r t">T</span>&gt; <a id="32dda8a4b55243d2" href="R/32dda8a4b55243d2.html" target="n" data-glyph="76,1" class="i method">Evaluate</a>&lt;<span id="r138 rd t" class="r138 r t">T</span>&gt;(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r139 rd" class="r139 r">text</span>, <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <span id="r140 rd" class="r140 r">expression</span>, <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a>, <span class="r138 r t">T</span>&gt; <span id="r141 rd" class="r141 r">build</span>, <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>, <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<span class="r138 r t">T</span>&gt;&gt; <span id="r142 rd" class="r142 r">rest</span>)
+        {
+            <b>if</b> (<span class="r139 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r139 r">text</span>));
+            }
+ 
+            <a href="@0@System/A.html#7376f85d6ff213d1" class="k">var</a> <span id="r143 rd" class="r143 r">matches</span> = <span class="r140 r">expression</span>.<a href="@0@System/A.html#eee0fd08a857f828" class="i method">Matches</a>(<span class="r139 r">text</span>);
+            <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r144 rd" class="r144 r">index</span> = 0;
+            <b>foreach</b> (<a href="@0@System/A.html#d8a604d3af777b1c" class="t t">Match</a> <span id="r145 rd" class="r145 r">m</span> <b>in</b> <span class="r143 r">matches</span>)
+            {
+                <b>if</b> (<span class="r145 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a> &gt; <span class="r144 r">index</span>)
+                {
+                    <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r146 rd" class="r146 r">prefix</span> = <span class="r139 r">text</span>.<a href="@0@mscorlib/A.html#8124961f027d9ac9" class="i method">Substring</a>(<span class="r144 r">index</span>, <span class="r145 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a> - <span class="r144 r">index</span>);
+                    <b>foreach</b> (<span class="r138 r t">var</span> <span id="r147 rd" class="r147 r">t</span> <b>in</b> <span class="r142 r">rest</span>(<span class="r146 r">prefix</span>))
+                    {
+                        <b>yield</b> <b>return</b> <span class="r147 r">t</span>;
+                    }
+                }
+ 
+                <b>yield</b> <b>return</b> <span class="r141 r">build</span>(<span class="r145 r">m</span>);
+ 
+                <span class="r144 r">index</span> = <span class="r145 r">m</span>.<a href="@0@System/A.html#d33b0131e21561d5" class="i property">Index</a> + <span class="r145 r">m</span>.<a href="@0@System/A.html#d22878087e24a96d" class="i property">Length</a>;
+            }
+ 
+            <b>if</b> (<span class="r144 r">index</span> &lt; <span class="r139 r">text</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a>)
+            {
+                <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r148 rd" class="r148 r">suffix</span> = <span class="r139 r">text</span>.<a href="@0@mscorlib/A.html#8124961f027d9ac9" class="i method">Substring</a>(<span class="r144 r">index</span>, <span class="r139 r">text</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a> - <span class="r144 r">index</span>);
+                <b>foreach</b> (<span class="r138 r t">var</span> <span id="r149 rd" class="r149 r">t</span> <b>in</b> <span class="r142 r">rest</span>(<span class="r148 r">suffix</span>))
+                {
+                    <b>yield</b> <b>return</b> <span class="r149 r">t</span>;
+                }
+            }
+        }
+ 
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="cf5b2829005bf34e" href="R/cf5b2829005bf34e.html" target="n" data-glyph="46,1" class="i field">_eoln</a> = <b>new</b> <a href="@0@System/A.html#71b5945bb883860b" class="t constructor">Regex</a>(<span class="s">&quot;\\s+&quot;</span>);
+        <b>private static readonly</b> <a href="@0@System/A.html#bbe3b2eb80ae5526" class="t t">Regex</a> <a id="ff89a96719f6a9a5" href="R/ff89a96719f6a9a5.html" target="n" data-glyph="46,1" class="i field">_lbrk</a> = <b>new</b> <a href="@0@System/A.html#71b5945bb883860b" class="t constructor">Regex</a>(<span class="s">@&quot;\ {2,}\n&quot;</span>);
+ 
+        <b>public</b> <a href="@0@mscorlib/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<a href="@0@PresentationFramework/A.html#e44cdab331f5ce45" class="t t">Inline</a>&gt; <a id="775dc7d2c5492482" href="R/775dc7d2c5492482.html" target="n" data-glyph="72,1" class="i method">DoText</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r150 rd" class="r150 r">text</span>)
+        {
+            <b>if</b> (<span class="r150 r">text</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r150 r">text</span>));
+            }
+ 
+            <b>var</b> <span id="r151 rd" class="r151 r">lines</span> = <a href="#ff89a96719f6a9a5" class="i field">_lbrk</a>.<a href="@0@System/A.html#0703e29d2bf2dff7" class="i method">Split</a>(<span class="r150 r">text</span>);
+            <b>bool</b> <span id="r152 rd" class="r152 r">first</span> = <b>true</b>;
+            <b>foreach</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r153 rd" class="r153 r">line</span> <b>in</b> <span class="r151 r">lines</span>)
+            {
+                <b>if</b> (<span class="r152 r">first</span>)
+                    <span class="r152 r">first</span> = <b>false</b>;
+                <b>else</b>
+                    <b>yield</b> <b>return</b> <b>new</b> <a href="@0@PresentationFramework/A.html#6652e7e1865b2205" class="t constructor">LineBreak</a>();
+                <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r154 rd" class="r154 r">t</span> = <a href="#cf5b2829005bf34e" class="i field">_eoln</a>.<a href="@0@System/A.html#1f2acfa32796faaa" class="i method">Replace</a>(<span class="r153 r">line</span>, <span class="s">&quot; &quot;</span>);
+                <b>yield</b> <b>return</b> <b>new</b> <a href="@0@PresentationFramework/A.html#b8abdcbfcb7b7da9" class="t constructor">Run</a>(<span class="r154 r">t</span>);
+            }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

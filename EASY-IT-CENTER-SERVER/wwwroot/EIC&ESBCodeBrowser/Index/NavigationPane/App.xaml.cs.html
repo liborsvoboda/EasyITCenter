@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html><head><title>App.xaml.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(109);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#NavigationPane/App.xaml.cs" target="_top">App.xaml.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#NavigationPane" target="_top">HelpProjects\WPF-MAIN\WPFprism\NavigationPane\NavigationPane\NavigationPane.csproj</a> (NavigationPane)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">IO</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Reflection</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Threading</span>.<span class="i n">Tasks</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Threading</span>;
+
+<b>using</b> <span class="i n">Microsoft</span>.<span class="i n">Extensions</span>.<span class="i n">Configuration</span>;
+
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">Constants</span>;
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">Contracts</span>.<span class="i n">Services</span>;
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">Core</span>.<span class="i n">Contracts</span>.<span class="i n">Services</span>;
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">Core</span>.<span class="i n">Services</span>;
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">Models</span>;
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">Services</span>;
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">ViewModels</span>;
+<b>using</b> <span class="i n">NavigationPane</span>.<span class="i n">Views</span>;
+
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Ioc</span>;
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Mvvm</span>;
+<b>using</b> <span class="i n">Prism</span>.<span class="i n">Unity</span>;
+
+<b>namespace</b> <span class="i n">NavigationPane</span>
+{
+    <b>public</b> <a href="P/685ecc1ee194aeb0.html" target="s" class="k">partial</a> <b>class</b> <a id="685ecc1ee194aeb0" href="R/685ecc1ee194aeb0.html" target="n" data-glyph="0,0" class="t t">App</a> : <span class="t t">PrismApplication</span>
+    {
+        <b>private string</b>[] <a id="f194b7ad811e08a2" href="R/f194b7ad811e08a2.html" target="n" data-glyph="46,1" class="i field">_startUpArgs</a>;
+
+        <b>public</b> <a id="cf9c0c5c1d52209b" href="R/cf9c0c5c1d52209b.html" target="n" data-glyph="72,1" class="t constructor">App</a>()
+        {
+        }
+
+        <b>protected override</b> <a href="@0@PresentationFramework/A.html#e438dc91640a8d15" class="t t">Window</a> <a id="f61179f1335c1d9b" href="R/f61179f1335c1d9b.html" target="n" data-glyph="75,1" class="i method">CreateShell</a>()
+            =&gt; <span class="i property">Container</span>.<span class="i method">Resolve</span>&lt;<a href="P/7fff86bcf3ca9e8f.html#7fff86bcf3ca9e8f" class="t t">ShellWindow</a>&gt;();
+
+        <b>protected override async void</b> <a id="13729f0a8ada9cac" href="R/13729f0a8ada9cac.html" target="n" data-glyph="75,1" class="i method">OnInitialized</a>()
+        {
+            <a href="Contracts/Services/IPersistAndRestoreService.cs.html#2d209c3ef22eca2f" class="k">var</a> <span id="r0 rd" class="r0 r">persistAndRestoreService</span> = <span class="i property">Container</span>.<span class="i method">Resolve</span>&lt;<a href="Contracts/Services/IPersistAndRestoreService.cs.html#2d209c3ef22eca2f" class="t t">IPersistAndRestoreService</a>&gt;();
+            <span class="r0 r">persistAndRestoreService</span>.<a href="Contracts/Services/IPersistAndRestoreService.cs.html#762361931e76f161" class="i method">RestoreData</a>();
+
+            <a href="Contracts/Services/IThemeSelectorService.cs.html#5f6554e7259391ac" class="k">var</a> <span id="r1 rd" class="r1 r">themeSelectorService</span> = <span class="i property">Container</span>.<span class="i method">Resolve</span>&lt;<a href="Contracts/Services/IThemeSelectorService.cs.html#5f6554e7259391ac" class="t t">IThemeSelectorService</a>&gt;();
+            <span class="r1 r">themeSelectorService</span>.<a href="Contracts/Services/IThemeSelectorService.cs.html#8855e7eed0430701" class="i method">SetTheme</a>();
+
+            <b>base</b>.<span class="i method">OnInitialized</span>();
+            <b>await</b> <a href="@1@System.Runtime/A.html#045a746eb48cbaa9" class="t t">Task</a>.<a href="@1@System.Runtime/A.html#66f1c3e3e272f591" class="i property">CompletedTask</a>;
+        }
+
+        <b>protected override void</b> <a id="41b1adb4fc2eaf34" href="R/41b1adb4fc2eaf34.html" target="n" data-glyph="75,1" class="i method">OnStartup</a>(<a href="@0@PresentationFramework/A.html#062b94c15f90a8f0" class="t t">StartupEventArgs</a> <span id="r2 rd" class="r2 r">e</span>)
+        {
+            <a href="#f194b7ad811e08a2" class="i field">_startUpArgs</a> = <span class="r2 r">e</span>.<a href="@0@PresentationFramework/A.html#bb5be4b459319dca" class="i property">Args</a>;
+            <b>base</b>.<span class="i method">OnStartup</span>(<span class="r2 r">e</span>);
+        }
+
+        <b>protected override void</b> <a id="a2af1c1a71635630" href="R/a2af1c1a71635630.html" target="n" data-glyph="75,1" class="i method">RegisterTypes</a>(<span class="t t">IContainerRegistry</span> <span id="r3 rd" class="r3 r">containerRegistry</span>)
+        {
+            <span class="c">// Core Services</span>
+            <span class="r3 r">containerRegistry</span>.<span class="i method">Register</span>&lt;<a href="/NavigationPane.Core/A.html#1eb8c5715cc5aa80" class="t t">IFileService</a>, <a href="/NavigationPane.Core/A.html#7a4c35ac8579b67b" class="t t">FileService</a>&gt;();
+
+            <span class="c">// App Services</span>
+            <span class="r3 r">containerRegistry</span>.<span class="i method">Register</span>&lt;<a href="Contracts/Services/IPersistAndRestoreService.cs.html#2d209c3ef22eca2f" class="t t">IPersistAndRestoreService</a>, <a href="Services/PersistAndRestoreService.cs.html#521c890b1475af45" class="t t">PersistAndRestoreService</a>&gt;();
+            <span class="r3 r">containerRegistry</span>.<span class="i method">Register</span>&lt;<a href="Contracts/Services/IThemeSelectorService.cs.html#5f6554e7259391ac" class="t t">IThemeSelectorService</a>, <a href="Services/ThemeSelectorService.cs.html#893049bf5be25157" class="t t">ThemeSelectorService</a>&gt;();
+            <span class="r3 r">containerRegistry</span>.<span class="i method">Register</span>&lt;<a href="Contracts/Services/ISystemService.cs.html#76cf1fe8d8a56b7d" class="t t">ISystemService</a>, <a href="Services/SystemService.cs.html#05701d3f38faa1b4" class="t t">SystemService</a>&gt;();
+            <span class="r3 r">containerRegistry</span>.<span class="i method">Register</span>&lt;<a href="/NavigationPane.Core/A.html#8d0ffa4fcf487602" class="t t">ISampleDataService</a>, <a href="/NavigationPane.Core/A.html#02892867bf635209" class="t t">SampleDataService</a>&gt;();
+
+            <span class="c">// Views</span>
+            <span class="r3 r">containerRegistry</span>.<span class="i method">RegisterForNavigation</span>&lt;<a href="P/9002c5520d23c862.html#9002c5520d23c862" class="t t">SettingsPage</a>, <a href="ViewModels/SettingsViewModel.cs.html#1702171d5315f792" class="t t">SettingsViewModel</a>&gt;(<a href="Constants/PageKeys.cs.html#1333b6dbd93ed540" class="t t">PageKeys</a>.<a href="Constants/PageKeys.cs.html#bd152183895193b9" class="i field">Settings</a>);
+            <span class="r3 r">containerRegistry</span>.<span class="i method">RegisterForNavigation</span>&lt;<a href="P/94fcf1ab9239cc82.html#94fcf1ab9239cc82" class="t t">WebViewPage</a>, <a href="ViewModels/WebViewViewModel.cs.html#64c58fd71a55be25" class="t t">WebViewViewModel</a>&gt;(<a href="Constants/PageKeys.cs.html#1333b6dbd93ed540" class="t t">PageKeys</a>.<a href="Constants/PageKeys.cs.html#ec61bdbec3f5cb00" class="i field">WebView</a>);
+            <span class="r3 r">containerRegistry</span>.<span class="i method">RegisterForNavigation</span>&lt;<a href="P/e0dbbae6105dae05.html#e0dbbae6105dae05" class="t t">MasterDetailPage</a>, <a href="ViewModels/MasterDetailViewModel.cs.html#97cb87995fb6fdab" class="t t">MasterDetailViewModel</a>&gt;(<a href="Constants/PageKeys.cs.html#1333b6dbd93ed540" class="t t">PageKeys</a>.<a href="Constants/PageKeys.cs.html#f748680597b312ed" class="i field">MasterDetail</a>);
+            <span class="r3 r">containerRegistry</span>.<span class="i method">RegisterForNavigation</span>&lt;<a href="P/bf2db3ef969c0391.html#bf2db3ef969c0391" class="t t">MainPage</a>, <a href="ViewModels/MainViewModel.cs.html#fa2a431df5b3f2cc" class="t t">MainViewModel</a>&gt;(<a href="Constants/PageKeys.cs.html#1333b6dbd93ed540" class="t t">PageKeys</a>.<a href="Constants/PageKeys.cs.html#d75f0a004d5f16c6" class="i field">Main</a>);
+            <span class="r3 r">containerRegistry</span>.<span class="i method">RegisterForNavigation</span>&lt;<a href="P/7fff86bcf3ca9e8f.html#7fff86bcf3ca9e8f" class="t t">ShellWindow</a>, <a href="ViewModels/ShellViewModel.cs.html#a43238798e49bd7e" class="t t">ShellViewModel</a>&gt;();
+
+            <span class="c">// Configuration</span>
+            <b>var</b> <span id="r4 rd" class="r4 r">configuration</span> = <a href="#338aea44c438cdce" class="i method">BuildConfiguration</a>();
+            <a href="Models/AppConfig.cs.html#1b526ce2ea90219e" class="k">var</a> <span id="r5 rd" class="r5 r">appConfig</span> = <span class="r4 r">configuration</span>
+                .<span class="i method">GetSection</span>(<b>nameof</b>(<a href="Models/AppConfig.cs.html#1b526ce2ea90219e" class="t t">AppConfig</a>))
+                .<span class="i method">Get</span>&lt;<a href="Models/AppConfig.cs.html#1b526ce2ea90219e" class="t t">AppConfig</a>&gt;();
+
+            <span class="c">// Register configurations to IoC</span>
+            <span class="r3 r">containerRegistry</span>.<span class="i method">RegisterInstance</span>&lt;<span class="t t">IConfiguration</span>&gt;(<span class="r4 r">configuration</span>);
+            <span class="r3 r">containerRegistry</span>.<span class="i method">RegisterInstance</span>&lt;<a href="Models/AppConfig.cs.html#1b526ce2ea90219e" class="t t">AppConfig</a>&gt;(<span class="r5 r">appConfig</span>);
+        }
+
+        <b>private</b> <span class="t t">IConfiguration</span> <a id="338aea44c438cdce" href="R/338aea44c438cdce.html" target="n" data-glyph="76,1" class="i method">BuildConfiguration</a>()
+        {
+            <a href="@1@System.Runtime/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r6 rd" class="r6 r">appLocation</span> = <span class="t t">Path</span>.<span class="i method">GetDirectoryName</span>(<a href="@1@System.Runtime/A.html#73b5be5e9c2474b2" class="t t">Assembly</a>.<a href="@1@System.Runtime/A.html#0b58cbf47b813b13" class="i method">GetEntryAssembly</a>().<a href="@1@System.Runtime/A.html#3faa3e0e41d8868b" class="i property">Location</a>);
+            <b>return</b> <b>new</b> <span class="t constructor">ConfigurationBuilder</span>()
+                .<span class="i method">SetBasePath</span>(<span class="r6 r">appLocation</span>)
+                .<span class="i method">AddJsonFile</span>(<span class="s">&quot;appsettings.json&quot;</span>)
+                .<span class="i method">AddCommandLine</span>(<a href="#f194b7ad811e08a2" class="i field">_startUpArgs</a>)
+                .<span class="i method">Build</span>();
+        }
+
+        <b>private void</b> <a id="be8741e8077f3059" href="R/be8741e8077f3059.html" target="n" data-glyph="76,1" class="i method">OnExit</a>(<b>object</b> <span id="r7 rd" class="r7 r">sender</span>, <a href="@0@PresentationFramework/A.html#ff645319584dbd6e" class="t t">ExitEventArgs</a> <span id="r8 rd" class="r8 r">e</span>)
+        {
+            <a href="Contracts/Services/IPersistAndRestoreService.cs.html#2d209c3ef22eca2f" class="k">var</a> <span id="r9 rd" class="r9 r">persistAndRestoreService</span> = <span class="i property">Container</span>.<span class="i method">Resolve</span>&lt;<a href="Contracts/Services/IPersistAndRestoreService.cs.html#2d209c3ef22eca2f" class="t t">IPersistAndRestoreService</a>&gt;();
+            <span class="r9 r">persistAndRestoreService</span>.<a href="Contracts/Services/IPersistAndRestoreService.cs.html#f415beed482de28a" class="i method">PersistData</a>();
+        }
+
+        <b>private void</b> <a id="b65962b12e3578b1" href="R/b65962b12e3578b1.html" target="n" data-glyph="76,1" class="i method">OnDispatcherUnhandledException</a>(<b>object</b> <span id="r10 rd" class="r10 r">sender</span>, <a href="@0@WindowsBase/A.html#4e3a8161c594e859" class="t t">DispatcherUnhandledExceptionEventArgs</a> <span id="r11 rd" class="r11 r">e</span>)
+        {
+            <span class="c">// TODO WTS: Please handle the exception as appropriate to your scenario</span>
+            <span class="c">// For more info see https://docs.microsoft.com/dotnet/api/system.windows.application.dispatcherunhandledexception?view=netcore-3.0</span>
+
+            <span class="c">// e.Handled = true;</span>
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

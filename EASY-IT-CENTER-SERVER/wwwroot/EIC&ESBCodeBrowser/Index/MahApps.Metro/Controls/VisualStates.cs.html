@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html><head><title>VisualStates.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(112);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/VisualStates.cs" target="_top">Controls\VisualStates.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Diagnostics</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <b>internal static class</b> <a id="f7fdd189762e3117" href="../R/f7fdd189762e3117.html" target="n" data-glyph="2,0" class="t t">VisualStates</a>
+    {
+        <b>public const string</b> <a id="7743a4060386229f" href="../R/7743a4060386229f.html" target="n" data-glyph="6,1" class="i field">GroupCommon</a> = <span class="s">&quot;CommonStates&quot;</span>;
+        <b>public const string</b> <a id="87a5de5cf1fee56b" href="../R/87a5de5cf1fee56b.html" target="n" data-glyph="6,1" class="i field">StateNormal</a> = <span class="s">&quot;Normal&quot;</span>;
+        <b>public const string</b> <a id="c5856b12f104ad06" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateReadOnly</a> = <span class="s">&quot;ReadOnly&quot;</span>;
+        <b>public const string</b> <a id="1bbbf41489a34da1" href="../R/1bbbf41489a34da1.html" target="n" data-glyph="6,1" class="i field">StateMouseOver</a> = <span class="s">&quot;MouseOver&quot;</span>;
+        <b>public const string</b> <a id="ed1b9d86b923c969" href="../R/ed1b9d86b923c969.html" target="n" data-glyph="6,1" class="i field">StatePressed</a> = <span class="s">&quot;Pressed&quot;</span>;
+        <b>public const string</b> <a id="64bbeb835f0349a8" href="../R/64bbeb835f0349a8.html" target="n" data-glyph="6,1" class="i field">StateDisabled</a> = <span class="s">&quot;Disabled&quot;</span>;
+        <b>public const string</b> <a id="739b373844c45878" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupFocus</a> = <span class="s">&quot;FocusStates&quot;</span>;
+        <b>public const string</b> <a id="772d8887f719e75a" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateUnfocused</a> = <span class="s">&quot;Unfocused&quot;</span>;
+        <b>public const string</b> <a id="959710bcf7cd82e2" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateFocused</a> = <span class="s">&quot;Focused&quot;</span>;
+        <b>public const string</b> <a id="8b22ae3f9111b1da" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupSelection</a> = <span class="s">&quot;SelectionStates&quot;</span>;
+        <b>public const string</b> <a id="00ca25b174d11281" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateSelected</a> = <span class="s">&quot;Selected&quot;</span>;
+        <b>public const string</b> <a id="5d7088f126e7483c" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateUnselected</a> = <span class="s">&quot;Unselected&quot;</span>;
+        <b>public const string</b> <a id="6ce9e39abf222c78" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateSelectedInactive</a> = <span class="s">&quot;SelectedInactive&quot;</span>;
+        <b>public const string</b> <a id="101ceb512123ed3f" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupExpansion</a> = <span class="s">&quot;ExpansionStates&quot;</span>;
+        <b>public const string</b> <a id="54f8d9ebb46547f3" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateExpanded</a> = <span class="s">&quot;Expanded&quot;</span>;
+        <b>public const string</b> <a id="1ba643a45d94a811" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateCollapsed</a> = <span class="s">&quot;Collapsed&quot;</span>;
+        <b>public const string</b> <a id="abe97f227e5dc6c3" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupPopup</a> = <span class="s">&quot;PopupStates&quot;</span>;
+        <b>public const string</b> <a id="6b123349ca519a9b" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StatePopupOpened</a> = <span class="s">&quot;PopupOpened&quot;</span>;
+        <b>public const string</b> <a id="a382a3fa67cb4cca" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StatePopupClosed</a> = <span class="s">&quot;PopupClosed&quot;</span>;
+        <b>public const string</b> <a id="6a6dbae1d2c8ce16" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupValidation</a> = <span class="s">&quot;ValidationStates&quot;</span>;
+        <b>public const string</b> <a id="068e0d2ef8064498" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateValid</a> = <span class="s">&quot;Valid&quot;</span>;
+        <b>public const string</b> <a id="df3b83e18a0d55b9" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateInvalidFocused</a> = <span class="s">&quot;InvalidFocused&quot;</span>;
+        <b>public const string</b> <a id="2f0df533dfb1ebc4" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateInvalidUnfocused</a> = <span class="s">&quot;InvalidUnfocused&quot;</span>;
+        <b>public const string</b> <a id="1db2b87697f74797" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupExpandDirection</a> = <span class="s">&quot;ExpandDirectionStates&quot;</span>;
+        <b>public const string</b> <a id="09557f1b6b1ad6aa" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateExpandDown</a> = <span class="s">&quot;ExpandDown&quot;</span>;
+        <b>public const string</b> <a id="841769becbf601c7" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateExpandUp</a> = <span class="s">&quot;ExpandUp&quot;</span>;
+        <b>public const string</b> <a id="278927eb53d974aa" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateExpandLeft</a> = <span class="s">&quot;ExpandLeft&quot;</span>;
+        <b>public const string</b> <a id="206263e0434cab98" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateExpandRight</a> = <span class="s">&quot;ExpandRight&quot;</span>;
+        <b>public const string</b> <a id="03d05a4ae8ac2725" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupHasItems</a> = <span class="s">&quot;HasItemsStates&quot;</span>;
+        <b>public const string</b> <a id="0c4979579359565d" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateHasItems</a> = <span class="s">&quot;HasItems&quot;</span>;
+        <b>public const string</b> <a id="e63b7d3fd734255d" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateNoItems</a> = <span class="s">&quot;NoItems&quot;</span>;
+        <b>public const string</b> <a id="21f77ff8a7508af0" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupIncrease</a> = <span class="s">&quot;IncreaseStates&quot;</span>;
+        <b>public const string</b> <a id="56d88c96a3b8104d" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateIncreaseEnabled</a> = <span class="s">&quot;IncreaseEnabled&quot;</span>;
+        <b>public const string</b> <a id="583ae0b3ee25bdec" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateIncreaseDisabled</a> = <span class="s">&quot;IncreaseDisabled&quot;</span>;
+        <b>public const string</b> <a id="06a61b6cd76fc71a" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupDecrease</a> = <span class="s">&quot;DecreaseStates&quot;</span>;
+        <b>public const string</b> <a id="b4ff267b133fc872" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateDecreaseEnabled</a> = <span class="s">&quot;DecreaseEnabled&quot;</span>;
+        <b>public const string</b> <a id="76eea62a71f79619" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateDecreaseDisabled</a> = <span class="s">&quot;DecreaseDisabled&quot;</span>;
+        <b>public const string</b> <a id="88f9b92dba7f82d4" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupInteractionMode</a> = <span class="s">&quot;InteractionModeStates&quot;</span>;
+        <b>public const string</b> <a id="6e5c2d6c0ff26ca0" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateEdit</a> = <span class="s">&quot;Edit&quot;</span>;
+        <b>public const string</b> <a id="cb6ea5a7504a0d0a" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateDisplay</a> = <span class="s">&quot;Display&quot;</span>;
+        <b>public const string</b> <a id="a090a6876457585d" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupLocked</a> = <span class="s">&quot;LockedStates&quot;</span>;
+        <b>public const string</b> <a id="d3b7fff89f424b8f" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateLocked</a> = <span class="s">&quot;Locked&quot;</span>;
+        <b>public const string</b> <a id="d0e241f3df5da661" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateUnlocked</a> = <span class="s">&quot;Unlocked&quot;</span>;
+        <b>public const string</b> <a id="580f69e707b760af" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateActive</a> = <span class="s">&quot;Active&quot;</span>;
+        <b>public const string</b> <a id="7e8460cb33690acf" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateInactive</a> = <span class="s">&quot;Inactive&quot;</span>;
+        <b>public const string</b> <a id="55e25032d15b9f19" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupActive</a> = <span class="s">&quot;ActiveStates&quot;</span>;
+        <b>public const string</b> <a id="717dd8af15e5be13" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateUnwatermarked</a> = <span class="s">&quot;Unwatermarked&quot;</span>;
+        <b>public const string</b> <a id="1c43387bdf4efac2" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateWatermarked</a> = <span class="s">&quot;Watermarked&quot;</span>;
+        <b>public const string</b> <a id="9757210fecc34364" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupWatermark</a> = <span class="s">&quot;WatermarkStates&quot;</span>;
+        <b>public const string</b> <a id="5f746cc08ce9d07b" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateCalendarButtonUnfocused</a> = <span class="s">&quot;CalendarButtonUnfocused&quot;</span>;
+        <b>public const string</b> <a id="5dabcfaecccff841" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateCalendarButtonFocused</a> = <span class="s">&quot;CalendarButtonFocused&quot;</span>;
+        <b>public const string</b> <a id="8dc9f0cb8e31e103" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupCalendarButtonFocus</a> = <span class="s">&quot;CalendarButtonFocusStates&quot;</span>;
+        <b>public const string</b> <a id="470769dab469f4c1" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateBusy</a> = <span class="s">&quot;Busy&quot;</span>;
+        <b>public const string</b> <a id="618324b31e20b649" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateIdle</a> = <span class="s">&quot;Idle&quot;</span>;
+        <b>public const string</b> <a id="fba7d81c9358914f" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupBusyStatus</a> = <span class="s">&quot;BusyStatusStates&quot;</span>;
+        <b>public const string</b> <a id="948cf69a7b4d6375" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateVisible</a> = <span class="s">&quot;Visible&quot;</span>;
+        <b>public const string</b> <a id="5c26b419ccfae076" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">StateHidden</a> = <span class="s">&quot;Hidden&quot;</span>;
+        <b>public const string</b> <a id="6c26213b5a23795f" href="../R/../../0000000000.html" target="n" data-glyph="6,1" class="i field">GroupVisibility</a> = <span class="s">&quot;VisibilityStates&quot;</span>;
+
+        <b>public static void</b> <a id="4ba6db6dd5e648f1" href="../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GoToState</a>(<a href="@0@PresentationFramework/A.html#6750b721a2294fc5" class="t t">Control</a> <span id="r0 rd" class="r0 r">control</span>, <b>bool</b> <span id="r1 rd" class="r1 r">useTransitions</span>, <b>params string</b>[] <span id="r2 rd" class="r2 r">stateNames</span>)
+        {
+            <a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<span class="r0 r">control</span> != <b>null</b>, <span class="s">&quot;control should not be null!&quot;</span>);
+            <a href="@0@System/A.html#632c6da37ce825df" class="t t">Debug</a>.<a href="@0@System/A.html#4f55cf5792dfc5e6" class="i method">Assert</a>(<span class="r2 r">stateNames</span>.<a href="@0@mscorlib/A.html#42e9b7616956cf94" class="i property">Length</a> &gt; 0, <span class="s">&quot;stateNames should not be empty!&quot;</span>);
+
+            <b>foreach</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r3 rd" class="r3 r">name</span> <b>in</b> <span class="r2 r">stateNames</span>)
+            {
+                <b>if</b> (<a href="@0@PresentationFramework/A.html#5c12561bc99f678d" class="t t">VisualStateManager</a>.<a href="@0@PresentationFramework/A.html#3e5f3965086c190b" class="i method">GoToState</a>(<span class="r0 r">control</span>, <span class="r3 r">name</span>, <span class="r1 r">useTransitions</span>))
+                {
+                    <b>break</b>;
+                }
+            }
+        }
+
+        <b>public static</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>? <a id="7b161a3e003effcf" href="../R/7b161a3e003effcf.html" target="n" data-glyph="72,1" class="i method">GetImplementationRoot</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>? <span id="r4 rd" class="r4 r">dependencyObject</span>)
+        {
+            <b>if</b> (<span class="r4 r">dependencyObject</span> <b>is null</b>)
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#8314938388254d5a" class="t constructor">ArgumentNullException</a>(<b>nameof</b>(<span class="r4 r">dependencyObject</span>));
+            }
+
+            <b>return</b> <a href="@0@PresentationCore/A.html#7f1e2538afba01e7" class="t t">VisualTreeHelper</a>.<a href="@0@PresentationCore/A.html#d74c0832c61e07fb" class="i method">GetChildrenCount</a>(<span class="r4 r">dependencyObject</span>) == 1
+                ? <a href="@0@PresentationCore/A.html#7f1e2538afba01e7" class="t t">VisualTreeHelper</a>.<a href="@0@PresentationCore/A.html#30089fb0c0679121" class="i method">GetChild</a>(<span class="r4 r">dependencyObject</span>, 0) <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>
+                : <b>null</b>;
+        }
+
+        <b>public static</b> <a href="@0@PresentationFramework/A.html#90cfc3be380c7238" class="t t">VisualStateGroup</a>? <a id="944dacec5955d901" href="../R/944dacec5955d901.html" target="n" data-glyph="72,1" class="i method">TryGetVisualStateGroup</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>? <span id="r5 rd" class="r5 r">dependencyObject</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r6 rd" class="r6 r">groupName</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="k">var</a> <span id="r7 rd" class="r7 r">root</span> = <a href="#7b161a3e003effcf" class="i method">GetImplementationRoot</a>(<span class="r5 r">dependencyObject</span>);
+
+            <b>return</b> <span class="r7 r">root</span> <b>is null</b>
+                ? <b>null</b>
+                : <a href="@0@PresentationFramework/A.html#5c12561bc99f678d" class="t t">VisualStateManager</a>.<a href="@0@PresentationFramework/A.html#b8331aff2da2fb56" class="i method">GetVisualStateGroups</a>(<span class="r7 r">root</span>)?
+                    .<a href="@0@System.Core/A.html#4ba4a3f8a5530e33" class="i method">OfType</a>&lt;<a href="@0@PresentationFramework/A.html#90cfc3be380c7238" class="t t">VisualStateGroup</a>&gt;()
+                    .<a href="@0@System.Core/A.html#b7e5965cab68b1cf" class="i method">FirstOrDefault</a>(<span id="r8 rd" class="r8 r">group</span> =&gt; <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#0601c3adfb08dab2" class="i method">CompareOrdinal</a>(<span class="r6 r">groupName</span>, <span class="r8 r">group</span>.<a href="@0@PresentationFramework/A.html#4faff610a90bded2" class="i property">Name</a>) == 0);
+        }
+    }
+}</pre></td></tr></table></div></body></html>

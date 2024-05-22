@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html><head><title>ObjectParser.cs</title><link rel="stylesheet" href="../../styles.css"><script src="../../scripts.js"></script></head>
+<body class="cB" onload="i(55);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro.Demo/Models/ObjectParser.cs" target="_top">Models\ObjectParser.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro.Demo" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro.Samples\MahApps.Metro.Demo\MahApps.Metro.Demo.csproj</a> (MahApps.Metro.Demo)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>.<span class="i n">Dialogs</span>;
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Globalization</span>;
+
+<b>namespace</b> <span class="i n">MetroDemo</span>.<span class="i n">Models</span>
+{
+    <b>public class</b> <a id="704b3d49a60e07f4" href="../R/704b3d49a60e07f4.html" target="n" data-glyph="0,0" class="t t">ObjectParser</a> : <a href="/MahApps.Metro/A.html#82d88a8482bca4b6" class="t t">IParseStringToObject</a>
+    {
+        <b>private readonly</b> <a href="../MainWindowViewModel.cs.html#d3a5d2b23b1f5f4b" class="t t">MainWindowViewModel</a> <a id="f2fc3e1c80749024" href="../R/f2fc3e1c80749024.html" target="n" data-glyph="46,1" class="i field">_mainWindowViewModel</a>;
+        <b>private readonly</b> <a href="/MahApps.Metro/A.html#332da3a0125230b2" class="t t">IDialogCoordinator</a> <a id="59cba8971af2ba14" href="../R/59cba8971af2ba14.html" target="n" data-glyph="46,1" class="i field">_dialogCoordinator</a>;
+
+        <b>public</b> <a id="53355a90dbd6d574" href="../R/53355a90dbd6d574.html" target="n" data-glyph="72,1" class="t constructor">ObjectParser</a>(<a href="../MainWindowViewModel.cs.html#d3a5d2b23b1f5f4b" class="t t">MainWindowViewModel</a> <span id="r0 rd" class="r0 r">mainWindowViewModel</span>, <a href="/MahApps.Metro/A.html#332da3a0125230b2" class="t t">IDialogCoordinator</a> <span id="r1 rd" class="r1 r">dialogCoordinator</span>)
+        {
+            <a href="#704b3d49a60e07f4" class="k">this</a>.<a href="#f2fc3e1c80749024" class="i field">_mainWindowViewModel</a> = <span class="r0 r">mainWindowViewModel</span>;
+            <a href="#704b3d49a60e07f4" class="k">this</a>.<a href="#59cba8971af2ba14" class="i field">_dialogCoordinator</a> = <span class="r1 r">dialogCoordinator</span>;
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">inheritdoc</span> <span class="c">/&gt;</span>
+        <b>public bool</b> <a id="ce1d9868cffd63f8" href="../R/ce1d9868cffd63f8.html" target="n" data-glyph="72,1" class="i method">TryCreateObjectFromString</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>? <span id="r2 rd" class="r2 r">input</span>,
+                                              <b>out object</b>? <span id="r3 rd" class="r3 r">result</span>,
+                                              <a href="@0@mscorlib/A.html#e319c6636909012f" class="t t">CultureInfo</a>? <span id="r4 rd" class="r4 r">culture</span> = <b>null</b>,
+                                              <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>? <span id="r5 rd" class="r5 r">stringFormat</span> = <b>null</b>,
+                                              <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>? <span id="r6 rd" class="r6 r">elementType</span> = <b>null</b>)
+        {
+            <b>if</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r2 r">input</span>))
+            {
+                <span class="r3 r">result</span> = <b>null</b>;
+                <b>return</b> <b>false</b>;
+            }
+
+            <a href="/MahApps.Metro/A.html#28729669bd8ecc77" class="t t">MetroDialogSettings</a> <span id="r7 rd" class="r7 r">dialogSettings</span> = <b>new</b> <a href="/MahApps.Metro/A.html#2553e0aff2ee74ad" class="t constructor">MetroDialogSettings</a>
+                                                 {
+                                                     <a href="/MahApps.Metro/A.html#b4939d811931c91e" class="i property">AffirmativeButtonText</a> = <span class="s">&quot;Yes&quot;</span>,
+                                                     <a href="/MahApps.Metro/A.html#fd38781fbc020095" class="i property">NegativeButtonText</a> = <span class="s">&quot;No&quot;</span>,
+                                                     <a href="/MahApps.Metro/A.html#c8c1fdb4aa4ac82b" class="i property">DefaultButtonFocus</a> = <a href="/MahApps.Metro/A.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="/MahApps.Metro/A.html#aa22be2646a94eb3" class="i field">Affirmative</a>
+                                                 };
+
+            <b>if</b> (<a href="#704b3d49a60e07f4" class="k">this</a>.<a href="#59cba8971af2ba14" class="i field">_dialogCoordinator</a>.<a href="/MahApps.Metro/A.html#66e313d5772909e7" class="i method">ShowModalMessageExternal</a>(<a href="#704b3d49a60e07f4" class="k">this</a>.<a href="#f2fc3e1c80749024" class="i field">_mainWindowViewModel</a>, <span class="s">&quot;Add Animal&quot;</span>, <span class="s">$&quot;</span><span class="s">Do you want to add \&quot;</span>{<span class="r2 r">input</span>}<span class="s">\&quot; to the animals list?</span><span class="s">&quot;</span>, <a href="/MahApps.Metro/A.html#f91a2da56714ece4" class="t t">MessageDialogStyle</a>.<a href="/MahApps.Metro/A.html#285137c3ac2f1c56" class="i field">AffirmativeAndNegative</a>, <span class="r7 r">dialogSettings</span>) == <a href="/MahApps.Metro/A.html#335af6f2d319a5f3" class="t t">MessageDialogResult</a>.<a href="/MahApps.Metro/A.html#aa22be2646a94eb3" class="i field">Affirmative</a>)
+            {
+                <span class="r3 r">result</span> = <span class="r2 r">input</span>!.<a href="@0@mscorlib/A.html#06a5f7c688e69307" class="i method">Trim</a>();
+                <b>return</b> <b>true</b>;
+            }
+            <b>else</b>
+            {
+                <span class="r3 r">result</span> = <b>null</b>;
+                <b>return</b> <b>false</b>;
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>

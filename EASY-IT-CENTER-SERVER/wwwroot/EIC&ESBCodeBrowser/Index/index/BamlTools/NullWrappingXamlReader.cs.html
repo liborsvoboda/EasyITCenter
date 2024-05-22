@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html><head><title>NullWrappingXamlReader.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(83);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#BamlTools/NullWrappingXamlReader.cs" target="_top">NullWrappingXamlReader.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#BamlTools" target="_top">HelpProjects\WPF-MORE\Tools\BamlReflector\BamlTools\BamlTools.csproj</a> (BamlTools)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>.<span class="i n">Xaml</span>;
+
+<b>namespace</b> <span class="i n">BamlTools</span>
+{
+    <b>public class</b> <a id="1487bdbc59080e36" href="R/../../0000000000.html" target="n" data-glyph="0,0" class="t t">NullWrappingXamlReader</a> : <a href="@0@System.Xaml/A.html#0e846dbb6f9f84f8" class="t t">XamlReader</a>
+    {
+        <a href="@0@System.Xaml/A.html#0e846dbb6f9f84f8" class="t t">XamlReader</a> <a id="e877cd948a4d1059" href="R/e877cd948a4d1059.html" target="n" data-glyph="46,1" class="i field">_wrappedReader</a>;
+
+        <a href="@0@System.Xaml/A.html#875ecd6c7a1ded6e" class="t t">XamlNodeQueue</a> <a id="3b098935bafb39b1" href="R/3b098935bafb39b1.html" target="n" data-glyph="46,1" class="i field">_pipe</a>;
+
+        <span class="c">// cached from the PIPE.</span>
+        <a href="@0@System.Xaml/A.html#0e846dbb6f9f84f8" class="t t">XamlReader</a> <a id="d8daa6936a74c8a4" href="R/d8daa6936a74c8a4.html" target="n" data-glyph="46,1" class="i field">_reader</a>;
+        <a href="@0@System.Xaml/A.html#065b53f6ef7eed1b" class="t t">XamlWriter</a> <a id="e9dc71d1cb5a1e3c" href="R/e9dc71d1cb5a1e3c.html" target="n" data-glyph="46,1" class="i field">_writer</a>;
+
+        <b>bool</b> <a id="10e31dc181784dd2" href="R/10e31dc181784dd2.html" target="n" data-glyph="46,1" class="i field">_done</a>;
+
+        <b>public</b> <a id="6044c50dc000b495" href="R/../../0000000000.html" target="n" data-glyph="72,1" class="t constructor">NullWrappingXamlReader</a>(<a href="@0@System.Xaml/A.html#0e846dbb6f9f84f8" class="t t">XamlReader</a> <span id="r0 rd" class="r0 r">wrappedReader</span>)
+        {
+            <a href="#e877cd948a4d1059" class="i field">_wrappedReader</a> = <span class="r0 r">wrappedReader</span>;
+
+            <a href="#3b098935bafb39b1" class="i field">_pipe</a> = <b>new</b> <a href="@0@System.Xaml/A.html#ad8a8f4ccad65aad" class="t constructor">XamlNodeQueue</a>(<span class="r0 r">wrappedReader</span>.<a href="@0@System.Xaml/A.html#0d4e4b66488ff0de" class="i property">SchemaContext</a>);
+            <a href="#d8daa6936a74c8a4" class="i field">_reader</a> = <a href="#3b098935bafb39b1" class="i field">_pipe</a>.<a href="@0@System.Xaml/A.html#b8371bc5a76fb983" class="i property">Reader</a>;
+            <a href="#e9dc71d1cb5a1e3c" class="i field">_writer</a> = <a href="#3b098935bafb39b1" class="i field">_pipe</a>.<a href="@0@System.Xaml/A.html#ced15f832d298f9c" class="i property">Writer</a>;
+        }
+
+        <b>public override bool</b> <a id="82b0cbd7df346a7a" href="R/82b0cbd7df346a7a.html" target="n" data-glyph="72,1" class="i method">Read</a>()
+        {
+            <b>if</b> (<a href="#10e31dc181784dd2" class="i field">_done</a>)
+            {
+                <b>return</b> <b>false</b>;
+            }
+
+            <b>if</b> (!<a href="#e877cd948a4d1059" class="i field">_wrappedReader</a>.<a href="@0@System.Xaml/A.html#9c21aeb500029976" class="i method">Read</a>())
+            {
+                <a href="#10e31dc181784dd2" class="i field">_done</a> = <b>true</b>;
+            }
+
+            <a href="#e9dc71d1cb5a1e3c" class="i field">_writer</a>.<a href="@0@System.Xaml/A.html#e7a05cc92e26c0bd" class="i method">WriteNode</a>(<a href="#e877cd948a4d1059" class="i field">_wrappedReader</a>);
+            <a href="#d8daa6936a74c8a4" class="i field">_reader</a>.<a href="@0@System.Xaml/A.html#9c21aeb500029976" class="i method">Read</a>();
+            <b>return</b> <b>true</b>;
+        }
+
+        <b>public override</b> <a href="@0@System.Xaml/A.html#5caff047fecea367" class="t t">XamlNodeType</a> <a id="c6d44234fecddaa0" href="R/c6d44234fecddaa0.html" target="n" data-glyph="102,1" class="i property">NodeType</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#d8daa6936a74c8a4" class="i field">_reader</a>.<a href="@0@System.Xaml/A.html#0ceac2228a191cf8" class="i property">NodeType</a>; }
+        }
+
+        <b>public override bool</b> <a id="5254609cbe84dd07" href="R/5254609cbe84dd07.html" target="n" data-glyph="102,1" class="i property">IsEof</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#d8daa6936a74c8a4" class="i field">_reader</a>.<a href="@0@System.Xaml/A.html#54afda38dde87617" class="i property">IsEof</a>; }
+        }
+
+        <b>public override</b> <a href="@0@System.Xaml/A.html#cdd83fa3adde4afc" class="t t">NamespaceDeclaration</a> <a id="7837048c8f7e938c" href="R/7837048c8f7e938c.html" target="n" data-glyph="102,1" class="i property">Namespace</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#d8daa6936a74c8a4" class="i field">_reader</a>.<a href="@0@System.Xaml/A.html#6167c8d300a7cc4d" class="i property">Namespace</a>; }
+        }
+
+        <b>public override</b> <a href="@0@System.Xaml/A.html#8be9a48c64bfb50d" class="t t">XamlType</a> <a id="17b112617f878ea8" href="R/17b112617f878ea8.html" target="n" data-glyph="102,1" class="i property">Type</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#d8daa6936a74c8a4" class="i field">_reader</a>.<a href="@0@System.Xaml/A.html#6ffa8fd7dce32b39" class="i property">Type</a>; }
+        }
+
+        <b>public override object</b> <a id="8edbd815d4607112" href="R/8edbd815d4607112.html" target="n" data-glyph="102,1" class="i property">Value</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#d8daa6936a74c8a4" class="i field">_reader</a>.<a href="@0@System.Xaml/A.html#2d7dcc66b5869d0e" class="i property">Value</a>; }
+        }
+
+        <b>public override</b> <a href="@0@System.Xaml/A.html#2cf2cd8e7beb6a15" class="t t">XamlMember</a> <a id="a97d34e199293047" href="R/a97d34e199293047.html" target="n" data-glyph="102,1" class="i property">Member</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#d8daa6936a74c8a4" class="i field">_reader</a>.<a href="@0@System.Xaml/A.html#20f17a24c55ec505" class="i property">Member</a>; }
+        }
+
+        <b>public override</b> <a href="@0@System.Xaml/A.html#3a99ac8e981cd5e1" class="t t">XamlSchemaContext</a> <a id="3c17dc44b447e5ca" href="R/3c17dc44b447e5ca.html" target="n" data-glyph="102,1" class="i property">SchemaContext</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#d8daa6936a74c8a4" class="i field">_reader</a>.<a href="@0@System.Xaml/A.html#0d4e4b66488ff0de" class="i property">SchemaContext</a>; }
+        }
+    }
+}
+</pre></td></tr></table></div></body></html>

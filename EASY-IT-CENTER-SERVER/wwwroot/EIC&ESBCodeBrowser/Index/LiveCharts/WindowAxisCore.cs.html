@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html><head><title>WindowAxisCore.cs</title><link rel="stylesheet" href="../styles.css"><script src="../scripts.js"></script></head>
+<body class="cB" onload="i(199);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#LiveCharts/WindowAxisCore.cs" target="_top">WindowAxisCore.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#LiveCharts" target="_top">HelpProjects\WPF-MAIN\Live-Charts-master\Core\Core.csproj</a> (LiveCharts)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">//The MIT License(MIT)</span>
+
+<span class="c">//Copyright(c) 2016 Alberto Rodriguez &amp; LiveCharts Contributors</span>
+
+<span class="c">//Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c">//of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c">//in the Software without restriction, including without limitation the rights</span>
+<span class="c">//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c">//copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c">//furnished to do so, subject to the following conditions:</span>
+
+<span class="c">//The above copyright notice and this permission notice shall be included in all</span>
+<span class="c">//copies or substantial portions of the Software.</span>
+
+<span class="c">//THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c">//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c">//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c">//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c">//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c">//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">//SOFTWARE.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Charts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Definitions</span>.<span class="i n">Charts</span>;
+<b>using</b> <span class="i n">LiveCharts</span>.<span class="i n">Dtos</span>;
+
+<b>namespace</b> <span class="i n">LiveCharts</span>
+{
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Provides an axis that displays separators based upon configured windows</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="f97614c13ee23ff8" href="R/f97614c13ee23ff8.html" target="n" data-glyph="0,0" class="t t">WindowAxisCore</a> : <a href="AxisCore.cs.html#cbae04475ce2fa76" class="t t">AxisCore</a>
+    {
+        <b>private</b> <a href="Definitions/Charts/IAxisWindow.cs.html#c200ac3cdde6aa1c" class="t t">IAxisWindow</a> <a id="8969b4a5e6b6029e" href="R/8969b4a5e6b6029e.html" target="n" data-glyph="46,1" class="i field">_selectedWindow</a>;
+
+        <b>private</b> <a href="Definitions/Charts/IAxisWindow.cs.html#c200ac3cdde6aa1c" class="t t">IAxisWindow</a> <a id="8a0d117259b5e3be" href="R/8a0d117259b5e3be.html" target="n" data-glyph="106,1" class="i property">SelectedWindow</a>
+        {
+            <b>get</b> { <b>return</b> <a href="#8969b4a5e6b6029e" class="i field">_selectedWindow</a>; }
+            <b>set</b>
+            {
+                <b>if</b> (<a href="@1@System.Runtime/A.html#f2a579c50b414717" class="i method">Equals</a>(<a href="#8969b4a5e6b6029e" class="i field">_selectedWindow</a>, <b>value</b>)) <b>return</b>;
+                <a href="#8969b4a5e6b6029e" class="i field">_selectedWindow</a> = <b>value</b>;
+                ((<a href="Definitions/Charts/IWindowAxisView.cs.html#1ad3f71155515a20" class="t t">IWindowAxisView</a>)<a href="AxisCore.cs.html#46d6d919d1a17160" class="i property">View</a>).<a href="Definitions/Charts/IWindowAxisView.cs.html#a558e333b9a99136" class="i method">SetSelectedWindow</a>(<b>value</b>);
+            }
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public</b> <span class="t t">List</span>&lt;<a href="AxisWindow.cs.html#8d41d4e8c29d8b3f" class="t t">AxisWindow</a>&gt; <a id="2bd3a8b146c6da7b" href="R/2bd3a8b146c6da7b.html" target="n" data-glyph="102,1" class="i property">Windows</a> { <b>get</b>; <b>set</b>; }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">param</span> <span class="c">name</span><span class="c">=</span><span class="c">&quot;</span><span class="r0 r">view</span><span class="c">&quot;</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">param</span><span class="c">&gt;</span>
+        <b>public</b> <a id="356cef7896ce6b9e" href="R/356cef7896ce6b9e.html" target="n" data-glyph="72,1" class="t constructor">WindowAxisCore</a>(<a href="Definitions/Charts/IAxisView.cs.html#669fcc7f2feaedf4" class="t t">IAxisView</a> <span id="r0 rd" class="r0 r">view</span>) : <a href="AxisCore.cs.html#6cd86ae1a796a239" class="k">base</a>(<span class="r0 r">view</span>)
+        {
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>internal override</b> <a href="Dtos/CoreMargin.cs.html#d5baae022c21faf0" class="t t">CoreMargin</a> <a id="111fcee17b1d433d" href="R/111fcee17b1d433d.html" target="n" data-glyph="74,1" class="i method">PrepareChart</a>(<a href="AxisOrientation.cs.html#294f3d11a155a9e1" class="t t">AxisOrientation</a> <span id="r1 rd" class="r1 r">source</span>, <a href="Charts/ChartCore.cs.html#2c3f1a2f79f08d10" class="t t">ChartCore</a> <span id="r2 rd" class="r2 r">chart</span>)
+        {
+            <b>if</b> (!(<span class="t t">Math</span>.<span class="i method">Abs</span>(<a href="AxisCore.cs.html#0baa4f00e73409e5" class="i property">TopLimit</a> - <a href="AxisCore.cs.html#ac6dc5ac31577634" class="i property">BotLimit</a>) &gt; <a href="AxisCore.cs.html#0c488ea530c0c95e" class="i property">S</a> * .01) || !<a href="AxisCore.cs.html#4f2d45dac6d9a1c9" class="i property">ShowLabels</a>) <b>return</b> <b>new</b> <a href="Dtos/CoreMargin.cs.html#d5baae022c21faf0" class="t constructor">CoreMargin</a>();
+
+            <a href="Dtos/CoreMargin.cs.html#d5baae022c21faf0" class="k">var</a> <span id="r3 rd" class="r3 r">currentMargin</span> = <b>new</b> <a href="Dtos/CoreMargin.cs.html#d5baae022c21faf0" class="t constructor">CoreMargin</a>();
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r4 rd" class="r4 r">tolerance</span> = <a href="AxisCore.cs.html#0c488ea530c0c95e" class="i property">S</a> / 10;
+
+            <a href="AxisCore.cs.html#9507b9e59ab4d94a" class="i method">InitializeGarbageCollector</a>();
+
+            <span class="c">// Determine which magnitude and unit to use</span>
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r5 rd" class="r5 r">m</span> = (!<b>double</b>.<a href="@1@System.Runtime/A.html#b3843db5f359a0fd" class="i method">IsNaN</a>(<a href="AxisCore.cs.html#46d6d919d1a17160" class="i property">View</a>.<a href="Definitions/Charts/IAxisView.cs.html#843a9d5d09e56a04" class="i property">Unit</a>) ? <a href="AxisCore.cs.html#46d6d919d1a17160" class="i property">View</a>.<a href="Definitions/Charts/IAxisView.cs.html#843a9d5d09e56a04" class="i property">Unit</a> : <a href="AxisCore.cs.html#458651ce34e3c6f3" class="i property">Magnitude</a>);
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r6 rd" class="r6 r">u</span> = (!<b>double</b>.<a href="@1@System.Runtime/A.html#b3843db5f359a0fd" class="i method">IsNaN</a>(<a href="AxisCore.cs.html#46d6d919d1a17160" class="i property">View</a>.<a href="Definitions/Charts/IAxisView.cs.html#843a9d5d09e56a04" class="i property">Unit</a>) ? <a href="AxisCore.cs.html#46d6d919d1a17160" class="i property">View</a>.<a href="Definitions/Charts/IAxisView.cs.html#843a9d5d09e56a04" class="i property">Unit</a> : 1);
+
+            <span class="c">// Calculate the separator indices</span>
+            <a href="@1@System.Runtime/A.html#3acf01620172c7f0" class="k">var</a> <span id="r7 rd" class="r7 r">indices</span> = <a href="#5fe97ffb88ba7f83" class="i method">CalculateSeparatorIndices</a>(<span class="r2 r">chart</span>, <span class="r1 r">source</span>, <span class="r6 r">u</span>);
+
+            <span class="c">// Draw the separators</span>
+            <b>foreach</b> (<a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r8 rd" class="r8 r">index</span> <b>in</b> <span class="r7 r">indices</span>)
+            {
+                <a href="#b6714fe04249ecb0" class="i method">DrawSeparator</a>(<span class="r8 r">index</span>, <span class="r4 r">tolerance</span>, <span class="r3 r">currentMargin</span>, <span class="r1 r">source</span>);
+            }
+
+            <b>return</b> <span class="r3 r">currentMargin</span>;
+        }
+
+        <b>internal</b> <a href="@1@System.Runtime/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<b>double</b>&gt; <a id="5fe97ffb88ba7f83" href="R/5fe97ffb88ba7f83.html" target="n" data-glyph="74,1" class="i method">CalculateSeparatorIndices</a>(<a href="Charts/ChartCore.cs.html#2c3f1a2f79f08d10" class="t t">ChartCore</a> <span id="r9 rd" class="r9 r">chart</span>, <a href="AxisOrientation.cs.html#294f3d11a155a9e1" class="t t">AxisOrientation</a> <span id="r10 rd" class="r10 r">source</span>, <b>double</b> <span id="r11 rd" class="r11 r">unit</span>)
+        {
+            <b>if</b> (!<b>double</b>.<a href="@1@System.Runtime/A.html#b3843db5f359a0fd" class="i method">IsNaN</a>(<a href="AxisCore.cs.html#5a01e19411f74804" class="i property">Separator</a>.<a href="SeparatorConfigurationCore.cs.html#649a3a9259fd9ea2" class="i property">Step</a>)) <b>throw</b> <b>new</b> <a href="@1@System.Runtime/A.html#df2d82d91ca29e40" class="t constructor">Exception</a>(<span class="s">&quot;Step should be NaN for WindowAxis separators&quot;</span>);
+            <b>if</b> (<a href="#2bd3a8b146c6da7b" class="i property">Windows</a> == <b>null</b>) <b>return</b> <span class="t t">Enumerable</span>.<span class="i method">Empty</span>&lt;<b>double</b>&gt;();
+
+            <span class="c">// Holder for the calculated separator indices and the proposed window</span>
+            <a href="@1@System.Runtime/A.html#225942ed7b7a3252" class="k">var</a> <span id="r12 rd" class="r12 r">supportedSeparatorCount</span> = 0;
+            <b>var</b> <span id="r13 rd" class="r13 r">separatorIndices</span> = <b>new</b> <span class="t constructor">List</span>&lt;<b>double</b>&gt;();
+            <a href="Definitions/Charts/IAxisWindow.cs.html#c200ac3cdde6aa1c" class="t t">IAxisWindow</a> <span id="r14 rd" class="r14 r">proposedWindow</span> = <a href="AxisWindows.cs.html#3ee2f470cea62f8d" class="t t">AxisWindows</a>.<a href="AxisWindows.cs.html#4fd54955c487cfd7" class="i property">EmptyWindow</a>;
+
+            <span class="c">// Build a range of possible separator indices</span>
+            <b>var</b> <span id="r15 rd" class="r15 r">rangeIndices</span> = <span class="t t">Enumerable</span>.<span class="i method">Range</span>((<b>int</b>)<span class="t t">Math</span>.<span class="i method">Floor</span>(<a href="AxisCore.cs.html#ac6dc5ac31577634" class="i property">BotLimit</a>), (<b>int</b>)<span class="t t">Math</span>.<span class="i method">Floor</span>(<a href="AxisCore.cs.html#0baa4f00e73409e5" class="i property">TopLimit</a> - (<a href="AxisCore.cs.html#b37834ebdb820dfe" class="i property">EvaluatesUnitWidth</a> ? <span class="r11 r">unit</span> : 0) - <a href="AxisCore.cs.html#ac6dc5ac31577634" class="i property">BotLimit</a>)).<span class="i method">Select</span>(<span id="r16 rd" class="r16 r">i</span> =&gt; (<b>double</b>)<span class="r16 r">i</span>).<span class="i method">ToList</span>();
+
+            <span class="c">// Make sure we have at least 2 separators to show</span>
+            <b>if</b> (<a href="#2bd3a8b146c6da7b" class="i property">Windows</a> != <b>null</b> &amp;&amp; <span class="r15 r">rangeIndices</span>.<span class="i property">Count</span> &gt; 1)
+            {
+                <b>foreach</b> (<a href="AxisWindow.cs.html#8d41d4e8c29d8b3f" class="k">var</a> <span id="r17 rd" class="r17 r">window</span> <b>in</b> <a href="#2bd3a8b146c6da7b" class="i property">Windows</a>)
+                {
+                    <a href="@1@System.Runtime/A.html#3acf01620172c7f0" class="t t">IEnumerable</a>&lt;<b>double</b>&gt; <span id="r18 rd" class="r18 r">proposedSeparatorIndices</span>;
+
+                    <span class="c">// Calculate the number of supported separators.</span>
+                    <span class="r12 r">supportedSeparatorCount</span> = (<b>int</b>)<span class="t t">Math</span>.<span class="i method">Floor</span>(<span class="r9 r">chart</span>.<a href="Charts/ChartCore.cs.html#d89cf534942aa187" class="i property">ControlSize</a>.<a href="Dtos/CoreSize.cs.html#98c3c833fabb9abb" class="i property">Width</a> / (<span class="r17 r">window</span>.<a href="AxisWindow.cs.html#064d88d6488e3395" class="i property">MinimumSeparatorWidth</a> * <a href="AxisCore.cs.html#f8aa9568d681fca9" class="i property">CleanFactor</a>));
+
+                    <span class="c">// Try go get separators. Continue if the window invalidated.</span>
+                    <b>if</b> (!<span class="r17 r">window</span>.<a href="AxisWindow.cs.html#59cfd811dbfcd493" class="i method">TryGetSeparatorIndices</a>(<span class="r15 r">rangeIndices</span>, <span class="r12 r">supportedSeparatorCount</span>, <b>out</b> <span class="r18 r">proposedSeparatorIndices</span>)) <b>continue</b>;
+
+                    <span class="c">// Double check whether the window exceeded the maximum separator count.</span>
+                    <span class="c">// It might be it does not respect the supportedSeparatorCount parameter.</span>
+                    <span class="r13 r">separatorIndices</span> = <span class="r18 r">proposedSeparatorIndices</span>.<span class="i method">ToList</span>();
+                    <b>if</b> (<span class="r12 r">supportedSeparatorCount</span> &lt; <span class="r13 r">separatorIndices</span>.<span class="i property">Count</span>) <b>continue</b>;
+                    
+                    <span class="c">// Pick this window. It is the first who passed both validations and our best candidate</span>
+                    <span class="r14 r">proposedWindow</span> = <span class="r17 r">window</span>;
+                    <b>break</b>;
+                }
+            }
+
+            <b>if</b> (<span class="r14 r">proposedWindow</span> == <b>null</b>)
+            {
+                <span class="c">// All variables are still set to defaults</span>
+            }
+
+            <span class="c">// Force the step of 1, as our prepare chart will filter the X axis for valid separators, and will skip a few</span>
+            <a href="AxisCore.cs.html#0c488ea530c0c95e" class="i property">S</a> = 1;
+
+            <a href="AxisCore.cs.html#458651ce34e3c6f3" class="i property">Magnitude</a> = <span class="t t">Math</span>.<span class="i method">Pow</span>(10, <span class="t t">Math</span>.<span class="i method">Floor</span>(<span class="t t">Math</span>.<span class="i method">Log</span>(<span class="r12 r">supportedSeparatorCount</span>) / <span class="t t">Math</span>.<span class="i method">Log</span>(10)));
+            <a href="#8a0d117259b5e3be" class="i property">SelectedWindow</a> = <span class="r14 r">proposedWindow</span>;
+
+            <b>return</b> <span class="r13 r">separatorIndices</span>;
+        }
+
+        <b>private void</b> <a id="b6714fe04249ecb0" href="R/b6714fe04249ecb0.html" target="n" data-glyph="76,1" class="i method">DrawSeparator</a>(<b>double</b> <span id="r19 rd" class="r19 r">x</span>, <b>double</b> <span id="r20 rd" class="r20 r">tolerance</span>, <a href="Dtos/CoreMargin.cs.html#d5baae022c21faf0" class="t t">CoreMargin</a> <span id="r21 rd" class="r21 r">currentMargin</span>, <a href="AxisOrientation.cs.html#294f3d11a155a9e1" class="t t">AxisOrientation</a> <span id="r22 rd" class="r22 r">source</span>)
+        {
+            <a href="SeparatorElementCore.cs.html#e167ed644677f32c" class="t t">SeparatorElementCore</a> <span id="r23 rd" class="r23 r">elementCore</span>;
+
+            <a href="@1@System.Runtime/A.html#1a65cbdb09544ba1" class="k">var</a> <span id="r24 rd" class="r24 r">key</span> = <span class="t t">Math</span>.<span class="i method">Round</span>(<span class="r19 r">x</span> / <span class="r20 r">tolerance</span>) * <span class="r20 r">tolerance</span>;
+
+            <b>if</b> (!<a href="AxisCore.cs.html#a1a2f4cb0b7ec790" class="i property">Cache</a>.<span class="i method">TryGetValue</span>(<span class="r24 r">key</span>, <b>out</b> <span class="r23 r">elementCore</span>))
+            {
+                <span class="r23 r">elementCore</span> = <b>new</b> <a href="DateSeparatorElementCore.cs.html#4a933818c6352b15" class="t constructor">DateSeparatorElementCore</a> { <a href="SeparatorElementCore.cs.html#b52627340aaf5014" class="i property">IsNew</a> = <b>true</b> };
+                <a href="AxisCore.cs.html#a1a2f4cb0b7ec790" class="i property">Cache</a>[<span class="r24 r">key</span>] = <span class="r23 r">elementCore</span>;
+            }
+            <b>else</b>
+            {
+                <span class="r23 r">elementCore</span>.<a href="SeparatorElementCore.cs.html#b52627340aaf5014" class="i property">IsNew</a> = <b>false</b>;
+            }
+
+            <span class="c">// Determine whether this separator is a header now</span>
+            ((<a href="DateSeparatorElementCore.cs.html#4a933818c6352b15" class="t t">DateSeparatorElementCore</a>)<span class="r23 r">elementCore</span>).<a href="DateSeparatorElementCore.cs.html#15561f3e6efbc01f" class="i property">IsHeader</a> = <a href="#8a0d117259b5e3be" class="i property">SelectedWindow</a>.<a href="Definitions/Charts/IAxisWindow.cs.html#60e6bd8b61ea0491" class="i method">IsHeader</a>(<span class="r19 r">x</span>);
+
+            <a href="AxisCore.cs.html#46d6d919d1a17160" class="i property">View</a>.<a href="Definitions/Charts/IAxisView.cs.html#858e89e25b4e098c" class="i method">RenderSeparator</a>(<span class="r23 r">elementCore</span>, <a href="AxisCore.cs.html#0f9305daa462e440" class="i property">Chart</a>);
+
+            <span class="r23 r">elementCore</span>.<a href="SeparatorElementCore.cs.html#c6a11f491252b072" class="i property">Key</a> = <span class="r24 r">key</span>;
+            <span class="r23 r">elementCore</span>.<a href="SeparatorElementCore.cs.html#01cea07672c07ce5" class="i property">Value</a> = <span class="r19 r">x</span>;
+            <span class="r23 r">elementCore</span>.<a href="SeparatorElementCore.cs.html#854d4cf7dee921d7" class="i property">GarbageCollectorIndex</a> = <a href="AxisCore.cs.html#abefdc9522615693" class="i property">GarbageCollectorIndex</a>;
+
+            <a href="Dtos/LabelEvaluation.cs.html#fa263aeddc9fa192" class="k">var</a> <span id="r25 rd" class="r25 r">labelsMargin</span> = <span class="r23 r">elementCore</span>.<a href="SeparatorElementCore.cs.html#ba6ab856dbc6e939" class="i property">View</a>.<a href="Definitions/Charts/ISeparatorElementView.cs.html#3844f7142e0deef2" class="i method">UpdateLabel</a>(<a href="#8a0d117259b5e3be" class="i property">SelectedWindow</a>.<a href="Definitions/Charts/IAxisWindow.cs.html#b8e3848414b88b03" class="i method">FormatAxisLabel</a>(<span class="r19 r">x</span>), <a href="#f97614c13ee23ff8" class="k">this</a>, <span class="r22 r">source</span>);
+
+            <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#cb64f866fdee1739" class="i property">Width</a> = <span class="r25 r">labelsMargin</span>.<a href="Dtos/LabelEvaluation.cs.html#3cea3e5c56fc2d12" class="i property">TakenWidth</a> &gt; <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#cb64f866fdee1739" class="i property">Width</a>
+                ? <span class="r25 r">labelsMargin</span>.<a href="Dtos/LabelEvaluation.cs.html#3cea3e5c56fc2d12" class="i property">TakenWidth</a>
+                : <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#cb64f866fdee1739" class="i property">Width</a>;
+            <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#8ea358429a0651db" class="i property">Height</a> = <span class="r25 r">labelsMargin</span>.<a href="Dtos/LabelEvaluation.cs.html#6b464bee59b2ab8d" class="i property">TakenHeight</a> &gt; <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#8ea358429a0651db" class="i property">Height</a>
+                ? <span class="r25 r">labelsMargin</span>.<a href="Dtos/LabelEvaluation.cs.html#6b464bee59b2ab8d" class="i property">TakenHeight</a>
+                : <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#8ea358429a0651db" class="i property">Height</a>;
+
+            <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#281aab5bc3e63ccd" class="i property">Left</a> = <span class="r25 r">labelsMargin</span>.<a href="Dtos/LabelEvaluation.cs.html#a40f1ac887b41487" class="i property">Left</a> &gt; <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#281aab5bc3e63ccd" class="i property">Left</a>
+                ? <span class="r25 r">labelsMargin</span>.<a href="Dtos/LabelEvaluation.cs.html#a40f1ac887b41487" class="i property">Left</a>
+                : <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#281aab5bc3e63ccd" class="i property">Left</a>;
+            <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#4d9a8b4518153edb" class="i property">Right</a> = <span class="r25 r">labelsMargin</span>.<a href="Dtos/LabelEvaluation.cs.html#5101e0f6787d3cf9" class="i property">Right</a> &gt; <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#4d9a8b4518153edb" class="i property">Right</a>
+                ? <span class="r25 r">labelsMargin</span>.<a href="Dtos/LabelEvaluation.cs.html#5101e0f6787d3cf9" class="i property">Right</a>
+                : <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#4d9a8b4518153edb" class="i property">Right</a>;
+
+            <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#fdb7e1ea6981768c" class="i property">Top</a> = <span class="r25 r">labelsMargin</span>.<a href="Dtos/LabelEvaluation.cs.html#1008c6823db82857" class="i property">Top</a> &gt; <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#fdb7e1ea6981768c" class="i property">Top</a>
+                ? <span class="r25 r">labelsMargin</span>.<a href="Dtos/LabelEvaluation.cs.html#1008c6823db82857" class="i property">Top</a>
+                : <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#fdb7e1ea6981768c" class="i property">Top</a>;
+            <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#019659f881552230" class="i property">Bottom</a> = <span class="r25 r">labelsMargin</span>.<a href="Dtos/LabelEvaluation.cs.html#d17dadd9a92d64ff" class="i property">Bottom</a> &gt; <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#019659f881552230" class="i property">Bottom</a>
+                ? <span class="r25 r">labelsMargin</span>.<a href="Dtos/LabelEvaluation.cs.html#d17dadd9a92d64ff" class="i property">Bottom</a>
+                : <span class="r21 r">currentMargin</span>.<a href="Dtos/CoreMargin.cs.html#019659f881552230" class="i property">Bottom</a>;
+
+            <b>if</b> (<a href="AxisCore.cs.html#09a5f9d1fe22a535" class="i property">LastAxisMax</a> == <b>null</b>)
+            {
+                <span class="r23 r">elementCore</span>.<a href="SeparatorElementCore.cs.html#00d05ba819423714" class="i property">State</a> = <a href="SeparationState.cs.html#5ff20960edceb01e" class="t t">SeparationState</a>.<a href="SeparationState.cs.html#56636ac35ac71f05" class="i field">InitialAdd</a>;
+                <b>return</b>;
+            }
+
+            <span class="r23 r">elementCore</span>.<a href="SeparatorElementCore.cs.html#00d05ba819423714" class="i property">State</a> = <a href="SeparationState.cs.html#5ff20960edceb01e" class="t t">SeparationState</a>.<a href="SeparationState.cs.html#7104eeb1b3ac8960" class="i field">Keep</a>;
+        }
+    }
+}</pre></td></tr></table></div></body></html>

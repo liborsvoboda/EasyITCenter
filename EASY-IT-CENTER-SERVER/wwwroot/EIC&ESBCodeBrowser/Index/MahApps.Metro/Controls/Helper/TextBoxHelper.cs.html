@@ -1,0 +1,1094 @@
+﻿<!DOCTYPE html>
+<html><head><title>TextBoxHelper.cs</title><link rel="stylesheet" href="../../../styles.css"><script src="../../../scripts.js"></script></head>
+<body class="cB" onload="i(1085);"><div class="dH">
+<table style="width: 100%">
+<tr><td>File: <a id="filePath" class="blueLink" href="/#MahApps.Metro/Controls/Helper/TextBoxHelper.cs" target="_top">Controls\Helper\TextBoxHelper.cs</a><br/></td><td></td></tr>
+<tr><td>Project: <a id="projectPath" class="blueLink" href="/#MahApps.Metro" target="_top">HelpProjects\WPF-MAIN\MahApps.Metro\src\MahApps.Metro\MahApps.Metro.csproj</a> (MahApps.Metro)</td></tr>
+</table>
+</div>
+<div class="cz"><table class="tb" cellpadding="0" cellspacing="0"><tr><td valign="top" align="right"><pre id="ln"></pre></td><td valign="top" align="left"><pre id="code">
+<span class="c">// Licensed to the .NET Foundation under one or more agreements.</span>
+<span class="c">// The .NET Foundation licenses this file to you under the MIT license.</span>
+<span class="c">// See the LICENSE file in the project root for more information.</span>
+
+<b>using</b> <span class="i n">System</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>.<span class="i n">DataAnnotations</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Linq</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Controls</span>.<span class="i n">Primitives</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Documents</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Input</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Media</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">ComponentModel</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Collections</span>.<span class="i n">Generic</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Reflection</span>;
+<b>using</b> <span class="i n">System</span>.<span class="i n">Windows</span>.<span class="i n">Data</span>;
+<b>using</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">ValueBoxes</span>;
+
+<b>namespace</b> <span class="i n">MahApps</span>.<span class="i n">Metro</span>.<span class="i n">Controls</span>
+{
+    <b>internal enum</b> <a id="756be514e6e724bf" href="../../R/756be514e6e724bf.html" target="n" data-glyph="20,0" class="t t"><span id="6df46d76b09a013a">SpellingResourceKeyId</span></a>
+    {
+        <a id="ac6294b0b9a71ef6" href="../../R/ac6294b0b9a71ef6.html" target="n" data-glyph="24,1" class="i field">SuggestionMenuItemStyle</a>,
+        <a id="9e6d887e7ababd8d" href="../../R/9e6d887e7ababd8d.html" target="n" data-glyph="24,1" class="i field">IgnoreAllMenuItemStyle</a>,
+        <a id="6f23cdf772fe0352" href="../../R/6f23cdf772fe0352.html" target="n" data-glyph="24,1" class="i field">NoSuggestionsMenuItemStyle</a>,
+        <a id="42745e273c910be3" href="../../R/42745e273c910be3.html" target="n" data-glyph="24,1" class="i field">SeparatorStyle</a>,
+    }
+
+    <b>public static class</b> <a id="d390ea70fccef28b" href="../../R/d390ea70fccef28b.html" target="n" data-glyph="0,0" class="t t">Spelling</a>
+    {
+        <b>public static</b> <a href="@0@PresentationFramework/A.html#26ea7ef2f5236562" class="t t">ResourceKey</a> <a id="e89be165863b1351" href="../../R/e89be165863b1351.html" target="n" data-glyph="102,1" class="i property">SuggestionMenuItemStyleKey</a> { <b>get</b>; } = <b>new</b> <a href="@0@PresentationFramework/A.html#84f78de1c74d243d" class="t constructor">ComponentResourceKey</a>(<b>typeof</b>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>), <a href="#756be514e6e724bf" class="t t">SpellingResourceKeyId</a>.<a href="#ac6294b0b9a71ef6" class="i field">SuggestionMenuItemStyle</a>);
+
+        <b>public static</b> <a href="@0@PresentationFramework/A.html#26ea7ef2f5236562" class="t t">ResourceKey</a> <a id="818afbe8a5442007" href="../../R/818afbe8a5442007.html" target="n" data-glyph="102,1" class="i property">IgnoreAllMenuItemStyleKey</a> { <b>get</b>; } = <b>new</b> <a href="@0@PresentationFramework/A.html#84f78de1c74d243d" class="t constructor">ComponentResourceKey</a>(<b>typeof</b>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>), <a href="#756be514e6e724bf" class="t t">SpellingResourceKeyId</a>.<a href="#9e6d887e7ababd8d" class="i field">IgnoreAllMenuItemStyle</a>);
+
+        <b>public static</b> <a href="@0@PresentationFramework/A.html#26ea7ef2f5236562" class="t t">ResourceKey</a> <a id="dbb2d28daf906014" href="../../R/dbb2d28daf906014.html" target="n" data-glyph="102,1" class="i property">NoSuggestionsMenuItemStyleKey</a> { <b>get</b>; } = <b>new</b> <a href="@0@PresentationFramework/A.html#84f78de1c74d243d" class="t constructor">ComponentResourceKey</a>(<b>typeof</b>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>), <a href="#756be514e6e724bf" class="t t">SpellingResourceKeyId</a>.<a href="#6f23cdf772fe0352" class="i field">NoSuggestionsMenuItemStyle</a>);
+
+        <b>public static</b> <a href="@0@PresentationFramework/A.html#26ea7ef2f5236562" class="t t">ResourceKey</a> <a id="23ac31251faebcd0" href="../../R/23ac31251faebcd0.html" target="n" data-glyph="102,1" class="i property">SeparatorStyleKey</a> { <b>get</b>; } = <b>new</b> <a href="@0@PresentationFramework/A.html#84f78de1c74d243d" class="t constructor">ComponentResourceKey</a>(<b>typeof</b>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>), <a href="#756be514e6e724bf" class="t t">SpellingResourceKeyId</a>.<a href="#42745e273c910be3" class="i field">SeparatorStyle</a>);
+    }
+
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> A helper class that provides various attached properties for the TextBox control.</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <span class="c">///</span><span class="c"> Password watermarking code from: http://prabu-guru.blogspot.com/2010/06/how-to-add-watermark-text-to-textbox.html</span>
+    <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+    <b>public class</b> <a id="c7a49507bd85fa56" href="../../R/c7a49507bd85fa56.html" target="n" data-glyph="0,0" class="t t"><span id="991df269d133b9cb">TextBoxHelper</span></a>
+    {
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="66cb9f5c5627b827" href="../../R/66cb9f5c5627b827.html" target="n" data-glyph="42,1" class="i field">IsMonitoringProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;IsMonitoring&quot;</span>,
+                <b>typeof</b>(<b>bool</b>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationCore/A.html#1708823089fadef6" class="t constructor">UIPropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>, <a href="#dd077e581be88449" class="i method">OnIsMonitoringChanged</a>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static bool</b> <a id="20162cef2bf4220c" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetIsMonitoring</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r0 rd" class="r0 r">element</span>)
+        {
+            <b>return</b> (<b>bool</b>)<span class="r0 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#66cb9f5c5627b827" class="i field">IsMonitoringProperty</a>);
+        }
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static void</b> <a id="66ee6a955cdef2cf" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetIsMonitoring</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r1 rd" class="r1 r">obj</span>, <b>bool</b> <span id="r2 rd" class="r2 r">value</span>)
+        {
+            <span class="r1 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#66cb9f5c5627b827" class="i field">IsMonitoringProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<span class="r2 r">value</span>));
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="5ced3f91c316a5fb" href="../../R/5ced3f91c316a5fb.html" target="n" data-glyph="42,1" class="i field">WatermarkProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;Watermark&quot;</span>,
+                <b>typeof</b>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationCore/A.html#a5d9694b66892d96" class="t constructor">UIPropertyMetadata</a>(<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#c9f70a27facb27cf" class="i field">Empty</a>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../TimePicker/TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../ColorPicker/ColorPicker.cs.html#642cf0da694e70d7" class="t t">ColorPicker</a>))]
+        <b>public static string</b> <a id="00360436f8d60db9" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetWatermark</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r3 rd" class="r3 r">obj</span>)
+        {
+            <b>return</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>)<span class="r3 r">obj</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#5ced3f91c316a5fb" class="i field">WatermarkProperty</a>);
+        }
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../TimePicker/TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../ColorPicker/ColorPicker.cs.html#642cf0da694e70d7" class="t t">ColorPicker</a>))]
+        <b>public static void</b> <a id="df4632931ce0739b" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetWatermark</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r4 rd" class="r4 r">obj</span>, <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a> <span id="r5 rd" class="r5 r">value</span>)
+        {
+            <span class="r4 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#5ced3f91c316a5fb" class="i field">WatermarkProperty</a>, <span class="r5 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="94561ffd2b939a22" href="../../R/94561ffd2b939a22.html" target="n" data-glyph="42,1" class="i field">WatermarkAlignmentProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;WatermarkAlignment&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a>.<a href="@0@PresentationCore/A.html#c8dd48b7f3f297d3" class="i field">Left</a>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#346d0d32656c4827" class="i field">Inherits</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets a value that indicates the horizontal alignment of the watermark.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> One of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<span class="i n">Windows</span>.<a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> values that specifies the desired alignment. The default is </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="i n">System</span>.<span class="i n">Windows</span>.<a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a>.<a href="@0@PresentationCore/A.html#c8dd48b7f3f297d3" class="i field">Left</a><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../TimePicker/TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../ColorPicker/ColorPicker.cs.html#642cf0da694e70d7" class="t t">ColorPicker</a>))]
+        <b>public static</b> <a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a> <a id="19c907c96211cbf1" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetWatermarkAlignment</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r6 rd" class="r6 r">obj</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a>)<span class="r6 r">obj</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#94561ffd2b939a22" class="i field">WatermarkAlignmentProperty</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets a value that indicates the horizontal alignment of the watermark.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../TimePicker/TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../ColorPicker/ColorPicker.cs.html#642cf0da694e70d7" class="t t">ColorPicker</a>))]
+        <b>public static void</b> <a id="dfdafb68616d34bd" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetWatermarkAlignment</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r7 rd" class="r7 r">obj</span>, <a href="@0@PresentationCore/A.html#30236e29d8244173" class="t t">TextAlignment</a> <span id="r8 rd" class="r8 r">value</span>)
+        {
+            <span class="r7 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#94561ffd2b939a22" class="i field">WatermarkAlignmentProperty</a>, <span class="r8 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="6d0305dc779272c6" href="../../R/6d0305dc779272c6.html" target="n" data-glyph="42,1" class="i field">WatermarkTrimmingProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;WatermarkTrimming&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationCore/A.html#98947646308d12be" class="t t">TextTrimming</a>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<a href="@0@PresentationCore/A.html#98947646308d12be" class="t t">TextTrimming</a>.<a href="@0@PresentationCore/A.html#3fef0c84ff6c8cff" class="i field">None</a>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the text trimming behavior to employ when watermark overflows the content area.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> One of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Windows.TextTrimming</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> values that specifies the text trimming behavior to employ. The default is </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">F:System.Windows.TextTrimming.None</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../TimePicker/TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../ColorPicker/ColorPicker.cs.html#642cf0da694e70d7" class="t t">ColorPicker</a>))]
+        <b>public static</b> <a href="@0@PresentationCore/A.html#98947646308d12be" class="t t">TextTrimming</a> <a id="b2b0c2f173393af1" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetWatermarkTrimming</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r9 rd" class="r9 r">obj</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationCore/A.html#98947646308d12be" class="t t">TextTrimming</a>)<span class="r9 r">obj</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#6d0305dc779272c6" class="i field">WatermarkTrimmingProperty</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets the text trimming behavior to employ when watermark overflows the content area.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../TimePicker/TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../ColorPicker/ColorPicker.cs.html#642cf0da694e70d7" class="t t">ColorPicker</a>))]
+        <b>public static void</b> <a id="b287c9902762b773" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetWatermarkTrimming</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r10 rd" class="r10 r">obj</span>, <a href="@0@PresentationCore/A.html#98947646308d12be" class="t t">TextTrimming</a> <span id="r11 rd" class="r11 r">value</span>)
+        {
+            <span class="r10 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#6d0305dc779272c6" class="i field">WatermarkTrimmingProperty</a>, <span class="r11 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="3dfd83475a1d2421" href="../../R/3dfd83475a1d2421.html" target="n" data-glyph="42,1" class="i field">WatermarkWrappingProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;WatermarkWrapping&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationCore/A.html#06cbdc94c6ffe9f2" class="t t">TextWrapping</a>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<a href="@0@PresentationCore/A.html#06cbdc94c6ffe9f2" class="t t">TextWrapping</a>.<a href="@0@PresentationCore/A.html#bd3559ec52aa50e0" class="i field">NoWrap</a>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets how the watermark should wrap text.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">returns</span><span class="c">&gt;</span><span class="c">One of the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">T:System.Windows.TextWrapping</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c"> values. The default is </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><span class="c">F:System.Windows.TextWrapping.NoWrap</span><span class="c">&quot;</span> <span class="c">/&gt;</span><span class="c">.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">returns</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        <b>public static</b> <a href="@0@PresentationCore/A.html#06cbdc94c6ffe9f2" class="t t">TextWrapping</a> <a id="c826ed21f7f43054" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetWatermarkWrapping</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r12 rd" class="r12 r">obj</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationCore/A.html#06cbdc94c6ffe9f2" class="t t">TextWrapping</a>)<span class="r12 r">obj</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#3dfd83475a1d2421" class="i field">WatermarkWrappingProperty</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets how the watermark should wrap text.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        <b>public static void</b> <a id="3e9a6e83c05ed342" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetWatermarkWrapping</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r13 rd" class="r13 r">obj</span>, <a href="@0@PresentationCore/A.html#06cbdc94c6ffe9f2" class="t t">TextWrapping</a> <span id="r14 rd" class="r14 r">value</span>)
+        {
+            <span class="r13 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#3dfd83475a1d2421" class="i field">WatermarkWrappingProperty</a>, <span class="r14 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="9a70727d0a4d2de4" href="../../R/9a70727d0a4d2de4.html" target="n" data-glyph="42,1" class="i field">UseFloatingWatermarkProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;UseFloatingWatermark&quot;</span>,
+                <b>typeof</b>(<b>bool</b>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#f55eafbea6d9be21" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>, <a href="#05caf3bf77e3ac5f" class="i method">ButtonCommandOrClearTextChanged</a>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../ColorPicker/ColorPicker.cs.html#642cf0da694e70d7" class="t t">ColorPicker</a>))]
+        <b>public static bool</b> <a id="a86cbc6688eb147e" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetUseFloatingWatermark</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r15 rd" class="r15 r">obj</span>)
+        {
+            <b>return</b> (<b>bool</b>)<span class="r15 r">obj</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#9a70727d0a4d2de4" class="i field">UseFloatingWatermarkProperty</a>);
+        }
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../ColorPicker/ColorPicker.cs.html#642cf0da694e70d7" class="t t">ColorPicker</a>))]
+        <b>public static void</b> <a id="d49b58f2da936611" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetUseFloatingWatermark</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r16 rd" class="r16 r">obj</span>, <b>bool</b> <span id="r17 rd" class="r17 r">value</span>)
+        {
+            <span class="r16 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#9a70727d0a4d2de4" class="i field">UseFloatingWatermarkProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<span class="r17 r">value</span>));
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This property can be used to retrieve the watermark using the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@System.ComponentModel.DataAnnotations/A.html#b290d77efef8586f" class="t t">DisplayAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> of bound property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Setting this property to true will uses reflection.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="09eb4c2c3e221eda" href="../../R/09eb4c2c3e221eda.html" target="n" data-glyph="42,1" class="i field">AutoWatermarkProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;AutoWatermark&quot;</span>,
+                <b>typeof</b>(<b>bool</b>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#9551015cc62efa7d" class="t constructor">PropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>, <a href="#2ec153e531486c1a" class="i method">OnAutoWatermarkChanged</a>));
+
+        <b>private static void</b> <a id="2ec153e531486c1a" href="../../R/2ec153e531486c1a.html" target="n" data-glyph="76,1" class="i method">OnAutoWatermarkChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r18 rd" class="r18 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r19 rd" class="r19 r">e</span>)
+        {
+            <b>if</b> (<span class="r18 r">d</span> <b>is</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r20 rd" class="r20 r">element</span> &amp;&amp; <span class="r19 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a> != <span class="r19 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>)
+            {
+                <b>if</b> ((<span class="r19 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a> <b>as bool</b>?).<a href="@0@mscorlib/A.html#8b928034cfee7d43" class="i method">GetValueOrDefault</a>())
+                {
+                    <b>if</b> (<span class="r20 r">element</span>.<a href="@0@PresentationFramework/A.html#b05bbe3100c43c82" class="i property">IsLoaded</a>)
+                    {
+                        <a href="#8cdf2c5cb262d357" class="i method">OnControlWithAutoWatermarkSupportLoaded</a>(<span class="r20 r">element</span>, <b>new</b> <a href="@0@PresentationCore/A.html#7f6d283b5c035c38" class="t constructor">RoutedEventArgs</a>());
+                    }
+                    <b>else</b>
+                    {
+                        <span class="r20 r">element</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += <a href="#8cdf2c5cb262d357" class="i method">OnControlWithAutoWatermarkSupportLoaded</a>;
+                    }
+                }
+                <b>else</b>
+                {
+                    <span class="r20 r">element</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> -= <a href="#8cdf2c5cb262d357" class="i method">OnControlWithAutoWatermarkSupportLoaded</a>;
+                }
+            }
+        }
+
+        <b>private static void</b> <a id="8cdf2c5cb262d357" href="../../R/8cdf2c5cb262d357.html" target="n" data-glyph="76,1" class="i method">OnControlWithAutoWatermarkSupportLoaded</a>(<b>object</b> <span id="r21 rd" class="r21 r">o</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r22 rd" class="r22 r">routedEventArgs</span>)
+        {
+            <b>if</b> (<span class="r21 r">o</span> <b>is</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a> <span id="r23 rd" class="r23 r">fe</span>)
+            {
+                <span class="r23 r">fe</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> -= <a href="#8cdf2c5cb262d357" class="i method">OnControlWithAutoWatermarkSupportLoaded</a>;
+
+                <b>if</b> (!<a href="#c5e3db1ecf46c72a" class="i field">AutoWatermarkPropertyMapping</a>.<a href="@0@mscorlib/A.html#2e5bc6d8c0f21e67" class="i method">TryGetValue</a>(<span class="r23 r">fe</span>.<a href="@0@mscorlib/A.html#4d73eb225aef8a61" class="i method">GetType</a>(), <b>out</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="k">var</a> <span id="r24 rd" class="r24 r">dependencyProperty</span>))
+                {
+                    <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#3d3c2c03118be4f8" class="t constructor">NotSupportedException</a>(<span class="s">$&quot;</span>{<b>nameof</b>(<a href="#09eb4c2c3e221eda" class="i field">AutoWatermarkProperty</a>)}<span class="s"> is not supported for </span>{<span class="r23 r">fe</span>.<a href="@0@mscorlib/A.html#4d73eb225aef8a61" class="i method">GetType</a>()}<span class="s">&quot;</span>);
+                }
+
+                <a href="@0@mscorlib/A.html#f3f0ea5f89a8f162" class="k">var</a> <span id="r25 rd" class="r25 r">resolvedProperty</span> = <a href="#e803e9b53798a472" class="i method">ResolvePropertyFromBindingExpression</a>(<span class="r23 r">fe</span>.<a href="@0@PresentationFramework/A.html#6836c0ec5460113c" class="i method">GetBindingExpression</a>(<span class="r24 r">dependencyProperty</span>));
+                <b>if</b> (<span class="r25 r">resolvedProperty</span> != <b>null</b>)
+                {
+                    <a href="@0@System.ComponentModel.DataAnnotations/A.html#b290d77efef8586f" class="k">var</a> <span id="r26 rd" class="r26 r">attribute</span> = <span class="r25 r">resolvedProperty</span>.<a href="@0@mscorlib/A.html#0497c27b6539bfd9" class="i method">GetCustomAttribute</a>&lt;<a href="@0@System.ComponentModel.DataAnnotations/A.html#b290d77efef8586f" class="t t">DisplayAttribute</a>&gt;();
+                    <b>if</b> (<span class="r26 r">attribute</span> != <b>null</b>)
+                    {
+                        <span class="r23 r">fe</span>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#5ced3f91c316a5fb" class="i field">WatermarkProperty</a>, <span class="r26 r">attribute</span>.<a href="@0@System.ComponentModel.DataAnnotations/A.html#9c2d44277c372a6e" class="i method">GetPrompt</a>());
+                    }
+                }
+            }
+        }
+
+        <b>private static</b> <a href="@0@mscorlib/A.html#f3f0ea5f89a8f162" class="t t">PropertyInfo</a>? <a id="e803e9b53798a472" href="../../R/e803e9b53798a472.html" target="n" data-glyph="76,1" class="i method">ResolvePropertyFromBindingExpression</a>(<a href="@0@PresentationFramework/A.html#8f8a18ec6ff7f298" class="t t">BindingExpression</a>? <span id="r27 rd" class="r27 r">bindingExpression</span>)
+        {
+            <b>if</b> (<span class="r27 r">bindingExpression</span> != <b>null</b> &amp;&amp; <span class="r27 r">bindingExpression</span>.<a href="@0@PresentationFramework/A.html#ee41d25c30d6749a" class="i property">Status</a> != <a href="@0@PresentationFramework/A.html#f2bf9bacdc768f82" class="t t">BindingStatus</a>.<a href="@0@PresentationFramework/A.html#d70ae6f62fdf7a7e" class="i field">PathError</a>)
+            {
+                <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r28 rd" class="r28 r">propertyName</span> = <span class="r27 r">bindingExpression</span>.<a href="@0@PresentationFramework/A.html#35ae23e37d213e93" class="i property">ResolvedSourcePropertyName</a>;
+                <b>if</b> (!<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#23a8597f842071f4" class="i method">IsNullOrEmpty</a>(<span class="r28 r">propertyName</span>))
+                {
+                    <a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="k">var</a> <span id="r29 rd" class="r29 r">resolvedType</span> = <span class="r27 r">bindingExpression</span>.<a href="@0@PresentationFramework/A.html#11ed316e3d1dcda6" class="i property">ResolvedSource</a>?.<a href="@0@mscorlib/A.html#4d73eb225aef8a61" class="i method">GetType</a>();
+                    <b>if</b> (<span class="r29 r">resolvedType</span> != <b>null</b>)
+                    {
+                        <b>return</b> <span class="r29 r">resolvedType</span>.<a href="@0@mscorlib/A.html#90cb501901e16fa4" class="i method">GetProperty</a>(<span class="r28 r">propertyName</span>, <a href="@0@mscorlib/A.html#4795caf3b483702d" class="t t">BindingFlags</a>.<a href="@0@mscorlib/A.html#ef2ef39bdfa059df" class="i field">Public</a> | <a href="@0@mscorlib/A.html#4795caf3b483702d" class="t t">BindingFlags</a>.<a href="@0@mscorlib/A.html#54a14f747b06c614" class="i field">Instance</a>);
+                    }
+                }
+            }
+
+            <b>return</b> <b>null</b>;
+        }
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../TimePicker/TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../ColorPicker/ColorPicker.cs.html#642cf0da694e70d7" class="t t">ColorPicker</a>))]
+        <b>public static bool</b> <a id="17fb035cee06e135" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetAutoWatermark</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r30 rd" class="r30 r">element</span>)
+        {
+            <b>return</b> (<b>bool</b>)<span class="r30 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#09eb4c2c3e221eda" class="i field">AutoWatermarkProperty</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Indicates whether if the watermark is automatically retrieved by using the </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@System.ComponentModel.DataAnnotations/A.html#b290d77efef8586f" class="t t">DisplayAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c"> of the bound property.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">remarks</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This attached property uses reflection; thus it might reduce the performance of the application.</span>
+        <span class="c">///</span><span class="c"> The auto-watermark does work for the following controls:</span>
+        <span class="c">///</span><span class="c"> In the following case no custom watermark is shown</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">list</span> <span class="c">type</span><span class="c">=</span><span class="c">&quot;</span><span class="c">bullet</span><span class="c">&quot;</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">There is no binding</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">Binding path errors</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">Binding to a element of a collection without using a property of that element </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">Binding Path=Collection[0]</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c"> use: </span><span class="c">&lt;</span><span class="c">c</span><span class="c">&gt;</span><span class="c">Binding Path=Collection[0].SubProperty</span><span class="c">&lt;/</span><span class="c">c</span><span class="c">&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">item</span><span class="c">&gt;</span><span class="c">The bound property does not have a </span><span class="c">&lt;</span><span class="c">see</span> <span class="c">cref</span><span class="c">=</span><span class="c">&quot;</span><a href="@0@System.ComponentModel.DataAnnotations/A.html#b290d77efef8586f" class="t t">DisplayAttribute</a><span class="c">&quot;</span><span class="c">/&gt;</span><span class="c">&lt;/</span><span class="c">item</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">list</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">remarks</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../TimePicker/TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../ColorPicker/ColorPicker.cs.html#642cf0da694e70d7" class="t t">ColorPicker</a>))]
+        <b>public static void</b> <a id="0c70300d3cb13b3b" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetAutoWatermark</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r31 rd" class="r31 r">element</span>, <b>bool</b> <span id="r32 rd" class="r32 r">value</span>)
+        {
+            <span class="r31 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#09eb4c2c3e221eda" class="i field">AutoWatermarkProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<span class="r32 r">value</span>));
+        }
+
+        <b>private static readonly</b> <a href="@0@mscorlib/A.html#d3599058f8d79be0" class="t t">Dictionary</a>&lt;<a href="@0@mscorlib/A.html#3d00eeab9feb80f3" class="t t">Type</a>, <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>&gt; <a id="c5e3db1ecf46c72a" href="../../R/c5e3db1ecf46c72a.html" target="n" data-glyph="46,1" class="i field">AutoWatermarkPropertyMapping</a>
+            = <a href="@0@mscorlib/A.html#bf6849e410b43c4c" class="k">new</a>()
+              {
+                  { <b>typeof</b>(<a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a>), <a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a>.<a href="@0@PresentationFramework/A.html#47e834d7646f17c6" class="i field">TextProperty</a> },
+                  { <b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>), <a href="@0@PresentationFramework/A.html#1c96d9a032a8ca1d" class="t t">Selector</a>.<a href="@0@PresentationFramework/A.html#1873444e87e5430d" class="i field">SelectedItemProperty</a> },
+                  { <b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>), <a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>.<a href="../NumericUpDown.cs.html#fb98411f5d308d51" class="i field">ValueProperty</a> },
+                  { <b>typeof</b>(<a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>), <a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>.<a href="../HotKeyBox.cs.html#dbba63dba1b4f2e0" class="i field">HotKeyProperty</a> },
+                  { <b>typeof</b>(<a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>), <a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>.<a href="@0@PresentationFramework/A.html#15e9baea2fd73857" class="i field">SelectedDateProperty</a> },
+                  { <b>typeof</b>(<a href="../TimePicker/TimePicker.cs.html#1575820c39eeb0b6" class="t t">TimePicker</a>), <a href="../TimePicker/TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a>.<a href="../TimePicker/TimePickerBase.cs.html#a067806ca275c70a" class="i field">SelectedDateTimeProperty</a> },
+                  { <b>typeof</b>(<a href="../TimePicker/DateTimePicker.cs.html#366231d70f1b6284" class="t t">DateTimePicker</a>), <a href="../TimePicker/TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a>.<a href="../TimePicker/TimePickerBase.cs.html#a067806ca275c70a" class="i field">SelectedDateTimeProperty</a> },
+                  { <b>typeof</b>(<a href="../ColorPicker/ColorPicker.cs.html#642cf0da694e70d7" class="t t">ColorPicker</a>), <a href="../ColorPicker/ColorPickerBase.cs.html#66c8ef13517405b4" class="t t">ColorPickerBase</a>.<a href="../ColorPicker/ColorPickerBase.cs.html#d437f564c4110bf3" class="i field">SelectedColorProperty</a> },
+                  { <b>typeof</b>(<a href="../ColorPicker/ColorCanvas.cs.html#4b5dbac94d25d9bb" class="t t">ColorCanvas</a>), <a href="../ColorPicker/ColorPickerBase.cs.html#66c8ef13517405b4" class="t t">ColorPickerBase</a>.<a href="../ColorPicker/ColorPickerBase.cs.html#d437f564c4110bf3" class="i field">SelectedColorProperty</a> },
+                  { <b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>), <a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>.<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f52643d908dc9746" class="i field">SelectedItemProperty</a> }
+              };
+
+        <b>internal static readonly</b> <a href="@0@WindowsBase/A.html#380f95e0ba8ab2a0" class="t t">DependencyPropertyKey</a> <a id="94c3b5e61ff07113" href="../../R/94c3b5e61ff07113.html" target="n" data-glyph="44,1" class="i field">TextLengthPropertyKey</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d7533dbc8b831df4" class="i method">RegisterAttachedReadOnly</a>(
+                <span class="s">&quot;TextLength&quot;</span>,
+                <b>typeof</b>(<b>int</b>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@WindowsBase/A.html#2a1a3328df22f3a0" class="t constructor">PropertyMetadata</a>(0));
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="1c7affa93b4d1e4e" href="../../R/1c7affa93b4d1e4e.html" target="n" data-glyph="42,1" class="i field">TextLengthProperty</a> = <a href="#94c3b5e61ff07113" class="i field">TextLengthPropertyKey</a>.<a href="@0@WindowsBase/A.html#d39196af37a6f1cf" class="i property">DependencyProperty</a>;
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static int</b> <a id="eca8c110911aed83" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetTextLength</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r33 rd" class="r33 r">element</span>)
+        {
+            <b>return</b> (<b>int</b>)<span class="r33 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#1c7affa93b4d1e4e" class="i field">TextLengthProperty</a>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b2b0618705c5f512" href="../../R/b2b0618705c5f512.html" target="n" data-glyph="42,1" class="i field">HasTextProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;HasText&quot;</span>,
+                <b>typeof</b>(<b>bool</b>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#b3ede21c21163c04" class="i field">AffectsArrange</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#07a9b4b185d868ab" class="i field">AffectsRender</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets if the attached TextBox has text.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>))]
+        <b>public static bool</b> <a id="51be43024373f3c0" href="../../R/51be43024373f3c0.html" target="n" data-glyph="72,1" class="i method">GetHasText</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r34 rd" class="r34 r">obj</span>)
+        {
+            <b>return</b> (<b>bool</b>)<span class="r34 r">obj</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b2b0618705c5f512" class="i field">HasTextProperty</a>);
+        }
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../MultiSelectionComboBox/MultiSelectionComboBox.cs.html#f88ab22f40b63a37" class="t t">MultiSelectionComboBox</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>))]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>))]
+        <b>public static void</b> <a id="9f049a4270f91c5b" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetHasText</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r35 rd" class="r35 r">obj</span>, <b>bool</b> <span id="r36 rd" class="r36 r">value</span>)
+        {
+            <span class="r35 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b2b0618705c5f512" class="i field">HasTextProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<span class="r36 r">value</span>));
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b2d6e3174abe8c9a" href="../../R/b2d6e3174abe8c9a.html" target="n" data-glyph="42,1" class="i field">ClearTextButtonProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;ClearTextButton&quot;</span>,
+                <b>typeof</b>(<b>bool</b>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#f55eafbea6d9be21" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>, <a href="#05caf3bf77e3ac5f" class="i method">ButtonCommandOrClearTextChanged</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the clear text button visibility / feature. Can be used to enable text deletion.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static bool</b> <a id="5da6840a07a97af2" href="../../R/5da6840a07a97af2.html" target="n" data-glyph="72,1" class="i method">GetClearTextButton</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r37 rd" class="r37 r">d</span>)
+        {
+            <b>return</b> (<b>bool</b>)<span class="r37 r">d</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b2d6e3174abe8c9a" class="i field">ClearTextButtonProperty</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets the clear text button visibility / feature. Can be used to enable text deletion.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static void</b> <a id="9d0d583af6e486ac" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetClearTextButton</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r38 rd" class="r38 r">obj</span>, <b>bool</b> <span id="r39 rd" class="r39 r">value</span>)
+        {
+            <span class="r38 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b2d6e3174abe8c9a" class="i field">ClearTextButtonProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<span class="r39 r">value</span>));
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="72835d4d46390e34" href="../../R/72835d4d46390e34.html" target="n" data-glyph="42,1" class="i field">ButtonsAlignmentProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;ButtonsAlignment&quot;</span>,
+                <b>typeof</b>(<a href="../ButtonsAlignment.cs.html#4fde7b9ef8b9bfd6" class="t t">ButtonsAlignment</a>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../ButtonsAlignment.cs.html#4fde7b9ef8b9bfd6" class="t t">ButtonsAlignment</a>.<a href="../ButtonsAlignment.cs.html#b1b90b7ec6b8a4ab" class="i field">Right</a>, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#b3ede21c21163c04" class="i field">AffectsArrange</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Gets the buttons placement variant.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static</b> <a href="../ButtonsAlignment.cs.html#4fde7b9ef8b9bfd6" class="t t">ButtonsAlignment</a> <a id="fda7c9765e509278" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetButtonsAlignment</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r40 rd" class="r40 r">d</span>)
+        {
+            <b>return</b> (<a href="../ButtonsAlignment.cs.html#4fde7b9ef8b9bfd6" class="t t">ButtonsAlignment</a>)<span class="r40 r">d</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#72835d4d46390e34" class="i field">ButtonsAlignmentProperty</a>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Sets the buttons placement variant.</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static void</b> <a id="70bdd61c29e7ba46" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetButtonsAlignment</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r41 rd" class="r41 r">obj</span>, <a href="../ButtonsAlignment.cs.html#4fde7b9ef8b9bfd6" class="t t">ButtonsAlignment</a> <span id="r42 rd" class="r42 r">value</span>)
+        {
+            <span class="r41 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#72835d4d46390e34" class="i field">ButtonsAlignmentProperty</a>, <span class="r42 r">value</span>);
+        }
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> This property can be used to set the button width (PART_ClearText) of TextBox, PasswordBox, ComboBox, NumericUpDown</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="e095b0a3aad1dfae" href="../../R/e095b0a3aad1dfae.html" target="n" data-glyph="42,1" class="i field">ButtonWidthProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;ButtonWidth&quot;</span>,
+                <b>typeof</b>(<b>double</b>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#a9606c0b7a3a3875" class="t constructor">FrameworkPropertyMetadata</a>(22d, <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#b3ede21c21163c04" class="i field">AffectsArrange</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#a47153bc5b3b24f4" class="i field">AffectsMeasure</a> | <a href="@0@PresentationFramework/A.html#3f1b30454997d7be" class="t t">FrameworkPropertyMetadataOptions</a>.<a href="@0@PresentationFramework/A.html#346d0d32656c4827" class="i field">Inherits</a>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static double</b> <a id="8a038b3477259b67" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetButtonWidth</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r43 rd" class="r43 r">obj</span>)
+        {
+            <b>return</b> (<b>double</b>)<span class="r43 r">obj</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#e095b0a3aad1dfae" class="i field">ButtonWidthProperty</a>);
+        }
+
+        <b>public static void</b> <a id="ae9a02cb45b62b36" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetButtonWidth</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r44 rd" class="r44 r">obj</span>, <b>double</b> <span id="r45 rd" class="r45 r">value</span>)
+        {
+            <span class="r44 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#e095b0a3aad1dfae" class="i field">ButtonWidthProperty</a>, <span class="r45 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="05a03f7f511f1ca5" href="../../R/05a03f7f511f1ca5.html" target="n" data-glyph="42,1" class="i field">ButtonCommandProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;ButtonCommand&quot;</span>,
+                <b>typeof</b>(<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#f55eafbea6d9be21" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>, <a href="#05caf3bf77e3ac5f" class="i method">ButtonCommandOrClearTextChanged</a>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static</b> <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <a id="d0c1664f9b2b9106" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetButtonCommand</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r46 rd" class="r46 r">d</span>)
+        {
+            <b>return</b> (<a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>?)<span class="r46 r">d</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#05a03f7f511f1ca5" class="i field">ButtonCommandProperty</a>);
+        }
+
+        <b>public static void</b> <a id="e95d078ec1d2e945" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetButtonCommand</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r47 rd" class="r47 r">obj</span>, <a href="@0@System/A.html#f0e0f4acfe262659" class="t t">ICommand</a>? <span id="r48 rd" class="r48 r">value</span>)
+        {
+            <span class="r47 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#05a03f7f511f1ca5" class="i field">ButtonCommandProperty</a>, <span class="r48 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="b37c99648b5a16c4" href="../../R/b37c99648b5a16c4.html" target="n" data-glyph="42,1" class="i field">ButtonCommandParameterProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;ButtonCommandParameter&quot;</span>,
+                <b>typeof</b>(<b>object</b>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#f0b5ca672c6f55d2" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static object</b>? <a id="a9cb19e567218ac3" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetButtonCommandParameter</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r49 rd" class="r49 r">d</span>)
+        {
+            <b>return</b> (<b>object</b>?)<span class="r49 r">d</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#b37c99648b5a16c4" class="i field">ButtonCommandParameterProperty</a>);
+        }
+
+        <b>public static void</b> <a id="ec9100f86849d99b" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetButtonCommandParameter</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r50 rd" class="r50 r">obj</span>, <b>object</b>? <span id="r51 rd" class="r51 r">value</span>)
+        {
+            <span class="r50 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#b37c99648b5a16c4" class="i field">ButtonCommandParameterProperty</a>, <span class="r51 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="ae28229ec5c74343" href="../../R/ae28229ec5c74343.html" target="n" data-glyph="42,1" class="i field">ButtonCommandTargetProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;ButtonCommandTarget&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#f0b5ca672c6f55d2" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static</b> <a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>? <a id="bd4f338325b8820f" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetButtonCommandTarget</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r52 rd" class="r52 r">d</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>?)<span class="r52 r">d</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#ae28229ec5c74343" class="i field">ButtonCommandTargetProperty</a>);
+        }
+
+        <b>public static void</b> <a id="e982bdce9fb91608" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetButtonCommandTarget</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r53 rd" class="r53 r">obj</span>, <a href="@0@PresentationCore/A.html#8f265daa8bd07ad4" class="t t">IInputElement</a>? <span id="r54 rd" class="r54 r">value</span>)
+        {
+            <span class="r53 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#ae28229ec5c74343" class="i field">ButtonCommandTargetProperty</a>, <span class="r54 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="c8a781abe8c1fa6c" href="../../R/c8a781abe8c1fa6c.html" target="n" data-glyph="42,1" class="i field">ButtonContentProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;ButtonContent&quot;</span>,
+                <b>typeof</b>(<b>object</b>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<span class="s">&quot;r&quot;</span>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static object</b> <a id="65fcd2126292bf20" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetButtonContent</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r55 rd" class="r55 r">d</span>)
+        {
+            <b>return</b> (<b>object</b>)<span class="r55 r">d</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#c8a781abe8c1fa6c" class="i field">ButtonContentProperty</a>);
+        }
+
+        <b>public static void</b> <a id="a9cad63705cd7912" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetButtonContent</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r56 rd" class="r56 r">obj</span>, <b>object</b> <span id="r57 rd" class="r57 r">value</span>)
+        {
+            <span class="r56 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#c8a781abe8c1fa6c" class="i field">ButtonContentProperty</a>, <span class="r57 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="593f544d2b2fff90" href="../../R/593f544d2b2fff90.html" target="n" data-glyph="42,1" class="i field">ButtonContentTemplateProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;ButtonContentTemplate&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#f0b5ca672c6f55d2" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span><span class="c"> </span>
+        <span class="c">///</span><span class="c"> ButtonContentTemplate is the template used to display the content of the ClearText button. </span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static</b> <a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>? <a id="d0c7437dc3e55b1b" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetButtonContentTemplate</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r58 rd" class="r58 r">d</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>?)<span class="r58 r">d</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#593f544d2b2fff90" class="i field">ButtonContentTemplateProperty</a>);
+        }
+
+        <b>public static void</b> <a id="75e7e35681658c72" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetButtonContentTemplate</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r59 rd" class="r59 r">obj</span>, <a href="@0@PresentationFramework/A.html#623bc07124c7ba7a" class="t t">DataTemplate</a>? <span id="r60 rd" class="r60 r">value</span>)
+        {
+            <span class="r59 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#593f544d2b2fff90" class="i field">ButtonContentTemplateProperty</a>, <span class="r60 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="e5474e3b7e8575b8" href="../../R/e5474e3b7e8575b8.html" target="n" data-glyph="42,1" class="i field">ButtonTemplateProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;ButtonTemplate&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationFramework/A.html#0482070906838a23" class="t t">ControlTemplate</a>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#f0b5ca672c6f55d2" class="t constructor">FrameworkPropertyMetadata</a>(<b>null</b>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static</b> <a href="@0@PresentationFramework/A.html#0482070906838a23" class="t t">ControlTemplate</a>? <a id="875c8a4036aa1488" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetButtonTemplate</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r61 rd" class="r61 r">d</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationFramework/A.html#0482070906838a23" class="t t">ControlTemplate</a>?)<span class="r61 r">d</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#e5474e3b7e8575b8" class="i field">ButtonTemplateProperty</a>);
+        }
+
+        <b>public static void</b> <a id="31e87e3a1e9bf5cd" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetButtonTemplate</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r62 rd" class="r62 r">obj</span>, <a href="@0@PresentationFramework/A.html#0482070906838a23" class="t t">ControlTemplate</a>? <span id="r63 rd" class="r63 r">value</span>)
+        {
+            <span class="r62 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#e5474e3b7e8575b8" class="i field">ButtonTemplateProperty</a>, <span class="r63 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="d7f10a3748eda455" href="../../R/d7f10a3748eda455.html" target="n" data-glyph="42,1" class="i field">ButtonFontFamilyProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;ButtonFontFamily&quot;</span>,
+                <b>typeof</b>(<a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<b>new</b> <a href="@0@PresentationCore/A.html#c5b671eb12fa8c8c" class="t constructor">FontFamilyConverter</a>().<a href="@0@System/A.html#798c60da4ae07b7e" class="i method">ConvertFromString</a>(<span class="s">&quot;Marlett&quot;</span>)));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static</b> <a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a> <a id="27f8eeaf3fa1882d" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetButtonFontFamily</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r64 rd" class="r64 r">d</span>)
+        {
+            <b>return</b> (<a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a>)<span class="r64 r">d</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#d7f10a3748eda455" class="i field">ButtonFontFamilyProperty</a>);
+        }
+
+        <b>public static void</b> <a id="4353e261eb09ad96" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetButtonFontFamily</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r65 rd" class="r65 r">obj</span>, <a href="@0@PresentationCore/A.html#409ace43b3c87f64" class="t t">FontFamily</a> <span id="r66 rd" class="r66 r">value</span>)
+        {
+            <span class="r65 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#d7f10a3748eda455" class="i field">ButtonFontFamilyProperty</a>, <span class="r66 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="87b0c6acf2c7349d" href="../../R/87b0c6acf2c7349d.html" target="n" data-glyph="42,1" class="i field">ButtonFontSizeProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;ButtonFontSize&quot;</span>,
+                <b>typeof</b>(<b>double</b>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<a href="@0@PresentationFramework/A.html#e2b8751638acf19d" class="t t">SystemFonts</a>.<a href="@0@PresentationFramework/A.html#b0e0d60d983893af" class="i property">MessageFontSize</a>));
+
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        <b>public static double</b> <a id="86468dab6f3d954b" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetButtonFontSize</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r67 rd" class="r67 r">d</span>)
+        {
+            <b>return</b> (<b>double</b>)<span class="r67 r">d</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#87b0c6acf2c7349d" class="i field">ButtonFontSizeProperty</a>);
+        }
+
+        <b>public static void</b> <a id="377b625b8a88bbb1" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetButtonFontSize</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r68 rd" class="r68 r">obj</span>, <b>double</b> <span id="r69 rd" class="r69 r">value</span>)
+        {
+            <span class="r68 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#87b0c6acf2c7349d" class="i field">ButtonFontSizeProperty</a>, <span class="r69 r">value</span>);
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="7d06f9de9d6f354d" href="../../R/7d06f9de9d6f354d.html" target="n" data-glyph="42,1" class="i field">SelectAllOnFocusProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;SelectAllOnFocus&quot;</span>,
+                <b>typeof</b>(<b>bool</b>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#69f23b8966049b7c" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>));
+
+        <b>public static bool</b> <a id="df191140960503d0" href="../../R/df191140960503d0.html" target="n" data-glyph="72,1" class="i method">GetSelectAllOnFocus</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r70 rd" class="r70 r">obj</span>)
+        {
+            <b>return</b> (<b>bool</b>)<span class="r70 r">obj</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#7d06f9de9d6f354d" class="i field">SelectAllOnFocusProperty</a>);
+        }
+
+        <b>public static void</b> <a id="f8c6d1dd97438472" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetSelectAllOnFocus</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r71 rd" class="r71 r">obj</span>, <b>bool</b> <span id="r72 rd" class="r72 r">value</span>)
+        {
+            <span class="r71 r">obj</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#7d06f9de9d6f354d" class="i field">SelectAllOnFocusProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<span class="r72 r">value</span>));
+        }
+
+        <b>public static readonly</b> <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a> <a id="f518be7e7e4c7c0c" href="../../R/f518be7e7e4c7c0c.html" target="n" data-glyph="42,1" class="i field">IsSpellCheckContextMenuEnabledProperty</a>
+            = <a href="@0@WindowsBase/A.html#4a20845df0b86ddd" class="t t">DependencyProperty</a>.<a href="@0@WindowsBase/A.html#d492f342ec933480" class="i method">RegisterAttached</a>(
+                <span class="s">&quot;IsSpellCheckContextMenuEnabled&quot;</span>,
+                <b>typeof</b>(<b>bool</b>),
+                <b>typeof</b>(<a href="#c7a49507bd85fa56" class="t t">TextBoxHelper</a>),
+                <b>new</b> <a href="@0@PresentationFramework/A.html#f55eafbea6d9be21" class="t constructor">FrameworkPropertyMetadata</a>(<a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#c31dc20d3767829d" class="i field">FalseBox</a>, <a href="#11f4a12ee7f4fa87" class="i method">IsSpellCheckContextMenuEnabledChanged</a>));
+
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;</span><span class="c">summary</span><span class="c">&gt;</span>
+        <span class="c">///</span><span class="c"> Indicates if a TextBox or RichTextBox should use SpellCheck context menu</span>
+        <span class="c">///</span><span class="c"> </span><span class="c">&lt;/</span><span class="c">summary</span><span class="c">&gt;</span>
+        [<a href="@0@System/A.html#3db3d3ff1819ebd5" class="t constructor">Category</a>(<a href="../../Constants.cs.html#fa5919ea0b325cd3" class="t t">AppName</a>.<a href="../../Constants.cs.html#164f78b73653fd9b" class="i field">MahApps</a>)]
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        <b>public static bool</b> <a id="08519bb260380b3b" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">GetIsSpellCheckContextMenuEnabled</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r73 rd" class="r73 r">element</span>)
+        {
+            <b>return</b> (<b>bool</b>)<span class="r73 r">element</span>.<a href="@0@WindowsBase/A.html#0e1012f338283c7a" class="i method">GetValue</a>(<a href="#f518be7e7e4c7c0c" class="i field">IsSpellCheckContextMenuEnabledProperty</a>);
+        }
+
+        [<a href="@0@WindowsBase/A.html#2fdfc16910f7c93f" class="t constructor">AttachedPropertyBrowsableForType</a>(<b>typeof</b>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>))]
+        <b>public static void</b> <a id="89c448c8d0353898" href="../../R/../../0000000000.html" target="n" data-glyph="72,1" class="i method">SetIsSpellCheckContextMenuEnabled</a>(<a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r74 rd" class="r74 r">element</span>, <b>bool</b> <span id="r75 rd" class="r75 r">value</span>)
+        {
+            <span class="r74 r">element</span>.<a href="@0@WindowsBase/A.html#b1809fe135a72ec5" class="i method">SetValue</a>(<a href="#f518be7e7e4c7c0c" class="i field">IsSpellCheckContextMenuEnabledProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<span class="r75 r">value</span>));
+        }
+
+        <b>private static void</b> <a id="11f4a12ee7f4fa87" href="../../R/11f4a12ee7f4fa87.html" target="n" data-glyph="76,1" class="i method">IsSpellCheckContextMenuEnabledChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r76 rd" class="r76 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r77 rd" class="r77 r">e</span>)
+        {
+            <b>if</b> (!(<span class="r76 r">d</span> <b>is</b> <a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a> <span id="r78 rd" class="r78 r">textBox</span>))
+            {
+                <b>throw</b> <b>new</b> <a href="@0@mscorlib/A.html#265d72f49e915224" class="t constructor">InvalidOperationException</a>(<span class="s">&quot;The property &#39;IsSpellCheckContextMenuEnabled&#39; may only be set on TextBoxBase elements.&quot;</span>);
+            }
+
+            <b>if</b> (<span class="r77 r">e</span>.<a href="@0@WindowsBase/A.html#dfc6526fd2b658ce" class="i property">OldValue</a> != <span class="r77 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>)
+            {
+                <span class="r78 r">textBox</span>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="@0@PresentationFramework/A.html#e9ea33e6ff5d1b60" class="t t">SpellCheck</a>.<a href="@0@PresentationFramework/A.html#e51f2b53954bb9ef" class="i field">IsEnabledProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>((<b>bool</b>)<span class="r77 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>));
+                <b>if</b> ((<b>bool</b>)<span class="r77 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>)
+                {
+                    <span class="r78 r">textBox</span>.<a href="@0@PresentationFramework/A.html#9bd53ab5fdd673bb" class="i">ContextMenuOpening</a> += <a href="#1e29d82ee31cdf96" class="i method">TextBoxBaseContextMenuOpening</a>;
+                    <span class="r78 r">textBox</span>.<a href="@0@PresentationCore/A.html#251395f35bbcd55f" class="i">LostFocus</a> += <a href="#b67a5cdb2e742e77" class="i method">TextBoxBaseLostFocus</a>;
+                    <span class="r78 r">textBox</span>.<a href="@0@PresentationFramework/A.html#613c304fddefb73e" class="i">ContextMenuClosing</a> += <a href="#54476b687e589f6e" class="i method">TextBoxBaseContextMenuClosing</a>;
+                }
+                <b>else</b>
+                {
+                    <span class="r78 r">textBox</span>.<a href="@0@PresentationFramework/A.html#9bd53ab5fdd673bb" class="i">ContextMenuOpening</a> -= <a href="#1e29d82ee31cdf96" class="i method">TextBoxBaseContextMenuOpening</a>;
+                    <span class="r78 r">textBox</span>.<a href="@0@PresentationCore/A.html#251395f35bbcd55f" class="i">LostFocus</a> -= <a href="#b67a5cdb2e742e77" class="i method">TextBoxBaseLostFocus</a>;
+                    <span class="r78 r">textBox</span>.<a href="@0@PresentationFramework/A.html#613c304fddefb73e" class="i">ContextMenuClosing</a> -= <a href="#54476b687e589f6e" class="i method">TextBoxBaseContextMenuClosing</a>;
+                }
+            }
+        }
+
+        <b>private static void</b> <a id="b67a5cdb2e742e77" href="../../R/b67a5cdb2e742e77.html" target="n" data-glyph="76,1" class="i method">TextBoxBaseLostFocus</a>(<b>object</b> <span id="r79 rd" class="r79 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r80 rd" class="r80 r">e</span>)
+        {
+            <a href="#23e326da18e9912a" class="i method">RemoveSpellCheckMenuItems</a>((<span class="r79 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>)?.<a href="@0@PresentationFramework/A.html#f9485affacabfc50" class="i property">ContextMenu</a>);
+        }
+
+        <b>private static void</b> <a id="54476b687e589f6e" href="../../R/54476b687e589f6e.html" target="n" data-glyph="76,1" class="i method">TextBoxBaseContextMenuClosing</a>(<b>object</b> <span id="r81 rd" class="r81 r">sender</span>, <a href="@0@PresentationFramework/A.html#590e80a3f8d90e70" class="t t">ContextMenuEventArgs</a> <span id="r82 rd" class="r82 r">e</span>)
+        {
+            <a href="#23e326da18e9912a" class="i method">RemoveSpellCheckMenuItems</a>((<span class="r81 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>)?.<a href="@0@PresentationFramework/A.html#f9485affacabfc50" class="i property">ContextMenu</a>);
+        }
+
+        <b>private static void</b> <a id="1e29d82ee31cdf96" href="../../R/1e29d82ee31cdf96.html" target="n" data-glyph="76,1" class="i method">TextBoxBaseContextMenuOpening</a>(<b>object</b> <span id="r83 rd" class="r83 r">sender</span>, <a href="@0@PresentationFramework/A.html#590e80a3f8d90e70" class="t t">ContextMenuEventArgs</a> <span id="r84 rd" class="r84 r">e</span>)
+        {
+            <a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="k">var</a> <span id="r85 rd" class="r85 r">tbBase</span> = (<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>)<span class="r83 r">sender</span>;
+            <a href="@0@PresentationFramework/A.html#f4776732cf34c5a5" class="k">var</a> <span id="r86 rd" class="r86 r">contextMenu</span> = <span class="r85 r">tbBase</span>.<a href="@0@PresentationFramework/A.html#f9485affacabfc50" class="i property">ContextMenu</a>;
+            <b>if</b> (<span class="r86 r">contextMenu</span> <b>is null</b>)
+            {
+                <b>return</b>;
+            }
+
+            <a href="#23e326da18e9912a" class="i method">RemoveSpellCheckMenuItems</a>(<span class="r86 r">contextMenu</span>);
+
+            <b>if</b> (!<a href="@0@PresentationFramework/A.html#e9ea33e6ff5d1b60" class="t t">SpellCheck</a>.<a href="@0@PresentationFramework/A.html#b2e7bdc3c11805b7" class="i method">GetIsEnabled</a>(<span class="r85 r">tbBase</span>))
+            {
+                <b>return</b>;
+            }
+
+            <a href="@0@PresentationFramework/A.html#159ac687cbce5dc2" class="k">var</a> <span id="r87 rd" class="r87 r">spellingError</span> = <span class="r85 r">tbBase</span> <b>switch</b>
+            {
+                <a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a> <span id="r88 rd" class="r88 r">textBox</span> =&gt; <span class="r88 r">textBox</span>.<a href="@0@PresentationFramework/A.html#2d5963f4425ce66b" class="i method">GetSpellingError</a>(<span class="r88 r">textBox</span>.<a href="@0@PresentationFramework/A.html#fbedd0e8147dd24f" class="i property">CaretIndex</a>),
+                <a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a> <span id="r89 rd" class="r89 r">richTextBox</span> =&gt; <span class="r89 r">richTextBox</span>.<a href="@0@PresentationFramework/A.html#54f1375ab50f985a" class="i method">GetSpellingError</a>(<span class="r89 r">richTextBox</span>.<a href="@0@PresentationFramework/A.html#61ab01baa44f8ddd" class="i property">CaretPosition</a>),
+                <b>_</b> =&gt; <b>null</b>
+            };
+
+            <b>if</b> (<span class="r87 r">spellingError</span> != <b>null</b>)
+            {
+                <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r90 rd" class="r90 r">itemIndex</span> = 0;
+
+                <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="k">var</a> <span id="r91 rd" class="r91 r">spellingSuggestionStyle</span> = <span class="r86 r">contextMenu</span>.<a href="@0@PresentationFramework/A.html#5b064a6294551b3b" class="i method">TryFindResource</a>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>.<a href="#e89be165863b1351" class="i property">SuggestionMenuItemStyleKey</a>) <b>as</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>;
+                <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="k">var</a> <span id="r92 rd" class="r92 r">suggestions</span> = <span class="r87 r">spellingError</span>.<a href="@0@PresentationFramework/A.html#88b8f57b0cda4131" class="i property">Suggestions</a>.<a href="@0@System.Core/A.html#e276d6892241255b" class="i method">ToList</a>();
+                <b>if</b> (<span class="r92 r">suggestions</span>.<a href="@0@System.Core/A.html#8788153112b7ffd0" class="i method">Any</a>())
+                {
+                    <b>foreach</b> (<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r93 rd" class="r93 r">suggestion</span> <b>in</b> <span class="r92 r">suggestions</span>)
+                    {
+                        <span class="r86 r">contextMenu</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#49fcf634ec70a13e" class="i method">Insert</a>(<span class="r90 r">itemIndex</span>++, <b>new</b> <a href="@0@PresentationFramework/A.html#e4608c757123b12e" class="t constructor">MenuItem</a>
+                                                              {
+                                                                  <a href="@0@PresentationFramework/A.html#eeecdc56d63189c3" class="i property">Command</a> = <a href="@0@PresentationFramework/A.html#d41db16a6666c0eb" class="t t">EditingCommands</a>.<a href="@0@PresentationFramework/A.html#8ef75e7397d34e30" class="i property">CorrectSpellingError</a>,
+                                                                  <a href="@0@PresentationFramework/A.html#5ad060f6867a89d8" class="i property">CommandParameter</a> = <span class="r93 r">suggestion</span>,
+                                                                  <a href="@0@PresentationFramework/A.html#6a12c8fc0cfbba3c" class="i property">CommandTarget</a> = <span class="r85 r">tbBase</span>,
+                                                                  <a href="@0@PresentationFramework/A.html#9e86dfc6412c0fe7" class="i property">Style</a> = <span class="r91 r">spellingSuggestionStyle</span>,
+                                                                  <a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> = <b>typeof</b>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>)
+                                                              });
+                    }
+                }
+                <b>else</b>
+                {
+                    <span class="r86 r">contextMenu</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#49fcf634ec70a13e" class="i method">Insert</a>(<span class="r90 r">itemIndex</span>++, <b>new</b> <a href="@0@PresentationFramework/A.html#e4608c757123b12e" class="t constructor">MenuItem</a>
+                                                          {
+                                                              <a href="@0@PresentationFramework/A.html#9e86dfc6412c0fe7" class="i property">Style</a> = <span class="r86 r">contextMenu</span>.<a href="@0@PresentationFramework/A.html#5b064a6294551b3b" class="i method">TryFindResource</a>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>.<a href="#dbb2d28daf906014" class="i property">NoSuggestionsMenuItemStyleKey</a>) <b>as</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>,
+                                                              <a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> = <b>typeof</b>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>)
+                                                          });
+                }
+
+                <span class="c">// add a separator</span>
+                <span class="r86 r">contextMenu</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#49fcf634ec70a13e" class="i method">Insert</a>(<span class="r90 r">itemIndex</span>++, <b>new</b> <a href="@0@PresentationFramework/A.html#9c69be9934fa8f24" class="t constructor">Separator</a>
+                                                      {
+                                                          <a href="@0@PresentationFramework/A.html#9e86dfc6412c0fe7" class="i property">Style</a> = <span class="r86 r">contextMenu</span>.<a href="@0@PresentationFramework/A.html#5b064a6294551b3b" class="i method">TryFindResource</a>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>.<a href="#23ac31251faebcd0" class="i property">SeparatorStyleKey</a>) <b>as</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>,
+                                                          <a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> = <b>typeof</b>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>)
+                                                      });
+
+                <span class="c">// ignore all</span>
+                <span class="r86 r">contextMenu</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#49fcf634ec70a13e" class="i method">Insert</a>(<span class="r90 r">itemIndex</span>++, <b>new</b> <a href="@0@PresentationFramework/A.html#e4608c757123b12e" class="t constructor">MenuItem</a>
+                                                      {
+                                                          <a href="@0@PresentationFramework/A.html#eeecdc56d63189c3" class="i property">Command</a> = <a href="@0@PresentationFramework/A.html#d41db16a6666c0eb" class="t t">EditingCommands</a>.<a href="@0@PresentationFramework/A.html#7ec1ea8c64f220ac" class="i property">IgnoreSpellingError</a>,
+                                                          <a href="@0@PresentationFramework/A.html#6a12c8fc0cfbba3c" class="i property">CommandTarget</a> = <span class="r85 r">tbBase</span>,
+                                                          <a href="@0@PresentationFramework/A.html#9e86dfc6412c0fe7" class="i property">Style</a> = <span class="r86 r">contextMenu</span>.<a href="@0@PresentationFramework/A.html#5b064a6294551b3b" class="i method">TryFindResource</a>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>.<a href="#818afbe8a5442007" class="i property">IgnoreAllMenuItemStyleKey</a>) <b>as</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>,
+                                                          <a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> = <b>typeof</b>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>)
+                                                      });
+
+                <span class="c">// add another separator</span>
+                <span class="r86 r">contextMenu</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#49fcf634ec70a13e" class="i method">Insert</a>(<span class="r90 r">itemIndex</span>, <b>new</b> <a href="@0@PresentationFramework/A.html#9c69be9934fa8f24" class="t constructor">Separator</a>
+                                                    {
+                                                        <a href="@0@PresentationFramework/A.html#9e86dfc6412c0fe7" class="i property">Style</a> = <span class="r86 r">contextMenu</span>.<a href="@0@PresentationFramework/A.html#5b064a6294551b3b" class="i method">TryFindResource</a>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>.<a href="#23ac31251faebcd0" class="i property">SeparatorStyleKey</a>) <b>as</b> <a href="@0@PresentationFramework/A.html#dd312833d0723042" class="t t">Style</a>,
+                                                        <a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a> = <b>typeof</b>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>)
+                                                    });
+            }
+        }
+
+        <b>private static void</b> <a id="23e326da18e9912a" href="../../R/23e326da18e9912a.html" target="n" data-glyph="76,1" class="i method">RemoveSpellCheckMenuItems</a>(<a href="@0@PresentationFramework/A.html#f4776732cf34c5a5" class="t t">ContextMenu</a>? <span id="r94 rd" class="r94 r">contextMenu</span>)
+        {
+            <b>if</b> (<span class="r94 r">contextMenu</span> != <b>null</b>)
+            {
+                <a href="@0@mscorlib/A.html#cf7f4095e4de7646" class="k">var</a> <span id="r95 rd" class="r95 r">spellCheckItems</span> = <span class="r94 r">contextMenu</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@System.Core/A.html#4ba4a3f8a5530e33" class="i method">OfType</a>&lt;<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="t t">FrameworkElement</a>&gt;().<a href="@0@System.Core/A.html#e73922753675387a" class="i method">Where</a>(<span id="r96 rd" class="r96 r">item</span> =&gt; <a href="@0@mscorlib/A.html#4d607d6d56a93c7e" class="i method">ReferenceEquals</a>(<span class="r96 r">item</span>.<a href="@0@PresentationFramework/A.html#53151b3ab7c73170" class="i property">Tag</a>, <b>typeof</b>(<a href="#d390ea70fccef28b" class="t t">Spelling</a>))).<a href="@0@System.Core/A.html#e276d6892241255b" class="i method">ToList</a>();
+                <b>foreach</b> (<a href="@0@PresentationFramework/A.html#d2d98a3022fbac2f" class="k">var</a> <span id="r97 rd" class="r97 r">item</span> <b>in</b> <span class="r95 r">spellCheckItems</span>)
+                {
+                    <span class="r94 r">contextMenu</span>.<a href="@0@PresentationFramework/A.html#54366ee76d2f1106" class="i property">Items</a>.<a href="@0@PresentationFramework/A.html#d48c9329f1788bd8" class="i method">Remove</a>(<span class="r97 r">item</span>);
+                }
+            }
+        }
+
+        <b>private static void</b> <a id="dd077e581be88449" href="../../R/dd077e581be88449.html" target="n" data-glyph="76,1" class="i method">OnIsMonitoringChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r98 rd" class="r98 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r99 rd" class="r99 r">e</span>)
+        {
+            <b>if</b> (<span class="r98 r">d</span> <b>is</b> <a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a> <span id="r100 rd" class="r100 r">richTextBox</span>)
+            {
+                <b>if</b> ((<b>bool</b>)<span class="r99 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>)
+                {
+                    <span class="c">// Fixes #1343 and #2514: also triggers the show of the floating watermark if necessary</span>
+                    <span class="r100 r">richTextBox</span>.<a href="../Extensions.cs.html#0f91027776f39144" class="i method">BeginInvoke</a>(() =&gt; <a href="#82dec4e6ad6f10a2" class="i method">RichTextBox_TextChanged</a>(<span class="r100 r">richTextBox</span>, <b>new</b> <a href="@0@PresentationFramework/A.html#60e7c2cbdf11c97c" class="t constructor">TextChangedEventArgs</a>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>.<a href="@0@PresentationFramework/A.html#c732caadb4224019" class="i field">TextChangedEvent</a>, <a href="@0@PresentationFramework/A.html#eae23d3a9f00b011" class="t t">UndoAction</a>.<a href="@0@PresentationFramework/A.html#cb1e825873112041" class="i field">None</a>)));
+
+                    <span class="r100 r">richTextBox</span>.<a href="@0@PresentationFramework/A.html#22cd61fb3203047e" class="i">TextChanged</a> += <a href="#82dec4e6ad6f10a2" class="i method">RichTextBox_TextChanged</a>;
+                    <span class="r100 r">richTextBox</span>.<a href="@0@PresentationCore/A.html#8d953a1d7fb18c62" class="i">GotFocus</a> += <a href="#4ae06851b8f7f52c" class="i method">TextBoxGotFocus</a>;
+                    <span class="r100 r">richTextBox</span>.<a href="@0@PresentationCore/A.html#ea5a3a9c07751cf7" class="i">PreviewMouseLeftButtonDown</a> += <a href="#b05588af2b5270d3" class="i method">UIElementPreviewMouseLeftButtonDown</a>;
+                }
+                <b>else</b>
+                {
+                    <span class="r100 r">richTextBox</span>.<a href="@0@PresentationFramework/A.html#22cd61fb3203047e" class="i">TextChanged</a> -= <a href="#82dec4e6ad6f10a2" class="i method">RichTextBox_TextChanged</a>;
+                    <span class="r100 r">richTextBox</span>.<a href="@0@PresentationCore/A.html#8d953a1d7fb18c62" class="i">GotFocus</a> -= <a href="#4ae06851b8f7f52c" class="i method">TextBoxGotFocus</a>;
+                    <span class="r100 r">richTextBox</span>.<a href="@0@PresentationCore/A.html#ea5a3a9c07751cf7" class="i">PreviewMouseLeftButtonDown</a> -= <a href="#b05588af2b5270d3" class="i method">UIElementPreviewMouseLeftButtonDown</a>;
+                }
+            }
+            <b>else</b> <b>if</b> (<span class="r98 r">d</span> <b>is</b> <a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a> <span id="r101 rd" class="r101 r">textBox</span>)
+            {
+                <b>if</b> ((<b>bool</b>)<span class="r99 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>)
+                {
+                    <span class="c">// Fixes #1343 and #2514: also triggers the show of the floating watermark if necessary</span>
+                    <span class="r101 r">textBox</span>.<a href="../Extensions.cs.html#0f91027776f39144" class="i method">BeginInvoke</a>(() =&gt; <a href="#94a2e204aafd1c3a" class="i method">TextChanged</a>(<span class="r101 r">textBox</span>, <b>new</b> <a href="@0@PresentationFramework/A.html#60e7c2cbdf11c97c" class="t constructor">TextChangedEventArgs</a>(<a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>.<a href="@0@PresentationFramework/A.html#c732caadb4224019" class="i field">TextChangedEvent</a>, <a href="@0@PresentationFramework/A.html#eae23d3a9f00b011" class="t t">UndoAction</a>.<a href="@0@PresentationFramework/A.html#cb1e825873112041" class="i field">None</a>)));
+
+                    <span class="r101 r">textBox</span>.<a href="@0@PresentationFramework/A.html#22cd61fb3203047e" class="i">TextChanged</a> += <a href="#94a2e204aafd1c3a" class="i method">TextChanged</a>;
+                    <span class="r101 r">textBox</span>.<a href="@0@PresentationCore/A.html#8d953a1d7fb18c62" class="i">GotFocus</a> += <a href="#4ae06851b8f7f52c" class="i method">TextBoxGotFocus</a>;
+                    <span class="r101 r">textBox</span>.<a href="@0@PresentationCore/A.html#ea5a3a9c07751cf7" class="i">PreviewMouseLeftButtonDown</a> += <a href="#b05588af2b5270d3" class="i method">UIElementPreviewMouseLeftButtonDown</a>;
+                }
+                <b>else</b>
+                {
+                    <span class="r101 r">textBox</span>.<a href="@0@PresentationFramework/A.html#22cd61fb3203047e" class="i">TextChanged</a> -= <a href="#94a2e204aafd1c3a" class="i method">TextChanged</a>;
+                    <span class="r101 r">textBox</span>.<a href="@0@PresentationCore/A.html#8d953a1d7fb18c62" class="i">GotFocus</a> -= <a href="#4ae06851b8f7f52c" class="i method">TextBoxGotFocus</a>;
+                    <span class="r101 r">textBox</span>.<a href="@0@PresentationCore/A.html#ea5a3a9c07751cf7" class="i">PreviewMouseLeftButtonDown</a> -= <a href="#b05588af2b5270d3" class="i method">UIElementPreviewMouseLeftButtonDown</a>;
+                }
+            }
+            <b>else</b> <b>if</b> (<span class="r98 r">d</span> <b>is</b> <a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a> <span id="r102 rd" class="r102 r">passBox</span>)
+            {
+                <b>if</b> ((<b>bool</b>)<span class="r99 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>)
+                {
+                    <span class="c">// Fixes #1343 and #2514: also triggers the show of the floating watermark if necessary</span>
+                    <span class="r102 r">passBox</span>.<a href="../Extensions.cs.html#0f91027776f39144" class="i method">BeginInvoke</a>(() =&gt; <a href="#465f7b0dc779fbcc" class="i method">PasswordChanged</a>(<span class="r102 r">passBox</span>, <b>new</b> <a href="@0@PresentationCore/A.html#490dcdfee133608e" class="t constructor">RoutedEventArgs</a>(<a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>.<a href="@0@PresentationFramework/A.html#4dcb34a796b635ab" class="i field">PasswordChangedEvent</a>, <span class="r102 r">passBox</span>)));
+
+                    <span class="r102 r">passBox</span>.<a href="@0@PresentationFramework/A.html#8acdf645fca8464f" class="i">PasswordChanged</a> += <a href="#465f7b0dc779fbcc" class="i method">PasswordChanged</a>;
+                    <span class="r102 r">passBox</span>.<a href="@0@PresentationCore/A.html#8d953a1d7fb18c62" class="i">GotFocus</a> += <a href="#bf1746497911f7d2" class="i method">PasswordGotFocus</a>;
+                    <span class="r102 r">passBox</span>.<a href="@0@PresentationCore/A.html#ea5a3a9c07751cf7" class="i">PreviewMouseLeftButtonDown</a> += <a href="#b05588af2b5270d3" class="i method">UIElementPreviewMouseLeftButtonDown</a>;
+                }
+                <b>else</b>
+                {
+                    <span class="r102 r">passBox</span>.<a href="@0@PresentationFramework/A.html#8acdf645fca8464f" class="i">PasswordChanged</a> -= <a href="#465f7b0dc779fbcc" class="i method">PasswordChanged</a>;
+                    <span class="r102 r">passBox</span>.<a href="@0@PresentationCore/A.html#8d953a1d7fb18c62" class="i">GotFocus</a> -= <a href="#bf1746497911f7d2" class="i method">PasswordGotFocus</a>;
+                    <span class="r102 r">passBox</span>.<a href="@0@PresentationCore/A.html#ea5a3a9c07751cf7" class="i">PreviewMouseLeftButtonDown</a> -= <a href="#b05588af2b5270d3" class="i method">UIElementPreviewMouseLeftButtonDown</a>;
+                }
+            }
+            <b>else</b> <b>if</b> (<span class="r98 r">d</span> <b>is</b> <a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a> <span id="r103 rd" class="r103 r">hotKeyBox</span>)
+            {
+                <b>if</b> ((<b>bool</b>)<span class="r99 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>)
+                {
+                    <span class="c">// Fixes #1343 and #2514: also triggers the show of the floating watermark if necessary</span>
+                    <span class="r103 r">hotKeyBox</span>.<a href="../Extensions.cs.html#0f91027776f39144" class="i method">BeginInvoke</a>(() =&gt; <a href="#356f6215e5e4d066" class="i method">OnHotKeyBoxHotKeyChanged</a>(<span class="r103 r">hotKeyBox</span>, <b>new</b> <a href="@0@PresentationCore/A.html#490dcdfee133608e" class="t constructor">RoutedEventArgs</a>(<a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>.<a href="../HotKeyBox.cs.html#a245f68ce0a8e139" class="i field">HotKeyChangedEvent</a>, <span class="r103 r">hotKeyBox</span>)));
+
+                    <span class="r103 r">hotKeyBox</span>.<a href="../HotKeyBox.cs.html#11326d4d1937e51d" class="i">HotKeyChanged</a> += <a href="#356f6215e5e4d066" class="i method">OnHotKeyBoxHotKeyChanged</a>;
+                }
+                <b>else</b>
+                {
+                    <span class="r103 r">hotKeyBox</span>.<a href="../HotKeyBox.cs.html#11326d4d1937e51d" class="i">HotKeyChanged</a> -= <a href="#356f6215e5e4d066" class="i method">OnHotKeyBoxHotKeyChanged</a>;
+                }
+            }
+            <b>else</b> <b>if</b> (<span class="r98 r">d</span> <b>is</b> <a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a> <span id="r104 rd" class="r104 r">numericUpDown</span>)
+            {
+                <b>if</b> ((<b>bool</b>)<span class="r99 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>)
+                {
+                    <span class="c">// Fixes #1343 and #2514: also triggers the show of the floating watermark if necessary</span>
+                    <span class="r104 r">numericUpDown</span>.<a href="../Extensions.cs.html#0f91027776f39144" class="i method">BeginInvoke</a>(() =&gt; <a href="#11d08117904683dc" class="i method">OnNumericUpDownValueChanged</a>(<span class="r104 r">numericUpDown</span>, <b>new</b> <a href="@0@PresentationCore/A.html#490dcdfee133608e" class="t constructor">RoutedEventArgs</a>(<a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>.<a href="../NumericUpDown.cs.html#6d7a77e9d2296e7e" class="i field">ValueChangedEvent</a>, <span class="r104 r">numericUpDown</span>)));
+
+                    <span class="r104 r">numericUpDown</span>.<a href="../NumericUpDown.cs.html#4b2aba23382b635e" class="i">ValueChanged</a> += <a href="#11d08117904683dc" class="i method">OnNumericUpDownValueChanged</a>;
+                }
+                <b>else</b>
+                {
+                    <span class="r104 r">numericUpDown</span>.<a href="../NumericUpDown.cs.html#4b2aba23382b635e" class="i">ValueChanged</a> -= <a href="#11d08117904683dc" class="i method">OnNumericUpDownValueChanged</a>;
+                }
+            }
+            <b>else</b> <b>if</b> (<span class="r98 r">d</span> <b>is</b> <a href="../TimePicker/TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a> <span id="r105 rd" class="r105 r">timePicker</span>)
+            {
+                <b>if</b> ((<b>bool</b>)<span class="r99 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>)
+                {
+                    <span class="r105 r">timePicker</span>.<a href="../TimePicker/TimePickerBase.cs.html#84aa31d124d610e5" class="i">SelectedDateTimeChanged</a> += <a href="#c37434c5089f973b" class="i method">OnTimePickerBaseSelectedDateTimeChanged</a>;
+                }
+                <b>else</b>
+                {
+                    <span class="r105 r">timePicker</span>.<a href="../TimePicker/TimePickerBase.cs.html#84aa31d124d610e5" class="i">SelectedDateTimeChanged</a> -= <a href="#c37434c5089f973b" class="i method">OnTimePickerBaseSelectedDateTimeChanged</a>;
+                }
+            }
+            <b>else</b> <b>if</b> (<span class="r98 r">d</span> <b>is</b> <a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a> <span id="r106 rd" class="r106 r">datePicker</span>)
+            {
+                <b>if</b> ((<b>bool</b>)<span class="r99 r">e</span>.<a href="@0@WindowsBase/A.html#0acf297ea547e623" class="i property">NewValue</a>)
+                {
+                    <span class="r106 r">datePicker</span>.<a href="@0@PresentationFramework/A.html#ab26c7dbb9b2b056" class="i">SelectedDateChanged</a> += <a href="#331ca3c050192291" class="i method">OnDatePickerBaseSelectedDateChanged</a>;
+                }
+                <b>else</b>
+                {
+                    <span class="r106 r">datePicker</span>.<a href="@0@PresentationFramework/A.html#ab26c7dbb9b2b056" class="i">SelectedDateChanged</a> -= <a href="#331ca3c050192291" class="i method">OnDatePickerBaseSelectedDateChanged</a>;
+                }
+            }
+        }
+
+        <b>private static void</b> <a id="82dec4e6ad6f10a2" href="../../R/82dec4e6ad6f10a2.html" target="n" data-glyph="76,1" class="i method">RichTextBox_TextChanged</a>(<b>object</b> <span id="r107 rd" class="r107 r">sender</span>, <a href="@0@PresentationFramework/A.html#b619f7b054bda67d" class="t t">TextChangedEventArgs</a> <span id="r108 rd" class="r108 r">e</span>)
+        {
+            <b>if</b> (<span class="r107 r">sender</span> <b>is</b> <a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a> <span id="r109 rd" class="r109 r">richTextBox</span>)
+            {
+                <a href="#2440a0a4d64ca969" class="i method">SetRichTextBoxTextLength</a>(<span class="r109 r">richTextBox</span>);
+            }
+        }
+
+        <b>private static void</b> <a id="7f384544978ce99a" href="../../R/7f384544978ce99a.html" target="n" data-glyph="76,1" class="i method">SetTextLength</a>&lt;<span id="r110 rd t" class="r110 r t">TDependencyObject</span>&gt;(<span class="r110 r t">TDependencyObject</span>? <span id="r111 rd" class="r111 r">sender</span>, <a href="@0@mscorlib/A.html#7a86aba051da82dd" class="t t">Func</a>&lt;<span class="r110 r t">TDependencyObject</span>, <b>int</b>&gt; <span id="r112 rd" class="r112 r">funcTextLength</span>)
+            <b>where</b> <span class="r110 r t">TDependencyObject</span> : <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>
+        {
+            <b>if</b> (<span class="r111 r">sender</span> != <b>null</b>)
+            {
+                <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r113 rd" class="r113 r">value</span> = <span class="r112 r">funcTextLength</span>(<span class="r111 r">sender</span>);
+                <span class="r111 r">sender</span>.<a href="@0@WindowsBase/A.html#ed29c3d1a59f0d92" class="i method">SetValue</a>(<a href="#94c3b5e61ff07113" class="i field">TextLengthPropertyKey</a>, <span class="r113 r">value</span>);
+                <span class="r111 r">sender</span>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#b2b0618705c5f512" class="i field">HasTextProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(<span class="r113 r">value</span> &gt; 0));
+            }
+        }
+
+        <b>private static void</b> <a id="94a2e204aafd1c3a" href="../../R/94a2e204aafd1c3a.html" target="n" data-glyph="76,1" class="i method">TextChanged</a>(<b>object</b> <span id="r114 rd" class="r114 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r115 rd" class="r115 r">e</span>)
+        {
+            <a href="#7f384544978ce99a" class="i method">SetTextLength</a>(<span class="r114 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a>, <span id="r116 rd" class="r116 r">textBox</span> =&gt; <span class="r116 r">textBox</span>.<a href="@0@PresentationFramework/A.html#7b5be95f7a8f33a8" class="i property">Text</a>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a>);
+        }
+
+        <b>private static void</b> <a id="356f6215e5e4d066" href="../../R/356f6215e5e4d066.html" target="n" data-glyph="76,1" class="i method">OnHotKeyBoxHotKeyChanged</a>(<b>object</b> <span id="r117 rd" class="r117 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r118 rd" class="r118 r">e</span>)
+        {
+            <a href="#7f384544978ce99a" class="i method">SetTextLength</a>(<span class="r117 r">sender</span> <b>as</b> <a href="../HotKeyBox.cs.html#82fddb00b13244fd" class="t t">HotKeyBox</a>, <span id="r119 rd" class="r119 r">hotKeyBox</span> =&gt; <span class="r119 r">hotKeyBox</span>.<a href="../HotKeyBox.cs.html#15307abea7b3d792" class="i property">Text</a>?.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a> ?? (<span class="r119 r">hotKeyBox</span>.<a href="../HotKeyBox.cs.html#718761635a007085" class="i property">HotKey</a> <b>is not null</b> ? 1 : 0));
+        }
+
+        <b>private static void</b> <a id="11d08117904683dc" href="../../R/11d08117904683dc.html" target="n" data-glyph="76,1" class="i method">OnNumericUpDownValueChanged</a>(<b>object</b> <span id="r120 rd" class="r120 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r121 rd" class="r121 r">e</span>)
+        {
+            <a href="#7f384544978ce99a" class="i method">SetTextLength</a>(<span class="r120 r">sender</span> <b>as</b> <a href="../NumericUpDown.cs.html#ec56d9a9d8a2477e" class="t t">NumericUpDown</a>, <span id="r122 rd" class="r122 r">numericUpDown</span> =&gt; <span class="r122 r">numericUpDown</span>.<a href="../NumericUpDown.cs.html#09f39c1bb79f3075" class="i property">Value</a>.<a href="@0@mscorlib/A.html#7bbe60e33e857298" class="i property">HasValue</a> ? 1 : 0);
+        }
+
+        <b>private static void</b> <a id="465f7b0dc779fbcc" href="../../R/465f7b0dc779fbcc.html" target="n" data-glyph="76,1" class="i method">PasswordChanged</a>(<b>object</b> <span id="r123 rd" class="r123 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r124 rd" class="r124 r">e</span>)
+        {
+            <a href="#7f384544978ce99a" class="i method">SetTextLength</a>(<span class="r123 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>, <span id="r125 rd" class="r125 r">passwordBox</span> =&gt; <span class="r125 r">passwordBox</span>.<a href="@0@PresentationFramework/A.html#b61d59d675a2381e" class="i property">Password</a>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a>);
+        }
+
+        <b>private static void</b> <a id="331ca3c050192291" href="../../R/331ca3c050192291.html" target="n" data-glyph="76,1" class="i method">OnDatePickerBaseSelectedDateChanged</a>(<b>object</b>? <span id="r126 rd" class="r126 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r127 rd" class="r127 r">e</span>)
+        {
+            <a href="#7f384544978ce99a" class="i method">SetTextLength</a>(<span class="r126 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#c20427230c18ba13" class="t t">DatePicker</a>, <span id="r128 rd" class="r128 r">timePickerBase</span> =&gt; <span class="r128 r">timePickerBase</span>.<a href="@0@PresentationFramework/A.html#975635351a0161c0" class="i property">SelectedDate</a>.<a href="@0@mscorlib/A.html#7bbe60e33e857298" class="i property">HasValue</a> ? 1 : 0);
+        }
+
+        <b>private static void</b> <a id="c37434c5089f973b" href="../../R/c37434c5089f973b.html" target="n" data-glyph="76,1" class="i method">OnTimePickerBaseSelectedDateTimeChanged</a>(<b>object</b>? <span id="r129 rd" class="r129 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r130 rd" class="r130 r">e</span>)
+        {
+            <a href="#7f384544978ce99a" class="i method">SetTextLength</a>(<span class="r129 r">sender</span> <b>as</b> <a href="../TimePicker/TimePickerBase.cs.html#f962ac5c0ca562af" class="t t">TimePickerBase</a>, <span id="r131 rd" class="r131 r">timePickerBase</span> =&gt; <span class="r131 r">timePickerBase</span>.<a href="../TimePicker/TimePickerBase.cs.html#3dc010efe03b0f45" class="i property">SelectedDateTime</a>.<a href="@0@mscorlib/A.html#7bbe60e33e857298" class="i property">HasValue</a> ? 1 : 0);
+        }
+
+        <b>private static void</b> <a id="4ae06851b8f7f52c" href="../../R/4ae06851b8f7f52c.html" target="n" data-glyph="76,1" class="i method">TextBoxGotFocus</a>(<b>object</b>? <span id="r132 rd" class="r132 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r133 rd" class="r133 r">e</span>)
+        {
+            <a href="#6b6824cf1bbbd288" class="i method">ControlGotFocus</a>(<span class="r132 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#52a329d42544a8fc" class="t t">TextBoxBase</a>, <span id="r134 rd" class="r134 r">textBox</span> =&gt; <span class="r134 r">textBox</span>.<a href="@0@PresentationFramework/A.html#cd558e8378436496" class="i method">SelectAll</a>());
+        }
+
+        <b>private static void</b> <a id="b05588af2b5270d3" href="../../R/b05588af2b5270d3.html" target="n" data-glyph="76,1" class="i method">UIElementPreviewMouseLeftButtonDown</a>(<b>object</b>? <span id="r135 rd" class="r135 r">sender</span>, <a href="@0@PresentationCore/A.html#8df546d93b7c55df" class="t t">MouseButtonEventArgs</a> <span id="r136 rd" class="r136 r">e</span>)
+        {
+            <b>if</b> (<span class="r135 r">sender</span> <b>is</b> <a href="@0@PresentationCore/A.html#7911653ccb506216" class="t t">UIElement</a> <span id="r137 rd" class="r137 r">uiElement</span> &amp;&amp; !<span class="r137 r">uiElement</span>.<a href="@0@PresentationCore/A.html#731d700ccd201ec4" class="i property">IsKeyboardFocusWithin</a> &amp;&amp; <a href="#df191140960503d0" class="i method">GetSelectAllOnFocus</a>(<span class="r137 r">uiElement</span>))
+            {
+                <span class="c">// always SelectAllOnFocus</span>
+                <span class="r137 r">uiElement</span>.<a href="@0@PresentationCore/A.html#0e11f7ae56f1c30f" class="i method">Focus</a>();
+                <span class="r136 r">e</span>.<a href="@0@PresentationCore/A.html#f2bcc08494fea0e6" class="i property">Handled</a> = <b>true</b>;
+            }
+        }
+
+        <b>private static void</b> <a id="bf1746497911f7d2" href="../../R/bf1746497911f7d2.html" target="n" data-glyph="76,1" class="i method">PasswordGotFocus</a>(<b>object</b> <span id="r138 rd" class="r138 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r139 rd" class="r139 r">e</span>)
+        {
+            <a href="#6b6824cf1bbbd288" class="i method">ControlGotFocus</a>(<span class="r138 r">sender</span> <b>as</b> <a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a>, <span id="r140 rd" class="r140 r">passwordBox</span> =&gt; <span class="r140 r">passwordBox</span>?.<a href="@0@PresentationFramework/A.html#a0247ee262b20d79" class="i method">SelectAll</a>());
+        }
+
+        <b>private static void</b> <a id="6b6824cf1bbbd288" href="../../R/6b6824cf1bbbd288.html" target="n" data-glyph="76,1" class="i method">ControlGotFocus</a>&lt;<span id="r141 rd t" class="r141 r t">TDependencyObject</span>&gt;(<span class="r141 r t">TDependencyObject</span>? <span id="r142 rd" class="r142 r">sender</span>, <a href="@0@mscorlib/A.html#486d58da4553e12d" class="t t">Action</a>&lt;<span class="r141 r t">TDependencyObject</span>&gt; <span id="r143 rd" class="r143 r">action</span>)
+            <b>where</b> <span class="r141 r t">TDependencyObject</span> : <a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a>
+        {
+            <b>if</b> (<span class="r142 r">sender</span> != <b>null</b>)
+            {
+                <b>if</b> (<a href="#df191140960503d0" class="i method">GetSelectAllOnFocus</a>(<span class="r142 r">sender</span>))
+                {
+                    <span class="r142 r">sender</span>.<a href="@0@WindowsBase/A.html#bd03df1631104fbc" class="i property">Dispatcher</a>.<a href="@0@WindowsBase/A.html#968dc7ef71211110" class="i method">BeginInvoke</a>(<span class="r143 r">action</span>, <span class="r142 r">sender</span>);
+                }
+            }
+        }
+
+        <b>private static void</b> <a id="05caf3bf77e3ac5f" href="../../R/05caf3bf77e3ac5f.html" target="n" data-glyph="76,1" class="i method">ButtonCommandOrClearTextChanged</a>(<a href="@0@WindowsBase/A.html#3ce192f6633decc8" class="t t">DependencyObject</a> <span id="r144 rd" class="r144 r">d</span>, <a href="@0@WindowsBase/A.html#71a1a16823f70b8c" class="t t">DependencyPropertyChangedEventArgs</a> <span id="r145 rd" class="r145 r">e</span>)
+        {
+            <b>if</b> (<span class="r144 r">d</span> <b>is</b> <a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a> <span id="r146 rd" class="r146 r">richTextBox</span>)
+            {
+                <span class="r146 r">richTextBox</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> -= <a href="#c303d08353fa0102" class="i method">RichTextBoxLoaded</a>;
+                <span class="r146 r">richTextBox</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += <a href="#c303d08353fa0102" class="i method">RichTextBoxLoaded</a>;
+                <b>if</b> (<span class="r146 r">richTextBox</span>.<a href="@0@PresentationFramework/A.html#b05bbe3100c43c82" class="i property">IsLoaded</a>)
+                {
+                    <a href="#c303d08353fa0102" class="i method">RichTextBoxLoaded</a>(<span class="r146 r">richTextBox</span>, <b>new</b> <a href="@0@PresentationCore/A.html#7f6d283b5c035c38" class="t constructor">RoutedEventArgs</a>());
+                }
+            }
+            <b>else</b> <b>if</b> (<span class="r144 r">d</span> <b>is</b> <a href="@0@PresentationFramework/A.html#77a66fa4f401a49f" class="t t">TextBox</a> <span id="r147 rd" class="r147 r">textBox</span>)
+            {
+                <span class="c">// only one loaded event</span>
+                <span class="r147 r">textBox</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> -= <a href="#94a2e204aafd1c3a" class="i method">TextChanged</a>;
+                <span class="r147 r">textBox</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += <a href="#94a2e204aafd1c3a" class="i method">TextChanged</a>;
+                <b>if</b> (<span class="r147 r">textBox</span>.<a href="@0@PresentationFramework/A.html#b05bbe3100c43c82" class="i property">IsLoaded</a>)
+                {
+                    <a href="#94a2e204aafd1c3a" class="i method">TextChanged</a>(<span class="r147 r">textBox</span>, <b>new</b> <a href="@0@PresentationCore/A.html#7f6d283b5c035c38" class="t constructor">RoutedEventArgs</a>());
+                }
+            }
+            <b>else</b> <b>if</b> (<span class="r144 r">d</span> <b>is</b> <a href="@0@PresentationFramework/A.html#edb4a1ef1b1bd609" class="t t">PasswordBox</a> <span id="r148 rd" class="r148 r">passwordBox</span>)
+            {
+                <span class="c">// only one loaded event</span>
+                <span class="r148 r">passwordBox</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> -= <a href="#465f7b0dc779fbcc" class="i method">PasswordChanged</a>;
+                <span class="r148 r">passwordBox</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += <a href="#465f7b0dc779fbcc" class="i method">PasswordChanged</a>;
+                <b>if</b> (<span class="r148 r">passwordBox</span>.<a href="@0@PresentationFramework/A.html#b05bbe3100c43c82" class="i property">IsLoaded</a>)
+                {
+                    <a href="#465f7b0dc779fbcc" class="i method">PasswordChanged</a>(<span class="r148 r">passwordBox</span>, <b>new</b> <a href="@0@PresentationCore/A.html#7f6d283b5c035c38" class="t constructor">RoutedEventArgs</a>());
+                }
+            }
+            <b>else</b> <b>if</b> (<span class="r144 r">d</span> <b>is</b> <a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a> <span id="r149 rd" class="r149 r">comboBox</span>)
+            {
+                <span class="c">// only one loaded event</span>
+                <span class="r149 r">comboBox</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> -= <a href="#f2d608c00cc97c98" class="i method">ComboBoxLoaded</a>;
+                <span class="r149 r">comboBox</span>.<a href="@0@PresentationFramework/A.html#a815b4f12f279dee" class="i">Loaded</a> += <a href="#f2d608c00cc97c98" class="i method">ComboBoxLoaded</a>;
+                <b>if</b> (<span class="r149 r">comboBox</span>.<a href="@0@PresentationFramework/A.html#b05bbe3100c43c82" class="i property">IsLoaded</a>)
+                {
+                    <a href="#f2d608c00cc97c98" class="i method">ComboBoxLoaded</a>(<span class="r149 r">comboBox</span>, <b>new</b> <a href="@0@PresentationCore/A.html#7f6d283b5c035c38" class="t constructor">RoutedEventArgs</a>());
+                }
+            }
+        }
+
+        <b>private static void</b> <a id="c303d08353fa0102" href="../../R/c303d08353fa0102.html" target="n" data-glyph="76,1" class="i method">RichTextBoxLoaded</a>(<b>object</b> <span id="r150 rd" class="r150 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r151 rd" class="r151 r">e</span>)
+        {
+            <b>if</b> (<span class="r150 r">sender</span> <b>is</b> <a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a> <span id="r152 rd" class="r152 r">richTextBox</span>)
+            {
+                <a href="#2440a0a4d64ca969" class="i method">SetRichTextBoxTextLength</a>(<span class="r152 r">richTextBox</span>);
+            }
+        }
+
+        <b>private static void</b> <a id="2440a0a4d64ca969" href="../../R/2440a0a4d64ca969.html" target="n" data-glyph="76,1" class="i method">SetRichTextBoxTextLength</a>(<a href="@0@PresentationFramework/A.html#dc23aa35ce336078" class="t t">RichTextBox</a> <span id="r153 rd" class="r153 r">richTextBox</span>)
+        {
+            <a href="#7f384544978ce99a" class="i method">SetTextLength</a>(<span class="r153 r">richTextBox</span>, <span id="r154 rd" class="r154 r">rtb</span> =&gt;
+                {
+                    <a href="@0@PresentationFramework/A.html#6c113c5cdd5b9976" class="k">var</a> <span id="r155 rd" class="r155 r">textRange</span> = <b>new</b> <a href="@0@PresentationFramework/A.html#89b123297a8cd9e8" class="t constructor">TextRange</a>(<span class="r154 r">rtb</span>.<a href="@0@PresentationFramework/A.html#15f250b3ed9878d6" class="i property">Document</a>.<a href="@0@PresentationFramework/A.html#038ddae1a0bc6cc1" class="i property">ContentStart</a>, <span class="r154 r">rtb</span>.<a href="@0@PresentationFramework/A.html#15f250b3ed9878d6" class="i property">Document</a>.<a href="@0@PresentationFramework/A.html#2a6aa9d9cfdb57cd" class="i property">ContentEnd</a>);
+                    <a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">var</a> <span id="r156 rd" class="r156 r">text</span> = <span class="r155 r">textRange</span>.<a href="@0@PresentationFramework/A.html#9bc40088b9689560" class="i property">Text</a>;
+                    <a href="@0@mscorlib/A.html#225942ed7b7a3252" class="k">var</a> <span id="r157 rd" class="r157 r">lastIndexOfNewLine</span> = <span class="r156 r">text</span>.<a href="@0@mscorlib/A.html#31af6d0e11b2dbd3" class="i method">LastIndexOf</a>(<a href="@0@mscorlib/A.html#7d2f1469d916fc63" class="t t">Environment</a>.<a href="@0@mscorlib/A.html#63a04833d43dd9d3" class="i property">NewLine</a>, <a href="@0@mscorlib/A.html#702797def97ecb7c" class="t t">StringComparison</a>.<a href="@0@mscorlib/A.html#eb6ce9ac0dbf4269" class="i field">InvariantCulture</a>);
+                    <b>if</b> (<span class="r157 r">lastIndexOfNewLine</span> &gt;= 0)
+                    {
+                        <span class="r156 r">text</span> = <span class="r156 r">text</span>.<a href="@0@mscorlib/A.html#1aa209df053ff944" class="i method">Remove</a>(<span class="r157 r">lastIndexOfNewLine</span>);
+                    }
+
+                    <b>return</b> <span class="r156 r">text</span>.<a href="@0@mscorlib/A.html#e13f5829ef28aa07" class="i property">Length</a>;
+                });
+        }
+
+        <b>private static void</b> <a id="f2d608c00cc97c98" href="../../R/f2d608c00cc97c98.html" target="n" data-glyph="76,1" class="i method">ComboBoxLoaded</a>(<b>object</b> <span id="r158 rd" class="r158 r">sender</span>, <a href="@0@PresentationCore/A.html#3089ebf2139eba9d" class="t t">RoutedEventArgs</a> <span id="r159 rd" class="r159 r">e</span>)
+        {
+            <b>if</b> (<span class="r158 r">sender</span> <b>is</b> <a href="@0@PresentationFramework/A.html#2ba9dd6838416d6a" class="t t">ComboBox</a> <span id="r160 rd" class="r160 r">comboBox</span>)
+            {
+                <span class="r160 r">comboBox</span>.<a href="@0@WindowsBase/A.html#abf250e9e5452be5" class="i method">SetCurrentValue</a>(<a href="#b2b0618705c5f512" class="i field">HasTextProperty</a>, <a href="../../ValueBoxes/BooleanBoxes.cs.html#1ea22ba96a3431b4" class="t t">BooleanBoxes</a>.<a href="../../ValueBoxes/BooleanBoxes.cs.html#679d28140d9330f2" class="i method">Box</a>(!<a href="@0@mscorlib/A.html#8281103e6f23cb5c" class="k">string</a>.<a href="@0@mscorlib/A.html#55e241b6143365ef" class="i method">IsNullOrWhiteSpace</a>(<span class="r160 r">comboBox</span>.<a href="@0@PresentationFramework/A.html#614e80f67211c656" class="i property">Text</a>) || <span class="r160 r">comboBox</span>.<a href="@0@PresentationFramework/A.html#f053c8f858b51411" class="i property">SelectedItem</a> != <b>null</b>));
+            }
+        }
+    }
+}</pre></td></tr></table></div></body></html>
