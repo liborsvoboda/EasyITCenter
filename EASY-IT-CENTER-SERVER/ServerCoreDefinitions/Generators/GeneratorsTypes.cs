@@ -15,8 +15,13 @@
     /// </summary>
     public class MDGeneratorCreateIndexRequest {
         public string WebRootFilePath { get; set; }
-        public SupportGenFileTypes FromType { get; set; }
-        public SupportGenFileTypes ToType { get; set; }
+
+        /// <summary>
+        /// Is Subfolder for WebrootFilePath AS multiple RootIndex
+        /// </summary>
+        public string IndexWebRootSubFolderPathName { get; set; } = null;
+        public string FromType { get; set; }
+        public string ToType { get; set; }
         public bool ScanRootOnly { get; set; }
         public bool IndexOnly { get; set; }
         public bool RewriteAllowed { get; set; }

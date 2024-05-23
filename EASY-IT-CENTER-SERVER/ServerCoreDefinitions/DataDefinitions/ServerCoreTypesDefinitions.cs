@@ -45,13 +45,13 @@
 
 
     /// <summary>
-    /// Supported Index Types By Files Generators
+    /// Supported Generating File Types Over Generators
+    /// Index Only Support All File Types You can 
     /// </summary>
     public enum SupportGenFileTypes {
         Md,
         Html,
-        Docx,
-        Png
+        Docx
     }
 
 

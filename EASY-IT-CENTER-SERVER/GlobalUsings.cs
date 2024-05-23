@@ -29,6 +29,7 @@ global using System.ComponentModel.DataAnnotations.Schema;
 global using System.Diagnostics;
 global using System.IdentityModel.Tokens.Jwt;
 global using System.Net;
+global using System.IO;
 global using System.Net.WebSockets;
 global using System.Reflection;
 global using System.Security.Claims;
