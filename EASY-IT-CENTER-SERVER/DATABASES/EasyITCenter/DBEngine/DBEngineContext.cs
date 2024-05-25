@@ -58,7 +58,8 @@ namespace EasyITCenter.ServerCoreDBSettings {
                     optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => {
                         builder.SetMinimumLevel(LogLevel.Warning).AddEventLog();
                     })).EnableSensitiveDataLogging(false).LogTo(message => {
-                        SolutionFailList SolutionFailList = new SolutionFailList() { UserId = null, Source = "Server", Message = message, LogLevel = null, UserName = null };
+                        SolutionFailList SolutionFailList = new SolutionFailList() 
+                        { UserId = null, Source = "Server", Message = message, LogLevel = null, UserName = null };
                         new EasyITCenterContext().SolutionFailLists.Add(SolutionFailList).Context.SaveChanges();
                     }, LogLevel.Warning);
                 }
@@ -79,7 +80,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
             if (cmd.Connection?.State != ConnectionState.Open)
                 cmd.Connection?.Open();
             try {
-                DataView results = null;
+                DataView? results = null;
                 DataTable table = new DataTable();
                 table.Locale = System.Globalization.CultureInfo.InvariantCulture;
                 table.Load(cmd.ExecuteReader());

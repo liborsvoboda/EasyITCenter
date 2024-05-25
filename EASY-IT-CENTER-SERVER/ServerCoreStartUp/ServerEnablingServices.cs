@@ -93,6 +93,11 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     endpoints.MapControllerRoute(name: "WebSites", pattern: "{controller=ServerCorePages}/{action=Index}/{id?}");
                 }
 
+
+                //https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-8.0
+                //VYTVORIT AGENDU NA VLASTNI API PO RESETU
+
+
                 //HeathService Support
                 if (ServerConfigSettings.ModuleHealthServiceEnabled) {
                     endpoints.MapHealthChecks("/HealthResultService",
@@ -135,6 +140,8 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     e.Response.StatusCode = 405;
                 });
 
+
+
                 //MirrorSharp Support
                 if (ServerConfigSettings.ModuleCSharpCodeBuilder) { endpoints.MapMirrorSharp("/mirrorsharp", new MirrorSharpOptions { SelfDebugEnabled = true, IncludeExceptionDetails = true  }
                 .SetupCSharp(o => {
@@ -176,6 +183,8 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     setup.AddCustomStylesheet(Path.Combine(ServerRuntimeData.WebRoot_path,"ServerCoreTools", "Modules", "JsCssLibrary","HealthCheck", "HealthChecksUI.css"));
                 });
             }
+
+            
         }
     }
 }

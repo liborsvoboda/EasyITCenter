@@ -12,6 +12,21 @@ namespace EasyITCenter.ServerCoreStructure {
     public static class CoreOperations {
 
 
+        //TODO CAN BE INSERTED CUSTOM KEYS FOR Machines o Other HERE WILL BE VALIDATED: NEW AGENDA 
+        public static HttpContext IncludeCookieTokenToRequest(HttpContext context) {
+            ServerWebPagesToken? serverWebPagesToken = null; 
+            string token = context.Request.Cookies.FirstOrDefault(a => a.Key == "ApiToken").Value;
+
+            if (token == null && context.Request.Headers.Authorization.ToString().Length > 0) { token = context.Request.Headers.Authorization.ToString().Substring(7); }
+            if (token != null) {
+                serverWebPagesToken = CoreOperations.CheckTokenValidityFromString(token);
+                if (serverWebPagesToken.IsValid) { 
+                    context.User.AddIdentities(serverWebPagesToken.UserClaims.Identities); 
+                    try { context.Items.Add(new KeyValuePair<object, object>("ServerWebPagesToken", serverWebPagesToken)); } catch { } }
+            }
+            return context;
+        }
+
         /// <summary>
         /// Selection Layout Between Static File / MarkDown / Or Portal
         /// Resolve Routing Logic Layout Selection 
@@ -33,14 +48,22 @@ namespace EasyITCenter.ServerCoreStructure {
                 if (serverModule != null) {
                     if (context.Items.FirstOrDefault(a => a.Key.ToString() == "ServerModule").Value != null) { context.Items.Remove("ServerModule"); }
                     try { context.Items.Add(new KeyValuePair<object, object>("ServerModule", serverModule)); } catch { }
-                    if (serverModule != null && serverModule.RestrictedAccess) {
+
+                    string? userRole = context.User.Claims?.FirstOrDefault(a => a.Type.ToString() == ClaimTypes.Role.ToString())?.Value;
+                    if (!serverModule.RestrictedAccess
+                        || (serverModule.RestrictedAccess && userRole != null && serverModule.AllowedRoles != null && serverModule.AllowedRoles.Split(",").ToList().Contains(userRole))) {
+                        /*Go To Server Module*/
+                        routeLayout = RouteLayoutTypes.ServerModulesLayout; validPath = routePath; routingResult = RoutingActionTypes.Return;
+                    } else if (serverModule.RestrictedAccess && (userRole == null || userRole != null && (string.IsNullOrWhiteSpace(serverModule.AllowedRoles) ||
+                        (!string.IsNullOrWhiteSpace(serverModule.AllowedRoles) && !serverModule.AllowedRoles.Split(",").ToList().Contains(userRole))))) {
                         ServerModuleAndServiceList? loginmodule = new EasyITCenterContext().ServerModuleAndServiceLists.FirstOrDefault(a => a.IsLoginModule);
                         if (context.Items.FirstOrDefault(a => a.Key.ToString() == "LoginModule").Value != null) { context.Items.Remove("LoginModule"); }
-                        try { context.Items.Add(new KeyValuePair<object, object>("LoginModule", loginmodule)); } catch { }
-                        try { context.Response.Cookies.Append("IsLoginRequest", "correct"); } catch { }
-                        try { context.Response.Cookies.Append("RequestedModulePath", serverModule.UrlSubPath); } catch { }
+                        try { context.Items.Add(new KeyValuePair<object, object?>("LoginModule", loginmodule)); } catch { }
+                        try { if (serverModule.UrlSubPath != null) { context.Response.Cookies.Append("RequestedModulePath", serverModule.UrlSubPath); } } catch { }
                     }
-                    routeLayout = RouteLayoutTypes.ServerModulesLayout; validPath = "/ServerModules"; routingResult = RoutingActionTypes.Next;
+                    routeLayout = RouteLayoutTypes.ServerModulesLayout;
+                    if (routePath != "/ServerModules") { validPath = "/ServerModules"; routingResult = RoutingActionTypes.Next; 
+                    } else { validPath = routePath; routingResult = RoutingActionTypes.Return; }
                 }
 
                 #region Solve Controlled Static Files

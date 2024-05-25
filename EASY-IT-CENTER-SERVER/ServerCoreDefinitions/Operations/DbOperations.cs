@@ -138,7 +138,7 @@ namespace EasyITCenter.ServerCoreStructure {
         private static ServerApiSecurityList? GetServerApiSecurityOffline(string apiPath) {
             int index = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == new List<ServerApiSecurityList>().GetType());
 
-            return ((List<ServerApiSecurityList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => a.UrlSubPath?.ToLower() == apiPath.ToLower()).FirstOrDefault();
+            return ((List<ServerApiSecurityList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => a.UrlSubPath?.ToLower() == apiPath.ToLower() && a.Active).FirstOrDefault();
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <param name="modulePath"></param>
         /// <returns></returns>
         private static ServerApiSecurityList? GetServerApiSecurityOnline(string apiPath) {
-            return new EasyITCenterContext().ServerApiSecurityLists.Where(a => a.UrlSubPath.ToLower() == apiPath.ToLower()).FirstOrDefault();
+            return new EasyITCenterContext().ServerApiSecurityLists.Where(a => a.UrlSubPath.ToLower() == apiPath.ToLower() && a.Active).FirstOrDefault();
         }
 
 
@@ -188,13 +188,13 @@ namespace EasyITCenter.ServerCoreStructure {
             } else if(fileName == null && specType.ToLower() == "js") {
                 return ((List<WebCoreFileList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => (a.SpecificationType.ToLower() == specType.ToLower() || a.SpecificationType.ToLower() == "minjs") && a.Active).ToList();
             } else if(specType.ToLower() == "css") {
-                return ((List<WebCoreFileList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => (a.SpecificationType.ToLower() == specType.ToLower() || a.SpecificationType.ToLower() == "mincss") && a.FileName.StartsWith(fileName.ToLower())).ToList();
+                return ((List<WebCoreFileList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => (a.SpecificationType.ToLower() == specType.ToLower() || a.SpecificationType.ToLower() == "mincss") && a.FileName.StartsWith(fileName.ToLower()) && a.Active).ToList();
             } else if (specType.ToLower() == "js") {
-                return ((List<WebCoreFileList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => (a.SpecificationType.ToLower() == specType.ToLower() || a.SpecificationType.ToLower() == "minjs") && a.FileName.StartsWith(fileName.ToLower())).ToList();
+                return ((List<WebCoreFileList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => (a.SpecificationType.ToLower() == specType.ToLower() || a.SpecificationType.ToLower() == "minjs") && a.FileName.StartsWith(fileName.ToLower()) && a.Active).ToList();
             } else if (specType.ToLower() == "cssfiles") {
-                return ((List<WebCoreFileList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => a.SpecificationType.ToLower() == specType.ToLower() && a.FileName.StartsWith(fileName.ToLower())).ToList();
+                return ((List<WebCoreFileList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => a.SpecificationType.ToLower() == specType.ToLower() && a.FileName.StartsWith(fileName.ToLower()) && a.Active).ToList();
             } else if (specType.ToLower() == "jsfiles") {
-                return ((List<WebCoreFileList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => a.SpecificationType.ToLower() == specType.ToLower() && a.FileName.StartsWith(fileName.ToLower())).ToList();
+                return ((List<WebCoreFileList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => a.SpecificationType.ToLower() == specType.ToLower() && a.FileName.StartsWith(fileName.ToLower()) && a.Active).ToList();
             }
             return new List<WebCoreFileList>();
         }
@@ -217,16 +217,16 @@ namespace EasyITCenter.ServerCoreStructure {
                 return new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == specType.ToLower() || a.SpecificationType.ToLower() == "minjs") && a.Active).ToList();
             }
             else if (specType.ToLower() == "css") {
-                return new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == specType.ToLower() || a.SpecificationType.ToLower() == "mincss") && a.FileName.StartsWith(fileName.ToLower())).ToList();
+                return new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == specType.ToLower() || a.SpecificationType.ToLower() == "mincss") && a.FileName.StartsWith(fileName.ToLower()) && a.Active).ToList();
             }
             else if (specType.ToLower() == "js") {
-                return new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == specType.ToLower() || a.SpecificationType.ToLower() == "minjs") && a.FileName.StartsWith(fileName.ToLower())).ToList();
+                return new EasyITCenterContext().WebCoreFileLists.Where(a => (a.SpecificationType.ToLower() == specType.ToLower() || a.SpecificationType.ToLower() == "minjs") && a.FileName.StartsWith(fileName.ToLower()) && a.Active).ToList();
             }
             else if (specType.ToLower() == "cssfiles") {
-                return new EasyITCenterContext().WebCoreFileLists.Where(a => a.SpecificationType.ToLower() == specType.ToLower() && a.FileName.StartsWith(fileName.ToLower())).ToList();
+                return new EasyITCenterContext().WebCoreFileLists.Where(a => a.SpecificationType.ToLower() == specType.ToLower() && a.FileName.StartsWith(fileName.ToLower()) && a.Active).ToList();
             }
             else if (specType.ToLower() == "jsfiles") {
-                return new EasyITCenterContext().WebCoreFileLists.Where(a => a.SpecificationType.ToLower() == specType.ToLower() && a.FileName.StartsWith(fileName.ToLower())).ToList();
+                return new EasyITCenterContext().WebCoreFileLists.Where(a => a.SpecificationType.ToLower() == specType.ToLower() && a.FileName.StartsWith(fileName.ToLower()) && a.Active).ToList();
             }
             return new List<WebCoreFileList>();
         }
@@ -240,7 +240,7 @@ namespace EasyITCenter.ServerCoreStructure {
         private static ServerModuleAndServiceList? CheckDefinedWebPageOffline(string modulePath) {
             int index = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == new List<ServerModuleAndServiceList>().GetType());
 
-            return ((List<ServerModuleAndServiceList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => a.UrlSubPath?.ToLower() == modulePath.ToLower()).FirstOrDefault();
+            return ((List<ServerModuleAndServiceList>)ServerRuntimeData.LocalDBTableList[index]).Where(a => a.UrlSubPath?.ToLower() == modulePath.ToLower() && a.Active).FirstOrDefault();
         }
 
 
@@ -251,7 +251,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <param name="modulePath"></param>
         /// <returns></returns>
         private static ServerModuleAndServiceList? CheckDefinedWebPageOnline(string modulePath) {
-            return new EasyITCenterContext().ServerModuleAndServiceLists.Where(a => a.UrlSubPath.ToLower() == modulePath.ToLower()).FirstOrDefault();
+            return new EasyITCenterContext().ServerModuleAndServiceLists.Where(a => a.UrlSubPath.ToLower() == modulePath.ToLower() && a.Active).FirstOrDefault();
         }
 
 

@@ -5,11 +5,11 @@
 - [Ver.9: Vize a Nápady a Postupy](VizeaNápadyaPostupy.md)   
 - [Ver.5: Historie Reklamních Sdělení](HistorieReklamníchSdělení.md)   
 - [Ver.22: Úvodní Informace](ÚvodníInformace.md)   
-- [Ver.42: Připravované Novinky](PřipravovanéNovinky.md)   
+- [Ver.43: Připravované Novinky](PřipravovanéNovinky.md)   
 - [Ver.5: Automatické Funkcinality](AutomatickéFunkcinality.md)   
 - [Ver.3: Databáze Nápověda](DatabázeNápověda.md)   
 - [Ver.5: EIC&ESB 3rd Nástroje a Moduly](EIC&ESB3rdNástrojeaModuly.md)   
-- [Ver.36: Zpracováváné A ChangeLog](ZpracovávánéAChangeLog.md)   
+- [Ver.37: Zpracováváné A ChangeLog](ZpracovávánéAChangeLog.md)   
 - [Ver.22: Ceník EIC&ESB a IT Služeb](CeníkEIC&ESBaITSlužeb.md)   
 - [Ver.2: Kontakty](Kontakty.md)   
     ```  
@@ -19,10 +19,10 @@
 
     ```markdown  
 - [Ver.8: Web Rozcestník](WebRozcestník.md)   
-- [Ver.49: DB Tabulky Řešení](DBTabulkyŘešení.md)   
-- [Ver.48: DB Procedury Řešení](DBProceduryŘešení.md)   
-- [Ver.46: DB Triggery](DBTriggery.md)   
-- [Ver.44: DB View a Funkce](DBViewaFunkce.md)   
+- [Ver.50: DB Tabulky Řešení](DBTabulkyŘešení.md)   
+- [Ver.49: DB Procedury Řešení](DBProceduryŘešení.md)   
+- [Ver.47: DB Triggery](DBTriggery.md)   
+- [Ver.45: DB View a Funkce](DBViewaFunkce.md)   
     ```  
 
 ---
@@ -38,8 +38,8 @@
     ```markdown  
 - [Ver.12: EIC - Logika a Struktura](EIC-LogikaaStruktura.md)   
 - [Ver.8: EIC Unikátní API Služby](EICUnikátníAPISlužby.md)   
-- [Ver.22: Základní Konfigurace Serveru](ZákladníKonfiguraceServeru.md)   
-- [Ver.8: Seznam Impl. Modulů Serveru](SeznamImpl.ModulůServeru.md)   
+- [Ver.23: Základní Konfigurace Serveru](ZákladníKonfiguraceServeru.md)   
+- [Ver.9: Seznam Impl. Modulů Serveru](SeznamImpl.ModulůServeru.md)   
 - [Ver.14: EIC XML Komentáře z Projektu](EICXMLKomentářezProjektu.md)   
 - [Ver.8: EIC Rady programování](EICRadyprogramování.md)   
 - [Ver.60: API Šablony Systému](APIŠablonySystému.md)   
@@ -51,10 +51,10 @@
 
     ```markdown  
 - [Ver.5: ESB - Logika a Stuktura](ESB-LogikaaStuktura.md)   
-- [Ver.17:  Seznam Implementovaných Agend](SeznamImplementovanýchAgend.md)   
-- [Ver.12: Seznam ukázkových Modulů Systému](SeznamukázkovýchModulůSystému.md)   
+- [Ver.18:  Seznam Implementovaných Agend](SeznamImplementovanýchAgend.md)   
+- [Ver.13: Seznam ukázkových Modulů Systému](SeznamukázkovýchModulůSystému.md)   
 - [Ver.6: ESB XML Komentáře z Projektu](ESBXMLKomentářezProjektu.md)   
-- [Ver.7: Mikročíselníky unikátní Funkce](MikročíselníkyunikátníFunkce.md)   
+- [Ver.8: Mikročíselníky unikátní Funkce](MikročíselníkyunikátníFunkce.md)   
 - [Ver.9: Globální Funkce](GlobálníFunkce.md)   
 - [Ver.8: ESB Rady programování](ESBRadyprogramování.md)   
 - [Ver.63: XAML Šablony Systému](XAMLŠablonySystému.md)   
@@ -67,8 +67,21 @@
 # EIC Knihovny Kódů a Šablony  
 
     ```markdown  
-- [Ver.61: API Šablony Systému](APIŠablonySystému.md)   
-- [Ver.62: Generátory a Jejich Funkce](GenerátoryaJejichFunkce.md)   
+- [Ver.62: API Šablony Systému](APIŠablonySystému.md)   
+    ```  
+
+---
+# ESB Knihovny Kódů a Šablony  
+
+    ```markdown  
+- [Ver.2: XAML Šablony Systému](XAMLŠablonySystému.md)   
+    ```  
+
+---
+# EIC Knihovny Kódů a Šablony  
+
+    ```markdown  
+- [Ver.63: Generátory a Jejich Funkce](GenerátoryaJejichFunkce.md)   
     ```  
 
 ---
@@ -86,7 +99,7 @@
 # EIC-CanceledRazorBuild  
 
     ```markdown  
-- [Ver.77: Zrušený MVC Web Portal CsHtml](ZrušenýMVCWebPortalCsHtml.md)   
+- [Ver.78: Zrušený MVC Web Portal CsHtml](ZrušenýMVCWebPortalCsHtml.md)   
     ```  
 
 ---
@@ -94,12 +107,13 @@
 
     ```markdown  
 - [Ver.2: GitHub Top Priorita](GitHubTopPriorita.md)   
-- [Ver.1: awesome-dotnet-core](awesome-dotnet-core.md)   
+- [Ver.2: awesome-dotnet-core](awesome-dotnet-core.md)   
 - [Ver.2: awesome-dotnet-core Next](awesome-dotnet-coreNext.md)   
+- [Ver.3: awesome Blazor](awesomeBlazor.md)   
 - [Ver.3: awesome-workflow-engines](awesome-workflow-engines.md)   
 - [Ver.4: editorjs rozšířený](editorjsrozšířený.md)   
 - [Ver.4: Awesome WPF](AwesomeWPF.md)   
-- [Ver.1: Zaznamenané Nápady k prověření ](ZaznamenanéNápadykprověření.md)   
+- [Ver.2: Zaznamenané Nápady k prověření ](ZaznamenanéNápadykprověření.md)   
 - [Ver.3: Inspirace Github Bohaté Profily ](InspiraceGithubBohatéProfily.md)   
     ```  
 
@@ -283,6 +297,13 @@
     ```  
 
 ---
+# EIC Knihovny Kódů a Šablony  
+
+    ```markdown  
+- [Šablona MVC s vlastním zabezpečením](SablonaMVCsvlastnimzabezpecenim.md)   
+    ```  
+
+---
 # ESB Knihovny Kódů a Šablony  
 
     ```markdown  
@@ -310,6 +331,7 @@
 # ESB Knihovny Kódů a Šablony  
 
     ```markdown  
+- [XAML Formulář Nastavení ve skupinách](XAMLFormularNastaveniveskupinach.md)   
 - [XAML Grafy, Diagrami, Uml, Atd](XAMLGrafy,Diagrami,Uml,Atd.md)   
 - [XAML Monitoring OS Systému](XAMLMonitoringOSSystemu.md)   
 - [XAML Panel Nástrojů](XAMLPanelNastroju.md)   

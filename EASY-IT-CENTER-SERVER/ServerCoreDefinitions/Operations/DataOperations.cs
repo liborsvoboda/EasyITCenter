@@ -30,7 +30,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// </summary>
         /// <param name="className"></param>
         /// <returns></returns>
-        public static object CreateObjectTypeByTypeName(string className) {
+        public static object? CreateObjectTypeByTypeName(string className) {
             var assembly = Assembly.GetExecutingAssembly();
             var type = assembly.GetTypes().First(t => t.Name == className);
             return Activator.CreateInstance(type);

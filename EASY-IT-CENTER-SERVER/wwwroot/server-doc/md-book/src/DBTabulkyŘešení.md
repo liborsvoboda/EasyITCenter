@@ -1359,14 +1359,15 @@ END
  DROP TABLE [dbo].[DocSrvDocTemplateList] 
  GO
  CREATE TABLE [dbo].[DocSrvDocTemplateList] ( 
- [Id]           INT              IDENTITY(1,1)          NOT NULL,
- [GroupId]      INT                                     NOT NULL,
- [Sequence]     INT                                     NOT NULL,
- [Name]         VARCHAR(50)                             NOT NULL,
- [Description]  TEXT                                        NULL,
- [Template]     VARCHAR(max)                                NULL,
- [UserId]       INT                                     NOT NULL,
- [TimeStamp]    DATETIME2                               NOT NULL  CONSTRAINT [DF_DocSrvDocTemplateList_TimeStamp] DEFAULT (getdate()),
+ [Id]                 INT              IDENTITY(1,1)          NOT NULL,
+ [InheritedCodeType]  VARCHAR(50)                             NOT NULL,
+ [GroupId]            INT                                     NOT NULL,
+ [Sequence]           INT                                     NOT NULL,
+ [Name]               VARCHAR(50)                             NOT NULL,
+ [Description]        TEXT                                        NULL,
+ [Template]           VARCHAR(max)                                NULL,
+ [UserId]             INT                                     NOT NULL,
+ [TimeStamp]          DATETIME2                               NOT NULL  CONSTRAINT [DF_DocSrvDocTemplateList_TimeStamp] DEFAULT (getdate()),
  CONSTRAINT   [PK_DocSrvDocTemplateList]  PRIMARY KEY CLUSTERED    ([Id] asc) ,
  CONSTRAINT   [IX_DocSrvDocTemplateList]  UNIQUE      NONCLUSTERED ([Name] asc) ,
  CONSTRAINT [FK_DocSrvDocTemplateList_DocSrvDocumentationGroupList] FOREIGN KEY ([GroupId]) REFERENCES [dbo].[DocSrvDocumentationGroupList] (Id) ,
@@ -1472,7 +1473,7 @@ BEGIN
 		SELECT @RecName = ins.[Name] from inserted ins;
 
 		--GET AutoRemoveSetting
-		SELECT @autoRemoveOld = CAST(CAST(SUBSTRING(p.[Value],1,10) as varchar(10)) as bit) FROM [dbo].[SystemParameterList] p WHERE p.[UserId] = @UserId AND p.[SystemName] = 'ServerDocsOldAutoRemoveEnabled';
+		SELECT @autoRemoveOld = CAST(CAST(SUBSTRING(ss.[Value],1,10) as varchar(10)) as bit) FROM [dbo].[ServerSettingList] ss WHERE ss.[Key] = 'ServerDocsOldAutoRemoveEnabled';
 
 		IF(@setActive = 1) BEGIN
 			UPDATE [dbo].DocSrvDocumentationList SET [Active] = 0 WHERE Id <> @RecId AND [Name] = @RecName AND [DocumentationGroupId] = @GroupId; 		
@@ -1492,7 +1493,7 @@ BEGIN
 			SELECT @RecName = ins.[Name] from inserted ins;
 
 			--GET AutoRemoveSetting
-			SELECT @autoRemoveOld = CAST(CAST(SUBSTRING(p.[Value],1,10) as varchar(10)) as bit) FROM [dbo].[SystemParameterList] p WHERE p.[UserId] = @UserId AND p.[SystemName] = 'ServerDocsOldAutoRemoveEnabled';
+			SELECT @autoRemoveOld = CAST(CAST(SUBSTRING(ss.[Value],1,10) as varchar(10)) as bit) FROM [dbo].[ServerSettingList] ss WHERE ss.[Key] = 'ServerDocsOldAutoRemoveEnabled';
 
 			--AutoVersioning
 			SELECT @autoVersion = MAX(d.[AutoVersion]) + 1 FROM [dbo].DocSrvDocumentationList d WHERE d.[Name] = @RecName AND [DocumentationGroupId] = @GroupId;
@@ -1508,19 +1509,7 @@ BEGIN
 				DELETE FROM  [dbo].DocSrvDocumentationList WHERE Id <> @RecId AND [Name] = @RecName AND [DocumentationGroupId] = @GroupId; 		
 			END
 		END
-END /* ELSE 
-BEGIN --DELETE
-	SELECT @setActive = ins.[Active] from deleted ins;
-	SELECT @RecId = ins.Id from deleted ins;
-	SELECT @RecName = ins.[Name] from deleted ins;
-
-	IF(@setActive = 1) BEGIN
-		UPDATE [dbo].DocSrvDocumentationList SET [Active] = 1 
-		WHERE Id IN(SELECT TOP (1) MAX(d.Id) FROM [dbo].DocSrvDocumentationList d WHERE d.Id <> @RecId AND d.[Name] = @RecName)
-		;
-	END
 END
-*/
 
  GO
 ```    
@@ -1978,24 +1967,31 @@ GO
 ```    
 			
 ---   
-			### TBL ServerBrowsablePathList     
+			### TBL ServerApiSecurityList     
 
 ```sql   
 			
- IF OBJECT_ID('[dbo].[ServerBrowsablePathList]') IS NOT NULL 
- DROP TABLE [dbo].[ServerBrowsablePathList] 
+ IF OBJECT_ID('[dbo].[ServerApiSecurityList]') IS NOT NULL 
+ DROP TABLE [dbo].[ServerApiSecurityList] 
  GO
- CREATE TABLE [dbo].[ServerBrowsablePathList] ( 
- [Id]           INT              IDENTITY(1,1)          NOT NULL,
- [SystemName]   VARCHAR(50)                             NOT NULL,
- [WebRootPath]  VARCHAR(2048)                           NOT NULL,
- [AliasPath]    VARCHAR(255)                                NULL,
- [UserId]       INT                                     NOT NULL,
- [Active]       BIT                                     NOT NULL,
- [TimeStamp]    DATETIME2                               NOT NULL  CONSTRAINT [DF_ServerBrowsablePathList_TimeStamp] DEFAULT (getdate()),
- CONSTRAINT   [PK_ServerBrowsablePathList]  PRIMARY KEY CLUSTERED    ([Id] asc) ,
- CONSTRAINT   [IX_ServerBrowsablePathList]  UNIQUE      NONCLUSTERED ([SystemName] asc) ,
- CONSTRAINT [FK_ServerBrowsablePathList_UserList] FOREIGN KEY ([UserId]) REFERENCES [dbo].[SolutionUserList] (Id) )
+ CREATE TABLE [dbo].[ServerApiSecurityList] ( 
+ [Id]                     INT              IDENTITY(1,1)          NOT NULL,
+ [InheritedApiType]       VARCHAR(50)                             NOT NULL,
+ [Name]                   VARCHAR(50)                             NOT NULL,
+ [Description]            TEXT                                        NULL,
+ [UrlSubPath]             VARCHAR(100)                                NULL,
+ [WriteAllowedRoles]      VARCHAR(500)                                NULL,
+ [ReadAllowedRoles]       VARCHAR(500)                                NULL,
+ [WriteRestrictedAccess]  BIT                                     NOT NULL,
+ [ReadRestrictedAccess]   BIT                                     NOT NULL  CONSTRAINT [DF_ServerApiSecurityList_ReadRestrictedAccess] DEFAULT ((0)),
+ [RedirectPathOnError]    VARCHAR(100)                                NULL,
+ [Active]                 BIT                                     NOT NULL  CONSTRAINT [DF_ServerApiSecurityList_Active] DEFAULT ((1)),
+ [UserId]                 INT                                     NOT NULL,
+ [TimeStamp]              DATETIME2                               NOT NULL  CONSTRAINT [DF_ServerApiSecurityList_TimeStamp] DEFAULT (getdate()),
+ CONSTRAINT   [PK_ServerApiSecurityList]  PRIMARY KEY CLUSTERED    ([Id] asc) ,
+ CONSTRAINT   [IX_ServerApiSecurityList_2]  UNIQUE      NONCLUSTERED ([UrlSubPath] asc) ,
+ CONSTRAINT   [IX_ServerApiSecurityList]  UNIQUE      NONCLUSTERED ([Name] asc) ,
+ CONSTRAINT [FK_ServerApiSecurityList_UserList] FOREIGN KEY ([UserId]) REFERENCES [dbo].[SolutionUserList] (Id) )
  
  
 ```    
@@ -2111,29 +2107,57 @@ GO
  
  GO
  
- CREATE   TRIGGER [dbo].[TR_ServerModuleAndServiceList] ON dbo.ServerModuleAndServiceList
+ CREATE   TRIGGER [dbo].[TR_ServerModuleAndServiceList] ON [dbo].[ServerModuleAndServiceList]
 FOR INSERT, UPDATE, DELETE
 AS
 DECLARE @Operation VARCHAR(15)
  
 IF EXISTS (SELECT 0 FROM inserted)
 BEGIN
-	DECLARE @setIsLoginModule bit;DECLARE @RecId int;
+	DECLARE @setIsLoginModule bit;DECLARE @RecId int;DECLARE @UrlSubPath VarChar(100);DECLARE @Type VarChar(50);DECLARE @ModulePathExist bit;
 	SET NOCOUNT ON;
 
     IF EXISTS (SELECT 0 FROM deleted)
     BEGIN --UPDADE
+		SET @ModulePathExist = 0;
 		SELECT @setIsLoginModule = ins.[IsLoginModule] from inserted ins;
 		SELECT @RecId = ins.Id from inserted ins;
+		SELECT @UrlSubPath = ins.UrlSubPath from inserted ins;
+		SELECT @Type = ins.[InheritedLayoutType] from inserted ins;
 
+		--CheckExisting Only One Allowed HTML Module
+		IF (@Type = 'FullHtmlPage' OR @Type = 'HtmlBodyOnly') BEGIN
+			SELECT @ModulePathExist = 1 FROM [dbo].[ServerModuleAndServiceList] WHERE UrlSubPath = @UrlSubPath;
+			IF (@ModulePathExist = 1) BEGIN
+				RAISERROR('Can Be Only One Endpoint for Html Module', 16, 1)  
+				ROLLBACK TRANSACTION
+				RETURN
+			END
+		END
+
+		--Changing Login Module Set
 		IF(@setIsLoginModule = 1) BEGIN
-			UPDATE [dbo].ServerModuleAndServiceList SET [IsLoginModule] = 0 WHERE Id <> @RecId; 		
+			UPDATE [dbo].ServerModuleAndServiceList SET [IsLoginModule] = 0 WHERE Id <> @RecId; 
 		END
 	END ELSE
 		BEGIN -- INSERT
+			SET @ModulePathExist = 0;
 			SELECT @setIsLoginModule = ins.[IsLoginModule] from inserted ins;
 			SELECT @RecId = ins.Id from inserted ins;
+			SELECT @UrlSubPath = ins.UrlSubPath from inserted ins;
+			SELECT @Type = ins.[InheritedLayoutType] from inserted ins;
 
+			--CheckExisting Only One Allowed HTML Module
+			IF (@Type = 'FullHtmlPage' OR @Type = 'HtmlBodyOnly') BEGIN
+				SELECT @ModulePathExist = 1 FROM [dbo].[ServerModuleAndServiceList] WHERE UrlSubPath = @UrlSubPath;
+				IF (@ModulePathExist = 1) BEGIN
+					RAISERROR('Can Be Only One Endpoint for Html Module', 16, 1)  
+					ROLLBACK TRANSACTION
+					RETURN
+				END
+			END
+
+			--Changing Login Module Set
 			IF(@setIsLoginModule = 1) BEGIN
 				UPDATE [dbo].ServerModuleAndServiceList SET [IsLoginModule] = 0 WHERE Id <> @RecId; 		
 			END
@@ -2144,6 +2168,7 @@ BEGIN --DELETE
 	SELECT @setIsLoginModule = ins.[IsLoginModule] from deleted ins;
 	SELECT @RecId = ins.Id from deleted ins;
 
+	--Changing Login Module Set
 	IF(@setIsLoginModule = 1) BEGIN
 		UPDATE [dbo].ServerModuleAndServiceList SET [IsLoginModule] = 1  
 		WHERE Id IN(SELECT TOP (1) Id FROM [dbo].ServerModuleAndServiceList WHERE Id <> @RecId)
@@ -2176,6 +2201,32 @@ END
  CONSTRAINT   [PK_AdminConfiguration]  PRIMARY KEY CLUSTERED    ([Id] asc) ,
  CONSTRAINT   [IX_ServerSettingList]  UNIQUE      NONCLUSTERED ([Key] asc) ,
  CONSTRAINT [FK_ServerSettingList_SolutionUserList] FOREIGN KEY ([UserId]) REFERENCES [dbo].[SolutionUserList] (Id) )
+ 
+ 
+```    
+			
+---   
+			### TBL ServerStaticOrMvcDefPathList     
+
+```sql   
+			
+ IF OBJECT_ID('[dbo].[ServerStaticOrMvcDefPathList]') IS NOT NULL 
+ DROP TABLE [dbo].[ServerStaticOrMvcDefPathList] 
+ GO
+ CREATE TABLE [dbo].[ServerStaticOrMvcDefPathList] ( 
+ [Id]                    INT              IDENTITY(1,1)          NOT NULL,
+ [SystemName]            VARCHAR(50)                             NOT NULL,
+ [WebRootSubPath]        VARCHAR(2048)                           NOT NULL,
+ [AliasPath]             VARCHAR(255)                                NULL,
+ [Description]           TEXT                                        NULL,
+ [IsBrowsable]           BIT                                     NOT NULL  CONSTRAINT [DF_ServerStaticOrMvcDefPathList_IsBowsable] DEFAULT ((0)),
+ [IsStaticOrMvcDefOnly]  BIT                                     NOT NULL  CONSTRAINT [DF_ServerStaticOrMvcDefPathList_IsStaticOrMvcDefOnly] DEFAULT ((0)),
+ [UserId]                INT                                     NOT NULL,
+ [Active]                BIT                                     NOT NULL,
+ [TimeStamp]             DATETIME2                               NOT NULL  CONSTRAINT [DF_ServerStaticOrMvcDefPathList_TimeStamp] DEFAULT (getdate()),
+ CONSTRAINT   [PK_ServerStaticOrMvcDefPathList]  PRIMARY KEY CLUSTERED    ([Id] asc) ,
+ CONSTRAINT   [IX_ServerStaticOrMvcDefPathList]  UNIQUE      NONCLUSTERED ([SystemName] asc) ,
+ CONSTRAINT [FK_ServerStaticOrMvcDefPathList_UserList] FOREIGN KEY ([UserId]) REFERENCES [dbo].[SolutionUserList] (Id) )
  
  
 ```    
@@ -2318,9 +2369,9 @@ END
  [AttachmentName]  VARCHAR(150)                                NULL,
  [Attachment]      VARBINARY(max)                              NULL,
  [UserId]          INT                                         NULL,
- [TimeStamp]       DATETIME2                               NOT NULL  CONSTRAINT [DF_SystemFailList_TimeStamp] DEFAULT (getdate()),
- CONSTRAINT   [PK_SystemFailList]  PRIMARY KEY CLUSTERED    ([Id] asc) ,
- CONSTRAINT [FK_SystemFailList_UserList] FOREIGN KEY ([UserId]) REFERENCES [dbo].[SolutionUserList] (Id) )
+ [TimeStamp]       DATETIME2                               NOT NULL  CONSTRAINT [DF_SolutionFailList_TimeStamp] DEFAULT (getdate()),
+ CONSTRAINT   [PK_SolutionFailList]  PRIMARY KEY CLUSTERED    ([Id] asc) ,
+ CONSTRAINT [FK_SolutionFailList_UserList] FOREIGN KEY ([UserId]) REFERENCES [dbo].[SolutionUserList] (Id) )
  
  
 ```    
@@ -2366,7 +2417,7 @@ END
  [IsSystemMessage]  BIT                                     NOT NULL,
  [Published]        BIT                                     NOT NULL  CONSTRAINT [DF_SolutionMessageModuleList_Publish] DEFAULT ((0)),
  [FromUserId]       INT                                         NULL,
- [ToUserId]         INT                                     NOT NULL,
+ [ToUserId]         INT                                         NULL,
  [TimeStamp]        DATETIME2                               NOT NULL  CONSTRAINT [DF_SolutionMessageModuleList_TimeStamp] DEFAULT (getdate()),
  CONSTRAINT   [PK_SolutionMessageModuleList]  PRIMARY KEY CLUSTERED    ([Id] asc) ,
  CONSTRAINT   [IX_SolutionMessageModuleList]  UNIQUE      NONCLUSTERED ([Subject] asc) ,
@@ -2582,6 +2633,40 @@ END
 ```    
 			
 ---   
+			### TBL SolutionTaskList     
+
+```sql   
+			
+ IF OBJECT_ID('[dbo].[SolutionTaskList]') IS NOT NULL 
+ DROP TABLE [dbo].[SolutionTaskList] 
+ GO
+ CREATE TABLE [dbo].[SolutionTaskList] ( 
+ [Id]                   INT              IDENTITY(1,1)          NOT NULL,
+ [InheritedTargetType]  VARCHAR(50)                             NOT NULL,
+ [InheritedStatusType]  VARCHAR(50)                             NOT NULL,
+ [Message]              TEXT                                    NOT NULL,
+ [Documentation]        TEXT                                    NOT NULL,
+ [ImageName]            VARCHAR(150)                                NULL,
+ [Image]                VARBINARY(max)                              NULL,
+ [AttachmentName]       VARCHAR(150)                                NULL,
+ [Attachment]           VARBINARY(max)                              NULL,
+ [UserId]               INT                                     NOT NULL,
+ [TimeStamp]            DATETIME2                               NOT NULL  CONSTRAINT [DF_SolutionTaskList_TimeStamp] DEFAULT (getdate()),
+ CONSTRAINT   [PK_SolutionTaskList]  PRIMARY KEY CLUSTERED    ([Id] asc) ,
+ CONSTRAINT [FK_SolutionTaskList_UserList] FOREIGN KEY ([UserId]) REFERENCES [dbo].[SolutionUserList] (Id) )
+ 
+ 
+ GO
+ 
+ CREATE NONCLUSTERED INDEX [IX_SolutionTaskList] 
+    ON [dbo].[SolutionTaskList] ([InheritedTargetType] asc)
+ CREATE NONCLUSTERED INDEX [IX_SolutionTaskList_1] 
+    ON [dbo].[SolutionTaskList] ([InheritedTargetType] asc, [InheritedStatusType] asc)
+ CREATE NONCLUSTERED INDEX [IX_SolutionTaskList_2] 
+    ON [dbo].[SolutionTaskList] ([InheritedStatusType] asc)
+```    
+			
+---   
 			### TBL SolutionUserList     
 
 ```sql   
@@ -2710,16 +2795,19 @@ END
  DROP TABLE [dbo].[SystemCustomPageList] 
  GO
  CREATE TABLE [dbo].[SystemCustomPageList] ( 
- [Id]           INT              IDENTITY(1,1)          NOT NULL,
- [PageName]     VARCHAR(250)                            NOT NULL,
- [Description]  TEXT                                        NULL,
- [UserId]       INT                                     NOT NULL,
- [MultiLink]    BIT                                     NOT NULL,
- [IsServerUrl]  BIT                                     NOT NULL,
- [GraphType]    BIT                                     NOT NULL,
- [Parameter]    VARCHAR(512)                                NULL,
- [Active]       BIT                                     NOT NULL  CONSTRAINT [DF_SystemCustomPageList_Active] DEFAULT ((1)),
- [TimeStamp]    DATETIME2                               NOT NULL  CONSTRAINT [DF_SystemCustomPageList_TimeStamp] DEFAULT (getdate()),
+ [Id]                INT              IDENTITY(1,1)          NOT NULL,
+ [PageName]          VARCHAR(250)                            NOT NULL,
+ [Description]       TEXT                                        NULL,
+ [IsMultiFormType]   BIT                                     NOT NULL,
+ [IsServerUrl]       BIT                                     NOT NULL,
+ [StartupUrl]        VARCHAR(512)                                NULL,
+ [IsWebServer]       BIT                                     NOT NULL,
+ [StartupSubFolder]  VARCHAR(150)                                NULL,
+ [StartupCommand]    VARCHAR(500)                                NULL,
+ [IsGraphType]       BIT                                     NOT NULL,
+ [Active]            BIT                                     NOT NULL,
+ [UserId]            INT                                     NOT NULL,
+ [TimeStamp]         DATETIME2                               NOT NULL  CONSTRAINT [DF_SystemCustomPageList_TimeStamp] DEFAULT (getdate()),
  CONSTRAINT   [PK_SystemCustomPageList]  PRIMARY KEY CLUSTERED    ([Id] asc) ,
  CONSTRAINT   [IX_SystemCustomPageList]  UNIQUE      NONCLUSTERED ([PageName] asc) ,
  CONSTRAINT [FK_SystemCustomPageList_UserList] FOREIGN KEY ([UserId]) REFERENCES [dbo].[SolutionUserList] (Id) )
@@ -3215,15 +3303,48 @@ END
  DROP TABLE [dbo].[WebCodeLibraryList] 
  GO
  CREATE TABLE [dbo].[WebCodeLibraryList] ( 
- [Id]           INT              IDENTITY(1,1)          NOT NULL,
- [Name]         VARCHAR(50)                             NOT NULL,
- [Description]  VARCHAR(2096)                               NULL,
- [HtmlContent]  TEXT                                    NOT NULL,
- [UserId]       INT                                     NOT NULL,
- [TimeStamp]    DATETIME2                               NOT NULL  CONSTRAINT [DF_WebCodeLibraryList_TimeStamp] DEFAULT (getdate()),
+ [Id]                 INT              IDENTITY(1,1)          NOT NULL,
+ [InheritedCodeType]  VARCHAR(50)                                 NULL,
+ [Name]               VARCHAR(50)                             NOT NULL,
+ [Description]        VARCHAR(2096)                               NULL,
+ [Content]            VARCHAR(max)                            NOT NULL,
+ [IsCompletion]       BIT                                     NOT NULL  CONSTRAINT [DF_WebCodeLibraryList_IsCompletion] DEFAULT ((0)),
+ [UserId]             INT                                     NOT NULL,
+ [TimeStamp]          DATETIME2                               NOT NULL  CONSTRAINT [DF_WebCodeLibraryList_TimeStamp] DEFAULT (getdate()),
  CONSTRAINT   [PK_WebCodeLibraryList]  PRIMARY KEY CLUSTERED    ([Id] asc) ,
  CONSTRAINT   [IX_WebCodeLibraryList]  UNIQUE      NONCLUSTERED ([Name] asc) ,
  CONSTRAINT [FK_WebCodeLibraryList_UserList] FOREIGN KEY ([UserId]) REFERENCES [dbo].[SolutionUserList] (Id) )
+ 
+ 
+```    
+			
+---   
+			### TBL WebConfiguratorList     
+
+```sql   
+			
+ IF OBJECT_ID('[dbo].[WebConfiguratorList]') IS NOT NULL 
+ DROP TABLE [dbo].[WebConfiguratorList] 
+ GO
+ CREATE TABLE [dbo].[WebConfiguratorList] ( 
+ [Id]               INT              IDENTITY(1,1)          NOT NULL,
+ [Name]             VARCHAR(50)                             NOT NULL,
+ [IsStartupPage]    BIT                                     NOT NULL,
+ [Description]      VARCHAR(max)                                NULL,
+ [HtmlContent]      VARCHAR(max)                                NULL,
+ [ServerUrl]        VARCHAR(500)                                NULL,
+ [AuthRole]         VARCHAR(200)                                NULL,
+ [AuthIgnore]       BIT                                     NOT NULL,
+ [AuthRedirect]     BIT                                     NOT NULL,
+ [AuthRedirectUrl]  VARCHAR(500)                                NULL,
+ [IncludedIdList]   VARCHAR(500)                                NULL,
+ [Active]           BIT                                     NOT NULL  CONSTRAINT [DF_WebConfiguratorList_Active] DEFAULT ((1)),
+ [UserId]           INT                                     NOT NULL,
+ [TimeStamp]        DATETIME2                               NOT NULL  CONSTRAINT [DF_WebConfiguratorList_TimeStamp] DEFAULT (getdate()),
+ CONSTRAINT   [PK_WebConfiguratorList]  PRIMARY KEY CLUSTERED    ([Id] asc) ,
+ CONSTRAINT   [IX_WebConfiguratorList]  UNIQUE      NONCLUSTERED ([Name] asc) ,
+ CONSTRAINT   [IX_WebConfiguratorList_1]  UNIQUE      NONCLUSTERED ([ServerUrl] asc) ,
+ CONSTRAINT [FK_WebConfiguratorList_UserList] FOREIGN KEY ([UserId]) REFERENCES [dbo].[SolutionUserList] (Id) )
  
  
 ```    
