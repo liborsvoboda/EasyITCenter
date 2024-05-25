@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyITSystemCenter.Classes {
+namespace EasyITSystemCenter.GlobalClasses {
 
     public class BasicAttachmentList {
         public int Id { get; set; } = 0;

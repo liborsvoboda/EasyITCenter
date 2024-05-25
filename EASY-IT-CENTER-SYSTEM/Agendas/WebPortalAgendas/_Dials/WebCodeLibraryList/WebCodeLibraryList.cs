@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EasyITSystemCenter.Classes {
+namespace EasyITSystemCenter.GlobalClasses {
 
     public partial class WebCodeLibraryList {
 

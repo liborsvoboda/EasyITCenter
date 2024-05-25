@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
@@ -72,7 +72,7 @@ namespace EasyITSystemCenter.Pages {
             try {
                 ((DataGrid)sender).Columns.ToList().ForEach(async e => {
                     string headername = e.Header.ToString().ToLower();
-                    if (headername == "Name".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                    if (headername == "Value".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
                     else if (headername == "GroupName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
                     else if (headername == "Sequence".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
                     else if (headername == "UserMenu".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }

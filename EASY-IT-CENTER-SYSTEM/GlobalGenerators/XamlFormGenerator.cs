@@ -1,5 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Presentation;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using ICSharpCode.TextEditor.Actions;
 using MahApps.Metro.Controls;
@@ -50,7 +50,7 @@ namespace EasyITSystemCenter.GlobalGenerators {
 
                         //DIAL TYPE 
                         if (dataset.Columns[columnNumber].ToString().ToLower().Contains("inherited")) {
-                            ComboBox combobox = new ComboBox() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Width = 250, Margin = new Thickness(5), ItemsSource = solutionMixedEnumList, SelectedValuePath = "Name", DisplayMemberPath = "Name" };
+                            ComboBox combobox = new ComboBox() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Width = 250, Margin = new Thickness(5), ItemsSource = solutionMixedEnumList, SelectedValuePath = "Value", DisplayMemberPath = "Value" };
                             combobox.SetValue(Grid.RowProperty, columnNumber + 1); combobox.SetValue(Grid.ColumnProperty, 1);
                             rootGrid.Children.Add(combobox);
                             columnDefined = true;

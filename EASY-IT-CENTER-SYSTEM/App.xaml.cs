@@ -1,6 +1,4 @@
-﻿using CefSharp;
-using EasyITSystemCenter.Classes;
-using EasyITSystemCenter.GlobalClasses;
+﻿using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.Pages;
 using EasyITSystemCenter.SystemHelper;
@@ -168,8 +166,6 @@ namespace EasyITSystemCenter {
 
             try {
                 if (moduleApp != null) { moduleApp.Dispose(); }
-                Cef.PreShutdown();
-                Cef.ShutdownWithoutChecks();
             } catch { }
 
             try { FileOperations.ClearFolder(appRuntimeData.reportFolder); } catch { }

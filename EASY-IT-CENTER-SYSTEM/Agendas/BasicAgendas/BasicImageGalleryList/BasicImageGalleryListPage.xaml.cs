@@ -1,6 +1,6 @@
 ﻿using EASYTools.ImageEffectLibrary;
 using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using MahApps.Metro.Controls.Dialogs;

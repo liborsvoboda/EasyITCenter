@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using HelixToolkit.Wpf;
@@ -90,7 +90,7 @@ namespace EasyITSystemCenter.Pages {
             ((DataGrid)sender).Columns.ToList().ForEach(e => {
                 string headername = e.Header.ToString();
                 if (headername == "PartNumber") e.Header = Resources["identifier"].ToString();
-                else if (headername == "Name") e.Header = Resources["fname"].ToString();
+                else if (headername == "Value") e.Header = Resources["fname"].ToString();
                 else if (headername == "Description") e.Header = Resources["description"].ToString();
                 else if (headername == "Unit") { e.Header = Resources["unit"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
                 else if (headername == "Price") { e.Header = Resources["price"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }

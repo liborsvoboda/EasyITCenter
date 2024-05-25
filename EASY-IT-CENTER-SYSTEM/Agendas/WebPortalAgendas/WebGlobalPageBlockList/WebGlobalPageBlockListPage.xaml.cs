@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
@@ -78,7 +78,7 @@ namespace EasyITSystemCenter.Pages {
             try {
                 ((DataGrid)sender).Columns.ToList().ForEach(async e => {
                     string headername = e.Header.ToString();
-                    if (headername == "Name") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                    if (headername == "Value") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
                     else if (headername == "PagePartType") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
                     else if (headername == "Sequence") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
                     else if (headername == "RewriteLowerLevel") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
@@ -213,7 +213,7 @@ namespace EasyITSystemCenter.Pages {
 
                 DBResultMessage dBResult;
                 selectedRecord.Id = (int)((txt_id.Value != null) && !asNew ? txt_id.Value : 0);
-                selectedRecord.PagePartType = ((Language)cb_pagePartType.SelectedItem).Name;
+                selectedRecord.PagePartType = ((TranslateSet)cb_pagePartType.SelectedItem).Name;
                 selectedRecord.Sequence = int.Parse(txt_sequence.Value.ToString());
 
                 selectedRecord.Name = txt_name.Text;

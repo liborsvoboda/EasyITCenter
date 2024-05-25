@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalClasses;
 using Newtonsoft.Json;
 using System;

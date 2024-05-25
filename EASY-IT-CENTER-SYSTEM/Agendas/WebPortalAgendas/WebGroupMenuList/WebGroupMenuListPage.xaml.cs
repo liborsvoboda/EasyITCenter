@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
@@ -44,7 +44,7 @@ namespace EasyITSystemCenter.Pages {
             try {
                 ((DataGrid)sender).Columns.ToList().ForEach(e => {
                     string headername = e.Header.ToString();
-                    if (headername == "Name") { e.Header = Resources["fname"].ToString(); e.DisplayIndex = 2; }
+                    if (headername == "Value") { e.Header = Resources["fname"].ToString(); e.DisplayIndex = 2; }
                     else if (headername == "Sequence") { e.Header = Resources["sequence"].ToString(); e.DisplayIndex = 1; }
                     else if (headername == "Active") { e.Header = Resources["active"].ToString(); e.DisplayIndex = 3; }
                     else if (headername == "Onclick") { e.Header = Resources["onClick"].ToString(); e.DisplayIndex = 4; }

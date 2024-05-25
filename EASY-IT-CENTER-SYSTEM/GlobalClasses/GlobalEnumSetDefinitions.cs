@@ -1,4 +1,4 @@
-﻿using EasyITSystemCenter.Classes;
+﻿using EasyITSystemCenter.GlobalClasses;
 using System.Collections.ObjectModel;
 
 namespace EasyITSystemCenter.GlobalClasses {
@@ -10,28 +10,28 @@ namespace EasyITSystemCenter.GlobalClasses {
         /// <summary>
         /// Client Setting Offline enum of Languages
         /// </summary>
-        public static ObservableCollection<Language> languages = new ObservableCollection<Language>() {
-                                                                new Language() { Name = "System", Value = "system" },
-                                                                new Language() { Name =  "czech", Value = "cs-CZ" },
-                                                                new Language() { Name = "English", Value = "en-US" }
+        public static ObservableCollection<TranslateSet> languages = new ObservableCollection<TranslateSet>() {
+                                                                new TranslateSet() { Name = "System", Value = "system" },
+                                                                new TranslateSet() { Name =  "czech", Value = "cs-CZ" },
+                                                                new TranslateSet() { Name = "English", Value = "en-US" }
                                                              };
         /// <summary>
         /// Client Setting offline enum Updater States
         /// </summary>
-        public static ObservableCollection<UpdateVariant> updateVariants = new ObservableCollection<UpdateVariant>() {
-                                                                new UpdateVariant() { Name = "never", Value = "never" },
-                                                                new UpdateVariant() { Name = "showInfo", Value = "showInfo"},
-                                                                new UpdateVariant() { Name ="automaticDownload", Value = "automaticDownload"},
-                                                                new UpdateVariant() { Name ="automaticInstall", Value = "automaticInstall"}
+        public static ObservableCollection<TranslateSet> updateVariants = new ObservableCollection<TranslateSet>() {
+                                                                new TranslateSet() { Name = "never", Value = "never" },
+                                                                new TranslateSet() { Name = "showInfo", Value = "showInfo"},
+                                                                new TranslateSet() { Name ="automaticDownload", Value = "automaticDownload"},
+                                                                new TranslateSet() { Name ="automaticInstall", Value = "automaticInstall"}
                                                              };
         /// <summary>
         /// Client Setting offline enum Menu Groups
         /// </summary>
-        public static ObservableCollection<UpdateVariant> sections = new ObservableCollection<UpdateVariant>() {
-                                                                new UpdateVariant() { Name ="connection", Value = "connection" },
-                                                                new UpdateVariant() { Name ="system", Value = "system"},
-                                                                new UpdateVariant() { Name ="appearance", Value = "appearance"},
-                                                                new UpdateVariant() { Name ="behavior", Value = "behavior"},
+        public static ObservableCollection<TranslateSet> sections = new ObservableCollection<TranslateSet>() {
+                                                                new TranslateSet() { Name ="connection", Value = "connection" },
+                                                                new TranslateSet() { Name ="system", Value = "system"},
+                                                                new TranslateSet() { Name ="appearance", Value = "appearance"},
+                                                                new TranslateSet() { Name ="behavior", Value = "behavior"},
                                                              };
 
         /// <summary>
@@ -39,41 +39,41 @@ namespace EasyITSystemCenter.GlobalClasses {
         /// </summary>
 
 
-        public static ObservableCollection<Language> MenuTypes = new ObservableCollection<Language>() {
-            new Language() { Name = "Dial", Value = "Dial" },
-            new Language() { Name = "View", Value = "View" },
-            new Language() { Name = "Agenda", Value = "Agenda" }
+        public static ObservableCollection<TranslateSet> MenuTypes = new ObservableCollection<TranslateSet>() {
+            new TranslateSet() { Name = "Dial", Value = "Dial" },
+            new TranslateSet() { Name = "View", Value = "View" },
+            new TranslateSet() { Name = "Agenda", Value = "Agenda" }
         };
 
-        public static ObservableCollection<Language> ProcessTypes = new ObservableCollection<Language>() {
-            new Language() { Name = "EDCservice", Value = "EDCservice" },
-            new Language() { Name = "WINcmd", Value = "WINcmd" },
-            new Language() { Name = "URL", Value = "URL" }
+        public static ObservableCollection<TranslateSet> ProcessTypes = new ObservableCollection<TranslateSet>() {
+            new TranslateSet() { Name = "EDCservice", Value = "EDCservice" },
+            new TranslateSet() { Name = "WINcmd", Value = "WINcmd" },
+            new TranslateSet() { Name = "URL", Value = "URL" }
         };
 
-        public static ObservableCollection<Language> HealthCheckTypes = new ObservableCollection<Language>() {
-            new Language() { Name = "driveSize", Value = "driveSize" },
-            new Language() { Name = "processMemory", Value = "processMemory" },
-            new Language() { Name = "allocatedMemory", Value = "allocatedMemory" },
-            new Language() { Name = "folderExist", Value = "folderExist" },
+        public static ObservableCollection<TranslateSet> HealthCheckTypes = new ObservableCollection<TranslateSet>() {
+            new TranslateSet() { Name = "driveSize", Value = "driveSize" },
+            new TranslateSet() { Name = "processMemory", Value = "processMemory" },
+            new TranslateSet() { Name = "allocatedMemory", Value = "allocatedMemory" },
+            new TranslateSet() { Name = "folderExist", Value = "folderExist" },
 
-            new Language() { Name = "ping", Value = "ping" },
-            new Language() { Name = "tcpPort", Value = "tcpPort" },
-            new Language() { Name = "serverUrlPath", Value = "serverUrlPath" },
-            new Language() { Name = "urlPath", Value = "urlPath" },
+            new TranslateSet() { Name = "ping", Value = "ping" },
+            new TranslateSet() { Name = "tcpPort", Value = "tcpPort" },
+            new TranslateSet() { Name = "serverUrlPath", Value = "serverUrlPath" },
+            new TranslateSet() { Name = "urlPath", Value = "urlPath" },
 
-            new Language() { Name = "mssqlConnection", Value = "mssqlConnection" },
-            new Language() { Name = "mysqlConnection", Value = "mysqlConnection" },
-            new Language() { Name = "oracleConnection", Value = "oracleConnection" },
-            new Language() { Name = "postgresConnection", Value = "postgresConnection" },
+            new TranslateSet() { Name = "mssqlConnection", Value = "mssqlConnection" },
+            new TranslateSet() { Name = "mysqlConnection", Value = "mysqlConnection" },
+            new TranslateSet() { Name = "oracleConnection", Value = "oracleConnection" },
+            new TranslateSet() { Name = "postgresConnection", Value = "postgresConnection" },
         };
 
-        public static ObservableCollection<Language> PagePartType = new ObservableCollection<Language>() {
-            new Language() { Name = "HeaderPreCss", Value = "HeaderPreCss" },
-            new Language() { Name = "HeaderPreScripts", Value = "HeaderPreScripts" },
-            new Language() { Name = "HeaderPostScripts", Value = "HeaderPostScripts" },
-            new Language() { Name = "Body", Value = "Body" },
-            new Language() { Name = "Footer", Value = "Footer" }
+        public static ObservableCollection<TranslateSet> PagePartType = new ObservableCollection<TranslateSet>() {
+            new TranslateSet() { Name = "HeaderPreCss", Value = "HeaderPreCss" },
+            new TranslateSet() { Name = "HeaderPreScripts", Value = "HeaderPreScripts" },
+            new TranslateSet() { Name = "HeaderPostScripts", Value = "HeaderPostScripts" },
+            new TranslateSet() { Name = "Body", Value = "Body" },
+            new TranslateSet() { Name = "Footer", Value = "Footer" }
         };
     }
 }

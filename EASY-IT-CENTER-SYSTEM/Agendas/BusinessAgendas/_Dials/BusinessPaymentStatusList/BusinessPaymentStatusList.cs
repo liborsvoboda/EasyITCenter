@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyITSystemCenter.Classes {
+namespace EasyITSystemCenter.GlobalClasses {
 
     public partial class BusinessPaymentStatusList {
         public int Id { get; set; }

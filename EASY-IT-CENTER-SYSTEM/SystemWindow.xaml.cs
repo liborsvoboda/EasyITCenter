@@ -1,6 +1,6 @@
 ﻿using Dragablz;
 using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalGenerators;
 using EasyITSystemCenter.GlobalOperations;

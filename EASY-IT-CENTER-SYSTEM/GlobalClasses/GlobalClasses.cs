@@ -115,14 +115,6 @@ namespace EasyITSystemCenter.GlobalClasses {
         public Authentification Authentification { get; set; }
     }
 
-    /// <summary>
-    /// Global class for using Name/Value - Example Reports, Language and others
-    /// </summary>
-    public class UpdateVariant {
-        public string Name { get; set; }
-        public string Value { get; set; }
-    }
-
     //public class Parameter {
     //    public string Value { get; set; } = string.Empty;
     //    public bool Correct { get; set; } = false;
@@ -161,6 +153,34 @@ namespace EasyITSystemCenter.GlobalClasses {
 
         public int UserId { get; set; }
         public DateTime TimeStamp { get; set; }
+    }
+
+    /// <summary>
+    /// Program version Class
+    /// </summary>
+    public class AppVersion {
+        public int Major { get; set; }
+        public int Minor { get; set; }
+        public int Build { get; set; }
+        public int Private { get; set; }
+    }
+
+    /// <summary>
+    /// Actual List Item informations for Controls each Page in MainView
+    /// </summary>
+    public class DataViewSupport {
+        public int SelectedRecordId { get; set; } = 0;
+        public bool FormShown { get; set; } = false;
+        public string FilteredValue { get; set; } = null;
+        public string AdvancedFilter { get; set; } = null;
+    }
+
+    /// <summary>
+    /// Language definition support
+    /// </summary>
+    public class TranslateSet {
+        public string Name { get; set; }
+        public string Value { get; set; }
     }
 
     /// <summary>

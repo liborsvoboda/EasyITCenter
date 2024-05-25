@@ -1,4 +1,4 @@
-﻿using EasyITSystemCenter.Classes;
+﻿using EasyITSystemCenter.GlobalClasses;
 using System;
 using System.Diagnostics;
 using System.IO;

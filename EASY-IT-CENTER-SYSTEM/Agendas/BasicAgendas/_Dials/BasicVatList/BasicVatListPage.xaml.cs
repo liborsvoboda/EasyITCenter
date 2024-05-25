@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
@@ -42,7 +42,7 @@ namespace EasyITSystemCenter.Pages {
         private void DgListView_Translate(object sender, EventArgs ex) {
             ((DataGrid)sender).Columns.ToList().ForEach(e => {
                 string headername = e.Header.ToString();
-                if (headername == "Name") e.Header = Resources["fname"].ToString();
+                if (headername == "Value") e.Header = Resources["fname"].ToString();
                 else if (headername == "Value") { e.Header = Resources["value"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
                 else if (headername == "Default") e.Header = Resources["default"].ToString();
                 else if (headername == "Description") e.Header = Resources["description"].ToString();

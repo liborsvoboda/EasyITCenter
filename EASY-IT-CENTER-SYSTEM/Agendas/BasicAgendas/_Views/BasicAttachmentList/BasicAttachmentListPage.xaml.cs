@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using HelixToolkit.Wpf;
@@ -15,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
+
 // This is Template ListView
 namespace EasyITSystemCenter.Pages {
 
@@ -25,6 +26,7 @@ namespace EasyITSystemCenter.Pages {
         public BasicAttachmentListPage() {
             InitializeComponent();
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
+            webBrowser.EnsureCoreWebView2Async();
 
             _ = LoadDataList();
             SetRecord();
@@ -80,8 +82,8 @@ namespace EasyITSystemCenter.Pages {
                     selectedRecord = (BasicViewAttachmentList)DgListView.SelectedItem;
                     dataViewSupport.SelectedRecordId = selectedRecord.Id;
 
-                    viewPort3d.IsEnabled = webViewer.IsEnabled = false;
-                    viewPort3d.Visibility = webViewer.Visibility = Visibility.Hidden;
+                    viewPort3d.IsEnabled = webBrowser.IsEnabled = false;
+                    viewPort3d.Visibility = webBrowser.Visibility = Visibility.Hidden;
 
                     string filePath = Path.Combine(App.appRuntimeData.tempFolder, selectedRecord.FileName);
                     FileOperations.ByteArrayToFile(filePath, (await CommunicationManager.GetApiRequest<BasicAttachmentList>(ApiUrls.EasyITCenterBasicAttachmentList, selectedRecord.Id.ToString(), App.UserData.Authentification.Token)).Attachment);
@@ -93,8 +95,8 @@ namespace EasyITSystemCenter.Pages {
                             break;
 
                         default:
-                            webViewer.IsEnabled = true; webViewer.Visibility = Visibility.Visible;
-                            webViewer.Address = filePath;
+                            webBrowser.IsEnabled = true; webBrowser.Visibility = Visibility.Visible;
+                            webBrowser.Source = new Uri(filePath);
                             break;
                     }
                 }

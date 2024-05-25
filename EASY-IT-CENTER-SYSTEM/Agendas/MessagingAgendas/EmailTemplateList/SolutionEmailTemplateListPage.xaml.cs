@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
@@ -29,10 +29,10 @@ namespace EasyITSystemCenter.Pages {
             InitializeComponent();
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
-            ObservableCollection<UpdateVariant> Templates = new ObservableCollection<UpdateVariant>() {
-                                                                new UpdateVariant() { Name = Resources["verification"].ToString(), Value = "verification" },
-                                                                new UpdateVariant() { Name = Resources["registration"].ToString(), Value = "registration"},
-                                                                new UpdateVariant() { Name = Resources["resetPassword"].ToString(), Value = "resetPassword"}                                                             };
+            ObservableCollection<TranslateSet> Templates = new ObservableCollection<TranslateSet>() {
+                                                                new TranslateSet() { Name = Resources["verification"].ToString(), Value = "verification" },
+                                                                new TranslateSet() { Name = Resources["registration"].ToString(), Value = "registration"},
+                                                                new TranslateSet() { Name = Resources["resetPassword"].ToString(), Value = "resetPassword"}                                                             };
 
             try {
                 try {

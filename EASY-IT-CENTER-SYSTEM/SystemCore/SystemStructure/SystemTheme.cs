@@ -33,8 +33,8 @@ namespace EasyITSystemCenter.SystemStructure {
 
         protected void SaveTheme(Accent accent, AppTheme theme) {
             try {
-                Settings.Default.ThemeName = theme.Name;
-                Settings.Default.AccentName = accent.Name;
+                Settings.Default.apper_themeName = theme.Name;
+                Settings.Default.apper_accentName = accent.Name;
                 Settings.Default.Save();
             } catch { }
         }

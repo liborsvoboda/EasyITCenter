@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
@@ -43,7 +43,7 @@ namespace EasyITSystemCenter.Pages {
         private void DgListView_Translate(object sender, EventArgs ex) {
             ((DataGrid)sender).Columns.ToList().ForEach(e => {
                 string headername = e.Header.ToString();
-                if (headername == "Name") e.Header = Resources["fname"].ToString();
+                if (headername == "Value") e.Header = Resources["fname"].ToString();
                 else if (headername == "WorkPlace") e.Header = Resources["workPlace"].ToString();
                 else if (headername == "Number") e.Header = Resources["partNumber"].ToString();
                 else if (headername == "Timestamp") e.Header = Resources["timestamp"].ToString();

@@ -12,7 +12,7 @@ namespace EasyITSystemCenter.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -74,12 +74,12 @@ namespace EasyITSystemCenter.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("\"Base Light\"")]
-        public string ThemeName {
+        public string apper_themeName {
             get {
-                return ((string)(this["ThemeName"]));
+                return ((string)(this["apper_themeName"]));
             }
             set {
-                this["ThemeName"] = value;
+                this["apper_themeName"] = value;
             }
         }
         
@@ -110,12 +110,12 @@ namespace EasyITSystemCenter.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("\"Green\"")]
-        public string AccentName {
+        public string apper_accentName {
             get {
-                return ((string)(this["AccentName"]));
+                return ((string)(this["apper_accentName"]));
             }
             set {
-                this["AccentName"] = value;
+                this["apper_accentName"] = value;
             }
         }
         

@@ -51,8 +51,8 @@ namespace EasyITSystemCenter.SystemStructure {
                         })
                 .ToList();
 
-            AppTheme theme = ThemeManager.AppThemes.FirstOrDefault(t => t.Name.Equals(Settings.Default.ThemeName));
-            Accent accent = ThemeManager.Accents.FirstOrDefault(a => a.Name.Equals(Settings.Default.AccentName));
+            AppTheme theme = ThemeManager.AppThemes.FirstOrDefault(t => t.Name.Equals(Settings.Default.apper_themeName));
+            Accent accent = ThemeManager.Accents.FirstOrDefault(a => a.Name.Equals(Settings.Default.apper_accentName));
 
             if ((theme != null) && (accent != null)) {
                 ThemeManager.ChangeAppStyle(Application.Current, accent, theme);

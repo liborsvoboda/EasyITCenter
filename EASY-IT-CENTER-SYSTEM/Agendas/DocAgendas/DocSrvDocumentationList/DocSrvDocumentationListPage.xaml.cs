@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
@@ -81,7 +81,7 @@ namespace EasyITSystemCenter.Pages {
             try {
                 ((DataGrid)sender).Columns.ToList().ForEach(e => {
                     string headername = e.Header.ToString();
-                    if (headername == "Name") { e.Header = Resources["name"].ToString(); e.DisplayIndex = 2; }
+                    if (headername == "Value") { e.Header = Resources["name"].ToString(); e.DisplayIndex = 2; }
                     else if (headername == "Sequence") { e.Header = Resources["sequence"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = 3; }
                     else if (headername == "DocumentationGroupName") { e.Header = Resources["documentationGroup"].ToString(); e.DisplayIndex = 1; }
                     else if (headername == "Description") e.Header = Resources["description"].ToString();

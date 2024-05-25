@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
@@ -26,10 +26,10 @@ namespace EasyITSystemCenter.Pages {
             InitializeComponent();
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
-            ObservableCollection<UpdateVariant> addressType = new ObservableCollection<UpdateVariant>() {
-                                                               new UpdateVariant() { Name = Resources["all"].ToString(), Value = "all" },
-                                                               new UpdateVariant() { Name = Resources["customer"].ToString(), Value = "customer" },
-                                                               new UpdateVariant() { Name = Resources["supplier"].ToString(), Value = "supplier" },
+            ObservableCollection<TranslateSet> addressType = new ObservableCollection<TranslateSet>() {
+                                                               new TranslateSet() { Name = Resources["all"].ToString(), Value = "all" },
+                                                               new TranslateSet() { Name = Resources["customer"].ToString(), Value = "customer" },
+                                                               new TranslateSet() { Name = Resources["supplier"].ToString(), Value = "supplier" },
                                                              };
 
             try {
@@ -149,7 +149,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Phone = txt_phone.Text;
                 selectedRecord.Email = txt_email.Text;
                 selectedRecord.BankAccount = txt_bankAccount.Text;
-                selectedRecord.AddressType = ((UpdateVariant)cb_addressType.SelectedItem).Value;
+                selectedRecord.AddressType = ((TranslateSet)cb_addressType.SelectedItem).Value;
                 selectedRecord.Ico = txt_ico.Text;
                 selectedRecord.Dic = txt_dic.Text;
                 selectedRecord.Active = (bool)chb_active.IsChecked;

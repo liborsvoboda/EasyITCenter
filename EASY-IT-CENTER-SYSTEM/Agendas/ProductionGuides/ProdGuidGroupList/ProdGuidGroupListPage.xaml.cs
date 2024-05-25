@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
@@ -44,7 +44,7 @@ namespace EasyITSystemCenter.Pages {
         private void DgListView_Translate(object sender, EventArgs ex) {
             ((DataGrid)sender).Columns.ToList().ForEach(e => {
                 string headername = e.Header.ToString();
-                if (headername == "Name") e.Header = Resources["name"].ToString();
+                if (headername == "Value") e.Header = Resources["name"].ToString();
                 else if (headername == "Timestamp") e.Header = Resources["timestamp"].ToString();
 
                 //Hide System Columns

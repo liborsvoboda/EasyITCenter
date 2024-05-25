@@ -1,5 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.Classes;
+using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using EASYTools.SqlConnectionDialog;
@@ -98,7 +98,7 @@ namespace EasyITSystemCenter.Pages {
         private void DgListView_Translate(object sender, EventArgs ex) {
             ((DataGrid)sender).Columns.ToList().ForEach(e => {
                 string headername = e.Header.ToString();
-                if (headername == "Name") { e.Header = Resources["fname"].ToString(); e.DisplayIndex = 1; }
+                if (headername == "Value") { e.Header = Resources["fname"].ToString(); e.DisplayIndex = 1; }
                 else if (headername == "ValidFrom") { e.Header = Resources["validFrom"].ToString(); (e as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy"; }
                 else if (headername == "ValidTo") { e.Header = Resources["validTo"].ToString(); (e as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy"; }
                 else if (headername == "Algorithm") { e.Header = Resources["algorithm"].ToString(); e.Visibility = Visibility.Hidden; }

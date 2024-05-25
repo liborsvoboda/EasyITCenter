@@ -1,11 +1,9 @@
 ﻿using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using Newtonsoft.Json;
-using SimpleBrowser;
 using System;
 using System.Data;
 using System.Linq;
-using System.Management;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
