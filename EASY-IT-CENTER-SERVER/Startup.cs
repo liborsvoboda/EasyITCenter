@@ -125,15 +125,11 @@ namespace EasyITCenter {
             app.Use(async (HttpContext context, Func<Task> next) => { await next();
                 string requestPath = context.Request.Path.ToString().ToLower(); bool redirected = false;
 
-
                 //Excluded Urls For Server Browsing From Page Settings, redirected Defined paths
                 if (DbOperations.CheckDBServerApiRule(requestPath)?.Count() > 0
                 || (!string.IsNullOrEmpty(System.IO.Path.GetExtension(context.Request.Path)))
                 || context.Response.StatusCode == StatusCodes.Status301MovedPermanently || context.Response.StatusCode == StatusCodes.Status302Found
                 ) {return;}
-
-              
-
 
                 //Include TOKEN
                 context = CoreOperations.IncludeCookieTokenToRequest(context);
@@ -183,33 +179,23 @@ namespace EasyITCenter {
 
 
                 //Start DocPortal by Link Without index.md
-                if (routeLayout == RouteLayoutTypes.DocPortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) {
-                    redirected = true; context.Request.Path = "/DocPortal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-
+                if (routeLayout == RouteLayoutTypes.DocPortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) { redirected = true; context.Request.Path = "/DocPortal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
                 //Show MarkDownFile in Layout by missing .md extension
                 else if (routeLayout == RouteLayoutTypes.EditorHtmlFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) { redirected = true; context.Request.Path = "/ServerCoreTools/EditorHtmlFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-
-
                 //Show MarkDownFile in Layout by missing .md extension
                 else if (routeLayout == RouteLayoutTypes.ViewerMarkDownFileLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) { redirected = true; context.Request.Path = "/ServerCoreTools/ViewerMarkDownFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-
                 //Show Report File in Layout by .frx extension
                 else if (routeLayout == RouteLayoutTypes.ViewerReportFileLayout) { redirected = true; context.Request.Path = "/ServerCoreTools/ViewerReportFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-
                 //Show Portal in Layout
                 else if (routeLayout == RouteLayoutTypes.PortalLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) { redirected = true; context.Request.Path = "/Portal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-
                 //Show ServerModules
                 else if (routeLayout == RouteLayoutTypes.ServerModulesLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) { redirected = true; context.Request.Path = "/ServerModules"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-
                 //Others Type Detected
                 else if (context.Request.Path.ToString().ToLower() != fileValidUrl) { redirected = true; context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
 
                 if (!redirected && commandType == RoutingActionTypes.Return) { return; }
-
                 else if (!redirected && commandType == RoutingActionTypes.Next) { context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-
                 else if (!redirected && commandType == RoutingActionTypes.Next && context.Request.Path.ToString().ToLower() == fileValidUrl) { return; }
 
             });
@@ -292,11 +278,14 @@ namespace EasyITCenter {
                     { data = new EasyITCenterContext().ServerStaticOrMvcDefPathLists.Where(a => a.IsBrowsable && a.Active).ToList(); }
                 data.ForEach(path => {
                     try {
-                        app.UseFileServer(new FileServerOptions {
-                            FileProvider = new PhysicalFileProvider(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder, FileOperations.ConvertSystemFilePathFromUrl(path.WebRootSubPath))),
-                            RequestPath = (path.AliasPath != null && path.AliasPath.Length > 0 ? (path.AliasPath.StartsWith("/") ? path.AliasPath : "/" + path.AliasPath) : (path.WebRootSubPath.StartsWith("/") ? path.WebRootSubPath : "/" + path.WebRootSubPath)),
-                            EnableDirectoryBrowsing = true,
-                        }); ;
+                        app.UseFileServer(new FileServerOptions { 
+                            FileProvider = new PhysicalFileProvider(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder) + FileOperations.ConvertSystemFilePathFromUrl(path.WebRootSubPath)),
+                            RequestPath = path.WebRootSubPath.StartsWith("/") ? path.WebRootSubPath : "/" + path.WebRootSubPath,EnableDirectoryBrowsing = true
+                        });
+                        if (!string.IsNullOrWhiteSpace(path.AliasPath)) { app.UseFileServer(new FileServerOptions { FileProvider = new PhysicalFileProvider(Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder) + FileOperations.ConvertSystemFilePathFromUrl(path.WebRootSubPath)),
+                                RequestPath = !string.IsNullOrWhiteSpace(path.AliasPath) ? (path.AliasPath.StartsWith("/") ? path.AliasPath : "/" + path.AliasPath) :"", EnableDirectoryBrowsing = true
+                            });
+                        }
                     } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
                 });
             }

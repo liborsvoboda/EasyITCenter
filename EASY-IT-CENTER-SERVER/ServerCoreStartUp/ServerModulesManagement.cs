@@ -135,13 +135,13 @@ namespace EasyITCenter.ServerCoreConfiguration {
                         foreach (ServerLiveDataMonitorList monitor in data) {
                             services.AddLiveReload(config => {
                                 try {
-                                    if (FileOperations.CheckDirectory(Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath))) {
+                                    if (FileOperations.CheckDirectory(Path.Combine(ServerRuntimeData.Startup_path,ServerConfigSettings.DefaultStaticWebFilesFolder) + FileOperations.ConvertSystemFilePathFromUrl(monitor.RootPath))) {
                                         config.LiveReloadEnabled = true;
                                         config.ServerRefreshTimeout = 10000;
-                                        config.FolderToMonitor = Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath);
+                                        config.FolderToMonitor = Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder) + FileOperations.ConvertSystemFilePathFromUrl(monitor.RootPath);
                                         if (monitor.FileExtensions.Length > 0) { config.ClientFileExtensions = monitor.FileExtensions; }
                                     }
-                                    else { CoreOperations.SendEmail(new SendMailRequest() { Content = "Path For Live Data Monitoring not Exist" + System.IO.Path.Combine(ServerRuntimeData.Startup_path, monitor.RootPath.StartsWith("/") ? monitor.RootPath.Substring(1) : monitor.RootPath) }); }
+                                    else { CoreOperations.SendEmail(new SendMailRequest() { Content = "Path For Live Data Monitoring not Exist" + System.IO.Path.Combine(ServerRuntimeData.Startup_path, ServerConfigSettings.DefaultStaticWebFilesFolder) + FileOperations.ConvertSystemFilePathFromUrl(monitor.RootPath) }); }
                                 } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
                             });
                         }
@@ -174,7 +174,9 @@ namespace EasyITCenter.ServerCoreConfiguration {
                                 break;
 
                             case "folderExist":
-                                services.AddHealthChecks().AddFolder(folderOption => { folderOption.AddFolder(item.FolderPath); }, item.TaskName);
+                                if (item.FolderPath != null && FileOperations.CheckDirectory(item.FolderPath)) {
+                                    services.AddHealthChecks().AddFolder(folderOption => { folderOption.AddFolder(System.IO.Path.GetFullPath(item.FolderPath)); }, item.TaskName);
+                                }
                                 break;
 
                             case "processMemory":

@@ -3,7 +3,7 @@ using System.IO.Compression;
 
 namespace EasyITCenter.ServerCoreDBSettings {
 
-    [Authorize]
+ 
     [ApiController]
     [Route("ServerApi")]
      //[ApiExplorerSettings(IgnoreApi = true)]

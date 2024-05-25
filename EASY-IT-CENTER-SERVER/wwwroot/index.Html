@@ -6,12 +6,13 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="author" content="Libor Svoboda">
     <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
-    <link rel="icon" href="~/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./metro/interactive/icons.css" />
     <link rel="stylesheet" href="./metro/interactive/metro.css" />
     <script type="text/javascript" src="./metro/jquery/js/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" src="./metro/addons/js/js.cookie.min.js"></script>
     <script type="text/javascript" src="./metro/interactive/metro.all.js"></script>
+    <script type="text/javascript" src="./metro/interactive/globalStorage.js"></script>
     <script type="text/javascript" src="./metro/interactive/global.js"></script>
     <script type="text/javascript" src="./metro/jquery/js/jquery.printElement.js"></script>
     <script type="text/javascript" src="./metro/addons/js/jspdf.js"></script>
@@ -26,19 +27,24 @@
             <H1 class="text-bold p-0 m-0">EIC&ESB Interaktivní Knihovny Index</H1>
             pro Načtení POČKEJTE: zpracovávají se CELÉ WEBY na 20let starém SERVERU
         </div>
-        <div class="w-100 pos-fixed text-right p-4 pt-2" style=" z-index:10000;">
-            <div class="pos-absolute d-block" style="top:200px;width:220px;right:20px;">
-                <div id="google_translate_element"></div>
-                <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=ImageFromFrameElement();>Stáhni si Obrázek</a>
-                <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=DownloadFrameHtmlElement();>Stáhni si Html</a>
-                <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=CopyFrameElement();>Zkopíruj si mě</a>
-                <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=PrintFrameElement();>Vytiskni si mě</a>
-
-                <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick="googleTranslateElementInit();">Přelož mě</a>
-                <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=SaveToFavorites("GroupWareSolutionEu",window.location.href);>Uložte si mě do Oblíbených</a>
-                <!-- <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" id="button">Stáhněte si Portál</a> -->
-            </div>
+        <div id="charmPanel" data-role="charms" style="width:350px !important;height:calc(100% - 45px) !important;" data-position="right" data-opacity=".5">
+            <textarea id="NewMessage" data-role="textarea" data-auto-size="true" data-max-height="150" class="primary" placeholder="Zanechte mi Zprávu...."></textarea>
+            <button id="SendMessageBtn" class="button success mb-4" onclick="SendMessage()">Save Message</button>
+            <div id="MessageBox" class="d-block m-0 p-0" style="overflow-y: scroll;max-height: 500px;"></div>
         </div>
+        <!--  <div class="w-100 pos-fixed text-right p-4 pt-2" style=" z-index:10000;">
+             <div class="pos-absolute d-block" style="top:200px;width:220px;right:20px;">
+                 <div id="google_translate_element"></div>
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=ImageFromFrameElement();>Stáhni si Obrázek</a>
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=DownloadFrameHtmlElement();>Stáhni si Html</a>
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=CopyFrameElement();>Zkopíruj si mě</a>
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=PrintFrameElement();>Vytiskni si mě</a>
+
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick="googleTranslateElementInit();">Přelož mě</a>
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=SaveToFavorites("GroupWareSolutionEu",window.location.href);>Uložte si mě do Oblíbených</a>
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" id="button">Stáhněte si Portál</a>
+            </div>
+        </div> -->
 
         <div class="d-flow">
             <div class="pos-static">
@@ -52,6 +58,8 @@
                     <li onclick=ChangeSource('/server-distribution/gallery'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Galerie Systému</a></li>
                     <li onclick=ChangeSource('/server-doc/md-book/book/'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Vývojářská Bible</a></li>
                     <li onclick=ChangeSource('/portal'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Generický WebPortál</a></li>
+                    <li onclick=ChangeSource('/Downloads'); class="active drop-shadow"><a href="#" class="bg-lightGreen"><span class="mif-home icon"></span>Ke Stažení</a></li>
+                    <li onclick=ShowMessagePanel(); class="active drop-shadow "><a href="#" class="bg-lightOrange"><span class="mif-home icon"></span>Zanechte Zprávu</a></li>
                     <!-- <li class="active drop-shadow"><a href="https://kliknetezde.cz:8000"><span class="mif-home icon"></span>Systém ESB Online</a></li> -->
                     <!-- <li class="title">Title 2</li> -->
                     <!-- <li class="disabled"><a href="#">Disabled item</a></li> -->
@@ -222,7 +230,8 @@
         showPageLoading();
         $(document).ready(function () {
             setTimeout(() => { Mermaid(); }, 3000);
-            Metro.activity.close(pageLoader);
+            ShowMessagePanel(); GetMessages();
+            hidePageLoading();
         });
     </script>
 </body>

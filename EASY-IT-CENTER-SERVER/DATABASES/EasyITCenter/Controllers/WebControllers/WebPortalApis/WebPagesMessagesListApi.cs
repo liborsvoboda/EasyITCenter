@@ -15,11 +15,8 @@
         [Consumes("application/json")]
         public async Task<string> InsertWebPageMessagesList([FromBody] WebMessage webdata) {
             try {
-                //string authId = User.FindFirst(ClaimTypes.PrimarySid.ToString()).Value;
-                var user = new EasyITCenterContext().SolutionUserLists.Where(a => a.Id == 2).FirstOrDefault();
-                string name = DateTimeOffset.Now.Date.ToShortDateString() + " " + user?.SurName; name = name.Substring(0, name.Length < 45 ? name.Length : 40);
-
-                WebMessagesList record = new() { Name = name, Description = webdata.Message, UserId = 2, Active = true, TimeStamp = DateTimeOffset.Now.DateTime };
+                string name = DateTimeOffset.Now.UtcDateTime.ToString();
+                WebMessagesList record = new() { Name = name, Description = webdata.Message, UserId = 1, Active = true, TimeStamp = DateTimeOffset.Now.DateTime };
                 var data = new EasyITCenterContext().WebMessagesLists.Add(record);
                 int result = await data.Context.SaveChangesAsync();
                 if (result > 0) return JsonSerializer.Serialize(new DBResultMessage() { InsertedId = record.Id, Status = DBResult.success.ToString(), RecordCount = result, ErrorMessage = string.Empty });

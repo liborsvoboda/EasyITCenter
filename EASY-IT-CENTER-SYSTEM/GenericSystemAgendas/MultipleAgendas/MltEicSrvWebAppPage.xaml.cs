@@ -55,7 +55,9 @@ namespace EasyITSystemCenter.Pages {
                 systemCustomPageList = await CommunicationManager.GetApiRequest<SystemCustomPageList>(ApiUrls.EasyITCenterSystemCustomPageList, this.Uid.ToString(), App.UserData.Authentification.Token);
                 webBrowser.CoreWebView2InitializationCompleted += WebBrowser_CoreWebView2InitializationCompleted;
                 await webBrowser.EnsureCoreWebView2Async();
-                if (systemCustomPageList.ShowHelpTab && systemCustomPageList.InheritedHelpTabSourceType.ToLower().Contains("helpurl")) { await helpWebBrowser.EnsureCoreWebView2Async(); }
+                //TODO udelat vyber na markdown viewer nebo browser
+                if (systemCustomPageList.ShowHelpTab && systemCustomPageList.InheritedHelpTabSourceType.Contains("ApiUrl")) { await helpWebBrowser.EnsureCoreWebView2Async(); }
+                //if (systemCustomPageList.ShowHelpTab) { await helpWebBrowser.EnsureCoreWebView2Async(); }
 
                 _ = FormOperations.TranslateFormFields(ListView);
                 
@@ -79,10 +81,10 @@ namespace EasyITSystemCenter.Pages {
 
                 if (systemCustomPageList.ShowHelpTab && systemCustomPageList.HelpTabUrl != null) {
 
-                    switch (systemCustomPageList.InheritedHelpTabSourceType.ToLower()) {
-                        case "eicserverhelpurl":
+                    switch (systemCustomPageList.InheritedHelpTabSourceType) {
+                        case "eicserverapiurl":
                             ti_helpUrl.SetCurrentValue(VisibilityProperty, Visibility.Visible);
-                            helpWebBrowser.SetCurrentValue(Microsoft.Web.WebView2.Wpf.WebView2.SourceProperty, new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "conn_apiAddress").Value + $"{(systemCustomPageList.HelpTabUrl.StartsWith("/")?systemCustomPageList.HelpTabUrl:"/"+systemCustomPageList.HelpTabUrl)}"));
+                            helpWebBrowser.SetCurrentValue(Microsoft.Web.WebView2.Wpf.WebView2.SourceProperty, new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "conn_apiAddress").Value + $"{(systemCustomPageList.HelpTabUrl.StartsWith("/") ? systemCustomPageList.HelpTabUrl : "/" + systemCustomPageList.HelpTabUrl)}"));
                             break;
                         case "esbsystemhelpurl":
                             ti_helpUrl.SetCurrentValue(VisibilityProperty, Visibility.Visible);
@@ -92,16 +94,20 @@ namespace EasyITSystemCenter.Pages {
                             ti_helpUrl.SetCurrentValue(VisibilityProperty, Visibility.Visible);
                             helpWebBrowser.SetCurrentValue(Microsoft.Web.WebView2.Wpf.WebView2.SourceProperty, new Uri(systemCustomPageList.HelpTabUrl));
                             break;
-                        case "eicservermdfile":
+                        case "EicServerAuthGetApiContent":
+                            ti_helpDoc.SetCurrentValue(VisibilityProperty, Visibility.Visible);
+                            helpDocument.SetCurrentValue(MarkdownViewer.MarkdownProperty, await CommunicationManager.ApiManagerGetRequest(UrlSourceTypes.EicWebServerAuth, systemCustomPageList.HelpTabUrl));
+                            break;
+                        case "EicServerGetApiContent":
                             ti_helpDoc.SetCurrentValue(VisibilityProperty, Visibility.Visible);
                             helpDocument.SetCurrentValue(MarkdownViewer.MarkdownProperty, await CommunicationManager.ApiManagerGetRequest(UrlSourceTypes.EicWebServer, systemCustomPageList.HelpTabUrl));
                             break;
-                        case "esbsystemmdfile":
+                        case "EsbSystemGetApiContent":
                             ti_helpDoc.SetCurrentValue(VisibilityProperty, Visibility.Visible);
                             helpDocument.SetCurrentValue(MarkdownViewer.MarkdownProperty, await CommunicationManager.ApiManagerGetRequest(UrlSourceTypes.EsbWebServer, systemCustomPageList.HelpTabUrl));
-                            //helpDocument.Markdown = System.IO.File.ReadAllText(System.IO.Path.Combine(App.appRuntimeData.webDataUrlPath) + FileOperations.ConvertSystemFilePathFromUrl(systemCustomPageList.HelpTabUrl));
+                            //helpDocument.Markdown = File.ReadAllText(Path.Combine(App.appRuntimeData.webDataUrlPath) + FileOperations.ConvertSystemFilePathFromUrl(systemCustomPageList.HelpTabUrl));
                             break;
-                        case "publicwebmdfile":
+                        case "PublicWebGetApiContent":
                             ti_helpDoc.SetCurrentValue(VisibilityProperty, Visibility.Visible);
                             helpDocument.SetCurrentValue(MarkdownViewer.MarkdownProperty, await CommunicationManager.ApiManagerGetRequest(UrlSourceTypes.WebUrl, systemCustomPageList.HelpTabUrl));
                             break;

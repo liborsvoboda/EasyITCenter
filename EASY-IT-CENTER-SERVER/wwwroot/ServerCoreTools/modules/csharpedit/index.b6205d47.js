@@ -31787,6 +31787,7 @@ using EasyData;
 using EasyITCenter;
 using EasyITCenter.Services;
 using EasyITCenter.MessageModuleClasses;
+using EasyITCenter.ServerCoreStructure;
 
 namespace EasyITCenter{
 
@@ -31794,9 +31795,15 @@ static class ExtendedTemplateClassList {
     public static string test { get; set; }
 }
 
-void Main(object v DbSetExtensions) {
+    public class MyLibrary {
         
-    
+        private static void NewMethod() {
+
+            
+        }
+
+        
+    }
 }
 `.replace(/(\r\n|\r|\n)/g, "\r\n") // Parcel changes newlines to LF
     .replace(/^        /gm, "");

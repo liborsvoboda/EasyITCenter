@@ -306,28 +306,28 @@ namespace EasyITSystemCenter.GlobalGenerators {
                 if (new string[] { "int", "float", "double", "int32", "int64" }.Contains(fieldTypeResult.Item2)) {
                     try {
                         newRecord.ItemArray[index] = 0;
-                        userForm.FindChild<NumericUpDown>($"frm_{newRecord.Table.Columns[index].ColumnName}").Value = double.Parse(newRecord.ItemArray[index].ToString());
+                        try { userForm.FindChild<NumericUpDown>($"frm_{newRecord.Table.Columns[index].ColumnName}").Value = double.Parse(newRecord.ItemArray[index].ToString()); } catch { }
                         selectedRecord.Row.ItemArray[index] = newRecord.ItemArray[index];
                      } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
                 }
                 else if (new string[] { "date", "time", "datetime" }.Contains(fieldTypeResult.Item2)) {
                     try {
                         newRecord.ItemArray[index] = null;
-                        userForm.FindChild<DateTimePicker>($"frm_{newRecord.Table.Columns[index].ColumnName}").SelectedDate = null;
+                        try { userForm.FindChild<DateTimePicker>($"frm_{newRecord.Table.Columns[index].ColumnName}").SelectedDate = DateTime.Parse(newRecord.ItemArray[index].ToString()); } catch { }
                         selectedRecord.Row.ItemArray[index] = newRecord.ItemArray[index];
                     } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
                 }
                 else if (new string[] { "bool" }.Contains(fieldTypeResult.Item2)) {
                     try {
                         newRecord.ItemArray[index] = null;
-                        userForm.FindChild<CheckBox>($"frm_{newRecord.Table.Columns[index].ColumnName}").IsChecked = bool.Parse(newRecord.ItemArray[index].ToString());
+                        try { userForm.FindChild<CheckBox>($"frm_{newRecord.Table.Columns[index].ColumnName}").IsChecked = bool.Parse(newRecord.ItemArray[index].ToString()); } catch { }
                         selectedRecord.Row.ItemArray[index] = newRecord.ItemArray[index];
                     } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
                 }
                 else if (new string[] { "string" }.Contains(fieldTypeResult.Item2)) {
                     try {
                         newRecord.ItemArray[index] = null;
-                        userForm.FindChild<TextBox>($"frm_{newRecord.Table.Columns[index].ColumnName}").Text = newRecord.ItemArray[index].ToString();
+                        try { userForm.FindChild<TextBox>($"frm_{newRecord.Table.Columns[index].ColumnName}").Text = newRecord.ItemArray[index].ToString(); } catch { }
                         selectedRecord.Row.ItemArray[index] = newRecord.ItemArray[index];
                     } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
                 }
