@@ -47,11 +47,10 @@ namespace EasyITCenter.ServerCoreConfiguration {
         }
 
 
-
         /// <summary>
         /// Server Module: Configure Report Designer Module
         /// </summary>
-        /// <param name="app"></param>
+        /// <param name="services"></param>
         internal static void ConfigureReportDesigner(ref IServiceCollection services) => services.AddFastReport();
         
 
@@ -70,8 +69,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                             .UseDiagrams().UseEmphasisExtras().UseFigures().UseListExtras().UseFooters().UseFootnotes()
                             .UseGlobalization().UseMathematics().UseMediaLinks().UsePreciseSourceLocation().UseReferralLinks()
                             .UseSmartyPants().UseSyntaxHighlighting().UseTableOfContent().UseTaskLists().UseDFMCodeInfoPrefix()
-                            .UseHighlightJs().UseInteractiveCode().UseXref()
-                            //.UsePrism()
+                            .UseHighlightJs().UseInteractiveCode().UseXref()//.UsePrism()
                             .UseUrlRewriter(link => link.Url.AsRelativeResource())
                             //.UseUrlRewriter(link => link.Url.Replace(!ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS ? "https://" : "http://", !ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS ? "http://" : "https://"))
                             .UseFigures().UseTaskLists().UseCustomContainers().UseGenericAttributes();//.Build();
@@ -339,7 +337,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                 app.UseSwaggerUI(c => {
                     c.RoutePrefix = ServerConfigSettings.ModuleSwaggerApiDocPath.StartsWith("/") ? ServerConfigSettings.ModuleSwaggerApiDocPath.Substring(1) : ServerConfigSettings.ModuleSwaggerApiDocPath;
                     c.DocumentTitle = BackendServer.SwaggerModuleDescription;
-                    c.SwaggerEndpoint("/swagger/" + Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString() + "/swagger.json", "Server API version " + Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString());
+                    c.SwaggerEndpoint(ServerRuntimeData.OpenApiDescriptionFile, "Server API version " + Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString());
                     c.DocExpansion(DocExpansion.None);
                     c.EnableTryItOutByDefault();
                     c.DisplayRequestDuration();

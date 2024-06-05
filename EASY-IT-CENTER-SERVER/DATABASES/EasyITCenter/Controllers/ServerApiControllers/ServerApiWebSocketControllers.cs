@@ -40,7 +40,6 @@ namespace EasyITCenter.ServerCoreDBSettings {
                 using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
                 ServerCoreWebHelpers.AddSocketConnectionToCentralList(webSocket, "");
                 await ServerCoreWebHelpers.ListenClientWebSocketMessages(webSocket, "");
-
                 //await Echo(HttpContext, webSocket);
             }
             else {
@@ -48,6 +47,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
             }
         }
 
+        /*
         /// <summary>
         /// WebSocket Communication Set Examle
         /// </summary>
@@ -65,5 +65,6 @@ namespace EasyITCenter.ServerCoreDBSettings {
             await webSocket.CloseAsync(wsresult.CloseStatus.Value, wsresult.CloseStatusDescription,
             CancellationToken.None);
         }
+        */
     }
 }

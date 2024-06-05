@@ -247,6 +247,7 @@ async function SendMessage() {
 }
 
 //Get Messages
+/*
 async function GetMessages() {
     showPageLoading();
     let response = await fetch(Metro.storage.getItem('ApiOriginSuffix', null) + '/WebPages/GetMessageList', {
@@ -264,12 +265,13 @@ async function GetMessages() {
     
         let messageData = "";
         data.forEach(message => {
-            messageData += "<div class=\"card image-header\"><div class=\"card-content p-2 op-lightBrown-low\"><p class=\"fg-black\">" + message.Name + "</p>" + message.Description + "</div></div>";
+            messageData += "<div class=\"card image-header\"><div class=\"card-content p-2 op-lightBrown-low\"><p class=\"fg-black\">" + message.Name + "</p>" + JSON.stringify(message.Description) + "</div></div>";
         });
         $("#MessageBox").html(messageData);
         hidePageLoading();
     }
 }
+*/
 
 function ShowMessagePanel(close) {
     charms = Metro.getPlugin($("#charmPanel"), 'charms');

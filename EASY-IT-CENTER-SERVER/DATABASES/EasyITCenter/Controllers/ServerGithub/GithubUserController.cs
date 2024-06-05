@@ -49,7 +49,7 @@ namespace EasyITCenter.GitServer.Controllers
                     identity.AddClaim(new Claim(ClaimTypes.Email, user.InfoEmail));
                     var principal = new ClaimsPrincipal(identity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-                    return Redirect("/servercoretools/server-web/Github");
+                    return Redirect("/servercoretools/webpages/Github");
                 }
             }
             return View();
@@ -80,14 +80,14 @@ namespace EasyITCenter.GitServer.Controllers
                     Timestamp = DateTimeOffset.Now.DateTime
                 });
                 await dataAcept.Context.SaveChangesAsync();
-                return Redirect("/servercoretools/server-web/Github");
+                return Redirect("/servercoretools/webpages/Github");
             }
             return View();
         }
         public async Task<IActionResult> Signout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Redirect("/servercoretools/server-web/Github");
+            return Redirect("/servercoretools/webpages/Github");
         }
 
     }

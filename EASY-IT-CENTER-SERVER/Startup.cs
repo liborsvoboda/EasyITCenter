@@ -270,9 +270,7 @@ namespace EasyITCenter {
             ServerModulesEnabling.EnableDocumentation(ref app);
             ServerEnablingServices.EnableRssFeed(ref app);
 
-            if (ServerConfigSettings.WebBrowserContentEnabled) {
-                
-                //Browsable Path Definitions
+            if (ServerConfigSettings.WebBrowserContentEnabled) { //Browsable Path Definitions
                 List<ServerStaticOrMvcDefPathList> data;
                 using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) 
                     { data = new EasyITCenterContext().ServerStaticOrMvcDefPathLists.Where(a => a.IsBrowsable && a.Active).ToList(); }

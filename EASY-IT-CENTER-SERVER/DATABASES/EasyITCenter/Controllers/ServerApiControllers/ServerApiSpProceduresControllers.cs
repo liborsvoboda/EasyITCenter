@@ -43,7 +43,11 @@ namespace EasyITCenter.Controllers {
             }
             var data = DataOperations.CreateObjectTypeByTypeName(EntityTypeName);
             data = new EasyITCenterContext().ExecuteReader($"EXEC {procedureName} {parameters};");
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
+                ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                WriteIndented = true,
+                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
 

@@ -1,3 +1,15 @@
+https://github.com/MediaBrowser/Emby/wiki
+Home Media Server
+
+
+
+Dynamické Datatabulky 1 šablona pro celou DB
+https://github.com/fingers10/JqueryDataTablesServerSide/t
+ree/master
+https://github.com/timhobbs/DataTablesDotNet
+
+
+
 
 WPF česky
 https://learn.microsoft.com/cs-cz/dotnet/desktop/wpf/controls/toolbar?view=netframeworkdesktop-4.8

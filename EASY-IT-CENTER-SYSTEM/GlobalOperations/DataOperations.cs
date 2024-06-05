@@ -44,6 +44,14 @@ namespace EasyITSystemCenter.GlobalOperations {
             }
         }
 
+        /// <summary>
+        /// Object To Json Serializer
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string ObjectToJson(this object obj) {
+            return JsonSerializer.Serialize(obj);
+        }
 
         /// <summary>
         /// Return Requested User or if not exist default DB parameter CamelCase Ignored

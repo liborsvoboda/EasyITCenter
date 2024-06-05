@@ -151,10 +151,9 @@ namespace EasyITCenter.ServerCoreDBSettings {
 
 
         //TODO Udelat Vlastni System/WebBrowser s Funkcemi Download MD,List Md, Html, Atd
-        //BUDE TO tedy NetCore WebView2
         [HttpPost("/ServerApi/GeneratorServices/DownloadMarkdownFromUrlToStatic")]
         public async Task<string> DownloadMarkdownFromUrlToStatic(string markdownUrl) {
-            /*
+           /*
             var basePath = ServerRuntimeData.WebRoot_path;
             string relativePath = HttpContext.Request.Path;
             if (relativePath == null) return NotFound();

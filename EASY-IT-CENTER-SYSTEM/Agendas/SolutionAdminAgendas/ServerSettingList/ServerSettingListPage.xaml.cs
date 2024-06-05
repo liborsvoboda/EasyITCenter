@@ -213,7 +213,7 @@ namespace EasyITSystemCenter.Pages {
         //}
 
         private async void BtnRestartServer_Click(object sender, RoutedEventArgs e) {
-            DBResultMessage dBResultMessage = await CommunicationManager.GetApiRequest<DBResultMessage>(ApiUrls.CoreServerRestart, null, App.UserData.Authentification.Token);
+            DBResultMessage dBResultMessage = await CommunicationManager.GetApiRequest<DBResultMessage>(ApiUrls.ServerApi, "ManagementServices/CoreServerRestart", App.UserData.Authentification.Token);
             {
                 await MainWindow.ShowMessageOnMainWindow(false, dBResultMessage.ErrorMessage);
             }

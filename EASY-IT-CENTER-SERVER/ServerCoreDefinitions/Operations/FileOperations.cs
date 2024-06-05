@@ -13,7 +13,7 @@
                     CreatePath(ServerRuntimeData.Setting_folder);
                     CopyFile(System.IO.Path.Combine(ServerRuntimeData.Startup_path, ServerRuntimeData.DataPath, ServerRuntimeData.ConfigFile), System.IO.Path.Combine(ServerRuntimeData.Setting_folder, ServerRuntimeData.ConfigFile));
                 }
-                if (!CheckDirectory(ServerRuntimeData.UserPath)) { CreatePath(ServerRuntimeData.UserPath); }
+                //if (!CheckDirectory(ServerRuntimeData.UserPath)) { CreatePath(ServerRuntimeData.UserPath); }
             } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
         }
 

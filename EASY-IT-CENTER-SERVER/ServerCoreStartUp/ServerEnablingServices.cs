@@ -93,7 +93,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     endpoints.MapControllerRoute(name: "WebSites", pattern: "{controller=ServerCorePages}/{action=Index}/{id?}");
                 }
 
-
+                
                 //https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-8.0
                 //VYTVORIT AGENDU NA VLASTNI API PO RESETU
 

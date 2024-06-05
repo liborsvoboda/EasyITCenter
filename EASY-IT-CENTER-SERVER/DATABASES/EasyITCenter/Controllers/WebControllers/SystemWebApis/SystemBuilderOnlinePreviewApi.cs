@@ -83,7 +83,8 @@ namespace EasyITCenter.ServerCoreDBSettings {
                 }
 
                 string head;
-                using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) { head = new EasyITCenterContext().WebSettingLists.Where(a => a.Key == "WebBuilderHeadSection").First().Value; }
+                using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) 
+                    { head = new EasyITCenterContext().WebSettingLists.Where(a => a.Key == "WebBuilderHeadSection").First().Value; }
                 htmlData = head + Environment.NewLine;
 
                 htmlData += (!string.IsNullOrWhiteSpace(data.GuestHtmlContent) ? "<-- GuestHtmlContent -->" + Environment.NewLine + data.GuestHtmlContent + Environment.NewLine : "");

@@ -214,6 +214,8 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     option.DomainNames = domainList.ToArray();
                     option.EmailAddress = ServerConfigSettings.EmailerServiceEmailAddress;
                     option.AcceptTermsOfService = true;
+                    option.RenewDaysInAdvance = new TimeSpan(10, 0, 0, 0);
+                    option.RenewalCheckPeriod = new TimeSpan(1, 0, 0, 0);
                 }).PersistDataToDirectory(new DirectoryInfo(System.IO.Path.Combine(ServerRuntimeData.Startup_path, ServerRuntimeData.DataPath)), ServerConfigSettings.ConfigCertificatePassword);
             }
         }
