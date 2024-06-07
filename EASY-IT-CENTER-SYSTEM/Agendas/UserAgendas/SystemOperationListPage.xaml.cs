@@ -29,7 +29,6 @@ namespace EasyITSystemCenter.Pages {
 
         private List<SolutionMixedEnumList> mixedEnumTypesList = new List<SolutionMixedEnumList>();
         private List<SolutionOperationList> solutionOperationList = new List<SolutionOperationList>();
-        //private List<SystemSvgIconList> systemSvgIconList = new List<SystemSvgIconList>();
 
         public SystemOperationListPage() {
             InitializeComponent();
@@ -43,7 +42,6 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
                 mixedEnumTypesList = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/OperationTypes", App.UserData.Authentification.Token);
-                //systemSvgIconList = await CommApi.GetApiRequest<List<SystemSvgIconList>>(ApiUrls.EasyITCenterSystemSvgIconList, null, App.UserData.Authentification.Token);
                 solutionOperationList = await CommunicationManager.GetApiRequest<List<SolutionOperationList>>(ApiUrls.EasyITCenterSolutionOperationList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
 
                 //Generate Menu Panel
@@ -77,7 +75,7 @@ namespace EasyITSystemCenter.Pages {
                     };
 
                     BitmapImage spinner = new BitmapImage();
-                    switch (panel.InheritedTypeName) {
+                    switch (panel.InheritedOperationTypes) {
                         case "DB_SP_GET_Operace":
                             spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), App.SystemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner").SvgIconPath);
                             break;
@@ -102,7 +100,7 @@ namespace EasyITSystemCenter.Pages {
                     Image icon = new Image() { Width = 120, Height = 120, Source = spinner };
                     toolPanel.Content = icon;
                     toolPanel.Click += ToolPanelListPage_Click;
-                    ((WrapPanel)TabMenuList.FindChild<TabItem>(Regex.Replace(solutionOperationList.Where(a => a.Id == int.Parse(toolPanel.Tag.ToString())).First().InheritedTypeName, @"[^a-zA-Z]", "_")).Content).Children.Add(toolPanel);
+                    ((WrapPanel)TabMenuList.FindChild<TabItem>(Regex.Replace(solutionOperationList.Where(a => a.Id == int.Parse(toolPanel.Tag.ToString())).First().InheritedOperationTypes, @"[^a-zA-Z]", "_")).Content).Children.Add(toolPanel);
                 }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden; return true;
@@ -115,14 +113,14 @@ namespace EasyITSystemCenter.Pages {
             List<GenericValue> jsonResponse = null; string json = null;
 
             try { //Request
-                switch (selectedPanel.InheritedTypeName) {
-                    case "DB_SP_GET_Operace":
-                        if (selectedPanel.InheritedResultTypeName == "message") {
+                switch (selectedPanel.InheritedOperationTypes) {
+                    case "DbSpDirectOperation":
+                        if (selectedPanel.InheritedApiResultTypes == "Message") {
                             messageResponse = await CommunicationManager.GetApiRequest<List<CustomOneRowList>>(ApiUrls.ServerApi, "DatabaseServices/SpProcedure/Message/" + selectedPanel.InputData, App.UserData.Authentification.Token);
                             json = messageResponse[0].MessageList;
                         }
                         else {
-                            jsonResponse = await CommunicationManager.GetApiRequest<List<GenericValue>>(ApiUrls.ServerApi, "DatabaseServices/SpProcedure/Json/" + selectedPanel.InputData, App.UserData.Authentification.Token);
+                            jsonResponse = await CommunicationManager.GetApiRequest<List<GenericValue>>(ApiUrls.ServerApi, "DatabaseServices/SpProcedure/File/" + selectedPanel.InputData, App.UserData.Authentification.Token);
                             JavaScriptSerializer serializer = new JavaScriptSerializer(); json = "{";
                             jsonResponse.ForEach(key => {
                                 DeserializedJson jsonObject = serializer.Deserialize<DeserializedJson>(key.Value);
@@ -132,19 +130,16 @@ namespace EasyITSystemCenter.Pages {
                         }
                         break;
 
-                    case "DB_SP_POST_Operace":
+                    case "DbSpConfigOperation":
                         //response = await CommApi.PostApiRequest<List<GlobalClasses.Message>>(ApiUrls.EasyITCenterSystemOperations, selectedPanel.InputData, App.UserData.Authentification.Token);
                         //json = response[0].MessageList;
                         break;
 
-                    case "API_GET_Request":
-                        using (HttpClient httpClient = new HttpClient()) {
-                            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", App.UserData.Authentification.Token);
-                            json = await httpClient.GetStringAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + (selectedPanel.InputData.StartsWith("/") ? selectedPanel.InputData.Substring(1) : selectedPanel.InputData));
-                        }
+                    case "ServerApiGetRequest":
+                        json = await CommunicationManager.ApiManagerGetRequest(UrlSourceTypes.EicWebServerAuth, selectedPanel.InputData);
                         break;
 
-                    case "API_POST_Request":
+                    case "ServerApiConfigRequest":
                         break;
                 }
                 MainWindow.progressRing = Visibility.Hidden;
@@ -153,8 +148,8 @@ namespace EasyITSystemCenter.Pages {
             try {
                
                 //Response
-                switch (selectedPanel.InheritedResultTypeName) {
-                    case "message":
+                switch (selectedPanel.InheritedApiResultTypes) {
+                    case "Message":
                         if (json == null) { await MainWindow.ShowMessageOnMainWindow(true, await DBOperations.DBTranslation("EmptyResponse")); }
                         else { await MainWindow.ShowMessageOnMainWindow(false, json); }
                         break;
@@ -176,5 +171,16 @@ namespace EasyITSystemCenter.Pages {
             MainWindow.DataGridSelected = MainWindow.DataGridSelectedIdListIndicator = false; MainWindow.dataGridSelectedId = 0; MainWindow.DgRefresh = false;
             dataViewSupport.FormShown = true;
         }
+
+
+        private void BtnRunPopup_Click(object sender, RoutedEventArgs e) {
+
+        }
+
+
+        private void BtnCancelPopup_Click(object sender, RoutedEventArgs e) {
+            pop_configOperationRequest.Visibility = Visibility.Hidden;
+        }
+
     }
 }

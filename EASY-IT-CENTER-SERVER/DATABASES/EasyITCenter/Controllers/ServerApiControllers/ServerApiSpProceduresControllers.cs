@@ -68,7 +68,7 @@ namespace EasyITCenter.Controllers {
         /// </summary>
         /// <param name="procedureName"></param>
         /// <returns></returns>
-        [HttpGet("/ServerApi/DatabaseServices/SpProcedure/Json/{procedureName}")]
+        [HttpGet("/ServerApi/DatabaseServices/SpProcedure/File/{procedureName}")]
         public async Task<string> GetSystemOperationsListJson(string procedureName) {
             List<DBJsonFile> data = null;
             data = new EasyITCenterContext().EasyITCenterCollectionFromSql<DBJsonFile>($"EXEC {procedureName};");

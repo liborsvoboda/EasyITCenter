@@ -9,7 +9,7 @@
 
         [StringLength(50)]
         [Unicode(false)]
-        public string InheritedTypeName { get; set; } = null!;
+        public string InheritedOperationTypes { get; set; } = null!;
 
         [StringLength(255)]
         [Unicode(false)]
@@ -20,7 +20,7 @@
 
         [StringLength(50)]
         [Unicode(false)]
-        public string InheritedResultTypeName { get; set; } = null!;
+        public string InheritedApiResultTypes { get; set; } = null!;
 
         [Column(TypeName = "text")]
         public string? Description { get; set; }
