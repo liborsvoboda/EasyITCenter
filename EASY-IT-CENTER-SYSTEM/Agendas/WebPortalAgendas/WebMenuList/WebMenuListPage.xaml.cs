@@ -81,7 +81,7 @@ namespace EasyITSystemCenter.Pages {
                     else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 7; }
                     else if (headername == "Description".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
 
-                    else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "TimeStamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
                     else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
                     else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
                     else if (headername == "GroupId".ToLower()) e.Visibility = Visibility.Hidden;

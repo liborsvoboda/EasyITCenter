@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using static XamlMath.Rendering.Transformations.Transformation;
 
 namespace EasyITSystemCenter.Pages {
 
@@ -22,21 +24,16 @@ namespace EasyITSystemCenter.Pages {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
         public static BusinessAddressList selectedRecord = new BusinessAddressList();
 
+        private List<SolutionMixedEnumList> inheritedAddressTypesList = new List<SolutionMixedEnumList>();
+
+
         public BusinessAddressListPage() {
             InitializeComponent();
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
-            ObservableCollection<TranslateSet> addressType = new ObservableCollection<TranslateSet>() {
-                                                               new TranslateSet() { Name = Resources["all"].ToString(), Value = "all" },
-                                                               new TranslateSet() { Name = Resources["customer"].ToString(), Value = "customer" },
-                                                               new TranslateSet() { Name = Resources["supplier"].ToString(), Value = "supplier" },
-                                                             };
-
             try {
                 _ = FormOperations.TranslateFormFields(ListForm);
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-
-            cb_addressType.ItemsSource = addressType;
 
             _ = LoadDataList();
             SetRecord(false);
@@ -45,7 +42,16 @@ namespace EasyITSystemCenter.Pages {
         //change datasource
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
-            try { if (MainWindow.serviceRunning) DgListView.ItemsSource = await CommunicationManager.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token); } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+            try {
+
+                DgListView.ItemsSource = await CommunicationManager.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
+                inheritedAddressTypesList = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/AddressTypes", App.UserData.Authentification.Token);
+                inheritedAddressTypesList.ForEach(async item => item.Translation = await DBOperations.DBTranslation(item.Name));
+
+                cb_addressType.ItemsSource = inheritedAddressTypesList;
+
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
 
             MainWindow.ProgressRing = Visibility.Hidden; return true;
         }
@@ -69,6 +75,7 @@ namespace EasyITSystemCenter.Pages {
                 else if (headername == "UnlockActivationHit") { e.Header = Resources["unlockActivationHit"].ToString(); e.DisplayIndex = DgListView.Columns.Count - 4; }
                 else if (headername == "Active") { e.Header = Resources["active"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
                 else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+
                 else if (headername == "Id") e.DisplayIndex = 0;
                 else if (headername == "UserId") e.Visibility = Visibility.Hidden;
                 else if (headername == "AddressType") e.Visibility = Visibility.Hidden;
@@ -76,23 +83,13 @@ namespace EasyITSystemCenter.Pages {
             });
         }
 
-        //change filter fields
         public void Filter(string filter) {
             try {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    BusinessAddressList report = e as BusinessAddressList;
-                    return report.AddressType.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.CompanyName) && report.CompanyName.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.ContactName) && report.ContactName.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.Street) && report.Street.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.City) && report.City.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.PostCode) && report.PostCode.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.Phone) && report.Phone.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.Email) && report.Email.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.BankAccount) && report.BankAccount.ToLower().Contains(filter.ToLower())
-                    || report.AddressType.ToLower().Contains(filter.ToLower());
+                    DataRowView search = e as DataRowView;
+                    return search.ObjectToJson().ToLower().Contains(filter.ToLower());
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
@@ -149,7 +146,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Phone = txt_phone.Text;
                 selectedRecord.Email = txt_email.Text;
                 selectedRecord.BankAccount = txt_bankAccount.Text;
-                selectedRecord.AddressType = ((TranslateSet)cb_addressType.SelectedItem).Value;
+                selectedRecord.AddressType = ((SolutionMixedEnumList)cb_addressType.SelectedItem).Name;
                 selectedRecord.Ico = txt_ico.Text;
                 selectedRecord.Dic = txt_dic.Text;
                 selectedRecord.Active = (bool)chb_active.IsChecked;
@@ -179,20 +176,22 @@ namespace EasyITSystemCenter.Pages {
 
         //change dataset prepare for working
         private void SetRecord(bool? showForm = null, bool copy = false) {
-            txt_id.Value = (copy) ? 0 : selectedRecord.Id;
-            txt_companyName.Text = selectedRecord.CompanyName;
-            txt_contactName.Text = selectedRecord.ContactName;
-            txt_street.Text = selectedRecord.Street;
-            txt_city.Text = selectedRecord.City;
-            txt_postCode.Text = selectedRecord.PostCode;
-            txt_phone.Text = selectedRecord.Phone;
-            txt_email.Text = selectedRecord.Email;
-            txt_bankAccount.Text = selectedRecord.BankAccount;
-            cb_addressType.Text = (selectedRecord.AddressType != null) ? Resources[selectedRecord.AddressType].ToString() : null;
-            txt_ico.Text = selectedRecord.Ico;
-            txt_dic.Text = selectedRecord.Dic;
+            try {
+                txt_id.Value = (copy) ? 0 : selectedRecord.Id;
+                txt_companyName.Text = selectedRecord.CompanyName;
+                txt_contactName.Text = selectedRecord.ContactName;
+                txt_street.Text = selectedRecord.Street;
+                txt_city.Text = selectedRecord.City;
+                txt_postCode.Text = selectedRecord.PostCode;
+                txt_phone.Text = selectedRecord.Phone;
+                txt_email.Text = selectedRecord.Email;
+                txt_bankAccount.Text = selectedRecord.BankAccount;
+                cb_addressType.SelectedValue = (selectedRecord.AddressType != null) ? inheritedAddressTypesList.FirstOrDefault(a => a.Name == selectedRecord.AddressType).Name : inheritedAddressTypesList.FirstOrDefault().Name;
+                txt_ico.Text = selectedRecord.Ico;
+                txt_dic.Text = selectedRecord.Dic;
 
-            chb_active.IsChecked = selectedRecord.Active;
+                chb_active.IsChecked = selectedRecord.Active;
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             if (showForm != null && showForm == true) {
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;

@@ -25,7 +25,7 @@
         [Unicode(false)]
         public string License { get; set; } = null!;
 
-        public DateTime ActivateDate { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         [StringLength(50)]
         [Unicode(false)]

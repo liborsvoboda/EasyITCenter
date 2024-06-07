@@ -45,7 +45,7 @@ namespace EasyITSystemCenter.Pages {
                         AlgorithmName = record.AlgorithmName,
                         PartNumber = record.PartNumber,
                         License = record.License,
-                        ActivateDate = record.ActivateDate,
+                        TimeStamp = record.TimeStamp,
                         ItemId = record.ItemId,
                         AddressId = record.AddressId,
                         ItemName = itemList.Where(a => a.Id == record.ItemId).First().Name,
@@ -73,10 +73,10 @@ namespace EasyITSystemCenter.Pages {
                 else if (headername == "AlgorithmName") { e.Header = Resources["algorithmName"].ToString(); e.DisplayIndex = 2; }
                 else if (headername == "License") e.Header = Resources["license"].ToString();
                 else if (headername == "Activated") e.Header = Resources["activated"].ToString();
-                else if (headername == "ActivateDate") e.Header = Resources["activateDate"].ToString();
+                else if (headername == "TimeStamp") e.Header = Resources["activateDate"].ToString();
                 else if (headername == "IpAddress") e.Header = Resources["ipAddress"].ToString();
                 else if (headername == "Active") { e.Header = Resources["active"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
-                else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
                 else if (headername == "Id") e.DisplayIndex = 0;
                 else if (headername == "UserId") e.Visibility = Visibility.Hidden;
                 else if (headername == "ItemId") e.Visibility = Visibility.Hidden;
@@ -110,9 +110,9 @@ namespace EasyITSystemCenter.Pages {
                     || LicenseList.License.ToLower().Contains(filter.ToLower())
                     || LicenseList.AlgorithmName.ToLower().Contains(filter.ToLower())
                     || LicenseList.CompanyName.ToLower().Contains(filter.ToLower())
-                    || LicenseList.ActivateDate.Value.ToShortDateString().ToLower().Contains(filter.ToLower())
+                    || LicenseList.TimeStamp.Value.ToShortDateString().ToLower().Contains(filter.ToLower())
                     || !string.IsNullOrEmpty(LicenseList.IpAddress) && LicenseList.IpAddress.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(LicenseList.ActivateDate.Value.ToString()) && LicenseList.ActivateDate.Value.ToUniversalTime().ToString().ToLower().Contains(filter.ToLower());
+                    || !string.IsNullOrEmpty(LicenseList.TimeStamp.Value.ToString()) && LicenseList.TimeStamp.Value.ToUniversalTime().ToString().ToLower().Contains(filter.ToLower());
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }

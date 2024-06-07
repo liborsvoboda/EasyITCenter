@@ -90,7 +90,7 @@ namespace EasyITSystemCenter.Pages {
                     else if (headername == "Type") e.Header = Resources["processType"].ToString();
                     else if (headername == "Command") e.Header = Resources["command"].ToString();
                     else if (headername == "Description") e.Header = Resources["description"].ToString();
-                    else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
                     else if (headername == "Id") e.DisplayIndex = 0;
                     else if (headername == "ToolTypeId") e.Visibility = Visibility.Hidden;
                     else if (headername == "BitmapImage") e.Visibility = Visibility.Hidden;
@@ -170,7 +170,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Description = txt_description.Text;
 
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");

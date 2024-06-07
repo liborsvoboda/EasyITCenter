@@ -66,7 +66,7 @@ namespace EasyITSystemCenter.Pages {
                 else if (headername == "Note") e.Header = Resources["description"].ToString();
                 else if (headername == "PcsPerHour") { e.Header = Resources["pcsPerHour"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
                 else if (headername == "KcPerKs") { e.Header = Resources["kcPerKs"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
 
                 //Hide System Columns
                 else if (headername == "Id") e.DisplayIndex = 0;
@@ -143,7 +143,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.PcsPerHour = (int)txt_pcsPerHour.Value;
                 selectedRecord.KcPerKs = (decimal)txt_kcPerKs.Value;
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
@@ -172,7 +172,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.PcsPerHour = (int)txt_pcsPerHour.Value;
                 selectedRecord.KcPerKs = (decimal)txt_kcPerKs.Value;
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");

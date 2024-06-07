@@ -13,7 +13,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         public decimal Amount { get; set; }
         public decimal WorkPower { get; set; }
         public int UserId { get; set; } = 0;
-        public DateTime? Timestamp { get; set; } = null;
+        public DateTime? TimeStamp { get; set; } = null;
     }
 
     public partial class ExtendedWorkList : ProdGuidWorkList {

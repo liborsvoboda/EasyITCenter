@@ -46,7 +46,7 @@ namespace EasyITSystemCenter.Pages {
                 if (headername == "Value") e.Header = Resources["fname"].ToString();
                 else if (headername == "WorkPlace") e.Header = Resources["workPlace"].ToString();
                 else if (headername == "Number") e.Header = Resources["partNumber"].ToString();
-                else if (headername == "Timestamp") e.Header = Resources["timestamp"].ToString();
+                else if (headername == "TimeStamp") e.Header = Resources["timestamp"].ToString();
 
                 //Hide System Columns
                 else if (headername == "Id") e.DisplayIndex = 0;
@@ -116,7 +116,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Number = tb_partNumber.Text;
                 selectedRecord.Name = tb_name.Text;
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
@@ -142,7 +142,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Number = tb_partNumber.Text;
                 selectedRecord.Name = tb_name.Text;
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");

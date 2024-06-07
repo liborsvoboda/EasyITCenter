@@ -1,6 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
 using EasyITSystemCenter.GlobalClasses;
-using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
@@ -125,7 +124,7 @@ namespace EasyITSystemCenter.Pages {
                     else if (headername == "Description") e.Header = Resources["description"].ToString();
                     else if (headername == "TotalPriceWithVat") { e.Header = Resources["totalPriceWithVat"].ToString(); e.DisplayIndex = 4; e.CellStyle = ProgramaticStyles.gridTextRightAligment; (e as DataGridTextColumn).Binding.StringFormat = "N2"; }
                     else if (headername == "TotalCurrency") { e.Header = Resources["currency"].ToString(); e.DisplayIndex = 5; }
-                    else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
                     else if (headername == "Id") e.DisplayIndex = 0;
                     else if (headername == "UserId") e.Visibility = Visibility.Hidden;
                     else if (headername == "TotalCurrencyId") e.Visibility = Visibility.Hidden;
@@ -133,18 +132,18 @@ namespace EasyITSystemCenter.Pages {
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
 
-        //change filter fields
+
         public void Filter(string filter) {
             try {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    ExtendedOutgoingOrderList user = e as ExtendedOutgoingOrderList;
-                    return user.Customer.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(user.Description) && user.Description.ToLower().Contains(filter.ToLower());
+                    DataRowView search = e as DataRowView;
+                    return search.ObjectToJson().ToLower().Contains(filter.ToLower());
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
+
 
         public void NewRecord() {
             selectedRecord = new ExtendedOutgoingOrderList();
@@ -442,7 +441,7 @@ namespace EasyITSystemCenter.Pages {
         private async void SetSubListsNonActiveOnNewItem(bool newItem) {
             if (newItem) {
                 cb_totalCurrency.ItemsSource = CurrencyList.Where(a => a.Active).ToList();
-                AddressList = (await CommunicationManager.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token)).Where(a => a.Active && (a.AddressType == "all" || a.AddressType == "supplier")).ToList();
+                AddressList = (await CommunicationManager.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token)).Where(a => a.Active && (a.AddressType == "All" || a.AddressType == "Supplier")).ToList();
                 ItemList = (await CommunicationManager.GetApiRequest<List<BasicItemList>>(ApiUrls.EasyITCenterBasicItemList, null, App.UserData.Authentification.Token)).Where(a => a.Active).ToList();
                 cb_notes.ItemsSource = NotesList.Where(a => a.Active).ToList();
                 cb_unit.ItemsSource = UnitList.Where(a => a.Active).ToList();
@@ -450,7 +449,7 @@ namespace EasyITSystemCenter.Pages {
             }
             else {
                 cb_totalCurrency.ItemsSource = CurrencyList;
-                AddressList = (await CommunicationManager.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token)).Where(a => a.AddressType == "all" || a.AddressType == "supplier").ToList();
+                AddressList = (await CommunicationManager.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token)).Where(a => a.AddressType == "All" || a.AddressType == "Supplier").ToList();
                 ItemList = await CommunicationManager.GetApiRequest<List<BasicItemList>>(ApiUrls.EasyITCenterBasicItemList, null, App.UserData.Authentification.Token);
                 cb_notes.ItemsSource = NotesList; cb_unit.ItemsSource = UnitList; cb_vat.ItemsSource = VatList;
             }

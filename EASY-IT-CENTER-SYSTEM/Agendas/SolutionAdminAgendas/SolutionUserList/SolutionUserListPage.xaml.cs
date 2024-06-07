@@ -73,7 +73,7 @@ namespace EasyITSystemCenter.Pages {
                 else if (headername == "Description") e.Header = await DBOperations.DBTranslation(headername);
                 else if (headername == "Expiration".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
                 else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
-                else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                else if (headername == "TimeStamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
                 else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
                 else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
                 else if (headername == "RoleId".ToLower()) e.Visibility = Visibility.Hidden;
@@ -153,7 +153,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.InfoEmail = txt_infoEmail.Text;
                 selectedRecord.Description = txt_description.Text;
                 selectedRecord.Active = (bool)chb_active.IsChecked;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
                 selectedRecord.Token = txt_token.Text;
                 selectedRecord.Expiration = dp_expiration.Value;
 
@@ -196,7 +196,7 @@ namespace EasyITSystemCenter.Pages {
             txt_infoEmail.Text = selectedRecord.InfoEmail;
             txt_description.Text = selectedRecord.Description;
             chb_active.IsChecked = (selectedRecord.Id == 0) ? bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_activeNewInputDefault").Value) : selectedRecord.Active;
-            dp_timestamp.Value = selectedRecord.Timestamp;
+            dp_timestamp.Value = selectedRecord.TimeStamp;
             txt_token.Text = selectedRecord.Token;
             dp_expiration.Value = selectedRecord.Expiration;
             img_photoPath.Source = (!string.IsNullOrWhiteSpace(selectedRecord.PhotoPath)) ? MediaOperations.ByteToImage(selectedRecord.Photo) : new BitmapImage(DataResources.GetImageResource("no_photo.png"));

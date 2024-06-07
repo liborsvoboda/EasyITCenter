@@ -1,6 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
 using EasyITSystemCenter.GlobalClasses;
-using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
@@ -77,7 +76,7 @@ namespace EasyITSystemCenter.Pages {
                 defaultAddress = await CommunicationManager.GetApiRequest<BusinessBranchList>(ApiUrls.EasyITCenterBusinessBranchList, "Active", App.UserData.Authentification.Token);
                 DocumentAdviceList = await CommunicationManager.GetApiRequest<SystemDocumentAdviceList>(ApiUrls.EasyITCenterSystemDocumentAdviceList, "outgoingInvoice/" + defaultAddress.Id, App.UserData.Authentification.Token);
                 if (DocumentAdviceList == null) { await MainWindow.ShowMessageOnMainWindow(true, await DBOperations.DBTranslation("documentAdviceNotSet"), false); }
-                AddressList = (await CommunicationManager.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token)).Where(a => a.AddressType == "all" || a.AddressType == "supplier").ToList();
+                AddressList = (await CommunicationManager.GetApiRequest<List<BusinessAddressList>>(ApiUrls.EasyITCenterBusinessAddressList, null, App.UserData.Authentification.Token)).Where(a => a.AddressType == "All" || a.AddressType == "Supplier").ToList();
                 cb_totalCurrency.ItemsSource = CurrencyList = await CommunicationManager.GetApiRequest<List<BasicCurrencyList>>(ApiUrls.EasyITCenterBasicCurrencyList, null, App.UserData.Authentification.Token);
                 cb_notes.ItemsSource = NotesList = await CommunicationManager.GetApiRequest<List<BusinessNotesList>>(ApiUrls.EasyITCenterBusinessNotesList, null, App.UserData.Authentification.Token);
                 cb_maturity.ItemsSource = MaturityList = await CommunicationManager.GetApiRequest<List<BusinessMaturityList>>(ApiUrls.EasyITCenterBusinessMaturityList, null, App.UserData.Authentification.Token);
@@ -169,22 +168,18 @@ namespace EasyITSystemCenter.Pages {
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
 
-        //change filter fields
+
         public void Filter(string filter) {
             try {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    ExtendedOutgoingInvoiceList invoice = e as ExtendedOutgoingInvoiceList;
-                    return invoice.Customer.ToLower().Contains(filter.ToLower())
-                    || invoice.DocumentNumber.ToLower().Contains(filter.ToLower())
-                    || invoice.IssueDate.ToShortDateString().ToLower().Contains(filter.ToLower())
-                    || invoice.MaturityDate.ToShortDateString().ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(invoice.OrderNumber) && invoice.OrderNumber.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(invoice.Description) && invoice.Description.ToLower().Contains(filter.ToLower());
+                    DataRowView search = e as DataRowView;
+                    return search.ObjectToJson().ToLower().Contains(filter.ToLower());
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
+
 
         public void NewRecord() {
             selectedRecord = new ExtendedOutgoingInvoiceList();

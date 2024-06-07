@@ -20,7 +20,7 @@
         public decimal WorkPower { get; set; }
 
         public int UserId { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         public virtual ProdGuidPersonList PersonalNumberNavigation { get; set; } = null!;
 

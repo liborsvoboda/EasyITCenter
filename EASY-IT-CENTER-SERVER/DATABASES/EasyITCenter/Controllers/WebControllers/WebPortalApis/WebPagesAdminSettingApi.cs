@@ -17,12 +17,12 @@
 
                     record.Settings.ForEach(setting => {
                         if (webSettingList.FirstOrDefault(a => a.Key == setting.Key) == null) {
-                            var data = new EasyITCenterContext().WebSettingLists.Add(new WebSettingList() { Key = setting.Key, Value = setting.Value, UserId = int.Parse(authId), Timestamp = DateTimeOffset.Now.DateTime });
+                            var data = new EasyITCenterContext().WebSettingLists.Add(new WebSettingList() { Key = setting.Key, Value = setting.Value, UserId = int.Parse(authId), TimeStamp = DateTimeOffset.Now.DateTime });
                             int result = data.Context.SaveChanges();
                         }
                         else {
                             webSettingList.FirstOrDefault(a => a.Key == setting.Key).Value = setting.Value;
-                            webSettingList.FirstOrDefault(a => a.Key == setting.Key).Timestamp = DateTimeOffset.Now.DateTime;
+                            webSettingList.FirstOrDefault(a => a.Key == setting.Key).TimeStamp = DateTimeOffset.Now.DateTime;
                             var data = new EasyITCenterContext().WebSettingLists.Update(webSettingList.First(a => a.Key == setting.Key));
                             int result = data.Context.SaveChanges();
                         }

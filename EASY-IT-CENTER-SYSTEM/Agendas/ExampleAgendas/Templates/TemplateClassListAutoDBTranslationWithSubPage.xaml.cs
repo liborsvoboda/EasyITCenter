@@ -159,7 +159,7 @@ namespace EasyITSystemCenter.Pages {
                     else if (headername == "Description") e.Header = await DBOperations.DBTranslation(headername);
                     else if (headername == "TotalPriceWithVat") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 5; e.CellStyle = ProgramaticStyles.gridTextRightAligment; (e as DataGridTextColumn).Binding.StringFormat = "N2"; }
                     else if (headername == "TotalCurrency") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 6; }
-                    else if (headername == "Timestamp") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "TimeStamp") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
                     else if (headername == "Id") e.DisplayIndex = 0;
                     else if (headername == "UserId") e.Visibility = Visibility.Hidden;
                     else if (headername == "TotalCurrencyId") e.Visibility = Visibility.Hidden;

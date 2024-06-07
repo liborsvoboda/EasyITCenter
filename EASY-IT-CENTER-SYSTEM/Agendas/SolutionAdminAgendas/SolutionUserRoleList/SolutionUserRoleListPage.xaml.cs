@@ -55,7 +55,7 @@ namespace EasyITSystemCenter.Pages {
                 else if (headername == "Translation".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
                 else if (headername == "minimalAccessValue".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
                 else if (headername == "Description".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
-                else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                else if (headername == "TimeStamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
 
                 else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
                 else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
@@ -126,7 +126,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.SystemName = txt_systemName.Text;
                 selectedRecord.MinimalAccessValue = (int)txt_minimalAccessValue.Value;
                 selectedRecord.Description = txt_description.Text;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 selectedRecord.Translation = null;
                 string json = JsonConvert.SerializeObject(selectedRecord);
@@ -159,7 +159,7 @@ namespace EasyITSystemCenter.Pages {
                 txt_minimalAccessValue.Value = selectedRecord.MinimalAccessValue;
                 text_translation.Content = selectedRecord.Translation;
                 txt_description.Text = selectedRecord.Description;
-                dp_timestamp.Value = selectedRecord.Timestamp;
+                dp_timestamp.Value = selectedRecord.TimeStamp;
 
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 

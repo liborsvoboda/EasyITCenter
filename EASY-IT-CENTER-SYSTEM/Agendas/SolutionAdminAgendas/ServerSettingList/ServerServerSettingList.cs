@@ -12,7 +12,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string Link { get; set; }
         public int UserId { get; set; }
         public bool Active { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         public string GroupNameTranslation { get; set; } = null;
         public string KeyTranslation { get; set; } = null;

@@ -14,7 +14,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         public bool SearchFilterIgnore { get; set; }
         public int? RecId { get; set; } = 0;
         public bool RecIdFilterIgnore { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         public string TranslatedTableName { get; set; } = null;
     }

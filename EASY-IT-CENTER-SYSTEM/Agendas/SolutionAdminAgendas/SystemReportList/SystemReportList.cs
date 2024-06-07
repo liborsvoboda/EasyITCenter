@@ -13,7 +13,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string MimeType { get; set; } = null;
         public byte[] File { get; set; } = null;
         public int UserId { get; set; }
-        public DateTime? Timestamp { get; set; }
+        public DateTime? TimeStamp { get; set; }
 
         public string PageTranslation { get; set; } = null;
         public string Translation { get; set; } = null;

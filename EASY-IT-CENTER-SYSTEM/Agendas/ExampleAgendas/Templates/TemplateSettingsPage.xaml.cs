@@ -21,17 +21,8 @@ namespace EasyITSystemCenter.Pages {
         /// Standartized declaring static page data for global vorking with pages
         /// </summary>
         public static DataViewSupport dataViewSupport = new DataViewSupport();
-
         public static TemplateClassList selectedRecord = new TemplateClassList();
 
-        /// <summary>
-        /// Define Collection For Combobox
-        /// </summary>
-        public ObservableCollection<TranslateSet> Languages = new ObservableCollection<TranslateSet>() {
-                                                                new TranslateSet() { Name = "System", Value = "system" },
-                                                                new TranslateSet() { Name = "Czech", Value = "cs-CZ" },
-                                                                new TranslateSet() { Name = "English", Value = "en-US" }
-                                                             };
 
         /// <summary>
         /// Initialize page with loading Dictionary and start loding data Manual work needed
@@ -65,7 +56,7 @@ namespace EasyITSystemCenter.Pages {
             chb_activeNewInputDefault.IsChecked = bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key == "beh_activeNewInputDefault").Value);
             txt_powerBuilderPath.Text = App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_reportingPath").Value;
 
-            cb_defaultLanguage.ItemsSource = Languages;
+            cb_defaultLanguage.ItemsSource = SystemLocalEnumSets.Languages;
 
           
         }

@@ -10,7 +10,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         /// <summary>
         /// Client Setting Offline enum of Languages
         /// </summary>
-        public static ObservableCollection<TranslateSet> languages = new ObservableCollection<TranslateSet>() {
+        public static ObservableCollection<TranslateSet> Languages = new ObservableCollection<TranslateSet>() {
                                                                 new TranslateSet() { Name = "System", Value = "system" },
                                                                 new TranslateSet() { Name =  "czech", Value = "cs-CZ" },
                                                                 new TranslateSet() { Name = "English", Value = "en-US" }
@@ -18,7 +18,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         /// <summary>
         /// Client Setting offline enum Updater States
         /// </summary>
-        public static ObservableCollection<TranslateSet> updateVariants = new ObservableCollection<TranslateSet>() {
+        public static ObservableCollection<TranslateSet> UpdateVariants = new ObservableCollection<TranslateSet>() {
                                                                 new TranslateSet() { Name = "never", Value = "never" },
                                                                 new TranslateSet() { Name = "showInfo", Value = "showInfo"},
                                                                 new TranslateSet() { Name ="automaticDownload", Value = "automaticDownload"},
@@ -27,7 +27,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         /// <summary>
         /// Client Setting offline enum Menu Groups
         /// </summary>
-        public static ObservableCollection<TranslateSet> sections = new ObservableCollection<TranslateSet>() {
+        public static ObservableCollection<TranslateSet> ConfigTypes = new ObservableCollection<TranslateSet>() {
                                                                 new TranslateSet() { Name ="connection", Value = "connection" },
                                                                 new TranslateSet() { Name ="system", Value = "system"},
                                                                 new TranslateSet() { Name ="appearance", Value = "appearance"},

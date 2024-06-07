@@ -7,7 +7,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string SystemName { get; set; } = null;
         public int MinimalAccessValue { get; set; }
         public string Description { get; set; } = null;
-        public DateTime? Timestamp { get; set; } = null;
+        public DateTime? TimeStamp { get; set; } = null;
 
         public string Translation { get; set; } = null;
     }

@@ -44,7 +44,7 @@ namespace EasyITSystemCenter.Pages {
                 if (headername == "UnlockCode") { e.Header = Resources["unlockCode"].ToString(); }
                 else if (headername == "IpAddress") e.Header = Resources["ipAddress"].ToString();
                 else if (headername == "PartNumber") e.Header = Resources["partNumber"].ToString();
-                else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
                 else if (headername == "Id") e.DisplayIndex = 0;
                 else if (headername == "UserId") e.Visibility = Visibility.Hidden;
             });

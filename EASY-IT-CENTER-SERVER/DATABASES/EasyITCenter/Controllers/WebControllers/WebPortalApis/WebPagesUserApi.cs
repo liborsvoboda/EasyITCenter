@@ -30,7 +30,7 @@
                     }
 
                     //Send Verify Email
-                    SolutionEmailTemplateList template = new EasyITCenterContext().SolutionEmailTemplateLists.Where(a => a.TemplateName.ToLower() == "verification" && a.SystemLanguage.SystemName.ToLower() == record.Language.ToLower()).FirstOrDefault();
+                    SolutionEmailTemplateList template = new EasyITCenterContext().SolutionEmailTemplateLists.Where(a => a.TemplateName.ToLower() == "Verification".ToLower() && a.SystemLanguage.SystemName.ToLower() == record.Language.ToLower()).FirstOrDefault();
                     SendMailRequest mailRequest = new SendMailRequest();
                     if (template != null) {
                         mailRequest = new SendMailRequest() {
@@ -80,18 +80,18 @@
                 if (origUser != null) {
                     origUser.Password = record.Password;
                     origUser.Active = true;
-                    origUser.Timestamp = DateTimeOffset.Now.DateTime;
+                    origUser.TimeStamp = DateTimeOffset.Now.DateTime;
                     var data = new EasyITCenterContext().SolutionUserLists.Update(origUser);
                     result = await data.Context.SaveChangesAsync();
                 }
                 else {
-                    origUser = new() { RoleId = 4, UserName = record.EmailAddress, Password = record.Password, Name = record.EmailAddress, SurName = record.EmailAddress, Active = true, Timestamp = DateTimeOffset.Now.DateTime };
+                    origUser = new() { RoleId = 4, UserName = record.EmailAddress, Password = record.Password, Name = record.EmailAddress, SurName = record.EmailAddress, Active = true, TimeStamp = DateTimeOffset.Now.DateTime };
                     var data = new EasyITCenterContext().SolutionUserLists.Add(origUser);
                     result = await data.Context.SaveChangesAsync();
                 }
 
                 //Send Reg Email
-                SolutionEmailTemplateList template = new EasyITCenterContext().SolutionEmailTemplateLists.Where(a => a.TemplateName.ToLower() == "registration" && a.SystemLanguage.SystemName.ToLower() == record.Language.ToLower()).FirstOrDefault();
+                SolutionEmailTemplateList template = new EasyITCenterContext().SolutionEmailTemplateLists.Where(a => a.TemplateName.ToLower() == "Registration".ToLower() && a.SystemLanguage.SystemName.ToLower() == record.Language.ToLower()).FirstOrDefault();
                 SendMailRequest mailRequest = new SendMailRequest();
                 if (template != null) {
                     mailRequest = new SendMailRequest() {
@@ -141,7 +141,7 @@
                     dbdata.Context.SaveChanges();
 
                     //Send ResetPassword Email
-                    SolutionEmailTemplateList template = new EasyITCenterContext().SolutionEmailTemplateLists.Where(a => a.TemplateName.ToLower() == "resetPassword" && a.SystemLanguage.SystemName.ToLower() == record.Language.ToLower()).FirstOrDefault();
+                    SolutionEmailTemplateList template = new EasyITCenterContext().SolutionEmailTemplateLists.Where(a => a.TemplateName.ToLower() == "ResetPassword".ToLower() && a.SystemLanguage.SystemName.ToLower() == record.Language.ToLower()).FirstOrDefault();
                     SendMailRequest mailRequest = new SendMailRequest();
                     if (template != null) {
                         mailRequest = new SendMailRequest() {
@@ -179,7 +179,7 @@
                     if (record.Password != null && record.Password.Length > 0) { user.Password = record.Password; }
                     user.Name = record.Firstname;
                     user.SurName = record.Lastname;
-                    user.Timestamp = DateTimeOffset.Now.DateTime;
+                    user.TimeStamp = DateTimeOffset.Now.DateTime;
 
                     var data = new EasyITCenterContext().SolutionUserLists.Update(user);
                     int result = await data.Context.SaveChangesAsync();

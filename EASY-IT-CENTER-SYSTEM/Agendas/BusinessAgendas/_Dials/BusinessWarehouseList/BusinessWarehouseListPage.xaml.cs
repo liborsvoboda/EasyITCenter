@@ -53,7 +53,7 @@ namespace EasyITSystemCenter.Pages {
                     else if (headername == "LockedByStockTaking") e.Header = Resources["lockedByStockTaking"].ToString();
                     else if (headername == "LastStockTaking") { e.Header = Resources["lastStockTaking"].ToString(); (e as DataGridTextColumn).Binding.StringFormat = "dd.MM.yyyy HH:mm:ss"; }
                     else if (headername == "Active") { e.Header = Resources["active"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
-                    else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
                     else if (headername == "Id") e.DisplayIndex = 0;
                     else if (headername == "UserId") e.Visibility = Visibility.Hidden;
                 });

@@ -18,6 +18,6 @@
         [Unicode(false)]
         public string UserName { get; set; } = null!;
 
-        public DateTime Timestamp { get; set; }
+        public DateTime TimeStamp { get; set; }
     }
 }

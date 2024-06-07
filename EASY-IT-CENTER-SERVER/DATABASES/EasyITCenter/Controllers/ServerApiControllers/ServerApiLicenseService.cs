@@ -1,11 +1,11 @@
 ﻿namespace EasyITCenter.ControllersExtensions {
 
     [ApiController]
-    [Route("LicenseActivator")]
+    [Route("ServerApi")]
     public class LicenseActivatorApi : ControllerBase {
 
         [AllowAnonymous]
-        [HttpGet("/LicenseActivator/{UnlockCode}/{PartNumber}")]
+        [HttpGet("/ServerApi/LicenseServices/Activation/{UnlockCode}/{PartNumber}")]
         public async Task<string> GetLicenseActivator(string unlockCode, string partNumber) {
             string data = string.Empty; List<SqlParameter> parameters = new(); bool allowed = false; bool catched = false;
             try {
@@ -18,7 +18,7 @@
                         new SqlParameter { ParameterName = "@ipAddress", Value = clientIPAddr },
                         new SqlParameter { ParameterName = "@allowed" , Value = allowed, Direction = System.Data.ParameterDirection.Output} };
 
-                        data = new EasyITCenterContext().Database.ExecuteSqlRaw("exec CheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output", parameters.ToArray()).ToString();
+                        data = new EasyITCenterContext().Database.ExecuteSqlRaw("exec SpServiceCheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output", parameters.ToArray()).ToString();
                         allowed = bool.Parse(parameters[3].Value.ToString());
                     }
                 }
@@ -31,7 +31,7 @@
                     new SqlParameter { ParameterName = "@ipAddress", Value = "Unknown" },
                     new SqlParameter { ParameterName = "@allowed" , Value = allowed, Direction = System.Data.ParameterDirection.Output} };
 
-                    data = new EasyITCenterContext().Database.ExecuteSqlRaw("exec CheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output", parameters.ToArray()).ToString();
+                    data = new EasyITCenterContext().Database.ExecuteSqlRaw("exec SpServiceCheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output", parameters.ToArray()).ToString();
                     allowed = bool.Parse(parameters[3].Value.ToString());
                 }
             } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
@@ -39,7 +39,7 @@
         }
 
         [AllowAnonymous]
-        [HttpPost("LicenseActivator")]
+        [HttpPost("/ServerApi/LicenseServices/Activation")]
         [Consumes("application/json")]
         public async Task<string> PostLicenseActivator([FromBody] LicenseCheckRequest record) {
             string data = string.Empty; List<SqlParameter> parameters = new(); bool allowed = false; bool catched = false;
@@ -53,7 +53,7 @@
                         new SqlParameter { ParameterName = "@ipAddress", Value = clientIPAddr },
                         new SqlParameter { ParameterName = "@allowed" , Value = allowed, Direction = System.Data.ParameterDirection.Output} };
 
-                        data = new EasyITCenterContext().Database.ExecuteSqlRaw("exec CheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output", parameters.ToArray()).ToString();
+                        data = new EasyITCenterContext().Database.ExecuteSqlRaw("exec SpServiceCheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output", parameters.ToArray()).ToString();
                         allowed = bool.Parse(parameters[3].Value.ToString());
                     }
                 }
@@ -66,7 +66,7 @@
                         new SqlParameter { ParameterName = "@ipAddress", Value = "Unknown" },
                         new SqlParameter { ParameterName = "@allowed" , Value = allowed, Direction = System.Data.ParameterDirection.Output} };
 
-                    data = new EasyITCenterContext().Database.ExecuteSqlRaw("exec CheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output", parameters.ToArray()).ToString();
+                    data = new EasyITCenterContext().Database.ExecuteSqlRaw("exec SpServiceCheckUnlockKey @unlockCode, @partNumber , @ipAddress, @allowed output", parameters.ToArray()).ToString();
                     allowed = bool.Parse(parameters[3].Value.ToString());
                 }
             } catch { }

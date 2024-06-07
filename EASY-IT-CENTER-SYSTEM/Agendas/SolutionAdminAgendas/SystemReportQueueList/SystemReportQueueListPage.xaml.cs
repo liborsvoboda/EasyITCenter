@@ -82,7 +82,7 @@ namespace EasyITSystemCenter.Pages {
                     else if (headername == "SearchColumnList") e.Header = Resources["searchColumnList"].ToString();
                     else if (headername == "SearchFilterIgnore") { e.Header = Resources["searchFilterIgnore"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
                     else if (headername == "RecIdFilterIgnore") { e.Header = Resources["recIdFilterIgnore"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                    else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
                     else if (headername == "Id") e.DisplayIndex = 0;
                     else if (headername == "Filter") e.Visibility = Visibility.Hidden;
                     else if (headername == "Search") e.Visibility = Visibility.Hidden;
@@ -162,7 +162,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.SearchColumnList = txt_searchColumnList.Text;
                 selectedRecord.SearchFilterIgnore = (bool)chb_searchFilterIgnore.IsChecked;
                 selectedRecord.RecIdFilterIgnore = (bool)chb_recIdFilterIgnore.IsChecked;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");

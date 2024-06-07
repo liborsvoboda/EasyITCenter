@@ -1,13 +1,11 @@
 ﻿using EasyITSystemCenter.Api;
 using EasyITSystemCenter.GlobalClasses;
-using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using MahApps.Metro.Controls.Dialogs;
 using Markdig;
 using Markdig.Wpf;
 using Microsoft.Web.WebView2.Core;
 using Pek.Markdig.HighlightJs;
-using SimpleBrowser;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,10 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using WebView2.DevTools.Dom;
 using EasyITSystemCenter.GlobalGenerators;
-using System.Collections;
-using Catel.Collections;
-
-
+using Gu.Localization;
 
 
 namespace EasyITSystemCenter.Pages {
@@ -32,14 +27,13 @@ namespace EasyITSystemCenter.Pages {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
         public static DataRowView selectedRecord = null;
 
-        private DataRow newRow;
         private DataTable definedDataList = new DataTable();
         private SystemCustomPageList systemCustomPageList = new SystemCustomPageList();
         private List<SolutionMixedEnumList> solutionMixedEnumList = new List<SolutionMixedEnumList>();
         List<Dictionary<string, string>> RecordForSave = new List<Dictionary<string, string>>();
         private Dictionary<string, string> webElement = new Dictionary<string, string>();
         private WebView2DevToolsContext devToolsContext;
-        string WebBrowserData = "";
+        string WebBrowserData = "";bool DataLoaded = false;
         string WebBrowserCommandResult = "";
             
         public MltTblGenEsbSrvFormPage() {
@@ -64,7 +58,7 @@ namespace EasyITSystemCenter.Pages {
             //Initiate WebBrowsers
             webBrowser.CoreWebView2InitializationCompleted += WebBrowser_CoreWebView2InitializationCompleted;
             webBrowser.EnsureCoreWebView2Async(null);
-            if (systemCustomPageList.ShowHelpTab && systemCustomPageList.InheritedHelpTabSourceType.ToLower().Contains("helpurl")) { helpWebBrowser.EnsureCoreWebView2Async(null); }
+            if (systemCustomPageList.ShowHelpTab && systemCustomPageList.InheritedHelpTabSourceType.ToLower().Contains("apiurl")) { helpWebBrowser.EnsureCoreWebView2Async(null); }
             else if (systemCustomPageList.ShowHelpTab) {
                 new MarkdownPipelineBuilder().UseEmphasisExtras().UseAbbreviations().UseAdvancedExtensions().UseBootstrap()
                 .UseDiagrams().UseEmphasisExtras().UseEmojiAndSmiley(true).UseDefinitionLists().UseTableOfContent().UseTaskLists()
@@ -76,24 +70,8 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
-
-                
                 await GetGenericTableData();
-                //DOM Initiate
-                //webElement = new Dictionary<string, string>();
-                //webElement.Add(systemCustomPageList.ColumnName, "text");
-                //devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
-                //var htmlDivElement = await devToolsContext.QuerySelectorAsync<HtmlDivElement>("#myDivElementId");
-                //await htmlDivElement.SetInnerTextAsync("Welcome!");
-                //await htmlDivElement.GetInnerTextAsync();
-
-
-
-                ////Initiate WebBrowsers
-                //webBrowser.CoreWebView2InitializationCompleted += WebBrowser_CoreWebView2InitializationCompleted;
-                //await webBrowser.EnsureCoreWebView2Async(null);
-                //if (systemCustomPageList.ShowHelpTab && systemCustomPageList.InheritedHelpTabSourceType.ToLower().Contains("helpurl")) { await helpWebBrowser.EnsureCoreWebView2Async(null); }
-
+            
                 _ = FormOperations.TranslateFormFields(ListView);
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden;
@@ -113,35 +91,33 @@ namespace EasyITSystemCenter.Pages {
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
 
-
         public void Filter(string filter) {
             try {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => { DataRowView search = e as DataRowView;
-                    return search.ToJson().ToLower().Contains(filter.ToLower()); };
+                    return search.ObjectToJson().ToLower().Contains(filter.ToLower()); };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
 
-
-
         public void NewRecord() {
-            DgListView.Items.Add(newRow); DgListView.Items.MoveCurrentToLast();
-            selectedRecord = ((DataRow)DgListView.Items.CurrentItem).Table.AsDataView()[0];
-            SetRecord(true);
+            definedDataList.Rows.Add(definedDataList.NewRow()); definedDataList.Rows[definedDataList.Rows.Count - 1][0] = 0;
+            DgListView.ItemsSource = definedDataList.AsDataView(); DgListView.SelectedIndex = definedDataList.Rows.Count - 1;
+            selectedRecord = (DataRowView)DgListView.SelectedItem;
+            SetRecord(true, true, false);
         }
 
         public void EditRecord(bool copy) {
             selectedRecord = (DataRowView)DgListView.SelectedItem;
-            dataViewSupport.SelectedRecordId = int.Parse(((DataRowView)DgListView.SelectedItem).Row.ItemArray[0].ToString());
-            SetRecord(true, copy);
+            dataViewSupport.SelectedRecordId = copy ? 0 : int.Parse(((DataRowView)DgListView.SelectedItem).Row.ItemArray[0].ToString());
+            SetRecord(true, false, copy);
         }
 
         public async void DeleteRecord() {
             selectedRecord = (DataRowView)DgListView.SelectedItem;
             dataViewSupport.SelectedRecordId = int.Parse(((DataRowView)DgListView.SelectedItem).Row.ItemArray[0].ToString());
 
-            MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, Resources["deleteRecordQuestion"].ToString() + " " + int.Parse(((DataRowView)DgListView.SelectedItem).Row.ItemArray[0].ToString()), true);
+            MessageDialogResult result = await MainWindow.ShowMessageOnMainWindow(false, await DBOperations.DBTranslation("deleteRecordQuestion") + " " + int.Parse(((DataRowView)DgListView.SelectedItem).Row.ItemArray[0].ToString()), true);
             if (result == MessageDialogResult.Affirmative) {
                 DBResultMessage dBResult = await CommunicationManager.DeleteApiRequest(ApiUrls.SolutionWebsiteList, ((DataRowView)DgListView.SelectedItem).Row.ItemArray[0].ToString(), App.UserData.Authentification.Token);
                 if (dBResult.RecordCount == 0) await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage);
@@ -171,12 +147,12 @@ namespace EasyITSystemCenter.Pages {
                 if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(null); 
                     devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();}
 
-                string dataForBrowser = XamlFormGenerators.StandardXamlDataFormController(ref userForm, ref selectedRecord, ref RecordForSave, false, systemCustomPageList);
+                string dataForBrowser = XamlFormGenerators.StandardXamlFillDataToForm(ref userForm, ref selectedRecord, ref RecordForSave, false, systemCustomPageList,false, false);
                 if (selectedRecord != null ) {
                     if (!string.IsNullOrWhiteSpace(WebBrowserData) && systemCustomPageList.UseIooverDom) { await DOMGetDataFromBrowser(); }
                     else if (!string.IsNullOrWhiteSpace(WebBrowserData)) { await JSGetDataFromBrowser(); }
                 } else if(selectedRecord == null) {
-                    await MainWindow.ShowMessageOnMainWindow(true, "Any Data For Save");
+                    await MainWindow.ShowMessageOnMainWindow(true, await DBOperations.DBTranslation("AnyDataForSave"));
                 }
                 else {
                     //INSERT DATA TO SAVE COOLECTION 
@@ -207,41 +183,54 @@ namespace EasyITSystemCenter.Pages {
 
 
 
-        private async void SetRecord(bool? showForm = null, bool copy = false) {
+        private async void SetRecord(bool? showForm = null,bool newRec = false, bool copy = false) {
             try {
                 //SET FOMRS 
-                if (int.Parse(selectedRecord.Row.ItemArray[0].ToString()) == 0) { XamlFormGenerators.DataFormNewRecordReset(ref newRow, ref userForm, ref selectedRecord); }
-                else { XamlFormGenerators.StandardXamlDataFormController(ref userForm,ref selectedRecord, ref RecordForSave, true, systemCustomPageList); }
+                DataLoaded = false;
+                if (showForm != null && showForm == true) {
+                    int recIt = DgListView.SelectedItem == null ? 0 : int.Parse(selectedRecord[0].ToString());
+                    MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = recIt != 0;
+                    MainWindow.dataGridSelectedId = recIt; MainWindow.DgRefresh = false;
+                    ListView.Visibility = Visibility.Hidden; ListForm.Visibility = Visibility.Visible; dataViewSupport.FormShown = true;
+                }
+                else {
+                    int recIt = DgListView.SelectedItem == null ? 0 : int.Parse(selectedRecord[0].ToString());
+                    MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = recIt != 0;
+                    MainWindow.dataGridSelectedId = recIt; MainWindow.DgRefresh = true;
+                    ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; dataViewSupport.FormShown = showForm == null && !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key.ToLower() == "beh_closeformaftersave".ToLower()).Value);
+                }
 
-                //REINIT WEBVIEW
-                if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(null); }
-                devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
+                if (showForm == true) {
+                    WebBrowserData = XamlFormGenerators.StandardXamlFillDataToForm(ref userForm, ref selectedRecord, ref RecordForSave, true, systemCustomPageList, newRec, copy).ObjectToJson(); 
+                 
 
-                //SET DATA TO FORM AND BROWSER
-                if (!string.IsNullOrWhiteSpace(WebBrowserData) && systemCustomPageList.UseIooverDom) {await DOMSetDataFromBrowser();} 
-                else if(!string.IsNullOrWhiteSpace(WebBrowserData)) { await JSSetDataFromBrowser();}
-          
-            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                    //REINIT WEBVIEW
+                    if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(null); }
+                    devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
 
-            if (showForm != null && showForm == true) {
-                int recIt = DgListView.SelectedItem == null ? 0 : int.Parse(selectedRecord.Row.ItemArray[0].ToString());
-                MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = recIt != 0;
-                MainWindow.dataGridSelectedId = recIt; MainWindow.DgRefresh = false;
-                ListView.Visibility = Visibility.Hidden; ListForm.Visibility = Visibility.Visible; dataViewSupport.FormShown = true;
-            }
-            else {
-                int recIt = DgListView.SelectedItem == null ? 0 : int.Parse(selectedRecord.Row.ItemArray[0].ToString());
-                MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = recIt != 0;
-                MainWindow.dataGridSelectedId = recIt; MainWindow.DgRefresh = true;
-                ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; dataViewSupport.FormShown = showForm == null && !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key.ToLower() == "beh_closeformaftersave".ToLower()).Value);
-            }
+                    //SET DATA TO FORM AND BROWSER
+                    if (!string.IsNullOrWhiteSpace(WebBrowserData) && systemCustomPageList.UseIooverDom) { await DOMSetDataFromBrowser(); }
+                    else if (!string.IsNullOrWhiteSpace(WebBrowserData)) { await JSSetDataFromBrowser(); }
+                    DataLoaded = true;
+                    TabMenuList.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, 0);
+                }
+
+            } 
+            catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden;
         }
 
 
         private async void BtnSave_Click(object sender, RoutedEventArgs e) => await SaveForm(false);
         private async void BtnSaveClose_Click(object sender, RoutedEventArgs e) => await SaveForm(true);
-        private void BtnCancel_Click(object sender, RoutedEventArgs e) { SetRecord(false); }
+        private void BtnCancel_Click(object sender, RoutedEventArgs e) {
+            if (DgListView.SelectedIndex > -1 && ((DataRowView)DgListView.SelectedItem)[0].ToString() == "0") { 
+                definedDataList.Rows.RemoveAt(DgListView.SelectedIndex);
+                //DgListView.SelectedIndex = -1;
+                DgListView.ItemsSource = definedDataList.AsDataView();
+            }
+            SetRecord(false); 
+        }
 
         /// <summary>
         /// Generic API Request
@@ -252,28 +241,28 @@ namespace EasyITSystemCenter.Pages {
             if (systemCustomPageList.Id == 0) {
                 systemCustomPageList = await CommunicationManager.GetApiRequest<SystemCustomPageList>(ApiUrls.EasyITCenterSystemCustomPageList, this.Uid.ToString(), App.UserData.Authentification.Token);
             }
-            List<Dictionary<string, string>> parameters = new List<Dictionary<string, string>>();
-            parameters.Add(new Dictionary<string, string>() { { "SpProcedure", "SpGetTableDataList" } });
-            parameters.Add(new Dictionary<string, string>() { { "tableName", systemCustomPageList.DbtableName } });
-            parameters.Add(new Dictionary<string, string>() { { "userRole", App.UserData.Authentification.Role } });
-            parameters.Add(new Dictionary<string, string>() { { "userId", App.UserData.Authentification.Id.ToString() } });
+            List<Dictionary<string, string>> parameters = new List<Dictionary<string, string>> {
+                new Dictionary<string, string>() { { "SpProcedure", "SpGetTableDataList" } },
+                new Dictionary<string, string>() { { "tableName", systemCustomPageList.DbtableName } },
+                new Dictionary<string, string>() { { "userRole", App.UserData.Authentification.Role } },
+                new Dictionary<string, string>() { { "userId", App.UserData.Authentification.Id.ToString() } }
+            };
 
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(parameters);
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
             definedDataList = await CommunicationManager.ApiManagerPostRequest<DataTable>(UrlSourceTypes.EicWebServerGenericGetTableApi, null, httpContent);
             DgListView.SetCurrentValue(ItemsControl.ItemsSourceProperty, definedDataList.AsDataView());
-            newRow = definedDataList.Rows[0];
             await LoadInheritedDataList();
 
             //Generate User Form 
             userForm = XamlFormGenerators.StandardXamlFormViewGenerator(ref userForm, definedDataList, systemCustomPageList, solutionMixedEnumList);
+            await FormOperations.TranslateFormFields(userForm);
 
-            bool res = XamlFormGenerators.DataFormNewRecordReset(ref newRow, ref userForm, ref selectedRecord);
             TabMenuList.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, 0);
             userForm.UpdateLayout();
             MainWindow.ProgressRing = Visibility.Hidden;
             await FormOperations.TranslateFormFields(ListForm);
-            await FormOperations.TranslateFormFields(userForm);
+            
             return true;
 
         }
@@ -282,6 +271,7 @@ namespace EasyITSystemCenter.Pages {
         private async Task<bool> LoadInheritedDataList() {
             if (systemCustomPageList?.InheritedSetName?.Length > 0) {
                 solutionMixedEnumList = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/" + systemCustomPageList.InheritedSetName, App.UserData.Authentification.Token);
+                solutionMixedEnumList.ForEach(async item => item.Translation = await DBOperations.DBTranslation(item.Name));
             } return true;
         }
 
@@ -331,42 +321,43 @@ namespace EasyITSystemCenter.Pages {
                     }
                 }
 
-            } catch { } try {
+            } catch { }
+            try {
                 webBrowser.CoreWebView2.ContextMenuRequested += async delegate (object sender1, CoreWebView2ContextMenuRequestedEventArgs args) {
                     IList<CoreWebView2ContextMenuItem> menuList = args.MenuItems;
                     CoreWebView2ContextMenuItem openConsole = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("openConsole"), null, CoreWebView2ContextMenuItemKind.Command); openConsole.CustomItemSelected += openConsoleSelected;
                     CoreWebView2ContextMenuItem openTaskManager = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("printPage"), null, CoreWebView2ContextMenuItemKind.Command); openTaskManager.CustomItemSelected += openTaskManagerSelected;
                     CoreWebView2ContextMenuItem testJsSetCommand = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("Run JS Set Browser Command Test Data"), null, CoreWebView2ContextMenuItemKind.Command); testJsSetCommand.CustomItemSelected += TestJsSetCommandSelected;
-                    CoreWebView2ContextMenuItem testJsGetCommand = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("Run JS Get Browser Command"), null, CoreWebView2ContextMenuItemKind.Command); testJsGetCommand.CustomItemSelected += TestJsGetCommandSelected;
                     CoreWebView2ContextMenuItem testDOMSetCommand = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("Run DOM Set Browser Command Test Data"), null, CoreWebView2ContextMenuItemKind.Command); testDOMSetCommand.CustomItemSelected += TestDOMSetCommandSelected;
-                    CoreWebView2ContextMenuItem testDOMGetCommand = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("Run DOM Get Browser Command"), null, CoreWebView2ContextMenuItemKind.Command); testDOMGetCommand.CustomItemSelected += TestDOMGetCommandSelected;
-                    CoreWebView2ContextMenuItem testJSSetFormCommand = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("Run JS Set Browser Command Form Data"), null, CoreWebView2ContextMenuItemKind.Command); testJSSetFormCommand.CustomItemSelected += TestJsSetFORMCommandSelected;
-                    CoreWebView2ContextMenuItem testDOMSetFormCommand = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("Run DOM Set Browser Command Form Data"), null, CoreWebView2ContextMenuItemKind.Command); testDOMSetFormCommand.CustomItemSelected += TestDOMSetFORMCommandSelected;
+                    CoreWebView2ContextMenuItem testJSSetFormCommand = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("Run JS Set Browser Command Form Data"), null, CoreWebView2ContextMenuItemKind.Command); testJSSetFormCommand.CustomItemSelected += JsSetFORMCommandSelected;
+                    CoreWebView2ContextMenuItem testDOMSetFormCommand = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("Run DOM Set Browser Command Form Data"), null, CoreWebView2ContextMenuItemKind.Command); testDOMSetFormCommand.CustomItemSelected += DOMSetFORMCommandSelected;
+                    CoreWebView2ContextMenuItem testJsGetCommand = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("Run JS Get Browser Command"), null, CoreWebView2ContextMenuItemKind.Command); testJsGetCommand.CustomItemSelected += JsGetCommandSelected;
+                    CoreWebView2ContextMenuItem testDOMGetCommand = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("Run DOM Get Browser Command"), null, CoreWebView2ContextMenuItemKind.Command); testDOMGetCommand.CustomItemSelected += DOMGetCommandSelected;
                     menuList.Add(openConsole); menuList.Add(openTaskManager); menuList.Add(testJsSetCommand); menuList.Add(testJsGetCommand);
                     menuList.Add(testDOMSetCommand); menuList.Add(testDOMGetCommand); menuList.Add(testJSSetFormCommand); menuList.Add(testDOMSetFormCommand);
                 };
-            
             } catch { }
             MainWindow.ProgressRing = Visibility.Hidden;
         }
         private void openConsoleSelected(object sender, object e) { webBrowser.CoreWebView2.OpenDevToolsWindow(); }
         private void openTaskManagerSelected(object sender, object e) { webBrowser.CoreWebView2.ShowPrintUI(); }
-        private async void TestDOMGetCommandSelected(object sender, object e) => await DOMGetDataFromBrowser();
         private async void TestDOMSetCommandSelected(object sender, object e) => await DOMSetDataFromBrowser(true);
+        private async void DOMSetFORMCommandSelected(object sender, object e) => await DOMSetDataFromBrowser(false);
+        private async void JsSetFORMCommandSelected(object sender, object e) => await JSSetDataFromBrowser(false);
         private async void TestJsSetCommandSelected(object sender, object e) => await JSSetDataFromBrowser(true);
-        private async void TestJsGetCommandSelected(object sender, object e) => await JSGetDataFromBrowser();
-        private async void TestDOMSetFORMCommandSelected(object sender, object e) => await DOMSetDataFromBrowser(false);
-        private async void TestJsSetFORMCommandSelected(object sender, object e) => await JSSetDataFromBrowser(false);
+        private async void JsGetCommandSelected(object sender, object e) => await JSGetDataFromBrowser();
+        private async void DOMGetCommandSelected(object sender, object e) => await DOMGetDataFromBrowser();
 
-    //ONTABCHANGE UPDATING DATA
-    private async void TabSelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (((TabControl)sender).SelectedIndex == 0) {
+        //ONTABCHANGE UPDATING DATA
+        private async void TabSelectionChanged(object sender, SelectionChangedEventArgs e) {
+            if (((TabControl)sender).SelectedIndex == 0 && DataLoaded) {
                 if (systemCustomPageList.UseIooverDom) { await DOMGetDataFromBrowser(); }
                 else { await JSGetDataFromBrowser(); }
             } else {
                 if (systemCustomPageList.UseIooverDom) { await DOMSetDataFromBrowser(); }
                 else { await JSSetDataFromBrowser(); }
             }
+
             if (systemCustomPageList.DevModeEnabled) {
                 App.ApplicationLogging(new Exception($"Data Updating on Tab Change: actual Command Reusult: " +
                     $"{WebBrowserCommandResult}{Environment.NewLine} Actual Saved Data: {Environment.NewLine}{WebBrowserData}"));
@@ -382,17 +373,17 @@ namespace EasyITSystemCenter.Pages {
             try {
                 var htmlDivElement = await devToolsContext.QuerySelectorAsync<HtmlDivElement>(!systemCustomPageList.DomhtmlElementName.StartsWith("#") ? $"#{systemCustomPageList.DomhtmlElementName}" : systemCustomPageList.DomhtmlElementName);
                 await htmlDivElement.SetInnerHtmlAsync(WebBrowserData.Replace("data", (isTest ? "This Is Test Data" : WebBrowserData)));
-                if (systemCustomPageList.DevModeEnabled) { App.ApplicationLogging(new Exception($"DOM Set InnerHtml Object {systemCustomPageList.DomhtmlElementName}")); }
+                if (systemCustomPageList.DevModeEnabled) { App.ApplicationLogging(new Exception($"DOM Set Data {(isTest ? "This Is Test Data" : WebBrowserData)} to InnerHtml Object {systemCustomPageList.DomhtmlElementName}")); }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             return true;
         }
 
         private async Task<bool> JSSetDataFromBrowser(bool isTest = false) {
-            if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(null); }
+            if (webBrowser.CoreWebView2 == null) {  await webBrowser.EnsureCoreWebView2Async(null); }
             devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
             try {
-                string result = await webBrowser.CoreWebView2.ExecuteScriptAsync(systemCustomPageList.SetWebDataJscriptCmd.Replace("data",(isTest ? "This Is Test Data" : WebBrowserData)));
-                if (systemCustomPageList.DevModeEnabled) { App.ApplicationLogging(new Exception($"JS Set ExecuteScriptAsync {systemCustomPageList.SetWebDataJscriptCmd.Replace("data", WebBrowserData)} Function Response Message:{Environment.NewLine}{result}")); }
+                string result = await webBrowser.ExecuteScriptAsync(systemCustomPageList.SetWebDataJscriptCmd.Replace("data",(isTest ? "This Is Test Data" : WebBrowserData)));
+                if (systemCustomPageList.DevModeEnabled) { App.ApplicationLogging(new Exception($"JS Set ExecuteScriptAsync {systemCustomPageList.SetWebDataJscriptCmd.Replace("data", (isTest ? "This Is Test Data" : WebBrowserData))} Function Response Message:{Environment.NewLine}{result}")); }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             return true;
         }
@@ -412,7 +403,7 @@ namespace EasyITSystemCenter.Pages {
             if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(null); }
             devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
             try {
-                WebBrowserData = await webBrowser.CoreWebView2.ExecuteScriptAsync(systemCustomPageList.GetWebDataJscriptCmd);
+                WebBrowserData = await webBrowser.ExecuteScriptAsync(systemCustomPageList.GetWebDataJscriptCmd);
                 if (systemCustomPageList.DevModeEnabled) { App.ApplicationLogging(new Exception($"JS Get ExecuteScriptAsync {systemCustomPageList.GetWebDataJscriptCmd} Function Response Message:{Environment.NewLine}{WebBrowserData}")); }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             return true;

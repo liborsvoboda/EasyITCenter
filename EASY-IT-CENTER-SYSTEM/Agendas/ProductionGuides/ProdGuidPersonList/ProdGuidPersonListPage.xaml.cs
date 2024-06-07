@@ -52,7 +52,7 @@ namespace EasyITSystemCenter.Pages {
                     PersonalNumber = record.PersonalNumber,
                     Name = record.Name,
                     SurName = record.SurName,
-                    Timestamp = record.Timestamp,
+                    TimeStamp = record.TimeStamp,
                     UserId = record.UserId,
                     GroupId = record.GroupId
                 });
@@ -69,7 +69,7 @@ namespace EasyITSystemCenter.Pages {
                 else if (headername == "Group") e.Header = Resources["group"].ToString();
                 else if (headername == "PersonalNumber") e.Header = Resources["personalNumber"].ToString();
                 else if (headername == "Surname") e.Header = Resources["surname"].ToString();
-                else if (headername == "Timestamp") e.Header = Resources["timestamp"].ToString();
+                else if (headername == "TimeStamp") e.Header = Resources["timestamp"].ToString();
 
                 //Hide System Columns
                 else if (headername == "Id") e.DisplayIndex = 0;
@@ -143,7 +143,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Name = tb_name.Text;
                 selectedRecord.SurName = tb_surname.Text;
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
@@ -170,7 +170,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Name = tb_name.Text;
                 selectedRecord.SurName = tb_surname.Text;
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");

@@ -129,7 +129,7 @@ namespace EasyITCenter.DBModel
         [Column(TypeName = "text")]
         public string? Description { get; set; }
         public bool Active { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime TimeStamp { get; set; }
         [StringLength(2048)]
         [Unicode(false)]
         public string? Token { get; set; }

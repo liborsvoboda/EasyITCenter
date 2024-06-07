@@ -77,7 +77,7 @@ namespace EasyITCenter.GitServer.Controllers
                     Description = userRegistration.Description,
                     Active = true,
                     //Email = model.Email,
-                    Timestamp = DateTimeOffset.Now.DateTime
+                    TimeStamp = DateTimeOffset.Now.DateTime
                 });
                 await dataAcept.Context.SaveChangesAsync();
                 return Redirect("/servercoretools/webpages/Github");

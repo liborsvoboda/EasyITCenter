@@ -45,7 +45,7 @@ namespace EasyITSystemCenter.Pages {
             ((DataGrid)sender).Columns.ToList().ForEach(e => {
                 string headername = e.Header.ToString();
                 if (headername == "Value") e.Header = Resources["name"].ToString();
-                else if (headername == "Timestamp") e.Header = Resources["timestamp"].ToString();
+                else if (headername == "TimeStamp") e.Header = Resources["timestamp"].ToString();
 
                 //Hide System Columns
                 else if (headername == "Id") e.DisplayIndex = 0;
@@ -113,7 +113,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Id = (int)((txt_id.Value != null) ? txt_id.Value : 0);
                 selectedRecord.Name = tb_name.Text;
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
                 //selectedRecord.Role = roles.Where(a => a.Id == selectedRecord.RoleId).First();
 
                 string json = JsonConvert.SerializeObject(selectedRecord);

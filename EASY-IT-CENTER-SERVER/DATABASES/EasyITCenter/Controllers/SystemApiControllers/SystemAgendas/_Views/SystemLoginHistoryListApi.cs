@@ -10,7 +10,7 @@
             List<SystemLoginHistoryList> data;
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {
                 IsolationLevel = IsolationLevel.ReadUncommitted //with NO LOCK
-            })) { data = new EasyITCenterContext().SystemLoginHistoryLists.OrderByDescending(a => a.Timestamp).ToList(); }
+            })) { data = new EasyITCenterContext().SystemLoginHistoryLists.OrderByDescending(a => a.TimeStamp).ToList(); }
             return JsonSerializer.Serialize(data);
         }
 

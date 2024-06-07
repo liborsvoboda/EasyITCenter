@@ -84,7 +84,7 @@ namespace EasyITSystemCenter.Pages {
                 else if (headername == "Description".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
                 else if (headername == "Default".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = DgListView.Columns.Count - 3; }
                 else if (headername == "Active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
-                else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                else if (headername == "TimeStamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
                 else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
                 else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
                 else if (headername == "ReportPath".ToLower()) e.Visibility = Visibility.Hidden;
@@ -173,7 +173,7 @@ namespace EasyITSystemCenter.Pages {
                 }
 
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
@@ -207,7 +207,7 @@ namespace EasyITSystemCenter.Pages {
             txt_reportPath.Text = null;
             txt_description.Text = selectedRecord.Description;
             chb_default.IsChecked = selectedRecord.Default;
-            dp_timestamp.Value = selectedRecord.Timestamp;
+            dp_timestamp.Value = selectedRecord.TimeStamp;
 
             if (showForm != null && showForm == true) {
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;

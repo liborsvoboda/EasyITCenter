@@ -78,7 +78,7 @@ namespace EasyITSystemCenter.Pages {
                         Amount = record.Amount,
                         WorkPower = record.WorkPower,
                         FullName = tempPersonList.Where(a => a.PersonalNumber == record.PersonalNumber).Select(b => (b.SurName + " " + b.Name).ToString()).FirstOrDefault(),
-                        Timestamp = record.Timestamp
+                        TimeStamp = record.TimeStamp
                     });
                 });
                 DgListView.ItemsSource = ExtendedWorkList;
@@ -100,7 +100,7 @@ namespace EasyITSystemCenter.Pages {
                 else if (headername == "Amount") { e.Header = Resources["amount"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
                 else if (headername == "FullName") { e.DisplayIndex = 3; e.Header = Resources["fullName"].ToString(); }
                 else if (headername == "WorkPower") { e.DisplayIndex = 9; e.Header = Resources["workPower"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "Timestamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
 
                 //Hide System Columns
                 else if (headername == "Id") e.DisplayIndex = 0;
@@ -178,7 +178,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Amount = (decimal)Amount;
                 selectedRecord.WorkPower = (decimal)WorkPower;
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
@@ -208,7 +208,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Amount = (decimal)Amount;
                 selectedRecord.WorkPower = (decimal)WorkPower;
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");

@@ -6,6 +6,7 @@ using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -64,24 +65,18 @@ namespace EasyITSystemCenter.Pages {
             });
         }
 
-        //change filter fields
+
         public void Filter(string filter) {
             try {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    BusinessBranchList report = e as BusinessBranchList;
-                    return !string.IsNullOrEmpty(report.CompanyName) && report.CompanyName.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.ContactName) && report.ContactName.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.Street) && report.Street.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.City) && report.City.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.PostCode) && report.PostCode.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.Phone) && report.Phone.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.Email) && report.Email.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(report.BankAccount) && report.BankAccount.ToLower().Contains(filter.ToLower());
+                    DataRowView search = e as DataRowView;
+                    return search.ObjectToJson().ToLower().Contains(filter.ToLower());
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
+
 
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e) {
             Regex regex = new Regex("[^0-9]+");

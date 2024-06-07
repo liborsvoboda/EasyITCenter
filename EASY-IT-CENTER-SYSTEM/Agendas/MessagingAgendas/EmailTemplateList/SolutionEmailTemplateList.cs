@@ -10,7 +10,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string Subject { get; set; }
         public string Email { get; set; }
         public int UserId { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         public string TemplateNameTranslation { get; set; }
         public string SystemLanguageTranslation { get; set; }

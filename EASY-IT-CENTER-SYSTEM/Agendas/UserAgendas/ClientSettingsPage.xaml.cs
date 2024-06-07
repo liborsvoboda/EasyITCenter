@@ -35,9 +35,9 @@ namespace EasyITSystemCenter.Pages {
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
             try {
-                SystemLocalEnumSets.languages.First(a => a.Name == "czech").Name = Resources["czech"].ToString();
-                SystemLocalEnumSets.updateVariants.ToList().ForEach(updateType => updateType.Name = Resources[updateType.Name].ToString());
-                SystemLocalEnumSets.sections.ToList().ForEach(section => section.Name = Resources[section.Name].ToString());
+                SystemLocalEnumSets.Languages.First(a => a.Name == "czech").Name = Resources["czech"].ToString();
+                SystemLocalEnumSets.UpdateVariants.ToList().ForEach(updateType => updateType.Name = Resources[updateType.Name].ToString());
+                SystemLocalEnumSets.ConfigTypes.ToList().ForEach(section => section.Name = Resources[section.Name].ToString());
 
                 _ = FormOperations.TranslateFormFields(ConfigForm);
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
@@ -67,7 +67,7 @@ namespace EasyITSystemCenter.Pages {
             try {
                 //Generate Menu Panel
                 TabMenuList.Items.Clear();
-                SystemLocalEnumSets.sections.ToList().ForEach(section => {
+                SystemLocalEnumSets.ConfigTypes.ToList().ForEach(section => {
                     try {
                         WrapPanel tabMenuPanel = new WrapPanel() { Name = "wp_" + section.Value, Width = 850, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
 
@@ -115,8 +115,8 @@ namespace EasyITSystemCenter.Pages {
                             case "list":
                                 ComboBox comboBox = new ComboBox() { Name = configuration.Key, Text = configuration.Value, Width = 300, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
 
-                                if (configuration.Key.ToLower() == "sys_defaultlanguage") { comboBox.ItemsSource = SystemLocalEnumSets.languages; comboBox.DisplayMemberPath = "Value"; comboBox.SelectedValuePath = "Value"; comboBox.SelectedValue = configuration.Value; }
-                                if (configuration.Key.ToLower() == "sys_automaticupdate") { comboBox.ItemsSource = SystemLocalEnumSets.updateVariants; comboBox.DisplayMemberPath = "Value"; comboBox.SelectedValuePath = "Value"; comboBox.SelectedValue = configuration.Value; }
+                                if (configuration.Key.ToLower() == "sys_defaultlanguage") { comboBox.ItemsSource = SystemLocalEnumSets.Languages; comboBox.DisplayMemberPath = "Value"; comboBox.SelectedValuePath = "Value"; comboBox.SelectedValue = configuration.Value; }
+                                if (configuration.Key.ToLower() == "sys_automaticupdate") { comboBox.ItemsSource = SystemLocalEnumSets.UpdateVariants; comboBox.DisplayMemberPath = "Value"; comboBox.SelectedValuePath = "Value"; comboBox.SelectedValue = configuration.Value; }
 
                                 targetGrid.Children.Add(comboBox);
                                 break;
@@ -240,7 +240,7 @@ namespace EasyITSystemCenter.Pages {
                 var mainWindow = (MetroWindow)App.Current.MainWindow;
                 var result = mainWindow.ShowMetroDialogAsync(modalDialog, modalSetting);
                 if (result.IsCompleted) {
-                    SystemLocalEnumSets.sections.ToList().ForEach(section => {
+                    SystemLocalEnumSets.ConfigTypes.ToList().ForEach(section => {
                         WrapPanel targetGrid = ((WrapPanel)TabMenuList.Items.Cast<TabItem>().ToList().Where(a => a.Name.StartsWith("conn")).First().Content);
                         targetGrid.Children.OfType<TextBox>().ToList().ForEach(textbox => {
                             if (textbox.Name == ((Button)sender).Name.Substring(((Button)sender).Name.Split('.')[0].Length - 1).Split('_').Last()) { textbox.Text = colorDialog.Color.ToHexString(); };
@@ -255,7 +255,7 @@ namespace EasyITSystemCenter.Pages {
             try {
                 OpenFileDialog dlg = new OpenFileDialog { DefaultExt = ".exe", Filter = "Exe files |*.exe", Title = Resources["fileOpenDescription"].ToString() };
                 if (dlg.ShowDialog() == true) {
-                    SystemLocalEnumSets.sections.ToList().ForEach(section => {
+                    SystemLocalEnumSets.ConfigTypes.ToList().ForEach(section => {
                         WrapPanel targetGrid = ((WrapPanel)TabMenuList.Items.Cast<TabItem>().ToList().Where(a => a.Name.StartsWith("conn")).First().Content);
                         targetGrid.Children.OfType<TextBox>().ToList().ForEach(textbox => {
                             if (textbox.Name == "conn_reportingPath") { textbox.Text = dlg.FileName; };
@@ -271,7 +271,7 @@ namespace EasyITSystemCenter.Pages {
                 try {
                     MainWindow.ProgressRing = Visibility.Visible;
 
-                    SystemLocalEnumSets.sections.ToList().ForEach(section => {
+                    SystemLocalEnumSets.ConfigTypes.ToList().ForEach(section => {
                         WrapPanel targetGrid = ((WrapPanel)TabMenuList.Items.Cast<TabItem>().ToList().Where(a => a.Name.StartsWith("conn")).First().Content);
                         targetGrid.Children.OfType<TextBox>().ToList().ForEach(textbox => {
                             if (textbox.Name == "conn_apiAddress") { apiAddress = textbox.Text; };
@@ -316,7 +316,7 @@ namespace EasyITSystemCenter.Pages {
                 MainWindow.ProgressRing = Visibility.Visible;
 
                 string connection = null;
-                SystemLocalEnumSets.sections.ToList().ForEach(section => {
+                SystemLocalEnumSets.ConfigTypes.ToList().ForEach(section => {
                     WrapPanel targetGrid = ((WrapPanel)TabMenuList.Items.Cast<TabItem>().ToList().Where(a => a.Name.StartsWith("conn")).First().Content);
                     targetGrid.Children.OfType<TextBox>().ToList().ForEach(textbox => {
                         if (textbox.Name == "conn_reportConnectionString") { connection = textbox.Text; };
@@ -339,7 +339,7 @@ namespace EasyITSystemCenter.Pages {
             try {
                 OpenFileDialog dlg = new OpenFileDialog { DefaultExt = ".exe", Filter = "Exe files |*.exe", Title = Resources["fileOpenDescription"].ToString() };
                 if (dlg.ShowDialog() == true) {
-                    SystemLocalEnumSets.sections.ToList().ForEach(section => {
+                    SystemLocalEnumSets.ConfigTypes.ToList().ForEach(section => {
                         WrapPanel targetGrid = ((WrapPanel)TabMenuList.Items.Cast<TabItem>().ToList().Where(a => a.Name.StartsWith("conn")).First().Content);
                         targetGrid.Children.OfType<TextBox>().ToList().ForEach(textbox => {
                             if (textbox.Name == "conn_reportBuilderPath") { textbox.Text = dlg.FileName; };

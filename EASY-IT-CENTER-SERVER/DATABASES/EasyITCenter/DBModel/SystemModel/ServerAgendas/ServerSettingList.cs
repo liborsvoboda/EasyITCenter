@@ -30,7 +30,7 @@
 
         public int UserId { get; set; }
         public bool Active { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         [ForeignKey("UserId")]
         [InverseProperty("ServerSettingLists")]

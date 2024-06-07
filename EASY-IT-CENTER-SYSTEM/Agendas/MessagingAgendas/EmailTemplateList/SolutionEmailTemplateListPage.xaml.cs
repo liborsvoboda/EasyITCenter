@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -24,22 +25,23 @@ namespace EasyITSystemCenter.Pages {
 
         private List<SolutionEmailTemplateList> emailTemplateList = new List<SolutionEmailTemplateList>();
         private List<SolutionLanguageList> systemLanguageList = new List<SolutionLanguageList>();
+        private List<SolutionMixedEnumList> inheritedEmailTypes = new List<SolutionMixedEnumList>();
 
         public SolutionEmailTemplateListPage() {
             InitializeComponent();
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
 
-            ObservableCollection<TranslateSet> Templates = new ObservableCollection<TranslateSet>() {
-                                                                new TranslateSet() { Name = Resources["verification"].ToString(), Value = "verification" },
-                                                                new TranslateSet() { Name = Resources["registration"].ToString(), Value = "registration"},
-                                                                new TranslateSet() { Name = Resources["resetPassword"].ToString(), Value = "resetPassword"}                                                             };
+            //ObservableCollection<TranslateSet> Templates = new ObservableCollection<TranslateSet>() {
+            //                                                    new TranslateSet() { Name = Resources["verification"].ToString(), Value = "verification" },
+            //                                                    new TranslateSet() { Name = Resources["registration"].ToString(), Value = "registration"},
+            //                                                    new TranslateSet() { Name = Resources["resetPassword"].ToString(), Value = "resetPassword"}                                                             };
 
             try {
                 try {
                     _ = FormOperations.TranslateFormFields(ListForm);
                 } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
-                cb_templateName.ItemsSource = Templates;
+               
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             _ = LoadDataList();
@@ -49,9 +51,11 @@ namespace EasyITSystemCenter.Pages {
         public async Task<bool> LoadDataList() {
             MainWindow.ProgressRing = Visibility.Visible;
             try {
+                inheritedEmailTypes = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/EmailTypes", App.UserData.Authentification.Token);
                 emailTemplateList = await CommunicationManager.GetApiRequest<List<SolutionEmailTemplateList>>(ApiUrls.EasyITCenterSolutionEmailTemplateList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
-                systemLanguageList = await CommunicationManager.GetApiRequest<List<SolutionLanguageList>>(ApiUrls.EasyITCenterSystemTranslationList, null, App.UserData.Authentification.Token);
+                systemLanguageList = await CommunicationManager.GetApiRequest<List<SolutionLanguageList>>(ApiUrls.EasyITCenterSolutionLanguageList, null, App.UserData.Authentification.Token);
 
+                inheritedEmailTypes.ForEach(async item => item.Translation = await DBOperations.DBTranslation(item.Name));
                 systemLanguageList.ForEach(async language => {
                     language.Translation = await DBOperations.DBTranslation(language.SystemName);
                 });
@@ -61,6 +65,7 @@ namespace EasyITSystemCenter.Pages {
                     template.SystemLanguageTranslation = systemLanguageList.First(a => a.Id == template.SystemLanguageId).Translation;
                 });
 
+                cb_templateName.ItemsSource = inheritedEmailTypes;
                 DgListView.ItemsSource = emailTemplateList;
                 DgListView.Items.Refresh();
                 cb_systemLanguage.ItemsSource = systemLanguageList;
@@ -72,34 +77,33 @@ namespace EasyITSystemCenter.Pages {
         private async void DgListView_Translate(object sender, EventArgs ex) {
             try {
                 ((DataGrid)sender).Columns.ToList().ForEach(async e => {
-                    string headername = e.Header.ToString();
-                    if (headername == "TemplateNameTranslation") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
-                    else if (headername == "Subject") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
-                    else if (headername == "SystemLanguageTranslation") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
-                    else if (headername == "Timestamp") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                    else if (headername == "Id") e.DisplayIndex = 0;
-                    else if (headername == "SystemLanguageId") e.Visibility = Visibility.Hidden;
-                    else if (headername == "TemplateName") e.Visibility = Visibility.Hidden;
-                    else if (headername == "Email") e.Visibility = Visibility.Hidden;
-                    else if (headername == "Variables") e.Visibility = Visibility.Hidden;
-                    else if (headername == "UserId") e.Visibility = Visibility.Hidden;
+                    string headername = e.Header.ToString().ToLower();
+                    if (headername == "TemplateNameTranslation".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                    else if (headername == "Subject".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                    else if (headername == "SystemLanguageTranslation".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
+                    else if (headername == "TimeStamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
+                    else if (headername == "SystemLanguageId".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "TemplateName".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "Email".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "Variables".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
                 });
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
+
 
         public void Filter(string filter) {
             try {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    SolutionEmailTemplateList search = e as SolutionEmailTemplateList;
-                    return search.TemplateName.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(search.Subject) && search.Subject.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(search.Email) && search.Email.ToLower().Contains(filter.ToLower())
-                    ;
+                    DataRowView search = e as DataRowView;
+                    return search.ObjectToJson().ToLower().Contains(filter.ToLower());
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
+
 
         public void NewRecord() {
             selectedRecord = new SolutionEmailTemplateList();
@@ -150,7 +154,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Email = html_email.Browser.GetCurrentHtml();
 
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
@@ -174,14 +178,18 @@ namespace EasyITSystemCenter.Pages {
         }
 
         private void SetRecord(bool? showForm = null, bool copy = false) {
-            txt_id.Value = (copy) ? 0 : selectedRecord.Id;
+            try { 
 
-            cb_systemLanguage.SelectedItem = (selectedRecord.Id == 0) ? systemLanguageList.FirstOrDefault() : systemLanguageList.First(a => a.Id == selectedRecord.SystemLanguageId);
-            cb_templateName.SelectedValue = txt_id.Value == 0 ? "" : selectedRecord.TemplateName;
-            txt_variables.Text = selectedRecord.Variables;
+                txt_id.Value = (copy) ? 0 : selectedRecord.Id;
 
-            txt_subject.Text = selectedRecord.Subject;
-            html_email.HtmlContent = selectedRecord.Email;
+                cb_systemLanguage.SelectedItem = (selectedRecord.Id == 0) ? systemLanguageList.FirstOrDefault() : systemLanguageList.FirstOrDefault(a => a.Id == selectedRecord.SystemLanguageId);
+                cb_templateName.SelectedValue = txt_id.Value == 0 ? "" : selectedRecord.TemplateName;
+                txt_variables.Text = selectedRecord.Variables;
+
+                txt_subject.Text = selectedRecord.Subject;
+                html_email.HtmlContent = selectedRecord.Email;
+
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             if (showForm != null && showForm == true) {
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;
@@ -195,15 +203,15 @@ namespace EasyITSystemCenter.Pages {
 
         private void TemplateNameChanged(object sender, SelectionChangedEventArgs e) {
             switch (cb_templateName.SelectedValue) {
-                case "verification":
+                case "Verification":
                     txt_variables.Text = "[verifyCode]";
                     break;
 
-                case "registration":
+                case "Registration":
                     txt_variables.Text = "[firstname],[lastname],[email],[password]";
                     break;
 
-                case "resetPassword":
+                case "ResetPassword":
                     txt_variables.Text = "[firstname],[lastname],[email],[password]";
                     break;
 

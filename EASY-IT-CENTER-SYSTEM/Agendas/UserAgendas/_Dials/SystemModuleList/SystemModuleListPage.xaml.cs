@@ -91,7 +91,7 @@ namespace EasyITSystemCenter.Pages {
                     else if (headername == "Value".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
                     else if (headername == "FileName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
                     else if (headername == "StartupCommand".ToLower()) e.Header = await DBOperations.DBTranslation(headername);
-                    else if (headername == "Timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "TimeStamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
                     
                     else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
                     else if (headername == "ModuleType".ToLower()) e.Visibility = Visibility.Hidden;

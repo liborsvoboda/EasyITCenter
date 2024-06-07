@@ -15,7 +15,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string Description { get; set; } = null;
 
         public int UserId { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         public string Translation { get; set; } = null;
         public BitmapImage BitmapImage { get; set; }

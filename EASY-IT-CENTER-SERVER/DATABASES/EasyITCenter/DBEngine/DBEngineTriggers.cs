@@ -14,7 +14,7 @@
         public static async void WriteVisit(string ipAddress, int userId, string userName) {
             // Save new visit
             if (!string.IsNullOrWhiteSpace(userName)) {
-                SystemLoginHistoryList record = new() { IpAddress = ipAddress, UserId = userId, UserName = userName, Timestamp = DateTimeOffset.Now.DateTime };
+                SystemLoginHistoryList record = new() { IpAddress = ipAddress, UserId = userId, UserName = userName, TimeStamp = DateTimeOffset.Now.DateTime };
                 EntityEntry<SystemLoginHistoryList>? result = new EasyITCenterContext().SystemLoginHistoryLists.Add(record);
                 await result.Context.SaveChangesAsync();
             }

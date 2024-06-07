@@ -12,7 +12,7 @@
         public string SystemName { get; set; } = null!;
 
         public int UserId { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         [ForeignKey("UserId")]
         [InverseProperty("SolutionMottoLists")]

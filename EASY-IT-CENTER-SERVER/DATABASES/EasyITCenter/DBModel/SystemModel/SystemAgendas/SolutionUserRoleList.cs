@@ -25,7 +25,7 @@ namespace EasyITCenter.DBModel
         [Column(TypeName = "text")]
         public string? Description { get; set; }
         public int? UserId { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         [InverseProperty("Role")]
         public virtual ICollection<SolutionUserList> SolutionUserLists { get; set; }

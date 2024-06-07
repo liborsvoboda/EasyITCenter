@@ -9,7 +9,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string AlgorithmName { get; set; }
         public string PartNumber { get; set; } = null;
         public string License { get; set; } = null;
-        public DateTime? ActivateDate { get; set; } = null;
+        public DateTime? TimeStamp { get; set; } = null;
         public int ItemId { get; set; } = 0;
         public int AddressId { get; set; }
     }

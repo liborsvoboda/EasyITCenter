@@ -157,19 +157,19 @@ namespace EasyITSystemCenter.Pages {
 
                         targetGrid.Children.OfType<CheckBox>().ToList().ForEach(checkBox => {
                             App.ServerSetting.First(a => a.Key == checkBox.Name).Value = checkBox.IsChecked.ToString();
-                            App.ServerSetting.First(a => a.Key == checkBox.Name).Timestamp = DateTimeOffset.Now.DateTime;
+                            App.ServerSetting.First(a => a.Key == checkBox.Name).TimeStamp = DateTimeOffset.Now.DateTime;
                         });
                         targetGrid.Children.OfType<TextBox>().ToList().ForEach(textbox => {
                             App.ServerSetting.First(a => a.Key == textbox.Name).Value = textbox.Text;
-                            App.ServerSetting.First(a => a.Key == textbox.Name).Timestamp = DateTimeOffset.Now.DateTime;
+                            App.ServerSetting.First(a => a.Key == textbox.Name).TimeStamp = DateTimeOffset.Now.DateTime;
                         });
                         targetGrid.Children.OfType<NumericUpDown>().ToList().ForEach(numeric => {
                             App.ServerSetting.First(a => a.Key == numeric.Name).Value = numeric.Value.ToString();
-                            App.ServerSetting.First(a => a.Key == numeric.Name).Timestamp = DateTimeOffset.Now.DateTime;
+                            App.ServerSetting.First(a => a.Key == numeric.Name).TimeStamp = DateTimeOffset.Now.DateTime;
                         });
                         targetGrid.Children.OfType<ComboBox>().ToList().ForEach(combobox => {
                             App.ServerSetting.First(a => a.Key == combobox.Name).Value = combobox.SelectedValue.ToString();
-                            App.ServerSetting.First(a => a.Key == combobox.Name).Timestamp = DateTimeOffset.Now.DateTime;
+                            App.ServerSetting.First(a => a.Key == combobox.Name).TimeStamp = DateTimeOffset.Now.DateTime;
                         });
                     } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
                 });

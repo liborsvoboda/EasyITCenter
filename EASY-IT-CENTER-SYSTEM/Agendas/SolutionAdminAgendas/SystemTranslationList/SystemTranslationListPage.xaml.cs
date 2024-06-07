@@ -115,7 +115,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.DescriptionCz = txt_descriptionCz.Text;
                 selectedRecord.DescriptionEn = txt_descriptionEn.Text;
                 selectedRecord.UserId = App.UserData.Authentification.Id;
-                selectedRecord.Timestamp = DateTimeOffset.Now.DateTime;
+                selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
                 StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");

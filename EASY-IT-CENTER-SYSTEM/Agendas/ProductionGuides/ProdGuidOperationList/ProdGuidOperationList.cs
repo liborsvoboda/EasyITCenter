@@ -11,7 +11,7 @@ namespace EasyITSystemCenter.GlobalClasses {
         public int PcsPerHour { get; set; }
         public decimal KcPerKs { get; set; }
         public int UserId { get; set; } = 0;
-        public DateTime? Timestamp { get; set; } = null;
+        public DateTime? TimeStamp { get; set; } = null;
     }
 
     public partial class WorkPlaceList {
