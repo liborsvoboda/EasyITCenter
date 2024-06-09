@@ -22,7 +22,7 @@ namespace EasyITSystemCenter.GlobalStyles {
     /// </summary>
     public enum EffectTypes {
         RotationEffect,
-        SizeNoneToWidthEffect,
+        SizeZeroToWidthEffect,
         SizePulseEffect
     }
 
@@ -33,7 +33,6 @@ namespace EasyITSystemCenter.GlobalStyles {
     /// </summary>
     public enum TriggerTypes {
         OnMouseMove,
-        OnInitOnly,
         Forever
     }
   
@@ -47,10 +46,14 @@ namespace EasyITSystemCenter.GlobalStyles {
         /// Programatic Defined StoryBoardEffect Library 
         /// for Multiple Using With Direct Join On Setted Object 
         /// Using Example:
+        /// double iconSize = 120;
+        /// Image icon = new Image() { Width = iconSize, Height = iconSize, Source = spinner, VerticalAlignment = VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch };
+        /// Get StoryBoard Type From Animation Library
+        /// icon = (Image) EffectLibrary.GetAnimationEffect(icon, AnimationLibrary.RotationAndSizeEffect, EffectTypes.SizeNoneToWidthEffect, TriggerTypes.OnMouseMove, iconSize, 2);
         /// Tile.WidthProperty, Image.WidthProperty, UIElement.RenderTransformProperty
         /// </summary>
         /// <returns></returns>
-        public static object GetAnimationEffect(AnimationLibrary selectedAnimation, EffectTypes selectedEffect, TriggerTypes selectedTrigger,double toValue, int effectTime) {
+        public static FrameworkElement GetAnimationEffect(FrameworkElement objectForAnimation, AnimationLibrary selectedAnimation, EffectTypes selectedEffect, TriggerTypes selectedTrigger, double toValue, int effectTime) {
 
             //Prepare Global Properties for Use in Effect Setting
             #region  Prepare Effect Variables
@@ -66,11 +69,11 @@ namespace EasyITSystemCenter.GlobalStyles {
             DoubleAnimation RotationAndSizeEffect = new DoubleAnimation() {
                 From = toValue,
                 To = toValue,
-                Duration = TimeSpan.FromSeconds(effectTime),
+                Duration = TimeSpan.FromSeconds(selectedEffect == EffectTypes.SizePulseEffect ? effectTime * 2 : effectTime),
                 RepeatBehavior = cycleSetting,
-                AutoReverse = autoreversing,  
+                AutoReverse = autoreversing,
                 BeginTime = TimeSpan.FromSeconds(0),
-                FillBehavior = FillBehavior.Stop, 
+                FillBehavior = selectedTrigger != TriggerTypes.Forever ? FillBehavior.Stop : FillBehavior.HoldEnd,
                 Name = "RotationAndSizeEffect",
                 EasingFunction = selectedEffect == EffectTypes.RotationEffect ? new QuadraticEase() : null,
             };
@@ -78,10 +81,18 @@ namespace EasyITSystemCenter.GlobalStyles {
             #endregion
 
             //Set Mouse Triggers 
-            RotationAndSizeEffect.Completed += (sEnd, eEnd) => { RotationAndSizeEffect.From = toValue; };
+            if (selectedTrigger != TriggerTypes.Forever) { RotationAndSizeEffect.Completed += (sEnd, eEnd) => { RotationAndSizeEffect.From = toValue; }; }
             RotationAndSizeEffect.CurrentStateInvalidated += (sEnd, eEnd) => { RotationAndSizeEffect.SetCurrentValue(DoubleAnimation.FromProperty, toValue); };
+            objectForAnimation.MouseEnter += (sStart, eStart) => { if (RotationAndSizeEffect.From == toValue) { RotationAndSizeEffect.From = 0;
+                    Storyboard.SetTarget(RotationAndSizeEffect, (FrameworkElement)sStart); Storyboard.SetTargetProperty(RotationAndSizeEffect, new PropertyPath(FrameworkElement.WidthProperty));
+                    var storyboard = new Storyboard() { Duration = selectedTrigger != TriggerTypes.Forever ? TimeSpan.FromSeconds(effectTime) : Duration.Forever };
+                    storyboard.Children.Clear(); storyboard.Children.Add(RotationAndSizeEffect); storyboard.Begin((FrameworkElement)sStart, true);
+                }
+            };
 
-            return RotationAndSizeEffect;
+
+            return objectForAnimation; 
+
         }
     }
 }

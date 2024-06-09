@@ -98,25 +98,11 @@ namespace EasyITSystemCenter.Pages {
                             break;
                     }
 
-                    double iconSize = 120;
+                    double iconSize = 120;//Get StoryBoard Type From Animation Library
                     Image icon = new Image() { Width = iconSize, Height = iconSize, Source = spinner, VerticalAlignment = VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch };
-                    
-                    //Get StoryBoard Type From Animation Library
-                    DoubleAnimation animation = (DoubleAnimation)EffectLibrary.GetAnimationEffect(AnimationLibrary.RotationAndSizeEffect, EffectTypes.SizeNoneToWidthEffect, TriggerTypes.OnMouseMove, iconSize, 2);
-                    //icon.Resources.Add("MouseAnimation", animation);
-                    //if (new string[] { "0", $"{iconSize}" }.ToList().Contains(((DoubleAnimation)icon.Resources["MouseAnimation"]).From.ToString())) {
-                        icon.MouseEnter += (sStart, eStart) => {
-                            if (animation.From == iconSize) { animation.From = 0;
-                                Storyboard.SetTarget(animation, icon); Storyboard.SetTargetProperty(animation, new PropertyPath(FrameworkElement.WidthProperty));
-                                var storyboard = new Storyboard() { Duration = TimeSpan.FromSeconds(2) }; //storyboard.Completed += (sBoard, eBoard) => { ((Storyboard)storyboard).Stop(); };
-                                storyboard.Children.Clear(); storyboard.Children.Add(animation); storyboard.Begin((FrameworkElement)sStart, true);
-                            }
-                        };
-                    //}
+                    icon = (Image)EffectLibrary.GetAnimationEffect(icon, AnimationLibrary.RotationAndSizeEffect, EffectTypes.SizeZeroToWidthEffect, TriggerTypes.OnMouseMove, iconSize, 2);
 
-                    animatedIconList.Add(icon);
-                    toolPanel.Content = icon;
-                    toolPanel.Click += ToolPanelListPage_Click;
+                    animatedIconList.Add(icon); toolPanel.Content = icon; toolPanel.Click += ToolPanelListPage_Click;
                     ((WrapPanel)TabMenuList.FindChild<TabItem>(Regex.Replace(solutionOperationList.Where(a => a.Id == int.Parse(toolPanel.Tag.ToString())).First().InheritedOperationTypes, @"[^a-zA-Z]", "_")).Content).Children.Add(toolPanel);
                 }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
