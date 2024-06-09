@@ -1,9 +1,13 @@
-﻿using MWindowInterfacesLib.Interfaces;
+﻿using Gemini.Framework;
+using Markdig.Extensions.TextRenderer;
+using MWindowInterfacesLib.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Windows.Media;
 
@@ -42,6 +46,14 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string appStartupLanguage = Thread.CurrentThread.CurrentCulture.ToString();
 
         public Dictionary<string, string> AppClientSettings = new Dictionary<string, string>();
+
+
+        public JsonSerializerOptions JsonSerializeOptions = new JsonSerializerOptions() {
+            PropertyNameCaseInsensitive = true, ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            DictionaryKeyPolicy = JsonNamingPolicy.CamelCase, PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
     }
 
     /// <summary>
@@ -97,12 +109,14 @@ namespace EasyITSystemCenter.GlobalClasses {
     /// <summary>
     /// Class for User Authentication information
     /// </summary>
-    public class Authentification {
+    public class AuthentificationResponse {
         public int Id { get; set; } = 0;
         public string Name { get; set; } = string.Empty;
         public string SurName { get; set; } = string.Empty;
-        public string Token { get; set; }
-        public DateTime? Expiration { get; set; }
+        public string Token { get; set; } = null;
+        public string Email { get; set; } = null;
+        public string Message { get; set; } = null;
+        public DateTime? Expiration { get; set; } = null;
         public string Role { get; set; }
     }
 
@@ -112,7 +126,7 @@ namespace EasyITSystemCenter.GlobalClasses {
     public class UserData {
         public string UserName { get; set; }
         public string Password { get; set; }
-        public Authentification Authentification { get; set; }
+        public AuthentificationResponse Authentification { get; set; }
     }
 
     //public class Parameter {
@@ -226,7 +240,7 @@ namespace EasyITSystemCenter.GlobalClasses {
     /// <summary>
     /// Custom Definition for Returning List with One Record from Operation Stored Procedures
     /// </summary>
-    public class CustomOneRowList {
+    public class CustomMessageList {
         public string MessageList { get; set; }
     }
 

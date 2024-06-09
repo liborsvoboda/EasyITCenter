@@ -15,6 +15,7 @@ using EasyData.Services;
 using EasyITCenter.ServerCoreConfiguration;
 using SQLitePCL;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 
 namespace EasyITCenter {
@@ -106,10 +107,10 @@ namespace EasyITCenter {
         /// </summary>
         /// <param name="app">           </param>
         /// <param name="serverLifetime"></param>
-        public void Configure(IApplicationBuilder app, IHostApplicationLifetime serverLifetime) {
-            serverLifetime.ApplicationStarted.Register(ServerOnStarted);
-            serverLifetime.ApplicationStopping.Register(ServerOnStopping);
-            serverLifetime.ApplicationStopped.Register(ServerOnStopped);
+        public void Configure(IApplicationBuilder app, IHostApplicationLifetime serverLifetime, IActionDescriptorCollectionProvider routerActionProvider) {
+
+            ServerRuntimeData.ActionRouterProvider = routerActionProvider;
+            serverLifetime.ApplicationStarted.Register(ServerOnStarted);serverLifetime.ApplicationStopping.Register(ServerOnStopping);serverLifetime.ApplicationStopped.Register(ServerOnStopped);
 
             ServerEnablingServices.EnableLogging(ref app);
 
@@ -129,7 +130,7 @@ namespace EasyITCenter {
                 if (DbOperations.CheckDBServerApiRule(requestPath)?.Count() > 0
                 || (!string.IsNullOrEmpty(System.IO.Path.GetExtension(context.Request.Path)))
                 || context.Response.StatusCode == StatusCodes.Status301MovedPermanently || context.Response.StatusCode == StatusCodes.Status302Found
-                ) {return;}
+                ) { return; }
 
                 //Include TOKEN
                 context = CoreOperations.IncludeCookieTokenToRequest(context);
@@ -160,9 +161,9 @@ namespace EasyITCenter {
                             try { context.Response.Cookies.Append("RequestedModulePath", requestPath); } catch { }
                             redirected = true; context.Request.Path = "/ServerModules"; await next();
 
-                        } 
+                        }
                     }
-                    
+
                 }
                 else if (context.Response.StatusCode == StatusCodes.Status200OK) { return; }
                 // ALLOVE All 200 AFTER SECURITY CHECK - DYNAMIC MODULES AND ALL OTHER MUST BE 404
@@ -191,7 +192,8 @@ namespace EasyITCenter {
                 //Show ServerModules
                 else if (!redirected && routeLayout == RouteLayoutTypes.ServerModulesLayout && context.Request.Path.ToString().ToLower() != fileValidUrl) { redirected = true; context.Request.Path = "/ServerModules"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
                 //Others Type Detected
-                else if (!redirected && context.Request.Path.ToString().ToLower() != fileValidUrl) { redirected = true; context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                else if (!redirected && context.Request.Path.ToString().ToLower() != fileValidUrl
+                && (context.Response.StatusCode != StatusCodes.Status200OK && context.Response.StatusCode != StatusCodes.Status301MovedPermanently && context.Response.StatusCode != StatusCodes.Status302Found)) { redirected = true; context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
 
 
                 if (!redirected && commandType == RoutingActionTypes.Return) { return; }
@@ -289,14 +291,13 @@ namespace EasyITCenter {
             }
 
             if (ServerConfigSettings.WebMvcPagesEngineEnabled) { app.UseMvcWithDefaultRoute(); }
-
-            try {
-                app.UsePathBase(ServerConfigSettings.RedirectPath);
-            } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
-            
+            try { app.UsePathBase(ServerConfigSettings.RedirectPath); } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
             if (ServerConfigSettings.BrowserLinkEnabled) { app.UseBrowserLink(); }
             if (ServerConfigSettings.ModuleWebDataManagerEnabled) { app.UseEasyData(); }
-            
+
+
+            //Load registered routes List To Runtime
+            CoreOperations.GetServerRegisteredRoutesList(true);
         }
 
         /// <summary>

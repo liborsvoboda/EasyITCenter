@@ -288,7 +288,7 @@ namespace EasyITSystemCenter.Pages {
                 if (systemCustomPageList.DevModeEnabled) { webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = true; } else { webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = false; }
                 if (systemCustomPageList.ShowHelpTab && systemCustomPageList.HelpTabUrl != null) {
 
-                    switch (systemCustomPageList.InheritedHelpTabSourceType) {
+                    switch (systemCustomPageList.InheritedHelpTabSourceType.ToLower()) {
                         case "eicserverapiurl":
                             ti_helpUrl.SetCurrentValue(VisibilityProperty, Visibility.Visible);
                             helpWebBrowser.SetCurrentValue(Microsoft.Web.WebView2.Wpf.WebView2.SourceProperty, new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "conn_apiAddress").Value + $"{(systemCustomPageList.HelpTabUrl.StartsWith("/") ? systemCustomPageList.HelpTabUrl : "/" + systemCustomPageList.HelpTabUrl)}"));

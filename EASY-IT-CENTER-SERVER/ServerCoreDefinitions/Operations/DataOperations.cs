@@ -1,6 +1,8 @@
 ﻿using DocumentFormat.OpenXml.Vml;
 using System.Data;
 using System.Text.RegularExpressions;
+using System.Web.Helpers;
+using System.Web.Script.Serialization;
 
 namespace EasyITCenter.ServerCoreStructure {
 
@@ -11,18 +13,93 @@ namespace EasyITCenter.ServerCoreStructure {
     public static class DataOperations {
 
         /// <summary>
-        /// Convert String to Enum
+        /// Convert String to Generic Enum
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static T ToEnum<T>(this string value) {
+        public static T GenericToEnum<T>(string value) {
             Type enumType = typeof(T);
             if (!enumType.IsEnum) {
-                CoreOperations.SendEmail(new SendMailRequest() { Content = "DataOperation ToEnum Method line 22: T must be an Enumeration type." + enumType.ToString() });
+                CoreOperations.SendEmail(new SendMailRequest() { Content = "DataOperation GenericToEnum Method line 22: T must be an Enumeration type." + enumType.ToString() });
             } return (T)Enum.Parse(typeof(T), value, true);
         }
 
+
+        /// <summary>
+        /// Generic Convert Data Table To DataList
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dt">The dt.</param>
+        /// <returns></returns>
+        public static List<T> GenericConvertTableToClassList<T>(DataTable dt) {
+            List<T> result = new List<T>();
+            foreach (DataRow dr in dt.Rows) {
+                var typeObject = Activator.CreateInstance<T>();
+                foreach (var fieldInfo in typeof(T).GetProperties()) {
+                    foreach (DataColumn dc in dt.Columns) {
+                        if (fieldInfo.Name == dc.ColumnName) { fieldInfo.SetValue(typeObject, dr[dc.ColumnName]); break; }
+                    }
+                }; result.Add(typeObject);
+            }; return result;
+        }
+
+
+        /// <summary>
+        ///  Convert Data Table To DataList of Type
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="classType"></param>
+        /// <returns></returns>
+        public static List<object> ConvertTableToClassListByType(DataTable dt, Type classType) {
+            List<object> result = new List<object>();
+            foreach (DataRow dr in dt.Rows) {
+                var typeObject = Activator.CreateInstance(classType);
+                foreach (var fieldInfo in classType.GetProperties()) {
+                    foreach (DataColumn dc in dt.Columns) {
+                        if (fieldInfo.Name == dc.ColumnName) { fieldInfo.SetValue(typeObject, dr[dc.ColumnName]); break; }
+                    }
+                }; result.Add(typeObject);
+            }; return result;
+        }
+
+        /// <summary>
+        /// Convert Dictionary string,string To Json Suportted Values Bool, Int, String
+        /// </summary>
+        /// <param name="keyList"></param>
+        /// <returns></returns>
+        public static string ConvertDictionaryListToJson(Dictionary<string, string> keyList) {
+            bool tempBool; int tempInt = 0;
+            Dictionary<string, object> exportJsonList = new Dictionary<string, object>();
+            keyList.ToList().ForEach(key => {
+                string valueType = bool.TryParse(key.Value, out tempBool) ? "bool" : int.TryParse(key.Value, out tempInt) ? "int" : "string";
+                exportJsonList.Add(key.Key, (valueType == "bool" ? (object)tempBool : valueType == "int" ? (object)tempInt : (object)key.Value));
+            });
+            return new JavaScriptSerializer().Serialize(exportJsonList);
+        }
+
+        /// <summary>
+        /// !!! SYSTEM RULE: ClassList with joining fields names must be nullable before API
+        /// operation !!! ClassName must contain: "Extended" WORD Extension field in Class - Dataset
+        /// must be set as null before Database Operation else is joining to other dataset is valid
+        /// and can be blocked by fail key Its Check Extended in ClassName - SYSTEM RULE
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static void NullSetInExtensionFields<T>(ref T dataset) {
+            if (dataset.GetType().Name.ToLower().Contains("extended")) {
+                foreach (PropertyInfo prop in dataset.GetType().GetProperties()) { if (prop.DeclaringType.Name.Contains("Extended")) prop.SetValue(dataset, null); }
+            }
+        }
+
+        /// <summary>
+        /// Object To Json Serializer
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string ObjectToJson(this object obj) {
+            return JsonSerializer.Serialize(obj);
+        }
 
         /// <summary>
         /// Create Object Type By Type Name

@@ -1,5 +1,11 @@
 ﻿using EasyITCenter.ServerCoreWebPages;
+using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
+using NUglify.Helpers;
+using ServiceStack;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
@@ -14,14 +20,14 @@ namespace EasyITCenter.ServerCoreStructure {
 
         //TODO CAN BE INSERTED CUSTOM KEYS FOR Machines o Other HERE WILL BE VALIDATED: NEW AGENDA 
         public static HttpContext IncludeCookieTokenToRequest(HttpContext context) {
-            ServerWebPagesToken? serverWebPagesToken = null; 
+            ServerWebPagesToken? serverWebPagesToken = null;
             string token = context.Request.Cookies.FirstOrDefault(a => a.Key == "ApiToken").Value;
 
             if (token == null && context.Request.Headers.Authorization.ToString().Length > 0) { token = context.Request.Headers.Authorization.ToString().Substring(7); }
             if (token != null) {
                 serverWebPagesToken = CoreOperations.CheckTokenValidityFromString(token);
-                if (serverWebPagesToken.IsValid) { 
-                    context.User.AddIdentities(serverWebPagesToken.UserClaims.Identities); 
+                if (serverWebPagesToken.IsValid) {
+                    context.User.AddIdentities(serverWebPagesToken.UserClaims.Identities);
                     try { context.Items.Add(new KeyValuePair<object, object>("ServerWebPagesToken", serverWebPagesToken)); } catch { } }
             }
             return context;
@@ -62,7 +68,7 @@ namespace EasyITCenter.ServerCoreStructure {
                         try { if (serverModule.UrlSubPath != null) { context.Response.Cookies.Append("RequestedModulePath", serverModule.UrlSubPath); } } catch { }
                     }
                     routeLayout = RouteLayoutTypes.ServerModulesLayout;
-                    if (routePath != "/ServerModules") { validPath = "/ServerModules"; routingResult = RoutingActionTypes.Next; 
+                    if (routePath != "/ServerModules") { validPath = "/ServerModules"; routingResult = RoutingActionTypes.Next;
                     } else { validPath = routePath; routingResult = RoutingActionTypes.Return; }
                 }
 
@@ -102,19 +108,16 @@ namespace EasyITCenter.ServerCoreStructure {
 
                 //Check MarkDown Type missing .md for Show in Markdown Layout
                 if (ServerConfigSettings.EnableAutoShowStaticMdAsHtml) {
-                    if (!routePath.EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + ".md")) 
-                    { validPath = routePath + ".md"; routeLayout = RouteLayoutTypes.ViewerMarkDownFileLayout; routingResult = RoutingActionTypes.Next; }
+                    if (!routePath.EndsWith("/") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + ".md")) { validPath = routePath + ".md"; routeLayout = RouteLayoutTypes.ViewerMarkDownFileLayout; routingResult = RoutingActionTypes.Next; }
                 }
 
 
                 //Check Report By extension '.frx' for Show
-                if (routePath.EndsWith(".frx") || routePath.EndsWith(".fpx")) 
-                    { routeLayout = RouteLayoutTypes.ViewerReportFileLayout; validPath = routePath; routingResult = RoutingActionTypes.Next; }
+                if (routePath.EndsWith(".frx") || routePath.EndsWith(".fpx")) { routeLayout = RouteLayoutTypes.ViewerReportFileLayout; validPath = routePath; routingResult = RoutingActionTypes.Next; }
 
 
                 //Check Html By missing '.html' for Open In HTML Editor
-                if (!routePath.EndsWith("/") && !context.Request.Path.ToString().Split("/").Last().Contains(".") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + ".html")) 
-                    { routeLayout = RouteLayoutTypes.EditorHtmlFileLayout; validPath = routePath + ".html"; routingResult = RoutingActionTypes.Next; }
+                if (!routePath.EndsWith("/") && !context.Request.Path.ToString().Split("/").Last().Contains(".") && File.Exists(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(routePath) + ".html")) { routeLayout = RouteLayoutTypes.EditorHtmlFileLayout; validPath = routePath + ".html"; routingResult = RoutingActionTypes.Next; }
 
 
                 //Check Index.html & Html file
@@ -136,12 +139,12 @@ namespace EasyITCenter.ServerCoreStructure {
 
                 //Any Validation Founded
                 if (validPath == null && context.Items.FirstOrDefault(a => a.Key.ToString() == "ComandType").Value == null) {
-                    routeLayout = DataOperations.ToEnum<RouteLayoutTypes>(DbOperations.CheckDefinedWebPageExists("/DefaultWebPages/404NonExistPage").InheritedLayoutType);
+                    routeLayout = DataOperations.GenericToEnum<RouteLayoutTypes>(DbOperations.CheckDefinedWebPageExists("/DefaultWebPages/404NonExistPage").InheritedLayoutType);
                     validPath = "/ServerControls/404NonExistPage"; routingResult = RoutingActionTypes.Next;
                 }
             } catch (Exception Ex) {
                 routeLayout = RouteLayoutTypes.PortalLayout; validPath = routePath; routingResult = RoutingActionTypes.Return;
-                CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); 
+                CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) });
             }
 
             if (context.Items.FirstOrDefault(a => a.Key.ToString() == "RouteLayoutTypes").Value == null) { context.Items.Add("RouteLayoutTypes", routeLayout); }
@@ -300,14 +303,14 @@ namespace EasyITCenter.ServerCoreStructure {
                     resultOutput += proc.StandardOutput.ReadToEndAsync();
                     resultError += proc.StandardError.ReadToEndAsync();
 
-                    if (processDefinition.WaitForExit) { 
+                    if (processDefinition.WaitForExit) {
                         await proc.WaitForExitAsync();
                         return resultOutput + Environment.NewLine + resultError;
                     }
                     else { return resultOutput + Environment.NewLine + resultError; }
                 }
-                
-            } catch (Exception ex ){ resultError += ex.StackTrace + Environment.NewLine + ex.Message;
+
+            } catch (Exception ex) { resultError += ex.StackTrace + Environment.NewLine + ex.Message;
                 CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(ex) });
             }
             return resultOutput + Environment.NewLine + resultError;
@@ -343,19 +346,30 @@ namespace EasyITCenter.ServerCoreStructure {
             return new ServerWebPagesToken();
         }
 
+
         /// <summary>
         /// Extension For Checking Operation System of Server Running
         /// </summary>
         public static class GetOperatingSystemInfo {
+            public static bool IsWindows() => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            public static bool IsMacOS() => RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+            public static bool IsLinux() => RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+        }
 
-            public static bool IsWindows() =>
-                RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
-            public static bool IsMacOS() =>
-                RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-
-            public static bool IsLinux() =>
-                RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+        /// <summary>
+        /// LOAD Registered Routes List 
+        /// </summary>
+        /// <param name="updateList"></param>
+        /// <returns></returns>
+        public static void GetServerRegisteredRoutesList(bool updateList) {
+            try {
+                if (updateList || ServerRuntimeData.ServerRegisteredRoutesList == null) { //a=>a.AttributeRouteInfo.Name action
+                    var RouteGroups = ((IReadOnlyList<ActionDescriptor>)ServerRuntimeData.ActionRouterProvider.ActionDescriptors.Items).GroupBy(a => a.AttributeRouteInfo?.Template).ToJson();
+                    ServerRuntimeData.ServerRegisteredRoutesList = ServerRuntimeData.ActionRouterProvider.ActionDescriptors.Items.ToArray().ToList();
+                    //.Select(a => a.JoinAsString("/")).ToList();
+                }
+            } catch { }
         }
     }
 }

@@ -29,3 +29,28 @@ GenericTable ConvertGenericClassToStandard
 jako přidání sloupce, změna typu, nahrazení stringu
 
 
+---   
+# TODO DATABASE MANAGEMENT   
+
+*   MassOnsert: db.BulkInsertAsync/Update/Delete/ 
+*   Clear cache by EasyITCenterContext.RefreshModel()
+*   New Table by EasyITCenterContext.Attach()
+*   Testing and Comit/rollback EasyITCenterContext.GetDbTransaction().Save/Release/Rollback 
+*   EasyITCenterContext.GetDbTransaction(). + next can be solution for Selection
+*   a.Model. -get procedures/function,schema,views,
+*   a.Database.AutoTransactionsEnabled = true, a.Database.beginTransaction/close,comit
+*   createDB a.Database.EnsureCreated
+*   Script For Create All Tables a.Database.GenerateCreateScript()
+*   a.Database.GetDbConnection().ChangeDatabase(dbname)
+*   a.Database.GetDbConnection().GetSchema()
+*   CONTEXT TO DB a.Database.Migrate()
+*   Open custom connect a.Database.OpenConnection() a.Database.UseTransaction() 
+*   a.Database.SetConnectionString() a.Database.RollbackTransaction()
+*   a.Database.ExecuteSqlRaw - Original executing, delete DB a.Database.EnsureDeleted/Created
+*   a.Database.GetMigrations 
+*   Connect NEW DB a.Database.GetInfrastructure().CreateScope
+*   a.Model.GetDefaultSchema a.Model.GetDbFunctions
+*   a.GetDto().ToCsv a.GetDto().ToJson/xml 
+*   copy context EasyITCenterContext.CreateCopy()
+*   TODO Integrity Operations db.Merge, 
+*   

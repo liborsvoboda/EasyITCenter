@@ -84,6 +84,13 @@
         /// </summary>
         public static string ConfigCoreServerRegisteredName { get; set; } = "EASY-IT-CENTER";
 
+
+        /// <summary>
+        /// Server Token Security Level Encryption For Token Generator
+        /// </summary>
+        public static string ConfigTokenEncryption { get; set; } = "HmacSha256";
+        
+
         /// <summary>
         /// Activation / Deactivation of Email Sender For Server Core Fails Checker All Catch Write
         /// to SendEmail, In Debug mode is Written in console in Release mode is Sended email (All

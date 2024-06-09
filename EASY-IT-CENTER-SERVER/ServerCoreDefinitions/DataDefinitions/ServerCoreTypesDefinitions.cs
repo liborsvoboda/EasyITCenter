@@ -66,6 +66,6 @@
         ServerModuleAndServiceLists,
         ServerStaticOrMvcDefPathLists,
         WebCoreFileLists,
-        WebGlobalPageBlockLists
+        WebGlobalPageBlockLists,
     }
 }

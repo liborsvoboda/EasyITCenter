@@ -12,6 +12,8 @@ using Docfx.MarkdigEngine.Extensions;
 using Markdig.Prism;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SourceBrowserIndex = Microsoft.SourceBrowser.SourceIndexServer.Models.Index;
+using Microsoft.Extensions.DependencyInjection;
+using ServiceStack;
 
 
 namespace EasyITCenter.ServerCoreConfiguration {
@@ -243,25 +245,29 @@ namespace EasyITCenter.ServerCoreConfiguration {
                 //services.AddSwaggerSchemaBuilder(c => c.CamelCase = true);
                 
                  services.AddSwaggerGen(c => {
-                    c.AddSecurityDefinition("Basic", new OpenApiSecurityScheme { Name = "Authorization", Type = SecuritySchemeType.Http, Scheme = "basic", In = ParameterLocation.Header, Description = "Basic Authorization header for getting Bearer Token." });
-                    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                    { { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Basic" } }, new List<string>() } });
-                    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme { Description = "JWT Authorization header using the Bearer scheme for All safe APIs.", Name = "Authorization", In = ParameterLocation.Header, Scheme = "bearer", Type = SecuritySchemeType.Http, BearerFormat = "JWT" });
-                    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                    { { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }, new List<string>() } });
-                    
-                    c.SchemaGeneratorOptions = new SchemaGeneratorOptions { SchemaIdSelector = type => type.FullName };
-                    c.SwaggerDoc(Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString(), new OpenApiInfo {
-                        Title = ServerConfigSettings.ConfigCoreServerRegisteredName + " Server API",
-                        Version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString(),
-                        TermsOfService = new Uri(ServerConfigSettings.ServerPublicUrl),
-                        Description = BackendServer.SwaggerModuleDescription,
-                        Contact = new OpenApiContact { Name = "Libor Svoboda", Email = ServerConfigSettings.EmailerServiceEmailAddress, Url = new Uri("https://groupware-solution.eu/contactus") },
-                        License = new OpenApiLicense { Name = ServerConfigSettings.ConfigCoreServerRegisteredName + " Server License", Url = new Uri("https://www.groupware-solution.eu/") }
-                    });
+                     c.AddSecurityDefinition("Basic", new OpenApiSecurityScheme { Name = "Authorization", Type = SecuritySchemeType.Http, Scheme = "basic", In = ParameterLocation.Header, Description = "Basic Authorization header for getting Bearer Token." });
+                     c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                     { { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Basic" } }, new List<string>() } });
+                     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme { Description = "JWT Authorization header using the Bearer scheme for All safe APIs.", Name = "Authorization", In = ParameterLocation.Header, Scheme = "bearer", Type = SecuritySchemeType.Http, BearerFormat = "JWT" });
+                     c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                     { { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }, new List<string>() } });
 
-                    var xmlFile = Path.Combine(ServerRuntimeData.Startup_path, $"{ServerConfigSettings.ConfigCoreServerRegisteredName}.xml");
-                    if (File.Exists(xmlFile)) c.IncludeXmlComments(xmlFile, true);
+                     c.SchemaGeneratorOptions = new SchemaGeneratorOptions { SchemaIdSelector = type => type.FullName };
+                     c.SwaggerDoc(Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString(), new OpenApiInfo {
+                         Title = ServerConfigSettings.ConfigCoreServerRegisteredName + " Server API",
+                         Version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString(),
+                         TermsOfService = new Uri(ServerConfigSettings.ServerPublicUrl),
+                         Description = BackendServer.SwaggerModuleDescription,
+                         Contact = new OpenApiContact { Name = "Libor Svoboda", Email = ServerConfigSettings.EmailerServiceEmailAddress, Url = new Uri("https://groupware-solution.eu/contactus") },
+                         License = new OpenApiLicense { Name = ServerConfigSettings.ConfigCoreServerRegisteredName + " Server License", Url = new Uri("https://www.groupware-solution.eu/") }
+                     });
+
+                     var xmlFile = Path.Combine(ServerRuntimeData.Startup_path, $"{Assembly.GetEntryAssembly()?.GetName().Name}.xml");
+                     if (File.Exists(xmlFile)) { try { c.IncludeXmlComments(xmlFile,true); } catch { } }
+                     foreach (var assembly in Assembly.GetExecutingAssembly().InList()) {
+                         if (File.Exists(assembly.Location)) { try {c.IncludeXmlComments(assembly.Location, true); } catch { } } }
+                     
+
 
                     //c.InferSecuritySchemes();
                     c.UseOneOfForPolymorphism();

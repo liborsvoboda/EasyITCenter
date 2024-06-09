@@ -43,7 +43,7 @@ namespace EasyITSystemCenter.GlobalOperations {
         public static Exception SaveSettings() {
             try {
                 using (StreamWriter sw = File.CreateText(Path.Combine(App.appRuntimeData.settingFolder, App.appRuntimeData.appSettingFile))) {
-                    sw.Write(DataOperations.ConvertDataSetToJson(App.appRuntimeData.AppClientSettings));
+                    sw.Write(DataOperations.ConvertDictionaryListToJson(App.appRuntimeData.AppClientSettings));
                     sw.Flush(); sw.Close();
                 }
                 return null;

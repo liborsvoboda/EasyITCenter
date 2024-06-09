@@ -9,7 +9,6 @@ using Westwind.AspNetCore.Markdown;
 using Pek.Markdig.HighlightJs;
 using Markdown = Westwind.AspNetCore.Markdown.Markdown;
 using OpenGraphNet;
-using Microsoft.VisualStudio.Services.Common;
 
 
 namespace EasyITCenter.ServerCoreDBSettings {

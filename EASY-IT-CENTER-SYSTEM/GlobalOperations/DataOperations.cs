@@ -1,6 +1,7 @@
 ﻿using EasyITSystemCenter.GlobalClasses;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -18,9 +19,12 @@ namespace EasyITSystemCenter.GlobalOperations {
     /// </summary>
     public static class DataOperations {
 
-        /// <summary> Convert Dictionary<string,string> To Json Suportted Values Bool, Int, String
-        /// </summary> <returns></returns>
-        public static string ConvertDataSetToJson(Dictionary<string, string> keyList) {
+        /// <summary>
+        /// Convert Dictionary string,string To Json Suportted Values Bool, Int, String
+        /// </summary>
+        /// <param name="keyList"></param>
+        /// <returns></returns>
+        public static string ConvertDictionaryListToJson(Dictionary<string, string> keyList) {
             bool tempBool; int tempInt = 0;
             Dictionary<string, object> exportJsonList = new Dictionary<string, object>();
             keyList.ToList().ForEach(key => {
@@ -50,7 +54,7 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// <param name="obj"></param>
         /// <returns></returns>
         public static string ObjectToJson(this object obj) {
-            return JsonSerializer.Serialize(obj);
+            return JsonSerializer.Serialize(obj, App.appRuntimeData.JsonSerializeOptions);
         }
 
         /// <summary>
@@ -120,7 +124,7 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// <param name="data"></param>
         /// <returns></returns>
         public static List<GenericTable> ConvertGenericClassListToStandard<T>(T data) {
-            return JsonSerializer.Deserialize<List<GenericTable>>(JsonSerializer.Serialize(data));
+            return JsonSerializer.Deserialize<List<GenericTable>>(JsonSerializer.Serialize(data), App.appRuntimeData.JsonSerializeOptions);
         }
 
         /// <summary>
@@ -130,26 +134,62 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// <param name="data"></param>
         /// <returns></returns>
         public static GenericTable ConvertGenericClassToStandard<T>(T data) {
-            return JsonSerializer.Deserialize<GenericTable>(JsonSerializer.Serialize(data));
+            return JsonSerializer.Deserialize<GenericTable>(JsonSerializer.Serialize(data), App.appRuntimeData.JsonSerializeOptions);
         }
 
         /// <summary>
-        /// Convert String to Enum
+        /// Convert String to Generic Enum
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static T ToEnum<T>(this string value) {
+        public static T GenericToEnum<T>(this string value) {
             try {
                 Type enumType = typeof(T);
                 if (!enumType.IsEnum) {
-                    App.ApplicationLogging(new Exception("DataOperation ToEnum Method DataOperations  T ToEnum<T>: T must be an Enumeration type." + enumType.ToString()));
+                    App.ApplicationLogging(new Exception("DataOperation GenericToEnum Method DataOperations  T GenericToEnum<T>: T must be an Enumeration type." + enumType.ToString()));
                 }
             } catch (Exception Ex) { App.ApplicationLogging(Ex); }
             return (T)Enum.Parse(typeof(T), value, true);
         }
 
 
-    
+        /// <summary>
+        /// Generic Convert Data Table To DataList
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dt">The dt.</param>
+        /// <returns></returns>
+        public static List<T> GenericConvertTableToClassList<T>(DataTable dt) {
+            List<T> result = new List<T>();
+            foreach (DataRow dr in dt.Rows) {
+                var typeObject = Activator.CreateInstance<T>();
+                foreach (var fieldInfo in typeof(T).GetProperties()) {
+                    foreach (DataColumn dc in dt.Columns) {
+                        if (fieldInfo.Name == dc.ColumnName) { fieldInfo.SetValue(typeObject, dr[dc.ColumnName]); break; }
+                    }
+                }; result.Add(typeObject);
+            }; return result;
+        }
+
+
+        /// <summary>
+        ///  Convert Data Table To DataList of Type
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="classType"></param>
+        /// <returns></returns>
+        public static List<object> ConvertTableToClassListByType(DataTable dt, Type classType) {
+            List<object> result = new List<object>();
+            foreach (DataRow dr in dt.Rows) {
+                var typeObject = Activator.CreateInstance(classType);
+                foreach (var fieldInfo in classType.GetProperties()) {
+                    foreach (DataColumn dc in dt.Columns) {
+                        if (fieldInfo.Name == dc.ColumnName) { fieldInfo.SetValue(typeObject, dr[dc.ColumnName]); break; }
+                    }
+                }; result.Add(typeObject);
+            }; return result;
+        }
+
     }
 }

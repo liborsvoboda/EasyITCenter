@@ -11,6 +11,7 @@ namespace EasyITCenter.ServerCoreStructure {
     /// </summary>
     public class DbOperations {
 
+        
         #region Definition for Startup And Reload Tables
 
         /// <summary>
@@ -52,6 +53,7 @@ namespace EasyITCenter.ServerCoreStructure {
                                 int sasIndexLL = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == sasDataLL.GetType());
                                 if (sasIndexLL >= 0) ServerRuntimeData.LocalDBTableList[sasIndexLL] = sasDataLL; else ServerRuntimeData.LocalDBTableList.Add(sasDataLL);
                                 break;
+
                             default: break;
                         }
                         if (onlyThis != null) break;
@@ -71,7 +73,8 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <param name="word">    </param>
         /// <param name="language"></param>
         /// <returns></returns>
-        public static string DBTranslate(string word, string language = "cz") {
+        public static string DBTranslate(string word, string? language = null) {
+            if (string.IsNullOrEmpty(language)) { language = ServerConfigSettings.ServiceServerLanguage; }
             return ServerConfigSettings.ServiceUseDbLocalAutoupdatedDials ? DBTranslateOffline(word, language) : DBTranslateOnline(word, language);
         }
 
@@ -292,7 +295,8 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <param name="word">    </param>
         /// <param name="language"></param>
         /// <returns></returns>
-        private static string DBTranslateOffline(string word, string language = "cz") {
+        private static string DBTranslateOffline(string word, string? language = null) {
+            if (string.IsNullOrEmpty(language)) { language = ServerConfigSettings.ServiceServerLanguage; }
             string result;
             int index = ServerRuntimeData.LocalDBTableList.FindIndex(a => a.GetType() == new List<SystemTranslationList>().GetType());
 
@@ -321,7 +325,8 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <param name="word">    </param>
         /// <param name="language"></param>
         /// <returns></returns>
-        private static string DBTranslateOnline(string word, string language = "cz") {
+        private static string DBTranslateOnline(string word, string? language = null) {
+            if (string.IsNullOrEmpty(language)) { language = ServerConfigSettings.ServiceServerLanguage; }
             string result;
 
             //Check Exist AND Insert New
@@ -344,34 +349,5 @@ namespace EasyITCenter.ServerCoreStructure {
 
         #endregion Private or On-line/Off-line Definitions
 
-        #region Databases Helper
-
-        /// <summary>
-        /// Extension For Using Custom Defined Tables from Database Procedures Its used as Database
-        /// Context Extension as 'CollectionFromSql' Method in Database Context
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="dt">The dt.</param>
-        /// <returns></returns>
-        public static List<T> BindList<T>(DataTable dt) {
-            var fields = typeof(T).GetProperties();
-            List<T> lst = new List<T>();
-            foreach (DataRow dr in dt.Rows) {
-                var ob = Activator.CreateInstance<T>();
-                foreach (var fieldInfo in fields) {
-                    foreach (DataColumn dc in dt.Columns) {
-                        if (fieldInfo.Name == dc.ColumnName) {
-                            object value = dr[dc.ColumnName];
-                            fieldInfo.SetValue(ob, value);
-                            break;
-                        }
-                    }
-                }
-                lst.Add(ob);
-            }
-            return lst;
-        }
-
-        #endregion Databases Helper
     }
 }

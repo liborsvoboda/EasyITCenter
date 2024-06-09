@@ -8,18 +8,19 @@
         [AllowAnonymous]
         [HttpPost("/EasyITCenterAuthentication")]
         public IActionResult Authenticate([FromHeader] string Authorization) {
-            (string username, string password) = GetUsernameAndPasswordFromAuthorizeHeader(Authorization);
+            (string? username, string? password) = GetUsernameAndPasswordFromAuthorizeHeader(Authorization);
+            AuthenticateResponse? user = Authenticate(username, password);
+            
+            if (!string.IsNullOrWhiteSpace(user?.Message)) { return Ok(JsonSerializer.Serialize(user)); 
+            } else if (user == null) { { return BadRequest(new { message = DbOperations.DBTranslate("UsernameOrPasswordIncorrect", ServerConfigSettings.ServiceServerLanguage) }); }; }
 
-            AuthenticateResponse user = Authenticate(username, password);
-
-            try {
-                if (HttpContext.Connection.RemoteIpAddress != null && user != null) {
+            try { if (HttpContext.Connection.RemoteIpAddress != null && user != null) {
                     string clientIPAddr = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).AddressList.First(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToString();
                     if (!string.IsNullOrWhiteSpace(clientIPAddr)) { SoftwareTriggers.WriteVisit(clientIPAddr, user.Id, username); }
                 }
             } catch { }
 
-            if (user == null) { return BadRequest(new { message = DbOperations.DBTranslate("UsernameOrPasswordIncorrect", ServerConfigSettings.ServiceServerLanguage) }); }
+            
             if (!ServerConfigSettings.ConfigTimeTokenValidationEnabled) { user.Expiration = null; }
 
             RefreshUserToken(username, user);
@@ -50,35 +51,44 @@
         /// <param name="password"></param>
         /// <returns></returns>
         public static AuthenticateResponse? Authenticate(string? username, string? password) {
-            if (username == null)
-                return null;
-
-            var user = new EasyITCenterContext().SolutionUserLists
-                .Include(a => a.Role).Where(a => a.Active == true && a.UserName == username && a.Password == password)
-                .First();
-
-            if (user == null)
-                return null;
-
+            SecurityToken? token = null; string? errorMessage = null;
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(ServerConfigSettings.ConfigJwtLocalKey);
-            var tokenDescriptor = new SecurityTokenDescriptor {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
+
+
+            if (username == null) { return null; }
+            var user = new EasyITCenterContext().SolutionUserLists.Include(a => a.Role)
+                .Where(a => a.Active == true && a.UserName == username && a.Password == password).First();
+            if (user == null) { return null; }
+                
+            try {
+               
+                var tokenDescriptor = new SecurityTokenDescriptor {
+                    Subject = new ClaimsIdentity(new Claim[] {
+
                     new Claim(ClaimTypes.PrimarySid, user.Id.ToString()),
                     new Claim(ClaimTypes.NameIdentifier, user.UserName),
+                    new Claim(ClaimTypes.Email, user.InfoEmail),
                     new Claim(ClaimTypes.Role, user.Role.SystemName.ToLower()),
                     new Claim(ClaimTypes.Dns, ServerConfigSettings.ConfigCertificateDomain)
                 }),
-                Issuer = user.UserName,
-                NotBefore = DateTimeOffset.Now.DateTime,
-                Expires = DateTimeOffset.Now.AddMinutes(ServerConfigSettings.ConfigApiTokenTimeoutMin).DateTime,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+                    CompressionAlgorithm = CompressionAlgorithms.Deflate,
+                    Issuer = user.UserName,
+                    TokenType = "JWT",
+                    IssuedAt = DateTimeOffset.Now.DateTime,
+                    NotBefore = DateTimeOffset.Now.DateTime,
+                    Expires = DateTimeOffset.Now.AddMinutes(ServerConfigSettings.ConfigApiTokenTimeoutMin).DateTime,
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512)
+                };                token = tokenHandler.CreateToken(tokenDescriptor);
+            } catch (Exception ex) { errorMessage = DataOperations.GetSystemErrMessage(ex); }
 
-            AuthenticateResponse authResponse = new() { Id = user.Id, Name = user.Name, Surname = user.SurName, Token = tokenHandler.WriteToken(token), Expiration = token.ValidTo.ToLocalTime(), Role = user.Role.SystemName.ToLower() };
+            AuthenticateResponse authResponse = new() 
+            { Id = user.Id, Name = user.Name, SurName = user.SurName, Token = token == null ? string.Empty : tokenHandler.WriteToken(token), 
+                Email = user.InfoEmail, Message = !string.IsNullOrWhiteSpace(errorMessage) ? $"Token Generation Error, Check {errorMessage}" : "",
+                Expiration = token?.ValidTo.ToLocalTime(), Role = user.Role.SystemName.ToLower() 
+            };
             return authResponse;
+            
         }
 
         /// <summary>
@@ -105,6 +115,7 @@
             return false;
         }
 
+
         /// <summary>
         /// API Token LifeTime Validator
         /// </summary>
@@ -113,10 +124,11 @@
         /// <param name="token">    </param>
         /// <param name="params">   </param>
         /// <returns></returns>
-        internal static bool LifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken token, TokenValidationParameters @params) {
-            if (RefreshUserToken(token.Issuer, new AuthenticateResponse() { Token = ((JwtSecurityToken)token).RawData.ToString(), Expiration = DateTimeOffset.Now.AddMinutes(ServerConfigSettings.ConfigApiTokenTimeoutMin).DateTime }))
-                return true;
-            else return false;
+        internal static bool TokenLifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken token, TokenValidationParameters @params) {
+            if (RefreshUserToken(token.Issuer, new AuthenticateResponse() {
+                Token = ((JwtSecurityToken)token).RawData.ToString(),
+                Expiration = DateTimeOffset.Now.AddMinutes(ServerConfigSettings.ConfigApiTokenTimeoutMin).DateTime
+            })) { return true; } else { return false; }
         }
     }
 }

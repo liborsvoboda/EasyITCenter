@@ -44,7 +44,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
                 DataTable table = new DataTable();
                 table.Locale = System.Globalization.CultureInfo.InvariantCulture;
                 table.Load(cmd.ExecuteReader());
-                results = DbOperations.BindList<T>(table).ToList();
+                results = DataOperations.GenericConvertTableToClassList<T>(table).ToList();
 
                 return results;
             } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); } finally { cmd.Connection.Close(); }

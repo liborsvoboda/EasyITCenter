@@ -1,17 +1,15 @@
-﻿using EasyITSystemCenter.Api;
-using EasyITSystemCenter.GlobalClasses;
+﻿using ControlzEx.Standard;
+using EasyITSystemCenter.Api;
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalGenerators;
 using EasyITSystemCenter.GlobalOperations;
+using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
@@ -19,7 +17,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+
 
 namespace EasyITSystemCenter.Pages {
 
@@ -29,6 +29,7 @@ namespace EasyITSystemCenter.Pages {
 
         private List<SolutionMixedEnumList> mixedEnumTypesList = new List<SolutionMixedEnumList>();
         private List<SolutionOperationList> solutionOperationList = new List<SolutionOperationList>();
+        public List<Image> animatedIconList = new List<Image>();
 
         public SystemOperationListPage() {
             InitializeComponent();
@@ -63,8 +64,8 @@ namespace EasyITSystemCenter.Pages {
                         Width = 200,
                         Height = 200,
                         Margin = new Thickness(3),
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        VerticalAlignment = VerticalAlignment.Top,
                         Cursor = Cursors.Hand,
                         FontWeight = FontWeights.DemiBold,
                         HorizontalTitleAlignment = HorizontalAlignment.Left,
@@ -76,19 +77,19 @@ namespace EasyITSystemCenter.Pages {
 
                     BitmapImage spinner = new BitmapImage();
                     switch (panel.InheritedOperationTypes) {
-                        case "DB_SP_GET_Operace":
+                        case "DbSpDirectOperation":
                             spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), App.SystemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner").SvgIconPath);
                             break;
 
-                        case "DB_SP_POST_Operace":
+                        case "DbSpConfigOperation":
                             spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), App.SystemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner2").SvgIconPath);
                             break;
 
-                        case "API_GET_Request":
+                        case "ServerApiGetRequest":
                             spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), App.SystemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner4").SvgIconPath);
                             break;
 
-                        case "API_POST_Request":
+                        case "ServerApiConfigRequest":
                             spinner = IconMaker.Icon((Color)ColorConverter.ConvertFromString("#C48C2B"), App.SystemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == "spinner5").SvgIconPath);
                             break;
 
@@ -97,7 +98,23 @@ namespace EasyITSystemCenter.Pages {
                             break;
                     }
 
-                    Image icon = new Image() { Width = 120, Height = 120, Source = spinner };
+                    double iconSize = 120;
+                    Image icon = new Image() { Width = iconSize, Height = iconSize, Source = spinner, VerticalAlignment = VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch };
+                    
+                    //Get StoryBoard Type From Animation Library
+                    DoubleAnimation animation = (DoubleAnimation)EffectLibrary.GetAnimationEffect(AnimationLibrary.RotationAndSizeEffect, EffectTypes.SizeNoneToWidthEffect, TriggerTypes.OnMouseMove, iconSize, 2);
+                    //icon.Resources.Add("MouseAnimation", animation);
+                    //if (new string[] { "0", $"{iconSize}" }.ToList().Contains(((DoubleAnimation)icon.Resources["MouseAnimation"]).From.ToString())) {
+                        icon.MouseEnter += (sStart, eStart) => {
+                            if (animation.From == iconSize) { animation.From = 0;
+                                Storyboard.SetTarget(animation, icon); Storyboard.SetTargetProperty(animation, new PropertyPath(FrameworkElement.WidthProperty));
+                                var storyboard = new Storyboard() { Duration = TimeSpan.FromSeconds(2) }; //storyboard.Completed += (sBoard, eBoard) => { ((Storyboard)storyboard).Stop(); };
+                                storyboard.Children.Clear(); storyboard.Children.Add(animation); storyboard.Begin((FrameworkElement)sStart, true);
+                            }
+                        };
+                    //}
+
+                    animatedIconList.Add(icon);
                     toolPanel.Content = icon;
                     toolPanel.Click += ToolPanelListPage_Click;
                     ((WrapPanel)TabMenuList.FindChild<TabItem>(Regex.Replace(solutionOperationList.Where(a => a.Id == int.Parse(toolPanel.Tag.ToString())).First().InheritedOperationTypes, @"[^a-zA-Z]", "_")).Content).Children.Add(toolPanel);
@@ -109,14 +126,14 @@ namespace EasyITSystemCenter.Pages {
         private async void ToolPanelListPage_Click(object sender, RoutedEventArgs e) {
             MainWindow.progressRing = Visibility.Visible;
             SolutionOperationList selectedPanel = solutionOperationList.Where(a => a.Id == int.Parse(((Tile)sender).Tag.ToString())).FirstOrDefault();
-            List<CustomOneRowList> messageResponse = null;
+            List<CustomMessageList> messageResponse = null;
             List<GenericValue> jsonResponse = null; string json = null;
 
             try { //Request
                 switch (selectedPanel.InheritedOperationTypes) {
                     case "DbSpDirectOperation":
                         if (selectedPanel.InheritedApiResultTypes == "Message") {
-                            messageResponse = await CommunicationManager.GetApiRequest<List<CustomOneRowList>>(ApiUrls.ServerApi, "DatabaseServices/SpProcedure/Message/" + selectedPanel.InputData, App.UserData.Authentification.Token);
+                            messageResponse = await CommunicationManager.GetApiRequest<List<CustomMessageList>>(ApiUrls.ServerApi, "DatabaseServices/SpProcedure/Message/" + selectedPanel.InputData, App.UserData.Authentification.Token);
                             json = messageResponse[0].MessageList;
                         }
                         else {
@@ -129,37 +146,41 @@ namespace EasyITSystemCenter.Pages {
                             }); json += "}";
                         }
                         break;
-
                     case "DbSpConfigOperation":
-                        //response = await CommApi.PostApiRequest<List<GlobalClasses.Message>>(ApiUrls.EasyITCenterSystemOperations, selectedPanel.InputData, App.UserData.Authentification.Token);
-                        //json = response[0].MessageList;
+                        json = await CommunicationManager.ApiManagerGetRequest(UrlSourceTypes.EicWebServerAuth, ApiUrls.ServerApi + "/DatabaseServices/SpGetProcedureParams/" + selectedPanel.InputData);
                         break;
-
                     case "ServerApiGetRequest":
                         json = await CommunicationManager.ApiManagerGetRequest(UrlSourceTypes.EicWebServerAuth, selectedPanel.InputData);
                         break;
-
                     case "ServerApiConfigRequest":
                         break;
                 }
-                MainWindow.progressRing = Visibility.Hidden;
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-
+            MainWindow.progressRing = Visibility.Hidden;
             try {
                
                 //Response
                 switch (selectedPanel.InheritedApiResultTypes) {
                     case "Message":
-                        if (json == null) { await MainWindow.ShowMessageOnMainWindow(true, await DBOperations.DBTranslation("EmptyResponse")); }
+                        if (string.IsNullOrWhiteSpace(json)) { await MainWindow.ShowMessageOnMainWindow(true, await DBOperations.DBTranslation("EmptyResponse")); }
                         else { await MainWindow.ShowMessageOnMainWindow(false, json); }
                         break;
 
                     case "File":
                         try {
-                            if (json == null) { await MainWindow.ShowMessageOnMainWindow(true, await DBOperations.DBTranslation("EmptyResponse")); }
+                            if (string.IsNullOrWhiteSpace(json)) { await MainWindow.ShowMessageOnMainWindow(true, await DBOperations.DBTranslation("EmptyResponse")); }
                             else {
                                 SaveFileDialog dlg = new SaveFileDialog { DefaultExt = ".*", Filter = "All files |*.*", Title = Resources["fileOpenDescription"].ToString() };
                                 if (dlg.ShowDialog() == true) { FileOperations.WriteToFile(dlg.FileName, json); }
+                            }
+                        } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                        break;
+                    case "DataSet":
+                        try {
+                            if (string.IsNullOrWhiteSpace(json)) { await MainWindow.ShowMessageOnMainWindow(true, await DBOperations.DBTranslation("EmptyResponse")); }
+                            else {
+                                //TODO Generate popup from DATASET
+
                             }
                         } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
                         break;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Common;
-using Korzh.DbUtils;
+//using Korzh.DbUtils;
 
 namespace EasyITCenter.Controllers {
 
@@ -25,7 +25,7 @@ namespace EasyITCenter.Controllers {
         /// <summary>
         /// Generic Procedure Return Full DB Over Params 
         /// SpProcedure, tableName, userRole, userId 
-        /// in List<Dictionary<string,string>>
+        /// in List Dictionary string,string
         /// Can Provide All PRocedure Datatypes 
         /// </summary>
         /// <param name="dataset"></param>
@@ -58,8 +58,8 @@ namespace EasyITCenter.Controllers {
         /// <returns></returns>
         [HttpGet("/ServerApi/DatabaseServices/SpProcedure/Message/{procedureName}")]
         public async Task<string> GetSystemOperationsList(string procedureName) {
-            List<SystemOperationMessage> data = new List<SystemOperationMessage>();
-            data = new EasyITCenterContext().EasyITCenterCollectionFromSql<SystemOperationMessage>($"EXEC {procedureName};");
+            List<CustomMessageList> data = new List<CustomMessageList>();
+            data = new EasyITCenterContext().EasyITCenterCollectionFromSql<CustomMessageList>($"EXEC {procedureName};");
             return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
 
@@ -70,7 +70,7 @@ namespace EasyITCenter.Controllers {
         /// <returns></returns>
         [HttpGet("/ServerApi/DatabaseServices/SpProcedure/File/{procedureName}")]
         public async Task<string> GetSystemOperationsListJson(string procedureName) {
-            List<DBJsonFile> data = null;
+            List<DBJsonFile>? data = null;
             data = new EasyITCenterContext().EasyITCenterCollectionFromSql<DBJsonFile>($"EXEC {procedureName};");
             return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         }
@@ -87,6 +87,23 @@ namespace EasyITCenter.Controllers {
                 List<GenericDataList> data = new List<GenericDataList>();
                 data = new EasyITCenterContext().EasyITCenterCollectionFromSql<GenericDataList>($"EXEC SpGetTableSchema @tableName = N'{tableName}';");
                 return JsonSerializer.Serialize(data, new JsonSerializerOptions() {ReferenceHandler = ReferenceHandler.IgnoreCycles,WriteIndented = true,DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
+            } catch (Exception ex) {
+                return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) });
+            }
+        }
+
+
+        /// <summary>
+        /// Get DB Procedure param List Definitions
+        /// </summary>
+        /// <param name="procedureName"></param>
+        /// <returns></returns>
+        [HttpGet("/ServerApi/DatabaseServices/SpGetProcedureParams/{procedureName}")]
+        public async Task<string> SpGetProcedureParams(string procedureName) {
+            try {
+                object? data = new object();
+                data = new EasyITCenterContext().ExecuteReader($"EXEC SpGetProcedureParams @procedureName = N'{procedureName}';");
+                return JsonSerializer.Serialize(data.ObjectToJson(), new JsonSerializerOptions() { ReferenceHandler = ReferenceHandler.IgnoreCycles, WriteIndented = true, DictionaryKeyPolicy = JsonNamingPolicy.CamelCase, PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             } catch (Exception ex) {
                 return JsonSerializer.Serialize(new DBResultMessage() { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) });
             }

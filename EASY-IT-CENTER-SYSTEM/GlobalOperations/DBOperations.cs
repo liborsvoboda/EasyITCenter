@@ -108,7 +108,7 @@ namespace EasyITSystemCenter.GlobalOperations {
                 systemName.Split(',').ToList().ForEach(async word => {
                     try {
                         if (!string.IsNullOrWhiteSpace(word)) {
-                            if (!App.ReloadLanguageListRequested && App.LanguageList.Where(a => a.SystemName.ToLower() == word.ToLower()).Count() == 0) {
+                            if (!App.ReloadLanguageListRequested && App.LanguageList?.Where(a => a.SystemName?.ToLower() == word.ToLower()).Count() == 0) {
                                 if (!notCreateNew && App.UserData.Authentification != null) {
                                     dictionaryUpdated = true; App.ReloadLanguageListRequested = true;
                                     SystemTranslationList newWord = new SystemTranslationList() { SystemName = word, DescriptionCz = "", DescriptionEn = "", UserId = 1 };
@@ -128,7 +128,7 @@ namespace EasyITSystemCenter.GlobalOperations {
             }
             else {
                 try {
-                    if (!string.IsNullOrWhiteSpace(systemName) && App.LanguageList.Where(a => a.SystemName.ToLower() == systemName.ToLower()).Count() == 0) {
+                    if (!string.IsNullOrWhiteSpace(systemName) && App.LanguageList?.Where(a => a.SystemName?.ToLower() == systemName.ToLower()).Count() == 0) {
                         if (!App.ReloadLanguageListRequested && !notCreateNew && App.UserData.Authentification != null) {
                             dictionaryUpdated = true; App.ReloadLanguageListRequested = true;
 

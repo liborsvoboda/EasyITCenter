@@ -63,18 +63,17 @@ namespace EasyITSystemCenter.Pages {
             try {
                 ((DataGrid)sender).Columns.ToList().ForEach(async e => {
                     string headername = e.Header.ToString().ToLower();
-                    if (headername == "typenametranslation") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
-                    else if (headername == "name") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
-                    else if (headername == "description") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
-                    else if (headername == "resulttypetranslation") { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
-                    else if (headername == "active") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
-                    else if (headername == "timestamp") { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                    else if (headername == "id") e.DisplayIndex = 0;
-                    else if (headername == "userid") e.Visibility = Visibility.Hidden;
-                    else if (headername == "inheritedtaskname") e.Visibility = Visibility.Hidden;
-                    else if (headername == "inputdata") e.Visibility = Visibility.Hidden;
-                    else if (headername == "inheritedtypename") e.Visibility = Visibility.Hidden;
-                    else if (headername == "inheritedresulttypename") e.Visibility = Visibility.Hidden;
+                    if (headername == "typenametranslation".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                    else if (headername == "name".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                    else if (headername == "description".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 3; }
+                    else if (headername == "resulttypetranslation".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 4; }
+                    else if (headername == "active".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 2; }
+                    else if (headername == "timestamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                    else if (headername == "id".ToLower()) e.DisplayIndex = 0;
+                    else if (headername == "userid".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "inputdata".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "InheritedOperationTypes".ToLower()) e.Visibility = Visibility.Hidden;
+                    else if (headername == "InheritedApiResultTypes".ToLower()) e.Visibility = Visibility.Hidden;
                 });
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }

@@ -57,7 +57,6 @@ namespace EasyITSystemCenter.Pages {
                 await webBrowser.EnsureCoreWebView2Async();
                 //TODO udelat vyber na markdown viewer nebo browser
                 if (systemCustomPageList.ShowHelpTab && systemCustomPageList.InheritedHelpTabSourceType.Contains("ApiUrl")) { await helpWebBrowser.EnsureCoreWebView2Async(); }
-                //if (systemCustomPageList.ShowHelpTab) { await helpWebBrowser.EnsureCoreWebView2Async(); }
 
                 _ = FormOperations.TranslateFormFields(ListView);
                 
@@ -81,7 +80,7 @@ namespace EasyITSystemCenter.Pages {
 
                 if (systemCustomPageList.ShowHelpTab && systemCustomPageList.HelpTabUrl != null) {
 
-                    switch (systemCustomPageList.InheritedHelpTabSourceType) {
+                    switch (systemCustomPageList.InheritedHelpTabSourceType.ToLower()) {
                         case "eicserverapiurl":
                             ti_helpUrl.SetCurrentValue(VisibilityProperty, Visibility.Visible);
                             helpWebBrowser.SetCurrentValue(Microsoft.Web.WebView2.Wpf.WebView2.SourceProperty, new Uri(App.appRuntimeData.AppClientSettings.First(a => a.Key == "conn_apiAddress").Value + $"{(systemCustomPageList.HelpTabUrl.StartsWith("/") ? systemCustomPageList.HelpTabUrl : "/" + systemCustomPageList.HelpTabUrl)}"));

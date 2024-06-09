@@ -300,7 +300,7 @@ namespace EasyITSystemCenter.Pages {
             if (PrepareConfigurationForSave()) {
                 try {
                     SaveFileDialog dlg = new SaveFileDialog { DefaultExt = ".json", Filter = "Config file |*.json", Title = Resources["fileOpenDescription"].ToString() };
-                    if (dlg.ShowDialog() == true) { FileOperations.WriteToFile(dlg.FileName, DataOperations.ConvertDataSetToJson(App.appRuntimeData.AppClientSettings)); }
+                    if (dlg.ShowDialog() == true) { FileOperations.WriteToFile(dlg.FileName, DataOperations.ConvertDictionaryListToJson(App.appRuntimeData.AppClientSettings)); }
                 } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             }
         }

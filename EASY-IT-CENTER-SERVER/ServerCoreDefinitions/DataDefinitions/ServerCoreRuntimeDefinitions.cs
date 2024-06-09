@@ -4,6 +4,8 @@
 */
 
 using FubarDev.FtpServer;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Quartz;
 
 namespace EasyITCenter.ServerCoreStructure {
@@ -127,9 +129,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// Central List With references on Hested Server Sevices For Acess and Using Hosted
         /// Functionalities for example: Start/Stop Service And More Other sub services for Optimal Hosting
         /// </summary>
-        public static ServiceProvider ServerServiceProvider;
-
-
+        public static IServiceProvider ServerServiceProvider;
 
         /// <summary>
         /// SercerCore FilesLibrary For Rotator
@@ -137,6 +137,17 @@ namespace EasyITCenter.ServerCoreStructure {
         /// </summary>
         public static Dictionary<object,object> FileRotatorRuntineLibrary = new();
 
+        /// <summary>
+        /// Registered routers Control
+        /// </summary>
+        public static IActionDescriptorCollectionProvider ActionRouterProvider;
+
+
+        /// <summary>
+        /// Registered Routes List Update 
+        /// Over 
+        /// </summary>
+        public static List<ActionDescriptor> ServerRegisteredRoutesList;
 
         //Generic Complicated Example
         //public static List<Tuple<string, T>>? ServerHostedServicesContollerList = new List<Tuple<string, T>>();

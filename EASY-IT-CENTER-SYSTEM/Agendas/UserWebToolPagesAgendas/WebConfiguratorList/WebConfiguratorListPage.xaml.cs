@@ -38,7 +38,7 @@ namespace EasyITSystemCenter.Pages {
         private List<DocSrvDocTemplateList> docSrvDocTemplateList = new List<DocSrvDocTemplateList>();
         private List<WebCodeLibraryList> webCodeLibraryList = new List<WebCodeLibraryList>();
         private List<SolutionMixedEnumList> solutionMixedEnumList = new List<SolutionMixedEnumList>();
-        Storyboard seachAnim;
+        Storyboard AnimatedSearchInput;
 
         CompletionWindow completionWindow;
         string currentFileName;
@@ -111,8 +111,8 @@ namespace EasyITSystemCenter.Pages {
                 DgListView.Items.Refresh();
 
 
-                seachAnim = (Storyboard)FindResource("FlashObject");
-                seachAnim.Begin(txt_search, true);
+                AnimatedSearchInput = (Storyboard)FindResource("StoryBoardFlashEffect");
+                AnimatedSearchInput.Begin(txt_search, true);
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden; return true;
         }
@@ -495,7 +495,7 @@ namespace EasyITSystemCenter.Pages {
         #endregion CodeEditor
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) => toolBar.IsEnabled = TabMenuList.SelectedIndex == 0;
-        private void txtSearchFocusChanged(object sender, RoutedEventArgs e) { if (txt_search.IsFocused) { seachAnim.Stop(txt_search); } else { seachAnim.Begin(txt_search,true); } }
+        private void txtSearchFocusChanged(object sender, RoutedEventArgs e) { if (txt_search.IsFocused) { AnimatedSearchInput.Stop(txt_search); } else { AnimatedSearchInput.Begin(txt_search,true); } }
 
 
         //Open And Preset Popup

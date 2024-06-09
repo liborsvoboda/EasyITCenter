@@ -631,20 +631,18 @@ namespace EasyITSystemCenter {
                 } else {
                     ProgressRing = Visibility.Visible;
                     App.UserData.UserName = result.Username;
-                    Authentification dBResult = await CommunicationManager.AuthApiRequest(ApiUrls.EasyITCenterAuthentication, result.Username, result.Password);
+                    AuthentificationResponse dBResult = await CommunicationManager.BasicAuthApiRequest(ApiUrls.EasyITCenterAuthentication, result.Username, result.Password);
                     ProgressRing = Visibility.Hidden;
                     if (dBResult == null || dBResult.Token == null) {
                         
                         if (!UserLogged) {
-                            if (!serviceRunning) {
-                                this.ShowModalMessageExternal(Resources["login"].ToString(), Resources["loginServiceError"].ToString() + "\n" + App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + ApiUrls.EasyITCenterAuthentication + " " + Resources["loginServiceError1"].ToString());
-                            }
-                            else { this.ShowModalMessageExternal(Resources["login"].ToString(), Resources["incorrectNameOrPassword"].ToString()); }
+                            if (!serviceRunning) { this.ShowModalMessageExternal(Resources["login"].ToString(), Resources["loginServiceError"].ToString() + "\n" + App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + ApiUrls.EasyITCenterAuthentication + " " + Resources["loginServiceError1"].ToString()); }
+                            else { this.ShowModalMessageExternal(Resources["login"].ToString(), Resources["incorrectNameOrPassword"].ToString() + (!string.IsNullOrWhiteSpace(dBResult.Message) ? Environment.NewLine + dBResult.Message : "")); }
                             ShowLoginDialog();
-                        } else { this.ShowModalMessageExternal(Resources["login"].ToString(), Resources["loginError"].ToString());  ShowLoginDialog(); }
+                        } else { this.ShowModalMessageExternal(Resources["login"].ToString(), Resources["loginError"].ToString() + (!string.IsNullOrWhiteSpace(dBResult.Message) ? Environment.NewLine + dBResult.Message : ""));  ShowLoginDialog(); }
                     } else {
                         App.UserData.Authentification = dBResult;
-                        si_loggedIn.Content = Resources["loggedIn"].ToString() + " " + ((App.UserData.Authentification != null) ? App.UserData.Authentification.Name + " " + App.UserData.Authentification.SurName : result.Username);
+                        si_loggedIn.SetCurrentValue(ContentProperty, Resources["loggedIn"].ToString() + " " + ((App.UserData.Authentification != null) ? App.UserData.Authentification.Name + " " + App.UserData.Authentification.SurName : result.Username));
                         await DBOperations.LoadOrRefreshUserData();
                         await SetSystemModuleListPanel();
                         await LoadUserMenu();

@@ -76,9 +76,8 @@ namespace EasyITCenter.ServerCoreConfiguration {
         /// </summary>
         /// <param name="services"></param>
         internal static void ConfigureControllers(ref IServiceCollection services) {
-            //services.AddServerSideBlazor(options => { options.RootComponents.MaxJSRootComponents = 1000; });
-
-            services.AddRouting(options => options.LowercaseUrls = true);
+            
+            services.AddRouting(options => { options.LowercaseUrls = true;options.LowercaseQueryStrings = true; });
 
             services.AddControllersWithViews(options => {
                 //if (ServerConfigSettings.ConfigServerStartupOnHttps) { options.Filters.Add(new RequireHttpsAttribute()); }
@@ -88,6 +87,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 options.SerializerSettings.Formatting = Formatting.Indented;
             }).AddJsonOptions(x => {
+                x.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 x.JsonSerializerOptions.WriteIndented = true;
                 x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -136,20 +136,22 @@ namespace EasyITCenter.ServerCoreConfiguration {
             //        };
             //    });
             //}
-
+            
             services.AddAuthentication(x => {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(x => {
+                //x.Authority = configuration["AuthServer:Authority"];
                 x.BackchannelHttpHandler = new HttpClientHandler { ServerCertificateCustomValidationCallback = delegate { return true; } };
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
                 x.TokenValidationParameters = CoreOperations.ValidAndGetTokenParameters();
                 x.ForwardSignIn = new EasyITCenterContext().ServerModuleAndServiceLists.Where(a=>a.IsLoginModule).FirstOrDefault()?.UrlSubPath;
 
-                if (ServerConfigSettings.ConfigTimeTokenValidationEnabled) { x.TokenValidationParameters.LifetimeValidator = EasyITCenterAuthenticationApi.LifetimeValidator; }
+                if (ServerConfigSettings.ConfigTimeTokenValidationEnabled) { x.TokenValidationParameters.LifetimeValidator = EasyITCenterAuthenticationApi.TokenLifetimeValidator; }
 
                 x.Events = new JwtBearerEvents {
                     OnAuthenticationFailed = context => {

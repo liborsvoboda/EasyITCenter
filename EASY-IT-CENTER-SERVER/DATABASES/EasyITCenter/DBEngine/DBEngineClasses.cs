@@ -29,8 +29,10 @@
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Surname { get; set; }
-        public string Token { get; set; }
+        public string SurName { get; set; }
+        public string? Token { get; set; }
+        public string Email { get; set; }
+        public string? Message { get; set; }
         public DateTime? Expiration { get; set; }
         public string Role { get; set; }
     }
@@ -72,7 +74,7 @@
     /// <summary>
     /// Custom Definition for Returning List with One Record from Operation Stored Procedures
     /// </summary>
-    public class SystemOperationMessage {
+    public class CustomMessageList {
         public string MessageList { get; set; }
     }
 

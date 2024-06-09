@@ -1,12 +1,12 @@
 ﻿using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
-using Newtonsoft.Json;
 using System;
 using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 
@@ -19,14 +19,19 @@ namespace EasyITSystemCenter.Api {
     /// </summary>
     internal class CommunicationManager {
 
-        public static async Task<Authentification> AuthApiRequest(ApiUrls apiUrl, string userName = null, string password = null) {
+        public static async Task<AuthentificationResponse> BasicAuthApiRequest(ApiUrls apiUrl, string userName = null, string password = null) {
+            object response = new object();
             using (HttpClient httpClient = new HttpClient()) {
                 try {
                     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(userName + ":" + password)));
                     StringContent requestContent = new StringContent("", Encoding.UTF8, "application/json");
                     HttpResponseMessage json = await httpClient.PostAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl, requestContent);
-                    return JsonConvert.DeserializeObject<Authentification>(await json.Content.ReadAsStringAsync());
-                } catch { return new Authentification() { Token = null, Expiration = null }; }
+                    response = JsonSerializer.Deserialize<object>(await json.Content.ReadAsStringAsync(), App.appRuntimeData.JsonSerializeOptions);
+                    return JsonSerializer.Deserialize<AuthentificationResponse>(response.ToString(), App.appRuntimeData.JsonSerializeOptions);
+                } catch (Exception ex) {
+                    _ = await MainWindow.ShowMessageOnMainWindow(false, response.ObjectToJson() + Environment.NewLine + apiUrl + Environment.NewLine + ex.StackTrace + Environment.NewLine + ex.Message, false);
+                    return new AuthentificationResponse() { Token = null, Expiration = null }; 
+                }
             }
         }
 
@@ -36,7 +41,7 @@ namespace EasyITSystemCenter.Api {
                 try {
                     if (token != null) { httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); }
                     json = await httpClient.GetStringAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(UrlPathExtension) ? "/" + UrlPathExtension : ""));
-                    return JsonConvert.DeserializeObject<T>(json);
+                    return JsonSerializer.Deserialize<T>(json, App.appRuntimeData.JsonSerializeOptions);
                 } catch (Exception ex) {
                     if (ex.Message.Contains("401 (Unauthorized)")) {
                         _ = await MainWindow.ShowMessageOnMainWindow(false, apiUrl + Environment.NewLine + await DBOperations.DBTranslation("UnAuthconnectionWasDisconnected") + Environment.NewLine + ex.Message, false);
@@ -53,7 +58,7 @@ namespace EasyITSystemCenter.Api {
                 try {
                     if (token != null) { httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); }
                     HttpResponseMessage json = await httpClient.PostAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(UrlPathExtension) ? "/" + UrlPathExtension : ""), body);
-                    result = JsonConvert.DeserializeObject<DBResultMessage>(await json.Content.ReadAsStringAsync());
+                    result = JsonSerializer.Deserialize<DBResultMessage>(await json.Content.ReadAsStringAsync(), App.appRuntimeData.JsonSerializeOptions);
                     if (result != null && result.ErrorMessage == null) { result.ErrorMessage = await json.Content.ReadAsStringAsync(); }
                     else if (result == null && json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
                         _ = await MainWindow.ShowMessageOnMainWindow(false, apiUrl + Environment.NewLine + await DBOperations.DBTranslation("UnAuthconnectionWasDisconnected") + Environment.NewLine + result.ErrorMessage, false);
@@ -71,7 +76,7 @@ namespace EasyITSystemCenter.Api {
                 try {
                     if (token != null) { httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); }
                     HttpResponseMessage json = await httpClient.PutAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(UrlPathExtension) ? "/" + UrlPathExtension : ""), body);
-                    result = JsonConvert.DeserializeObject<DBResultMessage>(await json.Content.ReadAsStringAsync());
+                    result = JsonSerializer.Deserialize<DBResultMessage>(await json.Content.ReadAsStringAsync(), App.appRuntimeData.JsonSerializeOptions);
                     if (result != null && result.ErrorMessage == null) { result.ErrorMessage = await json.Content.ReadAsStringAsync(); }
                     else if (result == null && json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
                         _ = await MainWindow.ShowMessageOnMainWindow(false, apiUrl + Environment.NewLine + await DBOperations.DBTranslation("UnAuthconnectionWasDisconnected") + Environment.NewLine + result.ErrorMessage, false);
@@ -89,7 +94,7 @@ namespace EasyITSystemCenter.Api {
                 try {
                     if (token != null) { httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); }
                     HttpResponseMessage json = await httpClient.DeleteAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(UrlPathExtension) ? "/" + UrlPathExtension : ""));
-                    result = JsonConvert.DeserializeObject<DBResultMessage>(await json.Content.ReadAsStringAsync());
+                    result = JsonSerializer.Deserialize<DBResultMessage>(await json.Content.ReadAsStringAsync(), App.appRuntimeData.JsonSerializeOptions);
                     if (result != null && result.ErrorMessage == null) { result.ErrorMessage = await json.Content.ReadAsStringAsync(); }
                     else if (result == null && json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
                         _ = await MainWindow.ShowMessageOnMainWindow(false, apiUrl + Environment.NewLine + await DBOperations.DBTranslation("UnAuthconnectionWasDisconnected") + Environment.NewLine + result.ErrorMessage, false);
@@ -118,7 +123,7 @@ namespace EasyITSystemCenter.Api {
                 try {
                     if (token != null) { httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); }
                     HttpResponseMessage json = await httpClient.PostAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(UrlPathExtension) ? "/" + UrlPathExtension : ""), body);
-                    result = JsonConvert.DeserializeObject<DataTable>(await json.Content.ReadAsStringAsync());
+                    result = JsonSerializer.Deserialize<DataTable>(await json.Content.ReadAsStringAsync(), App.appRuntimeData.JsonSerializeOptions);
                 } catch (Exception ex) { }
                 return result;
             }
@@ -176,6 +181,7 @@ namespace EasyITSystemCenter.Api {
         }
 
 
+
         public static async Task<T> ApiManagerPostRequest<T>(UrlSourceTypes UrlPrefix, string UrlOrSubPath = null, HttpContent htmlContent = null, string UrlPathExtension = null) where T : new() {
             HttpResponseMessage json;
             using (HttpClient httpClient = new HttpClient()) {
@@ -202,7 +208,7 @@ namespace EasyITSystemCenter.Api {
                     }
 
                     json = await httpClient.PostAsync(requestUrl, htmlContent);
-                    T result = JsonConvert.DeserializeObject<T>(await json.Content.ReadAsStringAsync());
+                    T result = JsonSerializer.Deserialize<T>(await json.Content.ReadAsStringAsync(), App.appRuntimeData.JsonSerializeOptions);
                     if (json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
                         _ = await MainWindow.ShowMessageOnMainWindow(false, $"Call type: POST prefix:{UrlPrefix} url:{UrlOrSubPath}{Environment.NewLine}{await DBOperations.DBTranslation("UnAuthconnectionWasDisconnected")}", false);
                     } else if (json.StatusCode != System.Net.HttpStatusCode.OK) {

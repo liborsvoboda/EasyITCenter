@@ -1,12 +1,15 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using Microsoft.Xaml.Behaviors;
+using NanoByte.Common.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interactivity;
 using System.Windows.Markup;
 
-namespace EasyITSystemCenter.ProgramaticXamlBehaviors {
+
+namespace EasyITSystemCenter.GlobalStyles {
 
 
     /// <summary>
@@ -17,14 +20,27 @@ namespace EasyITSystemCenter.ProgramaticXamlBehaviors {
     /// </summary>
     public class TextBoxBehavior : Behavior<TextBox> {
 
+        /// <summary>
+        /// Xaml Extension Get Select All On Focus
+        /// </summary>
+        /// <param name="textBox"></param>
+        /// <returns></returns>
         public static bool GetSelectAllTextOnFocus(TextBox textBox) {
             return (bool)textBox.GetValue(SelectAllTextOnFocusProperty);
         }
 
+        /// <summary>
+        /// Xaml Extension Set Select All On Focus
+        /// </summary>
+        /// <param name="textBox"></param>
+        /// <param name="value"></param>
         public static void SetSelectAllTextOnFocus(TextBox textBox, bool value) {
             textBox.SetValue(SelectAllTextOnFocusProperty, value);
         }
 
+        /// <summary>
+        /// Xaml Property: SelectAllTextOnFocus  
+        /// </summary>
         public static readonly DependencyProperty SelectAllTextOnFocusProperty =
             DependencyProperty.RegisterAttached(
                 "SelectAllTextOnFocus",
@@ -32,6 +48,11 @@ namespace EasyITSystemCenter.ProgramaticXamlBehaviors {
                 typeof(TextBoxBehavior),
                 new UIPropertyMetadata(false, OnSelectAllTextOnFocusChanged));
 
+        /// <summary>
+        /// Ons the select all text on focus changed.
+        /// </summary>
+        /// <param name="d">The d.</param>
+        /// <param name="e">The e.</param>
         private static void OnSelectAllTextOnFocusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             var textBox = d as TextBox;
             if (textBox == null) return;
@@ -48,12 +69,22 @@ namespace EasyITSystemCenter.ProgramaticXamlBehaviors {
             }
         }
 
+        /// <summary>
+        /// Selects the all.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The e.</param>
         private static void SelectAll(object sender, RoutedEventArgs e) {
             var textBox = e.OriginalSource as TextBox;
             if (textBox == null) return;
             textBox.SelectAll();
         }
 
+        /// <summary>
+        /// Ignores the mouse button.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The e.</param>
         private static void IgnoreMouseButton(object sender, System.Windows.Input.MouseButtonEventArgs e) {
             var textBox = sender as TextBox;
             if (textBox == null || textBox.IsKeyboardFocusWithin) return;
@@ -235,10 +266,6 @@ namespace EasyITSystemCenter.ProgramaticXamlBehaviors {
             }
         }
     }
-
-
-
-
 
 
 }

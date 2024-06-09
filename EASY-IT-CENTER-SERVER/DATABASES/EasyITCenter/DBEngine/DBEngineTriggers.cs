@@ -11,7 +11,7 @@
         /// <param name="ipAddress"></param>
         /// <param name="userId">   </param>
         /// <param name="userName"> </param>
-        public static async void WriteVisit(string ipAddress, int userId, string userName) {
+        public static async void WriteVisit(string ipAddress, int userId, string? userName) {
             // Save new visit
             if (!string.IsNullOrWhiteSpace(userName)) {
                 SystemLoginHistoryList record = new() { IpAddress = ipAddress, UserId = userId, UserName = userName, TimeStamp = DateTimeOffset.Now.DateTime };
@@ -22,6 +22,7 @@
 
         /// <summary>
         /// Trigger Web IP Hosts History List
+        /// TODO MOVE to app.use AS Agenda Definition 
         /// </summary>
         /// <param name="ipAddress"></param>
         public static async void WriteWebVisit(string ipAddress) {

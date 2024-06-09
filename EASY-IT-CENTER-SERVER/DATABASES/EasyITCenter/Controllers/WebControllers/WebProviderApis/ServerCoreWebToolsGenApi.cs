@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.Services.Common;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 
 namespace EasyITCenter.ControllersExtensions {
 

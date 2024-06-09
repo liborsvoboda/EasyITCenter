@@ -1,19 +1,9 @@
-﻿using ColorCode.Compilation.Languages;
-using DocumentFormat.OpenXml.Office.Word;
-using IdentityModel.OidcClient;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.VisualStudio.Services.Common;
-using NPOI.SS.Formula.Functions;
-using Org.BouncyCastle.Asn1.X509.Qualified;
-using ReverseMarkdown.Converters;
-using ServiceStack.Mvc;
+using ServiceStack;
 using System.Data;
 using System.Data.Common;
 
-/*
- * Server Core Configuration Part
- */
 
 namespace EasyITCenter.ServerCoreDBSettings {
 
@@ -72,23 +62,23 @@ namespace EasyITCenter.ServerCoreDBSettings {
     /// Simple SELECT * XXX and you Create Same Class for returned DataSet
     /// </summary>
     public static class DatabaseContextExtensions {
-
-
-        public static DataView EasyITCenterCollectionFromSql(this EasyITCenterContext EasyITCenterContext,Type type, string sql) {
+ 
+        public static List<object>? EasyITCenterCollectionFromSql(this EasyITCenterContext EasyITCenterContext, Type type, string sql) {
             using var cmd = EasyITCenterContext.Database.GetDbConnection().CreateCommand();
             cmd.CommandText = sql;
             if (cmd.Connection?.State != ConnectionState.Open)
                 cmd.Connection?.Open();
             try {
-                DataView? results = null;
+                List<object>? results = new List<object>();
                 DataTable table = new DataTable();
                 table.Locale = System.Globalization.CultureInfo.InvariantCulture;
                 table.Load(cmd.ExecuteReader());
-                results = (table.AsDataView());
+                results = DataOperations.ConvertTableToClassListByType(table, type).ToList(); 
+                //(table.AsDataView());
 
                 return results;
             } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); } finally { cmd.Connection?.Close(); }
-            return new DataView();
+            return null;
         }
 
 
@@ -102,30 +92,30 @@ namespace EasyITCenter.ServerCoreDBSettings {
                 DataTable table = new DataTable();
                 table.Locale = System.Globalization.CultureInfo.InvariantCulture;
                 table.Load(cmd.ExecuteReader());
-                results = DbOperations.BindList<T>(table).ToList();
+                results = DataOperations.GenericConvertTableToClassList<T>(table).ToList();
 
                 return results;
             } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); } finally { cmd.Connection?.Close(); }
             return new List<T>();
         }
 
-        public static IQueryable Set(this EasyITCenterContext context, Type T) {
-            MethodInfo method = typeof(EasyITCenterContext).GetMethod(nameof(EasyITCenterContext.Set), BindingFlags.Public | BindingFlags.Instance);
-            method = method.MakeGenericMethod(T);
-            return method.Invoke(context, null) as IQueryable;
+        public static IQueryable? Set(this EasyITCenterContext context, Type T) {
+            MethodInfo? method = typeof(EasyITCenterContext).GetMethod(nameof(EasyITCenterContext.Set), BindingFlags.Public | BindingFlags.Instance);
+            method = method?.MakeGenericMethod(T);
+            return method?.Invoke(context, null) as IQueryable;
         }
 
-        public static IQueryable<T> Set<T>(this EasyITCenterContext context) {
-            MethodInfo method = typeof(EasyITCenterContext).GetMethod(nameof(EasyITCenterContext.Set), BindingFlags.Public | BindingFlags.Instance);
-            method = method.MakeGenericMethod(typeof(T));
-            return method.Invoke(context, null) as IQueryable<T>;
+        public static IQueryable<T>? Set<T>(this EasyITCenterContext context) {
+            MethodInfo? method = typeof(EasyITCenterContext).GetMethod(nameof(EasyITCenterContext.Set), BindingFlags.Public | BindingFlags.Instance);
+            method = method?.MakeGenericMethod(typeof(T));
+            return method?.Invoke(context, null) as IQueryable<T>;
         }
 
 
         public static object? GetDbSet(EasyITCenterContext db, Type T) {
-            MethodInfo method = typeof(EasyITCenterContext).GetMethod(nameof(EasyITCenterContext.Set), BindingFlags.Public | BindingFlags.Instance);
-            method = method.MakeGenericMethod(T);
-            return method.Invoke(Set(db, T), null);
+            MethodInfo? method = typeof(EasyITCenterContext).GetMethod(nameof(EasyITCenterContext.Set), BindingFlags.Public | BindingFlags.Instance);
+            method = method?.MakeGenericMethod(T);
+            return method?.Invoke(Set(db, T), null);
         }
 
 
@@ -134,12 +124,12 @@ namespace EasyITCenter.ServerCoreDBSettings {
         }
 
 
-        public static DbTransaction GetDbTransaction(this EasyITCenterContext source) {
-            return (source as IInfrastructure<DbTransaction>).Instance;
+        public static DbTransaction? GetDbTransaction(this EasyITCenterContext source) {
+            return (source as IInfrastructure<DbTransaction>)?.Instance;
         }
 
-        public static DbTransaction GetDbTransaction(this IDbContextTransaction source) {
-            return (source as IInfrastructure<DbTransaction>).Instance;
+        public static DbTransaction? GetDbTransaction(this IDbContextTransaction source) {
+            return (source as IInfrastructure<DbTransaction>)?.Instance;
         }
 
         public static object? ExecuteScalar(this EasyITCenterContext context,
@@ -168,11 +158,32 @@ namespace EasyITCenter.ServerCoreDBSettings {
 
             } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
             return new object();
-            
         }
 
 
-        public static int ExecuteNonQuery(this EasyITCenterContext context, string command, List<DbParameter> parameters = null, CommandType commandType = CommandType.Text, int? commandTimeOutInSeconds = null) {
+        public async static Task<object?> ExecuteScalarAsync(this EasyITCenterContext context, string sql, List<DbParameter>? parameters = null, CommandType commandType = CommandType.Text, int? commandTimeOutInSeconds = null) {
+            Object? value;
+            try {
+                using (var cmd = context.Database.GetDbConnection().CreateCommand()) {
+
+                    if (cmd.Connection?.State != ConnectionState.Open) {
+                        await cmd.Connection?.OpenAsync();
+                    }
+                    cmd.CommandText = sql;
+                    cmd.CommandType = commandType;
+                    if (commandTimeOutInSeconds != null) { cmd.CommandTimeout = (int)commandTimeOutInSeconds; }
+                    if (parameters != null) { cmd.Parameters.AddRange(parameters.ToArray()); }
+                    value = await cmd.ExecuteScalarAsync();
+                    cmd.Connection?.Close();
+                }
+                return value;
+
+            } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
+            return new object();
+        }
+
+
+        public static int ExecuteNonQuery(this EasyITCenterContext context, string command, List<DbParameter>? parameters = null, CommandType commandType = CommandType.Text, int? commandTimeOutInSeconds = null) {
             try {
                 using (var cmd = context.Database.GetDbConnection().CreateCommand()) {
                     if (cmd.Connection?.State != ConnectionState.Open) {
@@ -198,8 +209,34 @@ namespace EasyITCenter.ServerCoreDBSettings {
             return new int();
         }
 
+        public async static Task<int> ExecuteNonQueryAsync(this EasyITCenterContext context, string command, List<DbParameter>? parameters = null, CommandType commandType = CommandType.Text, int? commandTimeOutInSeconds = null) {
+            try {
+                using (var cmd = context.Database.GetDbConnection().CreateCommand()) {
+                    if (cmd.Connection?.State != ConnectionState.Open) {
+                        await cmd.Connection?.OpenAsync();
+                    }
+                    var currentTransaction = context.Database.CurrentTransaction;
+                    if (currentTransaction != null) {
+                        cmd.Transaction = currentTransaction.GetDbTransaction();
+                    }
+                    cmd.CommandText = command;
+                    cmd.CommandType = commandType;
+                    if (commandTimeOutInSeconds != null) {
+                        cmd.CommandTimeout = (int)commandTimeOutInSeconds;
+                    }
+                    if (parameters != null) {
+                        cmd.Parameters.AddRange(parameters.ToArray());
+                    }
+                    int value = await cmd.ExecuteNonQueryAsync();
+                    //cmd.Connection?.Close();
+                    return value;
+                }
+            } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
+            return new int();
+        }
 
-        public static List<Dictionary<string,object>> ExecuteReader(this EasyITCenterContext context, string command, List<DbParameter> parameters = null, CommandType commandType = CommandType.Text, int? commandTimeOutInSeconds = null) {
+
+        public static List<Dictionary<string,object>> ExecuteReader(this EasyITCenterContext context, string command, List<DbParameter>? parameters = null, CommandType commandType = CommandType.Text, int? commandTimeOutInSeconds = null) {
             try {
                 using (var cmd = context.Database.GetDbConnection().CreateCommand()) {
                     if (cmd.Connection?.State != ConnectionState.Open) {
@@ -223,14 +260,57 @@ namespace EasyITCenter.ServerCoreDBSettings {
 
                     List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
                     Dictionary<string, object> row;
-                    foreach (DataRow dr in table.Rows) {
-                        row = new Dictionary<string, object>();
-                        foreach (DataColumn col in table.Columns) { row.Add(col.ColumnName, dr[col]); }
-                        rows.Add(row);
+
+                    if (table != null) {
+                        foreach (DataRow dr in table.Rows) {
+                            row = new Dictionary<string, object>();
+                            foreach (DataColumn col in table.Columns) { row.Add(col.ColumnName, dr[col]); }
+                            rows.Add(row);
+                        }
                     }
                     cmd.Connection?.Close();
                     return rows;
                   }
+            } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
+            return null;
+        }
+
+
+        public async static Task<List<Dictionary<string, object>>?> ExecuteReaderAsync(this EasyITCenterContext context, string command, List<DbParameter>? parameters = null, CommandType commandType = CommandType.Text, int? commandTimeOutInSeconds = null) {
+            try {
+                using (var cmd = context.Database.GetDbConnection().CreateCommand()) {
+                    if (cmd.Connection?.State != ConnectionState.Open) {
+                        await cmd.Connection?.OpenAsync();
+                    }
+                    var currentTransaction = context.Database.CurrentTransaction;
+                    if (currentTransaction != null) {
+                        cmd.Transaction = currentTransaction.GetDbTransaction();
+                    }
+                    cmd.CommandText = command;
+                    cmd.CommandType = commandType;
+                    if (commandTimeOutInSeconds != null) {
+                        cmd.CommandTimeout = (int)commandTimeOutInSeconds;
+                    }
+                    if (parameters != null) { cmd.Parameters.AddRange(parameters.ToArray()); }
+
+                    DataTable? table = new DataTable();
+                    table.Locale = System.Globalization.CultureInfo.InvariantCulture;
+                    table.Load(await cmd.ExecuteReaderAsync());
+                    table = (table.DefaultView.Table?.AsDataView()?.Table);
+
+                    List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
+                    Dictionary<string, object> row;
+
+                    if (table != null) {
+                        foreach (DataRow dr in table.Rows) {
+                            row = new Dictionary<string, object>();
+                            foreach (DataColumn col in table.Columns) { row.Add(col.ColumnName, dr[col]); }
+                            rows.Add(row);
+                        }
+                    }
+                    cmd.Connection?.Close();
+                    return rows;
+                }
             } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
             return null;
         }
