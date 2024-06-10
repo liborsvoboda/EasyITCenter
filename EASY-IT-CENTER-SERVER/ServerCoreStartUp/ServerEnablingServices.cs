@@ -106,8 +106,10 @@ namespace EasyITCenter.ServerCoreConfiguration {
                             ResultStatusCodes = { [HealthStatus.Healthy] = StatusCodes.Status200OK, [HealthStatus.Degraded] = StatusCodes.Status500InternalServerError, [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable },
                             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
                             AllowCachingResponses = false
-                        }
-                        );
+                        });
+
+                    endpoints.MapBlazorHub();
+                    endpoints.MapFallbackToPage("/ServerCoreTools/webpages/Blazor/_Host");
                 }
 
                 //Monaco Support

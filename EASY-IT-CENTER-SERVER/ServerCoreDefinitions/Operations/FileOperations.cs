@@ -32,12 +32,12 @@
         /// </summary>
         /// <param name="sourcePath">     </param>
         /// <param name="destinationPath"></param>
-        public static void CopyFiles(string sourcePath, string destinationPath) {
+        public static void CopyFiles(string sourcePath, string destinationPath, bool overiteExisting = false) {
             string[] filePaths = Directory.GetFiles(sourcePath);
             foreach (string fullFilePath in filePaths) {
                 string fileName = System.IO.Path.GetFileName(fullFilePath);
                 if (!File.Exists(System.IO.Path.Combine(destinationPath, fileName))) {
-                    File.Copy(System.IO.Path.Combine(sourcePath, fileName), System.IO.Path.Combine(destinationPath, fileName));
+                    File.Copy(System.IO.Path.Combine(sourcePath, fileName), System.IO.Path.Combine(destinationPath, fileName), overiteExisting);
                 }
             }
         }
@@ -158,7 +158,7 @@
         /// Deletes the directory.
         /// </summary>
         /// <param name="directory">The directory.</param>
-        public static void DeleteDirectory(string directory) {
+        public static void DeleteDirectory(string directory ) {
             if (Directory.Exists(directory))
                 Directory.Delete(directory, true);
         }

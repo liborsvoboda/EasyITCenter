@@ -9,10 +9,54 @@ using Westwind.AspNetCore.Markdown;
 using Pek.Markdig.HighlightJs;
 using Markdown = Westwind.AspNetCore.Markdown.Markdown;
 using OpenGraphNet;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
+using Prometheus;
+using System.Data.Entity.Core.Metadata.Edm;
 
 
 namespace EasyITCenter.ServerCoreDBSettings {
 
+    #region Generators Classes
+
+    /// <summary>
+    /// WebFile Generators Request Dataset
+    /// </summary>
+    public class MDGeneratorCreateIndexRequest {
+        public string WebRootFilePath { get; set; }
+
+        /// <summary>
+        /// Is Subfolder for WebrootFilePath AS multiple RootIndex
+        /// </summary>
+        public string IndexWebRootSubFolderPathName { get; set; } = null;
+        public string FromType { get; set; }
+        public string ToType { get; set; }
+        public bool ScanRootOnly { get; set; }
+        public bool IndexOnly { get; set; }
+        public bool RewriteAllowed { get; set; }
+        public string ServerLanguage { get; set; } = "cz";
+        public bool IndexInFrameList { get; set; } = false;
+        public string genHtmlIndexFileSuffix { get; set; }
+        public bool FromSuffixOnly { get; set; } = false;
+    }
+
+    /// <summary>
+    /// Summary MDbook Generator Request
+    /// Generate Central Index MD Book on Existing folder structure
+    /// Generate Fulltext MDBook Library and cleand Processed Structure
+    /// Link All File Types, Images and Video Are Shown
+    /// </summary>
+    public class MDDocBookGeneratorRequest {
+        public string WebRootFilePath { get; set; }
+        public bool CentralIndexOnly { get; set; }
+        public bool MdBookLibrary { get; set; }
+        public bool LinkAllFileTypes { get; set; }
+        public bool ProcessRootPathOnly { get; set; }
+        public bool OveriteExisting { get; set; }
+        public bool CleanProcessed { get; set; }
+    }
+
+
+    #endregion
 
     /// <summary>
     ///  WebPages Knihovna API pro Nastroje 
@@ -22,6 +66,98 @@ namespace EasyITCenter.ServerCoreDBSettings {
     [Route("ServerApi")]
     //[ApiExplorerSettings(IgnoreApi = true)]
     public class ServerApiGeneratorService : ControllerBase {
+
+
+        /// <summary>
+        /// Summary MDbook Generator Request
+        /// Generate Central Index MD Book on Existing folder structure
+        /// Generate Fulltext MDBook Library and cleand Processed Structure
+        /// </summary>
+        /// <param name="webfilesrequest"></param>
+        /// <returns></returns>
+        [HttpPost("/ServerApi/GeneratorServices/MDDocBookGeneratorRequest")]
+        [Consumes("application/json")]
+        public async Task<IActionResult> MDDocBookGeneratorRequest([FromBody] MDDocBookGeneratorRequest webfilesrequest) {
+            try {
+                string resultMessage = DbOperations.DBTranslate("ProcessSucessfullyCompleted", ServerConfigSettings.ServiceServerLanguage);
+
+                List<string> indexRootList = new List<string>();int docCounter = 0;bool mdBookPrepared = false;
+
+                //Corection Paths
+                webfilesrequest.WebRootFilePath = !webfilesrequest.WebRootFilePath.EndsWith("/") ? $"{webfilesrequest.WebRootFilePath}/" : webfilesrequest.WebRootFilePath;
+                var folderList = System.IO.Directory.GetDirectories(Path.Combine(ServerRuntimeData.WebRoot_path ,webfilesrequest.WebRootFilePath));
+                folderList.ToList().ForEach(folder => indexRootList.Add(System.IO.Path.GetFullPath(folder).Split("\\").Last() + "\\"));
+
+                string generatedFile = Environment.NewLine + ( webfilesrequest.CentralIndexOnly ?  $"# MD Docs Generated Index    " : $"# MD Docs Generated Library    " ) + Environment.NewLine + Environment.NewLine + "[[toc]]" + Environment.NewLine + Environment.NewLine;
+                indexRootList.ForEach(rootfolder => {
+
+                    generatedFile += webfilesrequest.CentralIndexOnly ? $"### {rootfolder}    " + Environment.NewLine + Environment.NewLine
+                    : $"    ```   {Environment.NewLine}{Environment.NewLine}  ---    {Environment.NewLine}";
+
+                    List<string> filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + webfilesrequest.WebRootFilePath + rootfolder, $"*.md", webfilesrequest.ProcessRootPathOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
+
+                    //PREPARE MD BOOK FOLDER FOR FILES
+                    if (!mdBookPrepared && webfilesrequest.MdBookLibrary) { mdBookPrepared = true; FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.DistributedPackagesPath, "md-book"), Path.Combine(ServerRuntimeData.WebRoot_path, webfilesrequest.WebRootFilePath,"md-book"));}
+
+                    filelist.Where(a => !a.Contains(Path.Combine(ServerRuntimeData.WebRoot_path, webfilesrequest.WebRootFilePath,"md-book"))).ToList().ForEach(file => {
+                        generatedFile += $"- [{Path.GetFileNameWithoutExtension(file)}]({(webfilesrequest.CentralIndexOnly ? file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1] : "./" + Path.GetFileName(file))})   " + Environment.NewLine;
+                    });
+
+                    //Generate File With Other File Types 
+                    if (webfilesrequest.LinkAllFileTypes) {
+                        filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + webfilesrequest.WebRootFilePath + rootfolder, $"*.*", SearchOption.AllDirectories);
+                        docCounter += 1; string newdoc = $"# List of Founded Other Files {rootfolder}_{docCounter}"; 
+                    
+                        filelist.Where(a => !Path.GetExtension(a).ToLower().Contains("md")).ToList().ForEach(file => {
+                            if (new string[] { "png", "jpg", "jpeg", "tiff", "bmp" }.Contains(Path.GetExtension(file).ToLower())) {
+                                newdoc += $"   ![{Path.GetFileNameWithoutExtension(file)}]({(webfilesrequest.CentralIndexOnly ? file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1] : "./" + Path.GetFileName(file))})   " + Environment.NewLine;
+                            
+                            } else if(new string[] { "avi", "mpg", "mpeg", "mp3", "mp4" }.Contains(Path.GetExtension(file).ToLower())) {
+                                newdoc += $"   @[{Path.GetFileNameWithoutExtension(file)}]({(webfilesrequest.CentralIndexOnly ? file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1] : "./" + Path.GetFileName(file))})   " + Environment.NewLine;
+                            
+                            } else {
+                                newdoc += $"   [{Path.GetFileNameWithoutExtension(file)}]({(webfilesrequest.CentralIndexOnly ? file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1] : "./" + Path.GetFileName(file))})   " + Environment.NewLine;
+                            }
+                        });
+                        generatedFile += $"- [{rootfolder}_{docCounter}](./{rootfolder}_{docCounter})   " + Environment.NewLine;
+                        FileOperations.WriteToFile(Path.Combine(ServerRuntimeData.WebRoot_path,webfilesrequest.WebRootFilePath, $"{(webfilesrequest.MdBookLibrary ? "/md-book/src/":"")}{rootfolder}_{docCounter}.md"), newdoc);
+                    }
+                });
+
+                FileOperations.WriteToFile(Path.Combine(ServerRuntimeData.WebRoot_path,webfilesrequest.WebRootFilePath, $"{(webfilesrequest.MdBookLibrary ? "/md-book/src/" : "")}index.md"), generatedFile);
+
+                //COPY MD-BROWSER TOOL AFTER FILE PROCESSES
+                if (webfilesrequest.CentralIndexOnly) {
+                    FileOperations.CopyFiles(Path.Combine(ServerRuntimeData.DistributedPackagesPath, "md-browser"), Path.Combine(ServerRuntimeData.WebRoot_path, webfilesrequest.WebRootFilePath), webfilesrequest.OveriteExisting);
+                }
+
+                //SUMMARY MOVE FILES AND CLEAN STRUCTURE
+                if (webfilesrequest.MdBookLibrary) {
+                    indexRootList.ForEach(rootfolder => {
+                        List<string> filelist = FileOperations.GetPathFiles(Path.Combine(ServerRuntimeData.WebRoot_path,webfilesrequest.WebRootFilePath , rootfolder), $"*.*", webfilesrequest.ProcessRootPathOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
+                        filelist.ForEach(file => {
+                            FileOperations.CopyFiles(file, Path.Combine(ServerRuntimeData.WebRoot_path, webfilesrequest.WebRootFilePath,"md-book","src", Path.GetFileName(file)), webfilesrequest.OveriteExisting);
+                        });
+                        if (webfilesrequest.CleanProcessed && rootfolder.Length >2) { FileOperations.DeleteDirectory(rootfolder);}
+                    });
+                }
+
+                //COPY AND PROCESS MD TOOL     
+
+                   
+
+
+                //ZipFile.CreateFromDirectory(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages"), Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages.zip"));
+                //var zipData = await System.IO.File.ReadAllBytesAsync(Path.Combine(ServerRuntimeData.Startup_path, "Export", "Webpages.zip"));
+                //if (data != null) { return File(zipData, "application/x-zip-compressed", "Webpages.zip"); }
+                //else { return BadRequest(new { message = DbOperations.DBTranslate("BadRequest", "en") }); }
+                if (resultMessage == DbOperations.DBTranslate("ProcessSucessfullyCompleted", ServerConfigSettings.ServiceServerLanguage)) {
+                    return new ContentResult() { Content = resultMessage, StatusCode = StatusCodes.Status200OK };
+                }
+                else { return new ContentResult() { Content = resultMessage, StatusCode = StatusCodes.Status200OK }; }
+            } catch (Exception ex) { return new ContentResult() { Content = DataOperations.GetSystemErrMessage(ex), StatusCode = StatusCodes.Status400BadRequest }; }
+        }
+
 
         //WebFile Generator
         //Convert MD->Html,Convert Html->Md,
@@ -48,7 +184,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
 
                     if (string.IsNullOrWhiteSpace(webfilesrequest.IndexWebRootSubFolderPathName)) { indexRootList.Add("");
                     } else {
-                        var folderList = System.IO.Directory.GetDirectories(ServerRuntimeData.WebRoot_path + webfilesrequest.WebRootFilePath);
+                        var folderList = System.IO.Directory.GetDirectories(Path.Combine(ServerRuntimeData.WebRoot_path, webfilesrequest.WebRootFilePath));
                         folderList.ToList().ForEach(folder => indexRootList.Add(System.IO.Path.GetFullPath(folder).Split("\\").Last() + "\\"));
                     }
 
@@ -56,9 +192,8 @@ namespace EasyITCenter.ServerCoreDBSettings {
                     indexRootList.ForEach(rootIndex => {
                         //Modify WebRoot For Each Index
                         webfilesrequest.WebRootFilePath = $"{webfilesrequest.WebRootFilePath.Split(webfilesrequest.IndexWebRootSubFolderPathName)[0]}{webfilesrequest.IndexWebRootSubFolderPathName}{(!string.IsNullOrWhiteSpace(webfilesrequest.IndexWebRootSubFolderPathName)?"\\":"")}" + rootIndex;
-                        List<string> filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + webfilesrequest.WebRootFilePath, 
-                            $"*." + webfilesrequest.FromType.ToString().ToLower(), 
-                            webfilesrequest.ScanRootOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories
+                        List<string> filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + webfilesrequest.WebRootFilePath,
+                            $"*.{webfilesrequest.FromType.ToString().ToLower()}", webfilesrequest.ScanRootOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories
                         );
 
                         if (filelist.Count == 0) {

@@ -150,6 +150,8 @@ see [markdonw-it-block-embed](https://github.com/rotorz/markdown-it-block-embed)
   @[youtube](lJIrF4YjHfQ)
   ```
 
+![a](a.jpg)
+
   @[youtube](lJIrF4YjHfQ)
 
 ## Dependencies

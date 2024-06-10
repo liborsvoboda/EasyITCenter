@@ -2,6 +2,7 @@
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalGenerators;
 using EasyITSystemCenter.GlobalOperations;
+using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
@@ -73,9 +74,9 @@ namespace EasyITSystemCenter.Pages {
                         VerticalTitleAlignment = VerticalAlignment.Bottom,
                         ClickMode = ClickMode.Press,
                         ToolTip = (!string.IsNullOrWhiteSpace(panel.Description)) ? panel.Description : null
-                    };
-
+                    }; 
                     Image icon = new Image() { Width = 120, Height = 120, Source = panel.BitmapImage };
+                    icon = (Image)EffectLibrary.GetAnimationEffect(icon, AnimationLibrary.RotationAndSizeEffect, EffectTypes.SizePulseEffect, TriggerTypes.OnMouseMove, 120, 2);
 
                     toolPanel.Content = icon;
                     toolPanel.Click += ToolPanelListPage_Click;

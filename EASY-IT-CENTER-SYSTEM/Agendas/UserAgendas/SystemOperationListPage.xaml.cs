@@ -100,7 +100,7 @@ namespace EasyITSystemCenter.Pages {
 
                     double iconSize = 120;//Get StoryBoard Type From Animation Library
                     Image icon = new Image() { Width = iconSize, Height = iconSize, Source = spinner, VerticalAlignment = VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch };
-                    icon = (Image)EffectLibrary.GetAnimationEffect(icon, AnimationLibrary.RotationAndSizeEffect, EffectTypes.SizeZeroToWidthEffect, TriggerTypes.OnMouseMove, iconSize, 2);
+                    icon = (Image)EffectLibrary.GetAnimationEffect(icon, AnimationLibrary.RotationAndSizeEffect, EffectTypes.RotationEffect, TriggerTypes.OnMouseMove, 360, 2);
 
                     animatedIconList.Add(icon); toolPanel.Content = icon; toolPanel.Click += ToolPanelListPage_Click;
                     ((WrapPanel)TabMenuList.FindChild<TabItem>(Regex.Replace(solutionOperationList.Where(a => a.Id == int.Parse(toolPanel.Tag.ToString())).First().InheritedOperationTypes, @"[^a-zA-Z]", "_")).Content).Children.Add(toolPanel);

@@ -59,6 +59,13 @@ namespace EasyITCenter.ServerCoreStructure {
 
 
         /// <summary>
+        /// Software Disctribution Path
+        /// </summary>
+        public static string DistributedPackagesPath { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ServerConfigSettings.DefaultStaticWebFilesFolder, "server-distribution","packages");
+
+
+
+        /// <summary>
         /// Gets or Sets the configure file.
         /// </summary>
         public static string ConfigFile { get; set; } = "config.json";

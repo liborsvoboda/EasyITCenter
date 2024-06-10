@@ -3,6 +3,7 @@ using EasyITSystemCenter.Api;
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalGenerators;
 using EasyITSystemCenter.GlobalOperations;
+using EasyITSystemCenter.GlobalStyles;
 using EasyITSystemCenter.Pages;
 using EasyITSystemCenter.Properties;
 using EasyITSystemCenter.SystemHelper;
@@ -364,6 +365,8 @@ namespace EasyITSystemCenter {
                     }; System.Windows.Media.Imaging.BitmapImage panelIcon = new System.Windows.Media.Imaging.BitmapImage();
                     panelIcon = IconMaker.Icon((Color)ColorConverter.ConvertFromString(panel.IconColor), App.SystemSvgIconList.FirstOrDefault(a => a.Name.ToLower() == panel.IconName).SvgIconPath);
                     Image icon = new Image() { Width = 30, Height = 30, Source = panelIcon, VerticalAlignment = VerticalAlignment.Top, HorizontalAlignment = HorizontalAlignment.Center };
+                    icon = (Image)EffectLibrary.GetAnimationEffect(icon, AnimationLibrary.RotationAndSizeEffect, EffectTypes.SizeZeroToWidthEffect, TriggerTypes.OnMouseMove, 30, 2);
+
                     toolPanel.Content = icon; toolPanel.Click += SystemModulePanel_Click;
 
                     ((WrapPanel)systemModuleList.Items.Cast<TabItem>().First(a => a.Name.ToString() == toolPanel.Uid.ToString()).Content).Children.Add(toolPanel);

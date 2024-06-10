@@ -21,7 +21,9 @@ namespace EasyITSystemCenter.Pages {
 
         private List<SolutionMixedEnumList> serverConfigGroups = new List<SolutionMixedEnumList>();
         private List<SolutionMixedEnumList> serverLanguages = new List<SolutionMixedEnumList>();
+        private List<SolutionMixedEnumList> inheritedTokenEncryptTypes = new List<SolutionMixedEnumList>();
 
+        
         public ServerSettingListPage() {
             InitializeComponent();
             _ = SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
@@ -55,10 +57,13 @@ namespace EasyITSystemCenter.Pages {
             try {
                 serverLanguages = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/ServerLanguages", App.UserData.Authentification.Token);
                 serverConfigGroups = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/ServerConfig", App.UserData.Authentification.Token);
+                inheritedTokenEncryptTypes = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/TokenEncryptTypes", App.UserData.Authentification.Token);
                 App.ServerSetting = await CommunicationManager.GetApiRequest<List<ServerServerSettingList>>(ApiUrls.EasyITCenterServerSettingList, null, null);
 
                 serverLanguages.ForEach(async srvLanguage => { srvLanguage.Translation = await DBOperations.DBTranslation(srvLanguage.Name); });
                 serverConfigGroups.ForEach(async tasktype => { tasktype.Translation = await DBOperations.DBTranslation(tasktype.Name); });
+                inheritedTokenEncryptTypes.ForEach(async tasktype => { tasktype.Translation = await DBOperations.DBTranslation(tasktype.Name); });
+
                 App.ServerSetting.ForEach(async serverConfig => {
                     serverConfig.KeyTranslation = await DBOperations.DBTranslation(serverConfig.Key);
                     serverConfig.GroupNameTranslation = serverConfigGroups.First(a => a.Name == serverConfig.InheritedGroupName).Translation;
@@ -117,8 +122,8 @@ namespace EasyITSystemCenter.Pages {
                                 ComboBox comboBox = new ComboBox() { Name = configuration.Key, Text = configuration.Value, Width = 300, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
 
                                 //All Udes Lists Definitions
-                                if (configuration.Key.ToLower() == "serviceserverlanguage") { comboBox.ItemsSource = serverLanguages; comboBox.DisplayMemberPath = "Translation"; comboBox.SelectedValuePath = "Value"; comboBox.SelectedValue = configuration.Value; }
-
+                                if (configuration.Key.ToLower() == "ServiceServerLanguage".ToLower()) { comboBox.ItemsSource = serverLanguages; comboBox.DisplayMemberPath = "Translation"; comboBox.SelectedValuePath = "Name"; comboBox.SelectedValue = configuration.Value; }
+                                if (configuration.Key.ToLower() == "ConfigTokenEncryption".ToLower()) { comboBox.ItemsSource = inheritedTokenEncryptTypes; comboBox.DisplayMemberPath = "Translation"; comboBox.SelectedValuePath = "Name"; comboBox.SelectedValue = configuration.Value; }
                                 targetGrid.Children.Add(comboBox);
                                 break;
                         }

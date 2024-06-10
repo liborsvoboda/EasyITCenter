@@ -78,7 +78,23 @@
                     IssuedAt = DateTimeOffset.Now.DateTime,
                     NotBefore = DateTimeOffset.Now.DateTime,
                     Expires = DateTimeOffset.Now.AddMinutes(ServerConfigSettings.ConfigApiTokenTimeoutMin).DateTime,
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512)
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), 
+                    (
+                        ServerConfigSettings.ConfigTokenEncryption == "Aes256Encryption" ? SecurityAlgorithms.Aes256Encryption :
+                        ServerConfigSettings.ConfigTokenEncryption == "Aes256Gcm" ? SecurityAlgorithms.Aes256Gcm :
+                        ServerConfigSettings.ConfigTokenEncryption == "EcdsaSha256" ? SecurityAlgorithms.EcdsaSha256 :
+                        ServerConfigSettings.ConfigTokenEncryption == "EcdsaSha512" ? SecurityAlgorithms.EcdsaSha512 :
+                        ServerConfigSettings.ConfigTokenEncryption == "HmacSha256" ? SecurityAlgorithms.HmacSha256 :
+                        ServerConfigSettings.ConfigTokenEncryption == "HmacSha384" ? SecurityAlgorithms.HmacSha384 :
+                        ServerConfigSettings.ConfigTokenEncryption == "HmacSha512" ? SecurityAlgorithms.HmacSha512 :
+                        ServerConfigSettings.ConfigTokenEncryption == "RsaOAEP" ? SecurityAlgorithms.RsaOAEP :
+                        ServerConfigSettings.ConfigTokenEncryption == "RsaPKCS1" ? SecurityAlgorithms.RsaPKCS1 :
+                        ServerConfigSettings.ConfigTokenEncryption == "RsaSha256" ? SecurityAlgorithms.RsaSha256 :
+                        ServerConfigSettings.ConfigTokenEncryption == "RsaSha512" ? SecurityAlgorithms.RsaSha512 :
+                        ServerConfigSettings.ConfigTokenEncryption == "RsaV15KeyWrap" ? SecurityAlgorithms.RsaV15KeyWrap :
+                        ServerConfigSettings.ConfigTokenEncryption == "Sha256" ? SecurityAlgorithms.Sha256 :
+                        ServerConfigSettings.ConfigTokenEncryption == "Sha512" ? SecurityAlgorithms.Sha512 : SecurityAlgorithms.RsaSha512
+                    ))
                 };                token = tokenHandler.CreateToken(tokenDescriptor);
             } catch (Exception ex) { errorMessage = DataOperations.GetSystemErrMessage(ex); }
 
@@ -99,17 +115,15 @@
         /// <returns></returns>
         public static bool RefreshUserToken(string username, AuthenticateResponse token) {
             try {
-                var dbUser = new EasyITCenterContext()
-                    .SolutionUserLists.Where(a => a.Active == true && a.UserName == username)
-                    .First();
-                if (dbUser == null || dbUser.Token == token.Token && dbUser.Expiration < DateTimeOffset.Now) return false;
+                var dbUser = new EasyITCenterContext().SolutionUserLists
+                    .Where(a => a.Active == true && a.UserName == username).First();
+                if (dbUser == null || dbUser.Token == token.Token && dbUser.Expiration < DateTimeOffset.Now) { return false; }
 
-                dbUser.Token = token.Token;
-                dbUser.Expiration = token.Expiration;
+                dbUser.Token = token.Token; dbUser.Expiration = token.Expiration;
                 var data = new EasyITCenterContext().SolutionUserLists.Update(dbUser);
                 int result = data.Context.SaveChanges();
 
-                if (result > 0) return true;
+                if (result > 0) { return true; }
                 return false;
             } catch (Exception ex) { }
             return false;

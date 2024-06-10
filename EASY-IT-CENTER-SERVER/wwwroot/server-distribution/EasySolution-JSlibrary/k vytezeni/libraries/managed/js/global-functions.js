@@ -80,3 +80,35 @@ function HighlightCode() { document.querySelectorAll('div.code').forEach(el => {
 
 
 
+
+
+    anchors.options.placement = 'left';
+    anchors.add();
+
+
+
+    var snippets = document.querySelectorAll('pre > code');
+    [].forEach.call(snippets, function (snippet) {
+        snippet.insertAdjacentHTML(
+            'beforebegin',
+            "<button class='btn-copy' data-clipboard-snippet><img class='clippy' width=13 src='/assets/img/clippy.svg' alt='Copy to clipboard'></button>"
+        );
+    });
+    var clipboardSnippets = new ClipboardJS('[data-clipboard-snippet]', {
+        container: document.getElementById('modal'),
+        target: function (trigger) {
+            return trigger.nextElementSibling;
+        },
+    });
+    clipboardSnippets.on('success', function (e) {
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        e.clearSelection();
+        // showTooltip(e.trigger, 'Copied!');
+    });
+    clipboardSnippets.on('error', function (e) {
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        // showTooltip(e.trigger, fallbackMessage(e.action));
+    });

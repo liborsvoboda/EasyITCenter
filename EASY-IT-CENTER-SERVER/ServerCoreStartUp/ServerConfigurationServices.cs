@@ -16,7 +16,11 @@ using EasyITCenter.GitServer.Models;
 using EasyITCenter.GitServer.Controllers;
 using RefactorWebSites;
 using Westwind.AspNetCore.Markdown;
-
+using IdentityServer4;
+using ServerCorePages;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Authentication.Facebook;
 
 namespace EasyITCenter.ServerCoreConfiguration {
 
@@ -117,9 +121,14 @@ namespace EasyITCenter.ServerCoreConfiguration {
 
         /// <summary>
         /// Server Core: Configure Server Authentication Support
+        /// IDENTITY FULL
+        /// https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/security/authentication/scaffold-identity/sample/StartupFull.cs
+        /// ///https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/other-logins?view=aspnetcore-3.1
         /// </summary>
         /// <param name="services"></param>
         internal static void ConfigureAuthentication(ref IServiceCollection services) {
+
+
             //FUTURE  Certificate Auth
             //if (ServerConfigSettings.ConfigServerStartupHttpAndHttps || ServerConfigSettings.ConfigServerStartupOnHttps) {
             //    services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme).AddCertificate(options =>
@@ -136,20 +145,17 @@ namespace EasyITCenter.ServerCoreConfiguration {
             //        };
             //    });
             //}
-            
             services.AddAuthentication(x => {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x => {
-                //x.Authority = configuration["AuthServer:Authority"];
+            }).AddJwtBearer(x => {
                 x.BackchannelHttpHandler = new HttpClientHandler { ServerCertificateCustomValidationCallback = delegate { return true; } };
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
                 x.TokenValidationParameters = CoreOperations.ValidAndGetTokenParameters();
-                x.ForwardSignIn = new EasyITCenterContext().ServerModuleAndServiceLists.Where(a=>a.IsLoginModule).FirstOrDefault()?.UrlSubPath;
+                x.ForwardSignIn = new EasyITCenterContext().ServerModuleAndServiceLists.Where(a => a.IsLoginModule).FirstOrDefault()?.UrlSubPath;
 
                 if (ServerConfigSettings.ConfigTimeTokenValidationEnabled) { x.TokenValidationParameters.LifetimeValidator = EasyITCenterAuthenticationApi.TokenLifetimeValidator; }
 
@@ -162,6 +168,26 @@ namespace EasyITCenter.ServerCoreConfiguration {
                     }
                 };
             });
+
+            /*
+            services.AddAuthentication().AddGoogle(options => { 
+                //options.ClientId = "";
+                //options.ClientSecret = "";
+            }).AddFacebook(options => {
+                //options.ClientId = "";
+                //options.ClientSecret = "";
+                options.AppId = "";
+                options.AppSecret = "";
+            }).AddMicrosoftAccount(microsoftOptions => {
+                //microsoftOptions.ClientId = "";
+                //microsoftOptions.ClientSecret = "";
+            }).AddTwitter(twitterOptions => {
+                twitterOptions.ConsumerKey = "";
+                twitterOptions.ConsumerSecret = "";
+                twitterOptions.RetrieveUserDetails = true;
+            });
+            */
+           
         }
 
         /// <summary>
@@ -173,15 +199,33 @@ namespace EasyITCenter.ServerCoreConfiguration {
                 if (ServerConfigSettings.WebRazorPagesCompileOnRuntime) {
                     services.AddMvc(options => {
                         options.CacheProfiles.Add("Default30", new CacheProfile() { Duration = 30 });
+                        options.AllowEmptyInputInBodyModelBinding = true;
+                        
                     }).AddRazorPagesOptions(opt => {
                         opt.RootDirectory = "/ServerCorePages";
+                        opt.Conventions.AuthorizeFolder("/DefaultWebPages/GlobalLogin");
+
+                        //TODO SEMDAT TY MODULY
+                        //LAYOUTY
+                        //options.Conventions.Add(new GlobalTemplatePageRouteModelConvention());
+                        //options.Conventions.AddFolderRouteModelConvention("/OtherPages", model =>
+
+
+                    //https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/razor-pages/razor-pages-conventions/samples/6.x/SampleApp/Program.cs
+                    //https://learn.microsoft.com/en-us/aspnet/core/mvc/views/view-components?view=aspnetcore-3.1 FULL DOC
+                    //options.Conventions.Add(new GlobalTemplatePageRouteModelConvention());
+                    //VYPADA TO, ZE CONVENTION Obohati vsechny stranky na urovni modelu
+                    // options.Conventions.AddPageRoute("/Contact", "TheContactPage/{text?}"); stranka
+
                     }).AddRazorRuntimeCompilation();
+                    //.WithRazorPagesAtContentRoot(); 
                 }
                 else {
                     services.AddMvc(options => {
                         options.CacheProfiles.Add("Default30", new CacheProfile() { Duration = 30 });
                     }).AddRazorPagesOptions(opt => {
                         opt.RootDirectory = "/ServerCorePages";
+                        opt.Conventions.AuthorizeFolder("/DefaultWebPages/GlobalLogin");
                     });
                 }
             }

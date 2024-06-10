@@ -358,18 +358,25 @@ namespace EasyITCenter.ServerCoreStructure {
 
 
         /// <summary>
-        /// LOAD Registered Routes List 
+        /// Scan Registered Routes List
+        /// You Can Check Pfysical API Path
+        /// Data are stored in ServerRuntimeData.ServerRegisteredRoutesList
         /// </summary>
+        /// <param name="patchForCheck"></param>
         /// <param name="updateList"></param>
-        /// <returns></returns>
-        public static void GetServerRegisteredRoutesList(bool updateList) {
+        public static bool GetServerRegisteredRoutesList(string patchForCheck, bool updateList = false) {
             try {
                 if (updateList || ServerRuntimeData.ServerRegisteredRoutesList == null) { //a=>a.AttributeRouteInfo.Name action
                     var RouteGroups = ((IReadOnlyList<ActionDescriptor>)ServerRuntimeData.ActionRouterProvider.ActionDescriptors.Items).GroupBy(a => a.AttributeRouteInfo?.Template).ToJson();
+
+                    
                     ServerRuntimeData.ServerRegisteredRoutesList = ServerRuntimeData.ActionRouterProvider.ActionDescriptors.Items.ToArray().ToList();
                     //.Select(a => a.JoinAsString("/")).ToList();
+
+                    return RouteGroups.Contains(patchForCheck);
                 }
             } catch { }
+            return false;
         }
     }
 }
