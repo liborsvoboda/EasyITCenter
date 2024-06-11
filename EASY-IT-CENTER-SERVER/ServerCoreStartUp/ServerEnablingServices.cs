@@ -107,9 +107,6 @@ namespace EasyITCenter.ServerCoreConfiguration {
                             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
                             AllowCachingResponses = false
                         });
-
-                    endpoints.MapBlazorHub();
-                    endpoints.MapFallbackToPage("/ServerCoreTools/webpages/Blazor/_Host");
                 }
 
                 //Monaco Support
