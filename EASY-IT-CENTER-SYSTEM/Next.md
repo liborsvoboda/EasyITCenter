@@ -40,3 +40,7 @@ https://weblog.west-wind.com/posts/2023/Nov/27/Embed-a-minimal-ASPNET
 
 WPF METRO MahAppsMetroThemesSample /AccentStyleWindow.xaml.cs VICE THEME 
 https://github.com/punker76/code-samples/blob/main/MahAppsMetroThemesSample/AccentStyleWindow.xaml.cs
+
+NODE SASS Solution
+npm install -g mirror-config-china --registry=https://registry.npmmirror.com
+npm install node-sass

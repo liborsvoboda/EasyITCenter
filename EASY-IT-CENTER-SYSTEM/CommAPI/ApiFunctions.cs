@@ -183,7 +183,7 @@ namespace EasyITSystemCenter.Api {
 
 
         public static async Task<T> ApiManagerPostRequest<T>(UrlSourceTypes UrlPrefix, string UrlOrSubPath = null, HttpContent htmlContent = null, string UrlPathExtension = null) where T : new() {
-            HttpResponseMessage json;
+            HttpResponseMessage json; string loadData = string.Empty;
             using (HttpClient httpClient = new HttpClient()) {
                 try {
                     string requestUrl = UrlPrefix != UrlSourceTypes.WebUrl ? $"{(!string.IsNullOrWhiteSpace(UrlOrSubPath) && !UrlOrSubPath.StartsWith("/") ? "/" : "")}{UrlOrSubPath}" +
@@ -198,7 +198,7 @@ namespace EasyITSystemCenter.Api {
                     } else if (UrlPrefix == UrlSourceTypes.EsbWebServer) {
                         string webServerUrl = App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value;
                         requestUrl = new Uri($"{webServerUrl}{(!string.IsNullOrWhiteSpace(webServerUrl) && !webServerUrl.EndsWith("/") ? "/" : "")}" +
-                            $"{(!string.IsNullOrWhiteSpace(requestUrl) && requestUrl.StartsWith("/")? requestUrl.Substring(1):requestUrl)}").ToString();
+                            $"{(!string.IsNullOrWhiteSpace(requestUrl) && requestUrl.StartsWith("/") ? requestUrl.Substring(1) : requestUrl)}").ToString();
                     }
                     else if (UrlPrefix == UrlSourceTypes.EicWebServerGenericGetTableApi) {
                         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", App.UserData.Authentification.Token);
@@ -208,7 +208,8 @@ namespace EasyITSystemCenter.Api {
                     }
 
                     json = await httpClient.PostAsync(requestUrl, htmlContent);
-                    T result = JsonSerializer.Deserialize<T>(await json.Content.ReadAsStringAsync(), App.appRuntimeData.JsonSerializeOptions);
+                    loadData = JsonSerializer.Deserialize<string>(await json.Content.ReadAsStringAsync(), App.appRuntimeData.JsonSerializeOptions);
+                    T result = JsonSerializer.Deserialize<T>(loadData);
                     if (json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
                         _ = await MainWindow.ShowMessageOnMainWindow(false, $"Call type: POST prefix:{UrlPrefix} url:{UrlOrSubPath}{Environment.NewLine}{await DBOperations.DBTranslation("UnAuthconnectionWasDisconnected")}", false);
                     } else if (json.StatusCode != System.Net.HttpStatusCode.OK) {
@@ -216,8 +217,9 @@ namespace EasyITSystemCenter.Api {
                     }
                     return result;
                 } catch (Exception ex) {
-                    _ = await MainWindow.ShowMessageOnMainWindow(false, $"Call type: POST prefix:{UrlPrefix} url:{UrlOrSubPath}{Environment.NewLine}{SystemOperations.GetExceptionMessagesAll(ex)}", false);
-                    App.ApplicationLogging(ex);
+                    _ = await MainWindow.ShowMessageOnMainWindow(false, $"Call type: POST prefix:{UrlPrefix} url:{UrlOrSubPath}{Environment.NewLine}$APIManager Error{Environment.NewLine}:" +
+                        $" returned Data:{Environment.NewLine}{loadData}{Environment.NewLine}{SystemOperations.GetExceptionMessagesAll(ex)}", false);
+                    App.ApplicationLogging(new Exception($"APIManager Error{Environment.NewLine}: returned Data:{Environment.NewLine}{loadData}{Environment.NewLine}{SystemOperations.GetExceptionMessagesAll(ex)}"));
                     return new T();
                 }
             }

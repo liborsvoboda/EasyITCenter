@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
-using ServiceStack;
-using System.Data;
+﻿using System.Data;
 using System.Data.Common;
 
 
@@ -119,17 +116,12 @@ namespace EasyITCenter.ServerCoreDBSettings {
         }
 
 
-        public static DbSet<T> GetDbSet<T>(EasyITCenterContext db) where T : class {
-           return db.Set<T>();
+        public static object GetDbSet<T>(EasyITCenterContext db) where T : class {
+           return db.Set<T>() as object;
         }
-
 
         public static DbTransaction? GetDbTransaction(this EasyITCenterContext source) {
-            return (source as IInfrastructure<DbTransaction>)?.Instance;
-        }
-
-        public static DbTransaction? GetDbTransaction(this IDbContextTransaction source) {
-            return (source as IInfrastructure<DbTransaction>)?.Instance;
+            return (source.Database.BeginTransaction() as IInfrastructure<DbTransaction>)?.Instance;
         }
 
         public static object? ExecuteScalar(this EasyITCenterContext context,
@@ -236,7 +228,7 @@ namespace EasyITCenter.ServerCoreDBSettings {
         }
 
 
-        public static List<Dictionary<string,object>> ExecuteReader(this EasyITCenterContext context, string command, List<DbParameter>? parameters = null, CommandType commandType = CommandType.Text, int? commandTimeOutInSeconds = null) {
+        public static DataTable ExecuteReader(this EasyITCenterContext context, string command, List<DbParameter>? parameters = null, CommandType commandType = CommandType.Text, int? commandTimeOutInSeconds = null) {
             try {
                 using (var cmd = context.Database.GetDbConnection().CreateCommand()) {
                     if (cmd.Connection?.State != ConnectionState.Open) {
@@ -258,25 +250,25 @@ namespace EasyITCenter.ServerCoreDBSettings {
                     table.Load(cmd.ExecuteReader());
                     table = (table.DefaultView.Table?.AsDataView()?.Table );
 
-                    List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
-                    Dictionary<string, object> row;
+                    //List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
+                    //Dictionary<string, object> row;
 
-                    if (table != null) {
-                        foreach (DataRow dr in table.Rows) {
-                            row = new Dictionary<string, object>();
-                            foreach (DataColumn col in table.Columns) { row.Add(col.ColumnName, dr[col]); }
-                            rows.Add(row);
-                        }
-                    }
+                    //if (table != null) {
+                    //    foreach (DataRow dr in table.Rows) {
+                    //        row = new Dictionary<string, object>();
+                    //        foreach (DataColumn col in table.Columns) { row.Add(col.ColumnName, dr[col]); }
+                    //        rows.Add(row);
+                    //    }
+                    //}
                     cmd.Connection?.Close();
-                    return rows;
+                    return table;
                   }
             } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
             return null;
         }
 
 
-        public async static Task<List<Dictionary<string, object>>?> ExecuteReaderAsync(this EasyITCenterContext context, string command, List<DbParameter>? parameters = null, CommandType commandType = CommandType.Text, int? commandTimeOutInSeconds = null) {
+        public async static Task<DataTable> ExecuteReaderAsync(this EasyITCenterContext context, string command, List<DbParameter>? parameters = null, CommandType commandType = CommandType.Text, int? commandTimeOutInSeconds = null) {
             try {
                 using (var cmd = context.Database.GetDbConnection().CreateCommand()) {
                     if (cmd.Connection?.State != ConnectionState.Open) {
@@ -298,18 +290,18 @@ namespace EasyITCenter.ServerCoreDBSettings {
                     table.Load(await cmd.ExecuteReaderAsync());
                     table = (table.DefaultView.Table?.AsDataView()?.Table);
 
-                    List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
-                    Dictionary<string, object> row;
+                    //List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
+                    //Dictionary<string, object> row;
 
-                    if (table != null) {
-                        foreach (DataRow dr in table.Rows) {
-                            row = new Dictionary<string, object>();
-                            foreach (DataColumn col in table.Columns) { row.Add(col.ColumnName, dr[col]); }
-                            rows.Add(row);
-                        }
-                    }
+                    //if (table != null) {
+                    //    foreach (DataRow dr in table.Rows) {
+                    //        row = new Dictionary<string, object>();
+                    //        foreach (DataColumn col in table.Columns) { row.Add(col.ColumnName, dr[col]); }
+                    //        rows.Add(row);
+                    //    }
+                    //}
                     cmd.Connection?.Close();
-                    return rows;
+                    return table;
                 }
             } catch (Exception Ex) { CoreOperations.SendEmail(new SendMailRequest() { Content = DataOperations.GetSystemErrMessage(Ex) }); }
             return null;

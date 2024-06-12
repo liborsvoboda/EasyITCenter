@@ -2,7 +2,7 @@
     x:Class="GoldenSystem.Pages.TemplateSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="500"
@@ -15,7 +15,7 @@
             x:Key="NormalCaseColumnHeader"
             BasedOn="{StaticResource MetroDataGridColumnHeader}"
             TargetType="{x:Type DataGridColumnHeader}">
-            <Setter Property="Controls:ControlsHelper.ContentCharacterCasing" Value="Normal" />
+            <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal" />
         </Style>
     </UserControl.Resources>
 
@@ -57,8 +57,8 @@
                 Grid.Row="0"
                 Grid.Column="1"
                 Margin="0,2,160,2"
-                Controls:TextBoxHelper.ClearTextButton="true"
-                Controls:TextBoxHelper.IsWaitingForData="True"
+                mah:TextBoxHelper.ClearTextButton="true"
+                mah:TextBoxHelper.IsWaitingForData="True"
                 TextChanged="ApiAddress_TextChanged"
                 ToolTip="Default is http://127.0.0.1:5000" />
 
@@ -93,9 +93,9 @@
                 Grid.Row="1"
                 Grid.Column="1"
                 Margin="0,2,0,2"
-                Controls:TextBoxHelper.ClearTextButton="true"
-                Controls:TextBoxHelper.IsWaitingForData="True"
-                Controls:TextBoxHelper.Watermark=""
+                mah:TextBoxHelper.ClearTextButton="true"
+                mah:TextBoxHelper.IsWaitingForData="True"
+                mah:TextBoxHelper.Watermark=""
                 ToolTip="Service name from windows processes" />
 
             <Label
@@ -116,14 +116,14 @@
                 Grid.Column="0"
                 HorizontalAlignment="Right"
                 HorizontalContentAlignment="Right" />
-            <Controls:NumericUpDown
+            <mah:NumericUpDown
                 x:Name="txt_serverCheckIntervalSec"
                 Grid.Row="3"
                 Grid.Column="1"
                 Margin="0,2,0,2"
                 HorizontalContentAlignment="Left"
-                Controls:TextBoxHelper.ClearTextButton="true"
-                Controls:TextBoxHelper.Watermark=""
+                mah:TextBoxHelper.ClearTextButton="true"
+                mah:TextBoxHelper.Watermark=""
                 Maximum="99"
                 Minimum="1" />
 
@@ -164,7 +164,7 @@
                 Margin="0,2,0,2"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
-                Controls:TextBoxHelper.ClearTextButton="false"
+                mah:TextBoxHelper.ClearTextButton="false"
                 DisplayMemberPath="Name"
                 IsEnabled="true"
                 ItemsSource="{Binding Path=Languages}"
@@ -194,8 +194,8 @@
                 Grid.Row="8"
                 Grid.Column="1"
                 Margin="0,2,85,0"
-                Controls:TextBoxHelper.SelectAllOnFocus="True"
-                Controls:TextBoxHelper.Watermark="Enter path with PowerBuilder installed exe file"
+                mah:TextBoxHelper.SelectAllOnFocus="True"
+                mah:TextBoxHelper.Watermark="Enter path with PowerBuilder installed exe file"
                 IsEnabled="False" />
             <Button
                 x:Name="btn_browse"

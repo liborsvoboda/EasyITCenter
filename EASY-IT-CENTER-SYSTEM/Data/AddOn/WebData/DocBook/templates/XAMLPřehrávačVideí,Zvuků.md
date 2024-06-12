@@ -2,7 +2,7 @@
     x:Class="GoldenSystem.Pages.TemplateVideoPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xceed="clr-namespace:WPFMediaKit.DirectShow.MediaPlayers;assembly=WPFMediaKit"
@@ -18,7 +18,7 @@
             x:Key="NormalCaseColumnHeader"
             BasedOn="{StaticResource MetroDataGridColumnHeader}"
             TargetType="{x:Type DataGridColumnHeader}">
-            <Setter Property="Controls:ControlsHelper.ContentCharacterCasing" Value="Normal" />
+            <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal" />
         </Style>
     </UserControl.Resources>
 

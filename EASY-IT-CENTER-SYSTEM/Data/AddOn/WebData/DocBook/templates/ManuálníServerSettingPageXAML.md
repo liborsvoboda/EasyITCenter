@@ -2,7 +2,7 @@
     x:Class="GoldenSystem.Pages.ServerSettingListPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="500"
@@ -15,7 +15,7 @@
             x:Key="NormalCaseColumnHeader"
             BasedOn="{StaticResource MetroDataGridColumnHeader}"
             TargetType="{x:Type DataGridColumnHeader}">
-            <Setter Property="Controls:ControlsHelper.ContentCharacterCasing" Value="Normal" />
+            <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal" />
         </Style>
     </UserControl.Resources>
 
@@ -158,15 +158,15 @@
 
                     <Label
                         x:Name="lbl_databaseInternalCacheTimeoutMin" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
-                    <Controls:NumericUpDown
+                    <mah:NumericUpDown
                         x:Name="txt_databaseInternalCacheTimeoutMin" Grid.Row="0" Grid.Column="4" Margin="0,2,0,2" HorizontalContentAlignment="Left"
-                        Controls:TextBoxHelper.ClearTextButton="true" Controls:TextBoxHelper.Watermark="" Maximum="9999" Minimum="1">
-                        <Controls:NumericUpDown.ToolTip>
+                        mah:TextBoxHelper.ClearTextButton="true" mah:TextBoxHelper.Watermark="" Maximum="9999" Minimum="1">
+                        <mah:NumericUpDown.ToolTip>
                             <TextBlock>
                                 Entity Framework has Custom Cache Controller.<LineBreak />
                                 Its Timweout for Data validation and refreshing</TextBlock>
-                        </Controls:NumericUpDown.ToolTip>
-                    </Controls:NumericUpDown>
+                        </mah:NumericUpDown.ToolTip>
+                    </mah:NumericUpDown>
                 </Grid>
             </GroupBox>
 
@@ -288,26 +288,26 @@
 
                     <Label
                         x:Name="lbl_configServerStartupPort" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
-                    <Controls:NumericUpDown
+                    <mah:NumericUpDown
                         x:Name="txt_configServerStartupPort" Grid.Row="0" Grid.Column="1" Margin="0,2,0,2" HorizontalContentAlignment="Left"
                         Maximum="65535" Minimum="1">
-                        <Controls:NumericUpDown.ToolTip>
+                        <mah:NumericUpDown.ToolTip>
                             <TextBlock>
                                 This is Startup Port For All Server Services.<LineBreak />
                                 Services are run on All Available IP addresses on machine.</TextBlock>
-                        </Controls:NumericUpDown.ToolTip>
-                    </Controls:NumericUpDown>
+                        </mah:NumericUpDown.ToolTip>
+                    </mah:NumericUpDown>
 
                     <Label
                         x:Name="lbl_configWebSocketTimeoutMin" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Right"
                         HorizontalContentAlignment="Right" />
-                    <Controls:NumericUpDown
+                    <mah:NumericUpDown
                         x:Name="txt_configWebSocketTimeoutMin" Grid.Row="0" Grid.Column="4" Margin="0,2,0,2" HorizontalContentAlignment="Left"
                         Maximum="65535" Minimum="1" ToolTip="Timeout on inactivity for Websocket Connection." />
 
                     <Label
                         x:Name="lbl_configMaxWebSocketBufferSizeKb" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
-                    <Controls:NumericUpDown
+                    <mah:NumericUpDown
                         x:Name="txt_configMaxWebSocketBufferSizeKb" Grid.Row="1" Grid.Column="1" Margin="0,2,0,2" HorizontalContentAlignment="Left"
                         Maximum="65535" Minimum="1" ToolTip="Maximum allowed size for Web Socket Communication. (Kb)" />
 
@@ -322,14 +322,14 @@
 
                     <Label
                         x:Name="lbl_configApiTokenTimeoutMin" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
-                    <Controls:NumericUpDown
+                    <mah:NumericUpDown
                         x:Name="txt_configApiTokenTimeoutMin" Grid.Row="1" Grid.Column="4" Margin="0,2,0,2" HorizontalContentAlignment="Left"
                         Maximum="99999" Minimum="1" ToolTip="Timeout on inactivity for JWT Bearer Token." />
 
 
                     <TextBox
                         x:Name="txt_configCertificateDomain" Grid.Row="2" Grid.Column="0" Margin="0,2,0,2" HorizontalAlignment="Stretch"
-                        Controls:TextBoxHelper.Watermark="127.0.0.1">
+                        mah:TextBoxHelper.Watermark="127.0.0.1">
                         <TextBox.ToolTip>
                             <TextBlock>
                                 Insert Certificate Domain name or IP address.<LineBreak />
@@ -359,7 +359,7 @@
 
                     <Button
                         x:Name="btn_generateKey" Grid.Row="2" Grid.Column="4" Width="150" Height="25"
-                        Margin="5,2,0,0" Padding="5,4,5,5" HorizontalAlignment="Right" VerticalAlignment="Top" Controls:ButtonHelper.PreserveTextCase="True"
+                        Margin="5,2,0,0" Padding="5,4,5,5" HorizontalAlignment="Right" VerticalAlignment="Top" mah:ButtonHelper.PreserveTextCase="True"
                         Click="BtnGenerateJwtKey_Click"
                         Style="{DynamicResource AccentedSquareButtonStyle}">
                         <Button.ToolTip>Generate 40 char lenght Random Key</Button.ToolTip>
@@ -434,7 +434,7 @@
 
                     <Label
                         x:Name="lbl_moduleHealthServiceRefreshIntervalSec" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
-                    <Controls:NumericUpDown
+                    <mah:NumericUpDown
                         x:Name="txt_moduleHealthServiceRefreshIntervalSec" Grid.Row="1" Grid.Column="4" Margin="0,2,0,2" HorizontalContentAlignment="Left"
                         Maximum="1000" Minimum="1" ToolTip="Refresh Interval for checking all monitored Statuses." />
 
@@ -487,7 +487,7 @@
 
                     <Label
                         x:Name="lbl_emailerSMTPPort" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" />
-                    <Controls:NumericUpDown
+                    <mah:NumericUpDown
                         x:Name="txt_emailerSMTPPort" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Maximum="65535"
                         Minimum="1"
                         Style="{StaticResource DefaultSystemNumericStyle}"
@@ -506,7 +506,7 @@
 
                     <Button
                         x:Name="btn_sendTestEmail" Grid.Row="1" Grid.Column="4" Width="150" Height="25"
-                        Margin="5,2,5,0" Padding="5,4,5,5" HorizontalAlignment="Right" VerticalAlignment="Top" Controls:ButtonHelper.PreserveTextCase="True"
+                        Margin="5,2,5,0" Padding="5,4,5,5" HorizontalAlignment="Right" VerticalAlignment="Top" mah:ButtonHelper.PreserveTextCase="True"
                         Click="BtnSendTestEmail_Click"
                         Style="{DynamicResource AccentedSquareButtonStyle}">
                         <Button.ToolTip>Send Test Email</Button.ToolTip>
@@ -517,17 +517,17 @@
 
             <Button
                 Name="btn_save" Grid.Row="20" Grid.Column="0" Width="200" Height="40"
-                Margin="44,21,0,44" HorizontalAlignment="Left" VerticalAlignment="Bottom" Controls:ButtonHelper.PreserveTextCase="True" Click="BtnSave_Click"
+                Margin="44,21,0,44" HorizontalAlignment="Left" VerticalAlignment="Bottom" mah:ButtonHelper.PreserveTextCase="True" Click="BtnSave_Click"
                 Style="{DynamicResource AccentedSquareButtonStyle}" />
 
             <Button
                 Name="btn_exportServerConfig" Grid.Row="20" Grid.Column="1" Width="200" Height="40"
-                Margin="0,21,0,44" HorizontalAlignment="Center" VerticalAlignment="Bottom" Controls:ButtonHelper.PreserveTextCase="True" Click="BtnExport_Click"
+                Margin="0,21,0,44" HorizontalAlignment="Center" VerticalAlignment="Bottom" mah:ButtonHelper.PreserveTextCase="True" Click="BtnExport_Click"
                 Style="{DynamicResource AccentedSquareButtonStyle}" />
 
             <Button
                 Name="btn_restartServer" Grid.Row="20" Grid.Column="3" Width="200" Height="40"
-                Margin="0,21,0,44" HorizontalAlignment="Center" VerticalAlignment="Bottom" Controls:ButtonHelper.PreserveTextCase="True" Click="BtnRestartServer_Click"
+                Margin="0,21,0,44" HorizontalAlignment="Center" VerticalAlignment="Bottom" mah:ButtonHelper.PreserveTextCase="True" Click="BtnRestartServer_Click"
                 Style="{DynamicResource AccentedSquareButtonStyle}" />
 
         </Grid>

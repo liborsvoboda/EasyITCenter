@@ -17,6 +17,8 @@ global using Microsoft.AspNetCore.Server.Kestrel.Https;
 global using Microsoft.Data.SqlClient;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.ChangeTracking;
+global using Microsoft.EntityFrameworkCore.Infrastructure;
+global using Microsoft.EntityFrameworkCore.Storage;
 global using Microsoft.Extensions.Diagnostics.HealthChecks;
 global using Microsoft.Extensions.Logging.Console;
 global using Microsoft.Extensions.Logging.Debug;

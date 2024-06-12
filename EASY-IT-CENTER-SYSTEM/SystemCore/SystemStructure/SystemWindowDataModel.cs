@@ -34,15 +34,10 @@ namespace EasyITSystemCenter.SystemStructure {
 
         public void LoadTheme() {
             // create accent color menu items for the demo
-            this.AccentColors = ThemeManager.Accents
-                .Select(
-                    a =>
-                        new AccentColorMenuData() { Name = a.Name, ColorBrush = a.Resources["AccentColorBrush"] as Brush })
-                .ToList();
+            this.AccentColors = ThemeManager.Accents.Select(a => new AccentColorMenuData() { Name = a.Name, ColorBrush = a.Resources["AccentColorBrush"] as Brush }).ToList();
 
             // create metro theme color menu items for the demo
-            this.AppThemes = ThemeManager.AppThemes
-                .Select(
+            this.AppThemes = ThemeManager.AppThemes.Select(
                     a =>
                         new SystemTheme() {
                             Name = a.Name,

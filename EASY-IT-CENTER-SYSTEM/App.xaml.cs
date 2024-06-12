@@ -4,6 +4,7 @@ using EasyITSystemCenter.Pages;
 using EasyITSystemCenter.SystemHelper;
 using EasyITSystemCenter.SystemStructure;
 using log4net.Config;
+using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Owin.Hosting;

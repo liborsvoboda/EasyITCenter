@@ -2,7 +2,7 @@
     x:Class="GoldenSystem.Pages.TemplateClassListAutoDBTranslationViewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:behaviors="clr-namespace:GoldenSystem.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"

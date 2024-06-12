@@ -17,7 +17,7 @@
 Standard
 - xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 - xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-- xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+- xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
 - xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 - xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
 - xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

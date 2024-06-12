@@ -2,7 +2,7 @@
     x:Class="GoldenSystem.Pages.TemplateClassListAutoDBTranslationWithSubPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:GoldenSystem.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -54,31 +54,31 @@
                 HorizontalContentAlignment="Right" />
             <TextBox
                 x:Name="txt_documentNumber" Grid.Row="0" Grid.Column="1" Width="200" Margin="0,2,0,2"
-                HorizontalAlignment="Right" HorizontalContentAlignment="Right" Controls:TextBoxHelper.ClearTextButton="False" Controls:TextBoxHelper.Watermark="" IsEnabled="False" />
+                HorizontalAlignment="Right" HorizontalContentAlignment="Right" mah:TextBoxHelper.ClearTextButton="False" mah:TextBoxHelper.Watermark="" IsEnabled="False" />
 
             <Label
                 x:Name="lbl_supplier" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" />
             <TextBox
-                x:Name="txt_supplier" Grid.Row="1" Grid.Column="0" Margin="0,30,0,2" Controls:TextBoxHelper.ClearTextButton="True"
-                Controls:TextBoxHelper.Watermark="" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                x:Name="txt_supplier" Grid.Row="1" Grid.Column="0" Margin="0,30,0,2" mah:TextBoxHelper.ClearTextButton="True"
+                mah:TextBoxHelper.Watermark="" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
 
             <Label
                 x:Name="lbl_customer" Grid.Row="1" Grid.Column="1" Margin="0,2,205,2" HorizontalAlignment="Left"
                 VerticalAlignment="Top" />
             <TextBox
                 x:Name="txt_customerFilter" Grid.Row="1" Grid.Column="1" Width="200" Margin="200,2,0,2"
-                HorizontalAlignment="Right" VerticalAlignment="Top" HorizontalContentAlignment="Right" Controls:TextBoxHelper.ClearTextButton="True" GotFocus="SelectGotFocus"
+                HorizontalAlignment="Right" VerticalAlignment="Top" HorizontalContentAlignment="Right" mah:TextBoxHelper.ClearTextButton="True" GotFocus="SelectGotFocus"
                 PreviewKeyDown="Customer_KeyDown" TextChanged="SelectGotFocus" />
 
             <TextBox
-                x:Name="txt_customer" Grid.Row="1" Grid.Column="1" Margin="0,30,0,2" Controls:TextBoxHelper.ClearTextButton="True"
-                Controls:TextBoxHelper.Watermark="" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                x:Name="txt_customer" Grid.Row="1" Grid.Column="1" Margin="0,30,0,2" mah:TextBoxHelper.ClearTextButton="True"
+                mah:TextBoxHelper.Watermark="" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
 
             <Label
                 x:Name="lbl_offerValidity" Grid.Row="2" Grid.Column="0" Margin="0,2,100,2" HorizontalAlignment="Stretch" />
-            <Controls:NumericUpDown
+            <mah:NumericUpDown
                 x:Name="txt_offerValidity" Grid.Row="2" Grid.Column="0" Width="100" Margin="100,2,0,2"
-                HorizontalAlignment="Right" Controls:TextBoxHelper.ClearTextButton="False" Controls:TextBoxHelper.Watermark="30" HideUpDownButtons="False" />
+                HorizontalAlignment="Right" mah:TextBoxHelper.ClearTextButton="False" mah:TextBoxHelper.Watermark="30" HideUpDownButtons="False" />
 
             <Label
                 x:Name="lbl_storned" Grid.Row="2" Grid.Column="1" Margin="0,2,100,2" HorizontalAlignment="Stretch" />
@@ -89,23 +89,23 @@
                 x:Name="lbl_totalCurrency" Grid.Row="3" Grid.Column="0" Margin="0,2,100,2" HorizontalAlignment="Stretch" />
             <ComboBox
                 x:Name="cb_totalCurrency" Grid.Row="3" Grid.Column="0" Width="100" Margin="100,2,0,2"
-                HorizontalAlignment="Right" Controls:TextBoxHelper.ClearTextButton="false" Controls:TextBoxHelper.IsWaitingForData="True" DisplayMemberPath="Name" SelectedValuePath="Id"
+                HorizontalAlignment="Right" mah:TextBoxHelper.ClearTextButton="false" mah:TextBoxHelper.IsWaitingForData="True" DisplayMemberPath="Name" SelectedValuePath="Id"
                 SelectionChanged="VatChanged" />
 
             <Label
                 x:Name="lbl_totalPrice" Grid.Row="3" Grid.Column="1" Margin="0,2,100,2" HorizontalAlignment="Stretch" />
             <TextBox
                 x:Name="txt_totalPrice" Grid.Row="3" Grid.Column="1" Width="100" Margin="100,2,0,2"
-                HorizontalAlignment="Right" HorizontalContentAlignment="Right" Controls:TextBoxHelper.ClearTextButton="False" IsReadOnly="True" />
+                HorizontalAlignment="Right" HorizontalContentAlignment="Right" mah:TextBoxHelper.ClearTextButton="False" IsReadOnly="True" />
 
             <Label
                 x:Name="lbl_description" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" />
             <TextBox
                 x:Name="txt_description" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,30,0,2"
-                Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" />
+                mah:TextBoxHelper.ClearTextButton="True" mah:TextBoxHelper.Watermark="" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" />
             <ComboBox
                 x:Name="cb_notes" Grid.Row="4" Grid.Column="1" Width="200" Margin="100,2,0,2"
-                HorizontalAlignment="Right" VerticalAlignment="Top" Controls:TextBoxHelper.ClearTextButton="false" Controls:TextBoxHelper.IsWaitingForData="True" Controls:TextBoxHelper.Watermark="Note Template"
+                HorizontalAlignment="Right" VerticalAlignment="Top" mah:TextBoxHelper.ClearTextButton="false" mah:TextBoxHelper.IsWaitingForData="True" mah:TextBoxHelper.Watermark="Note Template"
                 DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="NotesChanged" />
 
             <!--  SubItems  -->
@@ -125,29 +125,29 @@
                 <!--  Insert Line  -->
                 <TextBox
                     x:Name="txt_partNumber" Grid.Row="0" Grid.Column="0" Width="180" Margin="0,2,0,2"
-                    HorizontalAlignment="Left" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="PartNumber" GotFocus="PartNumberGotFocus" PreviewKeyDown="PartNumber_KeyDown"
+                    HorizontalAlignment="Left" mah:TextBoxHelper.ClearTextButton="True" mah:TextBoxHelper.Watermark="PartNumber" GotFocus="PartNumberGotFocus" PreviewKeyDown="PartNumber_KeyDown"
                     TextChanged="PartNumberGotFocus" />
                 <TextBox
                     x:Name="txt_name" Grid.Row="0" Grid.Column="0" Width="200" Margin="185,2,0,2"
-                    HorizontalAlignment="Left" Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Name" GotFocus="NameGotFocus" />
+                    HorizontalAlignment="Left" mah:TextBoxHelper.ClearTextButton="True" mah:TextBoxHelper.Watermark="Name" GotFocus="NameGotFocus" />
                 <ComboBox
                     x:Name="cb_unit" Grid.Row="0" Grid.Column="0" Width="100" Margin="390,2,0,2"
-                    HorizontalAlignment="Left" Controls:TextBoxHelper.ClearTextButton="false" Controls:TextBoxHelper.IsWaitingForData="True" Controls:TextBoxHelper.Watermark="Unit" DisplayMemberPath="Name"
+                    HorizontalAlignment="Left" mah:TextBoxHelper.ClearTextButton="false" mah:TextBoxHelper.IsWaitingForData="True" mah:TextBoxHelper.Watermark="Unit" DisplayMemberPath="Name"
                     IsEnabled="true" SelectedValuePath="Name" />
-                <Controls:NumericUpDown
+                <mah:NumericUpDown
                     x:Name="txt_pcsPrice" Grid.Row="0" Grid.Column="0" Width="100" Margin="495,2,0,2"
-                    HorizontalAlignment="Left" Controls:TextBoxHelper.ClearTextButton="False" Controls:TextBoxHelper.Watermark="Pcs Price" HideUpDownButtons="True" NumericInputMode="Decimal" />
-                <Controls:NumericUpDown
+                    HorizontalAlignment="Left" mah:TextBoxHelper.ClearTextButton="False" mah:TextBoxHelper.Watermark="Pcs Price" HideUpDownButtons="True" NumericInputMode="Decimal" />
+                <mah:NumericUpDown
                     x:Name="txt_count" Grid.Row="0" Grid.Column="0" Width="100" Margin="600,2,0,2"
-                    HorizontalAlignment="Left" Controls:TextBoxHelper.ClearTextButton="False" Controls:TextBoxHelper.Watermark="Count" HideUpDownButtons="True" NumericInputMode="Decimal"
+                    HorizontalAlignment="Left" mah:TextBoxHelper.ClearTextButton="False" mah:TextBoxHelper.Watermark="Count" HideUpDownButtons="True" NumericInputMode="Decimal"
                     ValueChanged="CountChanged" />
                 <ComboBox
                     x:Name="cb_vat" Grid.Row="0" Grid.Column="0" Width="100" Margin="705,2,0,2"
-                    HorizontalAlignment="Left" Controls:TextBoxHelper.ClearTextButton="false" Controls:TextBoxHelper.IsWaitingForData="True" Controls:TextBoxHelper.Watermark="Vat" DisplayMemberPath="Name"
+                    HorizontalAlignment="Left" mah:TextBoxHelper.ClearTextButton="false" mah:TextBoxHelper.IsWaitingForData="True" mah:TextBoxHelper.Watermark="Vat" DisplayMemberPath="Name"
                     IsEnabled="true" SelectedValuePath="Name" SelectionChanged="VatChanged" />
                 <TextBox
                     x:Name="txt_totalPriceWithVat" Grid.Row="0" Grid.Column="0" Width="100" Margin="810,2,0,2"
-                    HorizontalAlignment="Left" HorizontalContentAlignment="Right" Controls:TextBoxHelper.ClearTextButton="False" Controls:TextBoxHelper.Watermark="Total Vat Price " IsEnabled="False" />
+                    HorizontalAlignment="Left" HorizontalContentAlignment="Right" mah:TextBoxHelper.ClearTextButton="False" mah:TextBoxHelper.Watermark="Total Vat Price " IsEnabled="False" />
 
                 <!--  SubGrid Buttons  -->
                 <Button

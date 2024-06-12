@@ -2,7 +2,7 @@
     x:Class="GoldenSystem.Pages.TemplateClassListAutoDBTranslationWithParentPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:GoldenSystem.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -51,28 +51,28 @@
 
             <Label
                 x:Name="lbl_id" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
-            <Controls:NumericUpDown
+            <mah:NumericUpDown
                 x:Name="txt_id" Grid.Row="0" Grid.Column="1" Margin="0,2,0,2" HorizontalContentAlignment="Left"
-                Controls:TextBoxHelper.ClearTextButton="False" Controls:TextBoxHelper.Watermark="" HideUpDownButtons="True" IsEnabled="False" ToolTip="This unique identificator is read only value which is filled automatically by system" />
+                mah:TextBoxHelper.ClearTextButton="False" mah:TextBoxHelper.Watermark="" HideUpDownButtons="True" IsEnabled="False" ToolTip="This unique identificator is read only value which is filled automatically by system" />
 
             <Label
                 x:Name="lbl_systemName" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
             <TextBox
-                x:Name="txt_systemName" Grid.Row="1" Grid.Column="1" Margin="0,2,0,2" Controls:TextBoxHelper.ClearTextButton="true"
-                Controls:TextBoxHelper.IsWaitingForData="True" Controls:TextBoxHelper.Watermark="" ToolTip="" />
+                x:Name="txt_systemName" Grid.Row="1" Grid.Column="1" Margin="0,2,0,2" mah:TextBoxHelper.ClearTextButton="true"
+                mah:TextBoxHelper.IsWaitingForData="True" mah:TextBoxHelper.Watermark="" ToolTip="" />
 
             <Label
                 x:Name="lbl_parentId" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
             <ComboBox
                 x:Name="cb_parentId" Grid.Row="2" Grid.Column="1" Margin="0,2,0,2" HorizontalAlignment="Stretch"
-                VerticalAlignment="Center" Controls:TextBoxHelper.ClearTextButton="false" Controls:TextBoxHelper.IsWaitingForData="True" DisplayMemberPath="ParentName" IsEnabled="true"
+                VerticalAlignment="Center" mah:TextBoxHelper.ClearTextButton="false" mah:TextBoxHelper.IsWaitingForData="True" DisplayMemberPath="ParentName" IsEnabled="true"
                 SelectedValuePath="Id" />
 
             <Label
                 x:Name="lbl_description" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />
             <TextBox
-                x:Name="txt_description" Grid.Row="3" Grid.Column="1" Margin="0,2,0,2" Controls:TextBoxHelper.ClearTextButton="True"
-                Controls:TextBoxHelper.Watermark="" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" />
+                x:Name="txt_description" Grid.Row="3" Grid.Column="1" Margin="0,2,0,2" mah:TextBoxHelper.ClearTextButton="True"
+                mah:TextBoxHelper.Watermark="" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" />
 
             <Label
                 x:Name="lbl_active" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" HorizontalContentAlignment="Right" />

@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Quartz;
 using SimpleMvcSitemap;
-using Snickler.RSSCore.Extensions;
 using Microsoft.AspNetCore.Mvc.Razor;
 using EasyITCenter.GitServer.Services;
 using EasyITCenter.GitServer.Repositorys;
@@ -21,6 +20,7 @@ using ServerCorePages;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Snickler.RSSCore.Extensions;
 
 namespace EasyITCenter.ServerCoreConfiguration {
 
@@ -91,7 +91,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 options.SerializerSettings.Formatting = Formatting.Indented;
             }).AddJsonOptions(x => {
-                x.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                //x.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 x.JsonSerializerOptions.WriteIndented = true;
                 x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
