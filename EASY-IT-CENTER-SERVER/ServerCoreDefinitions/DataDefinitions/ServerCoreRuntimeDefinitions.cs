@@ -61,7 +61,7 @@ namespace EasyITCenter.ServerCoreStructure {
         /// <summary>
         /// Software Disctribution Path
         /// </summary>
-        public static string DistributedPackagesPath { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ServerConfigSettings.DefaultStaticWebFilesFolder, "server-distribution","packages");
+        public static string DistributedPackagesPath { get; set; } = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), ServerConfigSettings.DefaultStaticWebFilesFolder, "server-distribution", "GeneratorsLibrary");
 
 
 

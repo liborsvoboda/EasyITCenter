@@ -100,10 +100,10 @@ namespace EasyITCenter.ServerCoreDBSettings {
                     //PREPARE MD BOOK FOLDER FOR FILES
                     if (!mdBookPrepared && webfilesrequest.MdBookLibrary) { 
                         mdBookPrepared = true;
-                    FileOperations.DeleteDirectory(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "md-book");
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.DistributedPackagesPath, "md-book"), ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "md-book"); }
+                    FileOperations.DeleteDirectory(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "MdInteliBook");
+                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.DistributedPackagesPath, "Documentation", "MdInteliBook"), ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "MdInteliBook"); }
 
-                    filelist.Where(a => !a.Contains(Path.Combine(Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "md-book"))).ToList().ForEach(file => {
+                    filelist.Where(a => !a.Contains(Path.Combine(Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "MdInteliBook"))).ToList().ForEach(file => {
                         generatedFile += $"- [{Path.GetFileNameWithoutExtension(file)}](.{(webfilesrequest.CentralIndexOnly ? file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1] : "/" + Path.GetFileName(file))})   " + Environment.NewLine + Environment.NewLine;
                     });
 
@@ -122,15 +122,15 @@ namespace EasyITCenter.ServerCoreDBSettings {
                             }
                         });
                         generatedFile += $"- [{docCounter}](./{docCounter}.md)   " + Environment.NewLine + Environment.NewLine;
-                        FileOperations.WriteToFile(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + $"{(webfilesrequest.MdBookLibrary ? "md-book/src/" : "")}{docCounter}.md", newdoc);
+                        FileOperations.WriteToFile(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + $"{(webfilesrequest.MdBookLibrary ? "MdInteliBook/src/" : "")}{docCounter}.md", newdoc);
                     }
                 });
                 //Save Index File
-                FileOperations.WriteToFile((ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + $"{(webfilesrequest.MdBookLibrary ? "md-book/src/summary.md" : "index.md")}").Replace("/","\\"), generatedFile);
+                FileOperations.WriteToFile((ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + $"{(webfilesrequest.MdBookLibrary ? "MdInteliBook/src/summary.md" : "index.md")}").Replace("/","\\"), generatedFile);
 
                 //COPY MD-BROWSER TOOL AFTER FILE PROCESSES
                 if (webfilesrequest.CentralIndexOnly) {
-                    FileOperations.CopyFiles(Path.Combine(ServerRuntimeData.DistributedPackagesPath, "md-browser"), ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath), webfilesrequest.OveriteExisting);
+                    FileOperations.CopyFiles(Path.Combine(ServerRuntimeData.DistributedPackagesPath, "Documentation", "MdBrowser"), ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath), webfilesrequest.OveriteExisting);
                 }
 
                 //SUMMARY MOVE FILES AND CLEAN STRUCTURE
@@ -140,15 +140,15 @@ namespace EasyITCenter.ServerCoreDBSettings {
                     indexRootList.ForEach(rootfolder => {
                         List<string> filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + rootfolder, "*.*", webfilesrequest.ProcessRootPathOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
                         filelist.ForEach(file => {
-                            FileOperations.CopyFile(file, ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "md-book/src/" + Path.GetFileName(file));
+                            FileOperations.CopyFile(file, ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "MdInteliBook/src/" + Path.GetFileName(file));
                         });
                         if (webfilesrequest.CleanProcessed && rootfolder.Length > 2) { FileOperations.DeleteDirectory(rootfolder); }
                     });
 
                     //TODO RUN BOOK PROCESS     
                     RunProcessRequest process = new RunProcessRequest() {
-                        Command = (ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "md-book/" + "generate-mdbook.bat").Replace("/", "\\"),
-                        WorkingDirectory = (ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "md-book/").Replace("/", "\\")
+                        Command = (ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "MdInteliBook/" + "generate-mdbook.bat").Replace("/", "\\"),
+                        WorkingDirectory = (ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "MdInteliBook/").Replace("/", "\\")
                     };
                     string result = await CoreOperations.RunSystemProcess(process);
                 }

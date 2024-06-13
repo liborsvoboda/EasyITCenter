@@ -48,12 +48,13 @@ namespace EasyITSystemCenter.GlobalGenerators {
 
 
                     foreach (var item in dataset.Columns) {
+                        string fieldName = dataset.Columns[columnNumber].ToString().ToLower();
                         //Detect Field Type
                         var fieldTypeResult = ProgrammaticOperations.DetectTypeValueFromObject(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber]); bool columnDefined = false;
 
                         //DIAL TYPE 
-                        if (dataset.Columns[columnNumber].ToString().ToLower().Contains("inherited")) {
-                            ComboBox combobox = new ComboBox() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), VerticalAlignment = VerticalAlignment.Center, 
+                        if (fieldName.Contains("inherited")) {
+                            ComboBox combobox = new ComboBox() { Name = "frm_" + dataset.Columns[columnNumber].ToString().ToLower(), VerticalAlignment = VerticalAlignment.Center, 
                                 HorizontalAlignment = HorizontalAlignment.Right, Width = 250, Margin = new Thickness(5), ItemsSource = solutionMixedEnumList, 
                                 SelectedValuePath = "Name", DisplayMemberPath = "Translation" 
                             };
@@ -63,64 +64,57 @@ namespace EasyITSystemCenter.GlobalGenerators {
                         }
 
                         if (fieldTypeResult.Item2 == "string" && !columnDefined
-                            && dataset.Columns[columnNumber].ToString().ToLower() != systemCustomPageList.ColumnName.ToLower()
-                            && !dataset.Columns[columnNumber].ToString().ToLower().Contains("inherited")
-                            ) {
-                            TextBox textbox = new TextBox() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), VerticalAlignment = VerticalAlignment.Stretch, 
+                            && fieldName != systemCustomPageList.ColumnName.ToLower() && !fieldName.Contains("inherited") ) {
+                            TextBox textbox = new TextBox() { Name = "frm_" + fieldName, VerticalAlignment = VerticalAlignment.Stretch, 
                                 HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2), IsUndoEnabled = true
-                                ,AcceptsReturn = dataset.Columns[columnNumber].ToString().ToLower() == "Description".ToLower() ? true : false, TextWrapping = TextWrapping.Wrap, 
+                                ,AcceptsReturn = fieldName == "Description".ToLower() ? true : false, TextWrapping = TextWrapping.Wrap, 
                                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto  
                             };
                             textbox.SetValue(Grid.RowProperty, columnNumber + 1); textbox.SetValue(Grid.ColumnProperty, 1);
 
                             //DESCRIPTION AREA
-                            if (dataset.Columns[columnNumber].ToString().ToLower() == "Description".ToLower()) { rootGrid.RowDefinitions[columnNumber + 1].Height = new GridLength(80, GridUnitType.Pixel); }
+                            if (fieldName == "Description".ToLower()) { rootGrid.RowDefinitions[columnNumber + 1].Height = new GridLength(80, GridUnitType.Pixel); }
                             rootGrid.Children.Add(textbox);
                             columnDefined = true;
                         }
                         if (fieldTypeResult.Item2 == "bool" && !columnDefined) {
-                            CheckBox checkBox = new CheckBox() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), VerticalAlignment = VerticalAlignment.Center, 
+                            CheckBox checkBox = new CheckBox() { Name = "frm_" + fieldName, VerticalAlignment = VerticalAlignment.Center, 
                                 HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0,5,5,5), Padding = new Thickness(0) 
                             };
                             checkBox.SetValue(Grid.RowProperty, columnNumber + 1); checkBox.SetValue(Grid.ColumnProperty, 1);
                             rootGrid.Children.Add(checkBox);
                             columnDefined = true;
                         }
-                        if (fieldTypeResult.Item2 == "int"
-                             && dataset.Columns[columnNumber].ToString().ToLower() != "userid"
-                            && !columnDefined) {
-                            NumericUpDown numeric = new NumericUpDown() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), 
+                        if (fieldTypeResult.Item2 == "int" && fieldName != "userid" && !columnDefined) {
+                            NumericUpDown numeric = new NumericUpDown() { Name = "frm_" + fieldName, 
                                 VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2)
-                                , IsReadOnly = dataset.Columns[columnNumber].ToString().ToLower() == "id".ToLower() ? true : false 
+                                , IsReadOnly = fieldName.ToLower() == "id".ToLower() ? true : false 
                             };
                             numeric.SetValue(Grid.RowProperty, columnNumber + 1); numeric.SetValue(Grid.ColumnProperty, 1);
                             rootGrid.Children.Add(numeric);
                             columnDefined = true;
                         }
-                        if (fieldTypeResult.Item2 == "double"
-                            && dataset.Columns[columnNumber].ToString().ToLower() != "userid"
-                            && !columnDefined) {
-                            NumericUpDown numeric = new NumericUpDown() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2), IsReadOnly = dataset.Columns[columnNumber].ToString().ToLower() == "id".ToLower() ? true : false, /*Value = double.Parse(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber].ToString())*/ };
+                        if (fieldTypeResult.Item2 == "double" && fieldName != "userid" && !columnDefined) {
+                            NumericUpDown numeric = new NumericUpDown() { Name = "frm_" + fieldName, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2), IsReadOnly = dataset.Columns[columnNumber].ToString().ToLower() == "id".ToLower() ? true : false, /*Value = double.Parse(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber].ToString())*/ };
                             numeric.SetValue(Grid.RowProperty, columnNumber + 1); numeric.SetValue(Grid.ColumnProperty, 1);
                             rootGrid.Children.Add(numeric);
                             columnDefined = true;
                         }
                         if (fieldTypeResult.Item2 == "time" && !columnDefined) {
-                            DateTimePicker datePicker = new DateTimePicker() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2), IsTodayHighlighted = true, IsClockVisible = true, PickerVisibility = TimePartVisibility.All, SelectedDateFormat = DatePickerFormat.Short/*, SelectedTime = TimeSpan.Parse(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber].ToString())*/, SelectedTimeFormat = TimePickerFormat.Short };
+                            DateTimePicker datePicker = new DateTimePicker() { Name = "frm_" + fieldName, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2), IsTodayHighlighted = true, IsClockVisible = true, PickerVisibility = TimePartVisibility.All, SelectedDateFormat = DatePickerFormat.Short/*, SelectedTime = TimeSpan.Parse(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber].ToString())*/, SelectedTimeFormat = TimePickerFormat.Short };
                             datePicker.SetValue(Grid.RowProperty, columnNumber + 1); datePicker.SetValue(Grid.ColumnProperty, 1);
                             rootGrid.Children.Add(datePicker);
                             columnDefined = true;
                         }
                         if (fieldTypeResult.Item2 == "date" && !columnDefined) {
-                            DateTimePicker datePicker = new DateTimePicker() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2), IsTodayHighlighted = true, IsClockVisible = false, SelectedDateFormat = DatePickerFormat.Short/*, SelectedDate = DateTime.Parse(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber].ToString())*/ };
+                            DateTimePicker datePicker = new DateTimePicker() { Name = "frm_" + fieldName, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2), IsTodayHighlighted = true, IsClockVisible = false, SelectedDateFormat = DatePickerFormat.Short/*, SelectedDate = DateTime.Parse(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber].ToString())*/ };
                             datePicker.SetValue(Grid.RowProperty, columnNumber + 1); datePicker.SetValue(Grid.ColumnProperty, 1);
                             rootGrid.Children.Add(datePicker);
                             columnDefined = true;
                         }
 
-                        if (fieldTypeResult.Item2 == "datetime" && !columnDefined
-                            && !dataset.Columns[columnNumber].ToString().ToLower().StartsWith("timestamp")) {
-                            DateTimePicker datePicker = new DateTimePicker() { Name = "frm_" + dataset.Columns[columnNumber].ToString(), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2), IsTodayHighlighted = true, IsClockVisible = true, PickerVisibility = TimePartVisibility.All, SelectedDateFormat = DatePickerFormat.Short/*,  SelectedDate = DateTime.Parse(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber].ToString())*/ };
+                        if (fieldTypeResult.Item2 == "datetime" && !columnDefined && !fieldName.StartsWith("timestamp")) {
+                            DateTimePicker datePicker = new DateTimePicker() { Name = "frm_" + fieldName, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Margin = new Thickness(2), IsTodayHighlighted = true, IsClockVisible = true, PickerVisibility = TimePartVisibility.All, SelectedDateFormat = DatePickerFormat.Short/*,  SelectedDate = DateTime.Parse(dataset.Columns[columnNumber].Table.Select()[columnNumber].ItemArray[columnNumber].ToString())*/ };
                             datePicker.SetValue(Grid.RowProperty, columnNumber + 1); datePicker.SetValue(Grid.ColumnProperty, 1);
                             rootGrid.Children.Add(datePicker);
                             columnDefined = true;
@@ -129,13 +123,10 @@ namespace EasyITSystemCenter.GlobalGenerators {
 
                         //Insert Label for Each Field Without EDITOR AND HIDDEN FIELDS
                         if (columnDefined
-                            && dataset.Columns[columnNumber].ToString().ToLower() != systemCustomPageList.ColumnName.ToLower()
-                            && dataset.Columns[columnNumber].ToString().ToLower() != "userid"
-                            && dataset.Columns[columnNumber].ToString().ToLower() != "timestamp") {
-                            Label fieldLabel = new Label() { Name = "lbl_" + dataset.Columns[columnNumber].ToString(), FontSize = 20, 
+                            && fieldName != systemCustomPageList.ColumnName.ToLower() && fieldName != "userid" && fieldName != "timestamp") {
+                            Label fieldLabel = new Label() { Name = "lbl_" + fieldName, FontSize = 20, 
                                 VerticalAlignment = VerticalAlignment.Stretch, VerticalContentAlignment = VerticalAlignment.Top, 
                                 HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(5,0,5,5), Padding = new Thickness(0)
-                                //Style = "{StaticResource DefaultSystemLabelStyle}"
                             };
                             fieldLabel.SetValue(Grid.RowProperty, columnNumber + 1); fieldLabel.SetValue(Grid.ColumnProperty, 0);
                             rootGrid.Children.Add(fieldLabel);
@@ -169,7 +160,7 @@ namespace EasyITSystemCenter.GlobalGenerators {
                 foreach (object prop in columnList) {
 
                     bool setDone = false;
-                    string fieldName = ((DataColumn)prop).ColumnName;
+                    string fieldName = ((DataColumn)prop).ColumnName.ToLower();
                     string fieldValue = selectedRecord.Row.ItemArray[index].ToString();
                     if (newRec) { fieldValue = null; }
                     var fieldTypeResult = ProgrammaticOperations.DetectTypeValueFromObject(selectedRecord.Row.ItemArray[index]);
@@ -183,7 +174,7 @@ namespace EasyITSystemCenter.GlobalGenerators {
                             dataForBrowser = fieldValue; setDone = true;
                         }
                         //0 ID for Copy
-                        if (!setDone && (copy || newRec) && systemCustomPageSetting.ColumnName != null && fieldName.ToLower() == "Id".ToLower()) {
+                        if (!setDone && (copy || newRec) && systemCustomPageSetting.ColumnName != null && fieldName == "Id".ToLower()) {
                             try {
                                 fieldValue = "0";
                                 if (userForm.FindChild<NumericUpDown>($"frm_{fieldName}") != null) {
@@ -210,7 +201,7 @@ namespace EasyITSystemCenter.GlobalGenerators {
                         #endregion SpecialFieldsConditions
 
                         //STANDARD GENERATION PART
-                        if (!setDone && new string[] { "int", "float", "double", "int32", "int64" }.Contains(fieldTypeResult.Item2)) {
+                        if (!setDone && new string[] { "int", "float", "double", "numeric", "int32", "int64" }.Contains(fieldTypeResult.Item2)) {
                             try {
                                 if (userForm.FindChild<NumericUpDown>($"frm_{fieldName}") != null) {
                                     userForm.FindChild<NumericUpDown>($"frm_{fieldName}").Value = fieldValue == null ? null : double.Parse(fieldValue) as double?;

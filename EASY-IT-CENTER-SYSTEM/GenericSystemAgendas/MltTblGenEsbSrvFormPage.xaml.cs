@@ -17,7 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using WebView2.DevTools.Dom;
 using EasyITSystemCenter.GlobalGenerators;
-using Gu.Localization;
+using Newtonsoft.Json;
 
 
 namespace EasyITSystemCenter.Pages {
@@ -187,6 +187,7 @@ namespace EasyITSystemCenter.Pages {
             try {
                 //SET FOMRS 
                 DataLoaded = false;
+                if (newRec) { DataLoaded = true; } else { DataLoaded = false; }
                 if (showForm != null && showForm == true) {
                     int recIt = DgListView.SelectedItem == null ? 0 : int.Parse(selectedRecord[0].ToString());
                     MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = recIt != 0;
@@ -209,9 +210,12 @@ namespace EasyITSystemCenter.Pages {
                     devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
 
                     //SET DATA TO FORM AND BROWSER
-                    if (!string.IsNullOrWhiteSpace(WebBrowserData) && systemCustomPageList.UseIooverDom) { await DOMSetDataFromBrowser(); }
-                    else if (!string.IsNullOrWhiteSpace(WebBrowserData)) { await JSSetDataFromBrowser(); }
-                    DataLoaded = true;
+                    if (!DataLoaded && !string.IsNullOrWhiteSpace(WebBrowserData) && systemCustomPageList.UseIooverDom) { await DOMSetDataFromBrowser();
+                        var check = await DOMGetDataFromBrowser(); if (check == WebBrowserData) { DataLoaded = true; }
+
+                    } else if (!DataLoaded && !string.IsNullOrWhiteSpace(WebBrowserData)) { await JSSetDataFromBrowser();
+                        var check = await JSGetDataFromBrowser(); if (check == WebBrowserData) { DataLoaded = true; } }
+                    
                     TabMenuList.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, 0);
                 }
 
@@ -248,15 +252,18 @@ namespace EasyITSystemCenter.Pages {
                 new Dictionary<string, string>() { { "userId", App.UserData.Authentification.Id.ToString() } }
             };
 
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(parameters);
+
+            string json = JsonConvert.SerializeObject(parameters);
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-            definedDataList = await CommunicationManager.ApiManagerPostRequest<DataTable>(UrlSourceTypes.EicWebServerGenericGetTableApi, null, httpContent);
+            var definedDataList = await CommunicationManager.ApiManagerPostRequest<DataTable>(UrlSourceTypes.EicWebServerGenericGetTableApi, null, httpContent);
             DgListView.SetCurrentValue(ItemsControl.ItemsSourceProperty, definedDataList.AsDataView());
             await LoadInheritedDataList();
 
+
             //Generate User Form 
-            userForm = XamlFormGenerators.StandardXamlFormViewGenerator(ref userForm, definedDataList, systemCustomPageList, solutionMixedEnumList);
+            userForm = XamlFormGenerators.StandardXamlFormViewGenerator(ref userForm,definedDataList, systemCustomPageList, solutionMixedEnumList);
             await FormOperations.TranslateFormFields(userForm);
+
 
             TabMenuList.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, 0);
             userForm.UpdateLayout();
@@ -388,25 +395,29 @@ namespace EasyITSystemCenter.Pages {
             return true;
         }
 
-        private async Task<bool> DOMGetDataFromBrowser() {
+        private async Task<string> DOMGetDataFromBrowser() {
+            string check = null;
             if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(null); }
             devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
             try {
                 var htmlDivElement = await devToolsContext.QuerySelectorAsync<HtmlDivElement>(!systemCustomPageList.DomhtmlElementName.StartsWith("#") ? $"#{systemCustomPageList.DomhtmlElementName}" : systemCustomPageList.DomhtmlElementName);
-                WebBrowserData = await htmlDivElement.GetInnerHtmlAsync();
+                check  = await htmlDivElement.GetInnerHtmlAsync();
+                if (!DataLoaded && check == WebBrowserData) { DataLoaded = true; } else { await DOMSetDataFromBrowser(); }
                 if (systemCustomPageList.DevModeEnabled) { App.ApplicationLogging(new Exception($"DOM Get InnerHtml From Object '{systemCustomPageList.DomhtmlElementName}' Function Response Message:{Environment.NewLine}{WebBrowserData}")); }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-            return true;
+            return check;
         }
 
-        private async Task<bool> JSGetDataFromBrowser() {
+        private async Task<string> JSGetDataFromBrowser() {
+            string check = null;
             if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(null); }
             devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
             try {
-                WebBrowserData = await webBrowser.ExecuteScriptAsync(systemCustomPageList.GetWebDataJscriptCmd);
+                check = await webBrowser.ExecuteScriptAsync(systemCustomPageList.GetWebDataJscriptCmd);
+                if (!DataLoaded && check == WebBrowserData) { DataLoaded = true; } else { await JSSetDataFromBrowser(); }
                 if (systemCustomPageList.DevModeEnabled) { App.ApplicationLogging(new Exception($"JS Get ExecuteScriptAsync {systemCustomPageList.GetWebDataJscriptCmd} Function Response Message:{Environment.NewLine}{WebBrowserData}")); }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-            return true;
+            return check;
         }        
     }
 }

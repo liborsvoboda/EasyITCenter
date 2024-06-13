@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 
@@ -30,7 +31,7 @@ namespace EasyITSystemCenter.Api {
                     return JsonSerializer.Deserialize<AuthentificationResponse>(response.ToString(), App.appRuntimeData.JsonSerializeOptions);
                 } catch (Exception ex) {
                     _ = await MainWindow.ShowMessageOnMainWindow(false, response.ObjectToJson() + Environment.NewLine + apiUrl + Environment.NewLine + ex.StackTrace + Environment.NewLine + ex.Message, false);
-                    return new AuthentificationResponse() { Token = null, Expiration = null }; 
+                    return new AuthentificationResponse() { Token = null, Expiration = null };
                 }
             }
         }
@@ -106,6 +107,7 @@ namespace EasyITSystemCenter.Api {
             }
         }
 
+
         public static async Task<bool> CheckApiConnection() {
             using (HttpClient httpClient = new HttpClient()) {
                 try {
@@ -116,22 +118,8 @@ namespace EasyITSystemCenter.Api {
         }
 
 
-
-        public static async Task<DataTable> EicServerPostGenericDatalistListApiRequest(ApiUrls apiUrl, HttpContent body, string UrlPathExtension = null, string token = null) {
-            using (HttpClient httpClient = new HttpClient()) {
-                DataTable result = new DataTable();
-                try {
-                    if (token != null) { httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); }
-                    HttpResponseMessage json = await httpClient.PostAsync(App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + "/" + apiUrl + (!string.IsNullOrWhiteSpace(UrlPathExtension) ? "/" + UrlPathExtension : ""), body);
-                    result = JsonSerializer.Deserialize<DataTable>(await json.Content.ReadAsStringAsync(), App.appRuntimeData.JsonSerializeOptions);
-                } catch (Exception ex) { }
-                return result;
-            }
-        }
-
-
         /// <summary>
-        /// Centralizeds Definition For Use Direct Different GET Requests
+        /// Centralised Definition For Use Direct Different GET Requests
         /// for Check, Simple Html Download, API messages, etc..
         /// Implemented Automatic Correction, Formates, Login,Logging
         /// TODO: COPY It To Server For NEW ADENDA AUTOMATED API PROCESSES + Scheduling
@@ -144,10 +132,11 @@ namespace EasyITSystemCenter.Api {
         /// <param name="UrlPathExtension"></param>
         /// <returns></returns>
         public static async Task<string> ApiManagerGetRequest(UrlSourceTypes UrlPrefix, string UrlOrSubPath = null, string UrlPathExtension = null) {
+            string json = string.Empty; string requestUrl = string.Empty;
             using (HttpClient httpClient = new HttpClient()) {
                 try {
                     //PREPARE URL SUB PATH +URL EXTENSION OR FULL ADDRESS
-                    string requestUrl = UrlPrefix != UrlSourceTypes.WebUrl ? $"{(!string.IsNullOrWhiteSpace(UrlOrSubPath) && !UrlOrSubPath.StartsWith("/") ? "/" : "")}" +
+                    requestUrl = UrlPrefix != UrlSourceTypes.WebUrl ? $"{(!string.IsNullOrWhiteSpace(UrlOrSubPath) && !UrlOrSubPath.StartsWith("/") ? "/" : "")}" +
                         $"{UrlOrSubPath}{(!string.IsNullOrWhiteSpace(UrlPathExtension) && !UrlPathExtension.StartsWith("/") ? "/" : "")}{UrlPathExtension}"
                         : $"{UrlOrSubPath}{(!string.IsNullOrWhiteSpace(UrlPathExtension) && !UrlPathExtension.StartsWith("/") ? "/" : "")}{UrlPathExtension}";
 
@@ -163,17 +152,14 @@ namespace EasyITSystemCenter.Api {
                     } else {
                         _ = await MainWindow.ShowMessageOnMainWindow(false, $"Selected Definition {UrlPrefix} is Not Implemented.{Environment.NewLine} You can Write to Software Support With Implementation Request");
                     }
-
-                    //TODO Nev Agenda Saved Auth Connections
-                    //if (urlPrefix == UrlSourceTypes.ExternalAuthApi) { httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", App.UserData.Authentification.Token); }
-
-                    string json = await httpClient.GetStringAsync(requestUrl);
-
+                    json = await httpClient.GetStringAsync(requestUrl);
                     return json;
                 } catch (Exception ex) {
                     if (ex.Message.Contains("401 (Unauthorized)")) {
-                        _ = await MainWindow.ShowMessageOnMainWindow(false, $"Call type: GET prefix:{UrlPrefix} url:{UrlOrSubPath}{Environment.NewLine}{await DBOperations.DBTranslation("UnAuthconnectionWasDisconnected")}{Environment.NewLine}{SystemOperations.GetExceptionMessagesAll(ex)}", false);
+                        _ = await MainWindow.ShowMessageOnMainWindow(false, $"Call type GET :{requestUrl} {Environment.NewLine}{await DBOperations.DBTranslation("UnAuthconnectionWasDisconnected")}{Environment.NewLine}{SystemOperations.GetExceptionMessagesAll(ex)}", false);
                         App.ApplicationLogging(ex);
+                    } else {
+                        _ = await MainWindow.ShowMessageOnMainWindow(false, $"Call type POST:{requestUrl} Error: {Environment.NewLine}{json}", false);
                     }
                     return SystemOperations.GetExceptionMessagesAll(ex);
                 }
@@ -181,45 +167,64 @@ namespace EasyITSystemCenter.Api {
         }
 
 
-
+        /// <summary>
+        /// Centralised Definition For Use Direct Different POST Requests
+        /// for Check, Simple Html Download, API messages, etc..
+        /// Implemented Automatic Correction, Formates, Login,Logging
+        /// TODO: COPY It To Server For NEW ADENDA AUTOMATED API PROCESSES + Scheduling
+        /// TODO: Nev Agenda Saved Auth Connections
+        /// TODO: Pupetier Downloader
+        /// TODO: Same Solution For WebSocket
+        /// USE NEWTONSOFT ONLY
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="UrlPrefix"></param>
+        /// <param name="UrlOrSubPath"></param>
+        /// <param name="htmlContent"></param>
+        /// <param name="UrlPathExtension"></param>
+        /// <returns></returns>
         public static async Task<T> ApiManagerPostRequest<T>(UrlSourceTypes UrlPrefix, string UrlOrSubPath = null, HttpContent htmlContent = null, string UrlPathExtension = null) where T : new() {
-            HttpResponseMessage json; string loadData = string.Empty;
+            HttpResponseMessage json = null; string loadData = string.Empty;T result; string requestUrl = string.Empty;
             using (HttpClient httpClient = new HttpClient()) {
                 try {
-                    string requestUrl = UrlPrefix != UrlSourceTypes.WebUrl ? $"{(!string.IsNullOrWhiteSpace(UrlOrSubPath) && !UrlOrSubPath.StartsWith("/") ? "/" : "")}{UrlOrSubPath}" +
+                    requestUrl = UrlPrefix != UrlSourceTypes.WebUrl ? $"{(!string.IsNullOrWhiteSpace(UrlOrSubPath) && !UrlOrSubPath.StartsWith("/") ? "/" : "")}{UrlOrSubPath}" +
                         $"{(!string.IsNullOrWhiteSpace(UrlPathExtension) && !UrlPathExtension.StartsWith("/") ? "/" : "")}{UrlPathExtension}"
                         : $"{UrlOrSubPath}{(!string.IsNullOrWhiteSpace(UrlPathExtension) && !UrlPathExtension.StartsWith("/") ? "/" : "")}{UrlPathExtension}";
 
                     if (UrlPrefix == UrlSourceTypes.EicWebServer) {
                         requestUrl = App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + requestUrl;
-                    } else if (UrlPrefix == UrlSourceTypes.EicWebServerAuth) {
+                    }
+                    else if (UrlPrefix == UrlSourceTypes.EicWebServerAuth) {
                         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", App.UserData.Authentification.Token);
                         requestUrl = App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + requestUrl;
-                    } else if (UrlPrefix == UrlSourceTypes.EsbWebServer) {
+                    }
+                    else if (UrlPrefix == UrlSourceTypes.EsbWebServer) {
                         string webServerUrl = App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value;
                         requestUrl = new Uri($"{webServerUrl}{(!string.IsNullOrWhiteSpace(webServerUrl) && !webServerUrl.EndsWith("/") ? "/" : "")}" +
                             $"{(!string.IsNullOrWhiteSpace(requestUrl) && requestUrl.StartsWith("/") ? requestUrl.Substring(1) : requestUrl)}").ToString();
                     }
                     else if (UrlPrefix == UrlSourceTypes.EicWebServerGenericGetTableApi) {
                         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", App.UserData.Authentification.Token);
-                        requestUrl = App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value + $"/{ApiUrls.ServerApi}/DatabaseServices/SpProcedure/GetGenericDataListbyParams";
-                    } else {
-                        _ = await MainWindow.ShowMessageOnMainWindow(false, $"Selected Definition {UrlPrefix} is Not Implemented.{Environment.NewLine} You can Write to Software Support With Implementation Request");
+                        requestUrl = App.appRuntimeData.AppClientSettings.First(b => b.Key == "conn_apiAddress").Value
+                            + $"/{ApiUrls.ServerApi}/DatabaseServices/SpProcedure/GetGenericDataListbyParams";
+                    }
+                    else {
+                        _ = await MainWindow.ShowMessageOnMainWindow(false, $"Selected Definition {UrlPrefix} is Not Implemented.{Environment.NewLine}" +
+                            $"You can Write to Software Support With Implementation Request");
                     }
 
+
                     json = await httpClient.PostAsync(requestUrl, htmlContent);
-                    loadData = JsonSerializer.Deserialize<string>(await json.Content.ReadAsStringAsync(), App.appRuntimeData.JsonSerializeOptions);
-                    T result = JsonSerializer.Deserialize<T>(loadData);
-                    if (json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
-                        _ = await MainWindow.ShowMessageOnMainWindow(false, $"Call type: POST prefix:{UrlPrefix} url:{UrlOrSubPath}{Environment.NewLine}{await DBOperations.DBTranslation("UnAuthconnectionWasDisconnected")}", false);
-                    } else if (json.StatusCode != System.Net.HttpStatusCode.OK) {
-                        _ = await MainWindow.ShowMessageOnMainWindow(false, $"Call type: POST prefix:{UrlPrefix} url:{UrlOrSubPath} Error: {Environment.NewLine}{json}", false);
-                    }
-                    return result;
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(await json.Content.ReadAsStringAsync());
                 } catch (Exception ex) {
-                    _ = await MainWindow.ShowMessageOnMainWindow(false, $"Call type: POST prefix:{UrlPrefix} url:{UrlOrSubPath}{Environment.NewLine}$APIManager Error{Environment.NewLine}:" +
-                        $" returned Data:{Environment.NewLine}{loadData}{Environment.NewLine}{SystemOperations.GetExceptionMessagesAll(ex)}", false);
-                    App.ApplicationLogging(new Exception($"APIManager Error{Environment.NewLine}: returned Data:{Environment.NewLine}{loadData}{Environment.NewLine}{SystemOperations.GetExceptionMessagesAll(ex)}"));
+                    if (json.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
+                        _ = await MainWindow.ShowMessageOnMainWindow(false, $"Call type POST:{requestUrl} {Environment.NewLine}{await DBOperations.DBTranslation("UnAuthconnectionWasDisconnected")}", false);
+                    } else {
+                        _ = await MainWindow.ShowMessageOnMainWindow(false, $"Call type POST:{requestUrl} {Environment.NewLine}$APIManager Error{Environment.NewLine}:" +
+                            $" returned Data:{Environment.NewLine}{loadData}{Environment.NewLine}{SystemOperations.GetExceptionMessagesAll(ex)}", false);
+                            App.ApplicationLogging(new Exception($"APIManager Error{Environment.NewLine}: returned Data:{Environment.NewLine}{loadData}" +
+                            $"{Environment.NewLine}{SystemOperations.GetExceptionMessagesAll(ex)}"));
+                    }
                     return new T();
                 }
             }

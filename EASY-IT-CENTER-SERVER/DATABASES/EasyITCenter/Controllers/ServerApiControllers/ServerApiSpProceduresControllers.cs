@@ -1,9 +1,9 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using SharpCompress.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Common;
+using EasyITCenter.ServerCoreDBSettings;
+using System.Xml;
 //using Korzh.DbUtils;
 
 namespace EasyITCenter.Controllers {
@@ -35,19 +35,19 @@ namespace EasyITCenter.Controllers {
         public async Task<string> GetSystemOperationsList(List<Dictionary<string, string>> dataset) {
             string procedureName = ""; string parameters = ""; string EntityTypeName = "";
             foreach (Dictionary<string, string> param in dataset) {
-                if (param.Where(a => a.Key.ToLower() == "SpProcedure".ToLower()).Any()) { procedureName = param.Where(a => a.Key.ToLower() == "SpProcedure".ToLower()).First().Value;
+                if (param.Where(a => a.Key.ToLower() == "SpProcedure".ToLower()).Any()) {
+                    procedureName = param.Where(a => a.Key.ToLower() == "SpProcedure".ToLower()).First().Value;
+
                 } else if (param.Where(a => a.Key.ToLower() == "tableName".ToLower()).Any()) {
                     parameters += (parameters.Length > 0 ? "," : "") + $"@{param.Keys.First()} = N'{param.Values.First()}' ";
                     EntityTypeName = param.Values.First();
+
                 } else { parameters += (parameters.Length > 0 ? "," : "") + $"@{param.Keys.First()} = N'{param.Values.First()}' "; }
             }
-            var data = DataOperations.CreateObjectTypeByTypeName(EntityTypeName);
-            data = new EasyITCenterContext().ExecuteReader($"EXEC {procedureName} {parameters};");
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions() {
-                ReferenceHandler = ReferenceHandler.IgnoreCycles,
-                WriteIndented = true,
-                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
+
+            DataView data = ((DataView)(await new EasyITCenterContext().ExecuteReaderAsync($"EXEC {procedureName} {parameters};")).DefaultView);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(data.Table, (Newtonsoft.Json.Formatting)Formatting.Indented);
+
         }
 
 

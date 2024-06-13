@@ -1,7 +1,4 @@
-﻿using Gemini.Framework;
-using Markdig.Extensions.TextRenderer;
-using MWindowInterfacesLib.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,7 +6,6 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
-using System.Windows.Media;
 
 namespace EasyITSystemCenter.GlobalClasses {
 
@@ -47,7 +43,9 @@ namespace EasyITSystemCenter.GlobalClasses {
 
         public Dictionary<string, string> AppClientSettings = new Dictionary<string, string>();
 
-
+        /// <summary>
+        /// JSON Predefined
+        /// </summary>
         public JsonSerializerOptions JsonSerializeOptions = new JsonSerializerOptions() {
             PropertyNameCaseInsensitive = true, ReferenceHandler = ReferenceHandler.IgnoreCycles,
             WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,

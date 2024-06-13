@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Xml.Linq;
 
 namespace EasyITSystemCenter.GlobalOperations {
 
@@ -162,14 +163,17 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// <returns></returns>
         public static List<T> GenericConvertTableToClassList<T>(DataTable dt) {
             List<T> result = new List<T>();
-            foreach (DataRow dr in dt.Rows) {
-                var typeObject = Activator.CreateInstance<T>();
-                foreach (var fieldInfo in typeof(T).GetProperties()) {
-                    foreach (DataColumn dc in dt.Columns) {
-                        if (fieldInfo.Name == dc.ColumnName) { fieldInfo.SetValue(typeObject, dr[dc.ColumnName]); break; }
-                    }
-                }; result.Add(typeObject);
-            }; return result;
+            try {
+                foreach (DataRow dr in dt.Rows) {
+                    var typeObject = Activator.CreateInstance<T>();
+                    foreach (var fieldInfo in typeof(T).GetProperties()) {
+                        foreach (DataColumn dc in dt.Columns) {
+                            if (fieldInfo.Name == dc.ColumnName) { fieldInfo.SetValue(typeObject, dr[dc.ColumnName]); break; }
+                        }
+                    }; result.Add(typeObject);
+                };
+            } catch { }
+            return result;
         }
 
 
@@ -181,15 +185,39 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// <returns></returns>
         public static List<object> ConvertTableToClassListByType(DataTable dt, Type classType) {
             List<object> result = new List<object>();
-            foreach (DataRow dr in dt.Rows) {
-                var typeObject = Activator.CreateInstance(classType);
-                foreach (var fieldInfo in classType.GetProperties()) {
-                    foreach (DataColumn dc in dt.Columns) {
-                        if (fieldInfo.Name == dc.ColumnName) { fieldInfo.SetValue(typeObject, dr[dc.ColumnName]); break; }
-                    }
-                }; result.Add(typeObject);
-            }; return result;
+            try {
+                foreach (DataRow dr in dt.Rows) {
+                    var typeObject = Activator.CreateInstance(classType);
+                    foreach (var fieldInfo in classType.GetProperties()) {
+                        foreach (DataColumn dc in dt.Columns) {
+                            if (fieldInfo.Name == dc.ColumnName) { fieldInfo.SetValue(typeObject, dr[dc.ColumnName]); break; }
+                        }
+                    }; result.Add(typeObject);
+                };
+            } catch { }
+            return result;
         }
 
+
+        /// <summary>
+        /// Converts the data table to xml.
+        /// </summary>
+        /// <param name="dataTable">The data table.</param>
+        /// <param name="tablename">The tablename.</param>
+        /// <returns>A XElement.</returns>
+        public static XElement ConvertDataTableToXml(DataTable dataTable, string tablename) {
+            var xmlTable = new XElement(tablename, dataTable.Rows.Cast<DataRow>()
+       .GroupBy(row => (string)row[0]).Select(g =>
+           new XElement(dataTable.Columns[0].ColumnName,
+               new XElement("label", g.Key),
+               g.GroupBy(row => (string)row[1]).Select(g1 =>
+                   new XElement(dataTable.Columns[1].ColumnName, new XElement("label", g1.Key),
+                       new XElement(dataTable.Columns[2].ColumnName, g1.Select(row => new XElement("label", (string)row[2])))
+                   )
+               )
+            )));
+            return xmlTable;
+        }
+        
     }
 }

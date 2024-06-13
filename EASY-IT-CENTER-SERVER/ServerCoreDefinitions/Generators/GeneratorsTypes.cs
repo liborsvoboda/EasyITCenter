@@ -1,15 +1,5 @@
 ﻿namespace EasyITCenter.ServerCoreStructure {
 
-
-    //public class ApiStructureGenerator {
-
-    //    public List<string> PanelPointList { get; set; }
-    //    public bool GeneratePanelGlobalView { get; set; } = false;
-    //    public List<string> PanelPointList { get; set; }
-
-    //}
-
-
     /// <summary>
     /// Class Definition for Server Emailer In List of this claas you can use Mass Emailer
     /// </summary>
