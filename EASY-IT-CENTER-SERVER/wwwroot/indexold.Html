@@ -1,0 +1,240 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="charset" content="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Libor Svoboda">
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./metro/interactive/icons.css" />
+    <link rel="stylesheet" href="./metro/interactive/metro.css" />
+    <script type="text/javascript" src="./metro/jquery/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="./metro/addons/js/js.cookie.min.js"></script>
+    <script type="text/javascript" src="./metro/interactive/metro.all.js"></script>
+    <script type="text/javascript" src="./metro/interactive/globalStorage.js"></script>
+    <script type="text/javascript" src="./metro/interactive/global.js"></script>
+    <script type="text/javascript" src="./metro/jquery/js/jquery.printElement.js"></script>
+    <script type="text/javascript" src="./metro/addons/js/jspdf.js"></script>
+
+    <!-- Google Translation -->
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</head>
+
+<body class="w-100 h-100" style="height:100%;">
+    <div class="d-inline">
+        <div class="w-100 pos-absolute text-bold text-center">
+            <H1 class="text-bold p-0 m-0">EIC&ESB Interaktivní Knihovny Index</H1>
+            pro Načtení POČKEJTE: zpracovávají se CELÉ WEBY na 20let starém SERVERU
+        </div>
+        <div id="charmPanel" data-role="charms" style="width:350px !important;height:calc(100% - 45px) !important;" data-position="right" data-opacity=".5">
+            <textarea id="NewMessage" data-role="textarea" data-auto-size="true" data-max-height="150" class="primary" placeholder="Zanechte mi Zprávu...."></textarea>
+            <button id="SendMessageBtn" class="button success mb-4" onclick="SendMessage()">Save Message</button>
+            <div id="MessageBox" class="d-block m-0 p-0" style="overflow-y: scroll;max-height: 500px;"></div>
+        </div>
+        <!--  <div class="w-100 pos-fixed text-right p-4 pt-2" style=" z-index:10000;">
+             <div class="pos-absolute d-block" style="top:200px;width:220px;right:20px;">
+                 <div id="google_translate_element"></div>
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=ImageFromFrameElement();>Stáhni si Obrázek</a>
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=DownloadFrameHtmlElement();>Stáhni si Html</a>
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=CopyFrameElement();>Zkopíruj si mě</a>
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=PrintFrameElement();>Vytiskni si mě</a>
+
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick="googleTranslateElementInit();">Přelož mě</a>
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" onclick=SaveToFavorites("GroupWareSolutionEu",window.location.href);>Uložte si mě do Oblíbených</a>
+                 <a class="button m-1 text-bold bg-lightblue c-pointer shadowed" id="button">Stáhněte si Portál</a>
+            </div>
+        </div> -->
+
+        <div class="d-flow">
+            <div class="pos-static">
+                <ul class="sidenav-m3 drop-shadow">
+                    <li class="title text-bold h4">EIC&ESB <br />Interaktivní <br />Knihovny</li>
+                    <li class="content p-3 text-bold bg-green">Generické Portály</li>
+                    <li onclick=ChangeSource('/EiC&ESBdocs/CodeDocs/'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Doc Portál</a></li>
+                    <li onclick=ChangeSource('/EiC&ESBdocs/EIC-InfoWeb/'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>EIC Centrální Servery v 1</a></li>
+                    <li onclick=ChangeSource('/EiC&ESBdocs/ESB-InfoWeb/'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>ESB Centrální Systémy v 1</a></li>
+                    <li onclick=ChangeSource('/EiC&ESBCodeBrowser/index/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Průvodce Kódem</a></li>
+                    <li onclick=ChangeSource('/server-distribution/gallery'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Galerie Systému</a></li>
+                    <li onclick=ChangeSource('/server-doc/md-book/book/'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Vývojářská Bible</a></li>
+                    <li onclick=ChangeSource('/portal'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Generický WebPortál</a></li>
+                    <li onclick=ChangeSource('/Downloads'); class="active drop-shadow"><a href="#" class="bg-lightGreen"><span class="mif-home icon"></span>Ke Stažení</a></li>
+                    <li onclick=ShowMessagePanel(); class="active drop-shadow "><a href="#" class="bg-lightOrange"><span class="mif-home icon"></span>Zanechte Zprávu</a></li>
+                    <!-- <li class="active drop-shadow"><a href="https://kliknetezde.cz:8000"><span class="mif-home icon"></span>Systém ESB Online</a></li> -->
+                    <!-- <li class="title">Title 2</li> -->
+                    <!-- <li class="disabled"><a href="#">Disabled item</a></li> -->
+                    <li onclick=ChangeSource('/servercoretools/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Nástroje Řešení</a></li>
+                    <li class="stick-left bg-green">
+                        <a class="dropdown-toggle" href="#"><span class="mif-tree icon"></span>Technologie Metro</a>
+                        <ul class="d-menu" data-role="dropdown" style="display: none;">
+                            <li class="content p-3 text-bold bg-green">Pro Vývoj pouhým Editorem online </li>
+                            <li onclick=ChangeSource('/server-distribution/MetroLibrary/MetroWPF/docs/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Metro Systému ESB</a></li>
+                            <li onclick=ChangeSource('/server-distribution/MetroLibrary/Metro2/index.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Web Metro 2</a></li>
+                            <li onclick=ChangeSource('/server-distribution/MetroLibrary/Metro3/index.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Web Metro 3</a></li>
+                            <li onclick=ChangeSource('/server-distribution/MetroLibrary/Metro4/index.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Web Metro 4</a></li>
+                            <li onclick=ChangeSource('/server-distribution/MetroLibrary/Solutions/index.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Řešení Metro</a></li>
+                        </ul>
+                    </li>
+                    <li class="stick-left bg-green">
+                        <a class="dropdown-toggle" href="#"><span class="mif-tree icon"></span>50x Metro Web</a>
+                        <ul class="d-menu" data-role="dropdown" style="display: none;">
+                            <li class="content p-3 text-bold bg-green">Pro Vývoj pouhým Editorem online </li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/001-StarAdmin-Free-Bootstrap-Admin-Template-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>001-StarAdmin-Free-Bootstrap-Admin-Template-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/002-iconic-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>002-iconic-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/003-watch-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>003-watch-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/005-unapp-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>005-unapp-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/006-exclusivity-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>006-exclusivity-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/007-Ready-Bootstrap-Dashboard-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>007-Ready-Bootstrap-Dashboard-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/008-infinity-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>008-infinity-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/009-elate-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>009-elate-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/010-consult-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>010-consult-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/012-fancy-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>012-fancy-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/013-avilon-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>013-avilon-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/014-travelista-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>014-travelista-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/015-vex-Bootstrap-4-Free-product-landing-page-template-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>015-vex-Bootstrap-4-Free-product-landing-page-template-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/016-Datarc-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>016-Datarc-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/017-known-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>017-known-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/019-vira-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>019-vira-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/020-Osteriax-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>020-Osteriax-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/021-reveal-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>021-reveal-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/022-wedding-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>022-wedding-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/023-Photography-CL-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>023-Photography-CL-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/024-book-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>024-book-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/025-job-listing-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>025-job-listing-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/026-awesome-landing-page-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>026-awesome-landing-page-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/027-course-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>027-course-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/028-apex_app-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>028-apex_app-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/029-essence-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>029-essence-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/030-comply-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>030-comply-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/031-imperial-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>031-imperial-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/032-classimax-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>032-classimax-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/033-maze-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>033-maze-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/034-creativeagency-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>034-creativeagency-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/035-evie1-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>035-evie1-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/036-adventure-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>036-adventure-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/037-diner-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>037-diner-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/038-ebusiness-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>038-ebusiness-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/039-traveler-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>039-traveler-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/040-bizpage-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>040-bizpage-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/041-shop-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>041-shop-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/042-taste-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>042-taste-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/043-neat-master/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>043-neat-master</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/eshopper/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>eshopper</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/Resturent-Website-Single-Page/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Resturent-Website-Single-Page</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/003-watch-master/Watch - Doc /index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Watch - Doc</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/004-tabler-dev/dist/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>dist</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/004-tabler-dev/src/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>src</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/014-travelista-master/Travel - Doc /index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Travel - Doc</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/016-Datarc-master/datarc/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>datarc</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/016-Datarc-master/Doc/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Doc</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/018-mobiapp-master/src/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>src</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/023-Photography-CL-master/photography-doc/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>photography-doc</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/024-book-master/Book - Doc /index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Book - Doc</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/025-job-listing-master/Job Listing - Doc /index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Job Listing - Doc</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/033-maze-master/maze-doc/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>maze-doc</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/036-adventure-master/Adventure-doc/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Adventure-doc</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/001-StarAdmin-Free-Bootstrap-Admin-Template-master/pages/charts/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>charts</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/001-StarAdmin-Free-Bootstrap-Admin-Template-master/pages/forms/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>forms</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/001-StarAdmin-Free-Bootstrap-Admin-Template-master/pages/icons/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>icons</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/001-StarAdmin-Free-Bootstrap-Admin-Template-master/pages/tables/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>tables</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/004-tabler-dev/dist/docs/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>docs</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/018-mobiapp-master/src/without-npm-sass/index.html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>without-npm-sass</a></li>
+                        </ul>
+                    </li>
+                    <li class="stick-left bg-green">
+                        <a class="dropdown-toggle" href="#"><span class="mif-tree icon"></span>Připravené Nástroje</a>
+                        <ul class="d-menu" data-role="dropdown" style="display: none;">
+                            <li class="content p-3 text-bold bg-green">Pro Vývoj pouhým Editorem online </li>
+                            <li onclick=ChangeSource('/server-provider/awesomecode/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>awesomecode</a></li>
+                            <li onclick=ChangeSource('/server-provider/CodeEditorTools/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>CodeEditorTools</a></li>
+                            <li onclick=ChangeSource('/server-provider/DocsTools/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>DocsTools</a></li>
+                            <li onclick=ChangeSource('/server-provider/FileTools/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>FileTools</a></li>
+                            <li onclick=ChangeSource('/server-provider/GraphicsTools/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>GraphicsTools</a></li>
+                            <li onclick=ChangeSource('/server-provider/HardwareLibrary/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>HardwareLibrary</a></li>
+                            <li onclick=ChangeSource('/server-provider/JsComponentsLibrary/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>JsComponentsLibrary</a></li>
+                            <li onclick=ChangeSource('/server-provider/MoreTemplates/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>MoreTemplates</a></li>
+                            <li onclick=ChangeSource('/server-provider/StylesLibrary/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>StylesLibrary</a></li>
+                            <li onclick=ChangeSource('/server-provider/ViewerTools/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>ViewerTools</a></li>
+                            <li onclick=ChangeSource('/server-provider/WaitWebForImplement/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>WaitWebForImplement</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebDocsLibrary/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>WebDocsLibrary</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebEditorTools/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>WebEditorTools</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebFuture/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>WebFuture</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebPages/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>WebPages</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebSiteGenTools/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>WebSiteGenTools</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebViewDevLibrary/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>WebViewDevLibrary</a></li>
+                        </ul>
+                    </li>
+                    <li class="stick-left bg-green">
+                        <a class="dropdown-toggle" href="#"><span class="mif-tree icon"></span>Dashboards Řešení</a>
+                        <ul class="d-menu" data-role="dropdown" style="display: none;">
+                            <li class="content p-3 text-bold bg-green">Pro Vývoj pouhým Editorem online </li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/AdminDashboard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>AdminDashboard</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/AdminLte3Dashboard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>AdminLte3Dashboard</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/AdminLTE4Dashboard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>AdminLTE4Dashboard</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/BSBDashboard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>BSBDashboard</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/EuroDashboard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>EuroDashboard</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/MaterialDashboard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>MaterialDashboard</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/MatrixDashboard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>MatrixDashboard</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/MetroDashboard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>MetroDashboard</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/MetronicDashboard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>MetronicDashboard</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/ModernDashboard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>ModernDashboard</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/NowUiDashboard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>NowUiDashboard</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/SmallDashboard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>SmallDashboard</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiDashBoards/SoftUiDashBoard/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>SoftUiDashBoard</a></li>
+                        </ul>
+                    </li>
+                    <li class="stick-left bg-green">
+                        <a class="dropdown-toggle" href="#"><span class="mif-tree icon"></span>UI Frameworky</a>
+                        <ul class="d-menu" data-role="dropdown" style="display: none;">
+                            <li class="content p-3 text-bold bg-green">Pro Vývoj pouhým Editorem online </li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/Alloy/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Alloy</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/FoundationUi/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>FoundationUi</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/JQueryUi/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>JQueryUi</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/JUi/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>JUi</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/LayerJs/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>LayerJs</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/MotionUi/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>MotionUi</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/MuseUi/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>MuseUi</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/PlaneUi/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>PlaneUi</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/PrimeNg/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>PrimeNg</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/SemanticUi/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>SemanticUi</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/TablerEngine/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>TablerEngine</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/UiKit/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>UiKit</a></li>
+                            <li onclick=ChangeSource('/server-provider/WebUiFrameworks/Yui3/index_libIndex.Html'); class="active drop-shadow"><a href="#"><span class="mif-home icon"></span>Yui3</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="pos-absolute" style="left:230px !important;top:0px !important;height:calc(100vh - 200px) !important;">
+            <div class="container-fluid pt-10 mt-10">
+                <iframe id="FrameWindow" src="/EIC&ESBDocs/CodeDocs/" idth="100%" height="100%" style=" width:100%; height:100%;"></iframe>
+
+
+                <H1>A VPLÁNU, ZAPISNÍČKU,POZNÁMKÁCH A VŠUDE</H1>
+                ČEKÁ NA ZPRACOVÁNÍ CCA 500 RŮZNÝCH ŘEŠENÍ TYKÁJÍCÍ SE VŠECH OBLASTÍ VYUŽÍVÁNÍ IT V DNEŠNÍ DOBĚ.
+
+                DO SYSTÉMU LZE JIŽ PŘIDÁVAT NOVÉ AGENDY BEZ PROGRAMOVÁNÍ
+                SPÍCHNUTA FUNKCE GENERICKÉ AGENDY ODVOZENÉÉ Z DB za 5 dní.
+
+                <p></p>
+                <p></p>
+                <p></p>
+                <p></p>
+                <p></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        showPageLoading();
+        $(document).ready(function () {
+            setTimeout(() => { Mermaid(); }, 3000);
+            ShowMessagePanel();
+
+            //GetMessages();
+            hidePageLoading();
+        });
+    </script>
+</body>
+</html>

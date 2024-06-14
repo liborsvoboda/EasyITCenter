@@ -12,6 +12,10 @@ using OpenGraphNet;
 using DocumentFormat.OpenXml.Drawing.Diagrams;
 using Prometheus;
 using System.Data.Entity.Core.Metadata.Edm;
+using MongoDB.Bson.IO;
+using DocumentFormat.OpenXml.Packaging;
+using Eaf.Middleware.Authorization.Roles;
+using CsvHelper.Configuration;
 
 
 namespace EasyITCenter.ServerCoreDBSettings {
@@ -23,11 +27,6 @@ namespace EasyITCenter.ServerCoreDBSettings {
     /// </summary>
     public class MDGeneratorCreateIndexRequest {
         public string WebRootFilePath { get; set; }
-
-        /// <summary>
-        /// //TODO Generate Full Content to One Page For  Direct Search
-        /// Is Subfolder for WebrootFilePath AS multiple RootIndex
-        /// </summary>
         public string IndexWebRootSubFolderPathName { get; set; } = null;
         public string FromType { get; set; }
         public string ToType { get; set; }
@@ -40,17 +39,15 @@ namespace EasyITCenter.ServerCoreDBSettings {
         public bool FromSuffixOnly { get; set; } = false;
     }
 
-    /// <summary>
-    /// Summary MDbook Generator Request
-    /// Generate Central Index MD Book on Existing folder structure
-    /// Generate Fulltext MDBook Library and cleand Processed Structure
-    /// Link All File Types, Images and Video Are Shown
-    /// </summary>
+   
     public class MDDocBookGeneratorRequest {
         public string WebRootFilePath { get; set; }
         public bool CentralIndexOnly { get; set; }
+        public bool GenerateSummaryOnly { get; set; }
         public bool MdBookLibrary { get; set; }
         public bool LinkAllFileTypes { get; set; }
+        public bool SetLinkedFileTypeOnly { get; set; }
+        public string SetLinkFileExtension { get; set; }
         public bool ProcessRootPathOnly { get; set; }
         public bool OveriteExisting { get; set; }
         public bool CleanProcessed { get; set; }
@@ -73,15 +70,34 @@ namespace EasyITCenter.ServerCoreDBSettings {
         /// Summary MDbook Generator Request
         /// Generate Central Index MD Book on Existing folder structure
         /// Generate Fulltext MDBook Library and cleand Processed Structure
+        /// Link All File Types, Images and Video Are Shown
+        /// CentralIndexOnly = generate Docs with Link all All Files or by LinkedFileTypeOnly setting,
+        /// MdBookLibrary = Generate FullSearch MdbookLibrary -HtmlFiles are converted to MD
+        /// , For MD book are html files converted to MD
+        /// ProcessRootPathOnly = only files in selected path will be processed,
+        /// OveriteExisting = Rewrite Output File if Eist,
+        /// CleanProcessed = Delete the processedd files,
+        /// LinkedFileTypeOnly = Extension,
+        /// SetLinkFileExtension = set theextension, for All or default do empty, other html,md,png
+        /// examle html if is set Linked File only, other md file will be used
+        /// Mining INFO FROM: "html", "js", "css", "cs", "xaml", "sql","json", "bat", "sh", "cmd"
         /// </summary>
-        /// <param name="webfilesrequest"></param>
-        /// <returns></returns>
         [HttpPost("/ServerApi/GeneratorServices/MDDocBookGeneratorRequest")]
         [Consumes("application/json")]
         public async Task<IActionResult> MDDocBookGeneratorRequest([FromBody] MDDocBookGeneratorRequest webfilesrequest) {
-            try {
-                string resultMessage = DbOperations.DBTranslate("ProcessSucessfullyCompleted", ServerConfigSettings.ServiceServerLanguage);
+            try {  WordprocessingDocument? document = null; var styles = new DocumentStyles(); DocxDocumentRenderer? renderer = null; MarkdownPipeline? pipeline = null;
 
+                if (webfilesrequest.MdBookLibrary) {
+                     document = DocxTemplateHelper.Standard;
+                    renderer = new DocxDocumentRenderer(document, styles, NullLogger<DocxDocumentRenderer>.Instance);
+                    pipeline = new MarkdownPipelineBuilder().UseEmphasisExtras().UseAbbreviations().UseAdvancedExtensions().UseBootstrap()
+                    .UseDiagrams().UseEmphasisExtras().UseEmojiAndSmiley(true).UseDefinitionLists().UseTableOfContent().UseTaskLists()
+                    .UseSmartyPants().UsePipeTables().UseMediaLinks().UseMathematics().UseListExtras().UseHighlightJs()
+                    .UseGridTables().UseGlobalization().UseGenericAttributes().UseFootnotes().UseFooters().UseSyntaxHighlighting().UseFigures().Build();
+                }
+
+                string resultMessage = DbOperations.DBTranslate("ProcessSucessfullyCompleted", ServerConfigSettings.ServiceServerLanguage);
+                bool processInterrupted = false;
                 List<string> indexRootList = new List<string>(); int docCounter = 0; bool mdBookPrepared = false;
 
                 //Corection Paths
@@ -95,48 +111,66 @@ namespace EasyITCenter.ServerCoreDBSettings {
                     generatedFile += webfilesrequest.CentralIndexOnly ? $"### {rootfolder}    " + Environment.NewLine + Environment.NewLine
                     : $"    ```   {Environment.NewLine}{Environment.NewLine}  ---    {Environment.NewLine}";
 
-                    List<string> filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + rootfolder, $"*.md", webfilesrequest.ProcessRootPathOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
+                    List<string> filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + rootfolder,
+                        $"*.{(webfilesrequest.LinkAllFileTypes ? "*" : string.IsNullOrWhiteSpace(webfilesrequest.SetLinkFileExtension) ? "md": webfilesrequest.SetLinkFileExtension)}"
+                        , webfilesrequest.ProcessRootPathOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
 
                     //PREPARE MD BOOK FOLDER FOR FILES
-                    if (!mdBookPrepared && webfilesrequest.MdBookLibrary) { 
+                    if (!mdBookPrepared && webfilesrequest.MdBookLibrary) {
                         mdBookPrepared = true;
-                    FileOperations.DeleteDirectory(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "MdInteliBook");
-                FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.DistributedPackagesPath, "Documentation", "MdInteliBook"), ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "MdInteliBook"); }
+                        FileOperations.DeleteDirectory(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "MdInteliBook");
+                        FileOperations.CopyDirectory(Path.Combine(ServerRuntimeData.DistributedPackagesPath, "Documentation", "MdInteliBook"), ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "MdInteliBook");
+                    }
 
                     filelist.Where(a => !a.Contains(Path.Combine(Path.Combine(ServerRuntimeData.WebRoot_path) + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "MdInteliBook"))).ToList().ForEach(file => {
                         generatedFile += $"- [{Path.GetFileNameWithoutExtension(file)}](.{(webfilesrequest.CentralIndexOnly ? file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1] : "/" + Path.GetFileName(file))})   " + Environment.NewLine + Environment.NewLine;
                     });
 
                     //Generate File With Other File Types 
-                    if (webfilesrequest.LinkAllFileTypes) {
-                        filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + rootfolder, $"*.*", SearchOption.AllDirectories);
-                        docCounter += 1; string newdoc = $"# List of Founded Other Files {rootfolder}" + Environment.NewLine + Environment.NewLine;
+                    
+                    filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + rootfolder, $"*." + (webfilesrequest.LinkAllFileTypes ? $"*" : webfilesrequest.SetLinkFileExtension), SearchOption.AllDirectories);
+                    docCounter += 1; string newdoc = $"# List of Founded Other Files {rootfolder}" + Environment.NewLine + Environment.NewLine;
+                    
+                    string sourceCode = "";
+                    filelist.Where(a => !Path.GetExtension(a.ToLower()).Contains(".md")).ToList().ForEach(file => {
+                        string extension = Path.GetExtension(file).Substring(1).ToLower();
+                        string solveFilename = Path.GetFileNameWithoutExtension(file).ToLower().Contains("index") ? "OriginalIndex" : Path.GetFileNameWithoutExtension(file);
 
-                        filelist.Where(a => !Path.GetExtension(a.ToLower()).Contains(".md")).ToList().ForEach(file => {
-                            if (new string[] { "png", "jpg", "jpeg", "tiff", "bmp" }.Contains((Path.GetExtension(file).Substring(1).ToLower()))) {
-                                newdoc += $"   ![{Path.GetFileNameWithoutExtension(file)}](.{(webfilesrequest.CentralIndexOnly ? file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1] : "/" + Path.GetFileName(file))})   " + Environment.NewLine + Environment.NewLine;
-                            } else if (new string[] { "avi", "mpg", "mpeg", "mp3", "mp4" }.Contains((Path.GetExtension(file).Substring(1).ToLower()))) {
-                                newdoc += $"   @[{Path.GetFileNameWithoutExtension(file)}](.{(webfilesrequest.CentralIndexOnly ? file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1] : "/" + Path.GetFileName(file))})   " + Environment.NewLine + Environment.NewLine;
-                            } else {
-                                newdoc += $"   [{Path.GetFileNameWithoutExtension(file)}](.{(webfilesrequest.CentralIndexOnly ? file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1] : "/" + Path.GetFileName(file))})   " + Environment.NewLine + Environment.NewLine;
+                        if (!webfilesrequest.GenerateSummaryOnly) {
+                            if (new string[] { "png", "jpg", "jpeg", "tiff", "bmp" }.Contains(extension)) {
+
+                                //use only FIRST HOLDER runing in rootpath
+                                newdoc += $"   ![{solveFilename}](.{(webfilesrequest.CentralIndexOnly ? file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1].Replace(Path.GetFileNameWithoutExtension(file), solveFilename) : "/" + Path.GetFileName(file).Replace(Path.GetFileNameWithoutExtension(file), solveFilename))})   " + Environment.NewLine + Environment.NewLine;
                             }
-                        });
-                        generatedFile += $"- [{docCounter}](./{docCounter}.md)   " + Environment.NewLine + Environment.NewLine;
-                        FileOperations.WriteToFile(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + $"{(webfilesrequest.MdBookLibrary ? "MdInteliBook/src/" : "")}{docCounter}.md", newdoc);
-                    }
+                            else if (new string[] { "avi", "mpg", "mpeg", "mp3", "mp4" }.Contains(extension)) {
+                                newdoc += $"   @[{solveFilename}](.{(webfilesrequest.CentralIndexOnly ? file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1].Replace(Path.GetFileNameWithoutExtension(file), solveFilename) : "/" + Path.GetFileName(file).Replace(Path.GetFileNameWithoutExtension(file), solveFilename))})   " + Environment.NewLine + Environment.NewLine;
+                            }
+                            else if (new string[] { "html", "js", "css", "cs", "xaml", "sql", "json", "bat", "sh", "cmd" }.Contains(extension)) {
+                                string fileContent = System.IO.File.ReadAllText(file);
+                                sourceCode += $"```{extension}{Environment.NewLine}{new ReverseMarkdown.Converter().Convert(fileContent)}{Environment.NewLine}```   " + Environment.NewLine + Environment.NewLine;
+
+                                FileOperations.WriteToFile(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + "MdInteliBook/src/" + Path.GetFileNameWithoutExtension(file) + ".md"
+                                    , $"{fileContent}{Environment.NewLine} ");
+                                newdoc += $"   [{Path.GetFileNameWithoutExtension(file)}](.{(webfilesrequest.CentralIndexOnly ? file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1].Replace(Path.GetFileNameWithoutExtension(file), solveFilename) + ".md" : "/" + Path.GetFileNameWithoutExtension(file) + ".md")})   " + Environment.NewLine + Environment.NewLine;
+                            }
+                        }
+                    });
+                    generatedFile += $"- [{docCounter}](./{docCounter}.md)   " + Environment.NewLine + sourceCode + Environment.NewLine;
+                    FileOperations.WriteToFile(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + $"{(webfilesrequest.MdBookLibrary ? "MdInteliBook/src/" : "")}{docCounter}.md", newdoc);
+                    
                 });
                 //Save Index File
-                FileOperations.WriteToFile((ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + $"{(webfilesrequest.MdBookLibrary ? "MdInteliBook/src/summary.md" : "index.md")}").Replace("/","\\"), generatedFile);
+                FileOperations.WriteToFile((ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + $"{(webfilesrequest.MdBookLibrary ? "MdInteliBook/src/summary.md" : "index.md")}").Replace("/", "\\"), generatedFile);
 
                 //COPY MD-BROWSER TOOL AFTER FILE PROCESSES
-                if (webfilesrequest.CentralIndexOnly) {
+                if (!processInterrupted && webfilesrequest.CentralIndexOnly) {
                     FileOperations.CopyFiles(Path.Combine(ServerRuntimeData.DistributedPackagesPath, "Documentation", "MdBrowser"), ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath), webfilesrequest.OveriteExisting);
                 }
 
                 //SUMMARY MOVE FILES AND CLEAN STRUCTURE
 
 
-                if (webfilesrequest.MdBookLibrary) {
+                if (!processInterrupted && webfilesrequest.MdBookLibrary) {
                     indexRootList.ForEach(rootfolder => {
                         List<string> filelist = FileOperations.GetPathFiles(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath) + rootfolder, "*.*", webfilesrequest.ProcessRootPathOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
                         filelist.ForEach(file => {
@@ -168,15 +202,31 @@ namespace EasyITCenter.ServerCoreDBSettings {
         }
 
 
-        //WebFile Generator
-        //Convert MD->Html,Convert Html->Md,
-        //Convert List<Any FileType>->List<Any FileType>,
-        //Convert MD->Docx,List<Md>->List<Docx>
-        //Generate List<Md>->Index.Md,Generate List<Md>->Index.Html,Generate List<Html>->Index.Html
-        //TODO Ošetřit aby Mohli menit soubory jen ve svem ulozisti
-        //TODO Udelat Aendu Dynamicke Registace Trid Pro Dynamicka API a tam se zadaji file Extensions
-        //TODO VKladat Static DB Soubory 
-        //TODO Vracet jako Zip
+
+
+        /// <summary>
+        /// WebFile Generator
+        ///Convert MD->Html,Convert Html->Md,
+        ///Convert List Any FileType List Any FileType,
+        ///Convert MD->Docx,List<Md>->List<Docx>
+        ///Generate List<Md>->Index.Md,Generate List<Md>->Index.Html,Generate List<Html>->Index.Html
+        ////ODO Ošetřit aby Mohli menit soubory jen ve svem ulozisti
+        ///TODO Udelat Aendu Dynamicke Registace Trid Pro Dynamicka API a tam se zadaji file Extensions
+        ///TODO VKladat Static DB Soubory 
+        ///TODO Vracet jako Zip
+        /// //TODO Generate Full Content to One Page For  Direct Search
+        /// Is Subfolder for WebrootFilePath AS multiple RootIndex
+        /// WebRootFilePath set path wehich path diferrent wil be written,
+        /// IndexWebRootSubFolderPathName set path where starting procesing,
+        /// FromType = set the extension of processing files , exmaple html,md
+        /// ToType = set convert to type, for easch file setting use, must be fill, 
+        /// ScanRootOnly = Set if scan only selected root path - no subfolders,
+        /// IndexOnly = Set to genedate only Index List Or Tranform each File,
+        /// RewriteAllowed set if rewrite existing files on save,
+        /// IndexInFrameList set Frame part for generate onject, no generate link list
+        /// genHtmlIndexFileSuffix Set if Set the sufix example suffix_index.html
+        /// fromSuffixOnly = OPnly from files contain This string
+        /// </summary>
         [HttpPost("/ServerApi/GeneratorServices/GenerateDocsFile")]
         [Consumes("application/json")]
         public async Task<IActionResult> GenerateDocsFile([FromBody] MDGeneratorCreateIndexRequest webfilesrequest) {
@@ -219,9 +269,15 @@ namespace EasyITCenter.ServerCoreDBSettings {
                                     filelist.AsEnumerable().Where(a => (webfilesrequest.FromSuffixOnly && a.Contains(webfilesrequest.genHtmlIndexFileSuffix)) || !webfilesrequest.FromSuffixOnly).ToList().ForEach(
                                         file => {
                                             generatedFile += webfilesrequest.ToType.ToLower() == SupportGenFileTypes.Md.ToString().ToLower() ? $"[{Path.GetFileNameWithoutExtension(file)}]({webfilesrequest.WebRootFilePath + file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1]})" + Environment.NewLine :
-                                        webfilesrequest.IndexInFrameList ?
-                                        $"<span style='margin:10px'><iframe src='{webfilesrequest.WebRootFilePath + file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1]}' width='600px' height='400px' onclick=window.open('{webfilesrequest.WebRootFilePath + file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1]}','_blank') >{Path.GetDirectoryName(file)?.Split(Path.DirectorySeparatorChar).Last()}</iframe></span>" + Environment.NewLine
-                                        : $"<p><a  style='font-size:36px;' href='{webfilesrequest.WebRootFilePath + file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1]}' target='blank'>{Path.GetDirectoryName(file)?.Split(Path.DirectorySeparatorChar).Last()}</a></p>" + Environment.NewLine;
+                                            webfilesrequest.IndexInFrameList ?
+                                        
+                                        //GENERATE TILE ARRAY
+                                        "": $"{Environment.NewLine}<div data-role='tile' onclick=ChangeSource('.{webfilesrequest.WebRootFilePath + file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1]}')>{Environment.NewLine}<span class='mif-github icon'></span>{Environment.NewLine}<span class='branding-bar'>{Path.GetFileNameWithoutExtension(file)}</span>{Environment.NewLine}</div>{Environment.NewLine}{Environment.NewLine}" ;
+
+                                        /*
+                                                $"<span style='margin:10px'><iframe src='{webfilesrequest.WebRootFilePath + file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1]}' width='600px' height='400px' onclick=window.open('{webfilesrequest.WebRootFilePath + file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1]}','_blank') >{Path.GetDirectoryName(file)?.Split(Path.DirectorySeparatorChar).Last()}</iframe></span>" + Environment.NewLine
+                                                : $"<p><a  style='font-size:36px;' href='{webfilesrequest.WebRootFilePath + file.Split(Path.GetDirectoryName(webfilesrequest.WebRootFilePath)?.Split(Path.DirectorySeparatorChar).Last())[1]}' target='blank'>{Path.GetDirectoryName(file)?.Split(Path.DirectorySeparatorChar).Last()}</a></p>" + Environment.NewLine;
+                                                */
                                         });
                                     if (webfilesrequest.ToType.ToLower() == SupportGenFileTypes.Md.ToString().ToLower()) { generatedFile = DataOperations.MarkDownLineEndSpacesResolve(generatedFile); }
                                     FileOperations.WriteToFile(Path.Combine(ServerRuntimeData.WebRoot_path + FileOperations.ConvertSystemFilePathFromUrl(webfilesrequest.WebRootFilePath), $"index{webfilesrequest.genHtmlIndexFileSuffix}.{webfilesrequest.ToType.ToString()}"), generatedFile);

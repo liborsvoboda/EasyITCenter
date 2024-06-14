@@ -23,17 +23,31 @@ function showPageLoading() {
 }
 
 
-function showSource() {
+function ShowSource() {
     var source = "<html>";
     source += document.getElementsByTagName('html')[0].innerHTML;
     source += "</html>";
     source = source.replace(/</g, "&lt;").replace(/>/g, "&gt;");
     source = "<pre>" + source + "</pre>";
-    sourceWindow = window.open('', 'Source of page', 'height=800,width=800,scrollbars=1,resizable=1');
+    sourceWindow = window.open('', 'Interaktnivní Kód', 'height=800,width=800,scrollbars=1,resizable=1');
     sourceWindow.document.write(source);
     sourceWindow.document.close();
     if (window.focus) sourceWindow.focus();
 }
+
+function ShowFrameSource() {
+    var source = "<html>";
+    source += window.frames['FrameWindow'].contentWindow.document.body.innerHTML;
+    source += "</html>";
+    source = source.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    source = "<pre>" + source + "</pre>";
+    sourceWindow = window.open('', 'Interaktnivní Kód', 'height=800,width=800,scrollbars=1,resizable=1');
+    sourceWindow.document.write(source);
+    sourceWindow.document.close();
+    if (window.focus) sourceWindow.focus();
+}
+
+
 
 function htmlDecode(input) {
     var doc = new DOMParser().parseFromString(input, "text/html");
@@ -215,11 +229,18 @@ function CancelTranslation() {
     }, 1000);
 }
 
-
-function calcHeight(iframeElement) {
-    var the_height = iframeElement.contentWindow.document.body.scrollHeight;
-    iframeElement.height = the_height;
+function loadPage(url) {
+    $.ajax({
+        url: url
+    }).done(function (data) {
+        $('#frameWindow').html(data);
+    });
 }
+
+//function calcHeight(iframeElement) {
+//    var the_height = iframeElement.contentWindow.document.body.scrollHeight;
+//    iframeElement.height = the_height;
+//}
 
 async function SendMessage() {
     showPageLoading();
@@ -274,8 +295,77 @@ async function GetMessages() {
 */
 
 function ShowMessagePanel(close) {
+    OpenCharm(0);
     charms = Metro.getPlugin($("#charmPanel"), 'charms');
     if (close) {
         charms.close();
     } else { charms.toggle(); }
+}
+
+let LastMovedCharm = 0;
+function OpenCharm(index) {
+
+   
+    if (!Metro.charms.isOpen("#Metro" + index + "Charm") && index > 0) {
+        Metro.charms.toggle("#Metro" + index + "Charm");
+    } else {
+        Metro.charms.close("#Metro2Charm");
+        Metro.charms.close("#Metro3Charm");
+        Metro.charms.close("#Metro4Charm");
+        Metro.charms.close("#Metro5Charm");
+        Metro.charms.close("#Metro6Charm");
+        Metro.charms.close("#Metro7Charm");
+        Metro.charms.close("#Metro8Charm");
+        Metro.charms.close("#Metro9Charm");
+        Metro.charms.close("#Metro10Charm");
+        Metro.charms.close("#Metro11Charm");
+        Metro.charms.close("#Metro12Charm");
+        Metro.charms.close("#Metro13Charm");
+        Metro.charms.close("#Metro14Charm");
+        Metro.charms.close("#Metro15Charm");
+        Metro.charms.close("#Metro16Charm");
+        Metro.charms.close("#Metro17Charm");
+        Metro.charms.close("#Metro18Charm");
+        Metro.charms.close("#Metro19Charm");
+        Metro.charms.close("#Metro20Charm");
+
+
+        if (LastMovedCharm != index) { Metro.charms.toggle("#Metro" + index + "Charm"); }
+    } LastMovedCharm = index;
+}
+
+//Get NewsList
+function GetNewsList() {
+    if (Metro.storage.getItem('NewsList', null) == null) {
+        showPageLoading();
+        $.ajax({
+            url: Metro.storage.getItem('ApiOriginSuffix', null) + '/WebPages/GetNewsList', dataType: 'json',
+            type: "GET",
+            headers: { 'Content-type': 'application/json' },
+            success: function (data) {
+                data = JSON.parse(JSON.stringify(data));
+                Metro.storage.setItem('NewsList', data);
+                let messageData = "";
+                data.forEach(message => {
+                    messageData += "<div class=\"card image-header\"><div class=\"card-content p-2\"><p class=\"fg-black\"><b>" + new Date(message.timeStamp).toLocaleDateString() + "</b> " + message.title + "</p>" + message.description + "</div></div>";
+                });
+                $("#NewsListBox").html(messageData);
+                Metro.infobox.open('#NewsInfoBox');
+                hidePageLoading();
+            },
+            error: function (error) {
+                var notify = Metro.notify; notify.setup({ width: 300, duration: 1000, animation: 'easeOutBounce' });
+                notify.create("Downloading Messages Failed", "Alert", { cls: "alert" }); notify.reset();
+                hidePageLoading();
+            }
+        });
+    } else {
+        let data = Metro.storage.getItem('NewsList', null);
+        let messageData = "";
+        data.forEach(message => {
+            messageData += "<div class=\"card image-header\"><div class=\"card-content p-2\"><p class=\"fg-black\"><b>" + new Date(message.timeStamp).toLocaleDateString() + "</b> " + message.title + "</p>" + message.description + "</div></div>";
+        });
+        $("#NewsListBox").html(messageData);
+        Metro.infobox.open('#NewsInfoBox');
+    }
 }
