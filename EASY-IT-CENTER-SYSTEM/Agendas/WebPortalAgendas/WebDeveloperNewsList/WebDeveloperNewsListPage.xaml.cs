@@ -31,7 +31,6 @@ namespace EasyITSystemCenter.Pages {
                 LoadParameters();
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
-            html_description.BeginInit();
             _ = LoadDataList();
             SetRecord(false);
         }
