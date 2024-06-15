@@ -123,88 +123,92 @@ namespace EasyITCenter {
 
 
             //Aplied new Working Style For Files Makdow, Html, Editor, Images,
-            app.Use(async (HttpContext context, Func<Task> next) => { await next();
-                string requestPath = context.Request.Path.ToString().ToLower(); bool redirected = false;
+            app.Use(async (HttpContext context, Func<Task> next) => {
 
-                //Excluded Urls For Server Browsing From Page Settings, redirected Defined paths
-                if (DbOperations.CheckDBServerApiRule(requestPath)?.Count() > 0
-                || (!string.IsNullOrEmpty(System.IO.Path.GetExtension(context.Request.Path)))
-                || context.Response.StatusCode == StatusCodes.Status301MovedPermanently || context.Response.StatusCode == StatusCodes.Status302Found
-                ) { return; }
+                
+                if (!context.WebSockets.IsWebSocketRequest) {// WebSocket Ignored
+                    await next();
+                    string requestPath = context.Request.Path.ToString().ToLower(); bool redirected = false;
 
-                //Include TOKEN
-                context = CoreOperations.IncludeCookieTokenToRequest(context);
+                    //Excluded Urls For Server Browsing From Page Settings, redirected Defined paths
+                    if (DbOperations.CheckDBServerApiRule(requestPath)?.Count() > 0
+                    || (!string.IsNullOrEmpty(System.IO.Path.GetExtension(context.Request.Path)))
+                    || context.Response.StatusCode == StatusCodes.Status301MovedPermanently || context.Response.StatusCode == StatusCodes.Status302Found
+                    ) { return; }
 
-                //Check Server Api Security if ok aLLOWE go to NEXT PROCESSES
-                ServerApiSecurityList? serverApiSecurity = DbOperations.GetServerApiSecurity(requestPath);
-                if (serverApiSecurity != null) {
-                    if (context.User.Identity != null && context.User.FindFirstValue(ClaimTypes.PrimarySid) == null
-                    && ((context.Request.Method == "GET" && serverApiSecurity.ReadRestrictedAccess) || (context.Request.Method == "POST" && serverApiSecurity.WriteRestrictedAccess))) {
-                        if (serverApiSecurity.RedirectPathOnError?.Length == 0) { redirected = true; context.Request.Path = "/ServerControls/401UnauthorizedPage"; await next(); }
-                        else {
-                            ServerModuleAndServiceList? loginmodule = new EasyITCenterContext().ServerModuleAndServiceLists.FirstOrDefault(a => a.IsLoginModule);
-                            if (context.Items.FirstOrDefault(a => a.Key.ToString() == "LoginModule").Value != null) { context.Items.Remove("LoginModule"); }
-                            try { context.Items.Add(new KeyValuePair<object, object?>("LoginModule", loginmodule)); } catch { }
-                            try { context.Response.Cookies.Append("RequestedModulePath", requestPath); } catch { }
-                            redirected = true; context.Request.Path = "/ServerModules"; await next();
+                    //Include TOKEN
+                    context = CoreOperations.IncludeCookieTokenToRequest(context);
+
+                    //Check Server Api Security if ok aLLOWE go to NEXT PROCESSES
+                    ServerApiSecurityList? serverApiSecurity = DbOperations.GetServerApiSecurity(requestPath);
+                    if (serverApiSecurity != null) {
+                        if (context.User.Identity != null && context.User.FindFirstValue(ClaimTypes.PrimarySid) == null
+                        && ((context.Request.Method == "GET" && serverApiSecurity.ReadRestrictedAccess) || (context.Request.Method == "POST" && serverApiSecurity.WriteRestrictedAccess))) {
+                            if (serverApiSecurity.RedirectPathOnError?.Length == 0) { redirected = true; context.Request.Path = "/ServerControls/401UnauthorizedPage"; await next(); }
+                            else {
+                                ServerModuleAndServiceList? loginmodule = new EasyITCenterContext().ServerModuleAndServiceLists.FirstOrDefault(a => a.IsLoginModule);
+                                if (context.Items.FirstOrDefault(a => a.Key.ToString() == "LoginModule").Value != null) { context.Items.Remove("LoginModule"); }
+                                try { context.Items.Add(new KeyValuePair<object, object?>("LoginModule", loginmodule)); } catch { }
+                                try { context.Response.Cookies.Append("RequestedModulePath", requestPath); } catch { }
+                                redirected = true; context.Request.Path = "/ServerModules"; await next();
+                            }
                         }
-                    }
-                    else if (context.User.Identity != null && context.User.FindFirstValue(ClaimTypes.PrimarySid) != null
-                        && ((context.Request.Method == "GET" && serverApiSecurity.ReadRestrictedAccess && serverApiSecurity.ReadAllowedRoles != null && !serverApiSecurity.ReadAllowedRoles.ToLower().Split(",").Contains(context.User.FindFirstValue(ClaimTypes.Role).ToLower()))
-                        || (context.Request.Method != "GET" && serverApiSecurity.WriteRestrictedAccess && serverApiSecurity.WriteAllowedRoles != null && !serverApiSecurity.WriteAllowedRoles.ToLower().Split(",").Contains(context.User.FindFirstValue(ClaimTypes.Role).ToLower()))
-                        )) {
-                        if (serverApiSecurity.RedirectPathOnError?.Length == 0) { redirected = true; context.Request.Path = "/ServerControls/401UnauthorizedPage"; await next(); }
-                        else {
-                            ServerModuleAndServiceList? loginmodule = new EasyITCenterContext().ServerModuleAndServiceLists.FirstOrDefault(a => a.IsLoginModule);
-                            if (context.Items.FirstOrDefault(a => a.Key.ToString() == "LoginModule").Value != null) { context.Items.Remove("LoginModule"); }
-                            try { context.Items.Add(new KeyValuePair<object, object?>("LoginModule", loginmodule)); } catch { }
-                            try { context.Response.Cookies.Append("RequestedModulePath", requestPath); } catch { }
-                            redirected = true; context.Request.Path = "/ServerModules"; await next();
+                        else if (context.User.Identity != null && context.User.FindFirstValue(ClaimTypes.PrimarySid) != null
+                            && ((context.Request.Method == "GET" && serverApiSecurity.ReadRestrictedAccess && serverApiSecurity.ReadAllowedRoles != null && !serverApiSecurity.ReadAllowedRoles.ToLower().Split(",").Contains(context.User.FindFirstValue(ClaimTypes.Role).ToLower()))
+                            || (context.Request.Method != "GET" && serverApiSecurity.WriteRestrictedAccess && serverApiSecurity.WriteAllowedRoles != null && !serverApiSecurity.WriteAllowedRoles.ToLower().Split(",").Contains(context.User.FindFirstValue(ClaimTypes.Role).ToLower()))
+                            )) {
+                            if (serverApiSecurity.RedirectPathOnError?.Length == 0) { redirected = true; context.Request.Path = "/ServerControls/401UnauthorizedPage"; await next(); }
+                            else {
+                                ServerModuleAndServiceList? loginmodule = new EasyITCenterContext().ServerModuleAndServiceLists.FirstOrDefault(a => a.IsLoginModule);
+                                if (context.Items.FirstOrDefault(a => a.Key.ToString() == "LoginModule").Value != null) { context.Items.Remove("LoginModule"); }
+                                try { context.Items.Add(new KeyValuePair<object, object?>("LoginModule", loginmodule)); } catch { }
+                                try { context.Response.Cookies.Append("RequestedModulePath", requestPath); } catch { }
+                                redirected = true; context.Request.Path = "/ServerModules"; await next();
 
+                            }
                         }
-                    }
 
+                    }
+                    else if (context.Response.StatusCode == StatusCodes.Status200OK) { return; }
+                    // ALLOVE All 200 AFTER SECURITY CHECK - DYNAMIC MODULES AND ALL OTHER MUST BE 404
+
+
+
+                    //Verify Request For Detect Layout, Redirection, Module, Correct File Path, WebMenu Selection
+                    RouteLayoutTypes routeLayout = RouteLayoutTypes.EmptyLayout; RoutingActionTypes commandType = RoutingActionTypes.None; string fileValidUrl = context.Request.Path;
+                    context = CoreOperations.ChechUrlRequestValidOrAuthorized(context);
+                    try { routeLayout = ((RouteLayoutTypes)context.Items.FirstOrDefault(a => a.Key.ToString() == "RouteLayoutTypes").Value); } catch { }
+                    try { commandType = ((RoutingActionTypes)context.Items.FirstOrDefault(a => a.Key.ToString() == "ComandType").Value); } catch { }
+                    try { fileValidUrl = ((string)context.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
+
+
+
+                    //Start DocPortal by Link Without index.md
+                    if (!redirected && routeLayout == RouteLayoutTypes.DocPortalLayout && requestPath != fileValidUrl) { redirected = true; context.Request.Path = "/DocPortal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                    //Show MarkDownFile in Layout by missing .md extension
+                    else if (!redirected && routeLayout == RouteLayoutTypes.EditorHtmlFileLayout && requestPath != fileValidUrl) { redirected = true; context.Request.Path = "/ServerCoreTools/EditorHtmlFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                    //Show MarkDownFile in Layout by missing .md extension
+                    else if (!redirected && routeLayout == RouteLayoutTypes.ViewerMarkDownFileLayout && requestPath != fileValidUrl) { redirected = true; context.Request.Path = "/ServerCoreTools/ViewerMarkDownFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                    //Show Report File in Layout by .frx extension
+                    else if (!redirected && routeLayout == RouteLayoutTypes.ViewerReportFileLayout) { redirected = true; context.Request.Path = "/ServerCoreTools/ViewerReportFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                    //Show Portal in Layout
+                    else if (!redirected && routeLayout == RouteLayoutTypes.PortalLayout && requestPath != fileValidUrl) { redirected = true; context.Request.Path = "/Portal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                    //Show ServerModules
+                    else if (!redirected && routeLayout == RouteLayoutTypes.ServerModulesLayout && requestPath != fileValidUrl) { redirected = true; context.Request.Path = "/ServerModules"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+
+
+
+                    //Check If existing route Url and Allowe Auto Process 
+                    else if (CoreOperations.GetServerRegisteredRoutesList(requestPath, false)) { return; }
+                    //Others Type Detected
+                    else if (!redirected && requestPath.ToLower() != fileValidUrl
+                    && (context.Response.StatusCode != StatusCodes.Status200OK && context.Response.StatusCode != StatusCodes.Status301MovedPermanently && context.Response.StatusCode != StatusCodes.Status302Found)) { redirected = true; context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+
+
+                    if (!redirected && commandType == RoutingActionTypes.Return) { return; }
+                    else if (!redirected && commandType == RoutingActionTypes.Next) { context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
+                    else if (!redirected && commandType == RoutingActionTypes.Next && context.Request.Path.ToString().ToLower() == fileValidUrl) { return; }
                 }
-                else if (context.Response.StatusCode == StatusCodes.Status200OK) { return; }
-                // ALLOVE All 200 AFTER SECURITY CHECK - DYNAMIC MODULES AND ALL OTHER MUST BE 404
-
-
-
-                //Verify Request For Detect Layout, Redirection, Module, Correct File Path, WebMenu Selection
-                RouteLayoutTypes routeLayout = RouteLayoutTypes.EmptyLayout; RoutingActionTypes commandType = RoutingActionTypes.None; string fileValidUrl = context.Request.Path;
-                context = CoreOperations.ChechUrlRequestValidOrAuthorized(context);
-                try { routeLayout = ((RouteLayoutTypes)context.Items.FirstOrDefault(a => a.Key.ToString() == "RouteLayoutTypes").Value); } catch { }
-                try { commandType = ((RoutingActionTypes)context.Items.FirstOrDefault(a => a.Key.ToString() == "ComandType").Value); } catch { }
-                try { fileValidUrl = ((string)context.Items.FirstOrDefault(a => a.Key.ToString() == "FileValidUrl").Value); } catch { }
-
-
-
-                //Start DocPortal by Link Without index.md
-                if (!redirected && routeLayout == RouteLayoutTypes.DocPortalLayout && requestPath != fileValidUrl) { redirected = true; context.Request.Path = "/DocPortal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-                //Show MarkDownFile in Layout by missing .md extension
-                else if (!redirected && routeLayout == RouteLayoutTypes.EditorHtmlFileLayout && requestPath != fileValidUrl) { redirected = true; context.Request.Path = "/ServerCoreTools/EditorHtmlFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-                //Show MarkDownFile in Layout by missing .md extension
-                else if (!redirected && routeLayout == RouteLayoutTypes.ViewerMarkDownFileLayout && requestPath != fileValidUrl) { redirected = true; context.Request.Path = "/ServerCoreTools/ViewerMarkDownFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-                //Show Report File in Layout by .frx extension
-                else if (!redirected && routeLayout == RouteLayoutTypes.ViewerReportFileLayout) { redirected = true; context.Request.Path = "/ServerCoreTools/ViewerReportFile"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-                //Show Portal in Layout
-                else if (!redirected && routeLayout == RouteLayoutTypes.PortalLayout && requestPath != fileValidUrl) { redirected = true; context.Request.Path = "/Portal"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-                //Show ServerModules
-                else if (!redirected && routeLayout == RouteLayoutTypes.ServerModulesLayout && requestPath != fileValidUrl) { redirected = true; context.Request.Path = "/ServerModules"; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-
-
-
-                //Check If existing route Url and Allowe Auto Process 
-                else if (CoreOperations.GetServerRegisteredRoutesList(requestPath, false)) { return; }
-                //Others Type Detected
-                else if (!redirected && requestPath.ToLower() != fileValidUrl
-                && (context.Response.StatusCode != StatusCodes.Status200OK && context.Response.StatusCode != StatusCodes.Status301MovedPermanently && context.Response.StatusCode != StatusCodes.Status302Found)) { redirected = true; context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-
-
-                if (!redirected && commandType == RoutingActionTypes.Return) { return; }
-                else if (!redirected && commandType == RoutingActionTypes.Next) { context.Request.Path = fileValidUrl; context.Response.StatusCode = StatusCodes.Status200OK; await next(); }
-                else if (!redirected && commandType == RoutingActionTypes.Next && context.Request.Path.ToString().ToLower() == fileValidUrl) { return; }
-
             });
 
             //https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0

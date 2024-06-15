@@ -31,7 +31,7 @@ using System.Windows.Media;
 
 
 namespace EasyITSystemCenter {
-
+    
     public partial class MainWindow : MetroWindow {
         /// <summary>
         /// MainControls Screen Variables
@@ -269,8 +269,8 @@ namespace EasyITSystemCenter {
         /// </summary>
         public MainWindow() {
             try {
-                InitializeComponent();
 
+                InitializeComponent();
                 SystemOperations.SetLanguageDictionary(Resources, App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
                 Title = Resources["appName"].ToString();
 
