@@ -1,5 +1,75 @@
-﻿
+﻿COMPILER+CODEGEN BOND,  WEB WYAM2
 
+
+razor stránka - Formulář k vygenerování 
+https://github.com/ZoranGj/HTML-rendering-Fluent-API - WEbView nebo RENDERER
+Microsoft.MarkedNet XAML, JS WIN UI, NET , Mobilni APP
+ - FULL SUPPORT https://adaptivecards.io/explorer/
+https://github.com/Microsoft/AdaptiveCards
+
+DOC Marked .NET
+https://github.com/alex-titarenko/markednet/tree/main
+PUPETIER + na Sber
+
+
+IOT FULL 
+https://github.com/PeterWaher/IoTGateway/tree/master
+
+SPOJENO S BOT CO UMI VSE
+https://learn.microsoft.com/cs-cz/microsoftteams/platform/task-modules-and-cards/cards/cards-reference#adaptive-card
+https://learn.microsoft.com/cs-cz/microsoftteams/platform/concepts/design/design-teams-app-basic-ui-components
+
+Formulare z jednoduchych JSONU
+https://learn.microsoft.com/cs-cz/microsoftteams/platform/tabs/how-to/create-personal-tab?tabs=vs&pivots=node-java-script#extend-static-tabs-to-group-chat-channels-and-meetings
+Microsoft-Teams-Samples/samples/meetings-token-app/csharp   
+https://github.com/OfficeDev/Microsoft-Teams-Samples/tree/main
+TADY JSOU VSECHNA RESENI NAJEDNOU I SOC SITE, GRAPH,DOC, MEDIA,GIT,  WEBVIEW/RENDERER - SYSTEM 
+
+JQUERY intelisense Ukazka APP i pro SHAREPOINT
+https://github.com/OfficeDev/Product-List-Code-Sample/tree/master
+
+AUTOHOSTING - OBTAIN CUSTOMERDB + CONNSTRING
+
+BYLO BY DOBRE UDELAT SLUZBU DO SYSTEMU - KTERA JEJ BUDE ROZSIROVAT
+
+SHAREPOINT, SAP, OFFICE, TEAMS, GRAPH, 
+https://github.com/orgs/OfficeDev/repositories?q=Provider
+
+UKAZKA DASHBOARD, WOKFLOW, DATA SERVER - PROVIDER
+https://github.com/OfficeDev/Learning-Path-Manager-Code-Sample/tree/master
+https://github.com/OfficeDev/SAP-GWM-SharePoint-Provider-Hosted-App/blob/master/SellerDashboard/SellerDashboard.HTMLClient/GeneratedArtifacts/data.js
+
+OPENXML REPOSITORY
+https://github.com/OfficeDev/open-xml-docs/tree/main
+
+EXCHANGE SERVER STUDNICE
+https://github.com/OfficeDev/ews-managed-api/tree/master
+FULL DOC
+https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/explore-the-ews-managed-api-ews-and-web-services-in-exchange
+
++ AGENDA STAZENI DAT Z API
+
+SKYPE
++ https://github.com/OfficeDev/BotBuilder-MicrosoftTeams/tree/master/CSharp/Library/Microsoft.Bot.Connector.Teams.NetFramework
+
+msteams-sample-adminbot-csharp
+BotBuilder-MicrosoftTeams-dotnet
+https://github.com/OfficeDev/BotBuilder-MicrosoftTeams-dotnet/tree/master/CSharp/Microsoft.Bot.Schema.Teams/Generated
+
+NAPOJENI NA SLUZBU TEAMS TASKY,MEDIA ATD - COPY-PASTE - CELE UVOLNENO MUZU PREVZIT I S MODELEM
+https://github.com/OfficeDev/microsoft-teams-sample-task-module-csharp 
+
+SPRAVA APLIKACI ATD A MILION DALSIHO UBOLNE C BOTFRAMEWORKEM I TOOLY
+https://github.com/orgs/OfficeDev/repositories?page=10
+SUPER HOTOVA DILCI RESENI NAPR ZOBRAZIT GIT POUHE COPY-PASTE
+
+BOT DASHBOARD
+https://learn.microsoft.com/cs-cz/microsoftteams/platform/tabs/how-to/build-a-dashboard-tab-app
+
+NUGET SERVER
+https://learn.microsoft.com/en-us/nuget/create-packages/overview-and-workflow
+
+---------------------------------------------------------------------------
 var message = "This is some html text to <strong>translate</strong>!";
 string targetLanguage = "fr";
 string sourceLanguage = null; // automatically detected
@@ -143,3 +213,9 @@ FREE HOSTING https://www.aapanel.com/new/downloadview.html?invite_code=93684c35
 KENTICO HOSTING
 https://docs.kentico.com/13/installation/installing-xperience
 
+HOSTOVANI MISROSOFT GITWEB NUGET LIBRARY ATD
+https://github.com/dotnet/sourcelink/blob/main/README.md
+
+MICROSOFT WPF TOOLKIT
+https://github.com/CommunityToolkit/Microsoft.Toolkit.Win32/tree/main
+https://github.com/CommunityToolkit

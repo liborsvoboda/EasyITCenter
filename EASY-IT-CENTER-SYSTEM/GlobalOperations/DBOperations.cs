@@ -153,5 +153,25 @@ namespace EasyITSystemCenter.GlobalOperations {
 
             return result.Length == 0 ? systemName : result;
         }
+
+
+        /// <summary>
+        /// Global Inherited Load Function
+        /// Loads the inherited data list By ColumnName
+        /// Its must be InheritedGroupName 
+        /// 'Inherited' is removed and GroupName Is Loaded
+        /// </summary>
+        /// <param name="groupName">The group name.</param>
+        /// <returns>A Task.</returns>
+        public async static Task<List<SolutionMixedEnumList>> LoadInheritedDataList(string groupName) {
+            List<SolutionMixedEnumList> solutionMixedEnumList = new List<SolutionMixedEnumList>();
+            try {
+                if (groupName.Length > 0) {
+                    solutionMixedEnumList = await CommunicationManager.GetApiRequest<List<SolutionMixedEnumList>>(ApiUrls.EasyITCenterSolutionMixedEnumList, "ByGroup/" + DataOperations.IgnoreCaseReplaceString(groupName,"Inherited"), App.UserData.Authentification.Token);
+                    solutionMixedEnumList.ForEach(async item => { item.Translation = await DBTranslation(item.Name); });
+                }
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+            return solutionMixedEnumList;
+        }
     }
 }

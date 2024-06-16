@@ -1,4 +1,5 @@
-﻿using ICSharpCode.WpfDesign.Designer;
+﻿using DocumentFormat.OpenXml.Drawing;
+using ICSharpCode.WpfDesign.Designer;
 using Newtonsoft.Json;
 using ReverseMarkdown.Converters;
 using System;
@@ -6,6 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using Xamarin.Forms.Internals;
 
 namespace EasyITSystemCenter.GlobalOperations {
 
@@ -229,8 +232,8 @@ namespace EasyITSystemCenter.GlobalOperations {
         public static List<string> GetPathFiles(string sourcePath, string fileMask, SearchOption searchOption) {
             return Directory.GetFiles(sourcePath, fileMask, searchOption).ToList();
         }
-        
-        
+
+
         /// <summary>
         /// Copy Full directory.
         /// </summary>
@@ -322,6 +325,61 @@ namespace EasyITSystemCenter.GlobalOperations {
             if (!webpath.StartsWith("/")) { webpath = $"/{webpath}"; }
             webpath = webpath.Replace('/', slash).Replace('\\', slash).Replace(slash.ToString() + slash.ToString(), slash.ToString());
             return webpath;
+        }
+
+
+        public static class UserFileStorage {
+
+
+            private static string _jsonFileName =
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Avalonia.SimpleToDoList", "MyToDoList.txt");
+
+
+            /// <summary>
+            /// Saves the file.
+            /// </summary>
+            /// <param name="fileList">The file list.</param>
+            /// <returns>A Task.</returns>
+            public static bool SaveFile(Tuple<string, string> fileList) {
+                try {
+                    WriteToFile(fileList.Item1, fileList.Item2);
+                    return true;
+                } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+                return false;
+            }
+
+
+            /// <summary>
+            /// Saves the files.
+            /// </summary>
+            /// <param name="fileList">The file list.</param>
+            /// <returns>A Task.</returns>
+            public async static Task<bool> SaveFiles(IEnumerable<Tuple<string, string>> fileList) {
+                fileList.ForEach(async file => {
+                    try {
+                        CreateDirectory(file.Item1);
+                        WriteToFile(file.Item1, file.Item2);
+
+                    } catch (Exception autoEx) { App.ApplicationLogging(autoEx);
+                        await MainWindow.ShowMessageOnMainWindow(true, await DBOperations.DBTranslation("FileSavingError") + SystemOperations.GetExceptionMessagesAll(autoEx) );
+                    }
+                });
+                return true;
+            }
+
+
+            public static async Task<IEnumerable<string>> LoadFromFileAsync() {
+                try {
+                    // We try to read the saved file and return the ToDoItemsList if successful
+                    using (var fs = File.OpenRead(_jsonFileName)) {
+
+                        return await JsonSerializer.DeserializeAsync<IEnumerable<ToDoItem>>(fs);
+                    }
+                } catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException) {
+                    // In case the file was not found, we simply return null
+                    return null;
+                }
+            }
         }
     }
 }

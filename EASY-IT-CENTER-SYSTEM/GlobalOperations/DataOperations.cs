@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows;
@@ -207,7 +208,7 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// <returns>A XElement.</returns>
         public static XElement ConvertDataTableToXml(DataTable dataTable, string tablename) {
             var xmlTable = new XElement(tablename, dataTable.Rows.Cast<DataRow>()
-       .GroupBy(row => (string)row[0]).Select(g =>
+            .GroupBy(row => (string)row[0]).Select(g =>
            new XElement(dataTable.Columns[0].ColumnName,
                new XElement("label", g.Key),
                g.GroupBy(row => (string)row[1]).Select(g1 =>
@@ -218,6 +219,18 @@ namespace EasyITSystemCenter.GlobalOperations {
             )));
             return xmlTable;
         }
-        
+
+
+
+        /// <summary>
+        /// Ignores the case replace string.
+        /// </summary>
+        /// <param name="originalValue">The original value.</param>
+        /// <param name="replaceFrom">The replace from.</param>
+        /// <param name="ReplaceTo">The replace to.</param>
+        /// <returns>A string.</returns>
+        public static string IgnoreCaseReplaceString(string originalValue,string replaceFrom,string ReplaceTo = "") {
+            return Regex.Replace(originalValue, replaceFrom, ReplaceTo, RegexOptions.IgnoreCase);
+        }
     }
 }

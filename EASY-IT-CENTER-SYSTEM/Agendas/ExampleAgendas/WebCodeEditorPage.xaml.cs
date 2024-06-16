@@ -48,7 +48,9 @@ namespace EasyITSystemCenter.Pages {
                 serverModuleAndServiceList = await CommunicationManager.GetApiRequest<List<ServerModuleAndServiceList>>(ApiUrls.ServerModuleAndServiceList, (dataViewSupport.AdvancedFilter == null) ? null : "Filter/" + WebUtility.UrlEncode(dataViewSupport.AdvancedFilter.Replace("[!]", "").Replace("{!}", "")), App.UserData.Authentification.Token);
                 systemWebCodeEditor = serverModuleAndServiceList.FirstOrDefault(a => a.Name == "SystemWebEditors");
                 if (systemWebCodeEditor == null) { await MainWindow.ShowMessageOnMainWindow(true, "Missing HtmlBodyOnly Module: 'SystemWebEditors'"); }
-                else { WebCodeEditor.Text = systemWebCodeEditor.CustomHtmlContent; }    
+                else {
+                    WebCodeEditor.Text = systemWebCodeEditor.CustomHtmlContent; 
+                }    
 
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden; return true;

@@ -1,11 +1,14 @@
-﻿using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Folding;
+﻿using EasyITSystemCenter.GlobalOperations;
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Search;
+using Microsoft.Web.WebView2.Core;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
-namespace EasyITSystemCenter.GlobalOperations {
+
+namespace EasyITSystemCenter {
 
     /// <summary>
     /// Centralized Library With Extension Functions Of Exterrnal Tools
@@ -73,12 +76,11 @@ namespace EasyITSystemCenter.GlobalOperations {
                 SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("XML");
                 Options.EnableHyperlinks = true;
                 Options.EnableEmailHyperlinks = true;
-                Options.HighlightCurrentLine  = true;
+                Options.HighlightCurrentLine = true;
                 Options.ShowTabs = true;
                 Options.AllowScrollBelowDocument = true;
                 Options.ShowColumnRuler = true;
                 ShowLineNumbers = true;
-          
             }
 
             private new static void TextChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args) {
@@ -88,6 +90,10 @@ namespace EasyITSystemCenter.GlobalOperations {
                 }
             }
         }
+
+
+
+    
 
     }
 }

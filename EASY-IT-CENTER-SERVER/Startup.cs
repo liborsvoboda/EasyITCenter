@@ -16,6 +16,8 @@ using EasyITCenter.ServerCoreConfiguration;
 using SQLitePCL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using DocumentFormat.OpenXml.Office2010.Ink;
+using Fawdlstty.GitServerCore;
 
 
 namespace EasyITCenter {
@@ -25,6 +27,9 @@ namespace EasyITCenter {
     /// </summary>
     public class Startup {
 
+        //GIT SERVER
+        //https://git-scm.com/downloads
+        //https://github.com/fawdlstty/GitServerCore
         /// <summary>
         /// Server Core: Main Configure of Server Services, Technologies, Modules, etc..
         /// </summary>
@@ -87,7 +92,7 @@ namespace EasyITCenter {
             ServerModules.ConfigureCodeBrowser(ref services);
             ServerModules.ConfigureReportDesigner(ref services);
 
-
+           // services.AddGitServerCore(opt => { opt})
             #endregion Server Modules
 
             ServerConfigurationServices.ConfigureTransient(ref services);
