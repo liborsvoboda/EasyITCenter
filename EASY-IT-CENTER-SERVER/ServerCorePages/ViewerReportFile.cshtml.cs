@@ -3,7 +3,6 @@ using EasyITCenter.ServerCoreStructure;
 using FastReport;
 using FastReport.Web;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Palmmedia.ReportGenerator.Core.Reporting;
 using ServiceStack;
 using static ServerCorePages.ViewerReportFileModel;
 namespace ServerCorePages {

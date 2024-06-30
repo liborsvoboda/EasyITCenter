@@ -1,4 +1,26 @@
-﻿COMPILER+CODEGEN BOND,  WEB WYAM2
+﻿WEB PLAYWRITES
+https://playwright.dev/docs/intro HELP
+https://playwright.dev/dotnet/docs/api/class-browsercontext
+CODEGEN https://playwright.dev/dotnet/docs/codegen#generating-locators
+
+ROZSIRENI 50+
+https://github.com/microsoft/vscode-extension-samples
+https://packagecontrol.io/browse
+
+
+UTAJENE INTELISENSE EDITORY PREHLED 300+
+https://github.com/Azure/bicep/tree/main/scripts
+https://microsoft.github.io/language-server-protocol/implementors/servers/
+
+
+COMPILER+CODEGEN BOND,  WEB WYAM2
+
+ChangeLogGenerator
+https://github.com/igloo15/ChangelogGenerator
+DLLPackages Report Gernerator
+https://github.com/danielpalme/ReportGenerator/wiki/Custom-reports
+ASEMBLY GENERATOR
+https://github.com/rjasica/HtmlWarningsReportGenerator/blob/master/README.md
 
 
 razor stránka - Formulář k vygenerování 

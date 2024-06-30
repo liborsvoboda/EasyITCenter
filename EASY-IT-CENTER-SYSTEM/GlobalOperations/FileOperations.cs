@@ -1,7 +1,5 @@
-﻿using DocumentFormat.OpenXml.Drawing;
-using ICSharpCode.WpfDesign.Designer;
+﻿using ICSharpCode.WpfDesign.Designer;
 using Newtonsoft.Json;
-using ReverseMarkdown.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -331,10 +329,6 @@ namespace EasyITSystemCenter.GlobalOperations {
         public static class UserFileStorage {
 
 
-            private static string _jsonFileName =
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Avalonia.SimpleToDoList", "MyToDoList.txt");
-
-
             /// <summary>
             /// Saves the file.
             /// </summary>
@@ -368,18 +362,18 @@ namespace EasyITSystemCenter.GlobalOperations {
             }
 
 
-            public static async Task<IEnumerable<string>> LoadFromFileAsync() {
-                try {
-                    // We try to read the saved file and return the ToDoItemsList if successful
-                    using (var fs = File.OpenRead(_jsonFileName)) {
+            //public static async Task<IEnumerable<string>> LoadFromFileAsync() {
+            //    try {
+            //        // We try to read the saved file and return the ToDoItemsList if successful
+            //        using (var fs = File.OpenRead(_jsonFileName)) {
 
-                        return await JsonSerializer.DeserializeAsync<IEnumerable<ToDoItem>>(fs);
-                    }
-                } catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException) {
-                    // In case the file was not found, we simply return null
-                    return null;
-                }
-            }
+            //            return await JsonSerializer.DeserializeAsync<IEnumerable<ToDoItem>>(fs);
+            //        }
+            //    } catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException) {
+            //        // In case the file was not found, we simply return null
+            //        return null;
+            //    }
+            //}
         }
     }
 }

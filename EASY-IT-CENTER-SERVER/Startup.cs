@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.FileProviders.Physical;
 using ServerCorePages;
 using System.Diagnostics.Metrics;
 using System.Linq;
@@ -18,6 +16,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using DocumentFormat.OpenXml.Office2010.Ink;
 using Fawdlstty.GitServerCore;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.FileProviders.Physical;
 
 
 namespace EasyITCenter {
@@ -92,7 +92,8 @@ namespace EasyITCenter {
             ServerModules.ConfigureCodeBrowser(ref services);
             ServerModules.ConfigureReportDesigner(ref services);
 
-           // services.AddGitServerCore(opt => { opt})
+            services.AddGitServerCore(opt => { opt.GitRepoExtractDir = "Git"; });
+            
             #endregion Server Modules
 
             ServerConfigurationServices.ConfigureTransient(ref services);
@@ -173,8 +174,7 @@ namespace EasyITCenter {
                             }
                         }
 
-                    }
-                    else if (context.Response.StatusCode == StatusCodes.Status200OK) { return; }
+                    } else if (context.Response.StatusCode == StatusCodes.Status200OK) { return; }
                     // ALLOVE All 200 AFTER SECURITY CHECK - DYNAMIC MODULES AND ALL OTHER MUST BE 404
 
 

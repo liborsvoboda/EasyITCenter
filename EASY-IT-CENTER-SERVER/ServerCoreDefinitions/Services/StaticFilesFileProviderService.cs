@@ -28,7 +28,11 @@ namespace EasyITCenter.ServerCoreStructure {
             }
         }
 
-        public IChangeToken Watch(string filter) => NullChangeToken.Singleton;
+        //public IChangeToken Watch(string filter) => NullChangeToken.Singleton;
+
+        IChangeToken IFileProvider.Watch(string filter) {
+            throw new NotImplementedException();
+        }
     }
 
     public class DirectoryContents : IDirectoryContents {

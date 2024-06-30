@@ -1,0 +1,47 @@
+---
+title: Więcej o The Graph
+---
+
+Ta strona ma na celu wyjaśnienie czym jest The Graph i jak możesz zacząć go używać.
+
+## Co to jest The Graph?
+
+The Graph jest zdecentralizowanym protokołem ideksującym dane na blockchainie i wysyłającym zapytania o te dane. The Graph umożliwia tworzenie zapytań o dane, które są bezpośrenio trudne do odpytania.
+
+Projekty wykorzystujące kompleksowe smart kontrakty jak [Uniswap](https://uniswap.org/) i inicjatywy NFT jak [Bored Ape Yacht Club](https://boredapeyachtclub.com/) przechowują dane na blockchainie Ethereum, co sprawia, że bardzo trudno jest odczytać cokolwiek poza bardzo podstawowymi danymi dezpośrednio z danej sieci blockchain.
+
+W przypadku inicjatywy Bored Ape Yacht Club, możemy wykonać podstawowe operacje odczytania przez [kontrakt](https://etherscan.io/address/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d#code) jak np. znalezienie posiadacza konkretnej małpy (Ape), adresu URI małpy z jej numeru ID, czy informację o całkowitej podaży, ponieważ te informacje są zaprogramowane bezpośrednio w smart kontrakcie, ale już bardziej zaawansowane zapytania real-world i operacje takie jak agregacja, wyszukiwanie, zależności i niebanalne filtrowanie nie będą możliwe. Np. jeśli chcielibyśmy stworzyć zapytanie o małpy, które należą do danego adresu i filtrować pojedyńczo każdą ich cechę, nie bylibyśmy w stanie otrzymać tej informacji przez bezpośrednią interakcję z samym smart kontraktem.
+
+Aby otrzymać te dane trzeba byłoby przeprocesować każdy pojedyńczy [`transfer`](https://etherscan.io/address/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d#code#L1746) lub wydarzenie, które kiedykolwiek miało miejsce, zczytać dane z protokołu IPFS używając Token ID i IPFS hash, by w końcu dane te zagregować. Uzyskanie odpowiedzi nawet na tego typu, relatywnie proste pytania, zajęłoby **wiele godzin, a nawet dni** dla zdecentralizowanej aplikacji (dapp) działającej w przeglądarce.
+
+Możesz równieź zbudować własny serwer, przetwarzać na nim tranzakcje, zapisaywać je w bazie danych i wykorzystywać punkt końcowy API w celu tworzenia zapytań o dane. Jednak ta opcja [wymaga dużych nakładów finansowych](/network/benefits/), regularnej konserwacji i utrzymania, a mimo to stanowi ona pojedyńczy punkt podatności na awarię i narusza warunki bezpieczeństwa wymagane w procesie decentralizacji.
+
+**Indeksowanie danych na blockchainie jest bardzo, bardzo trudne.**
+
+Właściwości sieci blockchain jak ich nieodwołalność, reorganizacja łańcucha, czy tzw. "uncle blocks" komplikują ten proces i sprawiają, że jest on nie tylko sam w sobie długotrwały ale również odzyskiwanie poprawnych wyników zapytań o dane blockchainowe jest utrudnione.
+
+The Graph rozwiązuje te problemy za pomocą zdecentralizowanego protokołu indeksującego i umożliwiającego wydajne i efektywne odpytywanie danych z sieci blockchain. Te APIs (indeksowane subgrafy) mogą być odpytywane przez standardowy GraphQL API. Dziś istnieje już serwis "hosted", jak również zdecentralizowany protokół z tymi samymi możliwościami. Oba te rozwiązania są zabezpieczone przez zaimplementowany [Graph Node](https://github.com/graphprotocol/graph-node), który jest rozwiązaniem dostępnym publicznie (tzw. open source).
+
+## Jak działa The Graph
+
+The Graph uczy się co i jak należy indeksować spośród danych sieci Ethereum na podstawie opisów subgraphów, zwanych manifestami. Opis subgraphu definiuje smart kontrakty, które leżą w obszarze zainteresowania danego subgraphu, zdarzenia w tych kontraktach, na które należy zwracać uwagę, oraz sposób mapowania danych zdarzeń na dane przechowywane w bazie danych The Graph.
+
+Po napisaniu `manifestu subgraphu` można użyć narzędzia Graph CLI, aby przechować definicję w protokole IPFS i poinformować dowolnego indeksera o możliwości rozpoczęcia indeksowania danych dla tego subgraphu.
+
+Ten diagram przedstawia bardziej szczegółowo przepływ danych po wdrożeniu manifestu subgraphu, kiedy mamy do czynienia z transakcjami Ethereum:
+
+![Grafika wyjaśniająca sposób w jaki protokół The Graph wykorzystuje węzeł Graph Node by obsługiwać zapytania dla konsumentów danych](/img/graph-dataflow.png)
+
+Proces ten przebiega według poniższych kroków:
+
+1. Aplikacja dApp dodaje dane do sieci Ethereum za pomocą transakcji w smart kontrakcie.
+2. Inteligentny kontrakt emituje jedno lub więcej zdarzeń podczas przetwarzania transakcji.
+3. Graph Node nieprzerwanie skanuje sieć Ethereum w poszukiwaniu nowych bloków i danych dla Twojego subgraphu, które mogą one zawierać.
+4. Graph Node znajduje zdarzenia Ethereum dla Twojego subgraphu w tych blokach i uruchamia dostarczone przez Ciebie procedury mapowania. Mapowanie to moduł WASM, który tworzy lub aktualizuje jednostki danych przechowywane przez węzeł Graph Node w odpowiedzi na zdarzenia Ethereum.
+5. Aplikacja dApp wysyła zapytanie do węzła Graph Node o dane zindeksowane na blockchainie, korzystając z [punktu końcowego GraphQL](https://graphql.org/learn/). Węzeł Graph Node przekształca zapytania GraphQL na zapytania do swojego podstawowego magazynu danych w celu pobrania tych danych, wykorzystując zdolności indeksowania magazynu. Aplikacja dApp wyświetla te dane w interfejsie użytkownika dla użytkowników końcowych, którzy używają go do tworzenia nowych transakcji w sieci Ethereum. Cykl się powtarza.
+
+## Kolejne kroki
+
+W następnych częściach omówimy bardziej szczegółowo, jak definiować subgraphy, jak je wdrażać i jak tworzyć zapytania o dane z indeksów budowanych przez węzeł Graph Node.
+
+Zanim zaczniesz pisać własny subgraph, warto sprawdzić narzędzie Graph Explorer i poznać niektóre już wdrożone subgraphy. Strona każdego subgraphu zawiera miejsce zwane "placem zabaw" (ang. playground), który umożliwia zapytanie o dane tego subgraphu za pomocą języka GraphQL.
