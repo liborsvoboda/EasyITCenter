@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Web.WebView2.Core;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -42,6 +43,10 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string appStartupLanguage = Thread.CurrentThread.CurrentCulture.ToString();
 
         public Dictionary<string, string> AppClientSettings = new Dictionary<string, string>();
+
+        public CoreWebView2Environment WebViewEnvironment = CoreWebView2Environment.CreateAsync(null,
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0], "WebView"),
+            new CoreWebView2EnvironmentOptions()).GetAwaiter().GetResult();
 
         /// <summary>
         /// JSON Predefined

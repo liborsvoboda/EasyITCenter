@@ -56,8 +56,8 @@ namespace EasyITSystemCenter.Pages {
 
             //Initiate WebBrowsers
             webBrowser.CoreWebView2InitializationCompleted += WebBrowser_CoreWebView2InitializationCompleted;
-            webBrowser.EnsureCoreWebView2Async(null);
-            if (systemCustomPageList.ShowHelpTab && systemCustomPageList.InheritedHelpTabSourceType.ToLower().Contains("apiurl")) { helpWebBrowser.EnsureCoreWebView2Async(null); }
+            webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment);
+            if (systemCustomPageList.ShowHelpTab && systemCustomPageList.InheritedHelpTabSourceType.ToLower().Contains("apiurl")) { helpWebBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment); }
             else if (systemCustomPageList.ShowHelpTab) {
                 new MarkdownPipelineBuilder().UseEmphasisExtras().UseAbbreviations().UseAdvancedExtensions().UseBootstrap()
                 .UseDiagrams().UseEmphasisExtras().UseEmojiAndSmiley(true).UseDefinitionLists().UseTableOfContent().UseTaskLists()
@@ -143,7 +143,7 @@ namespace EasyITSystemCenter.Pages {
             try {
                 MainWindow.ProgressRing = Visibility.Visible;DBResultMessage dBResult;
 
-                if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(null); 
+                if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment); 
                     devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();}
 
                 string dataForBrowser = XamlFormGenerators.StandardXamlFormIODataController(ref userForm, ref selectedRecord, ref RecordForSave, false, systemCustomPageList,false, false);
@@ -159,8 +159,6 @@ namespace EasyITSystemCenter.Pages {
 
                     //TODO CHECK COLLECTION BEFORE SAVE
                 }
-
-
 
 
                 string json = JsonConvert.SerializeObject(selectedRecord);
@@ -205,7 +203,7 @@ namespace EasyITSystemCenter.Pages {
                  
 
                     //REINIT WEBVIEW
-                    if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(null); }
+                    if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment); }
                     devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
 
                     //SET DATA TO FORM AND BROWSER
@@ -366,7 +364,7 @@ namespace EasyITSystemCenter.Pages {
 
 
         private async Task<bool> DOMSetDataFromBrowser(bool isTest = false) {
-            if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(null); }
+            if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment); }
             devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
             try {
                 var htmlDivElement = await devToolsContext.QuerySelectorAsync<HtmlDivElement>(!systemCustomPageList.DomhtmlElementName.StartsWith("#") ? $"#{systemCustomPageList.DomhtmlElementName}" : systemCustomPageList.DomhtmlElementName);
@@ -377,7 +375,7 @@ namespace EasyITSystemCenter.Pages {
         }
 
         private async Task<bool> JSSetDataFromBrowser(bool isTest = false) {
-            if (webBrowser.CoreWebView2 == null) {  await webBrowser.EnsureCoreWebView2Async(null); }
+            if (webBrowser.CoreWebView2 == null) {  await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment); }
             devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
             try {
                 string result = await webBrowser.ExecuteScriptAsync(systemCustomPageList.SetWebDataJscriptCmd.Replace("data",(isTest ? "This Is Test Data" : WebBrowserData)));
@@ -388,7 +386,7 @@ namespace EasyITSystemCenter.Pages {
 
         private async Task<string> DOMGetDataFromBrowser() {
             string check = null;
-            if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(null); }
+            if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment); }
             devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
             try {
                 var htmlDivElement = await devToolsContext.QuerySelectorAsync<HtmlDivElement>(!systemCustomPageList.DomhtmlElementName.StartsWith("#") ? $"#{systemCustomPageList.DomhtmlElementName}" : systemCustomPageList.DomhtmlElementName);
@@ -401,7 +399,7 @@ namespace EasyITSystemCenter.Pages {
 
         private async Task<string> JSGetDataFromBrowser() {
             string check = null;
-            if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(null); }
+            if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment); }
             devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
             try {
                 check = await webBrowser.ExecuteScriptAsync(systemCustomPageList.GetWebDataJscriptCmd);

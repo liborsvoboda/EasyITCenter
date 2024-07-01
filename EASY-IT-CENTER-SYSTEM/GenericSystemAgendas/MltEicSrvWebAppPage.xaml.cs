@@ -54,9 +54,10 @@ namespace EasyITSystemCenter.Pages {
 
                 systemCustomPageList = await CommunicationManager.GetApiRequest<SystemCustomPageList>(ApiUrls.EasyITCenterSystemCustomPageList, this.Uid.ToString(), App.UserData.Authentification.Token);
                 webBrowser.CoreWebView2InitializationCompleted += WebBrowser_CoreWebView2InitializationCompleted;
-                await webBrowser.EnsureCoreWebView2Async();
+                await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment);
+
                 //TODO udelat vyber na markdown viewer nebo browser
-                if (systemCustomPageList.ShowHelpTab && systemCustomPageList.InheritedHelpTabSourceType.Contains("ApiUrl")) { await helpWebBrowser.EnsureCoreWebView2Async(); }
+                if (systemCustomPageList.ShowHelpTab && systemCustomPageList.InheritedHelpTabSourceType.Contains("ApiUrl")) { await helpWebBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment); }
 
                 _ = FormOperations.TranslateFormFields(ListView);
                 
@@ -72,11 +73,12 @@ namespace EasyITSystemCenter.Pages {
                 //TODO IS OWN SERVER Variant
                 webBrowser.SetCurrentValue(Microsoft.Web.WebView2.Wpf.WebView2.SourceProperty, new Uri(systemCustomPageList.IsServerUrl ? App.appRuntimeData.AppClientSettings.First(a => a.Key == "conn_apiAddress").Value +
                     (systemCustomPageList.StartupUrl.StartsWith("/") ? systemCustomPageList.StartupUrl : "/" + systemCustomPageList.StartupUrl)
-                    : systemCustomPageList.IsSystemUrl ? App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + App.appRuntimeData.webDataUrlPath + systemCustomPageList.StartupUrl
+                    : systemCustomPageList.IsSystemUrl ? App.appRuntimeData.AppClientSettings.First(a => a.Key == "sys_localWebServerUrl").Value + systemCustomPageList.StartupUrl
                     : systemCustomPageList.StartupUrl
                     ));
 
                 if (systemCustomPageList.DevModeEnabled) { webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = true; } else { webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = false; }
+
 
                 if (systemCustomPageList.ShowHelpTab && systemCustomPageList.HelpTabUrl != null) {
 
@@ -117,6 +119,7 @@ namespace EasyITSystemCenter.Pages {
                     IList<CoreWebView2ContextMenuItem> menuList = args.MenuItems;
                     CoreWebView2ContextMenuItem openConsole = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("openConsole"), null, CoreWebView2ContextMenuItemKind.Command); openConsole.CustomItemSelected += openConsoleSelected;
                     CoreWebView2ContextMenuItem openTaskManager = webBrowser.CoreWebView2.Environment.CreateContextMenuItem(await DBOperations.DBTranslation("printPage"), null, CoreWebView2ContextMenuItemKind.Command); openTaskManager.CustomItemSelected += openTaskManagerSelected;
+                    
                     menuList.Add(openConsole);
                     menuList.Add(openTaskManager);
                 };
