@@ -229,8 +229,8 @@ namespace EasyITSystemCenter.GlobalOperations {
         /// <param name="replaceFrom">The replace from.</param>
         /// <param name="ReplaceTo">The replace to.</param>
         /// <returns>A string.</returns>
-        public static string IgnoreCaseReplaceString(string originalValue,string replaceFrom,string ReplaceTo = "") {
-            return Regex.Replace(originalValue, replaceFrom, ReplaceTo, RegexOptions.IgnoreCase);
+        public static string IgnoreCaseReplaceString(string originalValue,string replaceFrom,string replaceTo = "") {
+            return Regex.Replace(originalValue, replaceFrom, replaceTo, RegexOptions.IgnoreCase);
         }
     }
 }

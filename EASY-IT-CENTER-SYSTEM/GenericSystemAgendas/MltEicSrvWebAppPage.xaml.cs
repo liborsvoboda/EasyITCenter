@@ -8,8 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.IO;
-using EasyITSystemCenter.GlobalClasses;
 using Markdig;
 using Markdig.Wpf;
 using Pek.Markdig.HighlightJs;

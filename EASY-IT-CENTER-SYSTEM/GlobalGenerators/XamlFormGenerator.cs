@@ -1,12 +1,7 @@
-﻿using DocumentFormat.OpenXml.Presentation;
-using EasyITSystemCenter.Api;
+﻿using BitMiracle.LibTiff.Classic;
 using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
-using HelixToolkit.Wpf.SharpDX.Model.Scene;
-using ICSharpCode.TextEditor.Actions;
 using MahApps.Metro.Controls;
-using Microsoft.EntityFrameworkCore.Query.Expressions;
-using Microsoft.Web.WebView2.Core.DevToolsProtocolExtension;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -107,10 +102,10 @@ namespace EasyITSystemCenter.GlobalGenerators {
                             columnDefined = true;
                         }
                         if (fieldTypeResult.Item2 == "double" && fieldName != "userid" && !columnDefined) {
-                            NumericUpDown numeric = new NumericUpDown() { 
-                                Name = "frm_" + fieldName, VerticalAlignment = VerticalAlignment.Center, 
-                                HorizontalAlignment = HorizontalAlignment.Stretch, 
-                                Margin = new Thickness(2), 
+                            NumericUpDown numeric = new NumericUpDown() {
+                                Name = "frm_" + fieldName, VerticalAlignment = VerticalAlignment.Center,
+                                HorizontalAlignment = HorizontalAlignment.Stretch,
+                                Margin = new Thickness(2),
                                 IsReadOnly = dataset.Columns[columnNumber].ToString().ToLower() == "id".ToLower()
                             };
                             numeric.SetValue(Grid.RowProperty, columnNumber + 1); numeric.SetValue(Grid.ColumnProperty, 1);
@@ -118,26 +113,26 @@ namespace EasyITSystemCenter.GlobalGenerators {
                             columnDefined = true;
                         }
                         if (fieldTypeResult.Item2 == "time" && !columnDefined) {
-                            DateTimePicker datePicker = new DateTimePicker() { 
-                                Name = "frm_" + fieldName, 
-                                VerticalAlignment = VerticalAlignment.Center, 
-                                HorizontalAlignment = HorizontalAlignment.Stretch, 
-                                Margin = new Thickness(2), IsTodayHighlighted = true, 
-                                IsClockVisible = true, PickerVisibility = TimePartVisibility.All, 
-                                SelectedDateFormat = DatePickerFormat.Short, 
-                                SelectedTimeFormat = TimePickerFormat.Short 
+                            DateTimePicker datePicker = new DateTimePicker() {
+                                Name = "frm_" + fieldName,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                HorizontalAlignment = HorizontalAlignment.Stretch,
+                                Margin = new Thickness(2), IsTodayHighlighted = true,
+                                IsClockVisible = true, PickerVisibility = TimePartVisibility.All,
+                                SelectedDateFormat = DatePickerFormat.Short,
+                                SelectedTimeFormat = TimePickerFormat.Short
                             };
                             datePicker.SetValue(Grid.RowProperty, columnNumber + 1); datePicker.SetValue(Grid.ColumnProperty, 1);
                             rootGrid.Children.Add(datePicker);
                             columnDefined = true;
                         }
                         if (fieldTypeResult.Item2 == "date" && !columnDefined) {
-                            DateTimePicker datePicker = new DateTimePicker() { 
-                                Name = "frm_" + fieldName, 
-                                VerticalAlignment = VerticalAlignment.Center, 
-                                HorizontalAlignment = HorizontalAlignment.Stretch, 
-                                Margin = new Thickness(2), IsTodayHighlighted = true, 
-                                IsClockVisible = false, 
+                            DateTimePicker datePicker = new DateTimePicker() {
+                                Name = "frm_" + fieldName,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                HorizontalAlignment = HorizontalAlignment.Stretch,
+                                Margin = new Thickness(2), IsTodayHighlighted = true,
+                                IsClockVisible = false,
                                 SelectedDateFormat = DatePickerFormat.Short
                             };
                             datePicker.SetValue(Grid.RowProperty, columnNumber + 1); datePicker.SetValue(Grid.ColumnProperty, 1);
@@ -146,14 +141,14 @@ namespace EasyITSystemCenter.GlobalGenerators {
                         }
 
                         if (fieldTypeResult.Item2 == "datetime" && !columnDefined && !fieldName.StartsWith("timestamp")) {
-                            DateTimePicker datePicker = new DateTimePicker() { 
-                                Name = "frm_" + fieldName, 
-                                VerticalAlignment = VerticalAlignment.Center, 
-                                HorizontalAlignment = HorizontalAlignment.Stretch, 
-                                Margin = new Thickness(2), 
-                                IsTodayHighlighted = true, 
-                                IsClockVisible = true, 
-                                PickerVisibility = TimePartVisibility.All, 
+                            DateTimePicker datePicker = new DateTimePicker() {
+                                Name = "frm_" + fieldName,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                HorizontalAlignment = HorizontalAlignment.Stretch,
+                                Margin = new Thickness(2),
+                                IsTodayHighlighted = true,
+                                IsClockVisible = true,
+                                PickerVisibility = TimePartVisibility.All,
                                 SelectedDateFormat = DatePickerFormat.Short
                             };
                             datePicker.SetValue(Grid.RowProperty, columnNumber + 1); datePicker.SetValue(Grid.ColumnProperty, 1);
@@ -166,10 +161,10 @@ namespace EasyITSystemCenter.GlobalGenerators {
                         if (columnDefined
                             && fieldName != systemCustomPageList.ColumnName.ToLower() && fieldName != "userid" && fieldName != "timestamp") {
                             Label fieldLabel = new Label() { Name = "lbl_" + fieldName, FontSize = 20,
-                                VerticalAlignment = VerticalAlignment.Stretch, 
+                                VerticalAlignment = VerticalAlignment.Stretch,
                                 VerticalContentAlignment = VerticalAlignment.Top,
-                                HorizontalAlignment = HorizontalAlignment.Right, 
-                                Margin = new Thickness(5, 0, 5, 5), 
+                                HorizontalAlignment = HorizontalAlignment.Right,
+                                Margin = new Thickness(5, 0, 5, 5),
                                 Padding = new Thickness(0)
                             };
                             fieldLabel.SetValue(Grid.RowProperty, columnNumber + 1); fieldLabel.SetValue(Grid.ColumnProperty, 0);
@@ -202,17 +197,18 @@ namespace EasyITSystemCenter.GlobalGenerators {
             int index = 0; string dataForBrowser = null; recordForSave.Clear();
 
             // DATA TO FORM
-            if (dataToForm) {
-                var columnList = selectedRecord.Row.Table.Columns;
-                foreach (object prop in columnList) {
 
-                    bool setDone = false;
-                    string fieldName = ((DataColumn)prop).ColumnName.ToLower();
-                    string fieldValue = selectedRecord.Row.ItemArray[index].ToString();
-                    if (newRec) { fieldValue = null; }
-                    var fieldTypeResult = ProgrammaticOperations.DetectTypeValueFromObject(selectedRecord.Row.ItemArray[index]);
+            var columnList = selectedRecord.Row.Table.Columns;
+            foreach (object prop in columnList) {
 
-                    try {
+                bool setDone = false;
+                string fieldName = ((DataColumn)prop).ColumnName.ToLower();
+                string fieldValue = selectedRecord.Row.ItemArray[index].ToString();
+                if (newRec) { fieldValue = null; }
+                var fieldTypeResult = ProgrammaticOperations.DetectTypeValueFromObject(selectedRecord.Row.ItemArray[index]);
+
+                try {
+                    if (dataToForm) {
 
                         #region SpecialFieldsConditions
 
@@ -222,18 +218,21 @@ namespace EasyITSystemCenter.GlobalGenerators {
                         }
                         //0 ID for Copy
                         if (!setDone && (copy || newRec) && systemCustomPageSetting.ColumnName != null && fieldName == "Id".ToLower()) {
+
                             try {
                                 fieldValue = "0";
                                 if (userForm.FindChild<NumericUpDown>($"frm_{fieldName}") != null) {
-                                    userForm.FindChild<NumericUpDown>($"frm_{fieldName}").SetCurrentValue(NumericUpDown.ValueProperty, (double?)int.Parse(fieldValue)); 
+                                    userForm.FindChild<NumericUpDown>($"frm_{fieldName}").SetCurrentValue(NumericUpDown.ValueProperty, (double?)int.Parse(fieldValue));
                                     setDone = true;
                                 }
                             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
                         }
                         if (!setDone && fieldName.Contains("inherited")) { //Combobox
+
                             try {
                                 if (userForm.FindChild<ComboBox>($"frm_{fieldName}") != null) {
-                                    userForm.FindChild<ComboBox>($"frm_{fieldName}").SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedValueProperty, fieldValue); 
+                                    userForm.FindChild<ComboBox>($"frm_{fieldName}").SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedValueProperty, fieldValue);
                                     setDone = true;
                                 }
                             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
@@ -259,16 +258,18 @@ namespace EasyITSystemCenter.GlobalGenerators {
                                     setDone = true;
                                 }
                             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-                        }
-                        else if (!setDone && new string[] { "date", "time", "datetime" }.Contains(fieldTypeResult.Item2)) {
+
+                        } else if (!setDone && new string[] { "date", "time", "datetime" }.Contains(fieldTypeResult.Item2)) {
+
                             try {
                                 if (userForm.FindChild<DateTimePicker>($"frm_{fieldName}") != null) {
                                     userForm.FindChild<DateTimePicker>($"frm_{fieldName}").SetCurrentValue(DateTimePicker.SelectedDateProperty, fieldValue == null ? null : DateTime.Parse(fieldValue) as DateTime?);
+                                    setDone = true;
                                 }
-                                setDone = true;
                             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-                        }
-                        else if (!setDone && new string[] { "bool" }.Contains(fieldTypeResult.Item2)) {
+
+                        } else if (!setDone && new string[] { "bool" }.Contains(fieldTypeResult.Item2)) {
+
                             try {
                                 if (userForm.FindChild<CheckBox>($"frm_{fieldName}") != null) {
                                     userForm.FindChild<CheckBox>($"frm_{fieldName}").SetCurrentValue(System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty, fieldValue == null ? false : bool.Parse(fieldValue));
@@ -276,99 +277,70 @@ namespace EasyITSystemCenter.GlobalGenerators {
                                 }
                             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
-                        }
-                        else if (!setDone && new string[] { "string" }.Contains(fieldTypeResult.Item2)) {
+                        } else if (!setDone && new string[] { "string" }.Contains(fieldTypeResult.Item2)) {
+
                             try {
                                 if (userForm.FindChild<TextBox>($"frm_{fieldName}") != null) {
                                     userForm.FindChild<TextBox>($"frm_{fieldName}").SetCurrentValue(TextBox.TextProperty, fieldValue);
                                     setDone = true;
                                 }
                             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
                         }
-                    } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
-                    if (setDone) {
-                        recordForSave.Add(new Dictionary<string, string>() { { fieldName, fieldValue } });
+                    } else { //PREPARE DATA for Save
+                        if (!setDone && new string[] { "int", "float", "double", "numeric", "int32", "int64" }.Contains(fieldTypeResult.Item2)) {
+
+                            try {
+                                if (userForm.FindChild<NumericUpDown>($"frm_{fieldName}") != null) {
+                                    fieldValue = userForm.FindChild<NumericUpDown>($"frm_{fieldName}").Value.ToString();
+                                    setDone = true;
+                                }
+                            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+                        } else if (!setDone && new string[] { "date", "time", "datetime" }.Contains(fieldTypeResult.Item2)) {
+
+                            try {
+                                if (userForm.FindChild<DateTimePicker>($"frm_{fieldName}") != null) {
+                                    fieldValue = userForm.FindChild<DateTimePicker>($"frm_{fieldName}").SelectedDate.ToString();
+                                    setDone = true;
+                                }
+                            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+                        } else if (!setDone && new string[] { "bool" }.Contains(fieldTypeResult.Item2)) {
+
+                            try {
+                                if (userForm.FindChild<CheckBox>($"frm_{fieldName}") != null) {
+                                    fieldValue = userForm.FindChild<CheckBox>($"frm_{fieldName}").IsChecked.ToString();
+                                    setDone = true;
+                                }
+                            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+                        } else if (!setDone && new string[] { "string" }.Contains(fieldTypeResult.Item2)) {
+
+                            try {
+                                if (userForm.FindChild<TextBox>($"frm_{fieldName}") != null) {
+                                    fieldValue = userForm.FindChild<TextBox>($"frm_{fieldName}").Text;
+                                    setDone = true;
+                                }
+                            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+                        }
                     }
-                    index += 1;
-                }
+
+                } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+                if (!dataToForm && fieldName.ToLower().Contains("content"))
+                { recordForSave.Add(new Dictionary<string, string>() { { fieldName, "DATACONTENT_FORREPLACE" } }); }
+                else { recordForSave.Add(new Dictionary<string, string>() { { fieldName, fieldValue } }); }
+
+                index += 1;
+
             }
 
-            return dataForBrowser;
+            if (dataToForm) { return dataForBrowser; } else { return recordForSave.ObjectToJson();}
+
         }
-
-
-        //FORM TO DATA For Save BROWSER DATA NOD ADDED TO RecordForSave COLLECTION
-
-        //(string)cb_templateName.SelectedValue;  - inherited value
-
-        //if (!dataToForm) {
-        /*List<object> columnList = selectedRecord.ItemArray.ToList();
-        foreach (object prop in columnList) {
-            bool setDone = false;
-            string fieldName = selectedRecord.Table.Columns[columnNo].ToString();
-            string fieldValue = selectedRecord[columnNo].ToString();
-            var fieldTypeResult = ProgrammaticOperations.DetectTypeValueFromObject(selectedRecord[columnNo]);
-
-            //SPECIFIC CONDITION MUST BE FIRST
-            if (!setDone && fieldName == formConfiguration.ColumnName.ToLower()) {
-                fieldValue = null; //selectedRecord[columnNo].ToString();dataForBrowser = fieldValue; 
-                setDone = true;
-            }
-            if (!setDone && fieldName.Contains("inherited")) { //Combobox
-                try { selectedRecord[columnNo] = userForm.FindChild<ComboBox>($"frm_{fieldName}").SelectedValue; setDone = true; } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-                fieldValue = userForm.FindChild<ComboBox>($"frm_{fieldName}").SelectedValue.ToString();
-            }
-            if (!setDone && fieldName == "timestamp") {
-                try { selectedRecord[columnNo] = DateTimeOffset.Now.DateTime; } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-                fieldValue = DateTimeOffset.Now.DateTime.ToString();
-                //userForm.Children.AsParallel().OfType<DateTimePicker>().Where(a => a.Name.ToLower().Split('_')[1] == fieldName).
-                //First().SetCurrentValue(DateTimePicker.SelectedDateProperty, DateTime.Parse(fieldValue));
-                setDone = true;
-            }
-            if (fieldName == "userid") {
-                try { selectedRecord[columnNo] = App.UserData.Authentification.Id; } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-                fieldValue = App.UserData.Authentification.Id.ToString();
-                setDone = true;
-            }
-            //userForm.Children.AsParallel().OfType<NumericUpDown>().Where(a => a.Name.ToLower().Split('_')[1] == fieldName).
-            //      First().SetCurrentValue(NumericUpDown.ValueProperty, double.Parse(fieldValue));
-
-
-
-            //STANDARD GENERATION PART
-            if (!setDone && new string[] { "int", "float", "double", "int32", "int64" }.Contains(fieldTypeResult.Item2)) {
-                try {
-                    selectedRecord[columnNo] = userForm.FindChild<NumericUpDown>($"frm_{fieldName}").Value;
-                    fieldValue = selectedRecord[columnNo].ToString();
-                    setDone = true;
-                } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-            }
-            else if (!setDone && new string[] { "date", "time", "datetime" }.Contains(fieldTypeResult.Item2)) {
-                try {
-                    selectedRecord[columnNo] = userForm.FindChild<DatePicker>($"frm_{fieldName}").SelectedDate;
-                    fieldValue = selectedRecord[columnNo].ToString();
-                    setDone = true;
-                } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-            }
-            else if (!setDone && new string[] { "bool" }.Contains(fieldTypeResult.Item2)) {
-                try {
-                    selectedRecord[columnNo] = userForm.FindChild<CheckBox>($"frm_{fieldName}").IsChecked;
-                    fieldValue = selectedRecord[columnNo].ToString();
-                    setDone = true;
-                } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-            }
-            else if (!setDone && new string[] { "string" }.Contains(fieldTypeResult.Item2)) {
-                try {
-                    selectedRecord[columnNo] = userForm.FindChild<TextBox>($"frm_{fieldName}").Text;
-                    fieldValue = selectedRecord[columnNo].ToString();
-                    setDone = true;
-                } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
-            }
-
-            if (fieldName != formConfiguration.ColumnName.ToLower()) { //Browser DATA ARE INSERTED IN SAVEFORM METHOD
-                recordForSave.Add(new Dictionary<string, string>() { { fieldName, fieldValue } });
-            }*/
 
     }
 }

@@ -18,6 +18,7 @@ using System.Windows.Input;
 using WebView2.DevTools.Dom;
 using EasyITSystemCenter.GlobalGenerators;
 using Newtonsoft.Json;
+using static DotNet2HTML.Attributes.Attr;
 
 
 namespace EasyITSystemCenter.Pages {
@@ -90,6 +91,7 @@ namespace EasyITSystemCenter.Pages {
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
 
+
         public void Filter(string filter) {
             try {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
@@ -99,18 +101,25 @@ namespace EasyITSystemCenter.Pages {
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
 
+
         public void NewRecord() {
-            definedDataList.Rows.Add(definedDataList.NewRow()); definedDataList.Rows[definedDataList.Rows.Count - 1][0] = 0;
-            DgListView.ItemsSource = definedDataList.AsDataView(); DgListView.SelectedIndex = definedDataList.Rows.Count - 1;
+
+            definedDataList.Rows.Add(definedDataList.NewRow()); 
+            definedDataList.Rows[definedDataList.Rows.Count - 1][0] = 0;
+            DgListView.ItemsSource = definedDataList.AsDataView(); 
+            DgListView.SelectedIndex = definedDataList.Rows.Count - 1;
             selectedRecord = (DataRowView)DgListView.SelectedItem;
             SetRecord(true, true, false);
+
         }
+
 
         public void EditRecord(bool copy) {
             selectedRecord = (DataRowView)DgListView.SelectedItem;
             dataViewSupport.SelectedRecordId = copy ? 0 : int.Parse(((DataRowView)DgListView.SelectedItem).Row.ItemArray[0].ToString());
             SetRecord(true, false, copy);
         }
+
 
         public async void DeleteRecord() {
             selectedRecord = (DataRowView)DgListView.SelectedItem;
@@ -125,53 +134,59 @@ namespace EasyITSystemCenter.Pages {
         }
 
         private void DgListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+
             if (DgListView.SelectedItems.Count == 0) return;
             selectedRecord = (DataRowView)DgListView.SelectedItem;
             dataViewSupport.SelectedRecordId = int.Parse(((DataRowView)DgListView.SelectedItem).Row.ItemArray[0].ToString());
             SetRecord(true);
+
         }
 
         private void DgListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+
             if (DgListView.SelectedItems.Count == 0) return;
             selectedRecord = (DataRowView)DgListView.SelectedItem;
             dataViewSupport.SelectedRecordId = int.Parse(((DataRowView)DgListView.SelectedItem).Row.ItemArray[0].ToString());
             SetRecord(false);
+
         }
 
 
         private async Task<bool> SaveForm(bool closeForm) {
-            try {
-                MainWindow.ProgressRing = Visibility.Visible;DBResultMessage dBResult;
+            try
+            {
 
-                if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment); 
-                    devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();}
+                MainWindow.ProgressRing = Visibility.Visible; DBResultMessage dBResult;
 
-                string dataForBrowser = XamlFormGenerators.StandardXamlFormIODataController(ref userForm, ref selectedRecord, ref RecordForSave, false, systemCustomPageList,false, false);
-                if (selectedRecord != null ) {
-                    if (!string.IsNullOrWhiteSpace(WebBrowserData) && systemCustomPageList.UseIooverDom) { await DOMGetDataFromBrowser(); }
-                    else if (!string.IsNullOrWhiteSpace(WebBrowserData)) { await JSGetDataFromBrowser(); }
-                } else if(selectedRecord == null) {
-                    await MainWindow.ShowMessageOnMainWindow(true, await DBOperations.DBTranslation("AnyDataForSave"));
-                }
-                else {
-                    //INSERT DATA TO SAVE COOLECTION 
-                    RecordForSave.Add(new Dictionary<string, string>() { { systemCustomPageList.ColumnName, WebBrowserData } });
-
-                    //TODO CHECK COLLECTION BEFORE SAVE
+                if (webBrowser.CoreWebView2 == null)
+                {
+                    await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment);
+                    devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
                 }
 
+                string recordForSave = XamlFormGenerators.StandardXamlFormIODataController(ref userForm, ref selectedRecord, ref RecordForSave, false, systemCustomPageList, true, false);
+                if (!string.IsNullOrWhiteSpace(WebBrowserData) && systemCustomPageList.UseIooverDom) { recordForSave.Replace("DATACONTENT_FORREPLACE", await DOMGetDataFromBrowser()); }
+                else if (!string.IsNullOrWhiteSpace(WebBrowserData)) { recordForSave.Replace("DATACONTENT_FORREPLACE", await JSGetDataFromBrowser()); }
 
-                string json = JsonConvert.SerializeObject(selectedRecord);
-                StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                if (int.Parse(((DataGridRow)DgListView.SelectedItem).ToString()) == 0) {
+                //INSERT DATA TO SAVE COOLECTION 
+                StringContent httpContent = new StringContent(recordForSave, System.Text.Encoding.UTF8, "application/json");
+
+                if (int.Parse(((Newtonsoft.Json.Linq.JArray)JsonConvert.DeserializeObject(recordForSave))[0]["id"].ToString()) == 0) {
+                    
+                    
                     // dBResult = await CommunicationManager.PutApiRequest(ApiUrls.SolutionWebsiteList, httpContent, null, App.UserData.Authentification.Token);
                 } else {
+                    
+
                     // dBResult = await CommunicationManager.PostApiRequest(ApiUrls.SolutionWebsiteList, httpContent, null, App.UserData.Authentification.Token);
                 }
+
                 //if (dBResult.RecordCount > 0) {
-                //    await LoadDataList(); if (closeForm) { selectedRecord = null; SetRecord(null); }
-                //}
-                //else { await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage); }
+                //    if (closeForm) {
+                //        ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; 
+                //        dataViewSupport.FormShown = !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key.ToLower() == "beh_closeformaftersave".ToLower()).Value);
+                //    }
+                //} else { await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage); }
 
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden;
@@ -190,8 +205,8 @@ namespace EasyITSystemCenter.Pages {
                     MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = recIt != 0;
                     MainWindow.dataGridSelectedId = recIt; MainWindow.DgRefresh = false;
                     ListView.Visibility = Visibility.Hidden; ListForm.Visibility = Visibility.Visible; dataViewSupport.FormShown = true;
-                }
-                else {
+
+                } else {
                     int recIt = DgListView.SelectedItem == null ? 0 : int.Parse(selectedRecord[0].ToString());
                     MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = recIt != 0;
                     MainWindow.dataGridSelectedId = recIt; MainWindow.DgRefresh = true;
@@ -258,9 +273,6 @@ namespace EasyITSystemCenter.Pages {
 
             //Generate User Form 
             userForm = await XamlFormGenerators.StandardXamlFormGenerator(userForm,definedDataList, systemCustomPageList);
-            //await FormOperations.TranslateFormFields(userForm);
-
-
             TabMenuList.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, 0);
             userForm.UpdateLayout();
             MainWindow.ProgressRing = Visibility.Hidden;
@@ -349,7 +361,7 @@ namespace EasyITSystemCenter.Pages {
             if (((TabControl)sender).SelectedIndex == 0 && DataLoaded) {
                 if (systemCustomPageList.UseIooverDom) { await DOMGetDataFromBrowser(); }
                 else { await JSGetDataFromBrowser(); }
-            } else {
+            } else if (DataLoaded) {
                 if (systemCustomPageList.UseIooverDom) { await DOMSetDataFromBrowser(); }
                 else { await JSSetDataFromBrowser(); }
             }
@@ -361,7 +373,7 @@ namespace EasyITSystemCenter.Pages {
         }
 
 
-
+        
 
         private async Task<bool> DOMSetDataFromBrowser(bool isTest = false) {
             if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment); }
