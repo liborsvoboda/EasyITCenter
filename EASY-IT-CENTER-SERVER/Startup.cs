@@ -61,6 +61,7 @@ namespace EasyITCenter {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
             });
 
+            ServerConfigurationServices.ConfigureAutoMinify(ref services);
             #endregion Server WebServer
 
             #region Server Core & Security Web

@@ -289,7 +289,27 @@ namespace EasyITSystemCenter.GlobalGenerators {
                         }
 
                     } else { //PREPARE DATA for Save
-                        if (!setDone && new string[] { "int", "float", "double", "numeric", "int32", "int64" }.Contains(fieldTypeResult.Item2)) {
+                        if (!setDone && fieldName == "userid") { 
+                            try {
+                                fieldValue = App.UserData.Authentification.Id.ToString();
+                                setDone = true;
+                            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+                        } else if (!setDone && fieldName == "timestamp") {
+                            try {
+                                fieldValue = DateTimeOffset.Now.DateTime.ToString();
+                                setDone = true;
+                            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+                        } else if (!setDone && fieldName.Contains("inherited")) { //Combobox
+                            try {
+                                if (userForm.FindChild<ComboBox>($"frm_{fieldName}") != null) {
+                                    fieldValue = (string)userForm.FindChild<ComboBox>($"frm_{fieldName}").SelectedValue;
+                                    setDone = true;
+                                }
+                            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
+
+                        } else if (!setDone && new string[] { "int", "float", "double", "numeric", "int32", "int64" }.Contains(fieldTypeResult.Item2)) {
 
                             try {
                                 if (userForm.FindChild<NumericUpDown>($"frm_{fieldName}") != null) {

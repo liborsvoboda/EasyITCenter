@@ -192,6 +192,16 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string AdvancedFilter { get; set; } = null;
     }
 
+
+    /// <summary>
+    /// Generic Inherited Set
+    /// </summary>
+    public class TranslationSet {
+        public string Name { get; set; }
+        public string Translation { get; set; }
+    }
+
+
     /// <summary>
     /// Language definition support
     /// </summary>

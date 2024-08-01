@@ -470,11 +470,17 @@
 
 
         /// <summary>
-        /// Zapíná Vypína Automatické zobrazení MD souboru 
+        /// Zapíná Vypíná Automatické zobrazení MD souboru 
         /// ve Statickém úložišti jako HTML s URL bez ".md"
         /// </summary>
         public static bool EnableAutoShowStaticMdAsHtml { get; set; } = true;
 
+
+
+        /// <summary>
+        /// Zapíná Vypíná Automatickou minifikaci Js,Css na všech webech
+        /// </summary>
+        public static bool EnableAutoMinify { get; set; } = true;
         #endregion Server Web Portal
 
     }

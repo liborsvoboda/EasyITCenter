@@ -114,7 +114,9 @@ namespace EasyITCenter {
                         });
                     });
                 }
-                
+
+               
+                //webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
                 webBuilder.UseWebRoot(ServerConfigSettings.DefaultStaticWebFilesFolder);
                 webBuilder.UseStaticWebAssets();
                 webBuilder.UseStartup<Startup>();
@@ -140,7 +142,7 @@ namespace EasyITCenter {
                     });
                 }
 
-
+               // webBuilder.UseIISIntegration();
 
 
             });

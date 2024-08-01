@@ -18,7 +18,6 @@ using System.Windows.Input;
 using WebView2.DevTools.Dom;
 using EasyITSystemCenter.GlobalGenerators;
 using Newtonsoft.Json;
-using static DotNet2HTML.Attributes.Attr;
 
 
 namespace EasyITSystemCenter.Pages {
@@ -29,6 +28,7 @@ namespace EasyITSystemCenter.Pages {
         public static DataRowView selectedRecord = null;
 
         private DataTable definedDataList = new DataTable();
+        private DataTable definedDataList1 = new DataTable();
         private SystemCustomPageList systemCustomPageList = new SystemCustomPageList();
         List<Dictionary<string, string>> RecordForSave = new List<Dictionary<string, string>>();
         private Dictionary<string, string> webElement = new Dictionary<string, string>();
@@ -114,6 +114,8 @@ namespace EasyITSystemCenter.Pages {
         }
 
 
+
+
         public void EditRecord(bool copy) {
             selectedRecord = (DataRowView)DgListView.SelectedItem;
             dataViewSupport.SelectedRecordId = copy ? 0 : int.Parse(((DataRowView)DgListView.SelectedItem).Row.ItemArray[0].ToString());
@@ -153,13 +155,12 @@ namespace EasyITSystemCenter.Pages {
 
 
         private async Task<bool> SaveForm(bool closeForm) {
-            try
-            {
+            try {
 
                 MainWindow.ProgressRing = Visibility.Visible; DBResultMessage dBResult;
 
-                if (webBrowser.CoreWebView2 == null)
-                {
+                if (webBrowser.CoreWebView2 == null) {
+                    TabMenuList.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, 1);
                     await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment);
                     devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
                 }
@@ -169,24 +170,23 @@ namespace EasyITSystemCenter.Pages {
                 else if (!string.IsNullOrWhiteSpace(WebBrowserData)) { recordForSave.Replace("DATACONTENT_FORREPLACE", await JSGetDataFromBrowser()); }
 
                 //INSERT DATA TO SAVE COOLECTION 
-                StringContent httpContent = new StringContent(recordForSave, System.Text.Encoding.UTF8, "application/json");
+                List<Dictionary<string, string>> parameters = new List<Dictionary<string, string>> {
+                    new Dictionary<string, string>() { { "SpProcedure", "SpSetTableDataRec" } },
+                    new Dictionary<string, string>() { { "tableName", systemCustomPageList.DbtableName } },
+                    new Dictionary<string, string>() { { "userRole", App.UserData.Authentification.Role } },
+                    new Dictionary<string, string>() { { "userId", App.UserData.Authentification.Id.ToString() } },
+                    new Dictionary<string, string>() { { "dataRec", recordForSave } }
+                };
 
-                if (int.Parse(((Newtonsoft.Json.Linq.JArray)JsonConvert.DeserializeObject(recordForSave))[0]["id"].ToString()) == 0) {
-                    
-                    
-                    // dBResult = await CommunicationManager.PutApiRequest(ApiUrls.SolutionWebsiteList, httpContent, null, App.UserData.Authentification.Token);
-                } else {
-                    
-
-                    // dBResult = await CommunicationManager.PostApiRequest(ApiUrls.SolutionWebsiteList, httpContent, null, App.UserData.Authentification.Token);
-                }
-
-                //if (dBResult.RecordCount > 0) {
-                //    if (closeForm) {
-                //        ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible; 
-                //        dataViewSupport.FormShown = !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key.ToLower() == "beh_closeformaftersave".ToLower()).Value);
-                //    }
-                //} else { await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage); }
+                string json = JsonConvert.SerializeObject(parameters);
+                StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                dBResult = await CommunicationManager.ApiManagerPostRequest<DBResultMessage>(UrlSourceTypes.EicWebServerGenericSetTableApi, null, httpContent);
+                if (dBResult.RecordCount > 0) {
+                    if (closeForm) {
+                        ListForm.Visibility = Visibility.Hidden; ListView.Visibility = Visibility.Visible;
+                        dataViewSupport.FormShown = !bool.Parse(App.appRuntimeData.AppClientSettings.First(a => a.Key.ToLower() == "beh_closeformaftersave".ToLower()).Value);
+                    }
+                } else { await MainWindow.ShowMessageOnMainWindow(true, "Exception Error : " + dBResult.ErrorMessage); }
 
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
             MainWindow.ProgressRing = Visibility.Hidden;
@@ -214,12 +214,15 @@ namespace EasyITSystemCenter.Pages {
                 }
 
                 if (showForm == true) {
-                    WebBrowserData = XamlFormGenerators.StandardXamlFormIODataController(ref userForm, ref selectedRecord, ref RecordForSave, true, systemCustomPageList, newRec, copy).ObjectToJson(); 
-                 
+                    WebBrowserData = XamlFormGenerators.StandardXamlFormIODataController(ref userForm, ref selectedRecord, ref RecordForSave, true, systemCustomPageList, newRec, copy).ObjectToJson();
+
 
                     //REINIT WEBVIEW
-                    if (webBrowser.CoreWebView2 == null) { await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment); }
-                    devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
+                    if (webBrowser.CoreWebView2 == null) {
+                        TabMenuList.SetCurrentValue(System.Windows.Controls.Primitives.Selector.SelectedIndexProperty, 1);
+                        await webBrowser.EnsureCoreWebView2Async(App.appRuntimeData.WebViewEnvironment);
+                        devToolsContext = await webBrowser.CoreWebView2.CreateDevToolsContextAsync();
+                    }
 
                     //SET DATA TO FORM AND BROWSER
                     if (!DataLoaded && !string.IsNullOrWhiteSpace(WebBrowserData) && systemCustomPageList.UseIooverDom) { await DOMSetDataFromBrowser();
@@ -267,7 +270,7 @@ namespace EasyITSystemCenter.Pages {
 
             string json = JsonConvert.SerializeObject(parameters);
             StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-            var definedDataList = await CommunicationManager.ApiManagerPostRequest<DataTable>(UrlSourceTypes.EicWebServerGenericGetTableApi, null, httpContent);
+            definedDataList = await CommunicationManager.ApiManagerPostRequest<DataTable>(UrlSourceTypes.EicWebServerGenericGetTableApi, null, httpContent);
             DgListView.SetCurrentValue(ItemsControl.ItemsSourceProperty, definedDataList.AsDataView());
 
 

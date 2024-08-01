@@ -29,6 +29,17 @@ namespace EasyITCenter.ServerCoreConfiguration {
     /// </summary>
     public class ServerConfigurationServices {
 
+
+
+
+
+        internal static void ConfigureAutoMinify(ref IServiceCollection services) {
+            if (ServerConfigSettings.EnableAutoMinify)
+            {
+                services.AddWebOptimizer(cfg => { cfg.MinifyCssFiles(); cfg.MinifyJsFiles(); /*cfg.MinifyHtmlFiles();*/ });
+            }
+        }
+
         /// <summary>
         /// Custom Secure FTP Server
         /// </summary>
@@ -339,6 +350,7 @@ namespace EasyITCenter.ServerCoreConfiguration {
             try {
                 services.AddDbContext<EasyITCenterContext>(opt => opt.UseSqlServer(ServerConfigSettings.DatabaseConnectionString).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
                 //services.AddDbContext<Context>(options => options.UseFileContextDatabase(databaseName: "LocalDatabase",location: @"C:\Users\mjanatzek\Documents\Projects\test",password: "EasyITCenter"));
+                //services.AddDbContext<dbcontext>(options => options.UseSqlite("connectionstring"));
             } catch (Exception ex) { }
         }
     }

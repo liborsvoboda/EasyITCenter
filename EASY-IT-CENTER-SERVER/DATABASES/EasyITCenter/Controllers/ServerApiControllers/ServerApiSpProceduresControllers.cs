@@ -30,24 +30,68 @@ namespace EasyITCenter.Controllers {
         /// </summary>
         /// <param name="dataset"></param>
         /// <returns></returns>
-        [HttpPost("/ServerApi/DatabaseServices/SpProcedure/GetGenericDataListbyParams")]
+        [HttpPost("/ServerApi/DatabaseServices/SpProcedure/GetGenericDataListByParams")]
         [Consumes("application/json")]
         public async Task<string> GetSystemOperationsList(List<Dictionary<string, string>> dataset) {
             string procedureName = ""; string parameters = ""; string EntityTypeName = "";
-            foreach (Dictionary<string, string> param in dataset) {
-                if (param.Where(a => a.Key.ToLower() == "SpProcedure".ToLower()).Any()) {
+            foreach (Dictionary<string, string> param in dataset)
+            {
+                if (param.Where(a => a.Key.ToLower() == "SpProcedure".ToLower()).Any())
+                {
                     procedureName = param.Where(a => a.Key.ToLower() == "SpProcedure".ToLower()).First().Value;
-
-                } else if (param.Where(a => a.Key.ToLower() == "tableName".ToLower()).Any()) {
+                }
+                else if (param.Where(a => a.Key.ToLower() == "tableName".ToLower()).Any())
+                {
                     parameters += (parameters.Length > 0 ? "," : "") + $"@{param.Keys.First()} = N'{param.Values.First()}' ";
                     EntityTypeName = param.Values.First();
-
-                } else { parameters += (parameters.Length > 0 ? "," : "") + $"@{param.Keys.First()} = N'{param.Values.First()}' "; }
+                }
+                else { parameters += (parameters.Length > 0 ? "," : "") + $"@{param.Keys.First()} = N'{param.Values.First()}' "; }
             }
 
             DataView data = ((DataView)(await new EasyITCenterContext().ExecuteReaderAsync($"EXEC {procedureName} {parameters};")).DefaultView);
             return Newtonsoft.Json.JsonConvert.SerializeObject(data.Table, (Newtonsoft.Json.Formatting)Formatting.Indented);
 
+        }
+
+
+        /// <summary>
+        /// Generic Procedure Return Full DB Over Params 
+        /// SpProcedure, tableName, userRole, userId 
+        /// in List Dictionary string,string
+        /// Can Provide All PRocedure Datatypes 
+        /// </summary>
+        /// <param name="dataset"></param>
+        /// <returns></returns>
+        [HttpPost("/ServerApi/DatabaseServices/SpProcedure/SetGenericDataListByParams")]
+        [Consumes("application/json")]
+        public async Task<string> SetGenericDataListByParams(List<Dictionary<string, string>> dataset) {
+            string procedureName = ""; string parameters = ""; string EntityTypeName = ""; List<CustomMessageList>? data = null;
+            List<CustomMessageList> succesData = new List<CustomMessageList>(); succesData.Add(new CustomMessageList() { MessageList = "1" });
+
+            try {
+                foreach (Dictionary<string, string> param in dataset) {
+                    if (param.Where(a => a.Key.ToLower() == "SpProcedure".ToLower()).Any()) {
+                        procedureName = param.Where(a => a.Key.ToLower() == "SpProcedure".ToLower()).First().Value;
+                    } else if (param.Where(a => a.Key.ToLower() == "tableName".ToLower()).Any()) {
+                        parameters += (parameters.Length > 0 ? "," : "") + $"@{param.Keys.First()} = N'{param.Values.First()}' ";
+                        EntityTypeName = param.Values.First();
+                    } else { parameters += (parameters.Length > 0 ? "," : "") + $"@{param.Keys.First()} = N'{param.Values.First()}' "; }
+                }
+
+                data = new EasyITCenterContext().EasyITCenterCollectionFromSql<CustomMessageList>($"EXEC {procedureName} {parameters};");
+            } catch (Exception ex) {
+                return JsonSerializer.Serialize(new DBResultMessage() 
+                { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = DataOperations.GetUserApiErrMessage(ex) });
+            }
+
+            
+            if (data == succesData) {
+                return JsonSerializer.Serialize(new DBResultMessage() 
+                { Status = DBResult.success.ToString(), RecordCount = 1, ErrorMessage = null });
+            } else {
+                return JsonSerializer.Serialize(new DBResultMessage() 
+                { Status = DBResult.error.ToString(), RecordCount = 0, ErrorMessage = data[0].MessageList });
+            }
         }
 
 
