@@ -29,10 +29,10 @@ namespace EasyITSystemCenter.GlobalClasses {
         public string updateFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0], "Update");
         public string tempFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0], "Temp");
         public string galleryFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0], "Gallery");
-        public string appDataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "AddOn", "AppData");
-        public string webDataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "AddOn", "WebData");
-        public string webDataUrlPath = Path.Combine("AddOn", "WebData");
-        public string webSrvDataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "AddOn", "WebSrvData");
+        public string appDataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),"Data", "AddOn", "AppData");
+        public string webDataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", "AddOn", "WebData");
+        public string webSrvDataPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", "AddOn", "WebSrvData");
+        public string webDataUrlPath = Path.Combine("Data", "AddOn", "WebData"); //For OWIN
         public string appSettingFile = "config.json";
         public bool webServerRunning = false;
 

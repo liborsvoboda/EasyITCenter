@@ -18,6 +18,7 @@ using DocumentFormat.OpenXml.Office2010.Ink;
 using Fawdlstty.GitServerCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileProviders.Physical;
+using Microsoft.AspNetCore.ResponseCompression;
 
 
 namespace EasyITCenter {
@@ -71,7 +72,7 @@ namespace EasyITCenter {
             ServerConfigurationServices.ConfigureAuthentication(ref services);
             ServerConfigurationServices.ConfigureLetsEncrypt(ref services);
             services.AddHttpContextAccessor();
-            services.AddResponseCompression();
+            services.AddResponseCompression(options => { options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "text/javascript" }); });
             services.AddResponseCaching();
             services.AddMemoryCache();
             services.AddEndpointsApiExplorer();
@@ -230,7 +231,6 @@ namespace EasyITCenter {
 
             //app.UseExceptionHandler("/Error");
             app.UseRouting();
-
             app.UseDefaultFiles(new DefaultFilesOptions() { DefaultFileNames = new List<string> { "index.html" } });
             ServerModulesEnabling.EnableMarkdownAsHtmlFiles(ref app);
 
@@ -239,9 +239,9 @@ namespace EasyITCenter {
             //TODO define over Administration
             var staticFilesProvider = new FileExtensionContentTypeProvider();
             staticFilesProvider.Mappings[".javascript"] = "application/javascript"; staticFilesProvider.Mappings[".style"] = "text/css";
-            staticFilesProvider.Mappings[".data"] = "text/json"; staticFilesProvider.Mappings[".code"] = "text/cs";
-            staticFilesProvider.Mappings[".design"] = "text/xaml"; staticFilesProvider.Mappings[".archive"] = "application/zip";
-            staticFilesProvider.Mappings[".docu"] = "text/markdown";
+            staticFilesProvider.Mappings[".json"] = "text/json"; staticFilesProvider.Mappings[".code"] = "text/cs";
+            staticFilesProvider.Mappings[".xaml"] = "text/xaml"; staticFilesProvider.Mappings[".archive"] = "application/zip";
+            staticFilesProvider.Mappings[".markdown"] = "text/markdown";
 
             if (ServerConfigSettings.ConfigServerStartupOnHttps) { app.UseHttpsRedirection(); }
             //app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, ContentTypeProvider = staticFilesProvider, HttpsCompression = HttpsCompressionMode.Compress, DefaultContentType = "text/html" });
@@ -266,6 +266,7 @@ namespace EasyITCenter {
             app.UseResponseCompression();
             app.UseAuthentication();
             app.UseAuthorization();
+            ServerEnablingServices.EnableAutoMinify(ref app);
 
             //Authorized - after Auth INIT for Static Files
             websites.ForEach(website => {

@@ -61,9 +61,12 @@ namespace EasyITCenter.ServerCoreConfiguration {
         /// </summary>
         /// <param name="services"></param>
         internal static void ConfigureMarkdownAsHtmlFiles(ref IServiceCollection services) {
-            if (ServerConfigSettings.EnableAutoShowStaticMdAsHtml) { 
-                services.AddMarkdown(config => {
-                    config.ConfigureMarkdigPipeline = builder => {
+            if (ServerConfigSettings.EnableAutoShowStaticMdAsHtml)
+            {
+                services.AddMarkdown(config =>
+                {
+                    config.ConfigureMarkdigPipeline = builder =>
+                    {
                         builder.UseEmphasisExtras(Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Default)
                             .UsePipeTables().UseGridTables().UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
                             .UseAutoLinks().UseAbbreviations().UseEmojiAndSmiley(true).UseListExtras()
@@ -76,10 +79,8 @@ namespace EasyITCenter.ServerCoreConfiguration {
                             //.UseUrlRewriter(link => link.Url.Replace(!ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS ? "https://" : "http://", !ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS ? "http://" : "https://"))
                             .UseFigures().UseTaskLists().UseCustomContainers().UseGenericAttributes();//.Build();
                     };
-                }); 
+                });
             }
-
-
         }
         
 

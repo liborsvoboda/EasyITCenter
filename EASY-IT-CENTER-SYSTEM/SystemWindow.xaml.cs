@@ -1012,7 +1012,9 @@ namespace EasyITSystemCenter {
                     string pageName = name; string objectToInstantiate = "EasyITSystemCenter.Pages." + pageName.Split('_')[0] + "";
                     var objectType = Type.GetType(objectToInstantiate);
                     object pageForm = Activator.CreateInstance(objectType, false);
-                    if (((MainWindow)Application.Current.MainWindow).MultiSameTabsEnabled || TabablzControl.GetLoadedInstances().Last().GetOrderedHeaders().Count(a => a.Content.ToString() == DBOperations.DBTranslation(pageName.Split('_')[0]).GetAwaiter().GetResult()) == 0) { AddOrRemoveTab(await DBOperations.DBTranslation(pageName), pageForm); }
+                    if (((MainWindow)Application.Current.MainWindow).MultiSameTabsEnabled || TabablzControl.GetLoadedInstances().Last().GetOrderedHeaders().Count(a => a.Content.ToString() == DBOperations.DBTranslation(pageName.Split('_')[0]).GetAwaiter().GetResult()) == 0) 
+                    { AddOrRemoveTab(await DBOperations.DBTranslation(pageName), pageForm); }
+                 
                     else { InitialTabablzControl.SelectedIndex = TabablzControl.GetLoadedInstances().Last().GetOrderedHeaders().First(a => a.Content.ToString() == DBOperations.DBTranslation(pageName.Split('_')[0]).GetAwaiter().GetResult().ToString()).LogicalIndex; }
                     StringToFilter(cb_filter, "");
 

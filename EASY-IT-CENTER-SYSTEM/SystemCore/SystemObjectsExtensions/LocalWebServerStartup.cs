@@ -20,9 +20,9 @@ namespace EasyITSystemCenter {
 
             var staticFilesProvider = new FileExtensionContentTypeProvider();
             staticFilesProvider.Mappings[".javascript"] = "application/javascript"; staticFilesProvider.Mappings[".style"] = "text/css";
-            staticFilesProvider.Mappings[".data"] = "text/json"; staticFilesProvider.Mappings[".code"] = "text/cs";
-            staticFilesProvider.Mappings[".design"] = "text/xaml"; staticFilesProvider.Mappings[".archive"] = "application/zip";
-            staticFilesProvider.Mappings[".docu"] = "text/markdown";
+            staticFilesProvider.Mappings[".json"] = "text/json"; staticFilesProvider.Mappings[".code"] = "text/cs";
+            staticFilesProvider.Mappings[".xaml"] = "text/xaml"; staticFilesProvider.Mappings[".archive"] = "application/zip";
+            staticFilesProvider.Mappings[".markdown"] = "text/markdown";
 
             StaticFileOptions staticStorage = new StaticFileOptions {
                 ServeUnknownFileTypes = true, ContentTypeProvider = staticFilesProvider, DefaultContentType = "text/html",

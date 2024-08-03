@@ -30,13 +30,20 @@ namespace EasyITCenter.ServerCoreConfiguration {
     public class ServerConfigurationServices {
 
 
-
-
-
+        /// <summary>
+        /// Configure AutoMinify Js,Css 
+        /// </summary>
+        /// <param name="services"></param>
         internal static void ConfigureAutoMinify(ref IServiceCollection services) {
             if (ServerConfigSettings.EnableAutoMinify)
             {
-                services.AddWebOptimizer(cfg => { cfg.MinifyCssFiles(); cfg.MinifyJsFiles(); /*cfg.MinifyHtmlFiles();*/ });
+                services.AddWebOptimizer(cfg =>
+                {
+                    cfg.MinifyCssFiles(); cfg.MinifyJsFiles();/*cfg.MinifyHtmlFiles();*/
+                }, option => {  
+                    option.EnableTagHelperBundling = true; 
+                    option.AllowEmptyBundle = true;
+                });
             }
         }
 

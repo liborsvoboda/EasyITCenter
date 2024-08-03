@@ -121,13 +121,13 @@ namespace EasyITCenter {
                 webBuilder.UseStaticWebAssets();
                 webBuilder.UseStartup<Startup>();
 
-                //TODO umoznuje naslouchat na vice portech soucasne i s ruznymi protokoly 
+              
+                //udelaz seznam naslouchani na urcitych portech portal=1,moduly=2 udela to poradek
                 //webBuilder.UseUrls(new string[] { "http://*:5000", "https://*:5001" });
 
                 if (ServerConfigSettings.ConfigServerStartupHTTPAndHTTPS) {
                     webBuilder.UseUrls($"https://*:{ServerConfigSettings.ConfigServerStartupHttpsPort}",$"http://*:{ServerConfigSettings.ConfigServerStartupHttpPort}");
-                }
-                else {
+                } else {
                     webBuilder.UseUrls(ServerConfigSettings.ConfigServerStartupOnHttps ? $"https://*:{ServerConfigSettings.ConfigServerStartupHttpsPort}" : $"http://*:{ServerConfigSettings.ConfigServerStartupHttpPort}");
                 }
                 if (ServerConfigSettings.ConfigServerStartupOnHttps && ServerConfigSettings.ConfigServerGetLetsEncrypt) {

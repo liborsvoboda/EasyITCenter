@@ -18,12 +18,24 @@ namespace EasyITCenter.ServerCoreConfiguration {
     /// </summary>
     public class ServerEnablingServices {
 
+
+
+        /// <summary>
+        /// Enable Automatic Js,Css Minification
+        /// </summary>
+        /// <param name="app"></param>
+        internal static void EnableAutoMinify(ref IApplicationBuilder app) {
+            if (ServerConfigSettings.EnableAutoMinify) { app.UseWebOptimizer(); }
+        }
+               
+
         /// <summary>
         /// Enable Server Logging in Debug Mode
         /// </summary>
         internal static void EnableLogging(ref IApplicationBuilder app) {
-            if (ServerRuntimeData.DebugMode) { app.UseHttpLogging(); }
-        }
+                if (ServerRuntimeData.DebugMode) { app.UseHttpLogging(); }
+         }
+
 
         /// <summary>
         /// Server Cors Configuration
