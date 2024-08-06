@@ -46,6 +46,7 @@ namespace EasyITCenter.DBModel
         public virtual DbSet<BusinessReceiptList> BusinessReceiptLists { get; set; } = null!;
         public virtual DbSet<BusinessReceiptSupportList> BusinessReceiptSupportLists { get; set; } = null!;
         public virtual DbSet<BusinessWarehouseList> BusinessWarehouseLists { get; set; } = null!;
+        public virtual DbSet<DeveloperToolGroupList> DeveloperToolGroupLists { get; set; } = null!;
         public virtual DbSet<DocSrvDocTemplateList> DocSrvDocTemplateLists { get; set; } = null!;
         public virtual DbSet<DocSrvDocumentationCodeLibraryList> DocSrvDocumentationCodeLibraryLists { get; set; } = null!;
         public virtual DbSet<DocSrvDocumentationGroupList> DocSrvDocumentationGroupLists { get; set; } = null!;
@@ -73,6 +74,7 @@ namespace EasyITCenter.DBModel
         public virtual DbSet<ServerHealthCheckTaskList> ServerHealthCheckTaskLists { get; set; } = null!;
         public virtual DbSet<ServerLiveDataMonitorList> ServerLiveDataMonitorLists { get; set; } = null!;
         public virtual DbSet<ServerModuleAndServiceList> ServerModuleAndServiceLists { get; set; } = null!;
+        public virtual DbSet<ServerParameterList> ServerParameterLists { get; set; } = null!;
         public virtual DbSet<ServerSettingList> ServerSettingLists { get; set; } = null!;
         public virtual DbSet<ServerStaticOrMvcDefPathList> ServerStaticOrMvcDefPathLists { get; set; } = null!;
         public virtual DbSet<ServerToolPanelDefinitionList> ServerToolPanelDefinitionLists { get; set; } = null!;
@@ -91,6 +93,7 @@ namespace EasyITCenter.DBModel
         public virtual DbSet<SolutionStaticFileList> SolutionStaticFileLists { get; set; } = null!;
         public virtual DbSet<SolutionStaticFilePathList> SolutionStaticFilePathLists { get; set; } = null!;
         public virtual DbSet<SolutionTaskList> SolutionTaskLists { get; set; } = null!;
+        public virtual DbSet<SolutionToolGroupList> SolutionToolGroupLists { get; set; } = null!;
         public virtual DbSet<SolutionUserList> SolutionUserLists { get; set; } = null!;
         public virtual DbSet<SolutionUserRoleList> SolutionUserRoleLists { get; set; } = null!;
         public virtual DbSet<SolutionWebsiteList> SolutionWebsiteLists { get; set; } = null!;
@@ -607,6 +610,22 @@ namespace EasyITCenter.DBModel
                     .HasConstraintName("FK_WarehouseList_UserList");
             });
 
+            modelBuilder.Entity<DeveloperToolGroupList>(entity =>
+            {
+                entity.Property(e => e.ReadmeUrl).IsFixedLength();
+
+                entity.HasOne(d => d.DeveloperToolGroup)
+                    .WithMany(p => p.InverseDeveloperToolGroup)
+                    .HasForeignKey(d => d.DeveloperToolGroupId)
+                    .HasConstraintName("FK_DeveloperToolGroupList_DeveloperToolGroupList");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.DeveloperToolGroupLists)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DeveloperToolGroupList_UserList");
+            });
+
             modelBuilder.Entity<DocSrvDocTemplateList>(entity =>
             {
                 entity.HasOne(d => d.Group)
@@ -870,6 +889,15 @@ namespace EasyITCenter.DBModel
                     .HasConstraintName("FK_ServerModuleAndServiceList_UserList");
             });
 
+            modelBuilder.Entity<ServerParameterList>(entity =>
+            {
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.ServerParameterLists)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ServerParameterList_SolutionUserList");
+            });
+
             modelBuilder.Entity<ServerSettingList>(entity =>
             {
                 entity.HasOne(d => d.User)
@@ -1060,6 +1088,20 @@ namespace EasyITCenter.DBModel
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SolutionTaskList_UserList");
+            });
+
+            modelBuilder.Entity<SolutionToolGroupList>(entity =>
+            {
+                entity.HasOne(d => d.SolutionToolGroup)
+                    .WithMany(p => p.InverseSolutionToolGroup)
+                    .HasForeignKey(d => d.SolutionToolGroupId)
+                    .HasConstraintName("FK_SolutionToolGroupList_SolutionToolGroupList");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.SolutionToolGroupLists)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SolutionToolGroupList_UserList");
             });
 
             modelBuilder.Entity<SolutionUserList>(entity =>

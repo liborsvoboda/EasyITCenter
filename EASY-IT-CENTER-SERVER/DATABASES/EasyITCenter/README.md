@@ -53,4 +53,12 @@ jako přidání sloupce, změna typu, nahrazení stringu
 *   a.GetDto().ToCsv a.GetDto().ToJson/xml 
 *   copy context EasyITCenterContext.CreateCopy()
 *   TODO Integrity Operations db.Merge, 
-*   
+
+
+
+#   Scaffold Command
+
+dotnet ef dbcontext scaffold "Data Source=192.168.1.141,1433; Initial Catalog=EasyITCenter; User ID=easyitcenter;\
+Password=easyitcenter;TrustServerCertificate=True;command timeout=300;" Microsoft.EntityFrameworkCore.SqlServer --context ScaffoldContext
+--context-dir DATABASES/EasyITCenter/DBModel --output-dir DATABASES/EasyITCenter/NewEntities --context-namespace EasyITCenter.DBModel
+--namespace EasyITCenter.DBModel --data-annotations --no-onconfiguring --force --no-build --verbose

@@ -41,6 +41,7 @@ namespace EasyITCenter.DBModel
             BusinessReceiptLists = new HashSet<BusinessReceiptList>();
             BusinessReceiptSupportLists = new HashSet<BusinessReceiptSupportList>();
             BusinessWarehouseLists = new HashSet<BusinessWarehouseList>();
+            DeveloperToolGroupLists = new HashSet<DeveloperToolGroupList>();
             DocSrvDocTemplateLists = new HashSet<DocSrvDocTemplateList>();
             DocSrvDocumentationCodeLibraryLists = new HashSet<DocSrvDocumentationCodeLibraryList>();
             DocSrvDocumentationGroupLists = new HashSet<DocSrvDocumentationGroupList>();
@@ -63,6 +64,7 @@ namespace EasyITCenter.DBModel
             ServerHealthCheckTaskLists = new HashSet<ServerHealthCheckTaskList>();
             ServerLiveDataMonitorLists = new HashSet<ServerLiveDataMonitorList>();
             ServerModuleAndServiceLists = new HashSet<ServerModuleAndServiceList>();
+            ServerParameterLists = new HashSet<ServerParameterList>();
             ServerSettingLists = new HashSet<ServerSettingList>();
             ServerStaticOrMvcDefPathLists = new HashSet<ServerStaticOrMvcDefPathList>();
             ServerToolPanelDefinitionLists = new HashSet<ServerToolPanelDefinitionList>();
@@ -80,6 +82,7 @@ namespace EasyITCenter.DBModel
             SolutionStaticFileLists = new HashSet<SolutionStaticFileList>();
             SolutionStaticFilePathLists = new HashSet<SolutionStaticFilePathList>();
             SolutionTaskLists = new HashSet<SolutionTaskList>();
+            SolutionToolGroupLists = new HashSet<SolutionToolGroupList>();
             SolutionWebsiteLists = new HashSet<SolutionWebsiteList>();
             SystemCustomPageLists = new HashSet<SystemCustomPageList>();
             SystemDocumentAdviceLists = new HashSet<SystemDocumentAdviceList>();
@@ -204,6 +207,8 @@ namespace EasyITCenter.DBModel
         [InverseProperty("User")]
         public virtual ICollection<BusinessWarehouseList> BusinessWarehouseLists { get; set; }
         [InverseProperty("User")]
+        public virtual ICollection<DeveloperToolGroupList> DeveloperToolGroupLists { get; set; }
+        [InverseProperty("User")]
         public virtual ICollection<DocSrvDocTemplateList> DocSrvDocTemplateLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<DocSrvDocumentationCodeLibraryList> DocSrvDocumentationCodeLibraryLists { get; set; }
@@ -248,6 +253,8 @@ namespace EasyITCenter.DBModel
         [InverseProperty("User")]
         public virtual ICollection<ServerModuleAndServiceList> ServerModuleAndServiceLists { get; set; }
         [InverseProperty("User")]
+        public virtual ICollection<ServerParameterList> ServerParameterLists { get; set; }
+        [InverseProperty("User")]
         public virtual ICollection<ServerSettingList> ServerSettingLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<ServerStaticOrMvcDefPathList> ServerStaticOrMvcDefPathLists { get; set; }
@@ -281,6 +288,8 @@ namespace EasyITCenter.DBModel
         public virtual ICollection<SolutionStaticFilePathList> SolutionStaticFilePathLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<SolutionTaskList> SolutionTaskLists { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<SolutionToolGroupList> SolutionToolGroupLists { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<SolutionWebsiteList> SolutionWebsiteLists { get; set; }
         [InverseProperty("User")]

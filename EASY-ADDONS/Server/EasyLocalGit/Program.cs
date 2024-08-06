@@ -78,7 +78,6 @@ namespace EasyGitServer
 
                 Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder => {
 
-
                     if (CheckProtocol().ToLower() == "https") {
                         webBuilder.ConfigureKestrel(options => {
                             options.AddServerHeader = true;
@@ -100,7 +99,6 @@ namespace EasyGitServer
                                 //if (ServerRuntimeData.DebugMode) {
                                 //    opt.UseConnectionLogging();
                                 //}
-
                             });
                         });
                     }

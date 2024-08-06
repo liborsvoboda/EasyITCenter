@@ -1,9 +1,6 @@
 ﻿using EasyGitServer.Services;
 using EasyGitServer.Settings;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using EasyGitServer.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,11 +15,15 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using EasyGitServer.Settings;
 
-namespace EasyGitServer
-{
-    public class Startup
-    {
+namespace EasyGitServer {
+
+    public class Startup {
+
         public Startup(IConfiguration configuration) { Configuration = configuration; }
         public IConfiguration Configuration { get; }
 
@@ -46,44 +47,60 @@ namespace EasyGitServer
 
 
             string json = File.ReadAllText(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", "config.txt"));
-             services.AddDbContext<GitServerContext>(options => options.UseSqlServer(json));
+            services.AddDbContext<GitServerContext>(options => options.UseSqlServer(json));
 
-     
+
 
             // Add framework services.
-            services.AddMvc(option => {
+
+            services.AddMvc(option =>
+            {
                 option.EnableEndpointRouting = false;
-            });
+            }).AddRazorPagesOptions(opt =>
+            {
+                opt.RootDirectory = "/Github";
+                //opt.Conventions.AuthorizeFolder("/DefaultWebPages/GlobalLogin");
+            }); ;
             services.AddOptions();
 
-            services.AddAuthentication(options => {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            }).AddCookie(options => {
-                options.AccessDeniedPath = "/User/Login";
-                options.LoginPath = "/User/Login";
-            }).AddBasic();
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //}).AddCookie(options =>
+            //{
+            //    options.AccessDeniedPath = "/Github/Login";
+            //    options.LoginPath = "/Github/Login";
+            //}).AddBasic();
 
-            services.AddOrchardCore();
+
+           // services.AddEndpointsApiExplorer();
+            services.AddRazorPages();
+           // services.AddOrchardCms();
+           services.AddOrchardCore();
 
             // Add settings
-            services.Configure<GitSettings>(options => {
-                options.BasePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),"EasyGitServer");
+            services.Configure<GitSettings>(options =>
+            {
+                options.BasePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "EasyGitServer");
                 options.GitPath = "git";
             });
 
             // Add git services
             services.AddTransient<GitRepositoryService>();
-			services.AddTransient<GitFileService>();
+            services.AddTransient<GitFileService>();
             services.AddTransient<IGitDbRepository<User>, GitDbRepository<User>>();
             services.AddTransient<IGitDbRepository<GitDbRepository>, GitDbRepository<GitDbRepository>>();
+            services.AddRouting();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, GitServerContext gitServerContext) {
-            try {
+            try
+            {
                 if (gitServerContext.Users.Count() == 0) { }
-            } catch {
+            } catch
+            {
                 gitServerContext.Database.EnsureCreated();
                 gitServerContext.Users.Add(new User() { Name = "admin", Password = "admin", Nickname = "admin", Email = "", WebSite = "", IsSystemAdministrator = true, CreationDate = DateTime.UtcNow });
                 gitServerContext.SaveChanges();
@@ -98,15 +115,30 @@ namespace EasyGitServer
                 app.UseExceptionHandler("/error");
             }
 
-            app.UseOrchardCore(cfg => {/* cfg.UseOrchardCore();*//*cfg.UseDirectoryBrowser();*/ });
-            app.UseAuthentication();
+            app.UseHsts();
+            app.UseRouting();
+           // app.UseAuthentication();
             app.UseStaticFiles();
+            app.UseDefaultFiles();
+
+
+            //app.UseRouter(routes => { routes.MapRoute});
             app.UseMvc(routes => RouteConfig.RegisterRoutes(routes));
-		}
+            app.UseOrchardCore(cfg => { /*cfg.UseOrchardCore();*//*cfg.UseDirectoryBrowser();*/ });
+            
+            
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapRazorPages();
+                //endpoints.MapDefaultControllerRoute();
+               
+                //endpoints.MapControllerRoute(name: "sites", pattern: "{controller=sites}/{action=Index}/{id?}");
+            });
+            
+          
 
 
-        public static string CreateDatabaseScript(GitServerContext context) {
-            return context.Database.GenerateCreateScript();
         }
 
         //Functions Part
@@ -117,10 +149,12 @@ namespace EasyGitServer
         /// <returns></returns>
         public static X509Certificate2 GetSelfSignedCertificateFromFile(string certificateFilename, string password) {
             byte[]? certificate = null;
-            try {
+            try
+            {
                 certificate = File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", certificateFilename));
                 return new X509Certificate2(certificate, password.Length > 0 ? password : "");
-            } catch (Exception Ex) {
+            } catch (Exception Ex)
+            {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(Environment.NewLine + Ex.Message + Environment.NewLine);
             }
@@ -138,7 +172,8 @@ namespace EasyGitServer
             var years = 10;
             var hashAlgorithm = HashAlgorithmName.SHA256;
 
-            using (var rsa = RSA.Create(rsaKeySize)) {
+            using (var rsa = RSA.Create(rsaKeySize))
+            {
                 var request = new CertificateRequest($"cn={commonName}", rsa, hashAlgorithm, RSASignaturePadding.Pkcs1);
 
                 SubjectAlternativeNameBuilder subjectAlternativeNameBuilder = new();
@@ -147,11 +182,11 @@ namespace EasyGitServer
                 X509BasicConstraintsExtension extension = new();
 
                 request.CertificateExtensions.Add(
-                  new X509KeyUsageExtension(X509KeyUsageFlags.DataEncipherment | X509KeyUsageFlags.KeyEncipherment | X509KeyUsageFlags.DigitalSignature | X509KeyUsageFlags.KeyCertSign, false)
+                    new X509KeyUsageExtension(X509KeyUsageFlags.DataEncipherment | X509KeyUsageFlags.KeyEncipherment | X509KeyUsageFlags.DigitalSignature | X509KeyUsageFlags.KeyCertSign, false)
                 );
 
                 request.CertificateExtensions.Add(
-                  new X509EnhancedKeyUsageExtension(
+                    new X509EnhancedKeyUsageExtension(
                     new OidCollection { new Oid("1.3.6.1.5.5.7.3.1"), new Oid("1.3.6.1.5.5.7.3.2") }, false)
                 );
 
@@ -159,7 +194,8 @@ namespace EasyGitServer
                 var certificate = request.CreateSelfSigned(DateTimeOffset.Now.AddDays(-1), notAfter);
                 if (OperatingSystem.IsWindows()) { certificate.FriendlyName = Assembly.GetExecutingAssembly().GetName().FullName; }
 
-                try { //Saving Autogenerate Certificate
+                try
+                { //Saving Autogenerate Certificate
                     byte[] exportedData = certificate.Export(X509ContentType.Pfx, password);
                     File.WriteAllBytes(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", "AutoGeneratedCertificate.pfx"), exportedData);
                 } catch { }
@@ -168,5 +204,5 @@ namespace EasyGitServer
             }
         }
 
-    }
+    }   
 }

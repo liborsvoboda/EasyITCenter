@@ -30,6 +30,9 @@ namespace EasyGitServer.Controllers
         {
             return View();
         }
+
+
+        //[HttpPost("/Github/Shared/Login")]
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
@@ -44,19 +47,20 @@ namespace EasyGitServer.Controllers
                     identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
                     var principal = new ClaimsPrincipal(identity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-                    return Redirect("/");
+                    return Redirect("Github/Shared/Home");
                 }
             }
             return View();
         }
 
-
+        
         public IActionResult Register()
         {
             return View();
         }
 
 
+        //[HttpPost("/Github/Shared/Register")]
         [HttpPost]
         public IActionResult Register(RegisterModel model)
         {
@@ -75,7 +79,7 @@ namespace EasyGitServer.Controllers
                     WebSite = null
                 }); 
 
-                return Redirect("/");
+                return Redirect("Github/Shared/Home");
             }
             return View();
         }

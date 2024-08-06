@@ -9,46 +9,47 @@ namespace EasyGitServer
 		public static void RegisterRoutes(IRouteBuilder routeBuilder)
 		{
 			routeBuilder.MapRoute(
-				"Home",
-                "{controller=Home}/{action=Home}/{id?}"
-			);
+                "Github/Home",
+                "github/{controller=Home}/{action=Home}/{id?}"
+            );
 
 			#region Routes for viewing the file tree
 			routeBuilder.MapRoute(
 				"RedirectGitLink",
-				"{userName}/{repoName}.git",
+                "github/{userName}/{repoName}.git",
 				new { controller = "FileView", action = "RedirectGitLink" },
 				new { method = new HttpMethodRouteConstraint("GET") }
 			);
 
 			routeBuilder.MapRoute(
-				"GetRepositoryHomeView",
-                "{userName}/{repoName}",
+                "GetRepositoryHomeView",
+                "github/{userName}/{repoName}",
 				new { controller = "FileView", action = "GetTreeView", id = "master", path = string.Empty },
 				new { method = new HttpMethodRouteConstraint("GET") }
 			);
 
 			routeBuilder.MapRoute(
-				"GetTreeView",
-                "{userName}/{repoName}/tree/{id}/{*path}",
+                "GetTreeView",
+                "github/{userName}/{repoName}/tree/{id}/{*path}",
 				new { controller = "FileView", action = "GetTreeView" },
 				new { method = new HttpMethodRouteConstraint("GET") }
 			);
 
 			routeBuilder.MapRoute(
-				"GetBlobView",
-                "{userName}/{repoName}/blob/{id}/{*path}",
+                "GetBlobView",
+                "github/{userName}/{repoName}/blob/{id}/{*path}",
 				new { controller = "FileView", action = "GetBlobView" },
 				new { method = new HttpMethodRouteConstraint("GET") }
 			);
 
 			routeBuilder.MapRoute(
-				"GetRawBlob",
-                "{userName}/{repoName}/raw/{id}/{*path}",
+                "GetRawBlob",
+                "github/{userName}/{repoName}/raw/{id}/{*path}",
 				new { controller = "FileView", action = "GetRawBlob" },
 				new { method = new HttpMethodRouteConstraint("GET") }
 			);
-			#endregion
-		}
+
+            #endregion
+        }
     }
 }
