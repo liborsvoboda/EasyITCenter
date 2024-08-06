@@ -21,6 +21,7 @@ namespace EasyITCenter.Controllers {
         /// </summary>
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
 
+
         public ServerApiUsersApi(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment) {
             _hostingEnvironment = hostingEnvironment;
         }

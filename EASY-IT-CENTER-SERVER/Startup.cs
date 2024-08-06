@@ -19,6 +19,7 @@ using Fawdlstty.GitServerCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileProviders.Physical;
 using Microsoft.AspNetCore.ResponseCompression;
+using Ninject.Activation;
 
 
 namespace EasyITCenter {
@@ -241,7 +242,7 @@ namespace EasyITCenter {
             staticFilesProvider.Mappings[".javascript"] = "application/javascript"; staticFilesProvider.Mappings[".style"] = "text/css";
             staticFilesProvider.Mappings[".json"] = "text/json"; staticFilesProvider.Mappings[".code"] = "text/cs";
             staticFilesProvider.Mappings[".xaml"] = "text/xaml"; staticFilesProvider.Mappings[".archive"] = "application/zip";
-            staticFilesProvider.Mappings[".markdown"] = "text/markdown";
+            staticFilesProvider.Mappings[".markdown"] = "text/markdown"; staticFilesProvider.Mappings[".snippets"] = "text/plain";
 
             if (ServerConfigSettings.ConfigServerStartupOnHttps) { app.UseHttpsRedirection(); }
             //app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true, ContentTypeProvider = staticFilesProvider, HttpsCompression = HttpsCompressionMode.Compress, DefaultContentType = "text/html" });

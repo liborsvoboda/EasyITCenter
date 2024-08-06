@@ -16,7 +16,7 @@
 
             try { if (HttpContext.Connection.RemoteIpAddress != null && user != null) {
                     string clientIPAddr = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).AddressList.First(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToString();
-                    if (!string.IsNullOrWhiteSpace(clientIPAddr)) { SoftwareTriggers.WriteVisit(clientIPAddr, user.Id, username); }
+                    if (!string.IsNullOrWhiteSpace(clientIPAddr)) { DatabaseContextExtensions.WriteVisit(clientIPAddr, user.Id, username); }
                 }
             } catch { }
 

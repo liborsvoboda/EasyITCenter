@@ -48,6 +48,7 @@ namespace EasyGitServer
             string json = File.ReadAllText(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", "config.txt"));
              services.AddDbContext<GitServerContext>(options => options.UseSqlServer(json));
 
+     
 
             // Add framework services.
             services.AddMvc(option => {
@@ -63,6 +64,7 @@ namespace EasyGitServer
                 options.LoginPath = "/User/Login";
             }).AddBasic();
 
+            services.AddOrchardCore();
 
             // Add settings
             services.Configure<GitSettings>(options => {
@@ -78,25 +80,25 @@ namespace EasyGitServer
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, GitServerContext gitServerContext)
-        {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, GitServerContext gitServerContext) {
             try {
-                if (gitServerContext.Users.Count() == 0) { } 
-            }  catch {
+                if (gitServerContext.Users.Count() == 0) { }
+            } catch {
                 gitServerContext.Database.EnsureCreated();
                 gitServerContext.Users.Add(new User() { Name = "admin", Password = "admin", Nickname = "admin", Email = "", WebSite = "", IsSystemAdministrator = true, CreationDate = DateTime.UtcNow });
                 gitServerContext.SaveChanges();
             }
 
-			if(env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
-			else
-			{
-				app.UseExceptionHandler("/error");
-			}
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/error");
+            }
 
+            app.UseOrchardCore(cfg => {/* cfg.UseOrchardCore();*//*cfg.UseDirectoryBrowser();*/ });
             app.UseAuthentication();
             app.UseStaticFiles();
             app.UseMvc(routes => RouteConfig.RegisterRoutes(routes));

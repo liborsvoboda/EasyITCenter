@@ -15,7 +15,7 @@
                 try {
                     if (HttpContext.Connection.RemoteIpAddress != null) {
                         string clientIPAddr = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).AddressList.First(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToString();
-                        if (!string.IsNullOrWhiteSpace(clientIPAddr)) { SoftwareTriggers.WriteWebVisit(clientIPAddr); }
+                        if (!string.IsNullOrWhiteSpace(clientIPAddr)) { DatabaseContextExtensions.WriteWebVisit(clientIPAddr); }
                         using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
                             IpIsBlocked = new EasyITCenterContext().WebBannedIpAddressLists.Where(a => a.IpAddress == clientIPAddr && a.Active).Count() > 0;
                         }
@@ -57,7 +57,7 @@
             try {
                 if (HttpContext.Connection.RemoteIpAddress != null) {
                     string clientIPAddr = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).AddressList.First(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToString();
-                    if (!string.IsNullOrWhiteSpace(clientIPAddr)) { SoftwareTriggers.WriteWebVisit(clientIPAddr); }
+                    if (!string.IsNullOrWhiteSpace(clientIPAddr)) { DatabaseContextExtensions.WriteWebVisit(clientIPAddr); }
                     using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
                         IpIsBlocked = new EasyITCenterContext().WebBannedIpAddressLists.Where(a => a.IpAddress == clientIPAddr && a.Active).Count() > 0;
                     }
@@ -99,7 +99,7 @@
             try {
                 if (HttpContext.Connection.RemoteIpAddress != null) {
                     string clientIPAddr = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).AddressList.First(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToString();
-                    if (!string.IsNullOrWhiteSpace(clientIPAddr)) { SoftwareTriggers.WriteWebVisit(clientIPAddr); }
+                    if (!string.IsNullOrWhiteSpace(clientIPAddr)) { DatabaseContextExtensions.WriteWebVisit(clientIPAddr); }
                     using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
                         IpIsBlocked = new EasyITCenterContext().WebBannedIpAddressLists.Where(a => a.IpAddress == clientIPAddr && a.Active).Count() > 0;
                     }
@@ -143,7 +143,7 @@
             try {
                 if (HttpContext.Connection.RemoteIpAddress != null) {
                     string clientIPAddr = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).AddressList.First(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToString();
-                    if (!string.IsNullOrWhiteSpace(clientIPAddr)) { SoftwareTriggers.WriteWebVisit(clientIPAddr); }
+                    if (!string.IsNullOrWhiteSpace(clientIPAddr)) { DatabaseContextExtensions.WriteWebVisit(clientIPAddr); }
                     using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
                         IpIsBlocked = new EasyITCenterContext().WebBannedIpAddressLists.Where(a => a.IpAddress == clientIPAddr && a.Active).Count() > 0;
                     }
@@ -181,7 +181,7 @@
             try {
                 if (HttpContext.Connection.RemoteIpAddress != null) {
                     string clientIPAddr = Dns.GetHostEntry(HttpContext.Connection.RemoteIpAddress).AddressList.First(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).ToString();
-                    if (!string.IsNullOrWhiteSpace(clientIPAddr)) { SoftwareTriggers.WriteWebVisit(clientIPAddr); }
+                    if (!string.IsNullOrWhiteSpace(clientIPAddr)) { DatabaseContextExtensions.WriteWebVisit(clientIPAddr); }
                     using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted })) {
                         IpIsBlocked = new EasyITCenterContext().WebBannedIpAddressLists.Where(a => a.IpAddress == clientIPAddr && a.Active).Count() > 0;
                     }

@@ -36,12 +36,6 @@ namespace EasyITSystemCenter.GlobalOperations {
                         Convert.ChangeType(value, value.GetTypeCode());
                         break;
 
-                    case "dateFormat":
-                        value = DateTime.Now.ToString(value);
-                        Convert.ChangeType(value, value.GetTypeCode());
-                        result = true;
-                        break;
-
                     case "time":
                         result = TimeSpan.TryParse(value, out TimeSpan tempTimeValue);
                         Convert.ChangeType(value, value.GetTypeCode());
@@ -56,12 +50,6 @@ namespace EasyITSystemCenter.GlobalOperations {
                     case "datetime":
                         result = DateTime.TryParse(value, out DateTime tempDateTimeValue);
                         Convert.ChangeType(value, value.GetTypeCode());
-                        break;
-
-                    case "datetimeFormat":
-                        value = DateTime.Now.ToString(value);
-                        Convert.ChangeType(value, value.GetTypeCode());
-                        result = true;
                         break;
 
                     default: throw new Exception();

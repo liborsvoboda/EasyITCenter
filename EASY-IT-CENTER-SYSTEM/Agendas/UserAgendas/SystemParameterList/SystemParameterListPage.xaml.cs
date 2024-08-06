@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -20,12 +21,7 @@ namespace EasyITSystemCenter.Pages {
         public static DataViewSupport dataViewSupport = new DataViewSupport();
         public static SystemParameterList selectedRecord = new SystemParameterList();
 
-        //Param types list
-        private readonly ObservableCollection<GenericValue> ParamTypes = new ObservableCollection<GenericValue>() {
-                                                               new GenericValue() { Value = "bit" },new GenericValue() { Value = "string" },new GenericValue() { Value = "int" },new GenericValue() { Value = "numeric" },
-            new GenericValue() { Value = "date" },new GenericValue() { Value = "dateFormat" },new GenericValue() { Value = "time" },new GenericValue() { Value = "timeFormat" },new GenericValue() { Value = "datetime" },new GenericValue() { Value = "datetimeFormat" },
-                                                             };
-
+        private List<SolutionMixedEnumList> mixedEnumTypesList = new List<SolutionMixedEnumList>();
         private List<SystemParameterList> parameterList = new List<SystemParameterList>();
 
         public SystemParameterListPage() {
@@ -36,17 +32,20 @@ namespace EasyITSystemCenter.Pages {
                 _ = FormOperations.TranslateFormFields(ListForm);
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
-            cb_type.ItemsSource = ParamTypes;
-
             _ = LoadDataList();
             SetRecord(false);
         }
+
+
 
         //change datasource
         public async Task<bool> LoadDataList() {
             List<SolutionUserList> userList = new List<SolutionUserList>();
             MainWindow.ProgressRing = Visibility.Visible;
-            try {
+            try
+            {
+
+                mixedEnumTypesList = await DBOperations.LoadInheritedDataList("DataType");
                 parameterList = await CommunicationManager.GetApiRequest<List<SystemParameterList>>(ApiUrls.EasyITCenterSystemParameterList, App.UserData.Authentification.Id.ToString(), App.UserData.Authentification.Token);
                 userList = await CommunicationManager.GetApiRequest<List<SolutionUserList>>(ApiUrls.EasyITCenterSolutionUserList, null, App.UserData.Authentification.Token);
 
@@ -55,6 +54,7 @@ namespace EasyITSystemCenter.Pages {
                     param.User = userList.Where(a => a.Id == param.UserId).Select(a => a.Username).FirstOrDefault();
                 });
 
+                cb_type.ItemsSource = mixedEnumTypesList.OrderBy(a=>a.Name);
                 DgListView.ItemsSource = parameterList;
                 DgListView.Items.Refresh();
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
@@ -62,37 +62,34 @@ namespace EasyITSystemCenter.Pages {
         }
 
         // set translate columns in listView
-        private void DgListView_Translate(object sender, EventArgs ex) {
-            ((DataGrid)sender).Columns.ToList().ForEach(e => {
-                string headername = e.Header.ToString();
-                if (headername == "SystemName") { e.Header = Resources["systemName"].ToString(); e.DisplayIndex = 1; }
-                else if (headername == "Translation") { e.Header = Resources["translation"].ToString(); e.DisplayIndex = 2; }
-                else if (headername == "Value") { e.Header = Resources["value"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "Type") { e.Header = Resources["type"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "Description") { e.Header = Resources["description"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "User") { e.Header = Resources["userName"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
-                else if (headername == "TimeStamp") { e.Header = Resources["timestamp"].ToString(); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
-                else if (headername == "Id") e.DisplayIndex = 0;
-                else if (headername == "UserId") e.Visibility = Visibility.Hidden;
+        private async void DgListView_Translate(object sender, EventArgs ex) {
+            ((DataGrid)sender).Columns.ToList().ForEach(async e => {
+                string headername = e.Header.ToString().ToLower();
+                if (headername == "SystemName".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 1; }
+                else if (headername == "Translation".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.DisplayIndex = 2; }
+                else if (headername == "Value".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "Type".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "Description".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "User".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; }
+                else if (headername == "TimeStamp".ToLower()) { e.Header = await DBOperations.DBTranslation(headername); e.CellStyle = ProgramaticStyles.gridTextRightAligment; e.DisplayIndex = DgListView.Columns.Count - 1; }
+                else if (headername == "Id".ToLower()) e.DisplayIndex = 0;
+                else if (headername == "UserId".ToLower()) e.Visibility = Visibility.Hidden;
             });
         }
 
         //change filter fields
         public void Filter(string filter) {
-            try {
+            try
+            {
                 if (filter.Length == 0) { dataViewSupport.FilteredValue = null; DgListView.Items.Filter = null; return; }
                 dataViewSupport.FilteredValue = filter;
                 DgListView.Items.Filter = (e) => {
-                    SystemParameterList param = e as SystemParameterList;
-                    return param.SystemName.ToLower().Contains(filter.ToLower())
-                    || param.Value.ToLower().Contains(filter.ToLower())
-                    || param.Type.ToLower().Contains(filter.ToLower())
-                    || param.Type.ToLower().Contains(filter.ToLower())
-                    || !string.IsNullOrEmpty(param.Description) && param.Description.ToLower().Contains(filter.ToLower())
-                    ;
+                    DataRowView search = e as DataRowView;
+                    return search.ObjectToJson().ToLower().Contains(filter.ToLower());
                 };
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
         }
+
 
         public void NewRecord() {
             selectedRecord = new SystemParameterList();
@@ -140,7 +137,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Id = (int)((txt_id.Value != null) ? txt_id.Value : 0);
                 selectedRecord.SystemName = txt_systemName.Text;
                 selectedRecord.Value = txt_value.Text;
-                selectedRecord.Type = ((GenericValue)cb_type.SelectedItem).Value;
+                selectedRecord.Type = ((SolutionMixedEnumList)cb_type.SelectedItem).Name;
                 selectedRecord.Description = txt_description.Text;
                 selectedRecord.UserId = App.UserData.Authentification.Id;
                 selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
@@ -172,18 +169,21 @@ namespace EasyITSystemCenter.Pages {
 
         //change dataset prepare for working
         private void SetRecord(bool? showForm = null, bool copy = false) {
-            txt_id.Value = (copy) ? 0 : selectedRecord.Id;
+            try {
+                txt_id.Value = (copy) ? 0 : selectedRecord.Id;
 
-            desc_translation.Content = selectedRecord.Translation;
-            txt_systemName.Text = selectedRecord.SystemName;
-            txt_value.Text = selectedRecord.Value;
-            cb_type.Text = selectedRecord.Type;
-            txt_description.Text = selectedRecord.Description;
+                desc_translation.Content = selectedRecord.Translation;
+                txt_systemName.Text = selectedRecord.SystemName;
+                txt_value.Text = selectedRecord.Value;
+                cb_type.Text = selectedRecord.Type;
+                txt_description.Text = selectedRecord.Description;
 
-            //Only for Admin: Owner/UserId Selection Allow Editing Server Default Values
-            if (App.UserData.Authentification.Role == "Admin" || selectedRecord.UserId == App.UserData.Authentification.Id)
-                btn_save.IsEnabled = true;
-            else btn_save.IsEnabled = false;
+                //Only for Admin: Owner/UserId Selection Allow Editing Server Default Values
+                if (App.UserData.Authentification.Role == "Admin" || selectedRecord.UserId == App.UserData.Authentification.Id)
+                    btn_save.IsEnabled = true;
+                else btn_save.IsEnabled = false;
+
+            } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
 
             if (showForm != null && showForm == true) {
                 MainWindow.DataGridSelected = true; MainWindow.DataGridSelectedIdListIndicator = selectedRecord.Id != 0; MainWindow.dataGridSelectedId = selectedRecord.Id; MainWindow.DgRefresh = false;
@@ -196,9 +196,7 @@ namespace EasyITSystemCenter.Pages {
         }
 
         private void Value_TextChanged(object sender, TextChangedEventArgs e) => btn_save.IsEnabled = false;
-
         private void Type_SelectionChanged(object sender, SelectionChangedEventArgs e) => btn_save.IsEnabled = false;
-
         private void Check_Click(object sender, RoutedEventArgs e) {
             try {
                 btn_save.IsEnabled = false;
