@@ -59,7 +59,12 @@ namespace EasyITCenter.ServerCoreDBSettings {
     /// Simple SELECT * XXX and you Create Same Class for returned DataSet
     /// </summary>
     public static class DatabaseContextExtensions {
- 
+
+
+        public static string CreateDbScript(EasyITCenterContext context) {
+            return context.Database.GenerateCreateScript();
+        }
+
         public static List<object>? EasyITCenterCollectionFromSql(this EasyITCenterContext EasyITCenterContext, Type type, string sql) {
             using var cmd = EasyITCenterContext.Database.GetDbConnection().CreateCommand();
             cmd.CommandText = sql;

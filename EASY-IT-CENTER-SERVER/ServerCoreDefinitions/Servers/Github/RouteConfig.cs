@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Routing.Constraints;
 
-namespace GitServer
+namespace EasyGitServer
 {
 	public static class RouteConfig
     {

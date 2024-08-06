@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GitServer.ApplicationCore.Models
+namespace EasyGitServer.Models
 {
     public class SshKey
     {

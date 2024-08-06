@@ -2,7 +2,7 @@
 using System.Linq;
 using LibGit2Sharp;
 
-namespace GitServer.Models
+namespace EasyGitServer.Models
 {
 	public class TreeModel : FileViewModel<Tree>
 	{

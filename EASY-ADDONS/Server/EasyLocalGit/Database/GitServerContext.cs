@@ -1,17 +1,21 @@
-using GitServer.ApplicationCore.Models;
+using EasyGitServer.Models;
+using EasyGitServer.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace GitServer.Infrastructure
+namespace EasyGitServer.Infrastructure
 {
     public partial class GitServerContext : DbContext
     {
+        //public GitServerContext() {
+        //}
+
         public GitServerContext(DbContextOptions<GitServerContext> options)
             : base(options)
         {
         }
 
         public DbSet<AuthorizationLog> AuthorizationLogs { get; set; }
-        public DbSet<Repository> Repositories { get; set; }
+        public DbSet<GitDbRepository> Repositories { get; set; }
         public DbSet<SshKey> SshKeys { get; set; }
         public DbSet<TeamRepositoryRole> TeamRepositoryRoles { get; set; }
         public DbSet<Team> Teams { get; set; }
@@ -24,4 +28,5 @@ namespace GitServer.Infrastructure
             modelBuilder.Entity<UserTeamRole>().HasKey(t => new { t.UserID, t.TeamID });
         }
     }
+
 }

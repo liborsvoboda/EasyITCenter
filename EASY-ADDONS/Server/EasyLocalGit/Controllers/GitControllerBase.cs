@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
-using GitServer.Models;
-using GitServer.Services;
-using GitServer.Settings;
+using EasyGitServer.Models;
+using EasyGitServer.Services;
+using EasyGitServer.Settings;
 using LibGit2Sharp;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace GitServer.Controllers
+namespace EasyGitServer.Controllers
 {
     public class GitControllerBase : Controller
     {
@@ -47,7 +47,7 @@ namespace GitServer.Controllers
 			}
 			catch(RepositoryNotFoundException)
 			{
-				return MakeError("Repository not found", repoName, 404);
+				return MakeError("GitDbRepository not found", repoName, 404);
 			}
 			catch(NotFoundException)
 			{

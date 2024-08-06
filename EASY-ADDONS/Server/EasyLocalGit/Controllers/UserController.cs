@@ -1,23 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using GitServer.Models;
+using EasyGitServer.Models;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using GitServer.ApplicationCore.Interfaces;
-using GitServer.ApplicationCore.Models;
+using EasyGitServer.Interfaces;
+using EasyGitServer.Models;
+using EasyGitServer.Infrastructure;
 
-namespace GitServer.Controllers
+namespace EasyGitServer.Controllers
 {    
     public class UserController : Controller
     {
-        private IRepository<User> _user;
-        public UserController(IRepository<User> user)
+        private IGitDbRepository<User> _user;
+        private GitServerContext db;
+
+        public UserController(GitServerContext dbContext, IGitDbRepository<User> user)
         {
+            db = dbContext;
             _user = user;
         }
         public IActionResult Index()
@@ -33,7 +35,7 @@ namespace GitServer.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _user.List(r => r.Name == model.Username && r.Password == model.Password).FirstOrDefault();
+                var user = db.Users.Where(r => r.Name == model.Username && r.Password == model.Password).FirstOrDefault();
                 if (user != null) {
                     var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
                     identity.AddClaim(new Claim(ClaimTypes.PrimarySid, user.ID.ToString()));
@@ -47,10 +49,14 @@ namespace GitServer.Controllers
             }
             return View();
         }
+
+
         public IActionResult Register()
         {
             return View();
         }
+
+
         [HttpPost]
         public IActionResult Register(RegisterModel model)
         {
@@ -58,11 +64,17 @@ namespace GitServer.Controllers
             {
                 _user.Add(new User()
                 {
+                    UserTeamRoles = null,
                     Name = model.Username,
                     Email = model.Email,
                     Password = model.ConfirmPassword,
-                    CreationDate = DateTime.Now
-                });
+                    CreationDate = DateTime.Now,
+                    IsSystemAdministrator = false,
+                    Description = null,
+                    Nickname = model.Username, 
+                    WebSite = null
+                }); 
+
                 return Redirect("/");
             }
             return View();

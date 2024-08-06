@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GitServer.ApplicationCore.Models
+namespace EasyGitServer.Models
 {
     public class TeamRepositoryRole
     {
@@ -9,7 +9,7 @@ namespace GitServer.ApplicationCore.Models
         public long RepositoryID { get; set; }
         public bool AllowRead { get; set; }
         public bool AllowWrite { get; set; }
-        public virtual Repository Repository { get; set; }
+        public virtual GitDbRepository Repository { get; set; }
         public virtual Team Team { get; set; }
     }
 }

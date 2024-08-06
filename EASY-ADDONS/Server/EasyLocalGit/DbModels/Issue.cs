@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GitServer.ApplicationCore.Models
+namespace EasyGitServer.Models
 {
     public class Issue:BaseEntity
     {

@@ -1,0 +1,37 @@
+﻿@page "/EditorDocument"
+@{
+    Layout = "/ServerCorePages/Shared/ServerModulesLayout.cshtml";
+}
+
+@model ServerCorePages.ServerModulesModel
+
+
+@{
+    var sDocument = "<html><body><p>Welcome to <strong>Text Control</strong></p></body></html>";
+}
+
+@* @Html.TXTextControl().TextControl(settings => {
+        settings.UserNames = new string[] { "Tim Typer" };
+        //settings.WebSocketURL = "wss://backend.textcontrol.com/api/TXWebSocket?access-token=addYourTokenHere"
+}).LoadText(sDocument, TXTextControl.Web.StringStreamType.HTMLFormat).Render() *@
+
+@* <tx-document-editor width="1000px"
+                    height="500px"
+                    webSocketURL="wss://127.0.0.1:5000/TXWebSocket?access-token=wFKNE0SrH3cNmb3DEopH">
+</tx-document-editor> *@
+
+<input type="button" onclick="insertTable()" value="Insert Table" />
+
+<script>
+    function insertTable() {
+        TXTextControl.tables.add(5, 5, 10, function(e) {
+          if (e === true) { // if added
+            TXTextControl.tables.getItem(function(table) {
+              table.cells.forEach(function(cell) {
+                cell.setText("Cell text");
+              });
+            }, null, 10);
+          }
+        })
+    }
+</script>

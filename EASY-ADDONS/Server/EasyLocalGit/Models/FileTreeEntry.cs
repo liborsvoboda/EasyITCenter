@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using LibGit2Sharp;
 
-namespace GitServer.Models
+namespace EasyGitServer.Models
 {
 	public class FileTreeEntry : IEnumerable<FileTreeEntry>
 	{

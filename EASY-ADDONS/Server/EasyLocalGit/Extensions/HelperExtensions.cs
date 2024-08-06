@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-namespace GitServer.Extensions
+namespace EasyGitServer.Extensions
 {
 	public static class HelperExtensions
     {

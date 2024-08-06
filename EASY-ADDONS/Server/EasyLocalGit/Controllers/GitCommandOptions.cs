@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using LibGit2Sharp;
 
-namespace GitServer.Controllers
+namespace EasyGitServer.Controllers
 {
     public class GitCommandOptions
     {

@@ -1,6 +1,7 @@
-﻿using LibGit2Sharp;
+﻿using EasyGitServer.Repositories;
+using LibGit2Sharp;
 
-namespace GitServer.Models
+namespace EasyGitServer.Models
 {
 	public class BlobModel : FileViewModel<Blob>
 	{

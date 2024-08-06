@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GitServer.Models
+namespace EasyGitServer.Models
 {
 	public class RegisterModel
     {

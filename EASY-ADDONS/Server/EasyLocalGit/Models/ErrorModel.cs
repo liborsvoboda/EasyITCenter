@@ -1,4 +1,4 @@
-﻿namespace GitServer.Models
+﻿namespace EasyGitServer.Models
 {
 	public class ErrorModel
     {

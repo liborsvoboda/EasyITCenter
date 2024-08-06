@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 
-namespace GitServer.Settings
+namespace EasyGitServer.Settings
 {
 	public class GitSettings
     {

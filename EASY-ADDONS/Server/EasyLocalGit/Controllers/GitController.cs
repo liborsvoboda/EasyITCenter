@@ -1,12 +1,12 @@
-using GitServer.Handlers;
-using GitServer.Services;
-using GitServer.Settings;
+using EasyGitServer.Handlers;
+using EasyGitServer.Services;
+using EasyGitServer.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.IO;
 
-namespace GitServer.Controllers
+namespace EasyGitServer.Controllers
 {
     [Authorize(AuthenticationSchemes = BasicAuthenticationDefaults.AuthenticationScheme)]
     public class GitController : GitControllerBase

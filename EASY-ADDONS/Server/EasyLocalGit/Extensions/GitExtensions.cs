@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace GitServer.Extensions
+namespace EasyGitServer.Extensions
 {
 	public static class GitExtensions
     {

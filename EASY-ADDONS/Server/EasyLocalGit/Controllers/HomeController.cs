@@ -1,26 +1,26 @@
 using System.Linq;
-using GitServer.Services;
-using GitServer.Settings;
+using EasyGitServer.Services;
+using EasyGitServer.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authorization;
-using GitServer.ApplicationCore.Interfaces;
-using GitServer.ApplicationCore.Models;
+using EasyGitServer.Interfaces;
+using EasyGitServer.Models;
 using System.IO;
 using System;
 using System.Security.Claims;
 
-namespace GitServer.Controllers
+namespace EasyGitServer.Controllers
 {
     
     public class HomeController : GitControllerBase
     {
-        private IRepository<Repository> _repository;
+        private IGitDbRepository<GitDbRepository> _repository;
 
         public HomeController(
             IOptions<GitSettings> gitOptions,
             GitRepositoryService repoService,
-            IRepository<Repository> repository
+            IGitDbRepository<GitDbRepository> repository
         )
             : base(gitOptions, repoService)
         {
@@ -63,7 +63,7 @@ namespace GitServer.Controllers
             //if (reps.Count > 9)
             //    return View(new { error = "You have Max Limit Repositories 9 " });
             if (reps.Exists(r => r.Name == name))
-                return View(new { error = "Repository with same Name Exist" });
+                return View(new { error = "GitDbRepository with same Name Exist" });
             if (!string.IsNullOrEmpty(name) && string.IsNullOrEmpty(remoteurl))
             {
                 result = RepositoryService.CreateRepository(Path.Combine(username, name));
@@ -75,7 +75,7 @@ namespace GitServer.Controllers
             }
             if (result != null)
             {
-                var rep = new Repository() {
+                var rep = new GitDbRepository() {
                     Name = name,
                     Description = description,
                     CreationDate = DateTime.Now,

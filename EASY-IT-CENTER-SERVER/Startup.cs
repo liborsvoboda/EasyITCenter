@@ -95,7 +95,7 @@ namespace EasyITCenter {
             ServerModules.ConfigureReportDesigner(ref services);
 
             services.AddGitServerCore(opt => { opt.GitRepoExtractDir = "Git"; });
-            
+
             #endregion Server Modules
 
             ServerConfigurationServices.ConfigureTransient(ref services);

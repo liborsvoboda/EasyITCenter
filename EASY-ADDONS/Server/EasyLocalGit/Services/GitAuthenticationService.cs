@@ -1,5 +1,5 @@
 ﻿
-namespace GitServer.Services
+namespace EasyGitServer.Services
 {
 	/// <summary>
 	/// Static class for handling git authentication

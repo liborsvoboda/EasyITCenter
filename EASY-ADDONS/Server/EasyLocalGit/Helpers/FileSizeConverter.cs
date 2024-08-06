@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace GitServer.Helpers
+namespace EasyGitServer.Helpers
 {
 	public static class FileSizeConverter
     {

@@ -1,6 +1,6 @@
 ﻿using LibGit2Sharp;
 
-namespace GitServer.Models
+namespace EasyGitServer.Models
 {
 	public class FileViewModel
 	{

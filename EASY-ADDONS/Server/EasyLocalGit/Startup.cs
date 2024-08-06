@@ -1,25 +1,25 @@
-﻿using GitServer.Services;
-using GitServer.Settings;
+﻿using EasyGitServer.Services;
+using EasyGitServer.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using GitServer.Infrastructure;
+using EasyGitServer.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using GitServer.Handlers;
-using GitServer.ApplicationCore.Interfaces;
-using GitServer.Infrastructure.Repositorys;
-using GitServer.ApplicationCore.Models;
+using EasyGitServer.Handlers;
+using EasyGitServer.Interfaces;
+using EasyGitServer.Repositories;
+using EasyGitServer.Models;
 using Microsoft.Extensions.Hosting;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 
-namespace GitServer
+namespace EasyGitServer
 {
     public class Startup
     {
@@ -28,23 +28,25 @@ namespace GitServer
 
 
         public void ConfigureServices(IServiceCollection services) {
-            /*
-            var connectionType = Configuration.GetConnectionString("ConnectionType");
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
-            switch (connectionType) {
-                case "Sqlite":
-                    services.AddDbContext<GitServerContext>(options => options.UseSqlite(connectionString)); break;
-                case "MSSQL":
-                    services.AddDbContext<GitServerContext>(options => options.UseSqlServer(connectionString)); break;
-                case "MySQL":
-                    services.AddDbContext<GitServerContext>(options => options.UseMySQL(connectionString)); break;
-                default:
-                    services.AddDbContext<GitServerContext>(options => options.UseSqlite(connectionString)); break;
-            }
-            */
+
+
+            //var connectionType = Configuration.GetConnectionString("ConnectionType");
+            //string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            //switch (connectionType)
+            //{
+            //    case "Sqlite":
+            //        services.AddDbContext<GitServerContext>(options => options.UseSqlite(connectionString)); break;
+            //    case "MSSQL":
+            //        services.AddDbContext<GitServerContext>(options => options.UseSqlServer(connectionString)); break;
+            //    case "MySQL":
+            //        services.AddDbContext<GitServerContext>(options => options.UseMySQL(connectionString)); break;
+            //    default:
+            //        services.AddDbContext<GitServerContext>(options => options.UseSqlite(connectionString)); break;
+            //}
+
 
             string json = File.ReadAllText(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", "config.txt"));
-            services.AddDbContext<GitServerContext>(options => options.UseSqlServer(json));
+             services.AddDbContext<GitServerContext>(options => options.UseSqlServer(json));
 
 
             // Add framework services.
@@ -64,21 +66,28 @@ namespace GitServer
 
             // Add settings
             services.Configure<GitSettings>(options => {
-                options.BasePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),"GitServer");
+                options.BasePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),"EasyGitServer");
                 options.GitPath = "git";
             });
 
             // Add git services
             services.AddTransient<GitRepositoryService>();
 			services.AddTransient<GitFileService>();
-            services.AddTransient<IRepository<User>, Repository<User>>();
-            services.AddTransient<IRepository<Repository>, Repository<Repository>>();
+            services.AddTransient<IGitDbRepository<User>, GitDbRepository<User>>();
+            services.AddTransient<IGitDbRepository<GitDbRepository>, GitDbRepository<GitDbRepository>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, GitServerContext gitServerContext)
         {
-            InitializeGitServerDatabase(app.ApplicationServices);
+            try {
+                if (gitServerContext.Users.Count() == 0) { } 
+            }  catch {
+                gitServerContext.Database.EnsureCreated();
+                gitServerContext.Users.Add(new User() { Name = "admin", Password = "admin", Nickname = "admin", Email = "", WebSite = "", IsSystemAdministrator = true, CreationDate = DateTime.UtcNow });
+                gitServerContext.SaveChanges();
+            }
+
 			if(env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
@@ -88,31 +97,15 @@ namespace GitServer
 				app.UseExceptionHandler("/error");
 			}
 
-            // Migrate latest database changes during startup
-            try {
-                gitServerContext.Database.Migrate();
-            } catch (Exception ex) {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(Environment.NewLine + ex.Message + Environment.NewLine + "You can Import Database bak File in Installed folder Manually or Allow Create Database for User in Connection string" + Environment.NewLine);
-            }
-
             app.UseAuthentication();
             app.UseStaticFiles();
             app.UseMvc(routes => RouteConfig.RegisterRoutes(routes));
 		}
-        private void InitializeGitServerDatabase(IServiceProvider serviceProvider)
-        {
-            using (var serviceScope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                var db = serviceScope.ServiceProvider.GetService<GitServerContext>();
-                try {
-                    db.Database.EnsureCreated();
-                } catch (Exception ex) { }
-                //if (db.Users.Count() == 0) { db.SaveChanges(); }
-            }
+
+
+        public static string CreateDatabaseScript(GitServerContext context) {
+            return context.Database.GenerateCreateScript();
         }
-
-
 
         //Functions Part
         /// <summary>

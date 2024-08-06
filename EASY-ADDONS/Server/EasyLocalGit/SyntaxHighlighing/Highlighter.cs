@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace GitServer.SyntaxHighlighing
+namespace EasyGitServer.SyntaxHighlighing
 {
 	public class Highlighter
 	{

@@ -7,7 +7,7 @@ Next Copy the License 'license.lic' file to "Data" folder
 
 Installed Git in OS System is Needed
 
-First Login user/password:   You must do Registration new User
+First Login user/password: admin/admin
 
 Default Database: MSSQL
 
@@ -53,7 +53,7 @@ Run the server and Done
 ### Linux Installation Steps
 Install ASPNETCORE6 Runtime support on your Linux Server   
 Copy unpacked Project to some folder on Linux server   
-Configure and enable new linux service [dotnet-GitServer.service](./dotnet-GitServer.service)      
+Configure and enable new linux service [dotnet-EasyGitServer.service](./dotnet-EasyGitServer.service)      
 Check "config.txt" Project file in "Data" folder for correct connection string with allowed Create Database  
 Copy the License 'license.lic' file to "Data" folder   
 Run the server and Done    
@@ -61,13 +61,13 @@ Run the server and Done
 
 ```cs
 
-Copy new service file dotnet-GitServer.service to '/lib/systemd/system' Linux server folder   
+Copy new service file dotnet-EasyGitServer.service to '/lib/systemd/system' Linux server folder   
 
-enable service by command: systemctl enable dotnet-ProjectManager.service
-run service by command: systemctl start dotnet-ProjectManager.service
+enable service by command: systemctl enable dotnet-EasyGitServer.service
+run service by command: systemctl start dotnet-EasyGitServer.service
 
-stop service by command: systemctl stop dotnet-ProjectManager.service
-status service by command: systemctl status dotnet-ProjectManager.service
+stop service by command: systemctl stop dotnet-EasyGitServer.service
+status service by command: systemctl status dotnet-EasyGitServer.service
 ```
 
 
@@ -87,13 +87,13 @@ Optional "pfxPassword" insert certificate password or set password for generated
 ```cs
 
 //examples for Linux/Windows/OSX
-server.EXE
-server.EXE "port:5000" "protocol:https"
-server.EXE "port:5000" "protocol:https" "domain:mydomain.eu"
-server.EXE "port:5000" "protocol:https" "domain:mydomain.eu" "pfxPassword:password"
-server.EXE "port:5000" "protocol:https" "pfxFilename:cert.pfx"
-server.EXE "port:5000" "protocol:https" "pfxFilename:cert.pfx" "pfxPassword:password"
-server.dll "port:3000" "protocol:http"
+EasyGitServer.EXE
+EasyGitServer.EXE "port:5000" "protocol:https"
+EasyGitServer.EXE "port:5000" "protocol:https" "domain:mydomain.eu"
+EasyGitServer.EXE "port:5000" "protocol:https" "domain:mydomain.eu" "pfxPassword:password"
+EasyGitServer.EXE "port:5000" "protocol:https" "pfxFilename:cert.pfx"
+EasyGitServer.EXE "port:5000" "protocol:https" "pfxFilename:cert.pfx" "pfxPassword:password"
+EasyGitServer.dll "port:3000" "protocol:http"
 
 ```
 
@@ -106,7 +106,7 @@ Run these command from Visual STudio console
 
 ```cs
 
-cd ./GitServer
+cd ./EasyGitServer
 dotnet ef database update
 
 ```
@@ -115,7 +115,7 @@ dotnet ef database update
 
 ### Multilanguage Screenshots  
 This project is in English language, 
-but program can be set to the any language for full ápplication translate
+but program can be set to the any language for full application translate
 
 <div>
     <img src="../Gallery/images/AutomaticDatabase.png" title="Desktop">
@@ -135,7 +135,7 @@ but program can be set to the any language for full ápplication translate
 
 ### Multilanguage Video 
 
-[![Desktop](../Gallery/images/GitServer.png)](../Gallery/images/MultilingualGitServer.mp4) 
+[![Desktop](../Gallery/images/EasyGitServer.png)](../Gallery/images/MultilingualGitServer.mp4) 
 
 ---
 

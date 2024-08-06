@@ -1,14 +1,14 @@
 ﻿using System.IO;
-using GitServer.Extensions;
-using GitServer.Models;
-using GitServer.Services;
-using GitServer.Settings;
+using EasyGitServer.Extensions;
+using EasyGitServer.Models;
+using EasyGitServer.Services;
+using EasyGitServer.Settings;
 using LibGit2Sharp;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authorization;
 
-namespace GitServer.Controllers
+namespace EasyGitServer.Controllers
 {
     //[Authorize]
     public class FileViewController : GitControllerBase

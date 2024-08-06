@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace GitServer.SyntaxHighlighing
+namespace EasyGitServer.SyntaxHighlighing
 {
 	public class HighlighterElement
     {

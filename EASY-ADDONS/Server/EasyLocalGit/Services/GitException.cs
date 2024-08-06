@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GitServer.Services
+namespace EasyGitServer.Services
 {
 	public class GitException : Exception
     {

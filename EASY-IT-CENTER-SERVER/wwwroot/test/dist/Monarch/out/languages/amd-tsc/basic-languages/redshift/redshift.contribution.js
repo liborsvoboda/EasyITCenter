@@ -1,1 +1,0 @@
-define(["require","exports","../_.contribution"],(function(e,i,s){"use strict";Object.defineProperty(i,"__esModule",{value:!0}),(0,s.registerLanguage)({id:"redshift",extensions:[],aliases:["Redshift","redshift"],loader:function(){return AMD?new Promise((function(i,s){e(["vs/basic-languages/redshift/redshift"],i,s)})):new Promise((function(i,s){e(["./redshift"],i,s)}))}})}));

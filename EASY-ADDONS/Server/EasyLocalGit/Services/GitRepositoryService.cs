@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GitServer.Settings;
+using EasyGitServer.Settings;
 using LibGit2Sharp;
 using Microsoft.Extensions.Options;
 
-namespace GitServer.Services
+namespace EasyGitServer.Services
 {
 	public class GitRepositoryService : GitServiceBase
 	{

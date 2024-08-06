@@ -1,5 +1,5 @@
-﻿using GitServer.ApplicationCore.Interfaces;
-using GitServer.ApplicationCore.Models;
+﻿using EasyGitServer.Interfaces;
+using EasyGitServer.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +13,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace GitServer.Handlers
+namespace EasyGitServer.Handlers
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<BasicAuthenticationOptions>
     {
@@ -80,7 +80,7 @@ namespace GitServer.Handlers
         {
             using (var serviceScope = ServiceCollection.BuildServiceProvider().CreateScope())
             {
-                var _user = serviceScope.ServiceProvider.GetService<IRepository<User>>();
+                var _user = serviceScope.ServiceProvider.GetService<IGitDbRepository<User>>();
                 var user = _user.List(r => r.Name == userName && r.Password == password).FirstOrDefault();
                 if (user == null)
                     return null;
@@ -102,7 +102,7 @@ namespace GitServer.Handlers
     public static class BasicAuthenticationExtensions
     {
         public static AuthenticationBuilder AddBasic(this AuthenticationBuilder builder)
-            => builder.AddBasic(BasicAuthenticationDefaults.AuthenticationScheme, _ => { _.ServiceCollection = builder.Services;_.Realm = "GitServer"; });
+            => builder.AddBasic(BasicAuthenticationDefaults.AuthenticationScheme, _ => { _.ServiceCollection = builder.Services;_.Realm = "EasyGitServer"; });
 
         public static AuthenticationBuilder AddBasic(this AuthenticationBuilder builder, Action<BasicAuthenticationOptions> configureOptions)
             => builder.AddBasic(BasicAuthenticationDefaults.AuthenticationScheme, configureOptions);

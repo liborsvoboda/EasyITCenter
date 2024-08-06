@@ -7,14 +7,14 @@ using System.Reflection;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
-using GitServer.SyntaxHighlighing;
+using EasyGitServer.SyntaxHighlighing;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
 
-namespace GitServer.Extensions
+namespace EasyGitServer.Extensions
 {
 	public static class HtmlExtensions
     {
