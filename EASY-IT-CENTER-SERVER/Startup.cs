@@ -259,7 +259,7 @@ namespace EasyITCenter {
                     RequestPath = "/EIC&ESBCodeBrowser", FileProvider = new PhysicalFileProvider(Path.Combine(ServerRuntimeData.WebRoot_path, "EIC&ESBCodeBrowser"), ExclusionFilters.Sensitive & ~ExclusionFilters.DotPrefixed)
                 });
             }
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true });
 
             app.UseCookiePolicy();
             app.UseSession();
@@ -274,7 +274,7 @@ namespace EasyITCenter {
                 app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true,
                     FileProvider = new StaticFilesFileProviderService(app.ApplicationServices),
                     RequestPath = "/server-users/" + website.WebsiteName + ".", HttpsCompression = HttpsCompressionMode.Compress,
-                    DefaultContentType = "text/html"//, ContentTypeProvider = staticFilesProvider
+                    DefaultContentType = "text/html", ContentTypeProvider = staticFilesProvider
                 });
             });
 

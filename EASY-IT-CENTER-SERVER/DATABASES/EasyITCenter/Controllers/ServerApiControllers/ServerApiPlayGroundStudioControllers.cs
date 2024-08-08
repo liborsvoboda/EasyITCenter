@@ -214,7 +214,7 @@ namespace EasyITCenter.Controllers {
         public IActionResult ListFiles() {
             var entries = mapper.GetEntries().Where(e => !e.IsNew).ToList();
 
-            var names = System.IO.Directory.GetDirectories(repoPath);
+            try { var names = System.IO.Directory.GetDirectories(repoPath); } catch { }
             return Json(new HandlerResult()
             {
                 Result = entries.OrderByDescending(e => e.LastUpdated)
@@ -231,13 +231,10 @@ namespace EasyITCenter.Controllers {
             var entry = mapper.GetEntry(name);
             if (entry == null)
                 return Json(new HandlerResult() { Success = false });
-
             entry.LastMilestone++;
 
             Save(entry, html, css, typescript, output);
-
             logger.LogInformation("Creating new milestone " + entry.LastMilestone + " for " + entry.Key);
-
             mapper.InsertMilestone(new RepoMapper.EntryMilestone()
             {
                 EntryKey = name,

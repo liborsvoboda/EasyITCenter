@@ -1,12 +1,10 @@
 ﻿using EasyITSystemCenter.Api;
 using EasyITSystemCenter.GlobalClasses;
-using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
-using Markdig;
 using Markdig.Renderers.Docx;
-using Markdig.Wpf;
+using Markdig;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -22,6 +20,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Markdig.Wpf;
+using Markdown = Markdig.Markdown;
 
 
 namespace EasyITSystemCenter.Pages {
@@ -179,7 +179,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Name = txt_name.Text;
                 selectedRecord.Description = txt_description.Text;
                 selectedRecord.MdContent = md_editor.Text;
-                selectedRecord.HtmlContent = Markdig.Markdown.ToHtml(mdViewer.Markdown);
+                selectedRecord.HtmlContent = Markdown.ToHtml(mdViewer.Markdown);
                 
                 selectedRecord.UserId = App.UserData.Authentification.Id;
                 selectedRecord.TimeStamp = DateTimeOffset.Now.DateTime;
@@ -242,14 +242,14 @@ namespace EasyITSystemCenter.Pages {
                 .UseDiagrams().UseEmphasisExtras().UseEmojiAndSmiley(true).UseDefinitionLists().UseTableOfContent().UseTaskLists()
                 .UseSupportedExtensions().UseSmartyPants().UsePipeTables().UseMediaLinks().UseMathematics().UseListExtras().UseHighlightJs()
                 .UseGridTables().UseGlobalization().UseGenericAttributes().UseFootnotes().UseFooters().UseSyntaxHighlighting().UseFigures().Build();
-            object exportedFile = Markdig.Markdown.Convert(mdViewer.Markdown, renderer, pipeline);
+            object exportedFile = Markdown.Convert(mdViewer.Markdown, renderer, pipeline);
 
             SaveFileDialog dlg = new SaveFileDialog { DefaultExt = ".docx", Filter = "Word files |*.docx", Title = Resources["fileOpenDescription"].ToString() };
             if (dlg.ShowDialog() == true) { ((DocxDocumentRenderer)exportedFile).Document.SaveAs(dlg.FileName); }
         }
 
         private void BtnExportHtml_Click(object sender, RoutedEventArgs e) {
-            string exportedFile = Markdig.Markdown.ToHtml(mdViewer.Markdown);
+            string exportedFile = Markdown.ToHtml(mdViewer.Markdown);
             SaveFileDialog dlg = new SaveFileDialog { DefaultExt = ".html", Filter = "Html files |*.html", Title = Resources["fileOpenDescription"].ToString() };
             if (dlg.ShowDialog() == true) { FileOperations.ByteArrayToFile(dlg.FileName, System.Text.Encoding.UTF8.GetBytes(exportedFile)); }
         }

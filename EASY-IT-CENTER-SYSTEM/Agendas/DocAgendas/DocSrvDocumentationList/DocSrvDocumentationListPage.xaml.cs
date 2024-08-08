@@ -1,6 +1,5 @@
 ﻿using EasyITSystemCenter.Api;
 using EasyITSystemCenter.GlobalClasses;
-using EasyITSystemCenter.GlobalClasses;
 using EasyITSystemCenter.GlobalOperations;
 using EasyITSystemCenter.GlobalStyles;
 using MahApps.Metro.Controls.Dialogs;
@@ -45,7 +44,7 @@ namespace EasyITSystemCenter.Pages {
 
                 LoadParameters();
 
-                new MarkdownPipelineBuilder().UseEmphasisExtras().UseAbbreviations().UseAdvancedExtensions().UseBootstrap()
+                 new Markdig.MarkdownPipelineBuilder().UseEmphasisExtras().UseAbbreviations().UseAdvancedExtensions().UseBootstrap()
                 .UseDiagrams().UseEmphasisExtras().UseEmojiAndSmiley(true).UseDefinitionLists().UseTableOfContent().UseTaskLists()
                 .UseSupportedExtensions().UseSmartyPants().UsePipeTables().UseMediaLinks().UseMathematics().UseListExtras().UseHighlightJs()
                 .UseGridTables().UseGlobalization().UseGenericAttributes().UseFootnotes().UseFooters().UseSyntaxHighlighting().UseFigures().Build();

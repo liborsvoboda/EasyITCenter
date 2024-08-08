@@ -279,14 +279,15 @@ namespace EasyITSystemCenter.Pages {
                 .UseDiagrams().UseEmphasisExtras().UseEmojiAndSmiley(true).UseDefinitionLists().UseTableOfContent().UseTaskLists()
                 .UseSupportedExtensions().UseSmartyPants().UsePipeTables().UseMediaLinks().UseMathematics().UseListExtras().UseHighlightJs()
                 .UseGridTables().UseGlobalization().UseGenericAttributes().UseFootnotes().UseFooters().UseSyntaxHighlighting().UseFigures().Build();
-            object exportedFile = Markdig.Markdown.Convert(mdViewer.Markdown, renderer, pipeline);
-
             SaveFileDialog dlg = new SaveFileDialog { DefaultExt = ".docx", Filter = "Word files |*.docx", Title = Resources["fileOpenDescription"].ToString() };
-            if (dlg.ShowDialog() == true) { ((DocxDocumentRenderer)exportedFile).Document.SaveAs(dlg.FileName); }
+            if (dlg.ShowDialog() == true) {
+                object exportedFile = Markdown.Convert(mdViewer.Markdown, renderer, pipeline);
+                ((DocxDocumentRenderer)exportedFile).Document.SaveAs(dlg.FileName);
+            }
         }
 
         private void BtnExportHtml_Click(object sender, RoutedEventArgs e) {
-            string exportedFile = Markdig.Markdown.ToHtml(mdViewer.Markdown);
+            string exportedFile = Markdown.ToHtml(mdViewer.Markdown);
             SaveFileDialog dlg = new SaveFileDialog { DefaultExt = ".html", Filter = "Html files |*.html", Title = Resources["fileOpenDescription"].ToString() };
             if (dlg.ShowDialog() == true) { FileOperations.ByteArrayToFile(dlg.FileName, System.Text.Encoding.UTF8.GetBytes(exportedFile)); }
         }

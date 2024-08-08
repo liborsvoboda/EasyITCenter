@@ -1,4 +1,13 @@
-﻿WEB PLAYWRITES
+﻿## ADD EDITORS OVER CODE INIT AND INSERT CHILD 
+
+## SOLVE Multiple Reference by ADD Aliases
+<PackageReference Include="Markdig.Signed">
+      <Aliases>MarkdigSigned</Aliases>
+      <Version>0.37.0</Version>
+###
+
+
+WEB PLAYWRITES
 https://playwright.dev/docs/intro HELP
 https://playwright.dev/dotnet/docs/api/class-browsercontext
 CODEGEN https://playwright.dev/dotnet/docs/codegen#generating-locators
