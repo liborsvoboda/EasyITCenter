@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Dapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Options;
@@ -25,7 +26,8 @@ namespace EasyITCenter.Controllers {
 
         public PlayGroundStudioControllers(IOptions<RepoSettings> settings, ILogger<PlayGroundStudioControllers> logger) {
             repoPath = settings.Value.RepoPath;
-            mapper = new RepoMapper(System.IO.Path.Combine(repoPath, "repo.db"));
+            SimpleCRUD.SetDialect(SimpleCRUD.Dialect.SQLite);
+            mapper = new RepoMapper(System.IO.Path.Combine(repoPath, "PlayGround.db"));
             this.logger = logger;
         }
 

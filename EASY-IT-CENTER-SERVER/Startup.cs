@@ -237,11 +237,11 @@ namespace EasyITCenter {
 
             app.UseHsts();
 
-            //TODO define over Administration
+            //Allowed File Types For Web TODO define over Administration
             var staticFilesProvider = new FileExtensionContentTypeProvider();
-            staticFilesProvider.Mappings[".javascript"] = "application/javascript"; staticFilesProvider.Mappings[".style"] = "text/css";
+            staticFilesProvider.Mappings[".js"] = "application/javascript"; staticFilesProvider.Mappings[".css"] = "text/css";
             staticFilesProvider.Mappings[".json"] = "text/json"; staticFilesProvider.Mappings[".code"] = "text/cs";
-            staticFilesProvider.Mappings[".xaml"] = "text/xaml"; staticFilesProvider.Mappings[".archive"] = "application/zip";
+            staticFilesProvider.Mappings[".xaml"] = "text/xaml"; staticFilesProvider.Mappings[".zip"] = "application/zip";
             staticFilesProvider.Mappings[".markdown"] = "text/markdown"; staticFilesProvider.Mappings[".snippets"] = "text/plain";
 
             if (ServerConfigSettings.ConfigServerStartupOnHttps) { app.UseHttpsRedirection(); }
@@ -274,7 +274,7 @@ namespace EasyITCenter {
                 app.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true,
                     FileProvider = new StaticFilesFileProviderService(app.ApplicationServices),
                     RequestPath = "/server-users/" + website.WebsiteName + ".", HttpsCompression = HttpsCompressionMode.Compress,
-                    DefaultContentType = "text/html", ContentTypeProvider = staticFilesProvider
+                    DefaultContentType = "text/html"//, ContentTypeProvider = staticFilesProvider
                 });
             });
 

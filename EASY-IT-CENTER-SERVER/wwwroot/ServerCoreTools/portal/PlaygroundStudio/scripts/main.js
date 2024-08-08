@@ -2423,7 +2423,7 @@ define(function (require, exports, module) {
 
     function RestServices() {
         var self = this;
-        var restBaseUrl = "ServerApi/PlayGroundStudio/";
+        var restBaseUrl = window.location.origin + "/ServerApi/PlayGroundStudio/";
 
         function newFile() {
             $.post(restBaseUrl + "newFile", function (resp) {

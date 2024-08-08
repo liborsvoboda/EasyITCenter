@@ -20,8 +20,6 @@ namespace EasyITCenter.Controllers {
         /// For wwwroot folder Update with detect changes and modify static pages
         /// </summary>
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
-
-
         public ServerApiUsersApi(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment) {
             _hostingEnvironment = hostingEnvironment;
         }
