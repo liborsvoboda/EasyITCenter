@@ -348,7 +348,7 @@ namespace EasyITSystemCenter.GlobalOperations {
             /// </summary>
             /// <param name="fileList">The file list.</param>
             /// <returns>A Task.</returns>
-            public async static Task<bool> SaveFiles(IEnumerable<Tuple<string, string>> fileList) {
+            public async static Task<bool> SaveFilesAsync(List<Tuple<string, string>> fileList) {
                 fileList.ForEach(async file => {
                     try {
                         CreateDirectory(file.Item1);

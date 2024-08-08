@@ -272,7 +272,7 @@ namespace EASYTools.MarkdownToFlow {
 
         private static readonly Regex _newlinesLeadingTrailing = new Regex(@"^\n+|\n+\z", RegexOptions.Compiled);
         private static readonly Regex _newlinesMultiple = new Regex(@"\n{2,}", RegexOptions.Compiled);
-        private static readonly Regex _leadingWhitespace = new Regex(@"^[ ]*", RegexOptions.Compiled);
+        //private static readonly Regex _leadingWhitespace = new Regex(@"^[ ]*", RegexOptions.Compiled);
 
         /// <summary>
         /// splits on two or more newlines, to form "paragraphs";    
@@ -436,6 +436,7 @@ namespace EASYTools.MarkdownToFlow {
             string url = match.Groups[3].Value;
             BitmapImage imgSource = null;
             try
+#pragma warning disable CA1031 // Nezachytávejte obecné typy výjimek
             {
                 if (!Uri.IsWellFormedUriString(url, UriKind.Absolute) && !System.IO.Path.IsPathRooted(url))
                 {
@@ -450,11 +451,11 @@ namespace EASYTools.MarkdownToFlow {
                 imgSource.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                 imgSource.UriSource = new Uri(url);
                 imgSource.EndInit();
-            }
-            catch (Exception)
+            } catch (Exception)
             {
                 return new Run("!" + url) { Foreground = Brushes.Red };
             }
+#pragma warning restore CA1031 // Nezachytávejte obecné typy výjimek
 
             Image image = new Image { Source = imgSource, Tag = linkText };
             if (ImageStyle is null)
@@ -1127,7 +1128,7 @@ namespace EASYTools.MarkdownToFlow {
         /// makes sure text ends with a couple of newlines; 
         /// removes any blank lines (only spaces) in the text
         /// </summary>
-        private string Normalize(string text)
+        private static string Normalize(string text)
         {
             if (text is null)
             {
@@ -1248,7 +1249,7 @@ namespace EASYTools.MarkdownToFlow {
         private static readonly Regex _eoln = new Regex("\\s+");
         private static readonly Regex _lbrk = new Regex(@"\ {2,}\n");
 
-        public IEnumerable<Inline> DoText(string text)
+        public static IEnumerable<Inline> DoText(string text)
         {
             if (text is null)
             {

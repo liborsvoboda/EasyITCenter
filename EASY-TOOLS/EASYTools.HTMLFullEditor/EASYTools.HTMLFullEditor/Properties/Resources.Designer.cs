@@ -61,17 +61,14 @@ namespace EASYTools.HTMLFullEditor.Properties {
         }
         
         /// <summary>
-        ///   Vyhledá lokalizovaný řetězec podobný &lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.01//EN&quot; &quot;http://www.w3.org/TR/html4/strict.dtd&quot;&gt;
-        ///&lt;html&gt;
+        ///   Vyhledá lokalizovaný řetězec podobný &lt;html&gt;
         ///&lt;head&gt;
-        ///    &lt;title&gt;doc&lt;/title&gt;
         ///    &lt;meta content=&quot;text/html;utf-8&quot; http-equiv=&quot;content-type&quot;&gt;
-        ///    &lt;style type=&quot;text/css&quot;&gt;ol,p,ul{font-family:Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif}p{margin-bottom:0;margin-top:0}&lt;/style&gt;
         ///&lt;/head&gt;
         ///&lt;body&gt;
-        ///&lt;p&gt;&lt;/p&gt;
+        ///    &lt;p&gt;&lt;/p&gt;
         ///&lt;/body&gt;
-        ///&lt;/html&gt;.
+        ///&lt;/html&gt; .
         /// </summary>
         internal static string Empty {
             get {

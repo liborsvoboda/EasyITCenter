@@ -35,10 +35,10 @@ namespace EasyITSystemCenter.Pages {
             try {
                 _ = FormOperations.TranslateFormFields(ListForm);
 
-                //html_htmlContent.HtmlContentDisableInitialChange = true;
-                //html_htmlContent.Toolbar.SetSourceMode(true);
-                //html_htmlContent.Browser.ToggleSourceEditor(html_htmlContent.Toolbar, true);
-                
+                html_htmlContent.HtmlContentDisableInitialChange = true;
+                html_htmlContent.Toolbar.SetSourceMode(true);
+                html_htmlContent.Browser.ToggleSourceEditor(html_htmlContent.Toolbar, true);
+
 
                 LoadParameters();
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
@@ -158,7 +158,7 @@ namespace EasyITSystemCenter.Pages {
             try {
                 OpenFileDialog dlg = new OpenFileDialog() { DefaultExt = ".html", Filter = "Html files |*.html|All files (*.*)|*.*", Title = Resources["fileOpenDescription"].ToString() };
                 if (dlg.ShowDialog() == true) {
-                    if ((bool)EditorSelector.IsChecked) { html_htmlContent.Text = File.ReadAllText(dlg.FileName, FileOperations.FileDetectEncoding(dlg.FileName)); }
+                    if ((bool)EditorSelector.IsChecked) { html_htmlContent.Browser.OpenDocument(File.ReadAllText(dlg.FileName, FileOperations.FileDetectEncoding(dlg.FileName))); }
                     else { txt_codeContent.Text = File.ReadAllText(dlg.FileName, FileOperations.FileDetectEncoding(dlg.FileName)); }
                 }
             } catch (Exception autoEx) { App.ApplicationLogging(autoEx); }
@@ -185,8 +185,8 @@ namespace EasyITSystemCenter.Pages {
             chb_active.IsChecked = selectedRecord.Active;
 
             //html_htmlContent.HtmlContent = selectedRecord.HtmlContent;
-            //html_htmlContent.Text = selectedRecord.HtmlContent;
-            if ((bool)EditorSelector.IsChecked) { html_htmlContent.Text = selectedRecord.HtmlContent; }
+            html_htmlContent.Browser.OpenDocument(selectedRecord.HtmlContent);
+            if ((bool)EditorSelector.IsChecked) { html_htmlContent.Browser.OpenDocument(selectedRecord.HtmlContent); }
             else { txt_codeContent.Text = selectedRecord.HtmlContent; }
 
             if (showForm != null && showForm == true) {
@@ -217,7 +217,7 @@ namespace EasyITSystemCenter.Pages {
                 selectedRecord.Active = chb_active.IsChecked.Value;
                 selectedRecord.Default = chb_default.IsChecked.Value;
 
-                if ((bool)EditorSelector.IsChecked) { selectedRecord.HtmlContent = html_htmlContent.Text; }
+                if ((bool)EditorSelector.IsChecked) { selectedRecord.HtmlContent = html_htmlContent.Browser.GetCurrentHtml(); }
                 else { selectedRecord.HtmlContent = txt_codeContent.Text; }
 
                 selectedRecord.UserId = App.UserData.Authentification.Id;
@@ -240,7 +240,7 @@ namespace EasyITSystemCenter.Pages {
         //Include Template on end in Editor
         private void DataListDoubleClick(object sender, MouseButtonEventArgs e) {
             if (lb_dataList.SelectedItems.Count > 0) {
-                if ((bool)EditorSelector.IsChecked) { html_htmlContent.Text += ((WebCodeLibraryList)lb_dataList.SelectedItem).Content; }
+                if ((bool)EditorSelector.IsChecked) { html_htmlContent.HtmlContent += ((WebCodeLibraryList)lb_dataList.SelectedItem).Content; }
                 else { txt_codeContent.Text += ((WebCodeLibraryList)lb_dataList.SelectedItem).Content; }
             }
         }
@@ -251,7 +251,7 @@ namespace EasyITSystemCenter.Pages {
 
         private void EditorSelectorStatus(object sender, RoutedEventArgs e) {
             if ((bool)EditorSelector.IsChecked) {
-                html_htmlContent.Text = selectedRecord.HtmlContent;
+                html_htmlContent.Browser.OpenDocument(selectedRecord.HtmlContent);
                 html_htmlContent.Visibility = Visibility.Visible;
                 txt_codeContent.Visibility = Visibility.Hidden;
                 code_selector.Visibility = Visibility.Hidden;

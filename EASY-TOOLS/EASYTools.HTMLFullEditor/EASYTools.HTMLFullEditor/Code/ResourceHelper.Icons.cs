@@ -1,12 +1,4 @@
-﻿
-
-
-
-
-
-
-
-using System.Windows;
+﻿using System.Windows;
 
 namespace EASYTools.HTMLFullEditor.Code
 {

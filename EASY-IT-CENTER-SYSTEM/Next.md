@@ -1,4 +1,5 @@
 ﻿## ADD EDITORS OVER CODE INIT AND INSERT CHILD 
+<ImplicitlyExpandNETStandardFacades>false</ImplicitlyExpandNETStandardFacades>
 
 ## SOLVE Multiple Reference by ADD Aliases
 <PackageReference Include="Markdig.Signed">

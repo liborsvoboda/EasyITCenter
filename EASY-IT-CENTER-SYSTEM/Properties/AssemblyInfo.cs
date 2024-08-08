@@ -3,6 +3,7 @@ using System.Resources;
 using System.Runtime.InteropServices;
 using System.Windows;
 
+
 [assembly: AssemblyTitle("EasyITSystemCenter")]
 [assembly: AssemblyDescription("EASY ANY SYSTEM Builder for Each Modern System")]
 [assembly: AssemblyConfiguration("")]
@@ -16,6 +17,6 @@ using System.Windows;
     ResourceDictionaryLocation.None,
     ResourceDictionaryLocation.SourceAssembly
 )]
-[assembly: AssemblyVersion("1.9.67.2773")]
-[assembly: AssemblyFileVersion("1.9.67.2773")]
+[assembly: AssemblyVersion("1.9.67.2774")]
+[assembly: AssemblyFileVersion("1.9.67.2774")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]

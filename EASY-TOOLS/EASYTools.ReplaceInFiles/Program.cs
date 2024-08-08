@@ -4,10 +4,10 @@ using System.Text;
 namespace EASYTools.ReplaceInFilesTool {
 
     internal class Program {
-        internal static string directoryPath;
-        internal static string fileType;
-        internal static string searchedString;
-        internal static string replaceString;
+        internal static string? directoryPath;
+        internal static string? fileType;
+        internal static string? searchedString;
+        internal static string? replaceString;
         internal static bool caseSensitive;
         internal static bool rootDirOnly;
         internal static bool pathIsFile = false;

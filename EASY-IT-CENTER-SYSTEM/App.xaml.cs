@@ -35,7 +35,7 @@ namespace EasyITSystemCenter {
 
         /// <summary>
         /// Global Application Startup Settings Central Parameters / Languages / User / Configure
-        /// TODO must centalize to Globall APP class
+        /// TODO must centralize to Global APP class
         /// </summary>
         public static AppRuntimeData appRuntimeData = new AppRuntimeData();
 
@@ -67,7 +67,6 @@ namespace EasyITSystemCenter {
 
             FileOperations.LoadSettings();
             SystemOperations.SetLanguageDictionary(Resources, appRuntimeData.AppClientSettings.First(a => a.Key == "sys_defaultLanguage").Value);
-
             //RenderOptions.ProcessRenderMode = System.Windows.Interop.RenderMode.Default;
             log4net.GlobalContext.Properties["RollingFileAppender"] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), Assembly.GetEntryAssembly().GetName().FullName.Split(',')[0], "Log4NetApplication.log");
             _ = XmlConfigurator.Configure();
